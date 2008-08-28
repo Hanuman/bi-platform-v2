@@ -1,0 +1,5 @@
+version: 1
+dn: cn=administrators,ou=groups,ou=system
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=joe,ou=users,ou=system

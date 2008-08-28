@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-test-foundation" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  <dependencies defaultconf="default->default">
+    
+        <!--  external dependencies -->
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
+    <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
+    <dependency org="junit" name="junit" rev="4.4" conf="default->default" />
+
+        <!--  internal dependencies -->
+    <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
+  </dependencies>
+</ivy-module>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-engine-services" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  <dependencies defaultconf="default->default">
+    
+        <!--  external dependencies -->
+    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1">
+      <exclude org="xml-apis" />
+      <exclude org="xerces" />
+    </dependency>
+    <dependency org="org.hibernate" name="hibernate" rev="3.2.4.sp1">
+      <!--
+        include these jars, needed for unit tests. child projects may choose to exclude these, if deploying to an app
+        server, etc. <exclude org="net.sf.ehcache" name="ehcache" /> <exclude org="asm" name="asm" /> <exclude org="asm"
+        name="asm-attrs" />
+      -->
+      <exclude org="commons-logging" name="commons-logging" />
+      <exclude org="commons-collections" />
+      <exclude org="dom4j" name="dom4j" />
+    </dependency>
+    <dependency org="rhino" name="js" rev="1.6R7" />
+        
+        <!--  external test dependencies -->
+    <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+    <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" conf="test->default" />        
+
+        <!--  external dependencies hosted by pentaho (not in ibiblio) -->
+    <dependency org="org.netbeans" name="jmi" rev="200507110943" />
+    <dependency org="org.netbeans" name="mdrapi" rev="200507110943" />
+        
+        <!--  internal dependencies -->
+    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.0.4" />
+    <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
+    <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
+        
+        <!--  internal test dependencies -->
+    <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
+      conf="test->default" transitive="false" />
+  </dependencies>
+</ivy-module>

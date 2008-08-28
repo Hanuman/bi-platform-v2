@@ -1,0 +1,135 @@
+<!-- ======================================================================
+     description: build coverage file for pentaho bi engine project
+
+     This file contains a deliberate structure. Before modifying this file, 
+     please take a moment to familiarize yourself with the document structure.
+     When adding code, follow the structure and conventions that are in place.
+     Whatever you need to do, you should be able to fit it into the current
+     structure. If you think you need to change the structure/conventions of 
+     this document, please consult with the pentaho build engineer, or at least
+     tell someone. Following the structure and conventions will ensure that this
+     document, and the build process, remains manageable.
+     
+     For additonal information on the structure and conventions 
+     in this document, see the wiki: http://wiki.pentaho.org/     
+                                                  
+====================================================================== -->
+
+<project name="bi-platform-engine">
+	<!-- ================================================================
+		PROPERTIES
+		
+		Do not add properties to this file. All properties are defined 
+		in the build.properites file. If you need to override a property
+		that is in the build.properites file, use an override.properties file.
+    ===================================================================== -->
+
+	<property file="override.properties" />
+	<property file="build_coverage.properties" />
+	<tstamp>
+		<format property="current.date" pattern="yyyyMMdd-hh:mma" locale="en" />
+	</tstamp>
+	<target name="init" description="create timestamp and directories">
+		<tstamp />
+		<mkdir dir="${coverage.report.dir}" />
+	</target>
+	<target name="clean" description="delete directories">
+		<tstamp />
+		<delete dir="${coverage.report.dir}" />
+	</target>
+	<!-- ===================================================================
+        target: run-all-reports
+        
+        Executes all the coverage report formats
+    =================================================================== -->
+	<target name="run-all-reports" depends="run-core-reports, run-services-reports" />
+	<!-- ===================================================================
+        target: clean-all-tests
+        
+        Cleans all the folders created for unit testing and coverage for all
+        sub projects
+    =================================================================== -->
+
+	<target name="clean-all-tests" depends="clean-core, clean-services" />
+	<!-- ===================================================================
+        target: clean-core
+        
+        Cleans all the folders created for unit testing and coverage for core
+        project
+    =================================================================== -->
+	<target name="copy-all-reports" depends="copy-bi-platform-engine-core-reports, copy-bi-platform-engine-services-reports"/>
+	<target name="clean-core">
+		<ant antfile="build_coverage.xml" dir="projects/core" target="clean-test"/>
+	</target>
+	<!-- ===================================================================
+        target: clean-services
+        
+        Cleans all the folders created for unit testing and coverage for services
+        project
+    =================================================================== -->
+	<target name="clean-services">
+		<ant antfile="build_coverage.xml" dir="projects/services" target="clean-test"/>
+	</target>
+	<!-- ===================================================================
+        target: run-core-reports
+        
+        Executes the core reports by passing the specific parameters
+    =================================================================== -->
+	<target name="run-core-reports">
+		<ant antfile="build_coverage.xml" dir="projects/core" target="all-coverage-report"/>
+	</target>
+	<!-- ===================================================================
+        target: run-services-reports
+        
+        Executes the services reports by passing the specific parameters
+    =================================================================== -->
+
+	<target name="run-services-reports">
+		<ant antfile="build_coverage.xml" dir="projects/services" target="all-coverage-report"/>
+	</target>
+
+	<!--<target name="merge-engine-reports">
+		<clover-merge initString="${build.coverage.db}/enginecoverage.db">
+		    <cloverDb initString="projects/core/build/coverage-db/coverage.db"/>
+		    <cloverDb initString="projects/services/build/coverage-db/coverage.db"/>
+		</clover-merge>
+		<mkdir dir="${build.coverage.db}" />
+		<taskdef resource="clovertasks" classpath="${clover.jar}" />
+		<typedef resource="clovertypes" classpath="${clover.jar}" />
+        <clover-clean/>
+        <clover-setup initstring="${build.coverage.db}/enginecoverage.db">
+            <fileset dir="src/" includes="**/*.java" />
+            <fileset dir="test-src/">
+                <include name="**/*.java" />
+				<exclude name="**/BaseTest.java" />
+            	<exclude name="**/BaseTestCase.java" />
+            </fileset>
+        </clover-setup>
+		<mkdir dir="${build.coverage.reports}" />
+        <mkdir dir="${build.coverage.reports}/coverage_html" />
+        <mkdir dir="${build.coverage.reports}/coverage_html/history" />
+        <clover-report>
+            <current outfile="${build.coverage.reports}/${ant.project.name}_coverage_xml" title="${ant.project.name} Coverage Report">
+	    		<format type="xml" />
+   			</current>            	
+        </clover-report>
+        <clover-historypoint historydir="${build.coverage.reports}/coverage_html/history" />
+        <clover-report>
+            <current outfile="${build.coverage.reports}/coverage_html" title="Pentaho Platform Coverage Report">
+                <format type="html"/>
+             </current>
+             <historical outfile="${build.coverage.reports}/coverage_html" historydir="${build.coverage.reports}/coverage_html/history" />
+        </clover-report>
+	</target>
+	 -->
+	<target name="copy-bi-platform-engine-core-reports">
+		<copy todir="${coverage.report.dir}" >
+			<fileset dir="${bi-platform-engine-core.report.dir}" />
+		</copy>
+	</target>
+	<target name="copy-bi-platform-engine-services-reports">
+		<copy todir="${coverage.report.dir}" >
+			<fileset dir="${bi-platform-engine-services.report.dir}" />
+		</copy>
+	</target>
+</project>

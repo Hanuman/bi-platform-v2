@@ -1,0 +1,172 @@
+<!-- ============================================================
+     description: main build file for BI Platform Engine
+-->
+
+<project name="common-build" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <property file="override.properties" />
+  <property file="build.properties" />
+
+  <target name="resolve">
+    <ant antfile="build.xml" dir="projects/core" target="resolve" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="resolve" />
+    <ant antfile="build.xml" dir="projects/security" target="resolve" />
+    <ant antfile="build.xml" dir="projects/services" target="resolve" />
+  </target>
+
+  <target name="report">
+    <ant antfile="build.xml" dir="projects/core" target="report" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="report" />
+    <ant antfile="build.xml" dir="projects/security" target="report" />
+    <ant antfile="build.xml" dir="projects/services" target="report" />
+  </target>
+
+  <target name="publish-local-nojar">
+    <ant antfile="build.xml" dir="projects/core" target="publish-local-nojar" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="publish-local-nojar" />
+    <ant antfile="build.xml" dir="projects/security" target="publish-local-nojar" />
+    <ant antfile="build.xml" dir="projects/services" target="publish-local-nojar" />
+  </target>
+
+  <target name="publish-local">
+    <ant antfile="build.xml" dir="projects/core" target="publish-local" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="publish-local" />
+    <ant antfile="build.xml" dir="projects/security" target="publish-local" />
+    <ant antfile="build.xml" dir="projects/services" target="publish-local" />
+  </target>
+
+  <target name="publish-pentaho">
+    <ant antfile="build.xml" dir="projects/core" target="publish-pentaho" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="publish-pentaho" />
+    <ant antfile="build.xml" dir="projects/security" target="publish-pentaho" />
+    <ant antfile="build.xml" dir="projects/services" target="publish-pentaho" />
+  </target>
+
+  <target name="publish-pentaho-nojar">
+    <ant antfile="build.xml" dir="projects/core" target="publish-pentaho-nojar" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="publish-pentaho-nojar" />
+    <ant antfile="build.xml" dir="projects/security" target="publish-pentaho-nojar" />
+    <ant antfile="build.xml" dir="projects/services" target="publish-pentaho-nojar" />
+  </target>
+
+  <target name="clean-jars">
+    <ant antfile="build.xml" dir="projects/core" target="clean-jars" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="clean-jars" />
+    <ant antfile="build.xml" dir="projects/security" target="clean-jars" />
+    <ant antfile="build.xml" dir="projects/services" target="clean-jars" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="clean">
+    <ant antfile="build.xml" dir="projects/core" target="clean" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="clean" />
+    <ant antfile="build.xml" dir="projects/security" target="clean" />
+    <ant antfile="build.xml" dir="projects/services" target="clean" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="clean-all">
+    <ant antfile="build.xml" dir="projects/core" target="clean-all" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="clean-all" />
+    <ant antfile="build.xml" dir="projects/security" target="clean-all" />
+    <ant antfile="build.xml" dir="projects/services" target="clean-all" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="compile">
+    <ant antfile="build.xml" dir="projects/core" target="compile" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="compile" />
+    <ant antfile="build.xml" dir="projects/security" target="compile" />
+    <ant antfile="build.xml" dir="projects/services" target="compile" />
+  </target>
+
+  <target name="jar">
+    <ant antfile="build.xml" dir="projects/core" target="jar" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="jar" />
+    <ant antfile="build.xml" dir="projects/security" target="jar" />
+    <ant antfile="build.xml" dir="projects/services" target="jar" />
+  </target>
+
+  <target name="srcjar">
+    <ant antfile="build.xml" dir="projects/core" target="srcjar" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="srcjar" />
+    <ant antfile="build.xml" dir="projects/security" target="srcjar" />
+    <ant antfile="build.xml" dir="projects/services" target="srcjar" />
+  </target>
+
+  <target name="test">
+    <ant antfile="build.xml" dir="projects/core" target="test" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="test" />
+    <ant antfile="build.xml" dir="projects/security" target="test" />
+    <ant antfile="build.xml" dir="projects/services" target="test" />
+  </target>
+
+  <target name="dist">
+    <ant antfile="build.xml" dir="projects/core" target="dist" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="dist" />
+    <ant antfile="build.xml" dir="projects/security" target="dist" />
+    <ant antfile="build.xml" dir="projects/services" target="dist" />
+
+    <mkdir dir="dist" />
+    <copy todir="dist">
+      <fileset dir="projects/core/dist" />
+      <fileset dir="projects/test-foundation/dist" />
+      <fileset dir="projects/security/dist" />
+      <fileset dir="projects/services/dist" />
+    </copy>
+
+    <mkdir dir="all-libs" />
+    <copy todir="all-libs">
+      <fileset dir="projects/core/lib" />
+      <fileset dir="projects/test-foundation/lib" />
+      <fileset dir="projects/security/lib" />
+      <fileset dir="projects/services/lib" />
+    </copy>
+  </target>
+
+  <target name="ivy-clean-cache">
+    <ant antfile="build.xml" dir="projects/core" target="ivy-clean-cache" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="ivy-clean-cache" />
+    <ant antfile="build.xml" dir="projects/security" target="ivy-clean-cache" />
+    <ant antfile="build.xml" dir="projects/services" target="ivy-clean-cache" />
+  </target>
+
+  <target name="ivy-clean-local">
+    <ant antfile="build.xml" dir="projects/core" target="ivy-clean-local" />
+    <ant antfile="build.xml" dir="projects/test-foundation" target="ivy-clean-local" />
+    <ant antfile="build.xml" dir="projects/security" target="ivy-clean-local" />
+    <ant antfile="build.xml" dir="projects/services" target="ivy-clean-local" />
+  </target>
+
+  <target name="continuous">
+    <ant antfile="build.xml" dir="projects/core">
+      <target name="continuous" />
+      <target name="publish-local" />
+    </ant>
+    <!-- test-foundation has no tests, so don't run the default continuous target -->
+    <ant antfile="build.xml" dir="projects/test-foundation">
+      <target name="clean-all" />
+      <target name="resolve" />
+      <target name="dist-javadoc" />
+      <target name="dist" />
+      <target name="publish-local" />
+    </ant>
+    <!-- security currently has no tests, so don't run the default continuous target -->
+    <ant antfile="build.xml" dir="projects/security">
+      <target name="clean-all" />
+      <target name="resolve" />
+      <target name="dist-javadoc" />
+      <target name="dist" />
+      <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="projects/services">
+      <target name="continuous" />
+    </ant>
+  </target>
+</project>
