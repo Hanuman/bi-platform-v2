@@ -730,6 +730,7 @@
 	    ====================================================================-->
   <target name="init-tests" depends="clean-tests">
     <mkdir dir="${testclasses.dir}" />
+  	<mkdir dir="${testsrc.dir}" />  	
   </target>
 
 
