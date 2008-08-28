@@ -11,7 +11,7 @@
     <dependency org="commons-fileupload" name="commons-fileupload" rev="1.2.1" />
     <dependency org="commons-io" name="commons-io" rev="1.4" />
     <dependency org="commons-lang" name="commons-lang" rev="2.2" />
-    <dependency org="commons-logging" name="commons-logging" rev="1.1" />
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
     <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" transitive="false" />
     <dependency org="dom4j" name="dom4j" rev="1.6.1">
       <exclude org="xml-apis" name="xml-apis" />
@@ -22,7 +22,8 @@
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
 
         <!-- reporting -->
-    <dependency org="pentaho.reporting" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
+    <dependency org="pentaho.reporting" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
+      changing="true" />
     <dependency org="javacup" name="javacup" rev="10k" />
     <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.2" />
     <dependency org="saaj-ri" name="saaj-ri" rev="1.1_02" />
@@ -50,9 +51,11 @@
       <exclude org="javax.activation" module="activation" />
     </dependency>
     <dependency org="pentaho.kettle" name="kettle-engine" rev="3.0.4" />
-    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
+      changing="true" />
     <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"
+      changing="true" />
     <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
@@ -68,6 +71,10 @@
     <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
     <dependency org="com.mockrunner" name="mockrunner-servlet" rev="0.3.7" conf="test->default" />
-    <dependency org="org.springframework" name="spring-mock" rev="2.0.6" conf="test->default" />
+    <dependency org="org.springframework" name="spring-mock" rev="2.0.6" conf="test->default">
+      <exclude org="javax.servlet" name="servlet-api" />
+      <exclude org="avalon-framework" name="avalon-framework" />
+      <exclude org="log4j" name="log4j" />
+    </dependency>
   </dependencies>
 </ivy-module>
