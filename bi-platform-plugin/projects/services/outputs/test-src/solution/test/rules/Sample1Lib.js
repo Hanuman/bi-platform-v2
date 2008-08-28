@@ -1,3 +1,0 @@
-function region() { 
-	return "Central";
-} 

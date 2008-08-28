@@ -1,3 +1,0 @@
-function city() { 
-	return "Westville";
-} 
