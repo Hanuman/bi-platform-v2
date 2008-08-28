@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="eclipse-bin"/>
+	<classpathentry kind="lib" path="lib/acegi-security-1.0.6.jar" />
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar" />
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar" />
+	<classpathentry kind="lib" path="lib/pentaho-actionsequence-dom-2.0-SNAPSHOT.jar" />
+	<classpathentry kind="lib" path="lib/pentaho-connections-2.0-SNAPSHOT.jar" />
+</classpath>
