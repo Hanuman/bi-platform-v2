@@ -1,0 +1,193 @@
+<!-- ============================================================
+     description: main build file 
+-->
+                                                  
+<project name="pentaho-dist" default="jar-all">
+	
+	<property file="override.properties" />
+	<property file="build.properties" />
+
+	<!-- ============================================================
+	     The pro build relies on these property names. Change the names and you're likely to break 
+	     the pro build.
+	-->
+	<property name="tomcat-pci"					location="../tomcat-pci"/>
+	<property name="platform-webapp"			location="../bi-platform-appserver/webapps/pentaho"/>
+	<property name="pentaho-style-webapp"		location="../bi-platform-appserver/webapps/pentaho-style"/>
+	<property name="sw-style-webapp"			location="../bi-platform-appserver/webapps/sw-style"/>
+	<property name="jboss-portal-webapp"		location="../bi-platform-appserver/jboss/webapps/pentaho-jboss-portal-layout"/>
+	<property name="source-solution" 			location="../bi-platform-sample-solution" />
+	<property name="target-solution" 			location="${tomcat-pci}/pentaho-solutions" />
+	<property name="target-pentaho-war"			location="${tomcat-pci}/tomcat/webapps/pentaho"/>
+	<property name="target-sw-style-war"		location="${tomcat-pci}/tomcat/webapps/sw-style"/>
+	<property name="target-pentaho-style-war"	location="${tomcat-pci}/tomcat/webapps/pentaho-style"/>
+
+
+	<tstamp>
+		<format property="current.date" pattern="yyyyMMdd-hh:mma" locale="en" />
+	</tstamp>
+
+	
+	<target name="clean" depends="" description="create distribution" >
+		 <delete>
+		    <fileset dir="." includes="pentaho-bi-platform-*.jar" />
+		 </delete>
+		<delete dir="all-libs"/>
+	</target>
+
+	<target name="copy-solution" >
+		<copy todir="${target-solution}">
+			<fileset dir="${source-solution}" />
+		</copy>
+	</target>
+
+
+	<target name="copy-webapp-stuff" >
+		<copy todir="${target-pentaho-war}" >
+			<fileset dir="${platform-webapp}" />
+		</copy>
+		<copy todir="${target-sw-style-war}" >
+			<fileset dir="${sw-style-webapp}" />
+		</copy>
+		<copy todir="${target-pentaho-style-war}" >
+			<fileset dir="${pentaho-style-webapp}" />
+		</copy>
+	</target>
+	
+	<target name="copy-jars" >
+		<copy todir="${target-pentaho-war}/WEB-INF/lib" >
+		    <fileset dir="." includes="pentaho-bi-platform-*.jar" />
+		</copy>
+		<copy todir="${target-pentaho-war}/WEB-INF/lib" >
+		    <fileset dir="all-libs" excludes="**/servlet-api.jar" />
+		    <fileset dir="lib-runtime" excludes="**/servlet-api.jar" />
+		</copy>
+	</target>
+	
+	<target name="dev_update" depends="jar-all, copy-jars, copy-webapp-stuff, copy-solution" >
+		<echo message="Updated"/>
+	</target>
+
+	<target name="dev_rebuild" depends="clean-all, dev_update" >
+		<echo message="Updated"/>
+	</target>
+
+	<target name="clean-all" depends="clean" >
+		<ant antfile="build.xml" dir="../bi-platform-api" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-util" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-engine" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-repository" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-web" target="clean-all" />
+	</target>
+
+	<target name="jar-all" depends="" >
+		<mkdir dir="all-libs"/>
+
+		<ant antfile="build.xml" dir="../bi-platform-api" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-api/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-api/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-util" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-util/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-util/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+
+		<ant antfile="build.xml" dir="../bi-platform-engine" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-engine/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-engine/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-repository" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-repository/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-repository/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-ui-foundation/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-ui-foundation/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-plugin" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-plugin/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-plugin/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-scheduler/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-scheduler/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-legacy" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-legacy/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-legacy/lib" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-web" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-web/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-web/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<!-- Remove the servlet-api jar -->
+		<delete>
+			<fileset dir="./all-libs" includes="servlet-api-*.jar"/>
+		</delete>
+	</target>
+
+	<target name="rebuild" depends="clean-all, jar-all" />
+	
+	<target name="publish-local">
+		<ant antfile="build.xml" dir="../bi-platform-api" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-util" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-engine" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-repository" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-web" target="publish-local" />
+	</target>
+
+	<target name="resolve">
+		<ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-util" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-engine" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-repository" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-web" target="resolve" />
+	</target>
+</project>
