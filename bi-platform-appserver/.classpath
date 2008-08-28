@@ -15,12 +15,15 @@
 	<classpathentry kind="lib" path="jboss/lib/portal-server-lib.jar"/>
 	<classpathentry kind="lib" path="jboss/lib/portal-theme-lib.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-repository"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-scheduler"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-ui-foundation"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-security"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-services"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin-actions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin-services"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

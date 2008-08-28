@@ -114,7 +114,7 @@
 			<fileset dir="../bi-platform-engine-core/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-engine-core/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-engine-core/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-engine-security" target="dist" />
@@ -122,7 +122,7 @@
 			<fileset dir="../bi-platform-engine-security/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-engine-security/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-engine-security/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-engine-services" target="dist" />
@@ -130,7 +130,7 @@
 			<fileset dir="../bi-platform-engine-services/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-engine-services/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-engine-services/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 			
 		<ant antfile="build.xml" dir="../bi-platform-repository" target="dist" />
@@ -154,7 +154,7 @@
 			<fileset dir="../bi-platform-plugin-services/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-plugin-services/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-plugin-services/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="dist" />
@@ -162,7 +162,7 @@
 			<fileset dir="../bi-platform-plugin-actions/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-plugin-actions/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-plugin-actions/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="dist" />
@@ -186,7 +186,7 @@
 			<fileset dir="../bi-platform-web/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-web/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-web/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-web-servlet" target="dist" />
@@ -194,7 +194,7 @@
 			<fileset dir="../bi-platform-web-servlet/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-web-servlet/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-web-servlet/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-web-portlet" target="dist" />
@@ -202,7 +202,7 @@
 			<fileset dir="../bi-platform-web-portlet/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-web-portlet/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-web-portlet/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<!-- Remove the servlet-api jar -->
