@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+  <local-tx-datasource>
+    <jndi-name>Quartz</jndi-name>
+    <connection-url>jdbc:oracle:thin:@localhost:1521:sampledata</connection-url>
+    <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+    <user-name>hibuser</user-name>
+    <password>password</password>
+  </local-tx-datasource>
+</datasources>
