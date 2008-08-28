@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-assembly" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+  </configurations>
+  <dependencies defaultconf="default->default">
+    <dependency org="pentaho" name="pentaho-bi-platform-web-portlet" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-web-servlet" rev="${project.revision}" changing="true" />
+    
+    <dependency org="org.apache.axis" name="axis" rev="1.4" />
+    <dependency org="batik" name="batik-bridge" rev="1.6" />
+    <dependency org="bsf" name="bsf" rev="2.4.0" transitive="false" />   <!-- we don't want bsf's commons_logging -->
+    <dependency org="org.netbeans" name="mdrjdbc" rev="1.4.2" />
+    <dependency org="org.beanshell" name="bsh" rev="1.3.0" />    
+    <dependency org="ognl" name="ognl" rev="2.6.9" />    
+    <dependency org="pentaho.reporting" name="pentaho-legacy-charts" rev="1.7.0" />    
+
+
+<!-- BIRT -->
+    <dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
+    <dependency org="org.eclipse/birt" name="org.eclipse.emf.common" rev="2.2.1.v200702131851-birt-custom" />
+    <dependency org="org.eclipse/birt" name="org.eclipse.emf.ecore" rev="2.2.2.v200702131851-birt-custom" />
+    <dependency org="org.eclipse/birt" name="org.eclipse.emf.ecore.xmi" rev="2.2.2.v200702131851-birt-custom" />
+    <dependency org="org.eclipse/birt" name="org.w3c.css.sac" rev="1.3.0.v200706111724-birt-custom" />
+    <dependency org="org.eclipse/birt" name="scriptapi" rev="2.2.1" />
+    <dependency org="com.ibm.icu" name="com.ibm.icu" rev="3.6.1-v20070906-birt-custom" />    
+
+<!-- COMMONS -->
+    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.6" transitive="false" />
+    <dependency org="commons-cli" name="commons-cli" rev="1.0" transitive="false" />
+    <dependency org="commons-digester" name="commons-digester" rev="1.8" transitive="false" />
+    <dependency org="commons-discovery" name="commons-discovery" rev="0.4" transitive="false" />
+    <dependency org="commons-jxpath" name="commons-jxpath" rev="1.2" transitive="false" />
+    <dependency org="commons-math" name="commons-math" rev="1.0" transitive="false" />
+    <dependency org="concurrent" name="concurrent" rev="1.3.4" />
+    <dependency org="org.eclipse/birt" name="dataadapterapi" rev="2.2.1" />
+    <dependency org="org.eclipse/birt" name="dteapi" rev="2.2.1" />
+    <dependency org="com.enterprisedt" name="edtftpj" rev="1.4.5" />
+    <dependency org="milyn" name="flute" rev="1.3" />
+    <dependency org="itext" name="itext" rev="1.5.2" />
+    <dependency org="jakarta-regexp" name="jakarta-regexp" rev="1.2" />
+    <dependency org="javax.xml" name="jaxrpc-api" rev="1.1" />
+    <dependency org="jcommon" name="jcommon-xml" rev="1.0.12" />
+    <dependency org="jcommon-logging-log4jlog" name="jcommon-logging-log4jlog" rev="1.0.2" />
+    <dependency org="poi" name="poi" rev="3.0.1-jdk122-final-20071014" />
+
+<!-- SAXON -->
+    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-dom" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-jdom" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-sql" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-xom" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-xpath" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
+    <dependency org="rhino" name="js" rev="1.6R7" />
+    <dependency org="soap" name="soap" rev="2.3" />
+    <dependency org="svgSalamander" name="svgSalamander" rev="1.0" />
+    <dependency org="wsdl4j" name="wsdl4j" rev="1.5.0" />
+    <dependency org="opensymphony" name="quartz-oracle" rev="1.5.2" />
+    <dependency org="jexcelapi" name="jxl" rev="2.4.3" />
+  </dependencies>
+</ivy-module>
