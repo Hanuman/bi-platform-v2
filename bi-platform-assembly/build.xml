@@ -25,5 +25,5 @@
       THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
       FOUND IN common_build.xml.
     --> 
-
+	  <target name="resolve-test"  description="Retrieves test configuration dependencies"/>
 </project>

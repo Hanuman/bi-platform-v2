@@ -1,6 +1,5 @@
 <project name="archive-assembly">
 	<description>
-            Archive assembly targets
     </description>
 
 	<property file="override.properties" />
@@ -8,20 +7,12 @@
 
 	<!-- library.path contains the libraries that compose the classpath, which is used in the MANIFEST.MF file -->
 	<path id="library.path">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars.jboss" />
-			<exclude name="**/licenses/*" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 	<!-- library.path contains the libraries that compose the classpath, which is used in the MANIFEST.MF file -->
 	<path id="library.path.no.portal">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars-noportal.jboss" />
-			<exclude name="**/licenses/*" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 	<!-- convert the libraries to be included in the classpath attribute of the MANIFEST.MF file -->
@@ -50,42 +41,22 @@
 
 
 	<path id="hsqldb.library.path">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars.jboss" />
-			<exclude name="**/licenses/*" />
-			<exclude name="**/quartz-oracle-1.5.2.jar" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 
 	<path id="hsqldb.library.path.no.portal">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars-noportal.jboss" />
-			<exclude name="**/licenses/*" />
-			<exclude name="**/quartz-oracle-1.5.2.jar" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 
 	<path id="oracle10g.library.path">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars.jboss" />
-			<exclude name="**/licenses/*" />
-			<exclude name="**/quartz-1.5.2.jar" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 
 	<path id="oracle10g.library.path.no.portal">
-		<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-			<excludesfile name="excludejars-noportal.jboss" />
-			<exclude name="**/licenses/*" />
-			<exclude name="**/quartz-1.5.2.jar" />
-		</fileset>
-		<fileset dir="${bi.platform.staging.dir}/all-libs" />
+		<fileset dir="${bi.platform.build.dir}/all-libs" />
 	</path>
 
 
@@ -649,24 +620,16 @@
 			<!-- zipfileset dir="${build.doc.dir}" / -->
 			<!-- include db specific quartz jar -->
 			<!-- zipfileset dir="${build.res.dir}/quartz/${rdbms}" prefix="WEB-INF/lib" / -->
-			<zipfileset dir="${bi.platform.staging.dir}/lib-runtime" prefix="WEB-INF/lib">
-				<excludesfile name="excludejars.jboss" />
-				<exclude name="dom4j.jar" />
-				<exclude name="servlet-api.jar" />
-				<exclude name="gnu-regexp.jar" />
-				<!-- exclude quartz jar. db specific needed for some -->
-				<exclude name="quartz*jar" />
-			</zipfileset>
-			<zipfileset dir="${bi.platform.staging.dir}/all-libs" prefix="WEB-INF/lib">
+			<zipfileset dir="${bi.platform.build.dir}/all-libs" prefix="WEB-INF/lib">
 				<exclude name="servlet-api.jar" />
 			</zipfileset>
 			<zipfileset dir="${bi.platform.repository.dir}/res/hibernate/${rdbms}" prefix="WEB-INF/classes">
 				<include name="**/*.xml" />
 			</zipfileset>
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
 			<zipfileset dir="${bi.platform.util.dir}/res/log4j" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.engine.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.engine.services.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
 		</zip>
 	</target>
 
@@ -691,22 +654,14 @@
 			<!-- zipfileset dir="${build.doc.dir}" / -->
 			<!-- include db specific quartz jar -->
 			<!-- zipfileset dir="${build.res.dir}/quartz/${rdbms}" prefix="WEB-INF/lib" / -->
-			<zipfileset dir="${bi.platform.staging.dir}/lib-runtime" prefix="WEB-INF/lib">
-				<!-- pentaho now has a dependency on portal-core-lib.jar. If you don't have jboss-portal installed, you need this -->
-				<!-- pentaho now has a dependency on hibernate3.jar. If you don't have jboss-portal installed, you need this -->
-				<!-- pentaho now has a dependency on ehcache.jar. If you don't have jboss-portal installed, you need this -->
-				<excludesfile name="excludejars-noportal.jboss" />
-				<!-- exclude quartz jar. db specific needed for some -->
-				<exclude name="quartz*jar" />
-			</zipfileset>
-			<zipfileset dir="${bi.platform.staging.dir}/all-libs" prefix="WEB-INF/lib"/>
+			<zipfileset dir="${bi.platform.build.dir}/all-libs" prefix="WEB-INF/lib"/>
 			<zipfileset dir="${bi.platform.repository.dir}/res/hibernate/${rdbms}" prefix="WEB-INF/classes">
 				<include name="**/*.xml" />
 			</zipfileset>
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
 			<zipfileset dir="${bi.platform.util.dir}/res/log4j" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.engine.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.engine.services.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
 		</zip>
 
 	</target>
@@ -743,10 +698,10 @@
 			<zipfileset dir="${bi.platform.repository.dir}/res/hibernate/${rdbms}" prefix="WEB-INF/classes">
 				<include name="**/*.xml" />
 			</zipfileset>
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.plugin.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
 			<zipfileset dir="${bi.platform.util.dir}/res/log4j" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.engine.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.engine.services.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
 		</zip>
 
 	</target>
@@ -814,23 +769,18 @@
 				<exclude name="**/WEB-INF/portlet-instances.xml" />
 			</zipfileset>
 			<!-- get all pentaho jars from the build process -->
-			<zipfileset dir="${bi.platform.staging.dir}" prefix="WEB-INF/lib">
+			<zipfileset dir="${bi.platform.build.dir}" prefix="WEB-INF/lib">
 				<include name="pentaho-bi*.jar"/>
 			</zipfileset>
 			<!-- zipfileset dir="${build.doc.dir}" / -->
-			<zipfileset dir="${bi.platform.staging.dir}/lib-runtime" prefix="WEB-INF/lib">
-				<excludesfile name="excludejars.generic" />
-				<exclude name="servlet-api.jar" />
-				<exclude name="gnu-regexp.jar" />
-			</zipfileset>
-			<zipfileset dir="${bi.platform.staging.dir}/all-libs" prefix="WEB-INF/lib">
+			<zipfileset dir="${bi.platform.build.dir}/all-libs" prefix="WEB-INF/lib">
 				<exclude name="servlet-api.jar" />
 			</zipfileset>
 			
-			<zipfileset dir="${bi.platform.plugin.dir}/projects/actions/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.plugin.dir}/projects/actions/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/projects/actions/src/org/pentaho/platform/plugin/action/jfreereport/res" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.plugin.actions.dir}/projects/actions/src/org/pentaho/platform/plugin/action/mondrian/res" prefix="WEB-INF/classes" />
 			<zipfileset dir="${bi.platform.util.dir}/res/log4j" prefix="WEB-INF/classes" />
-			<zipfileset dir="${bi.platform.engine.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
+			<zipfileset dir="${bi.platform.engine.services.dir}/projects/services/res/ehcache" prefix="WEB-INF/classes" />
 		</zip>
 
 	</target>
@@ -860,26 +810,22 @@
 			
 		<copy todir="${build.wars.dir}/tomcat/${rdbms}/pentaho.war/WEB-INF/lib">
 			<!-- get all pentaho jars from the build process -->
-			<fileset dir="${bi.platform.staging.dir}">
+			<fileset dir="${bi.platform.build.dir}">
 				<include name="pentaho-bi*.jar"/>
-			</fileset>
-			<fileset dir="${bi.platform.staging.dir}/lib-runtime">
-				<excludesfile name="excludejars.generic" />
-				<exclude name="gnu-regexp.jar" />
 			</fileset>
 		</copy>
 			
 			<!-- zipfileset dir="${build.doc.dir}" / -->
 			
 		<copy todir="${build.wars.dir}/tomcat/${rdbms}/pentaho.war/WEB-INF/lib">
-			<fileset dir="${bi.platform.staging.dir}/all-libs"/>
+			<fileset dir="${bi.platform.build.dir}/all-libs"/>
 		</copy>
 		
 		<copy todir="${build.wars.dir}/tomcat/${rdbms}/pentaho.war/WEB-INF/classes">
-			<fileset dir="${bi.platform.plugin.dir}/projects/actions/src/org/pentaho/platform/plugin/action/jfreereport/res"/>
-			<fileset dir="${bi.platform.plugin.dir}/projects/actions/src/org/pentaho/platform/plugin/action/mondrian/res"/>
+			<fileset dir="${bi.platform.plugin.actions.dir}/projects/actions/src/org/pentaho/platform/plugin/action/jfreereport/res"/>
+			<fileset dir="${bi.platform.plugin.actions.dir}/projects/actions/src/org/pentaho/platform/plugin/action/mondrian/res"/>
 			<fileset dir="${bi.platform.util.dir}/res/log4j"/>
-			<fileset dir="${bi.platform.engine.dir}/projects/services/res/ehcache"/>
+			<fileset dir="${bi.platform.engine.services.dir}/projects/services/res/ehcache"/>
 		</copy>
 		
 		
@@ -1151,16 +1097,9 @@
 		<fileset dir="${build.ears.dir}/jboss/portal/${rdbms}" includes="pentaho.war" />
 		<fileset dir="${bi.platform.appserver.dir}/jboss/res/datasources/${rdbms}" />
 		<!-- Include appropriate third party jars -->
-		<zipfileset dir="${bi.platform.staging.dir}/lib-runtime" prefix="lib">
-			<excludesfile name="excludejars.jboss" />
-			<exclude name="servlet-api.jar" />
-			<exclude name="gnu-regexp.jar" />
-			<exclude name="dom4j.jar" />
-			<exclude name="quartz*.jar" />
-		</zipfileset>
 		<!-- include db specific quartz jar -->
 		<!-- zipfileset dir="${build.res.dir}/quartz/${rdbms}" prefix="lib" / -->
-		<zipfileset dir="${bi.platform.staging.dir}/all-libs" prefix="lib" />
+		<zipfileset dir="${bi.platform.build.dir}/all-libs" prefix="lib" />
 	</ear>
 </target>
 
@@ -1193,16 +1132,9 @@
 		<fileset dir="${build.ears.dir}/jboss/no-portal/${rdbms}" includes="pentaho.war" />
 		<fileset dir="${bi.platform.appserver.dir}/jboss/res/datasources/${rdbms}" />
 		<!-- Include appropriate third party jars -->
-		<zipfileset dir="${bi.platform.staging.dir}/lib-runtime" prefix="lib">
-			<excludesfile name="excludejars-noportal.jboss" />
-			<exclude name="servlet-api.jar" />
-			<exclude name="gnu-regexp.jar" />
-			<exclude name="dom4j.jar" />
-			<exclude name="quartz*.jar" />
-		</zipfileset>
 		<!-- include db specific quartz jar -->
 		<!-- zipfileset dir="${build.res.dir}/quartz/${rdbms}" prefix="lib" / -->
-		<zipfileset dir="${bi.platform.staging.dir}/all-libs" prefix="lib" />
+		<zipfileset dir="${bi.platform.build.dir}/all-libs" prefix="lib" />
 	</ear>
 </target>
 
