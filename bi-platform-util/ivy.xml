@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="pentaho" module="pentaho-bi-platform-util" revision="${project.revision}" />
+    
+    <configurations>
+    	<conf name="default"/>
+    	<conf name="test" visibility="private"/>
+    </configurations>
+    
+    <dependencies defaultconf="default->default">
+    
+        <!--  external dependencies -->
+        <dependency org="javax.activation"   name="activation"         rev="1.0.2"/>
+        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" transitive="false"/>
+        <dependency org="commons-codec"      name="commons-codec"      rev="1.3"/>
+        <dependency org="commons-lang"       name="commons-lang"       rev="2.2"/>
+        <dependency org="commons-logging"    name="commons-logging"    rev="1.1"     transitive="false"/>
+        <dependency org="commons-io"         name="commons-io"         rev="1.4"/>
+        <dependency org="dom4j"              name="dom4j"              rev="1.6.1"   transitive="false"/>
+        <dependency org="org.safehaus.jug"   name="jug-lgpl"           rev="2.0.0" /> <!--  will not properly pull from ibiblio maven2. needs classifier of 'lgpl' -->
+
+        <dependency org="junit"              name="junit"              rev="4.4" conf="test->default"/>
+
+        <!--  internal dependencies -->
+        <dependency org="pentaho" name="pentaho-connections"     rev="${dependency.pentaho-connections.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true"/>
+    </dependencies>
+    
+</ivy-module>
