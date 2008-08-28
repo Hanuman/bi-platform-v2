@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     description: build coverage file for pentaho bi engine core project
+
+     This file contains a deliberate structure. Before modifying this file, 
+     please take a moment to familiarize yourself with the document structure.
+     When adding code, follow the structure and conventions that are in place.
+     Whatever you need to do, you should be able to fit it into the current
+     structure. If you think you need to change the structure/conventions of 
+     this document, please consult with the pentaho build engineer, or at least
+     tell someone. Following the structure and conventions will ensure that this
+     document, and the build process, remains manageable.
+     
+     For additonal information on the structure and conventions 
+     in this document, see the wiki: http://wiki.pentaho.org/     
+                                                  
+====================================================================== -->
+<project name="bi-platform-repository" basedir="." xmlns:cenqua="cenqua:cenqua.com">
+	<!-- ================================================================
+		PROPERTIES
+		
+		Do not add properties to this file. All properties are defined 
+		in the build.properites file. If you need to override a property
+		that is in the build.properites file, use an override.properties file.
+    ===================================================================== -->
+
+	<property file="override.properties" />
+	<property file="build_coverage.properties" />
+
+	<!-- ========================================================================
+		TASKS
+		
+		Please define all external tasks at this level.
+	===================================================================== -->
+
+	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
+
+	<!-- ========================================================================
+	CONDITIONS / TOP-LEVEL Elements
+	
+	Please define conditions and other top-level elements at this level. What is 
+	a top-level element? To find out, use Eclipse's Outline mode and switch the 
+	Show/Hide Top Level Elements button. 
+	======================================================================= -->
+
+	<path id="pentaho_classpath">
+		<fileset dir="${lib}/" includes="**/*.jar" />
+		<fileset dir="${dist-dir}">
+			<patternset refid="platform-libs" />
+		</fileset>
+	</path>
+
+	<path id="pentaho_test_classpath">
+		<fileset dir="${res-dir}/hibernate/general" includes="**/*.hbm.xml" />
+		<fileset dir="${res-dir}/hibernate/${rdbms}" includes="**/*.xml" />
+		<fileset dir="${test-jars-dir}/" includes="**/*.jar" />
+		<fileset dir="${lib}/" includes="**/*.jar" />
+		<fileset dir="${test-lib}/" includes="**/*.jar" />
+		<fileset dir="${dist-dir}">
+			<patternset refid="platform-libs" />
+		</fileset>
+	</path>
+
+	<patternset id="platform-libs">
+		<include name="pentaho-bi-platform-api-2.0.jar" />
+		<include name="pentaho-bi-platform-util-2.0.jar" />
+		<include name="pentaho-bi-platform-engine-core-2.0.jar" />
+		<include name="pentaho-bi-platform-engine-security-2.0.jar" />
+		<include name="pentaho-bi-platform-engine-services-2.0.jar" />
+		<include name="pentaho-bi-platform-repository-2.0.jar" />
+		<include name="pentaho-bi-platform-engine-test-foundation-2.0.jar" />
+	</patternset>
+
+	<!-- ========================================================================
+	    target: -check.clover                                              
+
+	    sets clover.insalled to true if the clover jar file is found       
+	======================================================================= -->
+
+	<target name="-check.clover">
+		<available property="clover.installed" classname="com.cenqua.clover.CloverInstr" classpath="${clover.jar}" />
+	</target>
+
+	<!-- ========================================================================
+		target: -guard-noclover                                            
+
+		depend on this task to fail and print an error message if clover   
+		is not installed                                                   
+	======================================================================= -->
+	<target name="-guard-noclover" depends="-check.clover" unless="clover.installed">
+		<fail message="The target you are attempting to run requires Clover, which doesn't appear to be installed" />
+	</target>
+
+	<!-- ========================================================================
+		target: with-clover                                                
+	
+		installs the clover ant tasks and calls clover-setup               
+	======================================================================= -->
+	<target name="with-clover" depends="-guard-noclover">
+		<mkdir dir="${build.coverage.db}" />
+		<taskdef resource="clovertasks" classpath="${clover.jar}" />
+		<typedef resource="clovertypes" classpath="${clover.jar}" />
+		<clover-setup initstring="${build.coverage.db}/repositorycoverage.db">
+			<fileset dir="src/" includes="**/*.java" />
+			<fileset dir="test-src/">
+				<include name="**/*.java" />
+				<exclude name="**/BaseTest.java" />
+				<exclude name="**/BaseTestCase.java" />
+				<exclude name="**/BaseSecurityTest.java" />
+			</fileset>
+		</clover-setup>
+	</target>
+
+	<!-- =================================================================
+          target: clover-xml
+          
+          Generated the coverage report in xml format using clover.
+    ================================================================= -->
+	<target name="clover-xml" if="clover.installed">
+		<mkdir dir="${build.coverage.reports}" />
+		<clover-report>
+			<current outfile="${build.coverage.reports}/${ant.project.name}_coverage_xml" title="${ant.project.name} Coverage Report">
+				<format type="xml" />
+			</current>
+		</clover-report>
+	</target>
+
+	<!-- =================================================================
+          target: clover-html
+          
+          Generated the coverage report in htm format using clover.
+    ================================================================= -->
+	<target name="clover-html" if="clover.installed">
+		<clover-historypoint historydir="${build.coverage.reports}/${ant.project.name}_coverage_html/history" />
+		<clover-report>
+			<current outfile="${build.coverage.reports}/${ant.project.name}_coverage_html" title="Pentaho Platform Coverage Report">
+				<format type="html" />
+			</current>
+			<historical outfile="${build.coverage.reports}/${ant.project.name}_coverage_html" historydir="${build.coverage.reports}/${ant.project.name}_coverage_html/history" />
+		</clover-report>
+	</target>
+
+	<!-- =================================================================
+          target: xml-coverage-report
+          
+          Generated the coverage report in htm format using clover.
+    ================================================================= -->
+	<target name="xml-coverage-report" depends="init, with-clover,compile-tests,test,clover-xml" />
+
+	<!-- =================================================================
+          target: html-coverage-report
+          
+          Generated the coverage report in htm format using clover.
+    ================================================================= -->
+	<target name="html-coverage-report" depends="init, with-clover,compile-tests,test,clover-html" />
+
+	<!-- =================================================================
+          target: all-coverage-report
+          
+          Generated the coverage report in htm format using clover.
+    ================================================================= -->
+	<target name="all-coverage-report" depends="xml-coverage-report, html-coverage-report" />
+
+	<!-- ===================================================================
+        target: init
+        
+        If you create an initialization target, please add the target to 
+        the depends attribute.            
+     =================================================================== -->
+	<target name="init" description="create timestamp and directories">
+		<echo>Init...</echo>
+		<tstamp />
+		<mkdir dir="${build.coverage.reports}" />
+		<mkdir dir="${build.coverage.reports}/${ant.project.name}_coverage_html" />
+		<mkdir dir="${build.coverage.reports}/${ant.project.name}_coverage_html/history" />
+		<mkdir dir="${test-jars-dir}" />
+		<mkdir dir="${classes}" />
+		<mkdir dir="${classes}/META-INF" />
+		<mkdir dir="${test-classes}" />
+		<mkdir dir="${test-classes}/META-INF" />
+		<mkdir dir="${reports.xml.dir}" />
+		<mkdir dir="${build.coverage.db}" />
+		<mkdir dir="${reports.html.dir}" />
+		<mkdir dir="${build.coverage.reports}" />
+		<mkdir dir="${build.junit.test.reports}" />
+	</target>
+
+	<!-- ===================================================================
+        target: clean-test
+        
+        Cleans all the folders which were created during the initil compilation
+        of the test and reports.
+    =================================================================== -->
+	<target name="clean-test" description="cleaning test folders">
+		<echo>Init...</echo>
+		<tstamp />
+		<delete dir="${build.coverage.reports}" />
+		<delete dir="${build.coverage.reports}/${ant.project.name}_coverage_html" />
+		<delete dir="${build.coverage.reports}/${ant.project.name}_coverage_html/history" />
+		<delete dir="${test-jars-dir}" />
+		<delete dir="${test-classes}" />
+		<delete dir="${test-classes}/META-INF" />
+		<delete dir="${reports.xml.dir}" />
+		<delete dir="${build.coverage.db}" />
+		<delete dir="${reports.html.dir}" />
+		<delete dir="${build.coverage.reports}" />
+		<delete dir="${build.junit.test.reports}" />
+		<delete dir="${build.dir}" />
+		<clover-clean />
+	</target>
+
+	<!-- ===================================================================
+        target: clean
+        
+        Cleans the classes and jar folder .
+    =================================================================== -->
+	<target name="clean" description="create timestamp and directories">
+		<delete dir="${classes}" />
+		<delete file="${jar}" />
+	</target>
+
+	<!-- ===================================================================
+        target: compile
+        
+        Compiles the source code for the project.
+    =================================================================== -->
+	<target name="compile" depends="init" description="compile the source">
+		<echo>Compiling...</echo>
+		<javac srcdir="${src}" destdir="${classes}" target="1.5" source="1.5" deprecation="true" debug="true" fork="true">
+			<classpath refid="pentaho_classpath" />
+		</javac>
+	</target>
+
+	<!-- ===================================================================
+        target: compile-tests
+        
+        Compiles the test source code for the project.
+    =================================================================== -->
+	<target name="compile-tests" depends="compile" description="compile the test source">
+		<echo>Compiling...Core Engine</echo>
+		<javac srcdir="${test-src}" destdir="${test-classes}" target="1.5" source="1.5" deprecation="true" debug="true" fork="true">
+			<classpath refid="pentaho_test_classpath" />
+		</javac>
+		<echo>Generating the JAR for core tests</echo>
+		<jar destfile="${test-jars-dir}/pentaho-bi-platform-repository-test.jar">
+			<manifest>
+				<attribute name="Implementation-Title" value="${title}" />
+				<attribute name="Implementation-Version" value="V2.0" />
+				<attribute name="Implementation-Vendor" value="Pentaho Corp" />
+				<attribute name="Implementation-ProductID" value="" />
+			</manifest>
+			<fileset dir="${test-classes}">
+				<!-- include only repository -->
+				<include name="**/**/**" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</jar>
+	</target>
+
+
+	<!-- ===================================================================
+        target: test
+        
+        Runs all the unit test and compiles the unit test report.
+    =================================================================== -->
+	<target name="test" depends="compile-tests">
+		<junit fork="yes" dir="${basedir}" failureProperty="test.failed" showoutput="yes">
+			<classpath location="${classes}" />
+			<classpath path="${res-dir}/hibernate/general" />
+			<classpath path="${res-dir}/hibernate/${rdbms}" />
+			<classpath refid="pentaho_test_classpath" />
+			<formatter type="xml" />
+			<batchtest todir="${reports.xml.dir}" unless="testcase">
+				<fileset dir="${test.src.dir}">
+					<include name="**/*Test.java" />
+					<include name="**/Test*.java" />
+					<exclude name="**/BaseTest*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${reports.xml.dir}">
+			<fileset dir="${reports.xml.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.html.dir}" />
+		</junitreport>
+	</target>
+</project>
+

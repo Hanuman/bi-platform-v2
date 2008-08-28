@@ -1,0 +1,91 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU General Public License, version 3 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ *
+ * Copyright 2006 - 2008 Pentaho Corporation.  All rights reserved. 
+ * 
+ * Created Apr 18, 2006
+ *
+ * @author mbatchel
+ */
+package org.pentaho.test.platform.security.acls;
+
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.pentaho.test.platform.engine.core.BaseTest;
+
+public class TestPentahoAclEntry extends BaseTest {
+
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(TestPentahoAclEntry.class);
+    System.exit(0);
+  }
+
+  public void testAcls() {
+    PentahoAclEntry aclEntry = null;
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_NOTHING);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "------");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "X-----");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_SUBSCRIBE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "-S----");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_CREATE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "--C---");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_UPDATE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "---U--");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_DELETE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "----D-");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_UPDATE_PERMS);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "-----P");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_ADMINISTRATION);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "--CUDP");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "XS----");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_ADMIN_ALL);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "XSCUD-");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_SUBSCRIBE_ADMINISTRATION);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "-SCUDP");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE_ADMINISTRATION);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "X-CUDP");//$NON-NLS-1$
+
+    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_FULL_CONTROL);//$NON-NLS-1$
+    assertEquals(aclEntry.printPermissionsBlock(), "XSCUDP");//$NON-NLS-1$
+
+    aclEntry.setRecipient(new GrantedAuthorityImpl("ROLE_ADMIN"));//$NON-NLS-1$
+    Object recip = aclEntry.getRecipient();
+    if (!(recip instanceof GrantedAuthority)) {
+      fail("setRecipientString failed - GrantedAuthority.");//$NON-NLS-1$
+    }
+    aclEntry.setRecipient("suzy");//$NON-NLS-1$
+    recip = aclEntry.getRecipient();
+    if (!(recip instanceof String)) {
+      fail("setRecipientString failed - User.");//$NON-NLS-1$
+    }
+
+  }
+
+}

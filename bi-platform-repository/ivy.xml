@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+
+    <info organisation="pentaho" module="pentaho-bi-platform-repository" revision="${project.revision}" />
+    
+    <configurations>
+    	<conf name="default"/>
+    	<conf name="test" visibility="private"/>
+    </configurations>
+    
+    <dependencies defaultconf="default->default">
+    
+        <!--  external dependencies -->
+        <dependency org="org.acegisecurity"   name="acegi-security"      rev="1.0.6" transitive="false"/>
+        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
+        <dependency org="commons-vfs"         name="commons-vfs"         rev="1.0"   transitive="false"/>
+       	<dependency org="commons-dbcp"        name="commons-dbcp"        rev="1.2.1">
+        	<exclude org="xml-apis" />
+        	<exclude org="xerces" />
+        	<exclude org="commons-collections" />
+        </dependency>
+        <dependency org="commons-pool"        name="commons-pool"        rev="1.2">
+        	<exclude org="xml-apis" />
+        	<exclude org="xerces" />
+        	<exclude org="commons-collections" />
+        </dependency>
+        <dependency org="dom4j"              name="dom4j"              rev="1.6.1">
+        	<exclude org="xml-apis" name="xml-apis" />
+        </dependency>
+		<dependency org="org.springframework" name="spring"              rev="2.0"   transitive="false"/>
+		<dependency org="org.hibernate"       name="hibernate"           rev="3.2.4.sp1">
+			<!--
+			 
+			 include these jars, needed for unit tests.  child projects may choose
+			 to exclude these, if deploying to an app server, etc.
+			  
+         	<exclude org="net.sf.ehcache" name="ehcache" />
+        	<exclude org="asm" name="asm" />
+        	<exclude org="asm" name="asm-attrs" />
+         	 -->
+        	<exclude org="commons-logging" name="commons-logging" />
+        	<exclude org="commons-collections"/>
+        	<exclude org="dom4j" name="dom4j" />
+        </dependency>
+
+        <dependency org="javax.servlet"       name="servlet-api"         rev="2.4"/>
+
+        <!--  internal dependencies -->
+		<dependency org="org.pentaho" name="pentaho-vfs"                     rev="1.0"          changing="true"/>
+        <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
+        <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>
+        
+        <!--  testing dependencies -->        
+        <dependency org="junit"               name="junit"               rev="4.4" conf="test->default"/>
+		<dependency org="hsqldb"              name="hsqldb"              rev="1.8.0.7" conf="test->default"/>
+		<dependency org="simple-jndi"         name="simple-jndi"         rev="0.11.3" conf="test->default"/>
+		<dependency org="quartz"			name="quartz"              rev="1.5.2"  conf="test->default">
+			<exclude org="commons-logging" name="commons-logging" />
+		</dependency>
+    </dependencies>
+    
+</ivy-module>

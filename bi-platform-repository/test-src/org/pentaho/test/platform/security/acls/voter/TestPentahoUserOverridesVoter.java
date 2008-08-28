@@ -1,0 +1,85 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU General Public License, version 3 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * Copyright 2006 - 2008 Pentaho Corporation.  All rights reserved. 
+ * 
+ * Created Apr 18, 2006
+ *
+ * @author mbatchel
+ */
+package org.pentaho.test.platform.security.acls.voter;
+
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.pentaho.platform.api.engine.IPermissionMask;
+import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SimplePermissionMask;
+import org.pentaho.platform.engine.security.SimpleRole;
+import org.pentaho.platform.engine.security.SimpleUser;
+import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.pentaho.platform.engine.security.acls.voter.PentahoUserOverridesVoter;
+import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
+import org.pentaho.test.platform.engine.core.BaseTest;
+import org.pentaho.test.platform.security.MockSecurityUtility;
+
+public class TestPentahoUserOverridesVoter extends BaseTest {
+
+  private static final String SOLUTION_PATH = "projects/core/test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+    @Override
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      System.out.println("File exist returning " + SOLUTION_PATH);
+      return SOLUTION_PATH;  
+    } else {
+      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
+  public void testVoter() {
+    StandaloneSession session = new StandaloneSession("suzy"); //$NON-NLS-1$
+    MockSecurityUtility.createSuzy(session);
+    RepositoryFile testFile = new RepositoryFile("Test Folder", null, null);//$NON-NLS-1$
+    Map<IPermissionRecipient, IPermissionMask> perms = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
+    perms.put(new SimpleUser("suzy"), new SimplePermissionMask(PentahoAclEntry.PERM_NOTHING));
+    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL));
+    AcegiPermissionMgr.instance().getPermissions(testFile);
+
+    // Now, the stage is set. We should be able to double-check that suzy
+    // has no access to the testFile.
+    PentahoUserOverridesVoter voter = new PentahoUserOverridesVoter();
+    assertNotNull(voter);
+    assertFalse(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_EXECUTE));
+  }
+  
+  public static void main(String[] args) {
+    TestPentahoUserOverridesVoter test = new TestPentahoUserOverridesVoter();
+    test.setUp();
+    test.testVoter();
+    try {
+
+    } finally {
+      test.tearDown();
+      BaseTest.shutdown();
+    }
+  }
+
+}

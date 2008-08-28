@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+	- Application context containing authentication, channel
+	- security and web URI beans.
+	-
+	- Only used by "filter" artifact.
+	-
+	- $Id: applicationContext-test-security.xml,v 1.1 2006/04/19 04:58:24 mbatchelor Exp $
+-->
+
+<beans>
+
+	<bean id="userMap" class="java.lang.String">
+		<constructor-arg type="java.lang.String">
+			<value>
+				<![CDATA[
+			joe=password,ROLE_ADMIN,ROLE_CEO,ROLE_AUTHENTICATED
+            suzy=password,ROLE_CTO,ROLE_IS,ROLE_AUTHENTICATED
+			pat=password,ROLE_DEV,ROLE_AUTHENTICATED
+			tiffany=password,ROLE_AUTHENTICATED
+            admin=secret,ROLE_ADMIN,ROLE_AUTHENTICATED
+        ]]>
+			</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="userMapFactoryBean"
+		class="org.pentaho.platform.plugin.services.security.userrole.memory.UserMapFactoryBean">
+		<property name="userMap">
+			<ref local="userMap" />
+		</property>
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+		<property name="userMap">
+			<ref local="userMapFactoryBean" />
+		</property>
+	</bean>
+
+	<bean id="userRoleListEnhancedUserMapFactoryBean"
+		class="org.pentaho.platform.plugin.services.security.userrole.memory.UserRoleListEnhancedUserMapFactoryBean">
+		<property name="userMap">
+			<ref local="userMap" />
+		</property>
+	</bean>
+
+	<bean id="inMemoryUserRoleListService"
+		class="org.pentaho.platform.plugin.services.security.userrole.memory.InMemoryUserRoleListService">
+		<property name="userRoleListEnhancedUserMap">
+			<ref local="userRoleListEnhancedUserMapFactoryBean" />
+		</property>
+		<property name="userDetailsService">
+			<ref local="userDetailsService" />
+		</property>
+		<property name="allAuthorities">
+			<list>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_AUTHENTICATED" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_ADMIN" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_CEO" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_CTO" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_IS" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_DEV" />
+				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_DEVMGR" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="pentahoUserRoleListService"
+		class="org.pentaho.platform.plugin.services.security.userrole.UserDetailsRoleListService">
+		<property name="userRoleListService">
+			<ref local="inMemoryUserRoleListService" />
+		</property>
+	</bean>
+
+</beans>

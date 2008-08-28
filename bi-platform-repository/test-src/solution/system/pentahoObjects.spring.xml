@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.solutionEngine">
+		<constructor-arg><value>org.pentaho.platform.engine.services.solution.SolutionEngine</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.solutionRepository">
+		<constructor-arg><value>org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.contentRepository">
+		<constructor-arg><value>org.pentaho.platform.repository.content.ContentRepository</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.runtimeRepository">
+		<constructor-arg><value>org.pentaho.platform.repository.runtime.RuntimeRepository</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.auditEntry">
+		<!-- does not support session creator (aka scope) -->
+		<constructor-arg><value>org.pentaho.platform.engine.core.audit.AuditFileEntry</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.uiTemplater">
+		<constructor-arg><value>org.pentaho.platform.web.http.WebTemplateHelper</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.userFilesComponent">
+		<constructor-arg><value>org.pentaho.platform.web.refactor.UserFilesComponent</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.backgroundExecution">
+		<constructor-arg><value>org.pentaho.platform.scheduler.SecurityAwareBackgroundExecutionHelper</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.subscriptionRepository">
+		<constructor-arg><value>org.pentaho.platform.repository.subscription.SubscriptionRepository</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.subscriptionScheduler">
+		<constructor-arg><value>org.pentaho.platform.scheduler.QuartzSubscriptionScheduler</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.cwmSchemaFactory">
+		<constructor-arg><value>org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.file">
+		<constructor-arg><value>org.pentaho.platform.engine.services.outputhandler.FileOutputHandler</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.contentrepo">
+		<constructor-arg><value>org.pentaho.platform.repository.content.ContentRepositoryOutputHandler</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.aclPublisher">
+		<constructor-arg><value>org.pentaho.platform.engine.security.acls.AclPublisher</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.aclVoter">
+		<constructor-arg><value>org.pentaho.platform.engine.security.acls.voter.PentahoBasicAclVoter</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.versionHelper">
+		<constructor-arg><value>org.pentaho.platform.util.VersionHelper</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.cacheManager">
+		<constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.SimpleMapCacheManager</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.scheduler">
+		<constructor-arg><value>org.pentaho.platform.scheduler.QuartzScheduler</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.conditionalExecution">
+		<constructor-arg><value>org.pentaho.platform.plugin.condition.javascript.ConditionalExecution</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.messageFormatter">
+		<constructor-arg><value>org.pentaho.platform.engine.services.MessageFormatter</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.navigationComponent">
+		<constructor-arg><value>org.pentaho.platform.uifoundation.component.xml.NavigationComponent</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.datasourceService">
+		<constructor-arg><value>org.pentaho.platform.repository.datasource.dbcp.PooledDatasourceService</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.passwordService">
+		<constructor-arg><value>org.pentaho.platform.util.Base64PasswordService</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.datasource">
+		<constructor-arg><value>org.pentaho.platform.repository.datasource.Datasource</value></constructor-arg>
+	</bean>
+	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.datasourceMgmtService">
+		<constructor-arg><value>org.pentaho.platform.repository.datasource.DatasourceMgmtService</value></constructor-arg>
+	</bean>			
+	<bean id="pentahoObjectFactory" class="org.pentaho.platform.engine.core.system.objfac.PentahoObjectFactory" singleton="true">
+		<property name="objectCreators">
+			<map>
+				<entry key="ISolutionEngine">
+					<ref bean="pentahoObjects.solutionEngine" />
+				</entry>
+				<entry key="ISolutionRepository">
+					<ref bean="pentahoObjects.solutionRepository" />
+				</entry>
+				<entry key="IContentRepository">
+					<ref bean="pentahoObjects.contentRepository" />
+				</entry>
+				<entry key="IRuntimeRepository">
+					<ref bean="pentahoObjects.runtimeRepository" />
+				</entry>
+				<entry key="IAuditEntry">
+					<ref bean="pentahoObjects.auditEntry" />
+				</entry>
+				<entry key="IUITemplater">
+					<ref bean="pentahoObjects.uiTemplater" />
+				</entry>
+				<entry key="IUserFilesComponent">
+					<ref bean="pentahoObjects.userFilesComponent" />
+				</entry>
+				<entry key="IBackgroundExecution">
+					<ref bean="pentahoObjects.backgroundExecution" />
+				</entry>
+				<entry key="ISubscriptionRepository">
+					<ref bean="pentahoObjects.subscriptionRepository" />
+				</entry>
+				<entry key="ISubscriptionScheduler">
+					<ref bean="pentahoObjects.subscriptionScheduler" />
+				</entry>
+				<entry key="ICwmSchemaFactory">
+					<ref bean="pentahoObjects.cwmSchemaFactory" />
+				</entry>
+				<entry key="file">
+					<ref bean="pentahoObjects.file" />
+				</entry>
+				<entry key="contentrepo">
+					<ref bean="pentahoObjects.contentrepo" />
+				</entry>
+				<entry key="IAclPublisher">
+					<ref bean="pentahoObjects.aclPublisher" />
+				</entry>
+				<entry key="IAclVoter">
+					<ref bean="pentahoObjects.aclVoter" />
+				</entry>
+				<entry key="IVersionHelper">
+					<ref bean="pentahoObjects.versionHelper" />
+				</entry>
+				<entry key="ICacheManager">
+					<ref bean="pentahoObjects.cacheManager" />
+				</entry>
+				<entry key="IScheduler">
+					<ref bean="pentahoObjects.scheduler" />
+				</entry>
+				<entry key="IConditionalExecution">
+					<ref bean="pentahoObjects.conditionalExecution" />
+				</entry>
+				<entry key="IMessageFormatter">
+					<ref bean="pentahoObjects.messageFormatter" />
+				</entry>
+				<entry key="INavigationComponent">
+					<ref bean="pentahoObjects.navigationComponent" />
+				</entry>
+				<entry key="IDatasourceService">
+					<ref bean="pentahoObjects.datasourceService" />
+				</entry>				
+				<entry key="IPasswordService">
+					<ref bean="pentahoObjects.passwordService" />
+				</entry>	
+				<entry key="IDatasource">
+					<ref bean="pentahoObjects.datasource" />
+				</entry>
+				<entry key="IDatasourceMgmtService">
+					<ref bean="pentahoObjects.datasourceMgmtService" />
+				</entry>				
+			</map>
+		</property>
+	</bean>
+</beans>
