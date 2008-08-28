@@ -625,17 +625,23 @@ public class AdhocWebService extends ServletBase {
     if (model == null) {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
     }
-
+    
+    double columnWidthScaleFactor = 1.0;
     boolean columnWidthUnitsConsistent = AdhocWebService.areMetadataColumnUnitsConsistent( reportSpec, model );
     if ( !columnWidthUnitsConsistent ) {
       logger.error( Messages.getErrorString( "AdhocWebService.ERROR_0013_INCONSISTENT_COLUMN_WIDTH_UNITS") ); //$NON-NLS-1$
+    } else {
+      int columnWidthSumOfPercents = AdhocWebService.getSumOfMetadatColumnWidths( reportSpec, model );
+      if ( columnWidthSumOfPercents > 100 ) {
+        columnWidthScaleFactor = 100.0 / (double)columnWidthSumOfPercents;
+      }
     }
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
       BusinessColumn column = model.findBusinessColumn(name);
       
-      AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent );
+      AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent, columnWidthScaleFactor );
       
       // Template properties have the lowest priority, merge them last
       if (bUseTemplate) {
@@ -736,19 +742,29 @@ public class AdhocWebService extends ServletBase {
     tmp.add(ColumnWidth.TYPE_WIDTH_PERCENT);
     PERCENT_SET = Collections.unmodifiableSet( tmp );
   }
-  private static final Set<Integer> MEASUREMENT_SET;
-  static {
-    Set<Integer> tmp = new HashSet<Integer>();
-    tmp.add(ColumnWidth.TYPE_WIDTH_CM);
-    tmp.add(ColumnWidth.TYPE_WIDTH_INCHES);
-    tmp.add(ColumnWidth.TYPE_WIDTH_POINTS);
-    MEASUREMENT_SET = Collections.unmodifiableSet( tmp );
-  } 
+  
+  private static int getSumOfMetadatColumnWidths( ReportSpec reportSpec, BusinessModel model ) {
+    int sum = 0;
+    
+    for (int i = 0; i < reportSpec.getField().length; i++) {
+      Field field = reportSpec.getField()[i];
+      String name = field.getName();
+      BusinessColumn column = model.findBusinessColumn(name);
+      ConceptInterface metadataConcept = column.getConcept();
+
+      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      if ( property != null) {
+        ColumnWidth columnWidth = (ColumnWidth)property.getValue();
+        sum += columnWidth.getWidth().intValue();
+      }
+    }
+
+    return sum;
+  }
   /**
    * columnWidth properties for the specified reportspec are valid if units 
    * for column widths for all columns in the reportspec are one of:
    *    percent or unspecified (PERCENT_SET)
-   *    cm, inches, points, and/or unspecified (MEASUREMENT_SET)
    *    unspecified
    * @param reportSpec
    * @param model
@@ -775,55 +791,7 @@ public class AdhocWebService extends ServletBase {
   
   private static boolean isSetConsistent( Set<Integer> unitsSet ) {
     return unitsSet.isEmpty() 
-    || CollectionUtils.isSubCollection( unitsSet, PERCENT_SET ) 
-    || CollectionUtils.isSubCollection( unitsSet, MEASUREMENT_SET );
-  }
-  
-  private static BigDecimal POINTS_PER_INCH = new BigDecimal( 72 );
-  // see: http://www.google.com/search?hl=en&client=firefox-a&rls=org.mozilla%3Aen-US%3Aofficial&hs=Cuj&q=how+many+points+in+an+cm&btnG=Search
-  private static BigDecimal POINTS_PER_CENTIMETER = new BigDecimal( 28.3464567F );
-  
-  private static BigDecimal inchesToPoints( BigDecimal inches ) {
-    return inches.multiply( POINTS_PER_INCH );
-  }
-  
-  private static BigDecimal centimetersToPoints( BigDecimal cm ) {
-    return cm.multiply( POINTS_PER_CENTIMETER );
-  }
-  
-  /**
-   * Get the width of the column in units of either percent or points.
-   * 
-   * @param property metadata property identifying the width and the unit of measure of the width.
-   * @return the width of the column in units of either percent or points
-   * @throws AdhocWebServiceException thrown if the units of measure for the width 
-   * is pixels. Pixels are not a supported unit of measure.
-   */
-  private static BigDecimal getColumnWidth( ConceptPropertyInterface property ) throws AdhocWebServiceException {
-    BigDecimal width;
-    ColumnWidth columnWidth = (ColumnWidth)property.getValue();
-    switch (columnWidth.getType()) {
-      case ColumnWidth.TYPE_WIDTH_PERCENT:
-        width = columnWidth.getWidth();
-        break;
-      case ColumnWidth.TYPE_WIDTH_CM:
-        width = AdhocWebService.centimetersToPoints(columnWidth.getWidth());
-        break;
-      case ColumnWidth.TYPE_WIDTH_INCHES:
-        width = AdhocWebService.inchesToPoints( columnWidth.getWidth() );
-        break;
-      case ColumnWidth.TYPE_WIDTH_POINTS:
-        width = columnWidth.getWidth();
-        break;
-      case ColumnWidth.TYPE_WIDTH_PIXELS:
-        // not supported throw exception, caller should be able to ignore the column width and continue
-        throw new AdhocWebServiceException( "Invalid state for column width properity in the metadata. Reporting Engine does not accept units of pixels for column width. The column id is: " + property.getId() );
-      default:
-        // should never happen, indicates that the metadata information is inconsistent since it doesn't include a unit of measure
-        throw new RuntimeException( "Invalid state for column width properity in the metadata. The units of measure for column width have not been specified. The column id is: " + property.getId() );
-    }
-    
-    return width;
+    || CollectionUtils.isSubCollection( unitsSet, PERCENT_SET );
   }
   
   /**
@@ -832,23 +800,21 @@ public class AdhocWebService extends ServletBase {
    * @param column
    * @param columnWidthUnitsConsistent this value should always be the result of a call to areMetadataColumnUnitsConsistent()
    */
-  private static void applyMetadata( final Field field, final BusinessColumn column, boolean columnWidthUnitsConsistent ) {
+  private static void applyMetadata( final Field field, final BusinessColumn column, 
+      boolean columnWidthUnitsConsistent, double columnWidthScaleFactor ) {
     ConceptInterface metadataConcept = column.getConcept();
 
     if ( columnWidthUnitsConsistent ) {
       // get column width from metadata, and add to report def
       ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property != null) {
-        try {
-          BigDecimal width = AdhocWebService.getColumnWidth( property );
-          field.setWidth( width );
-          field.setIsWidthPercent( ((ColumnWidth)property.getValue()).getType() == ColumnWidth.TYPE_WIDTH_PERCENT );
-          field.setWidthLocked( true );
-        } catch (AdhocWebServiceException e) {
-          // This should never happen. This exception will only be thrown if the unit of measure has been specified as pixels. if the columnWidthUnitsConsistent
-          // parameter is true, this guarantees that the unit of measure is not pixels
-          logger.error( e.getMessage() );
+        double width = ((ColumnWidth)property.getValue()).getWidth().doubleValue();
+        if ( 1.0 != columnWidthScaleFactor ) {
+          width *= columnWidthScaleFactor;
         }
+        field.setWidth( new BigDecimal( width ) );
+        field.setIsWidthPercent( ((ColumnWidth)property.getValue()).getType() == ColumnWidth.TYPE_WIDTH_PERCENT );
+        field.setWidthLocked( true );
       }
     }
     
