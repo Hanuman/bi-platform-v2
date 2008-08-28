@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+
+    <info organisation="pentaho" module="pentaho-bi-platform-scheduler" revision="${project.revision}"/>
+    
+    <configurations>
+    	<conf name="default"/>
+    	<conf name="test" visibility="private"/>
+    </configurations>
+    
+    <dependencies defaultconf="default->default">
+
+        <!--  external dependencies -->
+        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"  transitive="false"/>
+        <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
+        <dependency org="dom4j"               name="dom4j"               rev="1.6.1">
+			<exclude org="xml-apis" name="xml-apis" />
+		</dependency>
+		<dependency org="quartz"			  name="quartz"              rev="1.5.2">
+			<exclude org="commons-logging" name="commons-logging" />
+		</dependency>
+        
+        <!--  internal dependencies -->
+        <dependency org="pentaho" name="pentaho-actionsequence-dom"          rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
+        <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
+        <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true"/>        
+        <dependency org="pentaho" name="pentaho-bi-platform-ui-foundation"   rev="${project.revision}" changing="true"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true"/>
+        
+        <!--  testing dependencies -->        
+        <dependency org="junit"               name="junit"                   rev="4.4" conf="test->default"/>
+        <dependency org="commons-collections" name="commons-collections"     rev="3.2" conf="test->default"/>
+        <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>
+        
+    </dependencies>
+    
+</ivy-module>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- 
+This is the spring configuration file that is used to wire system listeners into the Pentaho
+BI Platform. System listeners are notified when the platform starts up and shuts down. System 
+listeners can be added, removed, and initialized here. Each bean in the list is a system listener.
+You can intialize any listeners properties, as shown in the QuartzSystemListener and 
+VersionCheckSystemListener.
+-->
+
+<beans>
+	<bean id="systemListenersList" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<bean class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener"/>
+				<bean class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener"/>
+				<bean class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener"/>
+				<bean class="org.pentaho.platform.scheduler.QuartzSystemListener">
+					<property name="quartzProperties">
+						<props>
+							<!-- these values are derived from /pentaho-solutions/system/quartz/quartz.properties -->
+							<prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+							<prop key="org.quartz.threadPool.threadCount">10</prop>
+							<prop key="org.quartz.threadPool.threadPriority">5</prop>
+							<prop key="org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread">true</prop>
+							<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+							<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+							<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+							<prop key="org.quartz.jobStore.useProperties">false</prop>
+							<prop key="org.quartz.jobStore.dataSource">myDS</prop>
+							<prop key="org.quartz.jobStore.tablePrefix">QRTZ_</prop>
+							<prop key="org.quartz.jobStore.isClustered">false</prop>
+							<prop key="org.quartz.dataSource.myDS.jndiURL">Quartz</prop>
+						</props>
+					</property>
+				</bean>
+				<bean class="org.pentaho.platform.engine.services.metadata.PMDSystemListener"/>
+				<bean class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
+					<property name="repeatIntervalSeconds">
+						<value>86400</value>
+					</property>
+					<property name="requestedReleases" value="Minor, GA"/>
+					<property name="disableVersionCheck">
+						<value>false</value>
+					</property>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>
