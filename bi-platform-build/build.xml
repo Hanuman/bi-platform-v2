@@ -73,15 +73,21 @@
 	</target>
 
 	<target name="clean-all" depends="clean" >
-		<ant antfile="build.xml" dir="../bi-platform-api" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-util" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-engine" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-repository" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-plugin" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-all" />
-		<ant antfile="build.xml" dir="../bi-platform-web" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-api"             target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-util"            target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-core"     target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-test-foundation" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-security" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-services" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-repository"      target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation"   target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-services" target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-actions"  target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler"       target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy"          target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-web"             target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="clean-all" />
 	</target>
 
 	<target name="jar-all" depends="" >
@@ -103,14 +109,30 @@
 			<fileset dir="../bi-platform-util/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 
-		<ant antfile="build.xml" dir="../bi-platform-engine" target="dist" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-core" target="dist" />
 		<copy todir=".">
-			<fileset dir="../bi-platform-engine/dist"/>
+			<fileset dir="../bi-platform-engine-core/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-engine/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-engine-core/all-libs" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
+		<ant antfile="build.xml" dir="../bi-platform-engine-security" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-engine-security/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-engine-security/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-engine-services" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-engine-services/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-engine-services/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+			
 		<ant antfile="build.xml" dir="../bi-platform-repository" target="dist" />
 		<copy todir=".">
 			<fileset dir="../bi-platform-repository/dist"/>
@@ -127,12 +149,20 @@
 			<fileset dir="../bi-platform-ui-foundation/lib" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
-		<ant antfile="build.xml" dir="../bi-platform-plugin" target="dist" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-services" target="dist" />
 		<copy todir=".">
-			<fileset dir="../bi-platform-plugin/dist"/>
+			<fileset dir="../bi-platform-plugin-services/dist"/>
 		</copy>
 		<copy todir="./all-libs">
-			<fileset dir="../bi-platform-plugin/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+			<fileset dir="../bi-platform-plugin-services/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-plugin-actions/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-plugin-actions/all-libs" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
 		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="dist" />
@@ -159,6 +189,22 @@
 			<fileset dir="../bi-platform-web/all-libs" excludes="pentaho-bi-platform-*.jar"/>
 		</copy>
 		
+		<ant antfile="build.xml" dir="../bi-platform-web-servlet" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-web-servlet/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-web-servlet/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
+		<ant antfile="build.xml" dir="../bi-platform-web-portlet" target="dist" />
+		<copy todir=".">
+			<fileset dir="../bi-platform-web-portlet/dist"/>
+		</copy>
+		<copy todir="./all-libs">
+			<fileset dir="../bi-platform-web-portlet/all-libs" excludes="pentaho-bi-platform-*.jar"/>
+		</copy>
+		
 		<!-- Remove the servlet-api jar -->
 		<delete>
 			<fileset dir="./all-libs" includes="servlet-api-*.jar"/>
@@ -168,26 +214,38 @@
 	<target name="rebuild" depends="clean-all, jar-all" />
 	
 	<target name="publish-local">
-		<ant antfile="build.xml" dir="../bi-platform-api" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-util" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-engine" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-repository" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-plugin" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-legacy" target="publish-local" />
-		<ant antfile="build.xml" dir="../bi-platform-web" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-api"             target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-util"            target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-core"     target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-test-foundation" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-security" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-services" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-repository"      target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation"   target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-services" target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-actions"  target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler"       target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy"          target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-web"             target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="publish-local" />
 	</target>
 
 	<target name="resolve">
-		<ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-util" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-engine" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-repository" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-plugin" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-scheduler" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-legacy" target="resolve" />
-		<ant antfile="build.xml" dir="../bi-platform-web" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-api"             target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-util"            target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-core"     target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-test-foundation" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-security" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-engine-services" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-repository"      target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-ui-foundation"   target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-services" target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-plugin-actions"  target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-scheduler"       target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-legacy"          target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-web"             target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="resolve" />
 	</target>
 </project>
