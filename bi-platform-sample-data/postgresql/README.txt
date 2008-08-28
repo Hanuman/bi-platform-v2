@@ -1,0 +1,1 @@
+These files have been tested using postgresql 8.2. You should be fine if you are using postgresql 8.2 or greater.
