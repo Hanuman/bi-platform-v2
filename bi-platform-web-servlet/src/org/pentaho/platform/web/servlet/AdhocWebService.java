@@ -843,6 +843,7 @@ public class AdhocWebService extends ServletBase {
           BigDecimal width = AdhocWebService.getColumnWidth( property );
           field.setWidth( width );
           field.setIsWidthPercent( ((ColumnWidth)property.getValue()).getType() == ColumnWidth.TYPE_WIDTH_PERCENT );
+          field.setWidthLocked( true );
         } catch (AdhocWebServiceException e) {
           // This should never happen. This exception will only be thrown if the unit of measure has been specified as pixels. if the columnWidthUnitsConsistent
           // parameter is true, this guarantees that the unit of measure is not pixels
