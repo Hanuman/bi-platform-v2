@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <name>invoice.xaction</name>
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author>Kurtis Cruzada</author>  
+    <description>%description</description>  
+    <icon>invoice.png</icon>  
+    <help/>  
+    <result-type>report</result-type> 
+  </documentation>
+
+  <inputs> 
+    <output-type type="string"> 
+      <default-value>pdf</default-value>  
+      <sources> 
+        <request>type</request> 
+      </sources> 
+    </output-type>  
+    <customer type="string"> 
+      <default-value>Reims Collectables</default-value>  
+      <sources> 
+        <request>customer</request> 
+      </sources> 
+    </customer>  
+    <output-type-list type="property-map-list"> 
+      <sources> 
+        <runtime>output-type-list</runtime> 
+      </sources>  
+      <default-value type="property-map-list"> 
+        <property-map> 
+          <entry key="report-output-desc">PDF</entry>  
+          <entry key="report-output-type-id">pdf</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="report-output-desc">Excel</entry>  
+          <entry key="report-output-type-id">xls</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="report-output-desc">Web Page</entry>  
+          <entry key="report-output-type-id">html</entry> 
+        </property-map> 
+      </default-value> 
+    </output-type-list> 
+  </inputs>
+
+  <outputs> 
+    <NoData type="string"> 
+      <destinations> 
+        <response>NoData</response> 
+      </destinations> 
+    </NoData> 
+  </outputs>
+
+  <resources> 
+    <report-definition> 
+      <solution-file> 
+        <location>invoice.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </report-definition> 
+  </resources>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get Customer List</action-type>
+      <action-outputs> 
+        <query-result type="result-set" mapping="customer_list"/>  
+        <customernumber type="string"/>
+        <customername type="string"/>
+      </action-outputs>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[select customernumber, customername from CUSTOMERS order by customername asc]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>SecureFilterComponent</component-name>
+      <action-type>Prompt for Customer and Report Format</action-type>
+      <action-inputs> 
+        <customer type="string"/>  
+        <customer_list type="property-map-list"/>  
+        <output-type type="string"/>  
+        <output-type-list type="property-map-list"/> 
+      </action-inputs>
+      <component-definition> 
+        <selections> 
+          <customer style="check-multi-scroll-4-column"> 
+            <filter value-col-name="customernumber" display-col-name="customername">customer_list</filter>  
+            <title>Customer</title> 
+          </customer>  
+          <output-type style="radio"> 
+            <title>Report Output</title>  
+            <filter value-col-name="report-output-type-id" display-col-name="report-output-desc">output-type-list</filter> 
+          </output-type> 
+        </selections> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get Data</action-type>
+      <action-inputs> 
+        <customer type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <query-result type="result-set" mapping="queryResult"/> 
+      </action-outputs>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
+        <live>true</live>  
+        <query><![CDATA[SELECT CUSTOMERS.CUSTOMERNAME, CUSTOMERS.ADDRESSLINE1, CUSTOMERS.ADDRESSLINE2, CUSTOMERS.CITY, CUSTOMERS.STATE, CUSTOMERS.POSTALCODE, CUSTOMERS.COUNTRY, CUSTOMERS.SALESREPEMPLOYEENUMBER, CUSTOMERS.CONTACTFIRSTNAME, CUSTOMERS.CONTACTLASTNAME, ORDERS.STATUS, ORDERS.CUSTOMERNUMBER, ORDERS.ORDERNUMBER, ORDERS.ORDERDATE, ORDERDETAILS.ORDERLINENUMBER, PRODUCTS.PRODUCTNAME, ORDERDETAILS.QUANTITYORDERED, ORDERDETAILS.PRODUCTCODE, ORDERDETAILS.PRICEEACH, PRODUCTS.QUANTITYINSTOCK, (ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE FROM ORDERS, ORDERDETAILS, PRODUCTS, CUSTOMERS  WHERE CUSTOMERS.CUSTOMERNUMBER IN ({PREPARE:customer}) AND ( ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER AND PRODUCTS.PRODUCTCODE = ORDERDETAILS.PRODUCTCODE AND ORDERS.CUSTOMERNUMBER = CUSTOMERS.CUSTOMERNUMBER ) ORDER BY CUSTOMERS.CUSTOMERNAME ASC, ORDERS.ORDERNUMBER ASC, ORDERDETAILS.ORDERLINENUMBER ASC]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <actions> 
+      <condition><![CDATA[queryResult.getRowCount() > 0]]></condition>  
+      <action-definition> 
+        <component-name>JFreeReportComponent</component-name>
+        <action-type>Run Report</action-type>
+        <action-inputs> 
+          <output-type type="string"/>  
+          <customer type="string"/>  
+          <data type="result-set" mapping="queryResult"/> 
+        </action-inputs>
+        <action-resources> 
+          <report-definition type="resource"/> 
+        </action-resources>
+        <component-definition/> 
+      </action-definition>
+ 
+    </actions>
+  
+    <actions> 
+      <condition><![CDATA[queryResult.getRowCount()==0]]></condition>  
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Prompt No Data Message</action-type>
+        <action-outputs> 
+          <output-message type="string" mapping="NoData"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[There is no data on this customer.]]></template> 
+        </component-definition> 
+      </action-definition>
+ 
+    </actions>
+ 
+  </actions> 
+</action-sequence>

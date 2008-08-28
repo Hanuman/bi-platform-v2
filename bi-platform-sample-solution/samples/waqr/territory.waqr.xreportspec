@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report-spec tool='waqr' tool-version='1.0' template-name='Pentaho'>
+<jndi-source><![CDATA[SampleData]]></jndi-source>
+<report-name><![CDATA[territory.waqr.xreportspec]]></report-name>
+<report-desc><![CDATA[Territory Report]]></report-desc>
+<query>
+<mql>
+<domain_type>relational</domain_type>
+<domain_id><![CDATA[samples]]></domain_id><model_id><![CDATA[BV_ORDERS]]></model_id>
+<options>
+<disable_distinct>false</disable_distinct>
+</options>
+<selections>
+<selection><view>BC_CUSTOMER_W_TER_</view><column>BC_CUSTOMER_W_TER_TERRITORY</column></selection>
+<selection><view>BC_CUSTOMER_W_TER_</view><column>BC_CUSTOMER_W_TER_CUSTOMERNAME</column></selection>
+<selection><view>CAT_PRODUCTS</view><column>BC_PRODUCTS_PRODUCTNAME</column></selection>
+<selection><view>CAT_ORDERS</view><column>BC_ORDERDETAILS_PRICEEACH</column></selection>
+<selection><view>CAT_ORDERS</view><column>BC_ORDERDETAILS_QUANTITYORDERED</column></selection>
+<selection><view>CAT_ORDERS</view><column>BC_ORDERDETAILS_TOTAL</column></selection>
+</selections>
+<constraints>
+<constraint><operator><![CDATA[AND]]></operator><condition><![CDATA[LIKE( [BC_CUSTOMER_W_TER_.BC_CUSTOMER_W_TER_CUSTOMERNAME];"%orn%")]]></condition></constraint>
+<constraint><operator><![CDATA[AND]]></operator><condition><![CDATA[[CAT_ORDERS.BC_ORDERS_STATUS] = "Shipped"]]></condition></constraint>
+</constraints>
+<orders>
+<order><direction>asc</direction><view_id>BC_CUSTOMER_W_TER_</view_id><column_id>BC_CUSTOMER_W_TER_TERRITORY</column_id></order>
+<order><direction>desc</direction><view_id>BC_CUSTOMER_W_TER_</view_id><column_id>BC_CUSTOMER_W_TER_CUSTOMERNAME</column_id></order>
+<order><direction>desc</direction><view_id>CAT_ORDERS</view_id><column_id>BC_ORDERDETAILS_QUANTITYORDERED</column_id></order>
+</orders>
+</mql>
+</query>
+<field-mapping key="reportheader" value="Territory Report Header"/><field-mapping key="reportfooter" value="Territory Report Footer"/><field-mapping key="pageheader" value="Territory Page Header"/><field-mapping key="pagefooter" value="Territory Page Footer"/><page-format><![CDATA[LETTER]]></page-format>
+<orientation><![CDATA[landscape]]></orientation>
+<use-row-banding><![CDATA[true]]></use-row-banding>
+<row-banding-color><![CDATA[#e7e7e7]]></row-banding-color>
+<use-column-header-background-color><![CDATA[true]]></use-column-header-background-color>
+<column-header-background-color><![CDATA[#9eaa36]]></column-header-background-color>
+<grand-totals-label><![CDATA[Grand Total]]></grand-totals-label>
+<grand-totals-horizontal-alignment><![CDATA[left]]></grand-totals-horizontal-alignment>
+<use-dummy-group-footer-background-color><![CDATA[true]]></use-dummy-group-footer-background-color>
+<dummy-group-footer-background-color><![CDATA[#e0d0c0]]></dummy-group-footer-background-color>
+<use-horizontal-gridlines><![CDATA[true]]></use-horizontal-gridlines>
+<use-vertical-gridlines><![CDATA[true]]></use-vertical-gridlines>
+<horizontal-gridlines-color><![CDATA[#c0c0c0]]></horizontal-gridlines-color>
+<vertical-gridlines-color><![CDATA[#c0c0c0]]></vertical-gridlines-color>
+<group-header-font-name><![CDATA[Arial]]></group-header-font-name>
+<group-header-font-style><![CDATA[1]]></group-header-font-style>
+<group-header-font-size><![CDATA[12]]></group-header-font-size>
+<group-header-font-color><![CDATA[#767676]]></group-header-font-color>
+<group-footer-font-name><![CDATA[Arial]]></group-footer-font-name>
+<group-footer-font-style><![CDATA[1]]></group-footer-font-style>
+<group-footer-font-size><![CDATA[12]]></group-footer-font-size>
+<group-footer-font-color><![CDATA[#ff7d17]]></group-footer-font-color>
+<column-header-font-name><![CDATA[Arial]]></column-header-font-name>
+<column-header-font-style><![CDATA[0]]></column-header-font-style>
+<column-header-font-size><![CDATA[10]]></column-header-font-size>
+<column-header-font-color><![CDATA[#ffffff]]></column-header-font-color>
+<column-header-gap><![CDATA[1]]></column-header-gap>
+<items-font-name><![CDATA[Arial]]></items-font-name>
+<items-font-style><![CDATA[0]]></items-font-style>
+<items-font-size><![CDATA[9]]></items-font-size>
+<items-font-color><![CDATA[#000000]]></items-font-color>
+<field is-detail="false" name="BC_CUSTOMER_W_TER_TERRITORY" horizontal-alignment="left" type="12" repeat-group-header="false" level-name="&amp;&lt;" group-totals-label="My Total $(BC_CUSTOMER_W_TER_TERRITORY)" page-break-before-header="false" page-break-after-header="false" page-break-before-footer="false" page-break-after-footer="false" calculate-group-totals="true" create-group-header="true" vertical-alignment="top"/>
+<field is-detail="false" name="BC_CUSTOMER_W_TER_CUSTOMERNAME" horizontal-alignment="left" type="12" repeat-group-header="false" level-name="" group-totals-label="My Other Total $(BC_CUSTOMER_W_TER_CUSTOMERNAME)" page-break-before-header="false" page-break-after-header="false" page-break-before-footer="false" page-break-after-footer="false" calculate-group-totals="true" create-group-header="true" vertical-alignment="top"/>
+<field is-detail="true" name="BC_PRODUCTS_PRODUCTNAME" horizontal-alignment="left" expression="none" type="12"/>
+<field is-detail="true" name="BC_ORDERDETAILS_PRICEEACH" horizontal-alignment="left" format="$ #,###.##;-$ #,###.##" expression="average" type="2"/>
+<field is-detail="true" name="BC_ORDERDETAILS_QUANTITYORDERED" horizontal-alignment="left" expression="sum" type="2"/>
+<field is-detail="true" name="BC_ORDERDETAILS_TOTAL" horizontal-alignment="left" format="$ #,###.##;-$ #,###.##" expression="sum" type="2"/>
+</report-spec>

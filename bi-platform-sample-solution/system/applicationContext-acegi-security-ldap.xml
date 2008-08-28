@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--+
+	| Application context containing LDAP AuthenticationProvider
+	| implementation.
+	+-->
+
+<beans>
+
+	<bean id="daoAuthenticationProvider"
+		class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+		<constructor-arg>
+      <ref bean="authenticator" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref local="populator" />
+		</constructor-arg>
+	</bean>
+
+  <bean id="authenticator" class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+    <constructor-arg>
+      <ref local="initialDirContextFactory" />
+    </constructor-arg>
+    <property name="userSearch">
+      <ref local="userSearch" />
+    </property>
+  </bean>
+
+	<bean id="initialDirContextFactory"
+		class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+		<constructor-arg index="0"
+			value="ldap://localhost:10389/ou=system" />
+		<property name="managerDn" value="uid=admin,ou=system" />
+		<property name="managerPassword" value="secret" />
+	</bean>
+
+  <!-- be sure to escape ampersands -->
+	<bean id="userSearch"
+		class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+		<constructor-arg index="0" value="ou=users" />
+		<constructor-arg index="1" value="cn={0}" />
+		<constructor-arg index="2">
+			<ref local="initialDirContextFactory" />
+		</constructor-arg>
+	</bean>
+
+  <!-- be sure to escape ampersands -->
+	<bean id="populator"
+		class="org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator">
+		<constructor-arg index="0">
+			<ref local="initialDirContextFactory" />
+		</constructor-arg>
+		<constructor-arg index="1" value="ou=roles" />
+		<property name="groupRoleAttribute" value="cn" />
+    <!-- {0} will be replaced with user DN; {1} will be replaced with username -->
+		<property name="groupSearchFilter" value="roleOccupant={0}" />
+    <property name="rolePrefix" value="" />
+    <property name="convertToUpperCase" value="false" />
+     <property name="searchSubtree" value="false" />
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.pentaho.platform.plugin.services.security.userrole.ldap.LdapUserDetailsService">
+		<property name="userSearch">
+			<ref local="userSearch" />
+		</property>
+		<property name="populator">
+			<ref local="populator" />
+		</property>
+	</bean>
+
+</beans>

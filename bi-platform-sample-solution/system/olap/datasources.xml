@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<DataSources>
+  <DataSource>
+    <DataSourceName>Provider=Mondrian;DataSource=SteelWheels</DataSourceName>
+    <DataSourceDescription>Steel Wheels Demo Data</DataSourceDescription>
+    <URL>http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password</URL>
+    <DataSourceInfo>Provider=mondrian;DataSource=SampleData</DataSourceInfo>
+    <ProviderName>PentahoXMLA</ProviderName>
+    <ProviderType>MDP</ProviderType>
+    <AuthenticationMode>Unauthenticated</AuthenticationMode>
+    <Catalogs>
+        <Catalog name="SteelWheels">
+			<Definition>solution:samples/steel-wheels/analysis/steelwheels.mondrian.xml</Definition>
+		</Catalog>
+    </Catalogs>
+  </DataSource>
+  <DataSource>
+    <DataSourceName>Provider=Mondrian;DataSource=SampleData</DataSourceName>
+    <DataSourceDescription>Pentaho Sample Demo Data</DataSourceDescription>
+    <URL>http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password</URL>
+    <DataSourceInfo>Provider=mondrian;DataSource=SampleData</DataSourceInfo>
+    <ProviderName>PentahoXMLA</ProviderName>
+    <ProviderType>MDP</ProviderType>
+    <AuthenticationMode>Unauthenticated</AuthenticationMode>
+    <Catalogs>
+        <Catalog name="SampleData">
+			<Definition>solution:samples/analysis/SampleData.mondrian.xml</Definition>
+		</Catalog>
+    </Catalogs>
+  </DataSource>
+</DataSources>

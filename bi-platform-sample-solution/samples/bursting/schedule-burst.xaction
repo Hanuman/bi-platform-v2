@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>DEBUG</logging-level>
+  <documentation> 
+    <author>Doug Moran</author>  
+    <description>%description</description>  
+    <help/>  
+    <result-type>email</result-type>  
+    <icon>schedule-burst.png</icon> 
+  </documentation>
+
+  <inputs/>
+
+  <outputs/>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>JobSchedulerComponent</component-name>
+      <action-type>Schedule An Action Sequence</action-type>
+      <component-definition> 
+        <jobAction>startJob</jobAction>  
+        <jobName>QuadrantBurstReportByRegion</jobName>  
+        <solution>samples</solution>  
+        <path>bursting</path>  
+        <action>BurstActionSequence.xaction</action>  
+        <triggerType>simple</triggerType>  
+        <triggerName>MyTrigger</triggerName>  
+        <repeatCount>3</repeatCount>  
+        <repeatInterval>120</repeatInterval> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

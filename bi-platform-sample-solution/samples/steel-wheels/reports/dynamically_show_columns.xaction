@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
+  <name>JFreeReport-WizardReport.xaction</name>
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>DEBUG</logging-level>
+  <documentation> 
+    <author>Kurtis Cruzada</author>  
+    <description>%description</description>  
+    <icon>file.png|PentahoReporting.png</icon>  
+    <help/>  
+    <result-type>report</result-type> 
+  </documentation>
+
+  <inputs> 
+    <output-type type="string"> 
+      <default-value>html</default-value>  
+      <sources> 
+        <request>type</request> 
+      </sources> 
+    </output-type>  
+    <ColumnList1 type="property-map-list"> 
+      <sources> 
+        <request>ColumnList1</request> 
+      </sources>  
+      <default-value type="property-map-list"> 
+        <property-map> 
+          <entry key="CID">Yes</entry>  
+          <entry key="CDESC">Yes</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="CID">No</entry>  
+          <entry key="CDESC">No</entry> 
+        </property-map> 
+      </default-value> 
+    </ColumnList1>  
+    <ColumnList2 type="property-map-list"> 
+      <sources> 
+        <request>ColumnList2</request> 
+      </sources>  
+      <default-value type="property-map-list"> 
+        <property-map> 
+          <entry key="CID">Yes</entry>  
+          <entry key="CDESC">Yes</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="CID">No</entry>  
+          <entry key="CDESC">No</entry> 
+        </property-map> 
+      </default-value> 
+    </ColumnList2>  
+    <ColumnList3 type="property-map-list"> 
+      <sources> 
+        <request>ColumnList3</request> 
+      </sources>  
+      <default-value type="property-map-list"> 
+        <property-map> 
+          <entry key="CID">Yes</entry>  
+          <entry key="CDESC">Yes</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="CID">No</entry>  
+          <entry key="CDESC">No</entry> 
+        </property-map> 
+      </default-value> 
+    </ColumnList3>  
+    <SQLC1 type="string"> 
+      <sources> 
+        <request>SQLC1</request> 
+      </sources>  
+      <default-value>No</default-value> 
+    </SQLC1>  
+    <SQLC2 type="string"> 
+      <sources> 
+        <request>SQLC2</request> 
+      </sources>  
+      <default-value>No</default-value> 
+    </SQLC2>  
+    <SQLC3 type="string"> 
+      <sources> 
+        <request>SQLC3</request> 
+      </sources>  
+      <default-value>No</default-value> 
+    </SQLC3>  
+    <ShowCol type="string"> 
+      <sources> 
+        <request>ShowCol</request> 
+      </sources>  
+      <default-value>Show_Column1</default-value> 
+    </ShowCol>  
+    <productline type="string"> 
+      <sources> 
+        <request>productline</request> 
+      </sources>  
+      <default-value>Classic Cars</default-value> 
+    </productline> 
+  </inputs>
+
+  <outputs> 
+    <report type="content"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </report>  
+  </outputs>
+
+  <resources> 
+    <!-- use this section to identify any files that the component needs to execute the report -->  
+    <report-definition> 
+      <solution-file> 
+        <location>dynamically_show_columns.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </report-definition> 
+  </resources>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Query for list of product lines</action-type>
+      <action-outputs> 
+        <query-result type="result-set" mapping="queryProductLine"/>  
+        <PRODUCTLINE type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[select distinct(productline) from PRODUCTS]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>SecureFilterComponent</component-name>
+      <action-type>Prompt for selections</action-type>
+      <action-inputs> 
+        <queryProductLine type="result-set"/>  
+        <SQLC1 type="string"/>  
+        <ColumnList1 type="property-map-list"/>  
+        <SQLC2 type="string"/>  
+        <ColumnList2 type="property-map-list"/>  
+        <SQLC3 type="string"/>  
+        <ColumnList3 type="property-map-list"/>  
+        <productline type="string"/> 
+      </action-inputs>
+      <component-definition> 
+        <selections> 
+          <productline style="list-multi"> 
+            <title>Choose Product Lines</title>  
+            <filter value-col-name="PRODUCTLINE" display-col-name="PRODUCTLINE">queryProductLine</filter> 
+          </productline>  
+          <SQLC1 style="radio"> 
+            <title>Show On Hand</title>  
+            <filter value-col-name="CID" display-col-name="CDESC">ColumnList1</filter> 
+          </SQLC1>  
+          <SQLC2 style="radio"> 
+            <title>Show Cost</title>  
+            <filter value-col-name="CID" display-col-name="CDESC">ColumnList2</filter> 
+          </SQLC2>  
+          <SQLC3 style="radio"> 
+            <title>Show MSRP</title>  
+            <filter value-col-name="CID" display-col-name="CDESC">ColumnList3</filter> 
+          </SQLC3> 
+        </selections> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Check for column and Count them</action-type>
+      <action-inputs> 
+        <SQLC1 type="string"/>  
+        <SQLC2 type="string"/>  
+        <SQLC3 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <number_of_columns type="integer"/>  
+        <ShowCol type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if (SQLC1 == "No") {
+sql1_count = 0;
+}
+else {
+sql1_count = 1;
+}
+
+if (SQLC2 == "No") {
+sql2_count = 0;
+}
+else {
+sql2_count = 1;
+}
+
+if (SQLC3 == "No") {
+sql3_count = 0;
+}
+else {
+sql3_count = 1;
+}
+
+number_of_columns = sql1_count + sql2_count + sql3_count;
+ShowCol = "Show_Column" + number_of_columns;]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Build SQL for QUANTITYINSTOCK</action-type>
+      <action-inputs> 
+        <SQLC1 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC1_query type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if (SQLC1 == "No"){
+SQLC1_query = " ";
+}
+else {
+SQLC1_query = ", QUANTITYINSTOCK AS COLUMN1";
+}]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Build SQL for BUYPRICE</action-type>
+      <action-inputs> 
+        <SQLC1 type="string"/>  
+        <SQLC2 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC2_query type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if ((SQLC2 == "No") )  {
+SQLC2_query = " ";
+  }
+else {
+  if ((SQLC2 == "Yes") && (SQLC1 == "No")) {
+     SQLC2_query = ", BUYPRICE AS COLUMN1";
+     }
+  else {
+     SQLC2_query = ", BUYPRICE AS COLUMN2";
+    }
+  }]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Build SQL for MSRP</action-type>
+      <action-inputs> 
+        <SQLC2 type="string"/>  
+        <SQLC1 type="string"/>  
+        <SQLC3 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC3_query type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if ((SQLC3 == "No")) {
+    SQLC3_query = " ";
+  }
+else {
+  if ((SQLC3 == "Yes") && (SQLC2 == "No") && (SQLC1 == "No")) {
+    SQLC3_query = ", MSRP AS COLUMN1";
+    }
+  else { 
+    if (((SQLC3 == "Yes") && (SQLC2 == "Yes") && (SQLC1 == "No")) || ((SQLC3 == "Yes") && (SQLC2 == "No") && (SQLC1 == "Yes"))) {
+      SQLC3_query = ", MSRP AS COLUMN2";
+      }
+    else {
+      SQLC3_query = ", MSRP AS COLUMN3";         
+      }
+    }
+  }]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Set column1 name</action-type>
+      <action-inputs> 
+        <SQLC1 type="string"/>  
+        <SQLC2 type="string"/>  
+        <SQLC3 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC1_name type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if (SQLC1 == "Yes")  {
+    SQLC1_name = "IN STOCK";
+  }
+else  {
+    if ((SQLC1 == "No") && (SQLC2 == "Yes")) {
+         SQLC1_name = "COST";
+      }
+    else {
+         SQLC1_name = "MSRP";     
+      }
+    }]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Set column2 name</action-type>
+      <action-inputs> 
+        <SQLC1 type="string"/>  
+        <SQLC2 type="string"/>  
+        <SQLC3 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC2_name type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if ((SQLC2 == "Yes") && (SQLC1 == "Yes"))  {
+    SQLC2_name = "COST";
+  }
+else  {
+    SQLC2_name = "MSRP";
+   }]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Set column3 name</action-type>
+      <action-inputs> 
+        <SQLC3 type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <SQLC3_name type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[if (SQLC3 == "Yes")  {
+    SQLC3_name = "MSRP";
+  }
+else  {
+    SQLC3_name = " ";
+   }]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get Data</action-type>
+      <action-inputs> 
+        <SQLC3_query type="string"/>  
+        <productline type="string"/>  
+        <SQLC2_query type="string"/>  
+        <SQLC1_query type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <query-result type="result-set"/> 
+      </action-outputs>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[select PRODUCTLINE, PRODUCTVENDOR, PRODUCTCODE, PRODUCTNAME, PRODUCTDESCRIPTION, PRODUCTSCALE {SQLC1_query} {SQLC2_query} {SQLC3_query} from PRODUCTS WHERE PRODUCTLINE IN ('{productline}') order by PRODUCTLINE asc, PRODUCTVENDOR  asc]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JFreeReportComponent</component-name>
+      <action-type>Run Report</action-type>
+      <action-inputs> 
+        <output-type type="string"/>  
+        <ShowCol type="string"/>  
+        <productline type="string"/>  
+        <SQLC1_name type="string"/>  
+        <SQLC2_name type="string"/>  
+        <SQLC3_name type="string"/>  
+        <data type="result-set" mapping="query-result"/> 
+      </action-inputs>
+      <action-resources> 
+        <report-definition type="resource"/> 
+      </action-resources>
+      <action-outputs> 
+        <report type="content"/> 
+      </action-outputs>
+      <component-definition/> 
+    </action-definition>
+  
+    <!--  
+    <action-definition>
+      <component-name>TemplateComponent</component-name>
+      <action-type>Message Template</action-type>
+      <action-inputs>
+        <SQLC1_query type="string"/>
+        <SQLC2_query type="string"/>
+        <SQLC3_query type="string"/>
+      </action-inputs>
+      <action-outputs>
+        <output-message type="content" mapping="result"/>
+      </action-outputs>
+      <component-definition>
+        <template><![CDATA[{SQLC1_query}
+{SQLC2_query}
+{SQLC3_query}]]></template>
+      </component-definition>
+    </action-definition>
+--> 
+  </actions> 
+</action-sequence>

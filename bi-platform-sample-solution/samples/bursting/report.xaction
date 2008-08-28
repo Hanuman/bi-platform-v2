@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <name>report.xaction</name>
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>error</logging-level>
+  <documentation> 
+    <author>Doug Moran</author>  
+    <description>%description</description>  
+    <icon/>  
+    <help/>  
+    <result-type>none</result-type> 
+  </documentation>
+
+  <inputs> 
+    <output-type type="string"> 
+      <default-value>pdf</default-value>  
+      <sources> 
+        <request>type</request>  
+        <runtime>output-type</runtime> 
+      </sources> 
+    </output-type>  
+    <REGION type="string"> 
+      <default-value/>  
+      <sources> 
+        <request>REGION</request>  
+        <runtime>REGION</runtime> 
+      </sources> 
+    </REGION> 
+  </inputs>
+
+  <outputs> 
+    <report-output type="content"/> 
+  </outputs>
+
+  <resources> 
+    <report-definition> 
+      <solution-file> 
+        <location>JFreeQuadrantForRegion.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </report-definition> 
+  </resources>
+  
+  <actions> 
+  
+    <action-definition> 
+      <component-name>JFreeReportComponent</component-name>
+      <action-type>report</action-type>
+      <action-inputs> 
+        <REGION type="string"/>  
+        <output-type type="string"/> 
+      </action-inputs>
+      <action-resources> 
+        <report-definition type="resource"/> 
+      </action-resources>
+      <action-outputs> 
+        <report-output type="content"/> 
+      </action-outputs>
+      <component-definition> 
+        <source>sql</source>  
+        <live>true</live>  
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[select   QUADRANT_ACTUALS.REGION,   QUADRANT_ACTUALS.DEPARTMENT,   QUADRANT_ACTUALS.POSITIONTITLE,   QUADRANT_ACTUALS.ACTUAL,   QUADRANT_ACTUALS.BUDGET,   QUADRANT_ACTUALS.VARIANCE  from QUADRANT_ACTUALS where QUADRANT_ACTUALS.REGION={PREPARE:REGION} order by QUADRANT_ACTUALS.REGION, QUADRANT_ACTUALS.DEPARTMENT]]></query> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

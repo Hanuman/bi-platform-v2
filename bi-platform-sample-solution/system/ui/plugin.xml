@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Pentaho Defaults">
+    <content-generator scope="session" id="default-xaction" type="xaction" url="ViewAction">
+        <classname>org.pentaho.platform.engine.services.solution.ActionSequenceContentGenerator</classname>
+        <fileinfo-classname>org.pentaho.platform.engine.services.solution.ActionSequenceFileInfo</fileinfo-classname>
+        <title>The default action sequence handler</title>
+    </content-generator>
+    <!-- content-generator scope="session" id="xaction2" type="xaction2" url="ViewAction2">
+        <classname>org.pentaho.platform.engine.services.solution.ActionSequenceContentGenerator</classname>
+        <fileinfo-classname>org.pentaho.platform.engine.services.solution.ActionSequenceFileInfo</fileinfo-classname>
+        <title>The default action sequence handler</title>
+    </content-generator -->
+</plugin>
