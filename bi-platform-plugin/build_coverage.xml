@@ -1,0 +1,85 @@
+<!-- ============================================================
+     description: main build file for BI Platform Plugin
+-->
+
+<project name="bi-platform-plugin">
+	<!-- ================================================================
+		PROPERTIES
+		
+		Do not add properties to this file. All properties are defined 
+		in the build.properites file. If you need to override a property
+		that is in the build.properites file, use an override.properties file.
+    ===================================================================== -->
+
+	<property file="override.properties" />
+	<property file="build_coverage.properties" />
+	<tstamp>
+		<format property="current.date" pattern="yyyyMMdd-hh:mma" locale="en" />
+	</tstamp>
+	<target name="init" description="create timestamp and directories">
+		<tstamp />
+		<mkdir dir="${coverage.report.dir}" />
+	</target>
+	<target name="clean" description="delete directories">
+		<tstamp />
+		<delete dir="${coverage.report.dir}" />
+	</target>
+	<!-- ===================================================================
+        target: run-all-reports
+        
+        Executes all the coverage report formats
+    =================================================================== -->
+	<target name="run-all-reports" depends="run-actions-reports, run-services-reports" />
+	<!-- ===================================================================
+        target: clean-all-tests
+        
+        Cleans all the folders created for unit testing and coverage for all
+        sub projects
+    =================================================================== -->
+	<target name="clean-all-tests" depends="clean-actions, clean-services" />
+	<!-- ===================================================================
+        target: clean-actions
+        
+        Cleans all the folders created for unit testing and coverage for actions
+        project
+    =================================================================== -->
+	<target name="clean-actions">
+		<ant antfile="build_coverage.xml" dir="projects/actions" target="clean-test"/>
+	</target>
+	<!-- ===================================================================
+        target: clean-services
+        
+        Cleans all the folders created for unit testing and coverage for services
+        project
+    =================================================================== -->
+	<target name="clean-services">
+		<ant antfile="build_coverage.xml" dir="projects/services" target="clean-test"/>
+	</target>
+	<target name="copy-all-reports" depends="copy-actions-reports, copy-services-reports"/>
+	<!-- ===================================================================
+        target: run-actions-reports
+        
+        Executes the actions reports by passing the specific parameters
+    =================================================================== -->
+	<target name="run-actions-reports">
+		<ant antfile="build_coverage.xml" dir="projects/actions" target="all-coverage-report"/>
+	</target>
+	<!-- ===================================================================
+        target: run-services-reports
+        
+        Executes the services reports by passing the specific parameters
+    =================================================================== -->
+	<target name="run-services-reports">
+		<ant antfile="build_coverage.xml" dir="projects/services" target="all-coverage-report"/>
+	</target>
+	<target name="copy-services-reports" depends="run-services-reports">
+		<copy todir="${coverage.report.dir}" >
+			<fileset dir="${bi-platform-plugin-services.report.dir}" />
+		</copy>
+	</target>
+	<target name="copy-actions-reports" depends="run-actions-reports" >
+		<copy todir="${coverage.report.dir}" >
+			<fileset dir="${bi-platform-plugin-actions.report.dir}" />
+		</copy>
+	</target>
+</project>

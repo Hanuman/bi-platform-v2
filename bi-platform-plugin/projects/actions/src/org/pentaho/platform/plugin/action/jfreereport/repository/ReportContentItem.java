@@ -1,0 +1,84 @@
+package org.pentaho.platform.plugin.action.jfreereport.repository;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.jfree.repository.ContentIOException;
+import org.jfree.repository.ContentItem;
+import org.jfree.repository.ContentLocation;
+import org.jfree.repository.LibRepositoryBoot;
+import org.jfree.repository.Repository;
+import org.pentaho.platform.api.repository.IContentItem;
+
+/**
+ * Creation-Date: 05.07.2007, 14:54:08
+ *
+ * @author Thomas Morgner
+ */
+public class ReportContentItem implements ContentItem {
+  private IContentItem backend;
+
+  private ReportContentLocation parent;
+
+  public ReportContentItem(final IContentItem backend, final ReportContentLocation parent) {
+    this.backend = backend;
+    this.parent = parent;
+  }
+
+  public String getMimeType() throws ContentIOException {
+    return backend.getMimeType();
+  }
+
+  public OutputStream getOutputStream() throws ContentIOException, IOException {
+    return backend.getOutputStream(parent.getActionName());
+  }
+
+  public InputStream getInputStream() throws ContentIOException, IOException {
+    return backend.getInputStream();
+  }
+
+  public boolean isReadable() {
+    return false;
+  }
+
+  public boolean isWriteable() {
+    return true;
+  }
+
+  public String getName() {
+    return backend.getName();
+  }
+
+  public Object getContentId() {
+    return backend.getId();
+  }
+
+  public Object getAttribute(final String domain, final String key) {
+    if (LibRepositoryBoot.REPOSITORY_DOMAIN.equals(domain)) {
+      if (LibRepositoryBoot.SIZE_ATTRIBUTE.equals(key)) {
+        return new Long(backend.getFileSize());
+      } else if (LibRepositoryBoot.VERSION_ATTRIBUTE.equals(key)) {
+        return backend.getFileDateTime();
+      }
+    }
+    return null;
+  }
+
+  public boolean setAttribute(final String domain, final String key, final Object object) {
+    return false;
+  }
+
+  public ContentLocation getParent() {
+    return parent;
+  }
+
+  public Repository getRepository() {
+    return parent.getRepository();
+  }
+
+  public boolean delete() {
+    backend.removeVersion(backend.getId());
+    return true;
+  }
+}
