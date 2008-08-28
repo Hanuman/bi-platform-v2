@@ -1,0 +1,153 @@
+<project name="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <property file="override.properties" />
+  <property file="build.properties" />
+
+  <target name="resolve">
+    <ant antfile="build.xml" dir="projects/web" target="resolve" />
+    <ant antfile="build.xml" dir="projects/servlet" target="resolve" />
+    <ant antfile="build.xml" dir="projects/portlet" target="resolve" />
+  </target>
+
+  <target name="report">
+    <ant antfile="build.xml" dir="projects/web" target="report" />
+    <ant antfile="build.xml" dir="projects/servlet" target="report" />
+    <ant antfile="build.xml" dir="projects/portlet" target="report" />
+  </target>
+
+  <target name="publish-local-nojar">
+    <ant antfile="build.xml" dir="projects/web" target="publish-local-nojar" />
+    <ant antfile="build.xml" dir="projects/servlet" target="publish-local-nojar" />
+    <ant antfile="build.xml" dir="projects/portlet" target="publish-local-nojar" />
+  </target>
+
+  <target name="publish-local">
+    <ant antfile="build.xml" dir="projects/web" target="publish-local" />
+    <ant antfile="build.xml" dir="projects/servlet" target="publish-local" />
+    <ant antfile="build.xml" dir="projects/portlet" target="publish-local" />
+  </target>
+
+  <target name="publish-pentaho">
+    <ant antfile="build.xml" dir="projects/web" target="publish-pentaho" />
+    <ant antfile="build.xml" dir="projects/servlet" target="publish-pentaho" />
+    <ant antfile="build.xml" dir="projects/portlet" target="publish-pentaho" />
+  </target>
+
+  <target name="publish-pentaho-nojar">
+    <ant antfile="build.xml" dir="projects/web" target="publish-pentaho-nojar" />
+    <ant antfile="build.xml" dir="projects/servlet" target="publish-pentaho-nojar" />
+    <ant antfile="build.xml" dir="projects/portlet" target="publish-pentaho-nojar" />
+  </target>
+
+  <target name="clean-jars">
+    <ant antfile="build.xml" dir="projects/web" target="clean-jars" />
+    <ant antfile="build.xml" dir="projects/servlet" target="clean-jars" />
+    <ant antfile="build.xml" dir="projects/portlet" target="clean-jars" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="clean">
+    <ant antfile="build.xml" dir="projects/web" target="clean" />
+    <ant antfile="build.xml" dir="projects/servlet" target="clean" />
+    <ant antfile="build.xml" dir="projects/portlet" target="clean" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="clean-all">
+    <ant antfile="build.xml" dir="projects/web" target="clean-all" />
+    <ant antfile="build.xml" dir="projects/servlet" target="clean-all" />
+    <ant antfile="build.xml" dir="projects/portlet" target="clean-all" />
+
+    <delete dir="dist" />
+    <delete dir="all-libs" />
+  </target>
+
+  <target name="compile">
+    <ant antfile="build.xml" dir="projects/web" target="compile" />
+    <ant antfile="build.xml" dir="projects/servlet" target="compile" />
+    <ant antfile="build.xml" dir="projects/portlet" target="compile" />
+  </target>
+
+  <target name="jar">
+    <ant antfile="build.xml" dir="projects/web" target="jar" />
+    <ant antfile="build.xml" dir="projects/servlet" target="jar" />
+    <ant antfile="build.xml" dir="projects/portlet" target="jar" />
+  </target>
+
+  <target name="srcjar">
+    <ant antfile="build.xml" dir="projects/web" target="srcjar" />
+    <ant antfile="build.xml" dir="projects/servlet" target="srcjar" />
+    <ant antfile="build.xml" dir="projects/portlet" target="srcjar" />
+  </target>
+
+  <target name="test">
+    <ant antfile="build.xml" dir="projects/web" target="test" />
+    <ant antfile="build.xml" dir="projects/servlet" target="test" />
+    <ant antfile="build.xml" dir="projects/portlet" target="test" />
+  </target>
+
+  <target name="dist">
+    <ant antfile="build.xml" dir="projects/web" target="dist" />
+    <ant antfile="build.xml" dir="projects/servlet" target="dist" />
+    <ant antfile="build.xml" dir="projects/portlet" target="dist" />
+
+    <mkdir dir="dist" />
+    <copy todir="dist">
+      <fileset dir="projects/web/dist" />
+      <fileset dir="projects/servlet/dist" />
+      <fileset dir="projects/portlet/dist" />
+    </copy>
+
+    <mkdir dir="all-libs" />
+    <copy todir="all-libs">
+      <fileset dir="projects/web/lib" />
+      <fileset dir="projects/servlet/lib" />
+      <fileset dir="projects/portlet/lib" />
+    </copy>
+  </target>
+
+  <target name="ivy-clean-cache">
+    <ant antfile="build.xml" dir="projects/web" target="ivy-clean-cache" />
+    <ant antfile="build.xml" dir="projects/servlet" target="ivy-clean-cache" />
+    <ant antfile="build.xml" dir="projects/portlet" target="ivy-clean-cache" />
+  </target>
+
+  <target name="ivy-clean-local">
+    <ant antfile="build.xml" dir="projects/web" target="ivy-clean-local" />
+    <ant antfile="build.xml" dir="projects/servlet" target="ivy-clean-local" />
+    <ant antfile="build.xml" dir="projects/portlet" target="ivy-clean-local" />
+  </target>
+
+  <target name="continuous">
+    <ant antfile="build.xml" dir="projects/web">
+      <target name="continuous" />
+      <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="projects/servlet">
+      <target name="continuous" />
+      <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="projects/portlet">
+      <target name="continuous" />
+    </ant>
+  </target>
+
+  <target name="continuous-lite">
+    <ant antfile="build.xml" dir="projects/web">
+      <target name="continuous-lite" />
+      <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="projects/servlet">
+      <target name="continuous-lite" />
+      <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="projects/portlet">
+      <target name="continuous-lite" />
+    </ant>
+  </target>
+
+</project>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="projects/servlet/src"/>
+	<classpathentry kind="src" path="projects/web/src"/>
+	<classpathentry kind="src" path="projects/portlet/src"/>
+	<classpathentry kind="src" path="projects/servlet/test-src"/>
+	<classpathentry kind="src" path="projects/portlet/test-src"/>
+	<classpathentry kind="src" path="projects/web/test-src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-repository"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-util"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-ui-foundation"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-scheduler"/>
+	<classpathentry kind="lib" path="projects/portlet/lib/mail-1.3.2.jar"/>
+	<classpathentry kind="lib" path="projects/portlet/lib/portlet-api-1.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/backport-util-concurrent-2.2.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/eigenbase-properties-1.1.0.10924.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/eigenbase-resgen-1.1.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/eigenbase-xom-1.1.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jai_codec-1.1.2.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jai_core-1.1.2.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/javacup-10k.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jpivot-1.8.0-080327.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jsf-api-1.1.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jstl-1.0.5.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/pentaho-report-wizard-core-2.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/saaj-api-1.3.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/saaj-impl-1.3.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/saaj-ri-1.1_02.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/standard-1.0.6.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/tbutils-wcf-1.8.0-070305.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/wcf-1.8.0-070305.jar"/>
+	<classpathentry kind="lib" path="test-lib/mockrunner-servlet.jar"/>
+	<classpathentry kind="lib" path="test-lib/spring-mock.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/acegi-security-1.0.6.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/activation-1.0.2.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/commons-fileupload-1.2.1.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/pentaho-connections-2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/quartz-1.5.2.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/servlet-api-2.4.jar"/>
+	<classpathentry kind="lib" path="projects/web/lib/spring-2.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/commons-httpclient-3.0-rc4.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/commons-vfs-1.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/jmi-1.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/kettle-engine-3.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/mdrapi-1.0.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/mondrian-3.0.3.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/pentaho-actionsequence-dom-2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/pentaho-cwm-1.5.4.jar"/>
+	<classpathentry kind="lib" path="projects/servlet/lib/pentaho-meta-1.8.0.0306.jar"/>
+	<classpathentry kind="lib" path="projects/web/test-lib/junit-4.4.jar"/>
+	<classpathentry kind="output" path="eclipse-bin"/>
+</classpath>

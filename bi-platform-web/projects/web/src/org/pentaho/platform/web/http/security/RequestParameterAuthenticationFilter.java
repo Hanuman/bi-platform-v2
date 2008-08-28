@@ -1,0 +1,210 @@
+/*
+ * Copyright 2007 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms 
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
+ * this file except in compliance with the license. If you need a copy of the license, 
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * the license for the specific language governing your rights and limitations.
+ */
+package org.pentaho.platform.web.http.security;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationException;
+import org.acegisecurity.AuthenticationManager;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.ui.AuthenticationEntryPoint;
+import org.acegisecurity.ui.WebAuthenticationDetails;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.web.http.messages.Messages;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+
+/**
+ * Processes Request Parameter authorization, putting the result
+ * into the <code>SecurityContextHolder</code>.
+ * 
+ * <p>
+ * In summary, this filter looks for request parameters with the userid/password
+ * </p>
+ * 
+ * <P>
+ * If authentication is successful, the resulting {@link Authentication} object
+ * will be placed into the <code>SecurityContextHolder</code>.
+ * </p>
+ * 
+ * <p>
+ * If authentication fails and <code>ignoreFailure</code> is <code>false</code>
+ * (the default), an {@link AuthenticationEntryPoint} implementation is
+ * called. Usually this should be {@link RequestParameterFilterEntryPoint}.
+ * </p>
+ * 
+ * <p>
+ * <b>Do not use this class directly.</b> Instead configure
+ * <code>web.xml</code> to use the {@link
+ * org.acegisecurity.util.FilterToBeanProxy}.
+ * </p>
+ *
+ */
+public class RequestParameterAuthenticationFilter implements Filter, InitializingBean {
+  //~ Static fields/initializers =============================================
+
+  private static final Log logger = LogFactory.getLog(RequestParameterAuthenticationFilter.class);
+
+  //~ Instance fields ========================================================
+
+  private AuthenticationEntryPoint authenticationEntryPoint;
+
+  private AuthenticationManager authenticationManager;
+
+  private boolean ignoreFailure = false;
+
+  private static final String DefaultUserNameParameter = "userid"; //$NON-NLS-1$
+
+  private static final String DefaultPasswordParameter = "password"; //$NON-NLS-1$
+
+  private String userNameParameter = RequestParameterAuthenticationFilter.DefaultUserNameParameter;
+
+  private String passwordParameter = RequestParameterAuthenticationFilter.DefaultPasswordParameter;
+
+  //~ Methods ================================================================
+
+  public void afterPropertiesSet() throws Exception {
+    Assert.notNull(this.authenticationManager, Messages
+        .getErrorString("RequestParameterAuthenticationFilter.ERROR_0001_AUTHMGR_REQUIRED")); //$NON-NLS-1$
+    Assert.notNull(this.authenticationEntryPoint, Messages
+        .getErrorString("RequestParameterAuthenticationFilter.ERROR_0002_AUTHM_ENTRYPT_REQUIRED")); //$NON-NLS-1$
+
+    Assert.hasText(this.userNameParameter, Messages
+        .getString("RequestParameterAuthenticationFilter.ERROR_0003_USER_NAME_PARAMETER_MISSING")); //$NON-NLS-1$
+    Assert.hasText(this.passwordParameter, Messages
+        .getString("RequestParameterAuthenticationFilter.ERROR_0004_PASSWORD_PARAMETER_MISSING")); //$NON-NLS-1$
+  }
+
+  public void destroy() {
+  }
+
+  public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException,
+      ServletException {
+    if (!(request instanceof HttpServletRequest)) {
+      throw new ServletException(Messages
+          .getErrorString("RequestParameterAuthenticationFilter.ERROR_0005_HTTP_SERVLET_REQUEST_REQUIRED")); //$NON-NLS-1$
+    }
+
+    if (!(response instanceof HttpServletResponse)) {
+      throw new ServletException(Messages
+          .getErrorString("RequestParameterAuthenticationFilter.ERROR_0006_HTTP_SERVLET_RESPONSE_REQUIRED")); //$NON-NLS-1$
+    }
+
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+    String username = httpRequest.getParameter(this.userNameParameter);
+    String password = httpRequest.getParameter(this.passwordParameter);
+
+    if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
+      RequestParameterAuthenticationFilter.logger.debug(Messages.getString("RequestParameterAuthenticationFilter.DEBUG_AUTH_USERID", username)); //$NON-NLS-1$
+    }
+
+    if ((username != null) && (password != null)) {
+      // Only reauthenticate if username doesn't match SecurityContextHolder and user isn't authenticated (see SEC-53)
+      Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+
+      if ((existingAuth == null) || !existingAuth.getName().equals(username) || !existingAuth.isAuthenticated()) {
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+        authRequest.setDetails(new WebAuthenticationDetails(httpRequest));
+
+        Authentication authResult;
+
+        try {
+          authResult = authenticationManager.authenticate(authRequest);
+        } catch (AuthenticationException failed) {
+          // Authentication failed
+          if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
+            RequestParameterAuthenticationFilter.logger.debug(Messages.getString(
+                "RequestParameterAuthenticationFilter.DEBUG_AUTHENTICATION_REQUEST", username, failed.toString())); //$NON-NLS-1$
+          }
+
+          SecurityContextHolder.getContext().setAuthentication(null);
+
+          if (ignoreFailure) {
+            chain.doFilter(request, response);
+          } else {
+            authenticationEntryPoint.commence(request, response, failed);
+          }
+
+          return;
+        }
+
+        // Authentication success
+        if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
+          RequestParameterAuthenticationFilter.logger.debug(Messages.getString(
+              "RequestParameterAuthenticationFilter.DEBUG_AUTH_SUCCESS", authResult.toString())); //$NON-NLS-1$
+        }
+
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+      }
+    }
+
+    chain.doFilter(request, response);
+  }
+
+  public AuthenticationEntryPoint getAuthenticationEntryPoint() {
+    return authenticationEntryPoint;
+  }
+
+  public AuthenticationManager getAuthenticationManager() {
+    return authenticationManager;
+  }
+
+  public void init(final FilterConfig arg0) throws ServletException {
+  }
+
+  public boolean isIgnoreFailure() {
+    return ignoreFailure;
+  }
+
+  public void setAuthenticationEntryPoint(final AuthenticationEntryPoint authenticationEntryPoint) {
+    this.authenticationEntryPoint = authenticationEntryPoint;
+  }
+
+  public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
+  }
+
+  public void setIgnoreFailure(final boolean ignoreFailure) {
+    this.ignoreFailure = ignoreFailure;
+  }
+
+  public String getUserNameParameter() {
+    return userNameParameter;
+  }
+
+  public String getPasswordParameter() {
+    return passwordParameter;
+  }
+
+  public void setUserNameParameter(final String value) {
+    userNameParameter = value;
+  }
+
+  public void setPasswordParameter(final String value) {
+    passwordParameter = value;
+  }
+
+}
