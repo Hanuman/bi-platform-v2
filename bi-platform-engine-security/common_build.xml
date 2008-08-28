@@ -730,7 +730,6 @@
 	    ====================================================================-->
   <target name="init-tests" depends="clean-tests">
     <mkdir dir="${testclasses.dir}" />
-  	<mkdir dir="${testsrc.dir}" />
   </target>
 
 
@@ -1130,8 +1129,18 @@
           depends="install-pentaho-ant-tasks,init"
           description="Creates the Eclipse .classpath file">
     <dot-classpath>
-      <!-- This classpath is the compile classpath from commonbuild -->
-      <classpath refid="classpath" />
+      <!-- Include all lib dirs -->
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="*.jar" />
+        </fileset>
+        <fileset dir="${devlib.dir}">
+          <include name="*.jar" />
+        </fileset>
+        <fileset dir="${testlib.dir}">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
     </dot-classpath>
   </target>
 
