@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-ui-foundation" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  <dependencies defaultconf="default->default">
+    
+        <!--  external dependencies -->
+    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
+    <dependency org="batik" name="batik-awt-util" rev="1.6" />
+    <dependency org="batik" name="batik-dom" rev="1.6" />
+    <dependency org="batik" name="batik-svggen" rev="1.6" />
+    <dependency org="jfree" name="jcommon" rev="1.0.12" />
+    <dependency org="jfree" name="jfreechart" rev="1.0.4">
+      <exclude org="jfree" name="jcommon" />
+    </dependency>
+
+        <!--  internal dependencies -->
+    <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-metadata"                    rev="${dependency.pentaho-metadata.revision}" changing="true" />
+  </dependencies>
+</ivy-module>
