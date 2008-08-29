@@ -280,4 +280,25 @@
 		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="resolve" />
 		<ant antfile="build.xml" dir="../bi-platform-appserver"       target="resolve" />
 	</target>
+  
+  <target name="create-dot-classpaths">
+    <ant antfile="build.xml" dir="../bi-platform-api"             target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-util"            target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-engine-core"     target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-repository"      target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation"   target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions"  target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-scheduler"       target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-legacy"          target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-web"             target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="create-dot-classpath" />
+    <ant antfile="build.xml" dir="../bi-platform-appserver"       target="create-dot-classpath" />
+  </target>
+    
+  
 </project>
