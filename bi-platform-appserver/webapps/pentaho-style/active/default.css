@@ -998,3 +998,15 @@ div.table-message {
 	width:100%;
 	padding-left:10px;
 }
+
+.parameter_table{
+	width:500px;
+}
+
+.parameter_fieldset{
+	width:100%;
+	margin: 10px 0px 10px 8px;
+}
+.run3div{
+  margin-left: 8px;
+}

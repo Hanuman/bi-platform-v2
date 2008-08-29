@@ -4,6 +4,8 @@ pentaho_ignoreFields.push('subscribe');
 pentaho_ignoreFields.push('pentaho-subscriptionmessage');
 pentaho_ignoreFields.push('subscribe-id');
 pentaho_ignoreFields.push('_PENTAHO_ADDITIONAL_PARAMS_');
+pentaho_ignoreFields.push('run_as_background_yes');
+pentaho_ignoreFields.push('run_as_background_no');
 
 pentaho_ignoreIndexOfFields.push('schedule-');
 
