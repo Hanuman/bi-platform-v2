@@ -16,7 +16,7 @@
 		<dependency org="pentaho.reporting" name="pentaho-legacy-charts" rev="1.7.0" />
 		<dependency org="hsqldb" name="hsqldb" rev="1.8.0" />
 		<dependency org="mysql" name="mysql-connector-java" rev="5.0.8" />
-		<dependency org="postgresql" name="postgresql" rev="8.2-506.jdbc3" />   
+		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
 
 <!-- BIRT -->
