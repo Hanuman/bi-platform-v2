@@ -16,7 +16,7 @@
        maximized = true;
    }
 
-%><title><%= PortalConstants.VERSION.toString() %></title>
+%><title>2.6.1</title>
    <meta http-equiv="Content-Type" content="text/html;"/>
    <!-- to correct the unsightly Flash of Unstyled Content. -->
    <script type="text/javascript">
