@@ -117,6 +117,7 @@
 		<ant antfile="build.xml" dir="../bi-platform-web"             target="clean-all" />
 		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="clean-all" />
 		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="clean-all" />
+		<ant antfile="build.xml" dir="../bi-platform-appserver"       target="clean-all" />
 	</target>
 
 	<target name="jar-all" depends="" >
@@ -258,6 +259,7 @@
 		<ant antfile="build.xml" dir="../bi-platform-web"             target="publish-local" />
 		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="publish-local" />
 		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="publish-local" />
+		<ant antfile="build.xml" dir="../bi-platform-appserver"       target="publish-local" />
 	</target>
 
 	<target name="resolve">
@@ -276,5 +278,6 @@
 		<ant antfile="build.xml" dir="../bi-platform-web"             target="resolve" />
 		<ant antfile="build.xml" dir="../bi-platform-web-servlet"     target="resolve" />
 		<ant antfile="build.xml" dir="../bi-platform-web-portlet"     target="resolve" />
+		<ant antfile="build.xml" dir="../bi-platform-appserver"       target="resolve" />
 	</target>
 </project>

@@ -12,22 +12,30 @@
         <!--  external dependencies -->
         <dependency org="org.jboss/portal"  name="portal-server-lib"	        rev="2.6.1"/>        
         <dependency org="org.jboss/portal"  name="portal-theme-lib"	        rev="2.6.1"/>        
-        <dependency org="javax.activation"  name="activation"	        rev="1.0.2"/>        
-        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
-        <dependency org="commons-collections" name="commons-collections" rev="3.2"/>
-        <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
-        <dependency org="commons-fileupload"  name="commons-fileupload"  rev="1.2.1"/>
         <dependency org="org.acegisecurity"   name="acegi-security"      rev="1.0.6"   transitive="false"/>
-        <dependency org="oro" name="oro" rev="2.0.8"/>
-        <dependency org="org.springframework" name="spring" rev="2.0" transitive="false"/>
-        <dependency org="dom4j"              name="dom4j"              rev="1.6.1">
-			<exclude org="xml-apis" name="xml-apis" />
-		</dependency>
+        <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
+        <dependency org="org.hibernate" name="hibernate" rev="3.2.4.sp1">
+	      <!--
+	        include these jars, needed for unit tests. child projects may choose to exclude these, if deploying to an app
+	        server, etc. <exclude org="net.sf.ehcache" name="ehcache" /> <exclude org="asm" name="asm" /> <exclude org="asm"
+	        name="asm-attrs" />
+	      -->
+          <exclude org="commons-logging" name="commons-logging" />
+          <exclude org="commons-collections" />
+          <exclude org="dom4j" name="dom4j" />
+        </dependency>
+        <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-080327">
+          <artifact name="jpivot" type="jar" />
+        </dependency>
 		<dependency org="quartz"			name="quartz"              rev="1.5.2">
 			<exclude org="commons-logging" name="commons-logging" />
 		</dependency>
 		<dependency org="javax.servlet"		  name="servlet-api"         rev="2.4"/>
-		
+        <dependency org="org.springframework" name="spring" rev="2.0" transitive="false"/>
+        <dependency org="dom4j"              name="dom4j"              rev="1.6.1">
+			<exclude org="xml-apis" name="xml-apis" />
+		</dependency>
+	
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
         <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
@@ -42,10 +50,6 @@
         <dependency org="pentaho" name="pentaho-bi-platform-web"             rev="${project.revision}" changing="true"/>
         <dependency org="pentaho" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
         
-        <!--  testing dependencies -->        
-        <dependency org="junit"      name="junit"               rev="4.4" conf="test->default"/>
-        <dependency org="pentaho"    name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>
-        <dependency org="com.mockrunner" name="mockrunner-servlet" rev="0.3.7" conf="test->default"/>
     </dependencies>
     
 </ivy-module>
