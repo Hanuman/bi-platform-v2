@@ -52,7 +52,7 @@
 	</xsl:template>
 
 	<xsl:template name="doSelections">
-		<table>
+		<table cellpadding="6" border="0">
 			<tr></tr>
 			<xsl:for-each select="filter">
 				<xsl:call-template name="doFilter"></xsl:call-template>
@@ -60,6 +60,34 @@
 			<xsl:for-each select="error">
 				<xsl:value-of select="." />
 			</xsl:for-each>
+            
+                                
+                              
+            
+            
+		    <tr>
+              <td class="portlet-font"  style="padding:0px" >
+               <table class="parameter_table" border="0" cellpadding="0" cellspacing="0">
+                    <tbody><tr>
+                       <td>
+                          
+                            <fieldset class="parameter_fieldset">
+                              <legend>
+                                  Run in Background
+                              </legend>
+
+                              <input id="run_as_background_yes" name="run_as_background" class="portlet-form-field" value="Yes" type="radio"/>
+                              <span class="portlet-form-field-label">Yes</span>
+                              <input name="run_as_background" class="portlet-form-field" value="No" checked="checked" type="radio"/>
+                              <span class="portlet-form-field-label">No</span>
+                              
+                            </fieldset>
+                          </td>
+                    </tr>
+                 </tbody></table>
+                 
+              </td>
+          </tr>
 		</table>
 		<xsl:apply-templates select="input" />
 	</xsl:template>
@@ -71,21 +99,23 @@
 				<xsl:call-template name="doSubscriptions"/>
 			</xsl:when>
 			<xsl:otherwise>
+      
 				<tr>
 					<td class="portlet-font" colspan="2">
-						<div> <!-- run3div -->
+						<div class="run3div"> <!-- run3div -->
 							<xsl:attribute name="id">run3div<xsl:value-of select="/filters/id" /></xsl:attribute>
-							<table>
+							<table align="right">
 								<tr>
 									<td>
 										<input type="button" class="portlet-form-button">
-											<xsl:attribute name="value">Run Report</xsl:attribute>
-											<xsl:attribute name="onClick">doRun("<xsl:value-of select="/filters/id" />", '<xsl:value-of select="/filters/action"/>', '<xsl:value-of select="/filters/target"/>', false);</xsl:attribute>
+											<xsl:attribute name="value">Ok</xsl:attribute>
+											<xsl:attribute name="onClick">doRun("<xsl:value-of select="/filters/id" />", '<xsl:value-of select="/filters/action"/>', '<xsl:value-of select="/filters/target"/>', document.getElementById('run_as_background_yes').checked);</xsl:attribute>
 											<xsl:attribute name="id">run2button<xsl:value-of select="/filters/id" /></xsl:attribute>
 										</input>
+                                        &#160;
 										<input type="button" class="portlet-form-button">
-											<xsl:attribute name="value">Run in Background</xsl:attribute>
-											<xsl:attribute name="onClick">doRun("<xsl:value-of select="/filters/id" />", '<xsl:value-of select="/filters/action"/>', '<xsl:value-of select="/filters/target"/>', true);</xsl:attribute>
+											<xsl:attribute name="value">Cancel</xsl:attribute>
+											<xsl:attribute name="onClick">closeMantleTab()</xsl:attribute>
 											<xsl:attribute name="id">run2button<xsl:value-of select="/filters/id" /></xsl:attribute>
 										</input>
 									</td>

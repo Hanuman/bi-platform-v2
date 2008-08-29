@@ -45,23 +45,26 @@
 						<xsl:text>';
  					</xsl:text>
 					</xsl:for-each>
+                    pentaho_optionalParams.push('form_<xsl:value-of select="id"/>.run_as_background');
 			    </script>
+          
+          <script type="text/javascript">
+            function closeMantleTab(){
+              try{
+                window.parent.closeTab(window.location.href);
+              } catch(e){
+                alert("error closing tab: "+e);
+              }
+            }
+          </script>
 			    
 	    </head>
 		<body>
-				<div style="margin:10px">
-					<span class="portlet-section-header"><xsl:value-of select="title" disable-output-escaping="yes"/></span>
-				</div>
-				<div style="margin:10px;border:1px solid #808080">
+        
+				<div style="margin:5px;">
 
-					<br/>
-					<table border="0" width="100%" >
-						<tr>
-							<td>
-								<span class="portlet-font"><xsl:value-of select="help" disable-output-escaping="yes"/></span>
-							</td>
-						</tr>
-
+					<table border="0" width="525" >
+						
 					<tr>
 			
 					<td class="portlet-font" colspan="2">
@@ -107,15 +110,27 @@
 	</xsl:template>
 
 	<xsl:template name="doFilter">
-		<tr>
-              <!-- <xsl:element name="br" /> -->
-		<td><b><xsl:value-of select="title"/><xsl:text>&#x20;</xsl:text></b></td></tr>
-		<tr><td>
-		<xsl:for-each select="control">
-			<!--  this is important - it copies the definition of the input control into the HTML output -->
-	                <xsl:apply-templates/>
-		</xsl:for-each>
-		</td>
+		
+		<tr><td style="padding:0;">
+        <table class="parameter_table" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>
+              <fieldset class="parameter_fieldset">
+                  <legend>
+                      <xsl:value-of select="title"/>
+                  </legend>
+
+              
+              		<xsl:for-each select="control">
+              			<!--  this is important - it copies the definition of the input control into the HTML output -->
+              	                <xsl:apply-templates/>
+              		</xsl:for-each>
+
+              </fieldset>
+            </td>
+          </tr>
+        </table>
+      </td>
 		</tr>
 	</xsl:template>
 

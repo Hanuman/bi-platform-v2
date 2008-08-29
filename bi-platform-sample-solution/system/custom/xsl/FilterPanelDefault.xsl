@@ -80,13 +80,7 @@
 
 	<xsl:template name="doFilter">
 		<xsl:param name="formName"/>
-		<xsl:if test="position()=1">
-				<tr>
-					<td>		
-                        <span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_FILTER_PANEL_HINT')" disable-output-escaping="yes"/></span>
-					</td>
-				</tr>
-		</xsl:if>
+		
 		
 				<tr>
 					<td class="portlet-section-subheader">		
@@ -96,12 +90,11 @@
 				<tr>
 					<td class="portlet-font">		
 						<xsl:for-each select="control">
-							<!--  this is important - it copies the definition of the input control into the HTML output -->
-		                    <xsl:apply-templates/>
-		                </xsl:for-each>
+                            <!--  this is important - it copies the definition of the input control into the HTML output -->
+                            <xsl:apply-templates/>
+                        </xsl:for-each>
 					</td>
 				</tr>
-		
 		<xsl:if test="position()=last()">
 				<tr>
 					<td>
