@@ -730,6 +730,7 @@
 	    ====================================================================-->
   <target name="init-tests" depends="clean-tests">
     <mkdir dir="${testclasses.dir}" />
+    <mkdir dir="${testsrc.dir}" />
   </target>
 
 
@@ -748,6 +749,13 @@
       <src path="${testsrc.dir}" />
       <classpath refid="test.classpath" />
     </javac>
+
+    <!-- Copy the non-java files from the source directory to the test classes directory -->
+    <copy todir="${testclasses.dir}">
+        <fileset dir="${testsrc.dir}">
+            <exclude name="**/*.java"/>
+        </fileset>
+    </copy>
   </target>
 
 
