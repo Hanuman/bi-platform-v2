@@ -357,7 +357,7 @@
 			<fileset dir="${data.dir}/postgresql" />
 		</copy>
 
-		<copy todir="${build.data.dir}/hsqldb/lib" file="${bi.platform.staging.dir}/lib-runtime/hsqldb.jar" />
+		<!--<copy todir="${build.data.dir}/hsqldb/lib" file="${bi.platform.build.dir}/lib-runtime/hsqldb.jar" />-->
 
 		<!-- this is needed when running tests on linux -->
 		<chmod file="${start.hsqldb.path}" perm="700" />
