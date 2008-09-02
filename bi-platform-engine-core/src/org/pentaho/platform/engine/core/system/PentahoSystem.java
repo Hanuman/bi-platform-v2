@@ -999,13 +999,11 @@ public class PentahoSystem {
     // TODO get the SimpleMapCacheManager into the object map somehow
     	// we will try to use a simple map cache manager if one has not been configured
     	ICacheManager cacheManager = (ICacheManager)pentahoObjectFactory.getObject( PentahoSystem.CACHE_MANAGER, session );
-  	  if( cacheManager == null ) {
-		  cacheManager = SimpleMapCacheManager.getInstance();
-	  }
       return cacheManager;
     } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
+    	ICacheManager cacheManager = SimpleMapCacheManager.getInstance();
+      Logger.warn( PentahoSystem.class.getName(), "Using default cache manager" );
+      return cacheManager;
     }
   }
 
