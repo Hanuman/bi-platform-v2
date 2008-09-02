@@ -27,16 +27,4 @@
       FOUND IN common_build.xml.
     --> 
 	
-	<!--=======================================================================
-	    compile.res_copy
-	    
-	    Copies the hibernate file into the 
-	    ====================================================================-->
-	<target name="compile.res_copy" description="Copies the hibernate files into the bin directory">
-		<echo>Copying hbm.xml documents to classes/hibernate directory...</echo>
-		<copy todir="${classes.dir}">
-			<fileset dir="${res.dir}" includes="**/*.hbm.xml" />
-		</copy>
-	</target>
-
 </project>
