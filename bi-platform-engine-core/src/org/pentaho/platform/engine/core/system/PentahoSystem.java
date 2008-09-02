@@ -708,6 +708,11 @@ public class PentahoSystem {
 	                  actionInfo.getActionName(),
 	                  "Session startup actions", false, true, instanceId, false, parameterProviderMap, outputHandler, null, urlFactory, messages); //$NON-NLS-1$
 	
+	          // if context is null, then we cannot check the status
+	          if (null == context) {
+	            return;
+	          }
+	          
 	          if (context.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
 	            // now grab any outputs
 	            Iterator outputNameIterator = context.getOutputNames().iterator();
