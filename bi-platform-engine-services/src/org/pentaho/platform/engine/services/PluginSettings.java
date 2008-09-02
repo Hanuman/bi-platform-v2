@@ -355,8 +355,8 @@ public class PluginSettings implements IPluginSettings {
 			Element node = (Element) obj;
 			
 			// create an IMenuCustomization object 
-			String className = XmlDom4JHelper.getNodeText( "classname", node, "");
-			String fileInfoClassName = XmlDom4JHelper.getNodeText( "fileinfo-classname", node, "");
+			String className = XmlDom4JHelper.getNodeText( "classname", node, null);
+			String fileInfoClassName = XmlDom4JHelper.getNodeText( "fileinfo-classname", node, null);
 			String scope = node.attributeValue( "scope" );
 			String id =  node.attributeValue( "id" );
 			String type =  node.attributeValue( "type" );

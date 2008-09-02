@@ -4,6 +4,7 @@ import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.util.logging.Logger;
 
 public class PluginManager implements IPentahoSystemListener, IPentahoPublisher {
 	
@@ -16,6 +17,11 @@ public class PluginManager implements IPentahoSystemListener, IPentahoPublisher 
 		// from IPentahoSystemListener
 		StringBuilder comments = new StringBuilder();
 		PluginSettings pluginSettings = (PluginSettings) PentahoSystem.getObject( session, "IPluginSettings" );
+		if( pluginSettings == null ) {
+			// we cannot continue without the PluginSettings
+			Logger.error( getClass().toString(), "IPluginSettings is ont configured");
+			return false;
+		}
 		pluginSettings.updatePluginSettings( session, comments );
 		return true;
 	}
