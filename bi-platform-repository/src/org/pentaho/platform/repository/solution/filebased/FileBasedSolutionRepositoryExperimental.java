@@ -88,26 +88,19 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	    	  return;
 	      }
 	      String extension = fileName.substring( lastPoint+1 ).toLowerCase();
+	        String solutionPath = element.getAbsolutePath().substring(rootPath.length());
+	        if ("url".equals( extension )) { //$NON-NLS-1$
+	          addUrlToRepository(element, parentNode, solutionPath);
+	        }
+	      boolean addFile = "xaction".equals( extension );
 	  	PluginSettings pluginSettings = (PluginSettings) PentahoSystem.getObject( getSession(), "IPluginSettings" );
 		if( pluginSettings != null ) {
 	    	Set<String> types = pluginSettings.getContentTypes();
-	    	if( types != null && !types.contains( extension ) ) {
-	    		// ignore anything that has no content generator
-	    		return;
-	    	}
+	    	addFile |= types != null && types.contains( extension );
 		}
-	        String solutionPath = element.getAbsolutePath().substring(rootPath.length());
-	        if (fileName.toLowerCase().endsWith(".url")) { //$NON-NLS-1$
-	          addUrlToRepository(element, parentNode, solutionPath);
-	        }
-	        if (!fileName.toLowerCase().endsWith(".xaction") && !fileName.toLowerCase().endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-	          // ignore any non-XML files
-	        	return;
-	        }
-	        if (fileName.toLowerCase().equals(ISolutionRepository.INDEX_FILENAME)) {
-	          // index.xml files are handled in the directory loop below
-	        	return;
-	        }
+		if( !addFile ) {
+			return;
+		}
 	        String path = element.getAbsolutePath().substring(pathIdx);
 	        if (!path.equals(fileName)) {
 	          path = path.substring(0, path.length() - fileName.length() - 1);
