@@ -271,6 +271,7 @@
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${devlib.dir}" />
+    <mkdir dir="${testlib.dir}" />
   </target>
 
 
@@ -752,9 +753,9 @@
 
     <!-- Copy the non-java files from the source directory to the test classes directory -->
     <copy todir="${testclasses.dir}">
-        <fileset dir="${testsrc.dir}">
-            <exclude name="**/*.java"/>
-        </fileset>
+      <fileset dir="${testsrc.dir}">
+        <exclude name="**/*.java" />
+      </fileset>
     </copy>
   </target>
 
