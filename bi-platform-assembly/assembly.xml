@@ -22,7 +22,20 @@
 	     Any of these properties can be overridden in either build.properties or override.properties
 	     =================================================================================-->
 
-  <property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
+  
+	<!-- Assembly properties -->
+		<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />  
+		<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
+		<property name="stage.dir.server" value="${basedir}/stage/win-bi-server" />
+		<property name="web.dir" value="${stage.dir.server}/WEB-INF" />
+	  <property name="web.classes.dir" value="${web.dir}/classes" />
+	  <property name="web.lib.dir" value="${web.dir}/lib" />
+	  <property name="meta.dir" value="${stage.dir.server}/META-INF" />
+		<property name="container.stage.dir" value="${stage.dir.server}/tomcat"/>
+		<property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps"/>
+	  <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
+	  <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
+	  <property name="dist.dir" value="${basedir}/dist" />
 	
   <!-- project relative folder for jar files for xmltask external ant task -->
   
@@ -66,17 +79,19 @@
     			pentaho.metadata.init" />
   
   <target name="init.stage.pentaho">
-    <mkdir dir="${stage.win.dir}/lib"/>
-    <mkdir dir="${stage.nix.dir}/lib"/>  		
+  	<mkdir dir="lib"/>
+    <mkdir dir="${stage.dir.server}/lib"/>
+  	<mkdir dir="${stage.dir.server}/tomcat"/>
+  	<mkdir dir="${stage.dir.server}/jre"/>
   </target>
 
   <!-- ================================= 
       target: stage-pentaho              
      ================================= -->
   <target name="stage-pentaho" depends="init.stage.pentaho" description="description">
-	   <copy todir="${win.dir}"><dirset dir="${tomcat.dir}"></dirset></copy>
-	   <copy todir="${win.dir}"><dirset dir="${jre.dir}"></dirset></copy>	   
-     <copy todir="${win.dir}/lib"><fileset dir="${lib.dir}"><include name="*.jar"/></fileset></copy>
+	   <copy todir="${stage.dir.server}/tomcat"><fileset dir="${tomcat.dir}"></fileset></copy>
+	   <copy todir="${stage.dir.server}/jre"><fileset dir="${jre.dir}"></fileset></copy>	   
+     <copy todir="${stage.dir.server}/lib"><fileset dir="${lib.dir}"><include name="*.jar"/></fileset></copy>
 
     <manifest file="${meta.dir}/MANIFEST.MF">
       <attribute name="Implementation-Title" value="${impl.title}" />
@@ -597,8 +612,13 @@
   </target>
 
 
+  <!-- =======================================================
+		  target: prep-pentaho-tomcat
+
+		  populate the server.dir with all required files.
+		 ======================================================== -->
   <target name="prep-pentaho-tomcat" depends="init.stage.pentaho,stage-pentaho">
-	  <copy todir="${stage.win.dir}">
+	  <copy todir="${stage.server.dir}">
 			<dirset dir="${tomcat.dir}"/>
 			<dirset dir="${jre.dir}"/>
 		</copy>
