@@ -14,12 +14,13 @@
 		and works with the common_build.xml file.
 	</description>
 
-	<!-- Define the default location of the common build file -->
-	<property name="common.build.file" value="./common_build.xml" 
-		description="This is the location of the standardized common_build.xml file"/>
+  <!-- Define the default location of the common build file -->
+  <property name="common.build.file"
+            value="./common_build.xml"
+            description="This is the location of the standardized common_build.xml file" />
 
-	<!-- Import the common_build.xml file which contains all the default tasks -->
-	<import file="${common.build.file}"/>
+  <!-- Import the common_build.xml file which contains all the default tasks -->
+  <import file="${common.build.file}" />
 
   <!--
       AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
@@ -53,26 +54,63 @@
 
 
   <!--=======================================================================
-	    compile.src_copy
+	    compile.res_copy
 	    
-	    Copies the source files to the bin directory
-	    NOTE: if the dont.copy.source variable exists, this step will be
-	          skipped!
+	    Copies any needed resources into the classes directory.  Will not
+	    duplicate copying of resources from src tree (handled by compile.src_copy
+	    if jar.include.source is set.
 	    ====================================================================-->
-  <target name="compile.src_copy"
-          depends="init"
-          unless="dont.copy.source"
-          description="Copies the source to the bin directory">
-    <copy todir="${classes.dir}" flatten="false">
-      <fileset dir="cache/src" />
-      <fileset dir="connections/src" />
-      <fileset dir="outputs/src" />
-      <fileset dir="security/src" />
-      <fileset dir="messages/src" />
-      <fileset dir="versionchecker/src" />
-    </copy>
+  <target name="compile.res_copy" depends="install-antcontrib">
+    <if>
+      <not>
+        <isset property="jar.include.source" />
+      </not>
+      <then>
+        <copy todir="${classes.dir}" flatten="false">
+          <fileset dir="cache/src" excludes="**/*.java" />
+          <fileset dir="connections/src" excludes="**/*.java" />
+          <fileset dir="messages/src" excludes="**/*.java" />
+          <fileset dir="outputs/src" excludes="**/*.java" />
+          <fileset dir="security/src" excludes="**/*.java" />
+          <fileset dir="versionchecker/src" excludes="**/*.java" />
+        </copy>
+      </then>
+    </if>
   </target>
 
+
+  <!--=======================================================================
+	    source.zip
+	    
+	    Creates a zip of the project source for distribution
+	    ====================================================================-->
+  <target name="source.zip" depends="init">
+    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.zip">
+      <fileset dir="cache/src" />
+      <fileset dir="connections/src" />
+      <fileset dir="messages/src" />
+      <fileset dir="outputs/src" />
+      <fileset dir="security/src" />
+      <fileset dir="versionchecker/src" />
+    </jar>
+  </target>
+
+
+  <!--=======================================================================
+	    source.targz
+	    
+	    Creates a gzipped tar of the project source for distribution
+	    ====================================================================-->
+  <target name="source.targz" depends="init">
+    <tar compression="gzip" destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.tar.gz">
+      <fileset dir="cache/src" />
+      <fileset dir="connections/src" />
+      <fileset dir="messages/src" />
+      <fileset dir="outputs/src" />
+      <fileset dir="security/src" />
+      <fileset dir="versionchecker/src" />
+    </tar>
+  </target>
 
   <!--=======================================================================
 	    compile-tests
