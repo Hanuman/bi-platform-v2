@@ -2,13 +2,18 @@
 
   <tstamp>
     <format property="current.date" pattern="MM-dd-yyyy" locale="en" />
-  </tstamp> 
+  </tstamp>
+	
+	<!-- Define xmltask for xml file manipulation -->
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+				<classpath>
+					<fileset dir="${user.home}/.pentaho_build_cache/xmlTask">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+	</taskdef>
   
-  <import file="common.xml" />
-
   <!-- Load the properties files in the proper order -->
-  <property file="override.properties"
-            description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
   <property file="assembly.properties"
             description="Properties customized for your particular project belong in this file." />
 
@@ -18,103 +23,11 @@
 	     =================================================================================-->
 
   <property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
-
-  <!-- Assembly properties -->
-  <property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
-  <property name="web.dir" value="${stage.dir}/WEB-INF" />
-  <property name="web.classes.dir" value="${web.dir}/classes" />
-  <property name="web.lib.dir" value="${web.dir}/lib" />
-  <property name="meta.dir" value="${stage.dir}/META-INF" />
-  <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
-  <property name="dist.dir" value="${basedir}/dist" />
-  <property name="xpath.DATABASE_JDBC_URL"
-            value="/XMI/XMI.content/CWMRDB:Catalog/CWM:ModelElement.taggedValue/CWM:TaggedValue[@tag='DATABASE_JDBC_URL']/@value" />
-  <property name="xpath.DATABASE_TYPE"
-            value="/XMI/XMI.content/CWMRDB:Catalog/CWM:ModelElement.taggedValue/CWM:TaggedValue[@tag='DATABASE_TYPE']/@value" />
-  <property name="mysql.databaseType" value="MYSQL" />
-  <property name="mysql.databaseJdbcUrl"
-            value="jdbc:mysql:///SampleData?defaultFetchSize=500&amp;useCursorFetch=true" />
-  <property name="hsql.databaseType" value="HYPERSONIC" />
-  <property name="hsql.databaseJdbcUrl" value="jdbc:hsqldb:hsql://:/SampleData" />
-
-  <!-- PCI properties -->
-  <property name="changelog.file" value="changelog.txt" />
-  <property name="dist.dir" value="dist" />
-  <property name="doc.dir" value="doc" />
-  <property name="license.dir" value="${doc.dir}/licenses" />
-  <property name="project.lib" value="${thirdparty.lib}/lib" />
-  <property name="readme.dir" value="${doc.dir}/readme" />
-  <property name="release.notes.dir" value="${doc.dir}/releasenotes" />
-  <property name="release.notes.file" value="releasenotes.txt" />
-  <property name="scripts.dir=" value="scripts" />
-  <property name="server.dir" value="../pentaho-tomcat" />
-  <property name="tomcat.dir" value="../pentaho-tomcat" />
-  <property name="server.resource.dir" value="server/pentaho/res" />
-  <property name="server.src" value="server/pentaho/src" />
-  <property name="test.src" value="server/pentaho/test" />
-  <property name="thirdparty.lib" value="third-party" />
-  <property name="webapp.dir" value="server/pentaho/webapp" />
-  <property name="starthere.dir" value="${doc.dir}/start_here" />
-
-  <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
-  <property name="bi.platfrom.sample.data.dir" value="../bi-platform-sample-data" />
-  <property name="bi.platform.sample.solution.dir" value="../bi-platform-sample-solution" />
-  <property name="bi.platform.test.solution.dir" value="../bi-platform-solution" />
-
-  <!-- Build Directories -->
-  <property name="build.classes.dir" value="${stage.dir}/pentaho-classes" />
-  <property name="build.data.dir" value="${stage.dir}/pentaho-data" />
-  <property name="build.doc.dir" value="${stage.dir}/pentaho-doc" />
-  <property name="build.starthere.dir" value="${build.doc.dir}/start_here" />
-  <property name="build.ears.dir" value="${stage.dir}/pentaho-ears" />
-  <property name="build.jars.dir" value="${stage.dir}/pentaho-jars" />
-  <property name="build.res.dir" value="${stage.dir}/pentaho-res" />
-  <property name="build.scripts.dir" value="${stage.dir}/pentaho-scripts" />
-  <property name="build.servers.dir" value="${stage.dir}/pentaho-servers" />
-  <property name="build.third-party.dir" value="${stage.dir}/pentaho-third-party" />
-  <property name="build.wars.dir" value="${stage.dir}/pentaho-wars" />
-  <property name="build.webapp.dir" value="${stage.dir}/pentaho-webapp" />
-  <property name="build.zips.dir" value="${stage.dir}/pentaho-zips" />
-  <property name="build.solutions.dir" value="${stage.dir}/pentaho-solutions" />
-  <property name="clean.jboss.server.dir" value="${server.dir}" />
-  <property name="checksum.path" value="${build.wars.dir}" />
-
-  <!-- Compile Options -->
-  <property name="debug" value="true" />
-  <property name="optimize" value="false" />
-
-  <!-- RDBMS Properties -->
-  <property name="hsqldb.jdbc.port" value="9001" />
-  <property name="hsqldb.jdbc.host" value="localhost" />
-  <property name="hibernate.user" value="hibuser" />
-  <property name="hibernate.password" value="password" />
-  <property name="hibernate.cacheprovider" value="org.hibernate.cache.EhCacheProvider" />
-  <property name="hibernate.hbm.dir" value="${bi.platform.repository.dir}/res/hibernate"/>
-  <property name="mysql.jdbc.port" value="3306" />
-  <property name="mysql.jdbc.host" value="localhost" />
-  <property name="pentaho.user" value="pentaho_user" />
-  <property name="pentaho.password" value="password" />
-  <property name="pentaho.admin" value="pentaho_admin" />
-  <property name="pentahoadmin.password" value="password" />
-  <property name="mysql.driver.dir" value="" />
-  <property name="mysql.driver.name" value="" />
-
-  <!--Metadata.xml replacement properties -->
-  <property name="xpath.DATABASE_JDBC_URL"
-            value="/XMI/XMI.content/CWMRDB:Catalog/CWM:ModelElement.taggedValue/CWM:TaggedValue[@tag='DATABASE_JDBC_URL']/@value" />
-  <property name="xpath.DATABASE_TYPE"
-            value="/XMI/XMI.content/CWMRDB:Catalog/CWM:ModelElement.taggedValue/CWM:TaggedValue[@tag='DATABASE_TYPE']/@value" />
-  <property name="mysql.databaseType" value="MYSQL" />
-  <property name="mysql.databaseJdbcUrl"
-            value="jdbc:mysql:///SampleData?defaultFetchSize=500&amp;useCursorFetch=true" />
-  <property name="hsql.databaseType" value="HYPERSONIC" />
-  <property name="hsql.databaseJdbcUrl" value="jdbc:hsqldb:hsql://:/SampleData" />
-
+	
   <!-- project relative folder for jar files for xmltask external ant task -->
-  <property name="xmltask.jar" value="${lib.dir}/xmltask-v1.15.1.jar" />
   
   <!-- ========================================================================
-	CONDITIONS / TOP-LEVEL Elements
+	target: Clean-all / Clean-stage / Clean-dist / Clean-lib
 	
 	Please define conditions and other top-level elements at this level. What is 
 	a top-level element? To find out, use Eclipse's Outline mode and switch the 
@@ -153,22 +66,17 @@
     			pentaho.metadata.init" />
   
   <target name="init.stage.pentaho">
-    <mkdir dir="${stage.dir}" />
-    <mkdir dir="${web.dir}" />
-    <mkdir dir="${web.classes.dir}" />
-    <mkdir dir="${web.lib.dir}" />
-    <mkdir dir="${meta.dir}" />
+    <mkdir dir="${stage.win.dir}/lib"/>
+    <mkdir dir="${stage.nix.dir}/lib"/>  		
   </target>
 
   <!-- ================================= 
       target: stage-pentaho              
      ================================= -->
   <target name="stage-pentaho" depends="init.stage.pentaho" description="description">
-     <copy todir="${web.lib.dir}">
-      <fileset dir="${lib.dir}">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
+	   <copy todir="${win.dir}"><dirset dir="${tomcat.dir}"></dirset></copy>
+	   <copy todir="${win.dir}"><dirset dir="${jre.dir}"></dirset></copy>	   
+     <copy todir="${win.dir}/lib"><fileset dir="${lib.dir}"><include name="*.jar"/></fileset></copy>
 
     <manifest file="${meta.dir}/MANIFEST.MF">
       <attribute name="Implementation-Title" value="${impl.title}" />
@@ -176,7 +84,7 @@
       <attribute name="Implementation-Vendor" value="${impl.vendor}" />
     </manifest>
 
-    <copy todir="${stage.dir}">
+    <copy todir="${win.dir}">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
         <!-- TODO: the files we include depends on the app server, these are for Tomcat only -->
         <exclude name="**/WEB-INF/default-object.xml" />
@@ -185,17 +93,20 @@
         <exclude name="**/WEB-INF/jboss-web.xml" />
         <exclude name="**/WEB-INF/portlet-instances.xml" />
       </fileset>
-    </copy>
+    </copy>      	
   </target>
 
   <target name="dist.init">
     <mkdir dir="${dist.dir}" />
   </target>
+	
+	<target name="assemble.styles" depends="war-pentaho-style,war-sw-style" />
+
+	<target name="assemble" depends="assemble.styles,war-pentaho" />
 
   <target name="war-pentaho" depends="stage-pentaho,dist.init">
     <zip destfile="${dist.dir}/pentaho-${impl.version}.war" basedir="${stage.dir}" />
   </target>
-
 
   <target name="war-pentaho-style" depends="dist.init">
     <zip destfile="${dist.dir}/pentaho-style.war">
@@ -333,12 +244,12 @@
     <copy todir="${build.res.dir}/quartz/postgresql" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
   </target>
 
-  <!--
+  <!--================================================================================
 		This target modifies the pentaho-solutions/samples/metadata.xmi file by setting the
 		database connection properties to be consistent with either mysql or hsql,
 		depending on the "parameters" it is called with (parameters = databaseType,databaseJdbcUrl)
 		This task requires the properties databaseType and databaseJdbcUrl to be set
-	-->
+	  ==================================================================================-->
 
   <target name="pentaho.metadata.init">
     <mkdir dir="${build.solutions.dir}" />
@@ -388,17 +299,6 @@
         <include name="system/custom/template-home.html" />
       </fileset>
     </copy>
-    <!--
-		<replace file="${stage.dir}/pentaho-solutions/system/custom/template-home.html">
-		   <replacetoken><![CDATA[menu2.addItem("{portal}", "/portal/portal/pentaho/default");]]></replacetoken>
-		   <replacevalue><![CDATA[]]></replacevalue>
-		</replace>
-		
-		<replace file="${stage.dir}/pentaho-solutions/system/custom/template.html">
-		   <replacetoken><![CDATA[menu2.addItem("{portal}", "/portal/portal/pentaho/default");]]></replacetoken>
-		   <replacevalue><![CDATA[]]></replacevalue>
-		</replace>
-		-->
   </target>
 
   <!-- =================================
@@ -436,7 +336,7 @@
       <fileset dir="${data.dir}/postgresql" />
     </copy>
 
-    <copy todir="${build.data.dir}/hsqldb/lib" file="${bi.platform.staging.dir}/lib-runtime/hsqldb.jar" />
+    <copy todir="${build.data.dir}/hsqldb/lib" file="${lib.dir}/hsqldb.jar" />
 
     <!-- this is needed when running tests on linux -->
     <chmod file="${start.hsqldb.path}" perm="700" />
@@ -560,18 +460,6 @@
 
 
   <!-- ===================================================================
-      target: third party lib compressed package
-
-      Zip the third party lib directory.
-     =================================================================== -->
-  <target name="zip-pentaho-lib">
-    <zip destfile="${dist.dir}/pentaho_lib-${release.number}.zip">
-      <fileset dir="third-party" />
-      <fileset dir="${build.doc.dir}" />
-    </zip>
-  </target>
-
-  <!-- ===================================================================
       target: source compressed package
 
       Zip the src directory.
@@ -650,17 +538,16 @@
   <!-- =========================================================================
 		   target: package-all-pentaho-tomcat-pcis
 
-		   Create all the flavors of tomcat pcis.  zip/tar tomcat+hsqldb+mantle
-		   and zip/tar tomcat+mysql5+mantle.
+		   Create all the flavors of tomcat pcis.  zip/tar tomcat+hsqldb+mantle+oac
+		   and zip/tar tomcat+mysql5+mantle+oac.
 		 ======================================================================== -->
-
-  <target name="package-all-pentaho-tomcat-pcis"
+  <target name="package-all-pentaho-pcis"
           depends="zip-pentaho-tomcat-hsqldb-pci, zip-pentaho-tomcat-mysql5-pci, tar-pentaho-tomcat-hsqldb-pci, tar-pentaho-tomcat-mysql5-pci" />
 
   <!-- ============================================================
         target: zip-pentaho-tomcat-hsqldb-pci
 
-        Create a pentaho pci configured for tomcat and hsqldb.
+        Create a Windows-based pentaho pci configured for tomcat and hsqldb.
         pentaho.doc.init, pentaho.scripts.init
        ========================================================= -->
   <target name="zip-pentaho-tomcat-hsqldb-pci" depends="dist.init-dir, pentaho.metadata.init, pentaho.data.init">
@@ -671,9 +558,9 @@
   </target>
 
   <!-- ==============================================================
-        target: tar-pentaho-jboss-hsqldb-pci
+        target: tar-pentaho-tomcat-hsqldb-pci
 
-        Create a pentaho pci configured for tomcat and hsqldb.
+        Create a Unix-based pentaho pci configured for tomcat and hsqldb.
        ============================================================ -->
   <target name="tar-pentaho-tomcat-hsqldb-pci"
           depends="init.stage.pentaho, init-tomcat-solutions, pentaho.metadata.init, pentaho.data.init, pentaho.doc.init, pentaho.scripts.init">
@@ -684,9 +571,9 @@
   </target>
 
   <!-- ========================================================
-		  target: zip-pentaho-tomcat-rdms-pci
+		  target: zip-pentaho-tomcat-mysql5-pci
 
-		  Create a pentaho pci configured for tomcat and mysql.
+		  Create a Windows-based pentaho  pci configured for tomcat and mysql.
 		 ======================================================= -->
   <target name="zip-pentaho-tomcat-mysql5-pci"
           depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, pentaho.data.init, pentaho.doc.init, pentaho.scripts.init">
@@ -699,7 +586,7 @@
   <!-- =======================================================
 		  target: tar-pentaho-tomcat-rdms-pci
 
-		  Create a pentaho pci configured for tomcat and mysql.
+		  Create a Unix-based pentaho pci configured for tomcat and mysql.
 		 ======================================================== -->
   <target name="tar-pentaho-tomcat-mysql5-pci"
           depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, pentaho.data.init, pentaho.doc.init, pentaho.scripts.init">
@@ -710,40 +597,11 @@
   </target>
 
 
-  <target name="zip-pentaho-tomcat">
-    <zip destfile="${stage.dir}/pentaho_biserver_tomcat_${rdbms}-${release.number}.zip">
-      <!-- include third-party licenses -->
-      <!-- zipfileset dir="${thirdparty.lib}/licenses" prefix="pentaho-biserver/licenses" / -->
-      <!-- include tomcat -->
-      <zipfileset dir="${appserver.dir}" prefix="pentaho-biserver/tomcat" />
-      <!-- include the pentaho sample data -->
-      <zipfileset dir="${build.data.dir}/${rdbms}" prefix="pentaho-biserver/data" />
-      <!-- include all of the pentaho wars -->
-      <zipfileset dir="${build.wars.dir}/tomcat/${rdbms}/" prefix="pentaho-biserver/tomcat/webapps">
-        <include name="pentaho.war" />
-      </zipfileset>
-      <zipfileset dir="${build.wars.dir}" prefix="pentaho-biserver/tomcat/webapps">
-        <include name="tomcat/${rdbms}/pentaho.war" />
-        <include name="sw-style.war" />
-        <include name="pentaho-style.war" />
-      </zipfileset>
-      <!-- include the pentaho sample solutions -->
-      <zipfileset dir="${solutions.dir}" prefix="pentaho-biserver/pentaho-solutions">
-        <exclude name=".dummy" />
-        <exclude name=".project" />
-        <!-- exclude this. The build has modified it. Grab it from /build/pentaho-solutions -->
-        <exclude name="**/samples/metadata.xmi" />
-      </zipfileset>
-      <!-- grab the modified metadata.xmi -->
-      <zipfileset dir="${build.solutions.dir}/${rdbms}"
-                  fullpath="pentaho-biserver/pentaho-solutions/samples/metadata.xmi">
-        <include name="metadata_${rdbms}.xmi" />
-      </zipfileset>
-      <!-- include the start scripts -->
-      <zipfileset dir="./scripts/tomcat/${rdbms}" prefix="pentaho-biserver" excludes="**/*.sh" />
-      <zipfileset dir="${jre.dir}" prefix="pentaho-biserver/jre" />
-      <!-- zipfileset dir="${build.doc.dir}" prefix="pentaho-biserver" / -->
-    </zip>
+  <target name="prep-pentaho-tomcat" depends="init.stage.pentaho,stage-pentaho">
+	  <copy todir="${stage.win.dir}">
+			<dirset dir="${tomcat.dir}"/>
+			<dirset dir="${jre.dir}"/>
+		</copy>
   </target>
 
   <!-- =========================================================================
@@ -802,58 +660,6 @@
     <delete file="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" />
   </target>
 
-  <!-- ======================================================================
-        target: zip-pentaho-deployments
-
-        Zip the j2ee deployments package, which contains all files necessary
-        to build application archives for jboss and tomcat. If you download the
-        source, you do not need this package. Simply run the targets that are
-        already in this file to build pentaho application archives.
-       ===================================================================== -->
-  <target name="zip-pentaho-j2ee-deployments" depends="pentaho.third.party.init, pentaho.res.init, pentaho.doc.init">
-    <mkdir dir="${dist.dir}" />
-    <zip destfile="${dist.dir}/pentaho_j2ee_deployments-${release.number}.zip">
-      <!-- include third-party licenses -->
-      <zipfileset dir="${thirdparty.lib}/licenses" prefix="pentaho_j2ee_deployments/pentaho-third-party/licenses" />
-      <zipfileset dir="${build.third-party.dir}" prefix="pentaho_j2ee_deployments/pentaho-third-party" />
-      <!-- cglib, jaxen needed by tomcat -->
-      <zipfileset dir="${server.dir}/server/default/lib" prefix="pentaho_j2ee_deployments/pentaho-third-party">
-        <include name="cglib.jar" />
-        <include name="jaxen.jar" />
-      </zipfileset>
-      <!-- cacheException.class needed for jboss no-portal -->
-      <!-- zipfileset dir="${server.dir}/server/default/deploy/jboss-portal.sar/lib" prefix="pentaho_j2ee_deployments/pentaho-third-party">
-				<include name="ehcache.jar" />
-			</zipfileset -->
-      <zipfileset dir="${build.jars.dir}" prefix="pentaho_j2ee_deployments/pentaho-jars" />
-      <zipfileset dir="${build.classes.dir}" prefix="pentaho_j2ee_deployments/pentaho-classes" excludes="**/*.class">
-        <include name="**/locale/**" />
-      </zipfileset>
-      <zipfileset dir="${build.precompiled.dir}" prefix="pentaho_j2ee_deployments/pentaho-precompiled-jsps" />
-      <zipfileset dir="${build.doc.dir}" prefix="pentaho_j2ee_deployments/pentaho-doc" />
-      <zipfileset dir="${webapp.dir}" prefix="pentaho_j2ee_deployments/pentaho-webapp" />
-      <!-- make sure to include the files that have replacements -->
-      <zipfileset dir="${build.res.dir}" prefix="pentaho_j2ee_deployments/pentaho-res" />
-      <!-- include the rest of the resources -->
-      <zipfileset dir="${server.resource.dir}" prefix="pentaho_j2ee_deployments/pentaho-res">
-        <exclude name="**/ear/**" />
-        <exclude name="**/hibernate/**" />
-        <exclude name="**/jboss/**" />
-      </zipfileset>
-
-      <zipfileset dir="."
-                  includes="deployment_build.properties"
-                  fullpath="pentaho_j2ee_deployments/override.properties" />
-      <zipfileset dir="." includes="deployment_build.xml" fullpath="pentaho_j2ee_deployments/build.xml" />
-      <zipfileset dir="${server.src}/build-res" includes="version.properties" prefix="pentaho_j2ee_deployments" />
-      <zipfileset dir="."
-                  includes="excludejars.*, excludejars-noportal.jboss, build.properties"
-                  prefix="pentaho_j2ee_deployments" />
-    </zip>
-  </target>
-
-  <target name="assemble.styles" depends="war-pentaho-style,war-sw-style" />
-
-  <target name="assemble" depends="assemble.styles,resolve,war-pentaho" />
+  
 
 </project>
