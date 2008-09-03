@@ -58,6 +58,7 @@
 			    document.location.href=submitUrl;
 			    return false;
 			  }
+              
 			&lt;/script&gt;
 		</xsl:text>
 

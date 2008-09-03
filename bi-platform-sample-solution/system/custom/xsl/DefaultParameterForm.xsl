@@ -52,7 +52,7 @@
 	</xsl:template>
 
 	<xsl:template name="doSelections">
-		<table cellpadding="6" border="0">
+		<table cellpadding="8" border="0">
 			<tr></tr>
 			<xsl:for-each select="filter">
 				<xsl:call-template name="doFilter"></xsl:call-template>
@@ -66,7 +66,7 @@
             
             
 		    <tr>
-              <td class="portlet-font"  style="padding:0px" >
+              <td class="portlet-font"  style="padding:3px" >
                <table class="parameter_table" border="0" cellpadding="0" cellspacing="0">
                     <tbody><tr>
                        <td>
@@ -106,18 +106,25 @@
 							<xsl:attribute name="id">run3div<xsl:value-of select="/filters/id" /></xsl:attribute>
 							<table align="right">
 								<tr>
-									<td>
+									<td valign="top">
 										<input type="button" class="portlet-form-button">
 											<xsl:attribute name="value">Ok</xsl:attribute>
 											<xsl:attribute name="onClick">doRun("<xsl:value-of select="/filters/id" />", '<xsl:value-of select="/filters/action"/>', '<xsl:value-of select="/filters/target"/>', document.getElementById('run_as_background_yes').checked);</xsl:attribute>
 											<xsl:attribute name="id">run2button<xsl:value-of select="/filters/id" /></xsl:attribute>
 										</input>
+                                     </td>
+                                     <td valign="top">
                                         &#160;
-										<input type="button" class="portlet-form-button">
+										<input type="button" class="portlet-form-button"  id="cancelBtn" style="display:none">
 											<xsl:attribute name="value">Cancel</xsl:attribute>
 											<xsl:attribute name="onClick">closeMantleTab()</xsl:attribute>
-											<xsl:attribute name="id">run2button<xsl:value-of select="/filters/id" /></xsl:attribute>
 										</input>
+                                        <script type="text/javascript">                
+                                                //show cancel when under mantle
+                                              if(window.parent.mantle_initialized == true){
+                                                    document.getElementById("cancelBtn").style.display="inline";
+                                              }
+                                        </script>
 									</td>
 								</tr>
 							</table>

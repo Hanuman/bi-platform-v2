@@ -111,7 +111,7 @@
 
 	<xsl:template name="doFilter">
 		
-		<tr><td style="padding:0;">
+		<tr><td style="padding:3px;">
         <table class="parameter_table" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td>
