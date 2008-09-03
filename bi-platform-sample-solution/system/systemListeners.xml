@@ -28,8 +28,9 @@ VersionCheckSystemListener.
 						<value>false</value>
 					</property>
 				</bean>
- 			<bean id="pooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener"/>
- 			<!-- <bean id="nonPooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/> -->	
+ 				<bean id="pooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener"/>
+ 				<!-- <bean id="nonPooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/> -->
+ 				<!-- Insert system-listeners -->	
 			</list>
 		</constructor-arg>
 	</bean>
