@@ -98,9 +98,11 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
+import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.color.ColorSettings;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
@@ -626,22 +628,76 @@ public class AdhocWebService extends ServletBase {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
     }
     
-    double columnWidthScaleFactor = 1.0;
-    boolean columnWidthUnitsConsistent = AdhocWebService.areMetadataColumnUnitsConsistent( reportSpec, model );
-    if ( !columnWidthUnitsConsistent ) {
-      logger.error( Messages.getErrorString( "AdhocWebService.ERROR_0013_INCONSISTENT_COLUMN_WIDTH_UNITS") ); //$NON-NLS-1$
-    } else {
-      int columnWidthSumOfPercents = AdhocWebService.getSumOfMetadatColumnWidths( reportSpec, model );
-      if ( columnWidthSumOfPercents > 100 ) {
-        columnWidthScaleFactor = 100.0 / (double)columnWidthSumOfPercents;
-      }
-    }
+    // ========== begin column width stuff
+    
+    // make copies of the business columns; in the next step we're going to fill out any missing column widths
+    BusinessColumn[] columns = new BusinessColumn[reportSpec.getField().length]; 
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
       BusinessColumn column = model.findBusinessColumn(name);
+      columns[i] = (BusinessColumn) column.clone();
+    }
+    
+    boolean columnWidthUnitsConsistent = AdhocWebService.areMetadataColumnUnitsConsistent( reportSpec, model );
+
+    if ( !columnWidthUnitsConsistent ) {
+      logger.error( Messages.getErrorString( "AdhocWebService.ERROR_0013_INCONSISTENT_COLUMN_WIDTH_UNITS") ); //$NON-NLS-1$
+    } else {
+      double columnWidthScaleFactor = 1.0;
+      int missingColumnWidthCount = 0;
+      int columnWidthSumOfPercents;
+      double defaultWidth;
+      columnWidthSumOfPercents = AdhocWebService.getSumOfMetadataColumnWidths( reportSpec, model );
+      missingColumnWidthCount = AdhocWebService.getMissingColumnWidthCount(reportSpec, model);
       
-      AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent, columnWidthScaleFactor );
+      // if there are columns with no column width specified, figure out what percent we should use for them
+      if (missingColumnWidthCount > 0) {
+        if (columnWidthSumOfPercents < 100) {
+          int remainingPercent = 100 - columnWidthSumOfPercents;
+          defaultWidth = remainingPercent / missingColumnWidthCount;
+          columnWidthSumOfPercents = 100;
+        } else {
+          defaultWidth = 10;
+          columnWidthSumOfPercents += (missingColumnWidthCount * 10);
+        }
+        
+        
+        // fill in columns without column widths
+        for (int i = 0; i < columns.length; i++) {
+          ConceptInterface metadataConcept = columns[i].getConcept();
+          ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+          if (property == null) {
+            ConceptPropertyInterface newProperty = DefaultPropertyID.getDefaultEmptyProperty(ConceptPropertyType.COLUMN_WIDTH, DefaultPropertyID.COLUMN_WIDTH.getId()); 
+            newProperty.setValue(new ColumnWidth(ColumnWidth.TYPE_WIDTH_PERCENT, defaultWidth));
+            metadataConcept.addProperty(newProperty);
+          }
+        }
+      }
+      
+      if (columnWidthSumOfPercents > 100) {
+        columnWidthScaleFactor = 100.0 / (double)columnWidthSumOfPercents;
+      }
+      
+      // now scale down if necessary
+      if (columnWidthScaleFactor < 1.0) {
+        for (int i = 0; i < columns.length; i++) {
+          ConceptInterface metadataConcept = columns[i].getConcept();
+          ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+          ((ColumnWidth) property.getValue()).setWidth(new BigDecimal(columnWidthScaleFactor * ((ColumnWidth) property.getValue()).getWidth().doubleValue()));
+        }
+      }
+      
+    }
+    
+    // ========== end column width stuff
+    
+    for (int i = 0; i < reportSpec.getField().length; i++) {
+      Field field = reportSpec.getField()[i];
+      String name = field.getName();
+      BusinessColumn column = columns[i];
+      
+      AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent);
       
       // Template properties have the lowest priority, merge them last
       if (bUseTemplate) {
@@ -743,7 +799,7 @@ public class AdhocWebService extends ServletBase {
     PERCENT_SET = Collections.unmodifiableSet( tmp );
   }
   
-  private static int getSumOfMetadatColumnWidths( ReportSpec reportSpec, BusinessModel model ) {
+  private static int getSumOfMetadataColumnWidths( ReportSpec reportSpec, BusinessModel model ) {
     int sum = 0;
     
     for (int i = 0; i < reportSpec.getField().length; i++) {
@@ -761,6 +817,28 @@ public class AdhocWebService extends ServletBase {
 
     return sum;
   }
+  
+  /**
+   * Returns the number of columns for which no column width is specified.
+   */
+  private static int getMissingColumnWidthCount( ReportSpec reportSpec, BusinessModel model ) {
+    int count = 0;
+    
+    for (int i = 0; i < reportSpec.getField().length; i++) {
+      Field field = reportSpec.getField()[i];
+      String name = field.getName();
+      BusinessColumn column = model.findBusinessColumn(name);
+      ConceptInterface metadataConcept = column.getConcept();
+
+      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      if ( property == null) {
+        count += 1;
+      }
+    }
+
+    return count;
+  }
+  
   /**
    * columnWidth properties for the specified reportspec are valid if units 
    * for column widths for all columns in the reportspec are one of:
@@ -801,7 +879,7 @@ public class AdhocWebService extends ServletBase {
    * @param columnWidthUnitsConsistent this value should always be the result of a call to areMetadataColumnUnitsConsistent()
    */
   private static void applyMetadata( final Field field, final BusinessColumn column, 
-      boolean columnWidthUnitsConsistent, double columnWidthScaleFactor ) {
+      boolean columnWidthUnitsConsistent ) {
     ConceptInterface metadataConcept = column.getConcept();
 
     if ( columnWidthUnitsConsistent ) {
@@ -809,9 +887,6 @@ public class AdhocWebService extends ServletBase {
       ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property != null) {
         double width = ((ColumnWidth)property.getValue()).getWidth().doubleValue();
-        if ( 1.0 != columnWidthScaleFactor ) {
-          width *= columnWidthScaleFactor;
-        }
         field.setWidth( new BigDecimal( width ) );
         field.setIsWidthPercent( ((ColumnWidth)property.getValue()).getType() == ColumnWidth.TYPE_WIDTH_PERCENT );
         field.setWidthLocked( true );
