@@ -21,8 +21,9 @@
   <property name="target-pentaho-war" location="${tomcat-pci}/tomcat/webapps/pentaho" />
   <property name="target-sw-style-war" location="${tomcat-pci}/tomcat/webapps/sw-style" />
   <property name="target-pentaho-style-war" location="${tomcat-pci}/tomcat/webapps/pentaho-style" />
+  <property name="bi-platform-assembly-open-dir" location="../bi-platform-assembly-open" />
 
-
+  
   <tstamp>
     <format property="current.date" pattern="yyyyMMdd-hh:mma" locale="en" />
   </tstamp>
@@ -83,8 +84,8 @@
         <exclude name="**/quartz-oracle-1.5.2.jar" />
         <exclude name="**/pentaho-bi-*.jar" />
         <exclude name="**/servlet-api.jar" />
-        <excludesfile name="excludejars.jboss" />
-        <excludesfile name="excludejars.generic" />
+        <exclude name="**/excludejars.jboss" />
+        <exclude name="**/excludejars.generic" />
       </fileset>
     </copy>
 
