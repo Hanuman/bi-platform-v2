@@ -231,7 +231,9 @@
       <value>
         <![CDATA[
 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-\A/mantleLogin/.*\Z=Anonymous,Authenticated
+\A/mantlelogin/.*\Z=Anonymous,Authenticated
+\A/mantle/mantleloginservice/*\Z=Anonymous,Authenticated
+\A/mantle/.*\Z=Authenticated
 \A/welcome/.*\Z=Anonymous,Authenticated
 \A/public/.*\Z=Anonymous,Authenticated
 \A/login.*\Z=Anonymous,Authenticated
