@@ -7,7 +7,7 @@
   
   See common_build.xml for more details
 ============================================================================-->
-<project name="assembly" basedir="." default="package-all-pentaho-pcis" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="assembly" basedir="." default="assemble" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<description>
 	  This build file is used to create the Util project
