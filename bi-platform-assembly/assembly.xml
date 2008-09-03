@@ -26,16 +26,17 @@
 	<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
 	<property name="stage.dir.server" value="${basedir}/stage/win-bi-server" />
 	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
-	<property name="stage.webdir.classes" value="${stage.dir.server}/WEB-INF/classes" />
 	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
-	<property name="prep.pentaho.war.dir" value="${stage.dir.server}/pentaho.war" />
 	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
 	<property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
+	<property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
+	<property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
 	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
 	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
 	<property name="sample.solution.dir" value="../bi-platform-sample-solution" />
 	<property name="sample.data.dir" value="../bi-platform-sample-data" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
+	<property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
 
 	<!-- =================================================================================
 	     "Wapper" target section: This section is set aside for the creation of those 
@@ -44,7 +45,7 @@
 	     create a wrapper target here, and set your dependencies as appropriate. -ejh
 	     =================================================================================-->
 
-	<target name="assemble.styles" depends="war-pentaho-style,war-sw-style" />
+	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
 	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,init-tomcat-solutions,init-pentaho-data" />
 
@@ -88,11 +89,33 @@
 	<target name="init.stage.pentaho">
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${lib.dir}" />
-		<mkdir dir="${stage.dir.server}/lib" />
+		<mkdir dir="${oac.dir}" />
 		<mkdir dir="${stage.dir.server}/tomcat" />
 		<mkdir dir="${stage.dir.server}/jre" />
-		<mkdir dir="${stage.webdir.server}/classes" />
 		<mkdir dir="${prep.pentaho.war.dir}" />
+		<mkdir dir="${container.deploy.dir}" />
+	</target>
+
+	<!-- ===================================================================
+				 target: prep-pentaho-style			         
+				 =================================================================== -->
+	<target name="prep-pentaho-style" depends="init.stage.pentaho">
+		<copy todir="${container.deploy.dir}/pentaho-style">
+			<fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ===================================================================
+				 target: prep-sw-style (steel wheel)			         
+				 =================================================================== -->
+	<target name="prep-sw-style" depends="init.stage.pentaho">
+		<copy todir="${container.deploy.dir}/pentaho-style">
+			<fileset dir="${bi.platform.appserver.dir}/webapps/sw-style">
+				<include name="**/**" />
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- ===================================================================
@@ -104,123 +127,179 @@
      =================================================================== -->
 
 	<target name="prep-pentaho-tomcat" depends="init.stage.pentaho">
+		<sequential>
 
-		<!-- Copy pure tomcat 5.5.26 -->
-		<copy todir="${stage.dir.server}/tomcat">
-			<fileset dir="${tomcat.dir}">
-				<exclude name="webapps/balancer/**" />
-				<exclude name="webapps/jsp-examples/**" />
-				<exclude name="webapps/examples/**" />
-				<exclude name="webapps/servlets-examples/**" />
-				<exclude name="webapps/tomcat-docs/**" />
-				<exclude name="webapps/docs/**" />
-				<exclude name="webapps/webdav/**" />
-				<exclude name="webapps/ROOT/WEB-INF/lib/*" />
+			<!-- Copy pure tomcat 5.5.26 -->
+			<copy todir="${stage.dir.server}/tomcat">
+				<fileset dir="${tomcat.dir}">
+					<exclude name="webapps/balancer/**" />
+					<exclude name="webapps/jsp-examples/**" />
+					<exclude name="webapps/examples/**" />
+					<exclude name="webapps/servlets-examples/**" />
+					<exclude name="webapps/tomcat-docs/**" />
+					<exclude name="webapps/docs/**" />
+					<exclude name="webapps/webdav/**" />
+					<exclude name="webapps/ROOT/WEB-INF/lib/*" />
+				</fileset>
+			</copy>
+
+			<!-- Copy required jars to common/lib -->
+			<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
+			<copy todir="${stage.dir.server}/tomcat/common/lib">
+				<fileset dir="${lib.dir}">
+					<include name="hsqldb-*.jar" />
+					<include name="mysql-connector-*.jar" />
+					<include name="postgresql*.jar" />
+					<include name="jasper*.jar" />
+					<include name="naming*.jar" />
+					<include name="commons-el.jar" />
+					<include name="jsp-api.jar" />
+				</fileset>
+			</copy>
+
+			<!-- Add jre -->
+			<copy todir="${stage.dir.server}/jre">
+				<fileset dir="${jre.dir}">
+				</fileset>
+			</copy>
+
+			<!-- Add general libs -->
+			<copy todir="${prep.pentaho.war.lib.dir}">
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</copy>
+
+			<!-- Add hibernate files -->
+			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
+				<fileset dir="${hibernate.hbm.dir}">
+					<include name="*.hbm.xml" />
+				</fileset>
+			</copy>
+
+			<!-- Add manifest -->
+			<mkdir dir="${prep.pentaho.war.dir}/META-INF" />
+			<manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
+				<attribute name="Implementation-Title" value="${impl.title}" />
+				<attribute name="Implementation-Version" value="${impl.version}" />
+				<attribute name="Implementation-Vendor" value="${impl.vendor}" />
+			</manifest>
+
+			<!-- Add rdbms context -->
+			<copy file="${bi.platform.appserver.dir}/tomcat/res/datasources/${rdbms}/context.xml" todir="${prep.pentaho.war.dir}/META-INF" />
+
+			<!-- Add the Pentaho webapp -->
+			<copy todir="${prep.pentaho.war.dir}">
+				<fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
+					<exclude name="**/WEB-INF/default-object.xml" />
+					<exclude name="**/WEB-INF/jboss-app.xml" />
+					<exclude name="**/WEB-INF/jboss-portlet.xml" />
+					<exclude name="**/WEB-INF/jboss-web.xml" />
+					<exclude name="**/WEB-INF/portlet-instances.xml" />
+				</fileset>
+			</copy>
+
+			<copy todir="${prep.pentaho.war.dir}/WEB-INF/lib">
+				<!-- get all pentaho jars from the build process -->
+				<fileset dir="${lib.dir}">
+					<include name="bi-platform*.jar" />
+				</fileset>
+			</copy>
+
+			<!-- Add scripts to appropriate locations -->
+			<copy todir="${stage.dir.server}/tomcat/bin">
+				<fileset dir="scripts/tomcat">
+					<include name="*.bat" />
+				</fileset>
+			</copy>
+			<copy todir="${stage.dir.server}">
+				<fileset dir="scripts/tomcat/hsqldb">
+					<include name="**" />
+				</fileset>
+			</copy>
+
+			<!-- Add additional Pentaho resources -->
+			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
+				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
+				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
+				<fileset dir="${bi.platform.util.dir}/res/log4j" />
+				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
+			</copy>
+
+			<!-- Add licenses -->
+			<copy todir="${stage.dir.server}/licenses">
+				<fileset dir="licenses">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+
+			<!-- Copy style and steel wheel wars to webapps -->
+			<copy todir="${container.deploy.dir}/">
+				<fileset dir="${dist.dir}">
+					<include name="*.war" />
+				</fileset>
+			</copy>
+		</sequential>
+	</target>
+
+	<!--====================================================
+			target: init-tomcat-solutions
+			===================================================== -->
+
+	<target name="init-tomcat-solutions">
+		<mkdir dir="${stage.dir.server}/pentaho-solutions/tmp" />
+		<copy todir="${stage.dir.server}/pentaho-solutions">
+			<fileset dir="${sample.solution.dir}">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =================================
+	        target: init-pentaho-data
+	  ================================= -->
+
+	<target name="init-pentaho-data">
+
+		<mkdir dir="${stage.data.dir}" />
+
+		<copy todir="${stage.data.dir}">
+			<fileset dir="${sample.data.dir}">
+				<exclude name=".project" />
+				<exclude name="**/mysql5/**" />
+				<exclude name="**/oracle10g/**" />
+				<exclude name="**/postgresql/**" />
 			</fileset>
 		</copy>
 
-		<!-- Copy required jars to common/lib -->
-		<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
-		<copy todir="${stage.dir.server}/tomcat/common/lib">
+		<mkdir dir="${stage.data.dir}/mysql5" />
+		<copy todir="${stage.data.dir}/mysql5">
+			<fileset dir="${sample.data.dir}/mysql5" />
+		</copy>
+
+		<mkdir dir="${stage.data.dir}/oracle10g" />
+		<copy todir="${stage.data.dir}/oracle10g">
+			<fileset dir="${sample.data.dir}/oracle10g" />
+		</copy>
+
+		<mkdir dir="${stage.data.dir}/postgresql" />
+		<copy todir="${stage.data.dir}/postgresql">
+			<fileset dir="${sample.data.dir}/postgresql" />
+		</copy>
+
+		<copy todir="${stage.data.dir}/lib">
 			<fileset dir="${lib.dir}">
 				<include name="hsqldb-*.jar" />
-				<include name="mysql-connector-*.jar" />
-				<include name="postgresql*.jar" />
 			</fileset>
 		</copy>
 
-		<!-- Add jre -->
-		<copy todir="${stage.dir.server}/jre">
-			<fileset dir="${jre.dir}">
-			</fileset>
-		</copy>
+		<!-- this is needed when running tests on linux -->
+		<chmod file="${start.hsqldb.path}" perm="700" />
+		<chmod file="${stop.hsqldb.path}" perm="700" />
+	</target>
 
-		<!-- Add general libs -->
-		<copy todir="${stage.dir.server}/lib">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
 
-		<!-- Add hibernate files -->
-		<copy todir="${stage.webdir.classes}">
-			<fileset dir="${hibernate.hbm.dir}">
-				<include name="*.hbm.xml" />
-			</fileset>
-		</copy>
-
-		<!-- Add manifest -->
-		<mkdir dir="${prep.pentaho.war.dir}/META-INF" />
-		<manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
-			<attribute name="Implementation-Title" value="${impl.title}" />
-			<attribute name="Implementation-Version" value="${impl.version}" />
-			<attribute name="Implementation-Vendor" value="${impl.vendor}" />
-		</manifest>
-
-		<!-- Add rdbms context -->
-		<copy file="${bi.platform.appserver.dir}/tomcat/res/datasources/${rdbms}/context.xml" todir="${prep.pentaho.war.dir}/META-INF" />
-
-		<!-- Add the Pentaho webapp -->
-		<copy todir="${prep.pentaho.war.dir}">
-			<fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
-				<exclude name="**/WEB-INF/default-object.xml" />
-				<exclude name="**/WEB-INF/jboss-app.xml" />
-				<exclude name="**/WEB-INF/jboss-portlet.xml" />
-				<exclude name="**/WEB-INF/jboss-web.xml" />
-				<exclude name="**/WEB-INF/portlet-instances.xml" />
-			</fileset>
-		</copy>
-
-		<copy todir="${prep.pentaho.war.dir}/WEB-INF/lib">
-			<!-- get all pentaho jars from the build process -->
-			<fileset dir="${lib.dir}">
-				<include name="bi-platform*.jar" />
-			</fileset>
-		</copy>
-
-		<!-- Add additional Pentaho resources -->
-		<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
-			<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
-			<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
-			<fileset dir="${bi.platform.util.dir}/res/log4j" />
-			<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
-		</copy>
-
-		<!-- Add licenses -->
-		<copy todir="${prep.pentaho.war.dir}/licenses">
-			<fileset dir="licenses">
-			  <include name="**/**" />
-		  </fileset>
-	  </copy>
-		
-		<!-- Copy style and steel wheel wars to webapps -->
-		<copy todir="${stage.dir.server}/tomcat/webapps">
-			<fileset dir="${dist.dir}">
-				<include name="*.war" />
-			</fileset>
-		</copy>
-
-</target>
-
-<!-- ===================================================================
-			 target: war-pentaho-style			         
-			 =================================================================== -->
-<target name="war-pentaho-style" depends="init.stage.pentaho">
-	<zip destfile="${dist.dir}/pentaho-style.war">
-		<zipfileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style" />
-	</zip>
-</target>
-
-<!-- ===================================================================
-			 target: war-sw-style (steel wheel)			         
-			 =================================================================== -->
-<target name="war-sw-style" depends="init.stage.pentaho">
-	<zip destfile="${dist.dir}/sw-style.war">
-		<zipfileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
-	</zip>
-</target>
-
-<!-- ===================================================================
+	<!-- ===================================================================
 		 target: init-third-party
 		 
 		 Description:
@@ -228,29 +307,29 @@
 		 - Copies and flattens ${project.lib}
 		         
 		 =================================================================== -->
-<target name="pentaho.third.party.init">
-	<mkdir dir="${build.third-party.dir}" />
+	<target name="pentaho.third.party.init">
+		<mkdir dir="${build.third-party.dir}" />
 
-	<copy todir="${build.third-party.dir}" flatten="true" includeEmptyDirs="false" overwrite="true">
-		<fileset dir="${project.lib}" includes="**/*.jar">
-			<!-- exclude name="**/portal-core-lib.jar" />
+		<copy todir="${build.third-party.dir}" flatten="true" includeEmptyDirs="false" overwrite="true">
+			<fileset dir="${project.lib}" includes="**/*.jar">
+				<!-- exclude name="**/portal-core-lib.jar" />
 				<exclude name="**/portal-portlet-lib.jar" />
 				<exclude name="**/portal-security-lib.jar" / -->
-		</fileset>
-	</copy>
-</target>
+			</fileset>
+		</copy>
+	</target>
 
-<target name="tomcat.libs.init" depends="pentaho.third.party.init">
-	<!-- cglib, jaxen needed by tomcat -->
-	<copy todir="${build.third-party.dir}">
-		<fileset dir="${server.dir}/server/default/lib">
-			<include name="cglib.jar" />
-			<include name="jaxen.jar" />
-		</fileset>
-	</copy>
-</target>
+	<target name="tomcat.libs.init" depends="pentaho.third.party.init">
+		<!-- cglib, jaxen needed by tomcat -->
+		<copy todir="${build.third-party.dir}">
+			<fileset dir="${server.dir}/server/default/lib">
+				<include name="cglib.jar" />
+				<include name="jaxen.jar" />
+			</fileset>
+		</copy>
+	</target>
 
-<!-- ===================================================================
+	<!-- ===================================================================
       target: init-pentaho-res
 
       Description:
@@ -258,455 +337,391 @@
       - Copies resources to ${build.res.dir}, which will have replacements
         made during the build.             
      =================================================================== -->
-<target name="pentaho.res.init">
+	<target name="pentaho.res.init">
 
-	<mkdir dir="${build.res.dir}" />
+		<mkdir dir="${build.res.dir}" />
 
-	<!-- copy hibernate resources and such (except hsqldb) -->
-	<copy todir="${build.res.dir}" overwrite="true">
-		<fileset dir="${server.resource.dir}">
-			<include name="**/hibernate/**" />
-			<include name="**/jboss/**" />
-			<include name="**/ear/**" />
-		</fileset>
-	</copy>
+		<!-- copy hibernate resources and such (except hsqldb) -->
+		<copy todir="${build.res.dir}" overwrite="true">
+			<fileset dir="${server.resource.dir}">
+				<include name="**/hibernate/**" />
+				<include name="**/jboss/**" />
+				<include name="**/ear/**" />
+			</fileset>
+		</copy>
 
-	<!-- copy the hsqldb stuff from src -->
-	<copy todir="${build.res.dir}/hibernate/hsqldb" overwrite="true">
-		<fileset dir="${server.src}">
-			<include name="**/org/pentaho/repository/*.xml" />
-			<include name="**/org/pentaho/repository/content/*.xml" />
-			<include name="**/org/pentaho/repository/runtime/*.xml" />
-			<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-			<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-			<include name="**/com/pentaho/repository/subscribe/*.xml" />
-		</fileset>
-	</copy>
+		<!-- copy the hsqldb stuff from src -->
+		<copy todir="${build.res.dir}/hibernate/hsqldb" overwrite="true">
+			<fileset dir="${server.src}">
+				<include name="**/org/pentaho/repository/*.xml" />
+				<include name="**/org/pentaho/repository/content/*.xml" />
+				<include name="**/org/pentaho/repository/runtime/*.xml" />
+				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
+				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
+				<include name="**/com/pentaho/repository/subscribe/*.xml" />
+			</fileset>
+		</copy>
 
-	<!--
+		<!--
 			Some resources that live in the source (for hsqldb) need to also
 			be included with rdbms resources. So copy them, but don't overwrite
 			the rdbms specific files
 		-->
-	<copy todir="${build.res.dir}/hibernate/mysql5">
-		<fileset dir="${server.src}">
-			<include name="**/org/pentaho/repository/*.xml" />
-			<include name="**/org/pentaho/repository/content/*.xml" />
-			<include name="**/org/pentaho/repository/runtime/*.xml" />
-			<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-			<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-			<include name="**/com/pentaho/repository/subscribe/*.xml" />
-		</fileset>
-	</copy>
+		<copy todir="${build.res.dir}/hibernate/mysql5">
+			<fileset dir="${server.src}">
+				<include name="**/org/pentaho/repository/*.xml" />
+				<include name="**/org/pentaho/repository/content/*.xml" />
+				<include name="**/org/pentaho/repository/runtime/*.xml" />
+				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
+				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
+				<include name="**/com/pentaho/repository/subscribe/*.xml" />
+			</fileset>
+		</copy>
 
-	<!--
+		<!--
 			Some resources that live in the source (for hsqldb) need to also
 			be included with rdbms resources. So copy them, but don't overwrite
 			the rdbms specific files.
 		-->
-	<copy todir="${build.res.dir}/hibernate/postgresql">
-		<fileset dir="${server.src}">
-			<include name="**/org/pentaho/repository/*.xml" />
-			<include name="**/org/pentaho/repository/content/*.xml" />
-			<include name="**/org/pentaho/repository/runtime/*.xml" />
-			<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-			<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-			<include name="**/com/pentaho/repository/subscribe/*.xml" />
-		</fileset>
-	</copy>
+		<copy todir="${build.res.dir}/hibernate/postgresql">
+			<fileset dir="${server.src}">
+				<include name="**/org/pentaho/repository/*.xml" />
+				<include name="**/org/pentaho/repository/content/*.xml" />
+				<include name="**/org/pentaho/repository/runtime/*.xml" />
+				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
+				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
+				<include name="**/com/pentaho/repository/subscribe/*.xml" />
+			</fileset>
+		</copy>
 
-	<!--
+		<!--
 			Some resources that live in the source (for hsqldb) need to also
 			be included with rdbms resources. So copy them, but don't overwrite
 			the rdbms specific files.
 		-->
-	<copy todir="${build.res.dir}/hibernate/oracle10g">
-		<fileset dir="${server.src}">
-			<include name="**/org/pentaho/repository/*.xml" />
-			<include name="**/org/pentaho/repository/content/*.xml" />
-			<include name="**/org/pentaho/repository/runtime/*.xml" />
-			<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-			<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-			<include name="**/com/pentaho/repository/subscribe/*.xml" />
-		</fileset>
-	</copy>
+		<copy todir="${build.res.dir}/hibernate/oracle10g">
+			<fileset dir="${server.src}">
+				<include name="**/org/pentaho/repository/*.xml" />
+				<include name="**/org/pentaho/repository/content/*.xml" />
+				<include name="**/org/pentaho/repository/runtime/*.xml" />
+				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
+				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
+				<include name="**/com/pentaho/repository/subscribe/*.xml" />
+			</fileset>
+		</copy>
 
-	<!-- quartz jar is different for oracle. make build.res.dir equal for all dbs, so war targets can be reused -->
-	<mkdir dir="${build.res.dir}/quartz" />
-	<mkdir dir="${build.res.dir}/quartz/hsqldb" />
-	<mkdir dir="${build.res.dir}/quartz/mysql5" />
-	<mkdir dir="${build.res.dir}/quartz/oracle10g" />
-	<mkdir dir="${build.res.dir}/quartz/postgresql" />
+		<!-- quartz jar is different for oracle. make build.res.dir equal for all dbs, so war targets can be reused -->
+		<mkdir dir="${build.res.dir}/quartz" />
+		<mkdir dir="${build.res.dir}/quartz/hsqldb" />
+		<mkdir dir="${build.res.dir}/quartz/mysql5" />
+		<mkdir dir="${build.res.dir}/quartz/oracle10g" />
+		<mkdir dir="${build.res.dir}/quartz/postgresql" />
 
-	<copy todir="${build.res.dir}/quartz/hsqldb" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
-	<copy todir="${build.res.dir}/quartz/mysql5" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
-	<copy todir="${build.res.dir}/quartz/oracle10g" file="${thirdparty.lib}/lib/quartz/quartz-oracle-1.5.2.jar" />
-	<copy todir="${build.res.dir}/quartz/postgresql" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
-</target>
+		<copy todir="${build.res.dir}/quartz/hsqldb" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
+		<copy todir="${build.res.dir}/quartz/mysql5" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
+		<copy todir="${build.res.dir}/quartz/oracle10g" file="${thirdparty.lib}/lib/quartz/quartz-oracle-1.5.2.jar" />
+		<copy todir="${build.res.dir}/quartz/postgresql" file="${thirdparty.lib}/lib/quartz/quartz-1.5.2.jar" />
+	</target>
 
-<!--================================================================================
+	<!--================================================================================
 		This target modifies the pentaho-solutions/samples/metadata.xmi file by setting the
 		database connection properties to be consistent with either mysql or hsql,
 		depending on the "parameters" it is called with (parameters = databaseType,databaseJdbcUrl)
 		This task requires the properties databaseType and databaseJdbcUrl to be set
 	  ==================================================================================-->
 
-<target name="pentaho.metadata.init">
-	<mkdir dir="${build.solutions.dir}" />
-	<mkdir dir="${build.solutions.dir}/hsqldb" />
-	<mkdir dir="${build.solutions.dir}/mysql5" />
-	<mkdir dir="${build.solutions.dir}/oracle10g" />
-	<mkdir dir="${build.solutions.dir}/postgresql" />
+	<target name="pentaho.metadata.init">
+		<mkdir dir="${build.solutions.dir}" />
+		<mkdir dir="${build.solutions.dir}/hsqldb" />
+		<mkdir dir="${build.solutions.dir}/mysql5" />
+		<mkdir dir="${build.solutions.dir}/oracle10g" />
+		<mkdir dir="${build.solutions.dir}/postgresql" />
 
-	<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/hsqldb/metadata_hsqldb.xmi'>
-		<replace path='${xpath.DATABASE_JDBC_URL}' withText='HYPERSONIC' />
-		<replace path='${xpath.DATABASE_TYPE}' withText='HYPERSONIC' />
-	</xmltask>
+		<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/hsqldb/metadata_hsqldb.xmi'>
+			<replace path='${xpath.DATABASE_JDBC_URL}' withText='HYPERSONIC' />
+			<replace path='${xpath.DATABASE_TYPE}' withText='HYPERSONIC' />
+		</xmltask>
 
-	<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/mysql5/metadata_mysql5.xmi'>
-		<replace path='${xpath.DATABASE_JDBC_URL}' withText='MYSQL' />
-		<replace path='${xpath.DATABASE_TYPE}' withText='MYSQL' />
-	</xmltask>
+		<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/mysql5/metadata_mysql5.xmi'>
+			<replace path='${xpath.DATABASE_JDBC_URL}' withText='MYSQL' />
+			<replace path='${xpath.DATABASE_TYPE}' withText='MYSQL' />
+		</xmltask>
 
-	<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/oracle10g/metadata_oracle10g.xmi'>
-		<replace path='${xpath.DATABASE_JDBC_URL}' withText='ORACLE' />
-		<replace path='${xpath.DATABASE_TYPE}' withText='ORACLE' />
-	</xmltask>
+		<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/oracle10g/metadata_oracle10g.xmi'>
+			<replace path='${xpath.DATABASE_JDBC_URL}' withText='ORACLE' />
+			<replace path='${xpath.DATABASE_TYPE}' withText='ORACLE' />
+		</xmltask>
 
-	<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/postgresql/metadata_postgresql.xmi'>
-		<replace path='${xpath.DATABASE_JDBC_URL}' withText='POSTGRESQL' />
-		<replace path='${xpath.DATABASE_TYPE}' withText='POSTGRESQL' />
-	</xmltask>
+		<xmltask source='${solutions.dir}/samples/metadata.xmi' dest='${build.solutions.dir}/postgresql/metadata_postgresql.xmi'>
+			<replace path='${xpath.DATABASE_JDBC_URL}' withText='POSTGRESQL' />
+			<replace path='${xpath.DATABASE_TYPE}' withText='POSTGRESQL' />
+		</xmltask>
 
-</target>
+	</target>
 
-<!--====================================================
-		target: init-tomcat-solutions
-		
-		Description:
-		Some solution files are different for tomcat, than jboss.
-		For example, tomcat does not need the portal menu items.
-		
-		===================================================== -->
 
-<target name="init-tomcat-solutions">
-	<mkdir dir="${stage.dir.server}/pentaho-solutions" />
-	<copy todir="${stage.dir.server}/pentaho-solutions">
-		<fileset dir="${sample.solution.dir}">
-			<include name="**/**" />
-		</fileset>
-	</copy>
-</target>
 
-<!-- =================================
-        target: init-pentaho-hsqldb
-
-        Initialize the sample hsqldb data.
-        
-       ================================= -->
-<target name="init-pentaho-data">
-
-	<mkdir dir="${stage.data.dir}" />
-
-	<copy todir="${stage.data.dir}">
-		<fileset dir="${sample.data.dir}">
-			<exclude name=".project" />
-			<exclude name="**/mysql5/**" />
-			<exclude name="**/oracle10g/**" />
-			<exclude name="**/postgresql/**" />
-		</fileset>
-		<!-- fileset dir="${build.doc.dir}">
-				<include name="license.txt" />
-			</fileset -->
-	</copy>
-
-	<mkdir dir="${stage.data.dir}/mysql5" />
-	<copy todir="${stage.data.dir}/mysql5">
-		<fileset dir="${sample.data.dir}/mysql5" />
-	</copy>
-
-	<mkdir dir="${stage.data.dir}/oracle10g" />
-	<copy todir="${stage.data.dir}/oracle10g">
-		<fileset dir="${sample.data.dir}/oracle10g" />
-	</copy>
-
-	<mkdir dir="${stage.data.dir}/postgresql" />
-	<copy todir="${stage.data.dir}/postgresql">
-		<fileset dir="${sample.data.dir}/postgresql" />
-	</copy>
-
-	<copy todir="${stage.data.dir}/lib">
-		<fileset dir="${lib.dir}">
-			<include name="hsqldb-*.jar" />
-		</fileset>
-	</copy>
-
-	<!-- this is needed when running tests on linux -->
-	<chmod file="${start.hsqldb.path}" perm="700" />
-	<chmod file="${stop.hsqldb.path}" perm="700" />
-</target>
-
-<!-- =================================
+	<!-- =================================
 		  target: init-pentaho-javadoc
 
 		  Create the build.javadoc.dir.
 		 ================================= -->
-<target name="pentaho.javadoc.init">
-	<mkdir dir="${build.javadoc.dir}" />
-</target>
+	<target name="pentaho.javadoc.init">
+		<mkdir dir="${build.javadoc.dir}" />
+	</target>
 
-<!-- ===================================================================
+	<!-- ===================================================================
       target: pentaho.doc.init
 
       Create the build.doc.dir and make replacements in the release notes
       and change log.
      =================================================================== -->
-<target name="pentaho.doc.init">
-	<mkdir dir="${build.doc.dir}" />
+	<target name="pentaho.doc.init">
+		<mkdir dir="${build.doc.dir}" />
 
-	<copy todir="${build.doc.dir}" overwrite="true">
-		<fileset dir="${license.dir}" includes="license.txt" />
-	</copy>
+		<copy todir="${build.doc.dir}" overwrite="true">
+			<fileset dir="${license.dir}" includes="license.txt" />
+		</copy>
 
-	<copy todir="${build.starthere.dir}" overwrite="true">
-		<fileset dir="${starthere.dir}" />
-	</copy>
+		<copy todir="${build.starthere.dir}" overwrite="true">
+			<fileset dir="${starthere.dir}" />
+		</copy>
 
-	<copy todir="${build.doc.dir}" file="${release.notes.dir}/${release.notes.file}" overwrite="true" />
-	<copy todir="${build.doc.dir}" file="${release.notes.dir}/${changelog.file}" overwrite="true" />
+		<copy todir="${build.doc.dir}" file="${release.notes.dir}/${release.notes.file}" overwrite="true" />
+		<copy todir="${build.doc.dir}" file="${release.notes.dir}/${changelog.file}" overwrite="true" />
 
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.major.number --&gt;" value="${release.major.number}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.minor.number --&gt;" value="${release.minor.number}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.milestone.number --&gt;" value="${release.milestone.number}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.build.number --&gt;" value="${release.build.number}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.candidate.token --&gt;" value="${release.candidate.token}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.name --&gt;" value="${release.name}" />
-	<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.date --&gt;" value="${current.date}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.major.number --&gt;" value="${release.major.number}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.minor.number --&gt;" value="${release.minor.number}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.milestone.number --&gt;" value="${release.milestone.number}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.build.number --&gt;" value="${release.build.number}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.candidate.token --&gt;" value="${release.candidate.token}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.name --&gt;" value="${release.name}" />
+		<replace file="${build.doc.dir}/${release.notes.file}" token="&lt;!-- release.date --&gt;" value="${current.date}" />
 
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.major.number --&gt;" value="${release.major.number}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.minor.number --&gt;" value="${release.minor.number}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.milestone.number --&gt;" value="${release.milestone.number}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.build.number --&gt;" value="${release.build.number}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.candidate.token --&gt;" value="${release.candidate.token}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.name --&gt;" value="${release.name}" />
-	<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.date --&gt;" value="${current.date}" />
-</target>
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.major.number --&gt;" value="${release.major.number}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.minor.number --&gt;" value="${release.minor.number}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.milestone.number --&gt;" value="${release.milestone.number}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.build.number --&gt;" value="${release.build.number}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.candidate.token --&gt;" value="${release.candidate.token}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.name --&gt;" value="${release.name}" />
+		<replace file="${build.doc.dir}/${changelog.file}" token="&lt;!-- release.date --&gt;" value="${current.date}" />
+	</target>
 
-<!-- ======================================================================= 
+	<!-- ======================================================================= 
         target: pentaho.scripts.init
 
         Description:
         - Copy scripts to the build directory and fix any end of line issues.
        ===================================================================== -->
-<target name="pentaho.scripts.init">
-	<mkdir dir="${build.scripts.dir}" />
+	<target name="pentaho.scripts.init">
+		<mkdir dir="${build.scripts.dir}" />
 
-	<copy todir="${build.scripts.dir}">
-		<fileset dir="${scripts.dir}">
-			<exclude name="**/demo/**" />
-			<exclude name="**/dev/**" />
-		</fileset>
-	</copy>
+		<copy todir="${build.scripts.dir}">
+			<fileset dir="${scripts.dir}">
+				<exclude name="**/demo/**" />
+				<exclude name="**/dev/**" />
+			</fileset>
+		</copy>
 
-	<copy todir="${build.scripts.dir}/jboss/oracle10g">
-		<fileset dir="${scripts.dir}/jboss/mysql5" />
-	</copy>
+		<copy todir="${build.scripts.dir}/jboss/oracle10g">
+			<fileset dir="${scripts.dir}/jboss/mysql5" />
+		</copy>
 
-	<copy todir="${build.scripts.dir}/jboss/postgresql">
-		<fileset dir="${scripts.dir}/jboss/mysql5" />
-	</copy>
+		<copy todir="${build.scripts.dir}/jboss/postgresql">
+			<fileset dir="${scripts.dir}/jboss/mysql5" />
+		</copy>
 
-	<copy todir="${build.scripts.dir}/tomcat/oracle10g">
-		<fileset dir="${scripts.dir}/jboss/mysql5" />
-	</copy>
+		<copy todir="${build.scripts.dir}/tomcat/oracle10g">
+			<fileset dir="${scripts.dir}/jboss/mysql5" />
+		</copy>
 
-	<copy todir="${build.scripts.dir}/tomcat/postgresql">
-		<fileset dir="${scripts.dir}/jboss/mysql5" />
-	</copy>
+		<copy todir="${build.scripts.dir}/tomcat/postgresql">
+			<fileset dir="${scripts.dir}/jboss/mysql5" />
+		</copy>
 
-	<!-- fix up unix end of line chars 	-->
-	<fixcrlf srcdir="${build.scripts.dir}" eol="unix" eof="remove" includes="**/*.sh" />
-</target>
+		<!-- fix up unix end of line chars 	-->
+		<fixcrlf srcdir="${build.scripts.dir}" eol="unix" eof="remove" includes="**/*.sh" />
+	</target>
 
-<!-- =================================
+	<!-- =================================
 		 target: dist.init-dir
 
 		 Create the dist dir.
 		 ================================= -->
-<target name="dist.init-dir">
-	<mkdir dir="${dist.dir}" />
-</target>
+	<target name="dist.init-dir">
+		<mkdir dir="${dist.dir}" />
+	</target>
 
 
-<!-- ===================================================================
+	<!-- ===================================================================
       target: source compressed package
 
       Zip the src directory.
      =================================================================== -->
-<target name="zip-pentaho-src">
-	<zip destfile="${dist.dir}/pentaho_src-${release.number}.zip">
-		<fileset dir="${server.src}" />
-	</zip>
-</target>
+	<target name="zip-pentaho-src">
+		<zip destfile="${dist.dir}/pentaho_src-${release.number}.zip">
+			<fileset dir="${server.src}" />
+		</zip>
+	</target>
 
-<!-- ===================================================================
+	<!-- ===================================================================
       target: javadoc package
 
       Zip the javadoc.
      =================================================================== -->
-<target name="zip-pentaho-javadoc" depends="pentaho.javadoc.init, pentaho.doc.init">
-	<javadoc destdir="${build.javadoc.dir}/docs/api" source="1.5" sourcepath="server/pentaho/src" access="public" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.*, com.pentaho.*" excludepackagenames="org.pentaho.test.*, org.hibernate.*" doctitle="Pentaho BI Platform">
-		<classpath refid="classpath" />
-	</javadoc>
+	<target name="zip-pentaho-javadoc" depends="pentaho.javadoc.init, pentaho.doc.init">
+		<javadoc destdir="${build.javadoc.dir}/docs/api" source="1.5" sourcepath="server/pentaho/src" access="public" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.*, com.pentaho.*" excludepackagenames="org.pentaho.test.*, org.hibernate.*" doctitle="Pentaho BI Platform">
+			<classpath refid="classpath" />
+		</javadoc>
 
-	<zip destfile="${dist.dir}/pentaho_javadoc-${release.number}.zip">
-		<fileset dir="${build.javadoc.dir}" />
-		<fileset dir="${build.doc.dir}" />
-	</zip>
-</target>
+		<zip destfile="${dist.dir}/pentaho_javadoc-${release.number}.zip">
+			<fileset dir="${build.javadoc.dir}" />
+			<fileset dir="${build.doc.dir}" />
+		</zip>
+	</target>
 
-<!-- =================================
+	<!-- =================================
         target: zip-pentaho-sample-data
 
         Zip the sample data.
        ================================= -->
-<target name="zip-pentaho-sample-data" depends="init-pentaho-data">
-	<zip destfile="${dist.dir}/pentaho_sample_data-${release.number}.zip">
-		<zipfileset dir="${stage.sample.data.dir}/hsqldb" prefix="pentaho-data">
-			<exclude name=".project" />
-		</zipfileset>
-	</zip>
-</target>
+	<target name="zip-pentaho-sample-data" depends="init-pentaho-data">
+		<zip destfile="${dist.dir}/pentaho_sample_data-${release.number}.zip">
+			<zipfileset dir="${stage.sample.data.dir}/hsqldb" prefix="pentaho-data">
+				<exclude name=".project" />
+			</zipfileset>
+		</zip>
+	</target>
 
-<!-- =================================
+	<!-- =================================
         target: zip-pentaho-solutions
 
         Zip the sample solutions.
        ================================= -->
-<target name="zip-pentaho-solutions" depends="dist.init-dir, pentaho.metadata.init">
-	<zip destfile="${dist.dir}/pentaho_solutions-${release.number}.zip">
-		<zipfileset dir="${solutions.dir}" prefix="pentaho-solutions">
-			<exclude name=".project" />
-			<exclude name="**/samples/metadata.xmi" />
-		</zipfileset>
-		<zipfileset dir="${build.solutions.dir}/hsqldb" prefix="pentaho-solutions/samples">
-			<include name="metadata_hsqldb.xmi" />
-		</zipfileset>
-		<zipfileset dir="${build.solutions.dir}/mysql5" prefix="pentaho-solutions/samples">
-			<include name="metadata_mysql5.xmi" />
-		</zipfileset>
-		<!-- zipfileset dir="${build.doc.dir}" prefix="pentaho-solutions" / -->
-	</zip>
-</target>
+	<target name="zip-pentaho-solutions" depends="dist.init-dir, pentaho.metadata.init">
+		<zip destfile="${dist.dir}/pentaho_solutions-${release.number}.zip">
+			<zipfileset dir="${solutions.dir}" prefix="pentaho-solutions">
+				<exclude name=".project" />
+				<exclude name="**/samples/metadata.xmi" />
+			</zipfileset>
+			<zipfileset dir="${build.solutions.dir}/hsqldb" prefix="pentaho-solutions/samples">
+				<include name="metadata_hsqldb.xmi" />
+			</zipfileset>
+			<zipfileset dir="${build.solutions.dir}/mysql5" prefix="pentaho-solutions/samples">
+				<include name="metadata_mysql5.xmi" />
+			</zipfileset>
+			<!-- zipfileset dir="${build.doc.dir}" prefix="pentaho-solutions" / -->
+		</zip>
+	</target>
 
-<!-- =========================================================================
+	<!-- =========================================================================
 		   target: package-all-pentaho-tomcat-pcis
 
 		   Create all the flavors of tomcat pcis.  zip/tar tomcat+hsqldb+mantle+oac
 		   and zip/tar tomcat+mysql5+mantle+oac.
 		 ======================================================================== -->
-<target name="package-all-pentaho-pcis" depends="zip-pentaho-tomcat-hsqldb-pci, zip-pentaho-tomcat-mysql5-pci, tar-pentaho-tomcat-hsqldb-pci, tar-pentaho-tomcat-mysql5-pci" />
+	<target name="package-all-pentaho-pcis" depends="zip-pentaho-tomcat-hsqldb-pci, zip-pentaho-tomcat-mysql5-pci, tar-pentaho-tomcat-hsqldb-pci, tar-pentaho-tomcat-mysql5-pci" />
 
-<!-- ============================================================
+	<!-- ============================================================
         target: zip-pentaho-tomcat-hsqldb-pci
 
         Create a Windows-based pentaho pci configured for tomcat and hsqldb.
         pentaho.doc.init, pentaho.scripts.init
        ========================================================= -->
-<target name="zip-pentaho-tomcat-hsqldb-pci" depends="dist.init-dir, pentaho.metadata.init, init-pentaho-data">
-	<antcall target="zip-pentaho-tomcat">
-		<param name="rdbms" value="hsqldb" />
-		<param name="appserver.dir" value="${tomcat.dir}" />
-	</antcall>
-</target>
+	<target name="zip-pentaho-tomcat-hsqldb-pci" depends="dist.init-dir, pentaho.metadata.init, init-pentaho-data">
+		<antcall target="zip-pentaho-tomcat">
+			<param name="rdbms" value="hsqldb" />
+			<param name="appserver.dir" value="${tomcat.dir}" />
+		</antcall>
+	</target>
 
-<!-- ==============================================================
+	<!-- ==============================================================
         target: tar-pentaho-tomcat-hsqldb-pci
 
         Create a Unix-based pentaho pci configured for tomcat and hsqldb.
        ============================================================ -->
-<target name="tar-pentaho-tomcat-hsqldb-pci" depends="init.stage.pentaho, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
-	<antcall target="tar-gz-pentaho-tomcat">
-		<param name="rdbms" value="hsqldb" />
-		<param name="appserver.dir" value="${tomcat.dir}" />
-	</antcall>
-</target>
+	<target name="tar-pentaho-tomcat-hsqldb-pci" depends="init.stage.pentaho, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
+		<antcall target="tar-gz-pentaho-tomcat">
+			<param name="rdbms" value="hsqldb" />
+			<param name="appserver.dir" value="${tomcat.dir}" />
+		</antcall>
+	</target>
 
-<!-- ========================================================
+	<!-- ========================================================
 		  target: zip-pentaho-tomcat-mysql5-pci
 
 		  Create a Windows-based pentaho  pci configured for tomcat and mysql.
 		 ======================================================= -->
-<target name="zip-pentaho-tomcat-mysql5-pci" depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
-	<antcall target="zip-pentaho-tomcat">
-		<param name="rdbms" value="mysql5" />
-		<param name="appserver.dir" value="${tomcat.dir}" />
-	</antcall>
-</target>
+	<target name="zip-pentaho-tomcat-mysql5-pci" depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
+		<antcall target="zip-pentaho-tomcat">
+			<param name="rdbms" value="mysql5" />
+			<param name="appserver.dir" value="${tomcat.dir}" />
+		</antcall>
+	</target>
 
-<!-- =======================================================
+	<!-- =======================================================
 		  target: tar-pentaho-tomcat-rdms-pci
 
 		  Create a Unix-based pentaho pci configured for tomcat and mysql.
 		 ======================================================== -->
-<target name="tar-pentaho-tomcat-mysql5-pci" depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
-	<antcall target="tar-gz-pentaho-tomcat">
-		<param name="rdbms" value="mysql5" />
-		<param name="appserver.dir" value="${tomcat.dir}" />
-	</antcall>
-</target>
+	<target name="tar-pentaho-tomcat-mysql5-pci" depends="dist.init-dir, init-tomcat-solutions, pentaho.metadata.init, init-pentaho-data, pentaho.doc.init, pentaho.scripts.init">
+		<antcall target="tar-gz-pentaho-tomcat">
+			<param name="rdbms" value="mysql5" />
+			<param name="appserver.dir" value="${tomcat.dir}" />
+		</antcall>
+	</target>
 
 
-<!-- =========================================================================
+	<!-- =========================================================================
         target: tar-gz-pentaho-tomcat
 
         Tar-gz the pentaho pci for tomcat.
 
        ========================================================================== -->
-<target name="tar-gz-pentaho-tomcat">
-	<tar destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" longfile="gnu">
-		<!-- include third-party licenses -->
-		<tarfileset dir="${thirdparty.lib}/licenses" prefix="pentaho-biserver/licenses" />
-		<!-- include tomcat -->
-		<tarfileset dir="${appserver.dir}" prefix="pentaho-biserver/tomcat" mode="755">
-			<!-- exclude server.xml. Include the one with updated datasources for specific rdbms -->
-			<exclude name="**/conf/server.xml" />
-		</tarfileset>
-		<!-- include the updated server.xml -->
-		<tarfileset file="${server.resource.dir}/tomcat/${rdbms}/server.xml" fullpath="pentaho-biserver/tomcat/conf/server.xml" />
-		<!-- include the pentaho sample data -->
-		<tarfileset dir="${stage.sample.data.dir}/${rdbms}" prefix="pentaho-biserver/data" mode="755" />
-		<!-- include all of the pentaho wars -->
-		<tarfileset dir="${build.wars.dir}/tomcat/${rdbms}/expanded/pentaho.war" prefix="pentaho-biserver/tomcat/webapps/pentaho" />
-		<tarfileset dir="${server.resource.dir}/styles/pentaho-style.war" prefix="pentaho-biserver/tomcat/webapps/pentaho-style" />
-		<tarfileset dir="${server.resource.dir}/styles/sw-style.war" prefix="pentaho-biserver/tomcat/webapps/sw-style" />
-		<!-- include the pentaho sample solutions -->
-		<tarfileset dir="${solutions.dir}" prefix="pentaho-biserver/pentaho-solutions">
-			<exclude name=".dummy" />
-			<exclude name=".project" />
-			<!-- exclude this. portal menu is removed for tomcat -->
-			<exclude name="**/template-home.html" />
-			<exclude name="**/template.html" />
-			<!-- exclude this. The build has modified it. Grab it from /build/pentaho-solutions -->
-			<exclude name="**/samples/metadata.xmi" />
-		</tarfileset>
-		<!-- include the new tomcat template-home.html and template.html -->
-		<tarfileset dir="${stage.dir}/pentaho-solutions" prefix="pentaho-biserver/pentaho-solutions">
-			<include name="**/system/**" />
-		</tarfileset>
-		<!-- grab the modified metadata.xmi -->
-		<tarfileset dir="${build.solutions.dir}/${rdbms}" fullpath="pentaho-biserver/pentaho-solutions/samples/metadata.xmi">
-			<include name="metadata_${rdbms}.xmi" />
-		</tarfileset>
-		<tarfileset dir="${build.scripts.dir}/tomcat/${rdbms}" prefix="pentaho-biserver" mode="755" excludes="**/*.bat" />
-		<tarfileset dir="${build.doc.dir}" prefix="pentaho-biserver" />
-	</tar>
+	<target name="tar-gz-pentaho-tomcat">
+		<tar destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" longfile="gnu">
+			<!-- include third-party licenses -->
+			<tarfileset dir="${thirdparty.lib}/licenses" prefix="pentaho-biserver/licenses" />
+			<!-- include tomcat -->
+			<tarfileset dir="${appserver.dir}" prefix="pentaho-biserver/tomcat" mode="755">
+				<!-- exclude server.xml. Include the one with updated datasources for specific rdbms -->
+				<exclude name="**/conf/server.xml" />
+			</tarfileset>
+			<!-- include the updated server.xml -->
+			<tarfileset file="${server.resource.dir}/tomcat/${rdbms}/server.xml" fullpath="pentaho-biserver/tomcat/conf/server.xml" />
+			<!-- include the pentaho sample data -->
+			<tarfileset dir="${stage.sample.data.dir}/${rdbms}" prefix="pentaho-biserver/data" mode="755" />
+			<!-- include all of the pentaho wars -->
+			<tarfileset dir="${build.wars.dir}/tomcat/${rdbms}/expanded/pentaho.war" prefix="pentaho-biserver/tomcat/webapps/pentaho" />
+			<tarfileset dir="${server.resource.dir}/styles/pentaho-style.war" prefix="pentaho-biserver/tomcat/webapps/pentaho-style" />
+			<tarfileset dir="${server.resource.dir}/styles/sw-style.war" prefix="pentaho-biserver/tomcat/webapps/sw-style" />
+			<!-- include the pentaho sample solutions -->
+			<tarfileset dir="${solutions.dir}" prefix="pentaho-biserver/pentaho-solutions">
+				<exclude name=".dummy" />
+				<exclude name=".project" />
+				<!-- exclude this. portal menu is removed for tomcat -->
+				<exclude name="**/template-home.html" />
+				<exclude name="**/template.html" />
+				<!-- exclude this. The build has modified it. Grab it from /build/pentaho-solutions -->
+				<exclude name="**/samples/metadata.xmi" />
+			</tarfileset>
+			<!-- include the new tomcat template-home.html and template.html -->
+			<tarfileset dir="${stage.dir}/pentaho-solutions" prefix="pentaho-biserver/pentaho-solutions">
+				<include name="**/system/**" />
+			</tarfileset>
+			<!-- grab the modified metadata.xmi -->
+			<tarfileset dir="${build.solutions.dir}/${rdbms}" fullpath="pentaho-biserver/pentaho-solutions/samples/metadata.xmi">
+				<include name="metadata_${rdbms}.xmi" />
+			</tarfileset>
+			<tarfileset dir="${build.scripts.dir}/tomcat/${rdbms}" prefix="pentaho-biserver" mode="755" excludes="**/*.bat" />
+			<tarfileset dir="${build.doc.dir}" prefix="pentaho-biserver" />
+		</tar>
 
-	<gzip destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar.gz" src="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" />
+		<gzip destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar.gz" src="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" />
 
-	<!-- remove the tar -->
-	<delete file="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" />
-</target>
+		<!-- remove the tar -->
+		<delete file="${dist.dir}/pentaho_tomcat_${rdbms}-${release.number}.tar" />
+	</target>
 
 
 
