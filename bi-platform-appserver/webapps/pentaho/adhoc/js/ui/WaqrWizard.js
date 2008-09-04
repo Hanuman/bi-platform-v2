@@ -23,6 +23,12 @@ WaqrWizard = function( msgCtrl )
 	
 	Messages.setElementText("previewFormatPrompt", "previewFormatPrompt");
 
+    
+    Messages.setElementText("step1_div", "step1_div");
+    Messages.setElementText("step2_div", "step2_div");
+    Messages.setElementText("step3_div", "step3_div");
+    Messages.setElementText("step4_div", "step4_div");
+    
 	var container = null;
 	var busyCtrl = new BusyCtrl();
 	container = document.getElementById( "busyContainer" );

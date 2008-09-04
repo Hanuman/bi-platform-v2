@@ -19,8 +19,17 @@
  */
 WizPg3 = function()
 {
-	var step3img = document.getElementById('step3img');
-	step3img.title = Messages.getString("step4Title");
+	this.between_1_2 = document.getElementById('img_between_1_2');
+	this.between_2_3 = document.getElementById('img_between_2_3');
+	this.between_3_4 = document.getElementById('img_between_3_4');
+	this.after_4 = document.getElementById('img_after_4');
+    
+    this.step1Div = document.getElementById('step1_div');
+    this.step2Div = document.getElementById('step2_div');
+    this.step3Div = document.getElementById('step3_div');
+    this.step4Div = document.getElementById('step4_div');
+    
+    
 	this.initText();
 	
 	var orientationTd = document.getElementById( "orientation_cell" );
@@ -71,20 +80,24 @@ WizPg3.prototype.initText = function()
 }
 WizPg3.prototype.showPg = function()
 {
-	var step3img = document.getElementById('step3img');
-	if( step3img.blur ) {
-		step3img.blur();
-	}
 	var title = Messages.getString("step4Title");
-	document.getElementById('wizard_title').innerHTML = title+'<span class="wizard_shadow">'+title+'</span>';
+
 	document.getElementById('content3').style.display='block';
-	step3img.src=UIUtil.getImageFolderPath() + 'step4_active.png';
-	setHeights_step3();
+	
+	this.step1Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_1_2.src = "images/steps_middle_active.gif";
+	this.step2Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_2_3.src = "images/steps_middle_active.gif";
+	this.step3Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_3_4.src = "images/steps_middle_active.gif";
+	this.step4Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.after_4.src = "images/steps_middle_mixed.gif";
+    
+    setHeights_step3();
 }
 WizPg3.prototype.hidePg = function()
 {
 	document.getElementById('content3').style.display='none';
-	document.getElementById('step3img').src=UIUtil.getImageFolderPath() + 'step4_available.png';
 }
 WizPg3.prototype.getOrientationCtrl = function()
 {

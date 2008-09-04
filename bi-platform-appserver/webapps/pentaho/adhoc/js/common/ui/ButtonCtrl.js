@@ -25,14 +25,14 @@ ButtonCtrl = function( btnLabel, btnSize )
 
 	if ( undefined != btnSize && btnSize == ButtonCtrl.SMALL )
 	{
-		this.btnImgBaseName = "sm_";
+		this.btnImgBaseName = "btn_sm_";
 		this.hoverClassName = "hoverSmallButtonTxt";
 		this.normalClassName = "normalSmallButtonTxt";
 		this.disabledClassName = "disabledSmallButtonTxt";
 	}
 	else
 	{
-		this.btnImgBaseName = "";
+		this.btnImgBaseName = "button_";
 		this.hoverClassName = "hoverLargeButtonTxt";
 		this.normalClassName = "normalLargeButtonTxt";
 		this.disabledClassName = "disabledLargeButtonTxt";
@@ -41,7 +41,7 @@ ButtonCtrl = function( btnLabel, btnSize )
 	
 	var table = this.getRoot();
 	table.className = "buttonCtrl";
-	table.background = UIUtil.getImageFolderPath() + this.btnImgBaseName + "middle_hover.png";	// TODO see if we can get this into the style/class
+	//table.background = UIUtil.getImageFolderPath() + this.btnImgBaseName + "middle_hover.png";	// TODO see if we can get this into the style/class
 	table.cellSpacing = "0";
 	table.cellPadding = "0";
 	table.border = "0";
@@ -61,23 +61,27 @@ ButtonCtrl = function( btnLabel, btnSize )
 	var td = document.createElement( "td" );
 	tr.appendChild( td );	
 	var img = document.createElement( "img" );
-	img.src = UIUtil.getImageFolderPath() + "btn_" + this.btnImgBaseName + "left.png";
+	img.src = UIUtil.getImageFolderPath() + this.btnImgBaseName + "left.png";
 	td.appendChild( img );
 	this.leftImg = img;
 
 	// middle td -----------------------------
 	td = document.createElement( "td" );
+    div = document.createElement("div");
 	if ( btnLabel.tagName != undefined )
 	{
-		td.appendChild( btnLabel );
+		div.appendChild( btnLabel );
 	}
 	else
 	{
-		td.innerHTML = btnLabel;
+        div.innerHTML = btnLabel;
 	}
+    td.appendChild(div);
 	td.noWrap = "true";
-	td.className = this.normalClassName;
-	td.style.backgroundImage = "url('images/btn_" + this.btnImgBaseName + "middle.png')";
+	div.className = this.normalClassName;
+	td.style.backgroundImage = "url('images/" + this.btnImgBaseName + "middle.png')";
+    td.style.backgroundRepeat = "repeat-x"; 
+    td.style.verticalAlign = "top";
 	this.labelTd = td;
 	
 	tr.appendChild( td );
@@ -87,7 +91,7 @@ ButtonCtrl = function( btnLabel, btnSize )
 	td = document.createElement( "td" );
 	tr.appendChild( td );	
 	var img = document.createElement( "img" );
-	img.src = UIUtil.getImageFolderPath() + "btn_" + this.btnImgBaseName + "right.png";
+	img.src = UIUtil.getImageFolderPath() + this.btnImgBaseName + "right.png";
 	td.appendChild( img );
 	this.rightImg = img;
 }
@@ -142,32 +146,32 @@ ButtonCtrl.prototype.setOnClickCallback = function( callback, object )
 /*private*/
 ButtonCtrl.prototype.setStateToHover = function()
 {
-	var base = UIUtil.getImageFolderPath() + "btn_" + this.btnImgBaseName;
-	this.leftImg.src = base + "left_hover.png";
-	this.centerTd.style.backgroundImage = "url('" + base + "middle_hover.png')";
-	this.rightImg.src = base + "right_hover.png";
+	var base = UIUtil.getImageFolderPath()  + this.btnImgBaseName;
+	this.leftImg.src = base + "left_over.png";
+	this.centerTd.style.backgroundImage = "url('" + base + "middle_over.png')";
+	this.rightImg.src = base + "right_over.png";
 	
-	this.centerTd.className = this.hoverClassName;
+	this.centerTd.firstChild.className = this.hoverClassName;
 }
 /*private*/
 ButtonCtrl.prototype.setStateToNormal = function()
 {
-	var base = UIUtil.getImageFolderPath() + "btn_" + this.btnImgBaseName;
+	var base = UIUtil.getImageFolderPath() + this.btnImgBaseName;
 	this.leftImg.src = base + "left.png";
 	this.centerTd.style.backgroundImage = "url('" + base + "middle.png')";
 	this.rightImg.src =  base + "right.png";
 	
-	this.centerTd.className = this.normalClassName;
+	this.centerTd.firstChild.className = this.normalClassName;
 }
 /*private*/
 ButtonCtrl.prototype.setStateToDisabled = function()
 {
-	var base = UIUtil.getImageFolderPath() + "btn_" + this.btnImgBaseName;
+	var base = UIUtil.getImageFolderPath() + this.btnImgBaseName;
 	this.leftImg.src = base + "left_disabled.png";
 	this.centerTd.style.backgroundImage = "url('" + base + "middle_disabled.png')";
 	this.rightImg.src =  base + "right_disabled.png";
 	
-	this.centerTd.className = this.disabledClassName;
+	this.centerTd.firstChild.className = this.disabledClassName;
 }
 
 ButtonCtrl.prototype.isEnabled = function()

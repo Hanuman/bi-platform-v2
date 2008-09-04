@@ -19,8 +19,17 @@
  */
 WizPg1 = function()
 {
-	var step1img = document.getElementById('step1img');
-	step1img.title = Messages.getString("step2Title");
+
+	this.between_1_2 = document.getElementById('img_between_1_2');
+	this.between_2_3 = document.getElementById('img_between_2_3');
+	this.between_3_4 = document.getElementById('img_between_3_4');
+	this.after_4 = document.getElementById('img_after_4');
+    
+    this.step1Div = document.getElementById('step1_div');
+    this.step2Div = document.getElementById('step2_div');
+    this.step3Div = document.getElementById('step3_div');
+    this.step4Div = document.getElementById('step4_div');
+    
 	this.initText();
 	
   // Distinct Control
@@ -78,7 +87,13 @@ WizPg1 = function()
 	this.filtersCtrl.setDefaultSelectedItemClassName( "selectedItem" );
 
 	var filtersListEditorTd = document.getElementById( "filtersListEditorTd" );
-	this.filtersListDeleteBtn = new ButtonCtrl( "X", ButtonCtrl.SMALL );
+    
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_delete.png";
+	img.alt = "X";
+	img.title = Messages.getString("deleteFromFilters");
+    
+	this.filtersListDeleteBtn = new ButtonCtrl(img, ButtonCtrl.SMALL );
 	this.filtersListDeleteBtn.getRoot().title = Messages.getString("deleteFromFilters");
 	filtersListEditorTd.appendChild( this.filtersListDeleteBtn.getRoot() );
 	this.filtersListDeleteBtn.setEnabled( false );
@@ -95,20 +110,26 @@ WizPg1.prototype.initText = function()
 }
 WizPg1.prototype.showPg = function()
 {
-	var step1img = document.getElementById('step1img');
-	if( step1img.blur ) {
-		step1img.blur();
-	}
+
 	var title = Messages.getString("step2Title");
-	document.getElementById('wizard_title').innerHTML = title+'<span class="wizard_shadow">'+title+'</span>';
+
 	document.getElementById('content1').style.display='block';
-	step1img.src=UIUtil.getImageFolderPath() + 'step2_active.png';
+	
+    
+	this.step1Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_1_2.src = "images/steps_middle_active.gif";
+	this.step2Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_2_3.src = "images/steps_middle_mixed.gif";
+	this.step3Div.style.backgroundImage="url('images/steps_inactive_slice.gif')";
+    this.between_3_4.src = "images/steps_middle_inactive.gif";
+	this.step4Div.style.backgroundImage="url('images/steps_inactive_slice.gif')";
+    this.after_4.src = "images/steps_middle_inactive.gif";
+    
 	setHeights_step1();
 }
 WizPg1.prototype.hidePg = function()
 {
 	document.getElementById('content1').style.display='none';
-	document.getElementById('step1img').src=UIUtil.getImageFolderPath() + 'step2_available.png';
 }
 /**
  * @return GroupsCtrl

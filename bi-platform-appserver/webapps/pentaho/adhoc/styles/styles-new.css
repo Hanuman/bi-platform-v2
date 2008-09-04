@@ -239,7 +239,7 @@ div.groupsCtrl
 {
 	overflow-x:hidden; 
 	overflow-y:auto; 
-	border: 1px solid #818f49; 
+	border: 1px solid #848484; 
 	background-color: #ffffff; 
 	padding: 7px; 
 	margin: 5px 0px 10px 0px;
@@ -249,7 +249,7 @@ div.groupsCtrlDragOver
 {
 	overflow-x:hidden; 
 	overflow-y:auto; 
-	border: 3px solid #818f49; 
+	border: 3px solid #DDD; 
 	background-color: #ffffff; 
 	padding: 5px; 
 	margin: 5px 0px 10px 0px;
@@ -270,15 +270,15 @@ div.groupsCtrlDragOver table
 div.selectedGroupHeader
 {
 	padding:1px 5px 1px 2px;
-	background-color:#bacda1;
-	border: 1px solid #818f49;
+	background-color:#CDCDCD;
+	border: 1px solid #aaa;
 	cursor:pointer;
 }
 div.unselectedGroupHeader
 {
 	padding:1px 5px 1px 2px;
-	background-color:#daedc1;
-	border: 1px solid #818f49;
+	background-color:#DFDFDF;
+	border: 1px solid #aaa;
 	cursor:pointer;
 }
 
@@ -286,15 +286,15 @@ div.unselectedGroupHeader
 tr.selectedGroupHeader td
 {
 	padding:1px 5px 1px 2px;
-	background-color:#bacda1;
-	border: 1px solid #818f49;
+	background-color:#CDCDCD;
+	border: 1px solid #aaa;
 	cursor:pointer;
 }
 tr.unselectedGroupHeader td
 {
 	padding:1px 5px 1px 2px;
-	background-color:#daedc1;
-	border: 1px solid #818f49;
+	background-color:#DFDFDF;
+	border: 1px solid #aaa;
 	cursor:pointer;
 }
 
@@ -400,7 +400,7 @@ tr.selectedItem_itemCannotDrag td{
 
 /* style for the drop target when it is ok to drop */
 tr.selectedItem_CanDrop td{
-	background-color: #88FF88;
+	background-color: #8E8E8E;
 	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -408,7 +408,7 @@ tr.selectedItem_CanDrop td{
 }
 /* style for the drop target when it is ok to drop */
 tr.unselectedItem_CanDrop td{
-	background-color: #BBFFBB;
+	background-color: #BFBFBF;
 	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -445,7 +445,7 @@ div.dragHereItem
 div.dragHereItem_CanDrop
 {
 	padding: 2px;
-	background-color: #BBFFBB;
+	background-color: #BFBFBF;
 	width:100%;
 	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 }
@@ -597,7 +597,7 @@ div.sortList
 {
 	overflow-y:auto; 
 	overflow-x:hidden; 
-	border: 1px solid #818f49;
+	border: 1px solid #848484;
 	background-color: #ffffff; 
 	margin: 5px 5px 5px 5px;
 	width:600px;
@@ -613,8 +613,8 @@ div.sortList table th
 {
 	color: #000000;
 	padding:1px 5px 1px 2px;
-	background-color:#bacda1;
-	border: 1px solid #818f49;
+	background-color:#DFDFDF;
+	border: 1px solid #aaa;
 }
 /* end sort list */
 

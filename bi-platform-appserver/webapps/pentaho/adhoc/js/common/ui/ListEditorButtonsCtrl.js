@@ -58,7 +58,13 @@ ListEditorButtonsCtrl = function()
 	td = document.createElement( "td" );
 	tr.appendChild( td );	
 	td.style.paddingLeft = "4px";
-	btn = new ButtonCtrl( "X", ButtonCtrl.SMALL );
+    
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_delete.png";
+	img.alt = "X";
+	img.title = Messages.getString("deleteColumn");
+    
+	btn = new ButtonCtrl( img, ButtonCtrl.SMALL );
 	td.appendChild( btn.getRoot() );
 	btn.getRoot().title = Messages.getString("deleteColumn");
 	this.deleteBtnCtrl = btn;

@@ -19,12 +19,22 @@
  */
 WizPg2 = function()
 {
+
+	this.between_1_2 = document.getElementById('img_between_1_2');
+	this.between_2_3 = document.getElementById('img_between_2_3');
+	this.between_3_4 = document.getElementById('img_between_3_4');
+	this.after_4 = document.getElementById('img_after_4');
+    
+    this.step1Div = document.getElementById('step1_div');
+    this.step2Div = document.getElementById('step2_div');
+    this.step3Div = document.getElementById('step3_div');
+    this.step4Div = document.getElementById('step4_div');
+    
+    
 	this.initText();
   var content2 = document.getElementById( "content2" );
   content2.title = Messages.getString( "STEP3_SELECT_AN_ITEM_TOOLTIP" );
   
-	var step2img = document.getElementById('step2img');
-	step2img.title = Messages.getString("step3Title");
 	
 	var parent = document.getElementById( "groups2Td" );
 	this.groupsCtrl = new ROGroupsCtrl( "groups2Div" );
@@ -86,20 +96,24 @@ WizPg2.prototype.initText = function()
 }
 WizPg2.prototype.showPg = function()
 {
-	var step2img = document.getElementById('step2img');
-	if( step2img.blur ) {
-		step2img.blur();
-	}
 	var title = Messages.getString("step3Title");
-	document.getElementById('wizard_title').innerHTML = title+'<span class="wizard_shadow">'+title+'</span>';
+
 	document.getElementById('content2').style.display='block';
-	step2img.src=UIUtil.getImageFolderPath() + 'step3_active.png';
+    
+	this.step1Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_1_2.src = "images/steps_middle_active.gif";
+	this.step2Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_2_3.src = "images/steps_middle_active.gif";
+	this.step3Div.style.backgroundImage="url('images/steps_active_slice.gif')";
+    this.between_3_4.src = "images/steps_middle_mixed.gif";
+	this.step4Div.style.backgroundImage="url('images/steps_inactive_slice.gif')";
+    this.after_4.src = "images/steps_middle_inactive.gif";
+    
 	setHeights_step2();
 }
 WizPg2.prototype.hidePg = function()
 {
 	document.getElementById('content2').style.display='none';
-	document.getElementById('step2img').src=UIUtil.getImageFolderPath() + 'step3_available.png';
 	var ctrl = this.getGroupHeaderEditorCtrl();
 	ctrl.hide();
 	ctrl = this.getGroupItemEditorCtrl();

@@ -195,5 +195,9 @@ NUMBER_FORMAT_PAREN_MONEY: "$ #,###;($ #,###)",
 NUMBER_FORMAT_NEG_DECIMAL_MONEY: "$ #,###.##;-$ #,###.##",
 /* end number format */
 ERROR_NO_BUSINESS_MODELS: "There are either no Business Models defined in the metadata, or you do not have permission to access any of the Business Models. Please create one or more Business Models using the Metadata Editor and then publish them to the Pentaho server. Or, use the Metadata Editor to give the appropriate user permission to access to the Business Model.",
-SOLUTION_REPOSITORY: "Solution Repository"
+SOLUTION_REPOSITORY: "Solution Repository",
+step1_div:"Select Business Model",
+step2_div:"Make Selections",
+step3_div:"Customize Selections",
+step4_div:"Report Settings"
 }

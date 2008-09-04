@@ -48,7 +48,13 @@ ConstraintsCtrl = function( id )
 	td = document.createElement( "td" );
 	td.align = "right";
 	tr.appendChild( td );
-	var ctrl = new ButtonCtrl( "X", ButtonCtrl.SMALL );
+    
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_delete.png";
+	img.alt = "X";
+	img.title = Messages.getString("deleteFromFilters");
+    
+	var ctrl = new ButtonCtrl( img, ButtonCtrl.SMALL );
 	ctrl.getRoot().title = Messages.getString( "deleteConstraintsBtnHoverTxt" );
 	td.appendChild( ctrl.getRoot() );
 	

@@ -204,27 +204,39 @@ for (var i in model.bViews)
 			Debug.markElemScrollMax( item3 );
 		}
 		*/
+        
 	</script>
 </head>
 
 <!-- smokin' -->
-<body onload="javascript:loadWaqr();">
+<body onload="loadWaqr();">
 <div id="header">
  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
    		<tr>
-				<td width="70">
-				  <a href="javascript:gCtrlr.showStep0()"><img id="step0img" src="images/step1_available.png" alt="Step 1" width="70" height="72" border="0"/></a>
+				<td id="step1_div" onClick="gCtrlr.showStep0()" class="step_link">
+                    __Select_Business_Model
 				</td>
-				<td width="70">
-				  <a href="javascript:gCtrlr.showStep1()"><img id="step1img" src="images/step2_available.png" alt="Step 2" width="70" height="72" border="0"/></a>
-			  </td>
-				<td width="70">
-				  <a href="javascript:gCtrlr.showStep2()"><img id="step2img" src="images/step3_available.png" alt="Step 3" width="70" height="72" border="0"/></a>
+                <td>
+                    <img id="img_between_1_2" src="images/steps_middle_mixed.gif" width="15" height="28"/>
+                </td>
+				<td id="step2_div" onClick="gCtrlr.showStep1()" class="step_link" >
+                    __Make Selections
+                </td>
+                <td>
+                    <img id="img_between_2_3" src="images/steps_middle_inactive.gif" width="15" height="28"/>
+                </td>
+				<td id="step3_div" onClick="gCtrlr.showStep2()" class="step_link" >
+                    __Customize Selections
 				</td>
-				<td width="70">
-				  <a href="javascript:gCtrlr.showStep3()"><img id="step3img" src="images/step4_available.png" alt="Step 4" width="70" height="72" border="0"/></a>
+                <td>
+                    <img id="img_between_3_4" src="images/steps_middle_inactive.gif" width="15" height="28"/>
+                </td>
+				<td id="step4_div" onClick="gCtrlr.showStep3()" class="step_link">__Report Settings
 			  </td>
-      	<td>&nbsp;</td>
+                <td>
+                    <img id="img_after_4" src="images/steps_endcap_inactive.png" width="15" height="28"/>
+                </td>
+          	<td width="100%">&nbsp;</td>
    		</tr>
  		</table>
 </div>
@@ -262,13 +274,13 @@ for (var i in model.bViews)
 		<td width="15" valign="top">&nbsp;
 		
 		</td>
-		<td id="selectModelTitle" class="content_header" style="padding: 0px 0px 5px 0px; border-bottom: 1px solid #818f49;" height="5" valign="top">
+		<td id="selectModelTitle" class="content_header" height="5" valign="top">
 			__Select a Business Model
 		</td>
 		<td width="15" valign="top">&nbsp;
 		
 		</td>
-		<td height="5" id="step1DetailsTitle" colspan="4" class="content_header" style="padding: 0px 0px 5px 0px; border-bottom: 1px solid #818f49;">
+		<td height="5" id="step1DetailsTitle" colspan="4" class="content_header">
 		__Business Model Details
 		</td>
 	</tr>
@@ -385,13 +397,13 @@ in stepsLayout.js (code that controls resizing) -->
 		<td width="15" valign="top">&nbsp;
 		
 		</td>
-		<td id="defineTmpltTitle" class="content_header" style="padding: 6px 0px 6px 0px; border-bottom: 1px solid #818f49;border-top: 1px solid #818f49;" height="5" valign="top">
+		<td id="defineTmpltTitle" class="content_header"  height="5" valign="top">
 			__Define a Template
 		</td>
 		<td width="15" valign="top">&nbsp;
 		
 		</td>
-		<td id="tmpltDetailsTitle" height="5" colspan="4" class="content_header" style="padding: 6px 0px 6px 0px; border-bottom: 1px solid #818f49;border-top: 1px solid #818f49;">
+		<td id="tmpltDetailsTitle" height="5" colspan="4" class="content_header" >
 		__Template Details
 		</td>
 	</tr>
@@ -504,7 +516,7 @@ in stepsLayout.js (code that controls resizing) -->
 					 ====================================================== -->
 				<table border="0" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<td id="step2AvailItemsTitle" width="30%" class="content_header" style="padding: 0px 0px 5px 0px;">__Available Items</td>
+						<td id="step2AvailItemsTitle" width="30%" class="content_header">__Available Items</td>
 						<td class="container_head_right1" style="text-align:right;vertical-align:top;"><input type='checkbox' id="step2DistinctSelections"/>
 							<span id='distinctSelectionsLabel'>__Distinct Selections</span>
 						</td>
@@ -527,12 +539,12 @@ in stepsLayout.js (code that controls resizing) -->
 				<table border="0" width="100%" cellpadding="0" cellspacing="0" style="margin: 0px 0px 0px 5px;" id="selected_items_table">
 					<tr>
 						<td width="5" style="padding: 0px 55px 5px 0px;">&nbsp;</td>
-						<td id="step2SelectedItemsTitle" width="100%" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">Selected Items</td>
+						<td id="step2SelectedItemsTitle" width="100%" nowrap="nowrap" class="content_header" >Selected Items</td>
 					</tr>
 					<tr>
 						<td width="5" id="addGroupsBtnTd">
 						</td>
-						<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 5px 0px 0px;" id="selecteditems_groups">
+						<td valign="top" style="padding: 5px 5px 0px 0px;" id="selecteditems_groups">
 							<!-- ======================================================
 								 ==  STEP TWO - SELECTED ITEMS [GROUPS]              ==
 								 ====================================================== -->
@@ -650,10 +662,10 @@ in stepsLayout.js (code that controls resizing) -->
 					 ====================================================== -->
 				<table cellpadding="0" cellspacing="0" style="margin: 0px 0px 0px 5px;">
 					<tr>
-						<td id="step3SelectedItemsTitle" nowrap="nowrap" width="250" class="content_header" style="padding: 0px 0px 5px 0px;">Selected Items</td>
+						<td id="step3SelectedItemsTitle" nowrap="nowrap" width="250" class="content_header">Selected Items</td>
 					</tr>
 					<tr>
-						<td valign="top" width="250" style="border-top: 1px solid #818f49; padding: 5px 5px 5px 0px;">
+						<td valign="top" width="250" style="border-top: 1px solid #818181; padding: 5px 5px 5px 0px;">
 							<!-- ======================================================
 								 ==  STEP THREE  SELECTED ITEMS GROUPS               ==
 								 ====================================================== -->
@@ -752,10 +764,10 @@ in stepsLayout.js (code that controls resizing) -->
 				<div id="groupHeaderEditorContainer" style="display:none;">
 					<table cellpadding="0" cellspacing="0" border="0px">
 						<tr>
-							<td id="step3GrpsGeneralTitle" class="content_header" style="padding: 0px 0px 5px 0px;">__General</td>
+							<td id="step3GrpsGeneralTitle" class="content_header">__General</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;"/>
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;"/>
 						</tr>
 						<tr>
 							<td>
@@ -841,10 +853,10 @@ in stepsLayout.js (code that controls resizing) -->
 							</td>
 						</tr>
 						<tr>
-							<td id="step3GrpsFormatTitle" width="250" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">__Formatting</td>
+							<td id="step3GrpsFormatTitle" width="250" nowrap="nowrap" class="content_header">__Formatting</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;">
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;">
 						</td>
 						<tr>
 							<td>									 
@@ -915,10 +927,10 @@ in stepsLayout.js (code that controls resizing) -->
 						 ====================================================== -->
 					<table cellpadding="0" cellspacing="0" border="0px">
 						<tr>
-							<td id="step3GrpsFormatTitle2" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">__Formatting</td>
+							<td id="step3GrpsFormatTitle2" nowrap="nowrap" class="content_header">__Formatting</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;"/>
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;"/>
 						</tr>
 						<tr>
 							<td>
@@ -996,10 +1008,10 @@ in stepsLayout.js (code that controls resizing) -->
 
 					<table cellpadding="0" cellspacing="0" border="0px">
 						<tr>
-							<td id="step3DetailsFormatTitle" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">__Formatting</td>
+							<td id="step3DetailsFormatTitle" nowrap="nowrap" class="content_header">__Formatting</td>
 						</tr>
 						<tr>
-							<td style="vertical-align:top;border-top: 1px solid #818f49; padding: 5px 0px 0px 0px;"/>
+							<td style="vertical-align:top;border-top: 1px solid #818181; padding: 5px 0px 0px 0px;"/>
 						</tr>
 						<tr>
 							<td>
@@ -1059,10 +1071,10 @@ in stepsLayout.js (code that controls resizing) -->
 							</td>
 						</tr>
 						<tr>
-							<td id="step3CalcsTitle" class="content_header" style="padding: 0px 0px 5px 0px;width:100%;" id="details_calculationHeader">__Calculation</td>
+							<td id="step3CalcsTitle" class="content_header" id="details_calculationHeader">__Calculation</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;"/>
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;"/>
 						</tr>
 						<tr>
 							<td>
@@ -1106,10 +1118,10 @@ in stepsLayout.js (code that controls resizing) -->
 				<div id="constraintsEditorContainer" style="display:none;vertical-align:top;width:100%;">
 					<table cellpadding="0" cellspacing="0" style="margin: 0px 0px 0px 5px;width:100%;">
 						<tr>
-							<td id="step3ConstraintsTitle" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">__Constraints</td>
+							<td id="step3ConstraintsTitle" nowrap="nowrap" class="content_header">__Constraints</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;">
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;">
 								<!-- CONSTRAINTS -->
 								<table id="constraintsBlock_constraintsTable" width="100%" border="0" cellspacing="0" cellpadding="0" class="container_inset_open">
 									<tr>
@@ -1144,10 +1156,10 @@ in stepsLayout.js (code that controls resizing) -->
 				<div id="columnSorterEditorContainer" style="display:none;width:100%;">
 					<table cellpadding="0" cellspacing="0" style="margin: 0px 0px 0px 5px;width:100%;">
 						<tr>
-							<td id="step3ColumnSorterEditorTitle" nowrap="nowrap" class="content_header" style="padding: 0px 0px 5px 0px;">__Sort Columns</td>
+							<td id="step3ColumnSorterEditorTitle" nowrap="nowrap" class="content_header" >__Sort Columns</td>
 						</tr>
 						<tr>
-							<td valign="top" style="border-top: 1px solid #818f49; padding: 5px 0px 5px 0px;">
+							<td valign="top" style="border-top: 1px solid #818181; padding: 5px 0px 5px 0px;">
 								<table id="constraintsBlock_constraintsTable" border="0" cellspacing="0" cellpadding="0" class="container_inset_open" style='width:100%;'>
 									<tr>
 										<td class="container_head_left1"><img src="images/spacer.png" width="1" height="1" /></td>
@@ -1201,10 +1213,10 @@ in stepsLayout.js (code that controls resizing) -->
 					 ====================================================== -->
 				<table border="0" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<td id="step4GeneralTitle" width="100%" class="content_header" style="padding: 0px 0px 5px 0px;">__General</td>
+						<td id="step4GeneralTitle" width="100%" class="content_header">__General</td>
 					</tr>
 					<tr>
-						<td valign="top" style="border-top: 1px solid #818f49; padding:0px 0px 5px 0px;" id="general_row" width="100%">
+						<td valign="top" style="border-top: 1px solid #818181; padding:0px 0px 5px 0px;" id="general_row" width="100%">
 							<!-- ======================================================
 								 ==  STEP FOUR - GENERAL [ORIENTATION]               ==
 								 ====================================================== -->
@@ -1304,10 +1316,10 @@ in stepsLayout.js (code that controls resizing) -->
 					 ====================================================== -->
 				<table border="0" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<td id="step4HdrTitle" width="100%" class="content_header" style="padding: 0px 0px 5px 0px;">__Header</td>
+						<td id="step4HdrTitle" width="100%" class="content_header">__Header</td>
 					</tr>
 					<tr>
-						<td valign="top" style="border-top: 1px solid #818f49; padding:0px 0px 5px 0px;">
+						<td valign="top" style="border-top: 1px solid #818181; padding:0px 0px 5px 0px;">
 							<!-- ======================================================
 								 ==  STEP FOUR - HEADER [REPORT]                     ==
 								 ====================================================== -->
@@ -1377,10 +1389,10 @@ in stepsLayout.js (code that controls resizing) -->
 					 ====================================================== -->
 				<table border="0" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<td id="step4FooterTitle" width="100%" class="content_header" style="padding: 0px 0px 5px 0px;">__Footer</td>
+						<td id="step4FooterTitle" width="100%" class="content_header" >__Footer</td>
 					</tr>
 					<tr>
-						<td valign="top" style="border-top: 1px solid #818f49; padding:0px 0px 5px 0px;">
+						<td valign="top" style="border-top: 1px solid #818181; padding:0px 0px 5px 0px;">
 							<!-- ======================================================
 								 ==  STEP FOUR - FOOTER [REPORT]                     ==
 								 ====================================================== -->
@@ -1536,7 +1548,7 @@ in stepsLayout.js (code that controls resizing) -->
 				</td>
 			</tr>
 			<tr>
-				<td style="border-top: 1px solid #818f49; background-color: #ffffff;">
+				<td style="border-top: 1px solid #818181; background-color: #ffffff;">
 					<table border="0" cellpadding="0" cellspacing="0" align="right">
 						<tr>
 							<td id="browser.saveBtnContainer" width="75">
@@ -1569,7 +1581,7 @@ in stepsLayout.js (code that controls resizing) -->
 					<table width="100%" height="100%" border="0" cellspacing="2" cellpadding="2">
 						<tr>
 							<td>
-								<input id="searchDialog.searchInputText" name="textfield" style="border: 1px solid #818f49;" type="text" size="60" />
+								<input id="searchDialog.searchInputText" name="textfield" style="border: 1px solid #818181;" type="text" size="60" />
 							</td>
 							<td id='searchDialog.searchBtnContainer'>
 							</td>
@@ -1597,7 +1609,7 @@ in stepsLayout.js (code that controls resizing) -->
 				</td>
 			  </tr>
 			  <tr>
-				<td style="border-top: 1px solid #818f49; background-color: #ffffff;">
+				<td style="border-top: 1px solid #818181; background-color: #ffffff;">
 					<table border="0" cellpadding="0" cellspacing="0" align="right">
 						<tr>
 							<td id='searchDialog.busyContainer' style='width:100%;'></td>
