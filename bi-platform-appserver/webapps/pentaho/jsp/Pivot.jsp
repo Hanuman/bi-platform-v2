@@ -843,14 +843,6 @@
 	}
 %>
 
-<table border="0" width="100%" class="content_header_line"
-	cellpadding="0" cellspacing="0">
-	<tr>
-		<td width="100%">
-		<div><%= pivotTitle %></div>
-		</td>
-	</tr>
-</table>
 <table border="0" width="100%" class="content_container2"
 	cellpadding="0" cellspacing="0">
 	<tr>
@@ -932,7 +924,6 @@
 	session.removeAttribute( "toolbar01" ); //$NON-NLS-1$
    }
  %>
-
 			<wcf:toolbar id="toolbar01"
 				bundle="com.tonbeller.jpivot.toolbar.resources">
 				<% if( options == null ) { %>
@@ -1076,7 +1067,6 @@
    } 
 %>
 			</wcf:toolbar>
-
 
 <!-- ****************************************************************************************** -->
 <!-- ******************                   SAVE BUTTONS               ************************** -->
@@ -1312,23 +1302,6 @@
 					</c:if>
 
 				</table>
-				<div class="dialog01_bg">&nbsp;</div>
-				<div class="dialog01_footer">
-
-				<table border="0" cellpadding="0" cellspacing="0" width="100%">
-					<tr>
-						<td width="100%" style="text-align:right">
-						<div class="footer_source_forge_and_disclaimer">&copy; 2005-2007, Pentaho. <%= "Version: "+PentahoSystem.getVersionHelper(null).getVersionInformation(PentahoSystem.class)%></div>
-						</td>
-					</tr>
-					<tr>
-						<td style="top:10px"><a href="http://www.sourceforge.net/"
-							target="_blank"><img height="37" id="sflogo"
-							alt="SourceForge.net Logo" src="/pentaho-style/sfLogo.png"
-							width="125" border="0" /></a></td>
-					</tr>
-				</table>
-				</div>
 </body>
 </html>
 <% 

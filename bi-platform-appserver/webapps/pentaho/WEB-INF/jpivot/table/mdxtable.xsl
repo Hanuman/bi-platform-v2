@@ -18,7 +18,7 @@
   <xsl:if test="@message">
     <div class="table-message"><xsl:value-of select="@message"/></div>
   </xsl:if>
-  <table border="1" cellspacing="0" cellpadding="2" id="{$renderId}">
+  <table border="0" cellspacing="1" cellpadding="2" id="{$renderId}">
     <xsl:apply-templates select="head"/>
     <xsl:apply-templates select="body"/>
   </table>
@@ -99,7 +99,7 @@
 
 <!-- navigation: expand / collapse / leaf node -->
 <xsl:template match="drill-expand | drill-collapse">
-  <input type="image" title="{@title}" name="{@id}" src="{$context}/{$imgpath}/{@img}.gif" border="0" width="9" height="9"/>
+  <input type="image" title="{@title}" name="{@id}" src="{$context}/{$imgpath}/{@img}.gif" border="0" width="16" height="16"/>
 </xsl:template>
 
 <xsl:template match="drill-other">

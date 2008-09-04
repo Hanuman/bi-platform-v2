@@ -93,7 +93,6 @@ A:active {
 
 /* shown on admin, about */
 .content_container2 {
-	border-top: 1px solid #818f49;
 	width: 100%;
 	padding: 0px;
 }
@@ -938,8 +937,6 @@ A:active {
 /* shown on admin, about */
 
 .content_container2 {
-
-    border-top: 1px solid #818f49;
 
     width: 100%;
 

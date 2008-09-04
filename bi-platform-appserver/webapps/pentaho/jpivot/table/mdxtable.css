@@ -1,16 +1,30 @@
 /* slicer */
 .slicer-normal {
-  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-  font-size: 0.9em;;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  font-size: 0.9em;
 }
 
 .slicer-selected {
   background-color : #ABE5B5;
-  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-  font-size: 0.8em;;
-  color : Black;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  color: #000000;
+  font-size: 0.8em;
 }
 
+th, td {
+  border-color: #FFFFFF;
+  border-width: 1px;
+}
+
+#table01 {
+	border: 1px solid gray;
+}
+
+#folder-options {
+    background-image: url(/pentaho/jpivot/table/toolbar_bg.png);
+}
 
 /* headings */
 th.corner-heading,
@@ -48,9 +62,10 @@ th.column-heading-span-right,
 
 th.property-heading,
 td.property-name {
-  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-  font-size: 0.8em;;
-  color : Black;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  color: #000000;
+  font-size: 0.8em;
   text-align: left;
   vertical-align: top;
 }
@@ -83,7 +98,7 @@ th.column-heading-span-right,
 th.row-heading-span-right,
 th.property-heading
 {
-  background-color : #DEE3EF;
+  background-color : #D0D0D0;
 }
 
 
@@ -93,7 +108,7 @@ th.column-heading-odd-right,
 th.row-heading-odd-right,
 th.row-heading-odd
 {
-  background-color : #EEF3FF;
+  background-color : #DDDDDD;
 }
 
 th.row-heading-red,
@@ -132,9 +147,10 @@ td.cell-gelb,
 td.cell-gruen,
 td.property-value,
 td.property-span {
-  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-  font-size: 0.8em;;
-  color : Black;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  color: #000000;
+  font-size: 0.8em;
   text-align: right;
 }
 
@@ -146,14 +162,14 @@ span.cell-odd {
 
 td.cell-even
 {
-  background-color : #f0f0f0;
+  background-color : #F5F5F5;
 }
 
 td.cell-odd,
 td.property-value,
 td.property-span
 {
-  background-color : #ffffff;
+  background-color : #DDDDDD;
 }
 
 td.cell-rot,
@@ -182,8 +198,9 @@ span.cell-green
 
 
 div.table-message {
-  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  color: #000000;
   font-size :12pt;
-  color : Black;
-  font-weight: bold;
 }
+
