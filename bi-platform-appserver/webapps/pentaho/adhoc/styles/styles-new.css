@@ -1,14 +1,5 @@
 
-A:link, A:visited {
-	font: normal 1em Tahoma, "Trebuchet MS", Arial; 
-	COLOR: #949e3e; 
-	TEXT-DECORATION: none;
-}
-A:hover, A:active {
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
-	COLOR: #ef8033; 
-	TEXT-DECORATION: none
-	}
+
 
 .dpDiv{
 	background-color: #e0e0e0;
@@ -18,9 +9,9 @@ A:hover, A:active {
 
 
 .content_header {
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,Arial,Helvetica,sans-serif;
 	margin: 9px 0px 3px 0px;
-	color: #ef6507;
+	color: #000;
 	}	
 	
 .middleContentTable
@@ -34,13 +25,8 @@ A:hover, A:active {
 
 /* added for the adhoc wizard */
 .container_outside {
-	border: 1px solid #818f49;
-	background-position: bottom left; 
-	background-color:#ffffff; 
-	background-image:url(../images/bg_container_inset.png); 
-/*	background-image:url(../images/bg_container_outside.png); */
-	background-repeat: repeat-x; 
-	}
+	border: 1px solid #848484;	
+}
 	
 .container_head_left1 {
 	height: 10px; 
@@ -95,7 +81,7 @@ A:hover, A:active {
 .container_content_scroll {	
 	overflow-x:hidden; 
 	overflow-y:auto; 
-	border: 1px solid #818f49; 
+	border: 1px solid #848484; 
 	background-color: #ffffff; 
 	padding: 5px; 
 	margin: 5px 0px 10px 0px;
@@ -219,7 +205,7 @@ div.columnsList
 {
 	overflow-y:auto; 
 	overflow-x:hidden; 
-	border: 1px solid #818f49;
+	border: 1px solid #848484;
 	background-color: #ffffff; 
 	padding: 7px; 
 	margin: 5px 0px 10px 0px;
@@ -324,29 +310,31 @@ table.buttonCtrl
 	cursor:pointer;
 }
 
-td.normalLargeButtonTxt
+.normalLargeButtonTxt
 {
-	background-repeat:repeat-x;	
-	font: normal .85em Tahoma, "Trebuchet MS", Arial;
-	color: #4b5660;
+	font: normal .8em Tahoma,  Arial, Helvetica, sans-serif;
+    line-height: 24px;
+	color: #000;
 }
 
-td.hoverLargeButtonTxt
+.hoverLargeButtonTxt
 {
-	background-repeat:repeat-x;	
-	font: normal .85em Tahoma, "Trebuchet MS", Arial;
+    color: #525252;
+	font: normal .8em Tahoma,  Arial, Helvetica, sans-serif;
+    line-height: 24px;
 }
 
-td.disabledLargeButtonTxt
+.disabledLargeButtonTxt
 {
-	background-repeat:repeat-x;	
-	font: normal .85em Tahoma, "Trebuchet MS", Arial;
+    color: #525252;
+	font: normal .8em Tahoma,  Arial, Helvetica, sans-serif;
+    line-height: 24px;
 }
 
 td.normalSmallButtonTxt
 {
 	background-repeat:repeat-x;	
-	font: normal .75em Tahoma, "Trebuchet MS", Arial;
+	font: normal .75em Tahoma,  Arial, Helvetica, sans-serif;
 	color: #ffffff;
 	padding: 0px 2px 0px 2px;
 }
@@ -354,14 +342,14 @@ td.normalSmallButtonTxt
 td.hoverSmallButtonTxt
 {
 	background-repeat:repeat-x;	
-	font: normal .75em Tahoma, "Trebuchet MS", Arial;
+	font: normal .75em Tahoma,  Arial, Helvetica, sans-serif;
 	color: #ffffff;
 	padding: 0px 2px 0px 2px;
 }
 td.disabledSmallButtonTxt
 {
 	background-repeat:repeat-x;	
-	font: normal .75em Tahoma, "Trebuchet MS", Arial;
+	font: normal .75em Tahoma,  Arial, Helvetica, sans-serif;
 	color: #ffffff;
 	padding: 0px 2px 0px 2px;
 }
@@ -369,7 +357,7 @@ td.disabledSmallButtonTxt
 /* style for unselected item in a list ctrl*/
 tr.unselectedItem td{
 	background-color: #ffffff;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -378,7 +366,7 @@ tr.unselectedItem td{
 /* style for selected item in a list ctrl*/
 tr.selectedItem td{
 	background-color: #bbbbbb;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -387,7 +375,7 @@ tr.selectedItem td{
 /* style for the drag-proxy element */
 tr.selectedItem_itemDrag td{
 	background-color: #CCCCCC;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -403,7 +391,7 @@ tr.selectedItem_itemDrag td{
 }
 tr.selectedItem_itemCannotDrag td{
 	background-color: #FF8888;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -413,7 +401,7 @@ tr.selectedItem_itemCannotDrag td{
 /* style for the drop target when it is ok to drop */
 tr.selectedItem_CanDrop td{
 	background-color: #88FF88;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -421,7 +409,7 @@ tr.selectedItem_CanDrop td{
 /* style for the drop target when it is ok to drop */
 tr.unselectedItem_CanDrop td{
 	background-color: #BBFFBB;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -429,7 +417,7 @@ tr.unselectedItem_CanDrop td{
 /* style for the drop target when it is NOT ok to drop */
 tr.selectedItem_CannotDrop td{
 	background-color: #FF8888;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -437,7 +425,7 @@ tr.selectedItem_CannotDrop td{
 /* style for the drop target when it is NOT ok to drop */
 tr.unselectedItem_CannotDrop td{
 	background-color: #FFBBBB;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	vertical-align: middle;
@@ -451,7 +439,7 @@ div.dragHereItem
 {
 	padding: 2px;
 	width:100%;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 }
 
 div.dragHereItem_CanDrop
@@ -459,7 +447,7 @@ div.dragHereItem_CanDrop
 	padding: 2px;
 	background-color: #BBFFBB;
 	width:100%;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 }
 
 div.dragHereItem_CannotDrop
@@ -467,12 +455,12 @@ div.dragHereItem_CannotDrop
 	padding: 2px;
 	background-color: #FFBBBB;
 	width:100%;
-	font: normal 1em Tahoma, "Trebuchet MS", Arial;
+	font: normal 1em Tahoma,  Arial, Helvetica, sans-serif;
 }
 /* end styles for ROGroupsCtrl*/
 table.radioButtons
 {
-	font: normal .85em Tahoma, 'Trebuchet MS', Arial;
+	font: normal .85em Tahoma,  Arial, Helvetica, sans-serif;
 }
 
 table.radioButtons td.rightColumn
@@ -506,7 +494,7 @@ div.resultList
 }
 div.resultList table
 {
-	font: normal .85em Tahoma, 'Trebuchet MS', Arial;
+	font: normal .85em Tahoma,  Arial, Helvetica, sans-serif;
 	width:100%;
 }
 /* end DBSearchCtlr*/
@@ -525,13 +513,13 @@ div.solutionList
 }
 div.solutionList a:link, a:visited, a:active
 {
-	font: normal 0.85em Tahoma, 'Trebuchet MS', Arial;
+	font: normal .85em Tahoma,  Arial, Helvetica, sans-serif;
 	color: #000000;
 	cursor:hand;
 }
 div.solutionList a:hover
 {
-	font: italic .85em Tahoma, "Trebuchet MS", Arial; 
+	font: normal .85em Tahoma,  Arial, Helvetica, sans-serif;
 	color: #000000;
 	cursor:hand;
 	text-decoration:underline;
@@ -541,7 +529,7 @@ div.categories
 	overflow:auto; 
 	padding: 0px 0px 5px 0px; 
 	width:100%;
-	font: normal .85em Tahoma, 'Trebuchet MS';
+	font: normal .85em Tahoma,  Arial, Helvetica, sans-serif;
 }
 table.categories
 {
@@ -659,4 +647,35 @@ div.aggrFuncList table
 {
 	font: normal .85em Tahoma, 'Trebuchet MS', Arial;
 	width:100%;
+}
+#step1_div{
+    background-image: url('../images/steps_active_slice.gif');
+    background-repeat: repeat-x;
+    white-space: nowrap;
+}
+#step2_div{
+    background-image: url('../images/steps_inactive_slice.gif');
+    background-repeat: repeat-x;
+    white-space: nowrap;
+}
+#step3_div{
+    background-image: url('../images/steps_inactive_slice.gif');
+    background-repeat: repeat-x;
+    white-space: nowrap;
+}
+#step4_div{
+    background-image: url('../images/steps_inactive_slice.gif');
+    background-repeat: repeat-x;
+    white-space: nowrap;
+}
+
+.step_link{
+	font: normal .8em Tahoma,Arial,Helvetica,sans-serif;
+    color: black;
+    text-decoration: none;
+    padding-right: 8px;
+    padding-left: 10px;
+    line-height:28px;
+    cursor:pointer;
+    
 }
