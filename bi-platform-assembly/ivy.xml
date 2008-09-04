@@ -7,7 +7,7 @@
 	<dependencies defaultconf="default->default">
 		<dependency org="pentaho" name="pentaho-bi-platform-web-portlet" rev="${project.revision}" changing="true" />
 		<dependency org="pentaho" name="pentaho-bi-platform-web-servlet" rev="${project.revision}" changing="true" />
-		<dependency org="pentaho" name="mantle" rev="${project.revisionS}" changing="true" />
+		<dependency org="pentaho" name="mantle" rev="${project.revision}" changing="true" />
 		<dependency org="org.apache.axis" name="axis" rev="1.4" />
 		<dependency org="batik" name="batik-bridge" rev="1.6" />
 		<dependency org="bsf" name="bsf" rev="2.4.0" transitive="false" />   <!-- we don't want bsf's commons_logging -->
