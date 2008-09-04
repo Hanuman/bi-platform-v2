@@ -22,7 +22,7 @@
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
 
         <!-- reporting -->
-    <dependency org="pentaho.reporting" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
+    <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
       changing="true" />
     <dependency org="javacup" name="javacup" rev="10k" />
     <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.2" />
