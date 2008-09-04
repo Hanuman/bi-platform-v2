@@ -140,7 +140,6 @@
 					<exclude name="webapps/webdav/**" />
 					<exclude name="webapps/ROOT/WEB-INF/lib/*" />
 					<exclude name="bin/setclasspath.bat" />
-					<exclude name="**/servlet-api.jar" />
 				</fileset>
 			</copy>
 
