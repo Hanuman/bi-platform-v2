@@ -24,7 +24,7 @@
 	<property name="dist.dir" value="${basedir}/dist" />
 	<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
 	<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
-	<property name="stage.dir.server" value="${basedir}/stage/win-bi-server" />
+	<property name="stage.dir.server" value="${basedir}/stage/bi-platform" />
 	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
 	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
 	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
@@ -83,7 +83,6 @@
 	<target name="init-res" depends="pentaho.doc.init,
     			pentaho.javadoc.init,
     			pentaho.res.init,
-    			pentaho.third.party.init,
     			pentaho.metadata.init" />
 
 	<target name="init.stage.pentaho">
@@ -111,7 +110,7 @@
 				 target: prep-sw-style (steel wheel)			         
 				 =================================================================== -->
 	<target name="prep-sw-style" depends="init.stage.pentaho">
-		<copy todir="${container.deploy.dir}/pentaho-style">
+		<copy todir="${container.deploy.dir}/sw-style">
 			<fileset dir="${bi.platform.appserver.dir}/webapps/sw-style">
 				<include name="**/**" />
 			</fileset>
@@ -140,6 +139,8 @@
 					<exclude name="webapps/docs/**" />
 					<exclude name="webapps/webdav/**" />
 					<exclude name="webapps/ROOT/WEB-INF/lib/*" />
+					<exclude name="bin/setclasspath.bat" />
+					<exclude name="**/servlet-api.jar" />
 				</fileset>
 			</copy>
 
@@ -160,6 +161,15 @@
 			<!-- Add jre -->
 			<copy todir="${stage.dir.server}/jre">
 				<fileset dir="${jre.dir}">
+					<exclude name="**/servlet-api.jar"/>
+				</fileset>
+			</copy>
+
+			<!-- Add libs needed by tomcat -->
+			<copy todir="${stage.dir.server}/tomcat/server/lib">
+				<fileset dir="${lib.dir}">
+					<include name="cglib*.jar" />
+					<include name="jaxen*.jar" />
 				</fileset>
 			</copy>
 
@@ -167,6 +177,7 @@
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
+					<exclude name="**/servlet-api.jar" />
 				</fileset>
 			</copy>
 
@@ -225,7 +236,6 @@
 				<fileset dir="${bi.platform.util.dir}/res/log4j" />
 				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
 			</copy>
-
 			<!-- Add licenses -->
 			<copy todir="${stage.dir.server}/licenses">
 				<fileset dir="licenses">
@@ -240,6 +250,7 @@
 				</fileset>
 			</copy>
 		</sequential>
+
 	</target>
 
 	<!--====================================================
@@ -300,36 +311,6 @@
 
 
 	<!-- ===================================================================
-		 target: init-third-party
-		 
-		 Description:
-		 - Creates the ${build.third-party.dir}
-		 - Copies and flattens ${project.lib}
-		         
-		 =================================================================== -->
-	<target name="pentaho.third.party.init">
-		<mkdir dir="${build.third-party.dir}" />
-
-		<copy todir="${build.third-party.dir}" flatten="true" includeEmptyDirs="false" overwrite="true">
-			<fileset dir="${project.lib}" includes="**/*.jar">
-				<!-- exclude name="**/portal-core-lib.jar" />
-				<exclude name="**/portal-portlet-lib.jar" />
-				<exclude name="**/portal-security-lib.jar" / -->
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="tomcat.libs.init" depends="pentaho.third.party.init">
-		<!-- cglib, jaxen needed by tomcat -->
-		<copy todir="${build.third-party.dir}">
-			<fileset dir="${server.dir}/server/default/lib">
-				<include name="cglib.jar" />
-				<include name="jaxen.jar" />
-			</fileset>
-		</copy>
-	</target>
-
-	<!-- ===================================================================
       target: init-pentaho-res
 
       Description:
@@ -350,65 +331,6 @@
 			</fileset>
 		</copy>
 
-		<!-- copy the hsqldb stuff from src -->
-		<copy todir="${build.res.dir}/hibernate/hsqldb" overwrite="true">
-			<fileset dir="${server.src}">
-				<include name="**/org/pentaho/repository/*.xml" />
-				<include name="**/org/pentaho/repository/content/*.xml" />
-				<include name="**/org/pentaho/repository/runtime/*.xml" />
-				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-				<include name="**/com/pentaho/repository/subscribe/*.xml" />
-			</fileset>
-		</copy>
-
-		<!--
-			Some resources that live in the source (for hsqldb) need to also
-			be included with rdbms resources. So copy them, but don't overwrite
-			the rdbms specific files
-		-->
-		<copy todir="${build.res.dir}/hibernate/mysql5">
-			<fileset dir="${server.src}">
-				<include name="**/org/pentaho/repository/*.xml" />
-				<include name="**/org/pentaho/repository/content/*.xml" />
-				<include name="**/org/pentaho/repository/runtime/*.xml" />
-				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-				<include name="**/com/pentaho/repository/subscribe/*.xml" />
-			</fileset>
-		</copy>
-
-		<!--
-			Some resources that live in the source (for hsqldb) need to also
-			be included with rdbms resources. So copy them, but don't overwrite
-			the rdbms specific files.
-		-->
-		<copy todir="${build.res.dir}/hibernate/postgresql">
-			<fileset dir="${server.src}">
-				<include name="**/org/pentaho/repository/*.xml" />
-				<include name="**/org/pentaho/repository/content/*.xml" />
-				<include name="**/org/pentaho/repository/runtime/*.xml" />
-				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-				<include name="**/com/pentaho/repository/subscribe/*.xml" />
-			</fileset>
-		</copy>
-
-		<!--
-			Some resources that live in the source (for hsqldb) need to also
-			be included with rdbms resources. So copy them, but don't overwrite
-			the rdbms specific files.
-		-->
-		<copy todir="${build.res.dir}/hibernate/oracle10g">
-			<fileset dir="${server.src}">
-				<include name="**/org/pentaho/repository/*.xml" />
-				<include name="**/org/pentaho/repository/content/*.xml" />
-				<include name="**/org/pentaho/repository/runtime/*.xml" />
-				<include name="**/org/pentaho/util/versionchecker/pentaho/*.xml" />
-				<include name="**/com/pentaho/repository/dbbased/solution/*.xml" />
-				<include name="**/com/pentaho/repository/subscribe/*.xml" />
-			</fileset>
-		</copy>
 
 		<!-- quartz jar is different for oracle. make build.res.dir equal for all dbs, so war targets can be reused -->
 		<mkdir dir="${build.res.dir}/quartz" />
@@ -458,8 +380,6 @@
 		</xmltask>
 
 	</target>
-
-
 
 	<!-- =================================
 		  target: init-pentaho-javadoc
