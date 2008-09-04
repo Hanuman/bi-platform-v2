@@ -5,13 +5,13 @@
 	</tstamp>
 
 	<!-- Define xmltask for xml file manipulation -->
-	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+	<!--taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
 		<classpath>
 			<fileset dir="${user.home}/.pentaho_build_cache/xmlTask">
 				<include name="*.jar" />
 			</fileset>
 		</classpath>
-	</taskdef>
+	</taskdef-->
 
 	<!-- =================================================================================
 	     Property Defaults
