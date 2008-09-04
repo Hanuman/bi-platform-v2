@@ -222,12 +222,16 @@
 					<include name="*.bat" />
 				</fileset>
 			</copy>
+            <copy todir="${stage.dir.server}">
+                <fileset dir="scripts/tomcat/general">
+                    <include name="**" />
+                </fileset>
+            </copy>
 			<copy todir="${stage.dir.server}">
 				<fileset dir="scripts/tomcat/hsqldb">
 					<include name="**" />
 				</fileset>
 			</copy>
-
 			<!-- Add additional Pentaho resources -->
 			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
 				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
