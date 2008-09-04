@@ -5,6 +5,10 @@
 		<conf name="default" />
 	</configurations>
 	<dependencies defaultconf="default->default">
+	
+<!-- EXCLUDE -->		
+		<exclude name="servlet-api" />
+		
 		<dependency org="pentaho" name="pentaho-bi-platform-web-portlet" rev="${project.revision}" changing="true" />
 		<dependency org="pentaho" name="pentaho-bi-platform-web-servlet" rev="${project.revision}" changing="true" />
 		<dependency org="pentaho" name="mantle" rev="${project.revision}" changing="true" />
