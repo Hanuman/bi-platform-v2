@@ -24,6 +24,21 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * Preferences - Java - Code Style - Code Templates
  */
 public class ConnectionTest extends BaseTest {
+	 private static final String SOLUTION_PATH = "connections/test-src/solution";
+	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+	  public String getSolutionPath() {
+	    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+	    if(file.exists()) {
+	      System.out.println("File exist returning " + SOLUTION_PATH);
+	      return SOLUTION_PATH;  
+	    } else {
+	      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
+	      return ALT_SOLUTION_PATH;
+	    }
+	    
+	  }
 
     public Map getRequiredListeners() {
         Map listeners = super.getRequiredListeners();
@@ -282,7 +297,7 @@ public class ConnectionTest extends BaseTest {
         OutputStream outputStream = this.getOutputStream("ConnectionTest.testSQLConnection", ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.XML_DATASOURCE, session, this);
-            String query = "doc(\"" + PentahoSystem.getApplicationContext().getSolutionPath("test/datasources/books.xml") + "\")/bookstore/book";  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+            String query = "doc(\"" + PentahoSystem.getApplicationContext().getSolutionPath("samples/datasources/books.xml") + "\")/bookstore/book";  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
             query = query.replace('\\', '/');
             IPentahoResultSet results = connection.executeQuery(query);
             assertNotNull( results );
@@ -318,7 +333,7 @@ public class ConnectionTest extends BaseTest {
 
         IPentahoResultSet resultSet = null;
         try {
-            IRuntimeContext context = run("test", "datasources", "query_rule.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            IRuntimeContext context = run("samples", "datasources", "query_rule.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
 
             Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
@@ -349,7 +364,7 @@ public class ConnectionTest extends BaseTest {
 
         IPentahoResultSet resultSet = null;
         try {
-            IRuntimeContext context = run("test", "datasources", "MDX_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            IRuntimeContext context = run("samples", "datasources", "MDX_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
             // IRuntimeContext context = run( "ops", "analysis",
             // "MDX_Datasource.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$

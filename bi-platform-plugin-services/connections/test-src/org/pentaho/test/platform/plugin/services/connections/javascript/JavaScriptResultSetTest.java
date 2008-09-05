@@ -10,7 +10,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class JavaScriptResultSetTest extends BaseTest {
-  private static final String SOLUTION_PATH = "projects/services/connections/test-src/solution";
+  private static final String SOLUTION_PATH = "connections/test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
   private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 
@@ -27,7 +27,7 @@ public class JavaScriptResultSetTest extends BaseTest {
   }
   public void testRSCompareOK() {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
     IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -38,14 +38,14 @@ public class JavaScriptResultSetTest extends BaseTest {
   
   public void testRSCompareNotOK1() {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
     finishTest();
   }
   
   public void testRSCompareNotOK2() {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
 
     finishTest();
@@ -54,7 +54,7 @@ public class JavaScriptResultSetTest extends BaseTest {
   public void testRSCompareNotOK3()
   {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL);
 
     finishTest();
@@ -64,7 +64,7 @@ public class JavaScriptResultSetTest extends BaseTest {
   public void testRSCompareNotOK4()
   {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error4.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error4.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL);
 
     finishTest();
@@ -74,7 +74,7 @@ public class JavaScriptResultSetTest extends BaseTest {
   public void testRSCompareNotOK5()
   {
     startTest();
-    IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error5.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error5.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
 
     finishTest();

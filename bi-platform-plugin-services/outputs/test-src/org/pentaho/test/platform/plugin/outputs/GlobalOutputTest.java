@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -21,11 +19,25 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
+import org.pentaho.test.platform.engine.core.BaseTest;
 
 
-public class GlobalOutputTest extends TestCase {
+public class GlobalOutputTest extends BaseTest {
 
-	public static String SOLUTION_PATH = "test-src/solution";
+	  private static final String SOLUTION_PATH = "outputs/test-src/solution";
+	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+	  private static final String PENTAHO_XML_PATH = "/system/pentahoObjects.spring.xml";
+
+	  @Override 
+	  public String getSolutionPath() {
+	      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+	      if(file.exists()) {
+	        return SOLUTION_PATH;  
+	      } else {
+	        return ALT_SOLUTION_PATH;
+	      }
+	  }	
+
 	
 	public void testEmptyActionSequence() {
         StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(SOLUTION_PATH, ""); //$NON-NLS-1$
@@ -42,7 +54,7 @@ public class GlobalOutputTest extends TestCase {
         IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);
 
         try {
-            File file = new File( SOLUTION_PATH+"/samples/platform/SetGlobalOutputTest.xaction" );
+            File file = new File( getSolutionPath() + "/samples/platform/SetGlobalOutputTest.xaction" );
             StringBuilder str = new StringBuilder();
            	Reader reader = new FileReader( file );
            	char buffer[] = new char[4096];

@@ -19,7 +19,6 @@ import javax.sql.DataSource;
 import junit.framework.TestCase;
 
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceService;
 
 public class JndiDatasourceServiceTest extends TestCase {
 

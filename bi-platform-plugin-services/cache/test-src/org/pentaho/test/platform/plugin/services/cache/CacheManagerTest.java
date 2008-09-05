@@ -15,7 +15,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class CacheManagerTest extends BaseTest {
 
-	private static final String SOLUTION_PATH = "projects/services/cache/test-src/solution";
+	private static final String SOLUTION_PATH = "cache/test-src/solution";
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
 	  private static final String PENTAHO_XML_PATH = "/system/pentahoObjects.spring.xml";
 	    @Override

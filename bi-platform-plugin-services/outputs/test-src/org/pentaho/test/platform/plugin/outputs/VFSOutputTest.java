@@ -2,6 +2,8 @@ package org.pentaho.test.platform.plugin.outputs;
 
 
 
+import java.io.File;
+
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.plugin.services.messages.Messages;
@@ -9,6 +11,19 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class VFSOutputTest extends BaseTest {
 
+  private static final String SOLUTION_PATH = "outputs/test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentahoObjects.spring.xml";
+
+  @Override 
+  public String getSolutionPath() {
+      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+      if(file.exists()) {
+        return SOLUTION_PATH;  
+      } else {
+        return ALT_SOLUTION_PATH;
+      }
+  }	
   public void testFileOutput() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
