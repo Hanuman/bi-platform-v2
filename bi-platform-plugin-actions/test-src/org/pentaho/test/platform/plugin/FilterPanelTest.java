@@ -1,6 +1,5 @@
 package org.pentaho.test.platform.plugin;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,196 +18,201 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class FilterPanelTest extends BaseTest {
+  private static final String SOLUTION_PATH = "test-src/solution";
 
-    public void testFilterDefinition1() {
-        startTest();
+  public String getSolutionPath() {
+    return SOLUTION_PATH;
+  }
 
-        String definitionPath = "test/dashboard/panel1.filterpanel.xml"; //$NON-NLS-1$
-        SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
-        ArrayList messages = new ArrayList();
+  public void testFilterDefinition1() {
+    startTest();
 
-        FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
-        filterPanel.setLoggingLevel(getLoggingLevel());
-        String test1Name = "FilterPanelTest.testFilterDefinition1_html_" + System.currentTimeMillis(); //$NON-NLS-1$
-        OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
-        String contentType = "text/html"; //$NON-NLS-1$
+    String definitionPath = "test/dashboard/panel1.filterpanel.xml"; //$NON-NLS-1$
+    SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
+    ArrayList messages = new ArrayList();
 
-        SimpleParameterProvider requestParameters = new SimpleParameterProvider();
-        SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
+    FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
+    filterPanel.setLoggingLevel(getLoggingLevel());
+    String test1Name = "FilterPanelTest.testFilterDefinition1_html_" + System.currentTimeMillis(); //$NON-NLS-1$
+    OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
+    String contentType = "text/html"; //$NON-NLS-1$
 
-        HashMap parameterProviders = new HashMap();
-        parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters); 
-        parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters); 
-        StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    SimpleParameterProvider requestParameters = new SimpleParameterProvider();
+    SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
 
-        SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
-        BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+    HashMap parameterProviders = new HashMap();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
+    parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
+    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
-        try {
-            filterPanel.validate(session, requestHandler);
-            boolean initOk = filterPanel.init();
-            assertTrue(initOk);
-            filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
-            String test2Name = "FilterPanelTest.testFilterDefinition1_xml_" + System.currentTimeMillis(); //$NON-NLS-1$
-            outputStream = getOutputStream(test2Name, ".xml"); //$NON-NLS-1$
-            outputStream.write(filterPanel.getXmlContent().asXML().getBytes());
-            outputStream.close();
-            InputStream is = this.getInputStreamFromOutput(test1Name, ".html"); //$NON-NLS-1$
-            assertNotNull(is);
-            String test1Data = FileHelper.getStringFromInputStream(is);
-            assertNotNull(test1Data);
-            assertTrue(test1Data.indexOf("Select filters to apply to other controls on this page")>0); //$NON-NLS-1$
-            is = this.getInputStreamFromOutput(test2Name, ".xml"); //$NON-NLS-1$
-            assertNotNull(is);
-            String test2Data = FileHelper.getStringFromInputStream(is);
-            assertNotNull(test2Data);
-            assertTrue(test2Data.indexOf("<xf:label>Central</xf:label>")>0); //$NON-NLS-1$
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
+    BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
 
-        finishTest();
+    try {
+      filterPanel.validate(session, requestHandler);
+      boolean initOk = filterPanel.init();
+      assertTrue(initOk);
+      filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
+      String test2Name = "FilterPanelTest.testFilterDefinition1_xml_" + System.currentTimeMillis(); //$NON-NLS-1$
+      outputStream = getOutputStream(test2Name, ".xml"); //$NON-NLS-1$
+      outputStream.write(filterPanel.getXmlContent().asXML().getBytes());
+      outputStream.close();
+      InputStream is = this.getInputStreamFromOutput(test1Name, ".html"); //$NON-NLS-1$
+      assertNotNull(is);
+      String test1Data = FileHelper.getStringFromInputStream(is);
+      assertNotNull(test1Data);
+      assertTrue(test1Data.indexOf("Select filters to apply to other controls on this page") > 0); //$NON-NLS-1$
+      is = this.getInputStreamFromOutput(test2Name, ".xml"); //$NON-NLS-1$
+      assertNotNull(is);
+      String test2Data = FileHelper.getStringFromInputStream(is);
+      assertNotNull(test2Data);
+      assertTrue(test2Data.indexOf("<xf:label>Central</xf:label>") > 0); //$NON-NLS-1$
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    public void testFilterDefinition3() {
-        startTest();
+    finishTest();
+  }
 
-        String definitionPath = "test/dashboard/panel3.filterpanel.xml"; //$NON-NLS-1$
-        SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
-        ArrayList messages = new ArrayList();
+  public void testFilterDefinition3() {
+    startTest();
 
-        FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
-        filterPanel.setLoggingLevel(getLoggingLevel());
-        String test1Name = "FilterPanelTest.testFilterDefinition3_html_" + System.currentTimeMillis(); //$NON-NLS-1$
-        OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
-        String contentType = "text/html"; //$NON-NLS-1$
+    String definitionPath = "test/dashboard/panel3.filterpanel.xml"; //$NON-NLS-1$
+    SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
+    ArrayList messages = new ArrayList();
 
-        SimpleParameterProvider requestParameters = new SimpleParameterProvider();
-        SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
+    FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
+    filterPanel.setLoggingLevel(getLoggingLevel());
+    String test1Name = "FilterPanelTest.testFilterDefinition3_html_" + System.currentTimeMillis(); //$NON-NLS-1$
+    OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
+    String contentType = "text/html"; //$NON-NLS-1$
 
-        HashMap parameterProviders = new HashMap();
-        parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters); 
-        parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters); 
-        StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    SimpleParameterProvider requestParameters = new SimpleParameterProvider();
+    SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
 
-        SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
-        BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+    HashMap parameterProviders = new HashMap();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
+    parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
+    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
-        try {
-            filterPanel.validate(session, requestHandler);
-            boolean initOk = filterPanel.init();
-            assertTrue(initOk);
-            filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
-            String test3Name = "FilterPanelTest.testFilterDefinition3_xml_" + System.currentTimeMillis(); //$NON-NLS-1$
-            outputStream = getOutputStream(test3Name, ".xml"); //$NON-NLS-1$
-            outputStream.write(filterPanel.getXmlContent().asXML().getBytes());
-            outputStream.close();
-            InputStream is = this.getInputStreamFromOutput(test1Name, ".html"); //$NON-NLS-1$
-            assertNotNull(is);
-            is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
-            assertNotNull(is);
-            String test3Data = FileHelper.getStringFromInputStream(is);
-            assertNotNull(test3Data);
-            assertTrue(test3Data.indexOf("Select one or more Position Titles")>0); //$NON-NLS-1$
-            is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
-            assertNotNull(is);
-            assertTrue(test3Data.indexOf("Year")>0); //$NON-NLS-1$
-            is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
-            assertNotNull(is);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
+    BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
 
-        finishTest();
+    try {
+      filterPanel.validate(session, requestHandler);
+      boolean initOk = filterPanel.init();
+      assertTrue(initOk);
+      filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
+      String test3Name = "FilterPanelTest.testFilterDefinition3_xml_" + System.currentTimeMillis(); //$NON-NLS-1$
+      outputStream = getOutputStream(test3Name, ".xml"); //$NON-NLS-1$
+      outputStream.write(filterPanel.getXmlContent().asXML().getBytes());
+      outputStream.close();
+      InputStream is = this.getInputStreamFromOutput(test1Name, ".html"); //$NON-NLS-1$
+      assertNotNull(is);
+      is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
+      assertNotNull(is);
+      String test3Data = FileHelper.getStringFromInputStream(is);
+      assertNotNull(test3Data);
+      assertTrue(test3Data.indexOf("Select one or more Position Titles") > 0); //$NON-NLS-1$
+      is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
+      assertNotNull(is);
+      assertTrue(test3Data.indexOf("Year") > 0); //$NON-NLS-1$
+      is = this.getInputStreamFromOutput(test3Name, ".xml"); //$NON-NLS-1$
+      assertNotNull(is);
+
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    
-    public void testFilterDefinition4() {
-        startTest();
 
-        String definitionPath = "test/dashboard/panel4.filterpanel.xml"; //$NON-NLS-1$
-        SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
-        ArrayList messages = new ArrayList();
+    finishTest();
+  }
 
-        FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
-        filterPanel.setLoggingLevel(getLoggingLevel());
-        String test1Name = "FilterPanelTest.testFilterDefinition4_html_" + System.currentTimeMillis(); //$NON-NLS-1$
-        OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
-        String contentType = "text/html"; //$NON-NLS-1$
+  public void testFilterDefinition4() {
+    startTest();
 
-        SimpleParameterProvider requestParameters = new SimpleParameterProvider();
-        SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
+    String definitionPath = "test/dashboard/panel4.filterpanel.xml"; //$NON-NLS-1$
+    SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
+    ArrayList messages = new ArrayList();
 
-        HashMap parameterProviders = new HashMap();
-        parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters); 
-        parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters); 
-        StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
+    filterPanel.setLoggingLevel(getLoggingLevel());
+    String test1Name = "FilterPanelTest.testFilterDefinition4_html_" + System.currentTimeMillis(); //$NON-NLS-1$
+    OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
+    String contentType = "text/html"; //$NON-NLS-1$
 
-        SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
-        BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+    SimpleParameterProvider requestParameters = new SimpleParameterProvider();
+    SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
 
-        try {
-            filterPanel.validate(session, requestHandler);
-            boolean initOk = filterPanel.init();
-            assertTrue(initOk);
-            filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
-        } catch (IOException e) {
-            e.printStackTrace();
-            assertTrue("Expected to throw exception since the static list of values were empty", true);
-        }
+    HashMap parameterProviders = new HashMap();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
+    parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
+    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
-        finishTest();
+    SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
+    BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+
+    try {
+      filterPanel.validate(session, requestHandler);
+      boolean initOk = filterPanel.init();
+      assertTrue(initOk);
+      filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
+    } catch (IOException e) {
+      e.printStackTrace();
+      assertTrue("Expected to throw exception since the static list of values were empty", true);
     }
-    
-    public void testFilterDefinition5() {
-        startTest();
 
-        String definitionPath = "test/dashboard/panel5.filterpanel.xml"; //$NON-NLS-1$
-        SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
-        ArrayList messages = new ArrayList();
+    finishTest();
+  }
 
-        FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
-        filterPanel.setLoggingLevel(getLoggingLevel());
-        String test1Name = "FilterPanelTest.testFilterDefinition5_html_" + System.currentTimeMillis(); //$NON-NLS-1$
-        OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
-        String contentType = "text/html"; //$NON-NLS-1$
+  public void testFilterDefinition5() {
+    startTest();
 
-        SimpleParameterProvider requestParameters = new SimpleParameterProvider();
-        SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
+    String definitionPath = "test/dashboard/panel5.filterpanel.xml"; //$NON-NLS-1$
+    SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
+    ArrayList messages = new ArrayList();
 
-        HashMap parameterProviders = new HashMap();
-        parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters); 
-        parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters); 
-        StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    FilterPanelComponent filterPanel = new FilterPanelComponent(definitionPath, null, urlFactory, messages);
+    filterPanel.setLoggingLevel(getLoggingLevel());
+    String test1Name = "FilterPanelTest.testFilterDefinition5_html_" + System.currentTimeMillis(); //$NON-NLS-1$
+    OutputStream outputStream = getOutputStream(test1Name, ".html"); //$NON-NLS-1$
+    String contentType = "text/html"; //$NON-NLS-1$
 
-        SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
-        BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+    SimpleParameterProvider requestParameters = new SimpleParameterProvider();
+    SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
 
-        try {
-            filterPanel.validate(session, requestHandler);
-            boolean initOk = filterPanel.init();
-            assertTrue(initOk);
-            filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
-        } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue("Expected to throw exception since the output result type was misspelled", true);
-        }
+    HashMap parameterProviders = new HashMap();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
+    parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
+    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
-        finishTest();
+    SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
+    BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
+
+    try {
+      filterPanel.validate(session, requestHandler);
+      boolean initOk = filterPanel.init();
+      assertTrue(initOk);
+      filterPanel.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
+    } catch (Exception e) {
+      e.printStackTrace();
+      assertTrue("Expected to throw exception since the output result type was misspelled", true);
     }
-    
-    public static void main(String[] args) {
-        FilterPanelTest test = new FilterPanelTest();
-        test.setUp();
-        try {
-            test.testFilterDefinition1();
-            test.testFilterDefinition3();
-            test.testFilterDefinition4();
-            test.testFilterDefinition5();
-        } finally {
-            test.tearDown();
-            BaseTest.shutdown();
-        }
+
+    finishTest();
+  }
+
+  public static void main(String[] args) {
+    FilterPanelTest test = new FilterPanelTest();
+    test.setUp();
+    try {
+      test.testFilterDefinition1();
+      test.testFilterDefinition3();
+      test.testFilterDefinition4();
+      test.testFilterDefinition5();
+    } finally {
+      test.tearDown();
+      BaseTest.shutdown();
     }
+  }
 
 }

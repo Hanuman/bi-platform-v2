@@ -1,7 +1,5 @@
 package org.pentaho.test.platform.plugin;
 
-
-import java.io.File;
 import java.util.HashMap;
 
 import org.pentaho.commons.connection.IPentahoResultSet;
@@ -18,313 +16,316 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  *
  */
 public class IPreparedComponentTest extends BaseTest {
-  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
-
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+  private static final String SOLUTION_PATH = "test-src/solution";
 
   public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if (file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
-      return SOLUTION_PATH;
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);
-      return ALT_SOLUTION_PATH;
-    }
+    return SOLUTION_PATH;
   }
-	
-	public void testIPreparedComponentSQLAvailable() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
 
-	    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn);
-	    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-	    
-	    assertNotNull(preparedComponent);
-	    
-	    finishTest();    
-	}
-	
-	public void testIPreparedComponentSQLTempTables() {
-	    startTest();
-	    info("Expected: Successful execution with one row of data"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_temptables.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-	
-	    IActionParameter rtn1 = context.getOutputParameter("a_result");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPentahoResultSet resultset1 = (IPentahoResultSet)rtn1.getValue();
-	    assertEquals(1,  resultset1.getRowCount());
-	    assertEquals("Expected first row of 'a_result' to contain a 1 in the first column.",  new Integer(1), resultset1.getValueAt(0, 0)); //$NON-NLS-1$
-
-	     
-	    IActionParameter rtn2 = context.getOutputParameter("no_results");//$NON-NLS-1$
-	    assertNotNull(rtn2);
-	    IPentahoResultSet resultset2 = (IPentahoResultSet)rtn2.getValue();
-	    assertEquals(1, resultset2.getRowCount());
-	    assertEquals("Expected first row of 'no_results' to contain a 0 in the first column.",  new Integer(0), resultset2.getValueAt(0, 0)); //$NON-NLS-1$
-
-	    finishTest();    
-	}
-
-
-	public void testIPreparedComponentSQLPrepareLater() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-	    assertEquals(1, resultset1.getRowCount());
-	    Number val1 = (Number)resultset1.getValueAt(0, 0);
-
-	    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn2);
-	    IPreparedComponent preparedComponent2 = (IPreparedComponent)rtn2.getValue();
-	    assertNotNull(preparedComponent2);
-	    HashMap map = new HashMap();
-	    map.put("DEPARTMENT", "Sales"); //$NON-NLS-1$ //$NON-NLS-2$
-	    map.put("REGION", "Eastern"); //$NON-NLS-1$ //$NON-NLS-2$
-	    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
-	    assertEquals(1, resultset2.getRowCount());
-      Number val2 = (Number)resultset2.getValueAt(0, 0);
-
-	    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
-	    
-	    finishTest();      
-	}
-
-	public void testIPreparedComponentMDXAvailable() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-	    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn);
-	    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-	    
-	    assertNotNull(preparedComponent);
-	    
-	    finishTest();    
-	}
-	
-	public void testIPreparedComponentMDXShareConnection() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-	    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn);
-	    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-	    
-	    assertNotNull(preparedComponent);
-
-	    IPentahoResultSet resultset = preparedComponent.executePrepared(null);
-      assertNotNull(resultset);
-	    assertTrue(resultset.getRowCount() >= 1);
-	    Object val1 = resultset.getValueAt(0, 0);
-	    assertNotNull(val1);
-	    
-	    finishTest();    
-	}
-
- 	public void testIPreparedComponentMDXPrepareLater() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-      assertNotNull(resultset1);
-	    assertTrue(resultset1.getRowCount() >= 1);
-	    Object val1 = resultset1.getValueAt(0, 0);
-
-	    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn2);
-	    IPreparedComponent preparedComponent2 = (IPreparedComponent)rtn2.getValue();
-	    assertNotNull(preparedComponent2);
-	    HashMap map = new HashMap();
-	    map.put("productline", "Classic Cars");//$NON-NLS-1$ //$NON-NLS-2$
-	    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
-	    assertTrue(resultset2.getRowCount() >= 1);
-	    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
-	    
-	    Object val2 = resultset2.getValueAt(0, 0);
-
-	    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
-	    
-	    finishTest();         
-	}
-
-	public void testIPreparedComponentXQueryAvailable() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-	    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn);
-	    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-	    
-	    assertNotNull(preparedComponent);
-	    
-	    finishTest();     
-	}
-
-  public void testIPreparedComponentXQueryAvailableErrorNoDocument() {
+  public void testIPreparedComponentSQLAvailable() {
     startTest();
-    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nodocument.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus() ); //$NON-NLS-1$
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
-    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-    
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
+    assertNotNull(preparedComponent);
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentSQLTempTables() {
+    startTest();
+    info("Expected: Successful execution with one row of data"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_temptables.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn1 = context.getOutputParameter("a_result");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPentahoResultSet resultset1 = (IPentahoResultSet) rtn1.getValue();
+    assertEquals(1, resultset1.getRowCount());
+    assertEquals(
+        "Expected first row of 'a_result' to contain a 1 in the first column.", new Integer(1), resultset1.getValueAt(0, 0)); //$NON-NLS-1$
+
+    IActionParameter rtn2 = context.getOutputParameter("no_results");//$NON-NLS-1$
+    assertNotNull(rtn2);
+    IPentahoResultSet resultset2 = (IPentahoResultSet) rtn2.getValue();
+    assertEquals(1, resultset2.getRowCount());
+    assertEquals(
+        "Expected first row of 'no_results' to contain a 0 in the first column.", new Integer(0), resultset2.getValueAt(0, 0)); //$NON-NLS-1$
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentSQLPrepareLater() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertEquals(1, resultset1.getRowCount());
+    Number val1 = (Number) resultset1.getValueAt(0, 0);
+
+    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn2);
+    IPreparedComponent preparedComponent2 = (IPreparedComponent) rtn2.getValue();
+    assertNotNull(preparedComponent2);
+    HashMap map = new HashMap();
+    map.put("DEPARTMENT", "Sales"); //$NON-NLS-1$ //$NON-NLS-2$
+    map.put("REGION", "Eastern"); //$NON-NLS-1$ //$NON-NLS-2$
+    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
+    assertEquals(1, resultset2.getRowCount());
+    Number val2 = (Number) resultset2.getValueAt(0, 0);
+
+    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentMDXAvailable() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn);
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
+    assertNotNull(preparedComponent);
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentMDXShareConnection() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn);
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
+    assertNotNull(preparedComponent);
+
+    IPentahoResultSet resultset = preparedComponent.executePrepared(null);
+    assertNotNull(resultset);
+    assertTrue(resultset.getRowCount() >= 1);
+    Object val1 = resultset.getValueAt(0, 0);
+    assertNotNull(val1);
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentMDXPrepareLater() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertNotNull(resultset1);
+    assertTrue(resultset1.getRowCount() >= 1);
+    Object val1 = resultset1.getValueAt(0, 0);
+
+    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn2);
+    IPreparedComponent preparedComponent2 = (IPreparedComponent) rtn2.getValue();
+    assertNotNull(preparedComponent2);
+    HashMap map = new HashMap();
+    map.put("productline", "Classic Cars");//$NON-NLS-1$ //$NON-NLS-2$
+    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
+    assertTrue(resultset2.getRowCount() >= 1);
+    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
+
+    Object val2 = resultset2.getValueAt(0, 0);
+
+    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentXQueryAvailable() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn);
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
+    assertNotNull(preparedComponent);
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentXQueryAvailableErrorNoDocument() {
+    startTest();
+    IRuntimeContext context = run(
+        "test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nodocument.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn);
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
     assertNull(preparedComponent);
-    
-    finishTest();     
+
+    finishTest();
   }
 
   public void testIPreparedComponentXQueryAvailableErrorNoPrepareComponent() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
-    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nopreparedcomponent.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus() ); //$NON-NLS-1$
-    
-    finishTest();     
-} 
-  
+    IRuntimeContext context = run(
+        "test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nopreparedcomponent.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
-	public void testIPreparedComponentXQueryPrepareLater() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+    finishTest();
+  }
 
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-	    assertTrue(resultset1.getRowCount() >= 1);
-	    Object val1 = resultset1.getValueAt(0, 0);
+  public void testIPreparedComponentXQueryPrepareLater() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
-	    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn2);
-	    IPreparedComponent preparedComponent2 = (IPreparedComponent)rtn2.getValue();
-	    assertNotNull(preparedComponent2);
-	    HashMap map = new HashMap();
-	    map.put("POSITIONTITLE", "Engineer");//$NON-NLS-1$ //$NON-NLS-2$
-	    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
-	    assertTrue(resultset2.getRowCount() >= 1);
-	    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
-	    
-	    Object val2 = resultset2.getValueAt(0, 0);
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertTrue(resultset1.getRowCount() >= 1);
+    Object val1 = resultset1.getValueAt(0, 0);
 
-	    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
-	    
-	    finishTest();    
-	}
+    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn2);
+    IPreparedComponent preparedComponent2 = (IPreparedComponent) rtn2.getValue();
+    assertNotNull(preparedComponent2);
+    HashMap map = new HashMap();
+    map.put("POSITIONTITLE", "Engineer");//$NON-NLS-1$ //$NON-NLS-2$
+    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
+    assertTrue(resultset2.getRowCount() >= 1);
+    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
 
-	
-	public void testIPreparedComponentXQueryShareConnection() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+    Object val2 = resultset2.getValueAt(0, 0);
 
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-	    assertTrue(resultset1.getRowCount() >= 1);
-	    Object val1 = resultset1.getValueAt(0, 0);
-	    assertNotNull(val1);
-		
-	    finishTest();    
-	}
-	
-	public void testIPreparedComponentHQLAvailable() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
 
-	    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn);
-	    IPreparedComponent preparedComponent = (IPreparedComponent)rtn.getValue();
-	    
-	    assertNotNull(preparedComponent);
-	    
-	    finishTest();    
-	}
+    finishTest();
+  }
 
- 	public void testIPreparedComponentHQLPrepareLater() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+  public void testIPreparedComponentXQueryShareConnection() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-	    assertTrue(resultset1.getRowCount() >= 1);
-	    Object val1 = resultset1.getValueAt(0, 0);
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertTrue(resultset1.getRowCount() >= 1);
+    Object val1 = resultset1.getValueAt(0, 0);
+    assertNotNull(val1);
 
-	    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn2);
-	    IPreparedComponent preparedComponent2 = (IPreparedComponent)rtn2.getValue();
-	    assertNotNull(preparedComponent2);
-	    HashMap map = new HashMap();
-	    map.put("mimetypeval", "text/html");//$NON-NLS-1$ //$NON-NLS-2$
-	    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
-	    assertTrue(resultset2.getRowCount() >= 1);
-	    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
-	    
-	    Object val2 = resultset2.getValueAt(0, 0);
+    finishTest();
+  }
 
-	    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
-	    
-	    finishTest();         
-	}
-	
- 	public void testIPreparedComponentHQLShareConnection() {
-	    startTest();
-	    info("Expected: Successful execution with object available"); //$NON-NLS-1$
-	    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+  public void testIPreparedComponentHQLAvailable() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
-	    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
-	    assertNotNull(rtn1);
-	    IPreparedComponent preparedComponent1 = (IPreparedComponent)rtn1.getValue();
-	    assertNotNull(preparedComponent1);
-	    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
-	    assertTrue(resultset1.getRowCount() >= 1);
-	    Object val1 = resultset1.getValueAt(0, 0);
-	    
-	    assertNotNull(val1);
-	    
-	    finishTest();         
-	}
- 	
+    IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn);
+    IPreparedComponent preparedComponent = (IPreparedComponent) rtn.getValue();
+
+    assertNotNull(preparedComponent);
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentHQLPrepareLater() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertTrue(resultset1.getRowCount() >= 1);
+    Object val1 = resultset1.getValueAt(0, 0);
+
+    IActionParameter rtn2 = context.getOutputParameter("second_prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn2);
+    IPreparedComponent preparedComponent2 = (IPreparedComponent) rtn2.getValue();
+    assertNotNull(preparedComponent2);
+    HashMap map = new HashMap();
+    map.put("mimetypeval", "text/html");//$NON-NLS-1$ //$NON-NLS-2$
+    IPentahoResultSet resultset2 = preparedComponent2.executePrepared(map);
+    assertTrue(resultset2.getRowCount() >= 1);
+    assertEquals(resultset1.getRowCount(), resultset2.getRowCount());
+
+    Object val2 = resultset2.getValueAt(0, 0);
+
+    assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
+
+    finishTest();
+  }
+
+  public void testIPreparedComponentHQLShareConnection() {
+    startTest();
+    info("Expected: Successful execution with object available"); //$NON-NLS-1$
+    IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(
+        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+
+    IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
+    assertNotNull(rtn1);
+    IPreparedComponent preparedComponent1 = (IPreparedComponent) rtn1.getValue();
+    assertNotNull(preparedComponent1);
+    IPentahoResultSet resultset1 = preparedComponent1.executePrepared(null);
+    assertTrue(resultset1.getRowCount() >= 1);
+    Object val1 = resultset1.getValueAt(0, 0);
+
+    assertNotNull(val1);
+
+    finishTest();
+  }
+
   public static void main(String[] args) {
     IPreparedComponentTest test = new IPreparedComponentTest();
     try {
@@ -343,7 +344,7 @@ public class IPreparedComponentTest extends BaseTest {
       test.testIPreparedComponentHQLAvailable();
       test.testIPreparedComponentHQLPrepareLater();
       test.testIPreparedComponentHQLShareConnection();
-    
+
     } finally {
       test.tearDown();
       BaseTest.shutdown();

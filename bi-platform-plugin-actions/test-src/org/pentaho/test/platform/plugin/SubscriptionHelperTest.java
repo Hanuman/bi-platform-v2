@@ -30,8 +30,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
 import org.pentaho.platform.api.engine.IScheduler;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
@@ -48,29 +46,18 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class SubscriptionHelperTest extends BaseTest {
 
-	  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
+  private static final String SOLUTION_PATH = "test-src/solution";
 
-	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  public String getSolutionPath() {
+    return SOLUTION_PATH;
+  }
 
-	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-
-	  public String getSolutionPath() {
-	    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-	    if (file.exists()) {
-	      System.out.println("File exist returning " + SOLUTION_PATH);
-	      return SOLUTION_PATH;
-	    } else {
-	      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);
-	      return ALT_SOLUTION_PATH;
-	    }
-	  }
-	  
-	private StandaloneApplicationContext applicationContext;
+  private StandaloneApplicationContext applicationContext;
 
   public SubscriptionHelperTest() {
-	  startTest();
-//    applicationContext = new StandaloneApplicationContext(SOLUTION_PATH, ""); //$NON-NLS-1$
-//    PentahoSystem.init(applicationContext);
+    startTest();
+    //    applicationContext = new StandaloneApplicationContext(SOLUTION_PATH, ""); //$NON-NLS-1$
+    //    PentahoSystem.init(applicationContext);
   }
 
   public org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository getFileSolutionRepository(
@@ -81,7 +68,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testSaveSubscription() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$
@@ -105,7 +92,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testEditSubscription() {
-	  startTest();
+    startTest();
     try {
       SimpleParameterProvider parameters1 = new SimpleParameterProvider();
       String solutionName1 = "test"; //$NON-NLS-1$
@@ -147,7 +134,7 @@ public class SubscriptionHelperTest extends BaseTest {
           break;
         }
       }
-      assertNotNull( "Subscription not found", subscriptionId );
+      assertNotNull("Subscription not found", subscriptionId);
       SubscriptionHelper.editSubscription(subscriptionId, session, null, outputStream);
     } catch (Exception e) {
       assertTrue("Exception was thrown" + e.getLocalizedMessage(), false);
@@ -157,7 +144,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testCreateSubscriptionArchive() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$
@@ -188,7 +175,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testGetArchived() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$
@@ -219,7 +206,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testDeleteSubscriptionArchive() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$
@@ -248,7 +235,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testDeleteSubscription() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "samples"; //$NON-NLS-1$
     String actionPath = "getting-started"; //$NON-NLS-1$
@@ -282,7 +269,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testSaveEditAndDeleteSubscription() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$
@@ -338,7 +325,7 @@ public class SubscriptionHelperTest extends BaseTest {
   }
 
   public void testCreateSaveEditAndDeleteSubscriptionArchive() {
-	  startTest();
+    startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
     String actionPath = "dashboard"; //$NON-NLS-1$

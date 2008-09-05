@@ -1,8 +1,5 @@
 package org.pentaho.test.platform.plugin.webservice;
 
-
-import java.io.File;
-
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.plugin.action.xml.webservice.WebServiceLookupRule;
@@ -14,21 +11,13 @@ public class WebServiceLookupRuleTest extends BaseTest {
   protected IPentahoConnection connection = null;
 
   protected WebServiceLookupRule wslr = null;
-  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  private static final String SOLUTION_PATH = "test-src/solution";
 
   public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if(file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
-      return SOLUTION_PATH;  
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-      return ALT_SOLUTION_PATH;
-    }
-    
+    return SOLUTION_PATH;
   }
+
   /**
    * Tests the success path of the xmlEncodeUrl method in the WebServiceLookupRule class
    */
@@ -63,7 +52,7 @@ public class WebServiceLookupRuleTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }
-  
+
   /**
    * Tests the failure path of the xmlEncodeUrl method in the WebServiceLookupRule class.
    * This failure path is caused by an no URL

@@ -1,7 +1,5 @@
 package org.pentaho.test.platform.plugin;
 
-import java.io.File;
-
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IRuntimeContext;
@@ -11,22 +9,10 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class RulesTest extends BaseTest {
 
-  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
-
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+  private static final String SOLUTION_PATH = "test-src/solution";
 
   public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if (file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
-      return SOLUTION_PATH;
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);
-      return ALT_SOLUTION_PATH;
-    }
-
+    return SOLUTION_PATH;
   }
 
   public void testScriptRule() {
