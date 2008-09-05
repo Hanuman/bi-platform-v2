@@ -58,18 +58,29 @@ public class GenericServlet extends ServletBase {
 	    	String key = request.getPathInfo();
 	    	String contentGeneratorId = "";
 	    	String urlPath = "";
+	    	SimpleParameterProvider pathParams = new SimpleParameterProvider();
 	    	if( key == null ) {
 	    		contentGeneratorId = servletPath.substring(1);
 	    		urlPath = contentGeneratorId;
 	    	} else {
-		    	contentGeneratorId = key.substring( 1 );
-		    	urlPath = "content"+key;
+	    		String path = key.substring( 1 );
+	    		int slashPos = path.indexOf( '/' );
+	    		if( slashPos != -1 ) {
+	    			pathParams.setParameter( "path" , key.substring( slashPos+1 ) );
+			    	contentGeneratorId = path.substring( 0, slashPos );
+	    		} else {
+			    	contentGeneratorId = path;
+	    		}
+		    	urlPath = "content/"+contentGeneratorId;
 	    	}
+	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId );
+	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath );
 	    	IPentahoSession session = getPentahoSession( request );
 	    	PluginSettings pluginSettings = (PluginSettings) PentahoSystem.getObject( session, "IPluginSettings" );
 		    if( pluginSettings == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";
+		    	error( message );
 		    	out.write( message.getBytes() );
 		    	return;
 		    }
@@ -78,6 +89,7 @@ public class GenericServlet extends ServletBase {
 	    	if( contentGenerator == null ) {
 		    	OutputStream out = response.getOutputStream();
 	    		String message = "Could not get content generator for type: "+contentGeneratorId;
+		    	error( message );
 	    		out.write( message.getBytes() );
 	    		return;
 	    	}
@@ -125,6 +137,7 @@ public class GenericServlet extends ServletBase {
 	    	Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
 	    	parameterProviders.put( IParameterProvider.SCOPE_REQUEST , requestParameters );
 	    	parameterProviders.put( IParameterProvider.SCOPE_SESSION , sessionParameters );
+	    	parameterProviders.put( "path", pathParams );
 	        SimpleUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl()
 	                + urlPath+"?"); //$NON-NLS-1$
 	    	List<String> messages = new ArrayList<String>();
@@ -134,44 +147,12 @@ public class GenericServlet extends ServletBase {
 	    	contentGenerator.setSession(session);
 	    	contentGenerator.setUrlFactory(urlFactory);
 	    	contentGenerator.createContent();
+	    	error( "Generic Servlet content generate successfully" );
 
-	    	
 	    } catch ( Exception e ) {
-	    // TODO 
+	    	error( "Errors trying to generate content: "+request.getQueryString(), e );
 	    } finally {
 	      PentahoSystem.systemExitPoint();
 	    }
 	  }
-/*
-	  private IContentGenerator getContentGenerator( String className, IPentahoSession userSession ) {
-		  if( className.startsWith( "solution:" ) ) {
-			  className = className.substring( "solution:".length() );
-			  int pos = className.lastIndexOf( '/' );
-			  String path = className.substring(0, pos);
-			  className = className.substring( pos + 1 );
-			  pos = path.lastIndexOf( '/' );
-			  String jarName = path.substring( pos+1 );
-			  path = path.substring(0, pos );
-				IPentahoSession session = new StandaloneSession( "test" );
-				ISolutionRepository repo = PentahoSystem.getSolutionRepository( session );
-			  SolutionClassLoader loader = new SolutionClassLoader( path, jarName, repo, this ); 
-			  
-				try {
-					Class<?> generatorClass = loader.loadClass( className );
-					Object obj = generatorClass.newInstance();
-					if( obj instanceof IContentGenerator ) {
-						return (IContentGenerator) obj;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		  } else {
-			  Object obj = PentahoSystem.createObject(className);
-			  if( obj instanceof IContentGenerator ) {
-				  return (IContentGenerator) obj;
-			  }
-		  }
-		  return null;
-	  }
-*/	  
 }
