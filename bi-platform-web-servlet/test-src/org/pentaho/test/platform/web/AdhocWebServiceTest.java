@@ -1,7 +1,6 @@
 package org.pentaho.test.platform.web;
 
 
-import java.io.File;
 import java.util.Map;
 
 import org.acegisecurity.GrantedAuthority;
@@ -12,11 +11,11 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.IUserRoleListService;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.servlet.AdhocWebService;
-import org.pentaho.test.platform.engine.core.BaseTest;
+import org.pentaho.test.platform.engine.core.BaseTestCase;
+import org.pentaho.test.platform.security.MockUserDetailsRoleListService;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -27,7 +26,7 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  * @author mlowery
  */
-public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
+public class AdhocWebServiceTest extends BaseTestCase {
 
   private static final String userName = "joe"; //$NON-NLS-1$
   private static final String role = "Admin"; //$NON-NLS-1$   
@@ -36,20 +35,11 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
   private static final String templatePath = "/templates/Pentaho/jfreereport-template.xml"; //$NON-NLS-1$   
   private static final AdhocWebServiceTestUserRoleListService userRolesLS = new AdhocWebServiceTestUserRoleListService();
   private static final MockHttpSession session = new MockHttpSession();
-  private static final String SOLUTION_PATH = "projects/portlet/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+  private static final String SOLUTION_PATH = "test-src/solution";
+
 
   public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if(file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
       return SOLUTION_PATH;  
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-      return ALT_SOLUTION_PATH;
-    }
-    
   }
   static class AdhocWebServiceTestUserRoleListService implements IUserRoleListService {
 
@@ -135,39 +125,27 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
        + "</acl>"; //$NON-NLS-1$
   
   
-	public void setUp() {
-	  super.setUp();
-	  
-    IUserDetailsRoleListService userDetailsLS = (IUserDetailsRoleListService) PentahoSystem.getUserDetailsRoleListService();
-    userDetailsLS.setUserRoleListService(userRolesLS );
+  public void setUp() {
+    IUserDetailsRoleListService userDetailsLS = (IUserDetailsRoleListService) new MockUserDetailsRoleListService();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("SOLUTION_PATH", "solution.path");
-    
-    session.setAttribute(UserSession.PENTAHO_SESSION_KEY, PentahoSystem.getUserDetailsRoleListService().getEffectiveUserSession(userName, (IParameterProvider)parameterProvider) );
+    session.setAttribute(UserSession.PENTAHO_SESSION_KEY, userDetailsLS.getEffectiveUserSession(userName, (IParameterProvider)parameterProvider) );
 
     request.setRemoteUser( userName );
     request.setBodyContent(""); //$NON-NLS-1$
     request.setSession(session);
-	}
+  }
 
-	protected Map<String, String> getRequiredListeners() {
-		Map<String, String> listeners = super.getRequiredListeners();
-    listeners.put("metadata", "metadata"); //$NON-NLS-1$ //$NON-NLS-2$
-    listeners.put("jfree-report", "jfree-report"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		return listeners;
-	}
-
-	private Node getNodeFromResponseDoc( MockHttpServletResponse response, String xpath )
-	{
+  private Node getNodeFromResponseDoc( MockHttpServletResponse response, String xpath )
+  {
     String responseContent = response.getOutputStreamContent();
     Document doc = XmlDom4JHelper.getDocFromString( responseContent, null ); 
     Node nd = doc.selectSingleNode( xpath );
     return nd;
-	}
-	
-	public void testGetWaqrRepositoryDoc() {
-	  request.clearParameters();
+  }
+  
+  public void testGetWaqrRepositoryDoc() {
+    request.clearParameters();
     MockHttpServletResponse response = new MockHttpServletResponse();
     request.setupAddParameter("component", "getWaqrRepositoryDoc"); //$NON-NLS-1$ //$NON-NLS-2$
     request.setupAddParameter("folderPath", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -178,13 +156,13 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
       return;
     }
     // need to look in the response to verify the content
-    String xpath = "/branch[@id='/pentaho-solutions/system/waqr']"; //$NON-NLS-1$   
+    String xpath = "/branch[@id='/solution/system/waqr']"; //$NON-NLS-1$   
     Node nd = getNodeFromResponseDoc( response, xpath );
     
     assertTrue( "getWaqrRepositoryDoc service call failed.", nd != null ); //$NON-NLS-1$
     System.out.println( "Done testGetWaqrRepositoryDoc." ); //$NON-NLS-1$   
-	}
-	
+  }
+  
   public void testGetWaqrRepositoryDoc2() {
     request.clearParameters();
     MockHttpServletResponse response = new MockHttpServletResponse();
@@ -197,7 +175,7 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
       return;
     }
     // need to look in the response to verify the content
-    String xpath = "/branch/branch[@id='/pentaho-solutions/system/waqr/templates/Pentaho']"; //$NON-NLS-1$   
+    String xpath = "/branch/branch[@id='/solution/system/waqr/templates/Pentaho']"; //$NON-NLS-1$   
     Node nd = getNodeFromResponseDoc( response, xpath );
     
     assertTrue( "getWaqrRepositoryDoc service call failed.", nd != null ); //$NON-NLS-1$
@@ -428,7 +406,7 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
     request.clearParameters();
     MockHttpServletResponse response = new MockHttpServletResponse();
     request.setupAddParameter("component", "getTemplateReportSpec" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("reportSpecPath", "/templates/Winter/report.xreportspec" ); //$NON-NLS-1$ //$NON-NLS-2$
+    request.setupAddParameter("reportSpecPath", "system/waqr/templates/Winter/report.xreportspec" ); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       servlet.service(request, response);
     } catch (Exception e) {
@@ -451,8 +429,8 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
     request.clearParameters();
     MockHttpServletResponse response = new MockHttpServletResponse();
     request.setupAddParameter("component", "getSolutionRepositoryDoc" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("solution", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("path", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+    request.setupAddParameter("solution", "samples" ); //$NON-NLS-1$ //$NON-NLS-2$
+    request.setupAddParameter("path", "waqr" ); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       servlet.service(request, response);
     } catch (Exception e) {
@@ -466,77 +444,5 @@ public class AdhocWebServiceTest extends BaseTest/*GenericPentahoTest*/ {
     assertTrue( "getSolutionRepositoryDoc service call failed.", nd != null ); //$NON-NLS-1$
     
     System.out.println( "Done testGetSolutionRepositoryDoc." ); //$NON-NLS-1$ 
-  }
-  
-  public void testSetAcl() {
-    // get current acl so we can restore it later
-    request.clearParameters();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "getAcl" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("solution", "samples" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("path", "waqr" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("filename", "territory.waqr.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    
-    Document doc = XmlDom4JHelper.getDocFromString( response.getOutputStreamContent(), null ); 
-    
-    request.clearParameters();
-    response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "setAcl" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("solution", "samples" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("path", "waqr" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("filename", "territory.waqr.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("aclXml", ACL_TEST_DOC ); //$NON-NLS-1$
-
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    
-    // restore original ACL
-    request.clearParameters();
-    response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "setAcl" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("solution", "samples" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("path", "waqr" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("filename", "territory.waqr.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("aclXml", doc.asXML() ); //$NON-NLS-1$
-
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    System.out.println( "Done testSetAcl." ); //$NON-NLS-1$ 
-  }
-  
-  public void testGetAcl() {
-    request.clearParameters();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "getAcl" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("solution", "samples" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("path", "waqr" ); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("filename", "territory.waqr.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    // need to look in the response to verify the content
-    String xpath = "/acl/entry"; //$NON-NLS-1$   
-    Node nd = getNodeFromResponseDoc( response, xpath );
-    
-    assertTrue( "getAcl service call failed.", nd != null ); //$NON-NLS-1$
-    
-    System.out.println( "Done testGetAcl." ); //$NON-NLS-1$ 
   }
 }

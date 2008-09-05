@@ -1,6 +1,8 @@
 package org.pentaho.test.platform.web;
 
 
+import java.io.File;
+
 import org.pentaho.actionsequence.dom.ActionSequenceDocument;
 import org.pentaho.actionsequence.dom.actions.PivotViewAction;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -18,7 +20,12 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * @author Will Gorman (wgorman@pentaho.org)
  */
 public class AnalysisViewServiceTest extends BaseTest {
-  
+  private static final String SOLUTION_PATH = "test-src/solution";
+
+
+  public String getSolutionPath() {
+      return SOLUTION_PATH;  
+  }
   public void testLoadAnalysisViewTemplate() {
     AnalysisViewService avs = new AnalysisViewService();
     StandaloneSession initialSession = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$

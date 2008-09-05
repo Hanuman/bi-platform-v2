@@ -1,6 +1,5 @@
 package org.pentaho.test.platform.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +11,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.SystemSettings;
 import org.pentaho.platform.web.servlet.ViewAction;
-import org.pentaho.test.platform.engine.core.BaseTest;
+import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -25,29 +24,19 @@ import com.mockrunner.mock.web.MockServletContext;
  * 
  * @author mlowery
  */
-public class ViewActionServletTest extends BaseTest {
-  private static final String SOLUTION_PATH = "projects/servlet/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-	
+public class ViewActionServletTest extends BaseTestCase {
+  private static final String SOLUTION_PATH = "test-src/solution";
+
+
+  public String getSolutionPath() {
+      return SOLUTION_PATH;  
+  }
 	public void setUp() {
 	  System.setProperty(PathBasedSystemSettings.SYSTEM_CFG_PATH_KEY, getSolutionPath() + "/system/" + SystemSettings.PENTAHOSETTINGSFILENAME);
 		StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(
 				getSolutionPath(), ""); //$NON-NLS-1$
 		PentahoSystem.init(applicationContext, getRequiredListeners());
 	}
-
-	 public String getSolutionPath() {
-	    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-	    if(file.exists()) {
-	      System.out.println("File exist returning " + SOLUTION_PATH);
-	      return SOLUTION_PATH;  
-	    } else {
-	      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-	      return ALT_SOLUTION_PATH;
-	    }
-	    
-	  }
 
 	protected Map getRequiredListeners() {
 		HashMap listeners = new HashMap();

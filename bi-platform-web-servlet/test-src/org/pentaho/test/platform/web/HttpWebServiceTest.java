@@ -12,7 +12,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.servlet.HttpWebService;
-import org.pentaho.test.platform.engine.core.GenericPentahoTest;
+import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -23,8 +23,13 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  * @author mlowery
  */
-public class HttpWebServiceTest extends GenericPentahoTest {
-	private static final String SOLUTION_PATH = "test-src/solution";
+public class HttpWebServiceTest extends BaseTestCase {
+  private static final String SOLUTION_PATH = "test-src/solution";
+
+
+  public String getSolutionPath() {
+      return SOLUTION_PATH;  
+  }
 	public void setUp() {
 		StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(
 				getSolutionPath(), ""); //$NON-NLS-1$
@@ -101,8 +106,4 @@ public class HttpWebServiceTest extends GenericPentahoTest {
 		}
 	}
 
-    @Override
-	public String getSolutionPath() {
-		return SOLUTION_PATH;
-	}
 }

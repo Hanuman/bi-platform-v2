@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.web.servlet.ProxyServlet;
-import org.pentaho.test.platform.engine.core.GenericPentahoTest;
+import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -20,8 +20,13 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  * @author mlowery
  */
-public class ProxyServletTest extends GenericPentahoTest {
-	private static final String SOLUTION_PATH = "test-src/solution";
+public class ProxyServletTest extends BaseTestCase {
+  private static final String SOLUTION_PATH = "test-src/solution";
+
+
+  public String getSolutionPath() {
+      return SOLUTION_PATH;  
+  }
 	public void setUp() {
 		StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(
 				getSolutionPath(), ""); //$NON-NLS-1$
@@ -44,9 +49,5 @@ public class ProxyServletTest extends GenericPentahoTest {
     ProxyServlet servlet = new ProxyServlet();
     servlet.service(request, response);
 	}
-	    
-    @Override
-	public String getSolutionPath() {
-		return SOLUTION_PATH;
-	}
+
 }
