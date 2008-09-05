@@ -34,6 +34,10 @@ public class XmlW3CHelper {
     DocumentBuilderFactory dbf;
     DocumentBuilder db;
     Document doc;
+    
+    if (str == null) {
+      throw new IllegalArgumentException("The source string can not be null"); //$NON-NLS-1$
+    }
 
     try {
       // Check and open XML document

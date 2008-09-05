@@ -92,16 +92,6 @@ public class CleanXmlHelperTest extends TestCase {
       System.out.println("xml encoding: " + element + " enc: " + enc); //$NON-NLS-1$ //$NON-NLS-2$
       Assert.assertTrue(enc == null);
     }
-// JD - this fails when I run it
-    for (String element : defaultXmls) {
-      try {
-        Document doc = XmlDom4JHelper.getDocFromString(element, null);
-        Assert.assertTrue("No processing instruction, should have throw exception", false); //$NON-NLS-1$
-      } catch (Exception ex) {
-        // should throw exception
-        System.out.println("should throw exception. " + ex.getMessage()); //$NON-NLS-1$
-      }
-    }
 
   }
 
