@@ -21,13 +21,27 @@
  */
 package org.pentaho.test.platform.security.acls;
 
+import java.io.File;
+
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class TestPentahoAclEntry extends BaseTest {
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
   public static void main(String[] args) {
     junit.textui.TestRunner.run(TestPentahoAclEntry.class);
     System.exit(0);

@@ -19,6 +19,7 @@
  */
 package org.pentaho.test.platform.security.acls.voter;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,7 +35,19 @@ import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class TestPentahoAllowAnonymousAclVoter extends BaseTest {
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
   public static void main(String[] args) {
     junit.textui.TestRunner.run(TestPentahoAllowAnonymousAclVoter.class);
     System.exit(0);

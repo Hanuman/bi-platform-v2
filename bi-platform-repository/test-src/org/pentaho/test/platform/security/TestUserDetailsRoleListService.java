@@ -21,6 +21,7 @@
  */
 package org.pentaho.test.platform.security;
 
+import java.io.File;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -29,7 +30,20 @@ import org.pentaho.platform.engine.security.userrole.UserDetailsRoleListService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class TestUserDetailsRoleListService extends BaseTest {
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
+	  
   //
   // This test case is specifically not extending BaseSecurityTest
   // so that it can always test the output of the class.

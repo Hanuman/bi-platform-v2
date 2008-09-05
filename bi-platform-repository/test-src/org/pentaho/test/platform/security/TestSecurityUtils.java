@@ -21,6 +21,7 @@
  */
 package org.pentaho.test.platform.security;
 
+import java.io.File;
 import java.security.Principal;
 
 import org.acegisecurity.Authentication;
@@ -32,6 +33,19 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class TestSecurityUtils extends BaseTest {
 
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }	
   public static void main(String[] args) {
     junit.textui.TestRunner.run(TestSecurityUtils.class);
     System.exit(0);

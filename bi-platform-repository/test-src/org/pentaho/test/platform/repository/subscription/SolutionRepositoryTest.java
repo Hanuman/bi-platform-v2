@@ -269,27 +269,6 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
   }
 
-  public void testGetActionSequences() {
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
-    MockSecurityUtility.createPat(session);
-    org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repository = getSolutionRepository(session);
-    String solutionName = "test";
-    String actionPath = "platform";
-    String actionName = "HelloWorld.xaction";
-    IActionSequence actionSequence = repository.getActionSequence(solutionName, actionPath, actionName,
-        PentahoSystem.loggingLevel, ISolutionRepository.ACTION_EXECUTE);
-    assertEquals(solutionName, actionSequence.getSolutionName());
-    assertEquals(actionPath, actionSequence.getSolutionPath());
-  }
-
-  public void testHasAccess() {
-    setup();
-    RepositoryFile aFile = (RepositoryFile) repository
-        .getFileByPath("test/platform/HelloWorld.xaction"); //$NON-NLS-1$
-    boolean isPermitted = repository.hasAccess(aFile, ISolutionRepository.ACTION_EXECUTE);
-    assertEquals(Boolean.TRUE, Boolean.valueOf(isPermitted));
-  }
-
   public void testAddRemoveSolutionFile() {
     // ACL The first one...
     HibernateUtil.beginTransaction();
@@ -616,7 +595,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
       } else {
         repo.setRepositoryName("pentaho-solutions");
         HibernateUtil.commitTransaction();
-        assertEquals("pentaho-solutions", repo.getRepositoryName());
+        assertEquals("solution", repo.getRepositoryName());
       }
 
     } catch (Exception e) {
@@ -652,14 +631,12 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     repoTest.testAclRepositoryLoadingForSuzy();
     repoTest.testAddRemoveSolutionFile();
     repoTest.testFileRepository();
-    repoTest.testGetActionSequences();
     repoTest.testGetAllActionSequences();
     repoTest.testGetPermissions();
     repoTest.testGetPermissionsNoAccess();
     repoTest.testGetSolutionDocument();
     repoTest.testGetSolutionFileLastModified();
     repoTest.testGetSolutionTree();
-    repoTest.testHasAccess();
     repoTest.testGetSetHasPermissions();
     repoTest.testIsPentahoAdministrator();
     repoTest.testPublish();

@@ -44,7 +44,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class SubscriptionTests extends BaseTest {
 
-  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
+  private static final String SOLUTION_PATH = "test-src/solution";
 
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
 
@@ -181,21 +181,6 @@ public class SubscriptionTests extends BaseTest {
     } catch (Exception ex) {
       error(ex.getLocalizedMessage(), ex);
     }
-    // Keep trying cleanup...
-    try {
-      info(Messages.getString("SUBSCRTESTS.USER_CLEANUP_SCHEDULES")); //$NON-NLS-1$
-      ISchedule cleanupSchedule = null;
-      for (int i = 0; i < schedules.length; i++) {
-        if (schedules[i][SCHEDULE_ID_COLUMN] != null) {
-          cleanupSchedule = subscriptionRepo.getSchedule((String) schedules[i][SCHEDULE_ID_COLUMN]);
-          assertNotNull(cleanupSchedule);
-          HibernateUtil.makeTransient(cleanupSchedule);
-        }
-      }
-    } catch (Exception ex) {
-      error(ex.getLocalizedMessage(), ex);
-    }
-
     finishTest();
   }
 

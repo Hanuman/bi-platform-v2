@@ -22,6 +22,8 @@
 
 package org.pentaho.test.platform.repository;
 
+import java.io.File;
+
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
@@ -34,8 +36,22 @@ public class RepositoryTestCase extends BaseTest {
    * @see TestCase#setUp()
    */
 
+	
   private static IPentahoSession sess;
 
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
   public void setUp() {
     super.setUp();
     sess = new StandaloneSession(Messages.getString("REPOSTEST.JUNIT_TEST_SESSION")); //$NON-NLS-1$

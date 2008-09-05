@@ -45,8 +45,6 @@ public class JndiDatasourceServiceTest extends BaseTest {
       JndiDatasourceService service = new JndiDatasourceService();
       DataSource ds = service.getDataSource("SampleData");
       assertNotNull( "DataSource is null", ds );
-      connection = ds.getConnection();
-      assertNotNull( "Connection is null", ds );
       String dsBoundName = service.getDSBoundName("SampleData");
       assertNotNull( "Bound name is null", dsBoundName );
       String dsUnBoundName = service.getDSUnboundName("SampleData");
@@ -56,7 +54,9 @@ public class JndiDatasourceServiceTest extends BaseTest {
       e.printStackTrace();
     } finally {
       try {
-        connection.close();
+    	if(connection != null) {
+    		connection.close();	
+    	}
       } catch (Exception ee) {
         ee.printStackTrace();
       }

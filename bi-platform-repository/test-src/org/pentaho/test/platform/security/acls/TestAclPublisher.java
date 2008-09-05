@@ -21,6 +21,7 @@
  */
 package org.pentaho.test.platform.security.acls;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,6 +41,19 @@ import org.pentaho.test.platform.security.MockSecurityUtility;
 
 public class TestAclPublisher extends BaseTest {
 
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+  }
   public static void main(String[] args) {
     junit.textui.TestRunner.run(TestAclPublisher.class);
     System.exit(0);

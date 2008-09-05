@@ -39,17 +39,15 @@ import org.pentaho.test.platform.security.MockSecurityUtility;
 
 public class TestPentahoUserOverridesVoter extends BaseTest {
 
-  private static final String SOLUTION_PATH = "projects/core/test-src/solution";
+  private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
   private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
     @Override
   public String getSolutionPath() {
     File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
     if(file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
       return SOLUTION_PATH;  
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
+    } else {      
       return ALT_SOLUTION_PATH;
     }
     

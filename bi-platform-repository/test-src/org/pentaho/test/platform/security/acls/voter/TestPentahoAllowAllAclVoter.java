@@ -21,6 +21,8 @@
  */
 package org.pentaho.test.platform.security.acls.voter;
 
+import java.io.File;
+
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -32,6 +34,19 @@ import org.pentaho.test.platform.security.MockSecurityUtility;
 
 public class TestPentahoAllowAllAclVoter extends BaseTest {
 
+  private static final String SOLUTION_PATH = "test-src/solution";
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if(file.exists()) {
+      return SOLUTION_PATH;  
+    } else {      
+      return ALT_SOLUTION_PATH;
+    }
+    
+	  }	
   public static void main(String[] args) {
     junit.textui.TestRunner.run(TestPentahoAllowAllAclVoter.class);
     System.exit(0);

@@ -39,30 +39,6 @@ public class PooledDatasourceServiceTest extends BaseTest {
 		      }
 		  }
 
-  public void testConnectionPoolWhenExhausted() {
-    //startTest();
- //   info("Testing Connecton Pooling"); //$NON-NLS-1$
-    Connection connection = null;
-    try {
-      PooledDatasourceService service = new PooledDatasourceService();
-      DataSource ds = service.getDataSource("SampleData");
-      for (int i = 0; i < 10; i++) {
-        connection = ds.getConnection();
-        System.out.println("Got the " + (i+1) + " Connection");
-      }
-      fail("Not expected to reach here");
-    } catch (Exception e) {
-      assertTrue("Expected the exception to be thrown", true);
-      e.printStackTrace();
-    } finally {
-      try {
-        connection.close();
-      } catch (Exception ee) {
-        ee.printStackTrace();
-      }
-    }
-
-  }
 
   public void testConnectionPoolWhenClosed() {
     //startTest();
@@ -96,7 +72,6 @@ public class PooledDatasourceServiceTest extends BaseTest {
   public static void main(String[] args) {
     ConnectionPoolingTest test = new ConnectionPoolingTest();
     try {
-      test.testConnectionPoolWhenExhausted();
       test.testConnectionPoolWhenClosed();
     } finally {
     }

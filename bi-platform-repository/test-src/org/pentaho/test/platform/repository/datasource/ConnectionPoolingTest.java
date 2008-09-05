@@ -14,6 +14,7 @@ package org.pentaho.test.platform.repository.datasource;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Timer;
 
 import javax.sql.DataSource;
 
@@ -44,36 +45,6 @@ public class ConnectionPoolingTest extends BaseTest {
 		      }
 		  }
 
-  public void testConnectionPoolWhenExhausted() {
-    //startTest();
- //   info("Testing Connecton Pooling"); //$NON-NLS-1$
-    Connection connection = null;
-    listener = new PooledDatasourceSystemListener();
-    session = new StandaloneSession("TEST");//$NON-NLS-1$
-
-    try {
-      listener.startup(session);
-      PooledDatasourceService service = new PooledDatasourceService();
-      DataSource ds = service.getDataSource("SampleData");
-      assertNotNull( "DataSource is null", ds );
-      for (int i = 0; i < 10; i++) {
-        connection = ds.getConnection();
-        System.out.println("Got the " + (i+1) + " Connection");
-      }
-      fail("Not expected to reach here");
-    } catch (Exception e) {
-      assertTrue("Expected the exception to be thrown", true);
-      e.printStackTrace();
-    } finally {
-      try {
-        connection.close();
-        listener.shutdown();
-      } catch (Exception ee) {
-        ee.printStackTrace();
-      }
-    }
-
-  }
 
   public void testConnectionPoolWhenClosed() {
     //startTest();
@@ -105,7 +76,6 @@ public class ConnectionPoolingTest extends BaseTest {
   public static void main(String[] args) {
     ConnectionPoolingTest test = new ConnectionPoolingTest();
     try {
-      test.testConnectionPoolWhenExhausted();
       test.testConnectionPoolWhenClosed();
     } finally {
     }
