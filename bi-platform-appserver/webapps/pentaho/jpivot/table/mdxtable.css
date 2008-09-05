@@ -22,8 +22,26 @@ th, td {
 	border: 1px solid gray;
 }
 
+#toolbar01 {
+	vertical-align: middle;
+	padding-top: 3px;
+}
+
+#folder-up {
+	vertical-align: middle;
+	padding-top: 3px;
+}
+
+#folder-down {
+	vertical-align: middle;
+	padding-left: 10px;
+	padding-top: 3px;
+}
+
 #folder-options {
     background-image: url(/pentaho/jpivot/table/toolbar_bg.png);
+    height: 31px;
+    vertical-align: middle;
 }
 
 /* headings */
