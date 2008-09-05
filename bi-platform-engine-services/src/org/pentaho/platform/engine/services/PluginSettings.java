@@ -185,6 +185,7 @@ public class PluginSettings implements IPluginSettings {
 		contentTypeByExtension.clear();
 		contentGeneratorFactory = new PentahoObjectFactory();
 		contentGeneratorCreatorMap = new HashMap<String,IObjectCreator>();
+		SolutionClassLoader.clearResourceCache();
 	}
 	
 	public synchronized boolean updatePluginSettings( IPentahoSession session, StringBuilder comments ) {
