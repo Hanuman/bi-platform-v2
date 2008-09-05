@@ -16,6 +16,8 @@
 
 package org.pentaho.test.platform.web;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SettingsPublisher;
@@ -26,7 +28,20 @@ import org.pentaho.platform.web.portal.PortletApplicationContext;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class ApplicationContextTest extends BaseTest {
+  private static final String SOLUTION_PATH = "test-src/solution";
 
+  private static final String ALT_SOLUTION_PATH = "test-src/solution";
+
+  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+
+  public String getSolutionPath() {
+    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
+    if (file.exists()) {
+      return SOLUTION_PATH;
+    } else {
+      return ALT_SOLUTION_PATH;
+    }
+  }
   public void testPortletApplicationContext() {
     startTest();
     
