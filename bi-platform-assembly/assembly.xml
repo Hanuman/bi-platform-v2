@@ -4,15 +4,6 @@
 		<format property="current.date" pattern="MM-dd-yyyy" locale="en" />
 	</tstamp>
 
-	<!-- Define xmltask for xml file manipulation -->
-	<!--taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
-		<classpath>
-			<fileset dir="${user.home}/.pentaho_build_cache/xmlTask">
-				<include name="*.jar" />
-			</fileset>
-		</classpath>
-	</taskdef-->
-
 	<!-- =================================================================================
 	     Property Defaults
 	     Any of these properties can be overridden in either build.properties or override.properties
@@ -160,7 +151,7 @@
 			<!-- Add jre -->
 			<copy todir="${stage.dir.server}/jre">
 				<fileset dir="${jre.dir}">
-					<exclude name="**/servlet-api.jar"/>
+					<exclude name="**/servlet-api.jar" />
 				</fileset>
 			</copy>
 
@@ -176,14 +167,7 @@
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
-					<exclude name="**/servlet-api.jar" />
-				</fileset>
-			</copy>
-
-			<!-- Add hibernate files -->
-			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
-				<fileset dir="${hibernate.hbm.dir}">
-					<include name="*.hbm.xml" />
+					<exclude name="servlet-api*.jar" />
 				</fileset>
 			</copy>
 
@@ -216,22 +200,45 @@
 				</fileset>
 			</copy>
 
-			<!-- Add scripts to appropriate locations -->
+			<!-- Add scripts to appropriate locations based on desired rdbms -->
+			<if>
+				<equals arg1="${rdbms}" arg2="general" />
+				<then>
+					<copy todir="${stage.dir.server}">
+						<fileset dir="scripts/tomcat/general">
+							<include name="**" />
+						</fileset>
+					</copy>
+				</then>
+			</if>
+			<if>
+				<equals arg1="${rdbms}" arg2="hsqldb" />
+				<then>
+					<copy todir="${stage.dir.server}">
+						<fileset dir="scripts/tomcat/hsqldb">
+							<include name="**" />
+						</fileset>
+					</copy>
+				</then>
+			</if>
+			<if>
+				<equals arg1="${rdbms}" arg2="mysql" />
+				<then>
+					<copy todir="${stage.dir.server}">
+						<fileset dir="scripts/tomcat/mysql">
+							<include name="**" />
+						</fileset>
+					</copy>
+				</then>
+			</if>
+
+			<!-- Replace tomcat's setclasspath.bat -->
 			<copy todir="${stage.dir.server}/tomcat/bin">
 				<fileset dir="scripts/tomcat">
 					<include name="*.bat" />
 				</fileset>
 			</copy>
-            <copy todir="${stage.dir.server}">
-                <fileset dir="scripts/tomcat/general">
-                    <include name="**" />
-                </fileset>
-            </copy>
-			<copy todir="${stage.dir.server}">
-				<fileset dir="scripts/tomcat/hsqldb">
-					<include name="**" />
-				</fileset>
-			</copy>
+
 			<!-- Add additional Pentaho resources -->
 			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
 				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
@@ -239,6 +246,7 @@
 				<fileset dir="${bi.platform.util.dir}/res/log4j" />
 				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
 			</copy>
+
 			<!-- Add licenses -->
 			<copy todir="${stage.dir.server}/licenses">
 				<fileset dir="licenses">
