@@ -29,7 +29,7 @@ public void testPublisherUtil() {
 
   public void setUp() {
     super.setUp();
-    TinyHTTPd.startServer(getSolutionPath(), 9876); // Start server on port 8080
+    TinyHTTPd.startServer("http://localhost:9876/pentaho", 9876); // Start server on port 8080
     StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(
     		getSolutionPath(), ""); //$NON-NLS-1$
     PentahoSystem.init(applicationContext, getRequiredListeners());
