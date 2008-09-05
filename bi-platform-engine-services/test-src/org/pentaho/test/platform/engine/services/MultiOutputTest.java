@@ -1,13 +1,11 @@
 package org.pentaho.test.platform.engine.services;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.output.MultiContentItem;
@@ -18,24 +16,10 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.ExceptionOutputStream;
 
 public class MultiOutputTest extends BaseTest {
-
-
-	public static final String SOLUTION_PATH = "projects/services/test-src/solution";
-	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-	  final String SYSTEM_FOLDER = "/system";
-	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
-
-		  public String getSolutionPath() {
-		      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-		      if(file.exists()) {
-		        System.out.println("File exist returning " + SOLUTION_PATH);
-		        return SOLUTION_PATH;  
-		      } else {
-		        System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-		        return ALT_SOLUTION_PATH;
-		      }
-		  }
+  private static final String SOLUTION_PATH = "test-src/solution";
+  public String getSolutionPath() {
+       return SOLUTION_PATH;  
+  }
 		  
 	public void testMultiOutput() {
 		

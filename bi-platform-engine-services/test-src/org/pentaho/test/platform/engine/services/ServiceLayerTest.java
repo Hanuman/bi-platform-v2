@@ -22,72 +22,68 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
-
 public class ServiceLayerTest extends TestCase {
 
-	public static final String SOLUTION_PATH = "projects/services/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
   final String SYSTEM_FOLDER = "/system";
+
   private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
-	  public String getSolutionPath() {
-	      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-	      if(file.exists()) {
-	        System.out.println("File exist returning " + SOLUTION_PATH);
-	        return SOLUTION_PATH;  
-	      } else {
-	        System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-	        return ALT_SOLUTION_PATH;
-	      }
-	  }
-	public void testEmptyActionSequence() {
-        StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
-        IObjectFactoryCreator facCreator;
-        String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-        try {
-      	  facCreator = new SpringObjectFactoryCreator();  
-      	  facCreator.configure( objectFactoryCreatorCfgFile );
-        } catch (Exception e) {
-          //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-          throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-        }
-        IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
-        PentahoSystem.setObjectFactory( pentahoObjectFactory );
-        PentahoSystem.init(applicationContext );
-        List messages = new ArrayList();
-        String instanceId = null;
-        IPentahoSession session = new StandaloneSession("system");
-        ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
-        solutionEngine.setLoggingLevel(ILogger.ERROR);
-        solutionEngine.init(session);
-        String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
-        HashMap parameterProviderMap = new HashMap();
-        IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);
+  private static final String SOLUTION_PATH = "test-src/solution";
 
-        try {
-            File file = new File( getSolutionPath()+"/services_layer/test1.xaction" );
-            StringBuilder str = new StringBuilder();
-           	Reader reader = new FileReader( file );
-           	char buffer[] = new char[4096];
-           	int n = reader.read( buffer );
-           	while( n != -1 ) {
-           		str.append( buffer, 0, n );
-           		n = reader.read( buffer );
-           	}
-            String xactionStr = str.toString();
-                    
-            solutionEngine.setSession(session);
-            IRuntimeContext runtimeContext = solutionEngine.execute( 
-            		xactionStr, "test1.xaction", "empty action sequence test", false, true, instanceId, false, parameterProviderMap, null, null, urlFactory, messages); //$NON-NLS-1$ //$NON-NLS-2$
-            assertNotNull( "RuntimeContext is null", runtimeContext );
-            assertEquals( "Action sequence execution failed", runtimeContext.getStatus(), IRuntimeContext.RUNTIME_STATUS_SUCCESS );
-        } catch (Exception e) {
-        	// we should not get here
-        	e.printStackTrace();
-        	assertTrue( e.getMessage(), false );
-        }
-        
-	}
-	
+  public String getSolutionPath() {
+    return SOLUTION_PATH;
+  }
+
+  public void testEmptyActionSequence() {
+    StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
+    IObjectFactoryCreator facCreator;
+    String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
+    try {
+      facCreator = new SpringObjectFactoryCreator();
+      facCreator.configure(objectFactoryCreatorCfgFile);
+    } catch (Exception e) {
+      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
+      throw new RuntimeException("Failed to configure the Pentaho Object Factory.", e);
+    }
+    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
+    PentahoSystem.setObjectFactory(pentahoObjectFactory);
+    PentahoSystem.init(applicationContext);
+    List messages = new ArrayList();
+    String instanceId = null;
+    IPentahoSession session = new StandaloneSession("system");
+    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    solutionEngine.setLoggingLevel(ILogger.ERROR);
+    solutionEngine.init(session);
+    String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
+    HashMap parameterProviderMap = new HashMap();
+    IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);
+
+    try {
+      File file = new File(getSolutionPath() + "/services_layer/test1.xaction");
+      StringBuilder str = new StringBuilder();
+      Reader reader = new FileReader(file);
+      char buffer[] = new char[4096];
+      int n = reader.read(buffer);
+      while (n != -1) {
+        str.append(buffer, 0, n);
+        n = reader.read(buffer);
+      }
+      String xactionStr = str.toString();
+
+      solutionEngine.setSession(session);
+      IRuntimeContext runtimeContext = solutionEngine
+          .execute(
+              xactionStr,
+              "test1.xaction", "empty action sequence test", false, true, instanceId, false, parameterProviderMap, null, null, urlFactory, messages); //$NON-NLS-1$ //$NON-NLS-2$
+      assertNotNull("RuntimeContext is null", runtimeContext);
+      assertEquals("Action sequence execution failed", runtimeContext.getStatus(),
+          IRuntimeContext.RUNTIME_STATUS_SUCCESS);
+    } catch (Exception e) {
+      // we should not get here
+      e.printStackTrace();
+      assertTrue(e.getMessage(), false);
+    }
+
+  }
+
 }

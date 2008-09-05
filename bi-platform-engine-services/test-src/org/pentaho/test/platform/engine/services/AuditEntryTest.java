@@ -21,27 +21,17 @@
 
 package org.pentaho.test.platform.engine.services;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 import org.pentaho.platform.engine.core.audit.AuditEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class AuditEntryTest extends BaseTest {
-	private static final String SOLUTION_PATH = "projects/services/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-    @Override
-	public String getSolutionPath() {
-      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-      if(file.exists()) {
-        System.out.println("File exist returning " + SOLUTION_PATH);
-        return SOLUTION_PATH;  
-      } else {
-        System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-        return ALT_SOLUTION_PATH;
-      }
-	}
+  private static final String SOLUTION_PATH = "test-src/solution";
+  public String getSolutionPath() {
+       return SOLUTION_PATH;  
+  }
+  
   public void testAuditEntry() {
     startTest();
     AuditEntry.auditAll("234234", "2342342342", "234234234", "String", "actor", "messageType", "messageName", "messageTxtValue", new BigDecimal(2324323.23), 23); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$

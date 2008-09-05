@@ -21,7 +21,6 @@
 
 package org.pentaho.test.platform.engine.services;
 
-import java.io.File;
 import java.sql.Connection;
 
 import javax.sql.DataSource;
@@ -30,21 +29,10 @@ import org.pentaho.platform.engine.core.audit.AuditConnection;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class AuditConnectionTest extends BaseTest {
-	private static final String SOLUTION_PATH = "projects/services/test-src/solution";
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-    @Override
+	private static final String SOLUTION_PATH = "test-src/solution";
 	public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if(file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
-      return SOLUTION_PATH;  
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);      
-      return ALT_SOLUTION_PATH;
-    }
-		
-	}
+       return SOLUTION_PATH;  
+ 	}
   public void testAuditConnection() {
     startTest();
     AuditConnection auditConnection = new AuditConnection();
