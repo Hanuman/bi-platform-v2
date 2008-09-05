@@ -49,6 +49,7 @@ public class MimeHelper {
     MimeHelper.mimes.put("video/mpeg", ".mpg"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("video/x-msvideo", ".avi"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("text/xaction+xml", ".xaction"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.mimes.put("text/css", ".css"); //$NON-NLS-1$ //$NON-NLS-2$
 
     MimeHelper.extensions.put(".doc", "application/msword"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".pdf", "application/pdf"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -76,6 +77,7 @@ public class MimeHelper {
     MimeHelper.extensions.put(".mpg", "video/mpeg"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".avi", "video/x-msvideo"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".xaction", "text/xaction+xml"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.extensions.put(".css", "text/css"); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
 
