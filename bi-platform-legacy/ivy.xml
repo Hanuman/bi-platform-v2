@@ -1,49 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-legacy" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  <dependencies defaultconf="default->default">
 
-    <info organisation="pentaho" module="pentaho-bi-platform-legacy" revision="${project.revision}"/>
-    
-    <configurations>
-    	<conf name="default"/>
-    	<conf name="test" visibility="private"/>
-    </configurations>
-    
-    <dependencies defaultconf="default->default">
+    <!--  external apache dependencies -->
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
 
-        <!--  external apache dependencies -->
-        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
-
-        <!--  external dependencies -->
-        <dependency org="dom4j"              name="dom4j"              rev="1.6.1">
-			<exclude org="xml-apis" name="xml-apis" />
-		</dependency>
-		<dependency org="jfree"			    name="jcommon"			   rev="1.0.12"/>
-		<dependency org="jfree"				name="jfreechart"          rev="1.0.4">
-			<exclude org="jfree" name="jcommon" />
-		</dependency>
-		<dependency org="quartz"			name="quartz"              rev="1.5.2">
-			<exclude org="commons-logging" name="commons-logging" />
-		</dependency>   
+    <!--  external dependencies -->
+    <dependency org="dom4j" name="dom4j" rev="1.6.1">
+      <exclude org="xml-apis" name="xml-apis" />
+    </dependency>
+    <dependency org="jfr name="jcommon" rev="1.0.12" />
+    <dependency org="jfree" name="jfreechart" rev="1.0.4">
+      <exclude org="jfree" name="jcommon" />
+    </dependency>
+    <dependency org="quartz" name="quartz" rev="1.5.2">
+      <exclude org="commons-logging" name="commons-logging" />
+    </dependency>   
         
-        <!--  internal dependencies -->
+    <!--  internal dependencies -->
         
-        <!--  reporting -->
-
-        <dependency org="org.pentaho.reporting" name="libloader"      rev="0.3.7"/>
-        <dependency org="org.pentaho.reporting" name="pentaho-reporting-engine-classic" rev="0.8.9.4"/>
+    <!--  reporting -->
+    <dependency org="pentaho" name="pentaho-reporting-engine-classic" rev="0.8.9.7" />
 
 
-        <!-- platform -->        
-        <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-versionchecker"              rev="1.7.0.35"       changing="true"/>        
-        <dependency org="pentaho" name="pentaho-actionsequence-dom"          rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
-        <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-scheduler"       rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" changing="true"/>
-    </dependencies>
-    
+    <!-- platform -->
+    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-versionchecker" rev="1.7.0.35" changing="true" />
+    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions" rev="${project.revision}" changing="true" />
+  </dependencies>
 </ivy-module>

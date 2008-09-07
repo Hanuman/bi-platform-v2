@@ -81,14 +81,7 @@
         <!--  internal dependencies -->
         
         <!--  reporting -->
-    <dependency org="org.pentaho.reporting" name="libfonts" rev="0.3.4" />
-    <dependency org="org.pentaho.reporting" name="libloader" rev="0.3.7" />
-    <dependency org="org.pentaho.reporting" name="librepository" rev="0.1.6" />
-    <dependency org="org.pentaho.reporting" name="libxml" rev="0.9.11" />
-    <dependency org="org.pentaho.reporting" name="pixie" rev="0.8.10" />
-    <dependency org="org.pentaho.reporting" name="libformula" rev="0.1.18" />
-    <dependency org="org.pentaho.reporting" name="pentaho-reporting-engine-classic" rev="0.8.9.4" />
-    <dependency org="org.pentaho.reporting" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.4" />
+    <dependency org="pentaho" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.7" />
     <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
 
         <!-- metadata -->
