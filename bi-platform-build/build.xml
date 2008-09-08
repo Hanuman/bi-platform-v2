@@ -2,7 +2,7 @@
      description: main build file 
 -->
 
-<project name="pentaho-dist" default="jar-all">
+<project name="pentaho-dist" basedir="." default="jar-all">
 
   <property file="override.properties" />
   <property file="build.properties" />
@@ -262,6 +262,25 @@
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="publish-local" />
     <ant antfile="build.xml" dir="../bi-platform-appserver" target="publish-local" />
   </target>
+	
+	<target name="publish-pentaho">
+	    <ant antfile="build.xml" dir="../bi-platform-api" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-util" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-repository" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-legacy" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-appserver" target="publish-pentaho" />
+	  </target>
 
   <target name="resolve">
     <ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
