@@ -354,7 +354,9 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
         }
         this.userSession = null; // Make sure nothing keeps a handle to the user session.
         try {
-          sched.removeJobListener(this.getName());
+          if(sched != null) {
+            sched.removeJobListener(this.getName());  
+          }
         } catch ( RuntimeException ex ) {
           throw ex; // programmer error, let RuntimeExceptions leak
         } catch (Exception ex) {
