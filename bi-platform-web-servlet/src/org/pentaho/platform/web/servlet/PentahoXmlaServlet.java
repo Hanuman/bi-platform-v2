@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import mondrian.olap.Util;
 import mondrian.xmla.DataSourcesConfig;
 import mondrian.xmla.DataSourcesConfig.DataSource;
@@ -16,7 +20,10 @@ import org.dom4j.Node;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
+import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
+import org.pentaho.platform.repository.solution.filebased.SolutionRepositoryVfs;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
+import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.xml.sax.EntityResolver;
 
 /**
@@ -104,5 +111,19 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
       }
     }
     return datasources;
+  }
+  
+  
+  /**
+   * override default doPost and configure SolutionRepositoryVFS, before
+   * calling parent's doPost
+   */
+  protected void doPost(
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws ServletException, IOException {
+    // configure solution repository VFS service 
+    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.getSolutionRepository(PentahoHttpSessionHelper.getPentahoSession(request)));
+    super.doPost(request, response);
   }
 }
