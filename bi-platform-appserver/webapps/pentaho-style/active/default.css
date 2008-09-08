@@ -1005,7 +1005,9 @@ div.table-message {
 
 .parameter_fieldset{
 	width:100%;
-	margin: 10px 0px 10px 8px;
+	margin: 6px 0px 6px 8px;
+	font-size: .85em;
+	
 }
 .run3div{
   margin-left: 8px;
