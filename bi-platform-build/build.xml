@@ -98,7 +98,7 @@
     <echo message="Updated" />
   </target>
 
-  <target name="dev_rebuild" depends="clean-all, dev_update">
+  <target name="dev_rebuild" depends="clean-all, resolve, dev_update">
     <echo message="Updated" />
   </target>
 
