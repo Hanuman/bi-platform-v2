@@ -24,16 +24,16 @@
         <!-- reporting -->
     <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
       changing="true" />
-    <dependency org="javacup" name="javacup" rev="10k" />
-    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.2" />
     <dependency org="saaj-ri" name="saaj-ri" rev="1.1_02" />
     <dependency org="org.codehaus.castor" name="castor" rev="1.0.5" transitive="false" />
 
         <!-- olap -->
-    <dependency org="pentaho" name="mondrian" rev="3.0.3" />
-    <dependency org="eigenbase" name="eigenbase-properties" rev="1.1.0.10924" />
-    <dependency org="eigenbase" name="eigenbase-xom" rev="1.1" />
-    <dependency org="eigenbase" name="eigenbase-resgen" rev="1.1" />
+    <dependency org="pentaho" name="mondrian" rev="3.0.4">
+        <exclude org="commons-dbcp" name="commons-dbcp"/>
+        <exclude org="javax.servlet" name="jsp-api"/>
+        <exclude org="javax.servlet" name="servlet-api"/>
+    </dependency>    
+    
     <dependency org="com.sun" name="jai_codec" rev="1.1.2" />
     <dependency org="com.sun" name="jai_core" rev="1.1.2" />
     <dependency org="javax.faces" name="jsf-api" rev="1.1" />
