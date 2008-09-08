@@ -33,5 +33,6 @@
 	-->
 	<target name="compile.compile" depends="init" description="Performs the actual javac compile" />
 	<target name="jar" depends="compile" description="Jars up the bin directory after a compile" />
+	<target name="publish-pentaho" depends="compile" description="Jars up the bin directory after a compile" />
 	
 </project>
