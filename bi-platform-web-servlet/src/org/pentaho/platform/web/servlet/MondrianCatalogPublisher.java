@@ -190,6 +190,9 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       return;
     }
 
+    // flush all schemas
+    mondrian.rolap.agg.AggregationManager.instance().getCacheControl(null).flushSchemaCache();
+    
     resp.getWriter().println(ISolutionRepository.FILE_ADD_SUCCESSFUL);
 
   }
