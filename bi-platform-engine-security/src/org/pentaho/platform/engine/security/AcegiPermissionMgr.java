@@ -48,7 +48,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     List<IPentahoAclEntry> aclList = aclHolder.getAccessControls();
     Map<IPermissionRecipient, IPermissionMask> permissionsMap = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
     for (Object element : aclList) {
-      PentahoAclEntry pentahoAclEntry = (PentahoAclEntry) element;
+      IPentahoAclEntry pentahoAclEntry = (IPentahoAclEntry) element;
       IPermissionRecipient permissionRecipient = null;
       if (pentahoAclEntry.getRecipient() instanceof GrantedAuthorityImpl) {
         GrantedAuthorityImpl grantedAuthorityImpl = (GrantedAuthorityImpl) pentahoAclEntry.getRecipient();
@@ -75,7 +75,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
       session = simpleSession.getSession();
       IAclVoter voter = PentahoSystem.getAclVoter(session);
       int aclMask = permissionMask.getMask();
-      if (aclMask == PentahoAclEntry.PERM_ADMINISTRATION) {
+      if (aclMask == IPentahoAclEntry.PERM_ADMINISTRATION) {
         isPermitted = voter.isPentahoAdministrator(session);
       } else {
         // TODO mlowery Voter only needs Authentication. Why pass in IPentahoSession?

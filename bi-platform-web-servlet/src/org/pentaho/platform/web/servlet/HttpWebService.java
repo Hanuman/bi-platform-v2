@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -759,7 +760,7 @@ public class HttpWebService extends ServletBase {
    */
   protected void doACLs(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
       throws ServletException, IOException {
-    Map validPermissionsNameMap = PentahoAclEntry.getValidPermissionsNameMap(PentahoAclEntry.PERMISSIONS_LIST_ALL);
+    Map validPermissionsNameMap = PentahoAclEntry.getValidPermissionsNameMap(IPentahoAclEntry.PERMISSIONS_LIST_ALL);
     buf.append("<acls>"); //$NON-NLS-1$
     if (validPermissionsNameMap != null) {
       Set aclsKeySet = validPermissionsNameMap.keySet();

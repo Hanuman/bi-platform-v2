@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -62,14 +63,14 @@ public class TestBasicAclVoter extends BaseTest {
     MockSecurityUtility.createSuzy(session);
     RepositoryFile testFile = new RepositoryFile("Test Folder", null, null);//$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> perms = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
-    perms.put(new SimpleUser("suzy"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE));
-    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(PentahoAclEntry.PERM_SUBSCRIBE));
-    perms.put(new SimpleRole("ROLE_IS"), new SimplePermissionMask(PentahoAclEntry.PERM_ADMINISTRATION));
+    perms.put(new SimpleUser("suzy"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE));
+    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_SUBSCRIBE));
+    perms.put(new SimpleRole("ROLE_IS"), new SimplePermissionMask(IPentahoAclEntry.PERM_ADMINISTRATION));
     AcegiPermissionMgr.instance().setPermissions(perms, testFile);
     PentahoBasicAclVoter voter = new PentahoBasicAclVoter();
-    assertTrue(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_EXECUTE));
-    assertTrue(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_SUBSCRIBE));
-    assertTrue(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_ADMINISTRATION));
+    assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_EXECUTE));
+    assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_SUBSCRIBE));
+    assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_ADMINISTRATION));
     PentahoAclEntry entry = voter.getEffectiveAcl(session, testFile);
     assertNotNull(entry);
     assertEquals(entry.printPermissionsBlock(), "XSCUDP"); //$NON-NLS-1$    

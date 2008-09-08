@@ -229,7 +229,6 @@ public class PropertiesPanelUIComponent extends XmlComponent {
         String lineNumber = name.substring(name.lastIndexOf('_') + 1);
         name = name.substring(0, name.lastIndexOf('_'));
         if (!isFlaggedForDelete(name)) { // If this is one being deleted we don't do anything with it
-          PentahoAclEntry entry = new PentahoAclEntry();
           IPermissionRecipient permissionRecipient = isRole ? new SimpleRole(name) : new SimpleUser(name);
           SimplePermissionMask permissionMask = new SimplePermissionMask();
           Iterator it1 = request.getParameterNames();

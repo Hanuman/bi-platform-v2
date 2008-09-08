@@ -27,6 +27,7 @@ import java.util.Set;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.ISystemSettings;
@@ -141,27 +142,27 @@ public class AclPublisher implements IAclPublisher {
         if (AclPublisher.NOTHING.equalsIgnoreCase(aclStr)) {
           aclValue = 0;
         } else if (AclPublisher.EXECUTE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_EXECUTE;
+          aclValue = IPentahoAclEntry.PERM_EXECUTE;
         } else if (AclPublisher.SUBSCRIBE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_SUBSCRIBE;
+          aclValue = IPentahoAclEntry.PERM_SUBSCRIBE;
         } else if (AclPublisher.EXECUTE_SUBSCRIBE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE;
+          aclValue = IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE;
         } else if (AclPublisher.CREATE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_CREATE;
+          aclValue = IPentahoAclEntry.PERM_CREATE;
         } else if (AclPublisher.UPDATE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_UPDATE;
+          aclValue = IPentahoAclEntry.PERM_UPDATE;
         } else if (AclPublisher.DELETE.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_DELETE;
+          aclValue = IPentahoAclEntry.PERM_DELETE;
         } else if (AclPublisher.ADMINISTRATION.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_ADMINISTRATION;
+          aclValue = IPentahoAclEntry.PERM_ADMINISTRATION;
         } else if (AclPublisher.EXECUTE_ADMINISTRATION.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_EXECUTE_ADMINISTRATION;
+          aclValue = IPentahoAclEntry.PERM_EXECUTE_ADMINISTRATION;
         } else if (AclPublisher.SUBSCRIBE_ADMINISTRATION.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_SUBSCRIBE_ADMINISTRATION;
+          aclValue = IPentahoAclEntry.PERM_SUBSCRIBE_ADMINISTRATION;
         } else if (AclPublisher.ADMIN_ALL.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_ADMIN_ALL;
+          aclValue = IPentahoAclEntry.PERM_ADMIN_ALL;
         } else if (AclPublisher.FULL_CONTROL.equalsIgnoreCase(aclStr)) {
-          aclValue = PentahoAclEntry.PERM_FULL_CONTROL;
+          aclValue = IPentahoAclEntry.PERM_FULL_CONTROL;
         } else {
           continue;
         }

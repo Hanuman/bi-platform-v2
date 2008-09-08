@@ -28,13 +28,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pentaho.platform.api.engine.IAclSolutionFile;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.security.AcegiPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.acls.AclPublisher;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.security.MockSecurityUtility;
@@ -63,10 +63,10 @@ public class TestAclPublisher extends BaseTest {
 
   public void setup() {
     super.setUp();
-    defaultAcls.put(new SimpleRole("ROLE_ADMIN"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
-    defaultAcls.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
-    defaultAcls.put(new SimpleRole("ROLE_DEV"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
-    defaultAcls.put(new SimpleRole("ROLE_AUTHENTICATED"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("ROLE_ADMIN"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("ROLE_DEV"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("ROLE_AUTHENTICATED"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
   }
 
   public void testPublisher() {

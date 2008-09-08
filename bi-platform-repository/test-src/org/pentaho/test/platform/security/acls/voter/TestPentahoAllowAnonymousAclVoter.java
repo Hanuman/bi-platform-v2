@@ -23,13 +23,13 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.AcegiPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.engine.security.acls.voter.PentahoAllowAnonymousAclVoter;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
@@ -58,13 +58,13 @@ public class TestPentahoAllowAnonymousAclVoter extends BaseTest {
     // We should now have an anonymous user
     RepositoryFile testFile = new RepositoryFile("Test Folder", null, null);//$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> perms = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
-    perms.put(new SimpleRole("suzy"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL));
-    perms.put(new SimpleRole("Anonymous"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE));
-    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
+    perms.put(new SimpleRole("suzy"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL));
+    perms.put(new SimpleRole("Anonymous"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE));
+    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
     AcegiPermissionMgr.instance().setPermissions(perms, testFile);
 
     PentahoAllowAnonymousAclVoter voter = new PentahoAllowAnonymousAclVoter();
-    assertTrue(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_EXECUTE));
+    assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_EXECUTE));
 
   }
 

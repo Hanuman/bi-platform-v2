@@ -36,8 +36,8 @@ import java.util.Set;
 import org.dom4j.Document;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
-import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -93,10 +93,10 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     // ACL The first one...
     HibernateUtil.beginTransaction();
 
-    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
-    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
-    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
-    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
+    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
+    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
     session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     MockSecurityUtility.createPat(session);
     repository = getSolutionRepository(session);
@@ -273,10 +273,10 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     // ACL The first one...
     HibernateUtil.beginTransaction();
 
-    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
-    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
-    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
-    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
+    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
+    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
 
     session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     MockSecurityUtility.createJoe(session);
@@ -378,10 +378,10 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
       String recipientNew = null;
       String permNew[] = null;
 
-      defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
-      defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
-      defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
-      defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+      defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
+      defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
+      defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
+      defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
 
       session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
       MockSecurityUtility.createJoe(session);

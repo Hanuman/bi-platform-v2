@@ -59,9 +59,9 @@ public class TestPentahoAllowAllAclVoter extends BaseTest {
     // RepositoryFile has no acls on it. Nobody should be able to access it.
     // But, we're using an allowAll voter.
     PentahoAllowAllAclVoter voter = new PentahoAllowAllAclVoter();
-    assertTrue(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_EXECUTE));
+    assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_EXECUTE));
     IPentahoAclEntry entry = voter.getEffectiveAcl(session, testFile);
-    assertEquals(((PentahoAclEntry) entry).getMask(), PentahoAclEntry.PERM_FULL_CONTROL);
+    assertEquals(((PentahoAclEntry) entry).getMask(), IPentahoAclEntry.PERM_FULL_CONTROL);
     assertTrue(voter.isPentahoAdministrator(session));
     assertTrue(voter.isGranted(session, new GrantedAuthorityImpl("ROLE_ANYTHING")));//$NON-NLS-1$
   }

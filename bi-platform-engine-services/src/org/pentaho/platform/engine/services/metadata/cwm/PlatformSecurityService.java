@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
@@ -50,7 +51,7 @@ public class PlatformSecurityService extends SecurityService {
     users = service.getAllUsers();
     roles = service.getAllRoles();
     acls = new ArrayList();
-    Map validPermissionsNameMap = PentahoAclEntry.getValidPermissionsNameMap(PentahoAclEntry.PERMISSIONS_LIST_ALL);
+    Map validPermissionsNameMap = PentahoAclEntry.getValidPermissionsNameMap(IPentahoAclEntry.PERMISSIONS_LIST_ALL);
     if (validPermissionsNameMap != null) {
       Set aclsKeySet = validPermissionsNameMap.keySet();
       for (Iterator aclsIterator = aclsKeySet.iterator(); aclsIterator.hasNext();) {

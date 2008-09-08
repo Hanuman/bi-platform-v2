@@ -1113,16 +1113,16 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    */
   private void setXMLPermissionAttributes(final IPentahoAclEntry entry, final Element node) {
     node.addAttribute("aclAdministration", //$NON-NLS-1$
-        Boolean.toString(entry.isPermitted(PentahoAclEntry.PERM_ADMINISTRATION)));
+        Boolean.toString(entry.isPermitted(IPentahoAclEntry.PERM_ADMINISTRATION)));
 
     node.addAttribute("aclExecute", //$NON-NLS-1$
-        Boolean.toString(entry.isPermitted(PentahoAclEntry.PERM_EXECUTE)));
+        Boolean.toString(entry.isPermitted(IPentahoAclEntry.PERM_EXECUTE)));
 
     node.addAttribute("aclSubscribe", //$NON-NLS-1$
-        Boolean.toString(entry.isPermitted(PentahoAclEntry.PERM_SUBSCRIBE)));
+        Boolean.toString(entry.isPermitted(IPentahoAclEntry.PERM_SUBSCRIBE)));
 
     node.addAttribute("aclModifyAcl", //$NON-NLS-1$
-        Boolean.toString(entry.isPermitted(PentahoAclEntry.PERM_UPDATE_PERMS)
+        Boolean.toString(entry.isPermitted(IPentahoAclEntry.PERM_UPDATE_PERMS)
             || SecurityHelper.isPentahoAdministrator(getSession())));
 
   }
@@ -1321,12 +1321,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   protected Map<IPermissionRecipient, IPermissionMask> getDefaultPublishAcl() {
     Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
     // the publisher gets full control
-    acl.put(new SimpleSession(getSession()), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL));
+    acl.put(new SimpleSession(getSession()), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL));
     IPentahoSession sess = getSession();
     IAclVoter voter = PentahoSystem.getAclVoter(sess);
     // and the Pentaho administrator gets full control
     acl.put(new SimpleRole(voter.getAdminRole().getAuthority()), new SimplePermissionMask(
-        PentahoAclEntry.PERM_FULL_CONTROL));
+        IPentahoAclEntry.PERM_FULL_CONTROL));
     return acl;
   }
 
@@ -1346,12 +1346,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     // TODO mlowery Fetch the ACE belonging to this IPermissionRecipient (if any).
     AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
     for (IPermissionRecipient shareRecipient : shareRecipients) {
-      addPermission(file, shareRecipient, new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
+      addPermission(file, shareRecipient, new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
     }
   }
 
   public void unshare(final ISolutionFile file, final List<IPermissionRecipient> shareRecipients) {
-    final int NOT_SHARE = PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE ^ 0xffffffff;
+    final int NOT_SHARE = IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE ^ 0xffffffff;
     AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
     // make a copy of the ACL in case it is immutable
     Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>(permissionMgr
@@ -1375,7 +1375,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
     if (isPentahoAdministrator()
         || permissionMgr.hasPermission(new SimpleSession(getSession()), new SimplePermissionMask(
-            PentahoAclEntry.PERM_UPDATE_PERMS), file)) {
+            IPentahoAclEntry.PERM_UPDATE_PERMS), file)) {
       permissionMgr.setPermission(recipient, permission, file);
     } else {
       warn("request to add permission on file \"" + file.getFileName() + "\" denied");
@@ -1390,7 +1390,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
     if (isPentahoAdministrator()
         || permissionMgr.hasPermission(new SimpleSession(getSession()), new SimplePermissionMask(
-            PentahoAclEntry.PERM_UPDATE_PERMS), file)) {
+            IPentahoAclEntry.PERM_UPDATE_PERMS), file)) {
       permissionMgr.setPermissions(acl, file);
     } else {
       String msg = Messages.getErrorString("SolutionRepository.ERROR_0015_SET_PERMISSIONS_DENIED", file.getFileName()); //$NON-NLS-1$

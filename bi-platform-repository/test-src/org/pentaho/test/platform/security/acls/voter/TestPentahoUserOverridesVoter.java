@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -31,7 +32,6 @@ import org.pentaho.platform.engine.security.AcegiPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.engine.security.acls.voter.PentahoUserOverridesVoter;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
@@ -57,15 +57,15 @@ public class TestPentahoUserOverridesVoter extends BaseTest {
     MockSecurityUtility.createSuzy(session);
     RepositoryFile testFile = new RepositoryFile("Test Folder", null, null);//$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> perms = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
-    perms.put(new SimpleUser("suzy"), new SimplePermissionMask(PentahoAclEntry.PERM_NOTHING));
-    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL));
+    perms.put(new SimpleUser("suzy"), new SimplePermissionMask(IPentahoAclEntry.PERM_NOTHING));
+    perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL));
     AcegiPermissionMgr.instance().getPermissions(testFile);
 
     // Now, the stage is set. We should be able to double-check that suzy
     // has no access to the testFile.
     PentahoUserOverridesVoter voter = new PentahoUserOverridesVoter();
     assertNotNull(voter);
-    assertFalse(voter.hasAccess(session, testFile, PentahoAclEntry.PERM_EXECUTE));
+    assertFalse(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_EXECUTE));
   }
   
   public static void main(String[] args) {

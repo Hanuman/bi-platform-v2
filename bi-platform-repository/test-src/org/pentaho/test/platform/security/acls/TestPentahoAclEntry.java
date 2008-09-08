@@ -25,6 +25,7 @@ import java.io.File;
 
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
@@ -50,43 +51,43 @@ public class TestPentahoAclEntry extends BaseTest {
   public void testAcls() {
     PentahoAclEntry aclEntry = null;
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_NOTHING);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_NOTHING);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "------");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_EXECUTE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "X-----");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_SUBSCRIBE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_SUBSCRIBE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "-S----");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_CREATE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_CREATE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "--C---");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_UPDATE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_UPDATE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "---U--");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_DELETE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_DELETE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "----D-");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_UPDATE_PERMS);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_UPDATE_PERMS);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "-----P");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_ADMINISTRATION);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_ADMINISTRATION);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "--CUDP");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE_SUBSCRIBE);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "XS----");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_ADMIN_ALL);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_ADMIN_ALL);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "XSCUD-");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_SUBSCRIBE_ADMINISTRATION);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_SUBSCRIBE_ADMINISTRATION);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "-SCUDP");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_EXECUTE_ADMINISTRATION);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_EXECUTE_ADMINISTRATION);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "X-CUDP");//$NON-NLS-1$
 
-    aclEntry = new PentahoAclEntry("joe", PentahoAclEntry.PERM_FULL_CONTROL);//$NON-NLS-1$
+    aclEntry = new PentahoAclEntry("joe", IPentahoAclEntry.PERM_FULL_CONTROL);//$NON-NLS-1$
     assertEquals(aclEntry.printPermissionsBlock(), "XSCUDP");//$NON-NLS-1$
 
     aclEntry.setRecipient(new GrantedAuthorityImpl("ROLE_ADMIN"));//$NON-NLS-1$

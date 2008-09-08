@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclVoter;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -192,24 +193,24 @@ public class SecurityHelper {
 
     switch (actionOperation) {
       case (IAclHolder.ACCESS_TYPE_READ): {
-        aclMask = PentahoAclEntry.PERM_EXECUTE;
+        aclMask = IPentahoAclEntry.PERM_EXECUTE;
         break;
       }
       case IAclHolder.ACCESS_TYPE_WRITE:
       case IAclHolder.ACCESS_TYPE_UPDATE: {
-        aclMask = PentahoAclEntry.PERM_UPDATE;
+        aclMask = IPentahoAclEntry.PERM_UPDATE;
         break;
       }
       case IAclHolder.ACCESS_TYPE_DELETE: {
-        aclMask = PentahoAclEntry.PERM_DELETE;
+        aclMask = IPentahoAclEntry.PERM_DELETE;
         break;
       }
       case IAclHolder.ACCESS_TYPE_ADMIN: {
-        aclMask = PentahoAclEntry.PERM_ADMINISTRATION;
+        aclMask = IPentahoAclEntry.PERM_ADMINISTRATION;
         break;
       }
       default: {
-        aclMask = PentahoAclEntry.PERM_EXECUTE;
+        aclMask = IPentahoAclEntry.PERM_EXECUTE;
         break;
       }
 
@@ -244,7 +245,7 @@ public class SecurityHelper {
     int aclMask = -1;
     switch (actionOperation) {
       case ISolutionRepository.ACTION_EXECUTE: {
-        aclMask = PentahoAclEntry.PERM_EXECUTE;
+        aclMask = IPentahoAclEntry.PERM_EXECUTE;
         break;
       }
       case ISolutionRepository.ACTION_ADMIN: {
@@ -253,23 +254,23 @@ public class SecurityHelper {
         return SecurityHelper.isPentahoAdministrator(session);
       }
       case ISolutionRepository.ACTION_SUBSCRIBE: {
-        aclMask = PentahoAclEntry.PERM_SUBSCRIBE;
+        aclMask = IPentahoAclEntry.PERM_SUBSCRIBE;
         break;
       }
       case ISolutionRepository.ACTION_CREATE: {
-        aclMask = PentahoAclEntry.PERM_CREATE;
+        aclMask = IPentahoAclEntry.PERM_CREATE;
         break;
       }
       case ISolutionRepository.ACTION_UPDATE: {
-        aclMask = PentahoAclEntry.PERM_UPDATE;
+        aclMask = IPentahoAclEntry.PERM_UPDATE;
         break;
       }
       case ISolutionRepository.ACTION_DELETE: {
-        aclMask = PentahoAclEntry.PERM_DELETE;
+        aclMask = IPentahoAclEntry.PERM_DELETE;
         break;
       }
       default: {
-        aclMask = PentahoAclEntry.PERM_EXECUTE;
+        aclMask = IPentahoAclEntry.PERM_EXECUTE;
         break;
       }
     }

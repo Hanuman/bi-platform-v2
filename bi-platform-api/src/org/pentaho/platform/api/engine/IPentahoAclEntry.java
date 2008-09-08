@@ -19,13 +19,15 @@
  */
 package org.pentaho.platform.api.engine;
 
+import org.acegisecurity.acl.basic.BasicAclEntry;
+
 /**
- * Base Pentaho Access Control entry. Subclassed <tt>AbstractBasicAclEntry</tt> from
- * the ACEGI project. Provides known access controls.
+ * Base Pentaho Access Control entry. Subclassed <tt>BasicAclEntry</tt> from Acegi Security. Provides known access 
+ * controls.
  * 
  * @author mbatchel
  * */
-public interface IPentahoAclEntry {
+public interface IPentahoAclEntry extends BasicAclEntry {
   /**
    * No access (0)
    */
@@ -100,28 +102,7 @@ public interface IPentahoAclEntry {
   public static final String PERMISSIONS_LIST_SOLUTIONS = "solutions"; //$NON-NLS-1$
 
   public static final String PERMISSIONS_LIST_ALL = "all"; //$NON-NLS-1$
-
-  //private static final int EXECUTE_IDX = 1;
-  //private static final int SUBSCRIBE_IDX = 2;
-  //private static final int ADMINISTRATION_IDX = 10;
-
-  public void setRecipient(Object value);
-
-  /**
-   * As implemented, this method says that all permission combinations are valid.  (Well not all. FULL_CONTROL must
-   * stand alone.  It cannot be combined with other bits.)
-   * 
-   * <ol>
-   * <li>Find the permission value (call it p) that is the highest power of two.</li>
-   * <li>Find n (0-based) such that 2^n = p. (Uses logarithm with base 2.)</li>
-   * <li>So there are 2^(n+1) permutations of permission bits.</li>
-   * <li>So the valid permission values list consists of those 2^(n+1) permutations plus the FULL_CONTROL perm bit. (i.e. (2^(n+1))+1</li>
-   * </ol>
-   */
-  public int[] getValidPermissions();
-
-  public String printPermissionsBlock(int i);
-
-  public boolean isPermitted(int i);
+  
+  public static final String PERMISSION_PREFIX = "PERM_"; //$NON-NLS-1$
 
 }

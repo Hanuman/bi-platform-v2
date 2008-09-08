@@ -44,8 +44,8 @@ public class PentahoAllowAllAclVoter extends AbstractPentahoAclVoter {
   }
 
   public IPentahoAclEntry getEffectiveAcl(final IPentahoSession session, final Object domainInstance) {
-    PentahoAclEntry rtn = new PentahoAclEntry();
-    rtn.setMask(PentahoAclEntry.PERM_FULL_CONTROL);
+    IPentahoAclEntry rtn = new PentahoAclEntry();
+    rtn.setMask(IPentahoAclEntry.PERM_FULL_CONTROL);
     return rtn;
   }
 

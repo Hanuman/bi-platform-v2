@@ -22,6 +22,7 @@ import org.acegisecurity.acl.AclEntry;
 import org.acegisecurity.acl.basic.BasicAclEntry;
 import org.acegisecurity.acl.basic.GrantedAuthorityEffectiveAclsResolver;
 import org.pentaho.platform.api.engine.IAclVoter;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
@@ -114,14 +115,14 @@ public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAc
     // First, get all the ACLs on the object that apply to the user.
     AclEntry[] effectiveAcls = getEffectiveAcls(session, domainInstance);
     PentahoAclEntry entry = new PentahoAclEntry();
-    entry.setMask(PentahoAclEntry.PERM_NOTHING);
+    entry.setMask(IPentahoAclEntry.PERM_NOTHING);
     // By default, we'll OR together all the acls to create the whole mask
     // which
     // indicates their access.
     if ((effectiveAcls != null) && (effectiveAcls.length > 0)) {
       int[] allAcls = new int[effectiveAcls.length];
       for (int i = 0; i < effectiveAcls.length; i++) {
-        allAcls[i] = ((PentahoAclEntry) effectiveAcls[i]).getMask();
+        allAcls[i] = ((IPentahoAclEntry) effectiveAcls[i]).getMask();
       }
       entry.addPermissions(allAcls);
       return entry;
