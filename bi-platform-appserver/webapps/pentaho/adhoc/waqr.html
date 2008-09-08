@@ -162,12 +162,14 @@
 		}
 		
 		function selectInitModel() {
-var model = gCtrlr.mdModels.models[ paramModelName ];
-for (var i in model.bViews)
-{
-  viewName = model.bViews[i].viewId;
-}
-
+			var model = gCtrlr.mdModels.models[ paramModelName ];
+			if(model != null){
+				for (var i in model.bViews)
+				{
+				  viewName = model.bViews[i].viewId;
+				}
+      }
+      
 			gCtrlr.handleSelectBusinessView( paramModelName, viewName );
 			gCtrlr.showStep1();
 		} 
