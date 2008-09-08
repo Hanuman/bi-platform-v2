@@ -101,7 +101,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     }
     int status = ISolutionRepository.FILE_ADD_FAILED;
     try {
-      status = doPublish(fileItems, publishPath, publishKey, jndiName, jdbcDriver, jdbcUrl, jdbcUserId, jdbcPassword,
+      status = doPublish(fileItems, publishPath, publishKey, null, null, null, null, null,
         overwrite, pentahoSession);
     } catch (Exception e) {
       MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0005_PUBLISH_EXCEPTION"), e); //$NON-NLS-1$
