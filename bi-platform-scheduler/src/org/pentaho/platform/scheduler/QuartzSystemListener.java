@@ -96,11 +96,9 @@ public class QuartzSystemListener implements IPentahoSystemListener {
       }
       QuartzSystemListener.schedulerInstance.start();
     } catch (SchedulerException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      // return true because this shouldn't always stop the entire server
-      // from running
-      return true;
+      Logger.error(this, Messages.getErrorString(
+          "QuartzSystemListener.ERROR_0001_Scheduler_Not_Initialized",QuartzSystemListener.class.getName()), e); //$NON-NLS-1$
+      return false;        
     }
     return true;
   }
