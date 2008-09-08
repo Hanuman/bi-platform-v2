@@ -14,7 +14,7 @@
     <dependency org="dom4j" name="dom4j" rev="1.6.1">
       <exclude org="xml-apis" name="xml-apis" />
     </dependency>
-    <dependency org="jfr" name="jcommon" rev="1.0.12" />
+    <dependency org="jfree" name="jcommon" rev="1.0.12" />
     <dependency org="jfree" name="jfreechart" rev="1.0.4">
       <exclude org="jfree" name="jcommon" />
     </dependency>
