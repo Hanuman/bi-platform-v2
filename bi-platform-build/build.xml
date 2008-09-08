@@ -263,7 +263,7 @@
     <ant antfile="build.xml" dir="../bi-platform-appserver" target="publish-local" />
   </target>
 	
-	<target name="publish-pentaho">
+	<!-- target name="publish-pentaho">
 	    <ant antfile="build.xml" dir="../bi-platform-api" target="publish-pentaho" />
 	    <ant antfile="build.xml" dir="../bi-platform-util" target="publish-pentaho" />
 	    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="publish-pentaho" />
@@ -280,7 +280,7 @@
 	    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="publish-pentaho" />
 	    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="publish-pentaho" />
 	    <ant antfile="build.xml" dir="../bi-platform-appserver" target="publish-pentaho" />
-	  </target>
+	  </target -->
 
   <target name="resolve">
     <ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
