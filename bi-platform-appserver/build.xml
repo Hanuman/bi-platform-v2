@@ -1,5 +1,5 @@
 <!--===========================================================================
-  This is the build file for the Pentaho BI Platform API project.
+  This is the build file for the Pentaho BI Platform Appserver project.
   
   This build file will use the common_build.xml file as the default build
   process and should only override the tasks that need to differ from
@@ -7,7 +7,7 @@
   
   See common_build.xml for more details
 ============================================================================-->
-<project name="API" basedir="." default="jar">
+<project name="appserver" basedir="." default="jar">
 	
 	<description>
 	  This build file is used to create the API project
@@ -33,6 +33,6 @@
 	-->
 	<target name="compile.compile" depends="init" description="Performs the actual javac compile" />
 	<target name="jar" depends="compile" description="Jars up the bin directory after a compile" />
-	<target name="publish-pentaho" depends="compile" description="Jars up the bin directory after a compile" />
+	<target name="publish-pentaho" depends="" description="Jars up the bin directory after a compile" />
 	
 </project>
