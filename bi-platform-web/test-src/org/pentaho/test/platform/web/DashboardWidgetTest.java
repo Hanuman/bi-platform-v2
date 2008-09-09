@@ -16,7 +16,6 @@
 
 package org.pentaho.test.platform.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -37,18 +36,9 @@ public class DashboardWidgetTest extends BaseTest {
   
   private static final String SOLUTION_PATH = "test-src/solution";
 
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-
-  public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if (file.exists()) {
-      return SOLUTION_PATH;
-    } else {
-      return ALT_SOLUTION_PATH;
-    }
-  }
+   public String getSolutionPath() {
+       return SOLUTION_PATH;
+   }
 
 	public void testWidget2() {
 		
@@ -114,55 +104,12 @@ public class DashboardWidgetTest extends BaseTest {
         finishTest();
 
     }
-
-    public void testWidgetGrid1() {
-        startTest();
-
-        SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
-        ArrayList messages = new ArrayList();
-
-        int columns = 4;
-        int widgetWidth = 150;
-        int widgetHeight = 150;
-        WidgetGridComponent widgetGrid = new WidgetGridComponent("test/dashboard/budgetvariance.dial.xml", urlFactory, messages); //$NON-NLS-1$
-
-        widgetGrid.setLoggingLevel(getLoggingLevel());
-        widgetGrid.setColumns(columns);
-        widgetGrid.setWidgetWidth(widgetWidth);
-        widgetGrid.setWidgetHeight(widgetHeight);
-
-        widgetGrid.setDataAction("test", "rules", "headcount_variance_by_region.xaction", "rule-result", "REGION", "VARIANCE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
-        OutputStream outputStream = getOutputStream("DashboardWidgetTest.testWidgetGrid1", ".html"); //$NON-NLS-1$//$NON-NLS-2$
-        String contentType = "text/html"; //$NON-NLS-1$
-
-        SimpleParameterProvider requestParameters = new SimpleParameterProvider();
-        SimpleParameterProvider sessionParameters = new SimpleParameterProvider();
-
-        HashMap parameterProviders = new HashMap();
-        parameterProviders.put(HttpRequestParameterProvider.SCOPE_REQUEST, requestParameters); 
-        parameterProviders.put(HttpSessionParameterProvider.SCOPE_SESSION, sessionParameters); 
-        StandaloneSession session = new StandaloneSession("BaseTest.DEBUG_JUNIT_SESSION"); //$NON-NLS-1$
-
-        SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
-        BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
-
-        try {
-            widgetGrid.validate(session, requestHandler);
-            widgetGrid.handleRequest(outputStream, requestHandler, contentType, parameterProviders);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        finishTest();
-    }
-
     public static void main(String[] args) {
         DashboardWidgetTest test = new DashboardWidgetTest();
         test.setUp();
         try {
             test.testWidget1();
             test.testWidget2();
-            test.testWidgetGrid1();
         } finally {
             test.tearDown();
             BaseTest.shutdown();
