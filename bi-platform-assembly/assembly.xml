@@ -30,6 +30,8 @@
 	<property name="sample.data.dir" value="../bi-platform-sample-data" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
 	<property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
+	<property name="res.dir" value="${basedir}/res"/>
+	<property name="oac-res.dir" value="${res.dir}/oac"/>
 
 	<!-- =================================================================================
 	     "Wapper" target section: This section is set aside for the creation of those 
@@ -40,7 +42,7 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,init-tomcat-solutions,init-pentaho-data" />
+	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-open-admin-console,init-tomcat-solutions,init-pentaho-data" />
 
 	<!-- =================================================================================
 	     End wrapper target section -ejh
@@ -117,7 +119,6 @@
       and the structure for the wars that will go into the container.  This
       task does not zip, tar or compress.          
      =================================================================== -->
-
 	<target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
 		<sequential>
 
@@ -212,7 +213,7 @@
 						</fileset>
 						<fileset dir="scripts/tomcat/general">
 							<include name="**" />
-						</fileset>						
+						</fileset>
 					</copy>
 				</then>
 			</if>
@@ -225,7 +226,7 @@
 						</fileset>
 						<fileset dir="scripts/tomcat/general">
 							<include name="**" />
-						</fileset>	
+						</fileset>
 					</copy>
 				</then>
 			</if>
@@ -244,10 +245,10 @@
 				<fileset dir="${bi.platform.util.dir}/res/log4j" />
 				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
 			</copy>
-			
+
 			<!-- Explode the mantle generated files -->
 			<unzip dest="${prep.pentaho.war.dir}">
-				<fileset dir="${lib.dir}" includes="mantle-web*.zip"/>
+				<fileset dir="${lib.dir}" includes="mantle-web-*.zip" />
 			</unzip>
 
 			<!-- Add licenses -->
@@ -265,6 +266,26 @@
 			</copy>
 		</sequential>
 
+	</target>
+
+	
+<!-- ===================================================================
+      target: install-open-admin-console
+      
+      Installs the Open Admin Console from the pentaho-open-admin-console.zip
+      file in the lib directory. Once installed, a few settings in the 
+      configuration file will need to be tweaked.          
+     =================================================================== -->
+	<target name="install-open-admin-console">
+		<!-- Explode the Open Admin Console -->
+		<unzip dest="${stage.dir.server}">
+			<fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
+		</unzip>
+
+		<!-- Update the OAC's config.xml file -->
+		<copy 
+			file="${oac-res.dir}/resource-config-console.xml.open" 
+			tofile="${stage.dir.server}/pentaho-open-admin-console/resource/config/console.xml"/>
 	</target>
 
 	<!--====================================================

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<console> 
+  <platform-username>joe</platform-username>  
+  <biserver-status-check-period-millis>30000</biserver-status-check-period-millis>  
+  <homepage-timeout-millis>15000</homepage-timeout-millis>  
+  <solution-path>../pentaho-solutions</solution-path>
+  <war-path>../tomcat/webapps/pentaho</war-path>
+  <jdbc-drivers-path></jdbc-drivers-path>  
+  <hibernate-config-path>hsql.hibernate.cfg.xml</hibernate-config-path>
+</console>
