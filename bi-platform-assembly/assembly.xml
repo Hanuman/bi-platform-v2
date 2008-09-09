@@ -202,22 +202,15 @@
 
 			<!-- Add scripts to appropriate locations based on desired rdbms -->
 			<if>
-				<equals arg1="${rdbms}" arg2="general" />
-				<then>
-					<copy todir="${stage.dir.server}">
-						<fileset dir="scripts/tomcat/general">
-							<include name="**" />
-						</fileset>
-					</copy>
-				</then>
-			</if>
-			<if>
 				<equals arg1="${rdbms}" arg2="hsqldb" />
 				<then>
 					<copy todir="${stage.dir.server}">
 						<fileset dir="scripts/tomcat/hsqldb">
 							<include name="**" />
 						</fileset>
+						<fileset dir="scripts/tomcat/general">
+							<include name="**" />
+						</fileset>						
 					</copy>
 				</then>
 			</if>
@@ -228,6 +221,9 @@
 						<fileset dir="scripts/tomcat/mysql">
 							<include name="**" />
 						</fileset>
+						<fileset dir="scripts/tomcat/general">
+							<include name="**" />
+						</fileset>	
 					</copy>
 				</then>
 			</if>
