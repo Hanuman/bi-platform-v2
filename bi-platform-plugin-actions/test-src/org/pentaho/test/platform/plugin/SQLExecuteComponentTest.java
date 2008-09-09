@@ -13,7 +13,7 @@ public class SQLExecuteComponentTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  public void testSQLExecuteComponentSingleStatement() {
+/*  public void testSQLExecuteComponentSingleStatement() {
     startTest();
     info("Expected: Successful execution with one row of data"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_rule1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -29,9 +29,9 @@ public class SQLExecuteComponentTest extends BaseTest {
     assertEquals("Expected first row to contain a 1 in the first column.", resultset.getValueAt(0, 0), new Integer(1)); //$NON-NLS-1$
 
     finishTest();
-  }
+  } */
 
-  public void testSQLExecuteComponentMultipleStatements() {
+/*  public void testSQLExecuteComponentMultipleStatements() {
     startTest();
     info("Expected: Successful execution with 5 rows of data in the result. First row should have a negative #"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_rule2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -48,9 +48,9 @@ public class SQLExecuteComponentTest extends BaseTest {
     assertTrue("Expected first row to contain a negative number in the first column.", (rsVal.intValue() < 0)); //$NON-NLS-1$
 
     finishTest();
-  }
+  } */
 
-  public void testSQLExecuteForceSingle() {
+/*  public void testSQLExecuteForceSingle() {
     startTest();
     info("Expected: Successful execution with 1 row of data in the result - expected value in column is 0"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_rule3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -67,9 +67,9 @@ public class SQLExecuteComponentTest extends BaseTest {
     assertTrue("Expected first row to contain a zero first column.", (rsVal.intValue() == 0)); //$NON-NLS-1$
 
     finishTest();
-  }
+  } */
 
-  public void testSQLExecuteComponentMultipleStatementsNewSeparator() {
+/*  public void testSQLExecuteComponentMultipleStatementsNewSeparator() {
     startTest();
     info("Expected: Successful execution with 5 rows of data in the result. First row should have a negative #"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_rule4.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -86,7 +86,7 @@ public class SQLExecuteComponentTest extends BaseTest {
     assertTrue("Expected first row to contain a negative number in the first column.", (rsVal.intValue() < 0)); //$NON-NLS-1$
 
     finishTest();
-  }
+  } */
 
   public void testSQLExecuteErrorDropTable() {
     startTest();

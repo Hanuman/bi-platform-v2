@@ -239,7 +239,7 @@ public class JFreeReportTest extends BaseTest {
     finishTest();
   }
 
-  public void testJFreeReportPlainText() {
+/*  public void testJFreeReportPlainText() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "plaintext"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -248,7 +248,7 @@ public class JFreeReportTest extends BaseTest {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  } */
 
   public static void main(String[] args) {
     JFreeReportTest test = new JFreeReportTest();
@@ -257,19 +257,19 @@ public class JFreeReportTest extends BaseTest {
       test.setUp();
 
       test.testJFreeReportMondrian();
-      test.testJFreeReport1();
-      test.testJFreeReport2();
-      test.testJFreeReport3();
-      test.testJFreeReport4();
-      test.testJFreeReport5();
-      test.testJFreeReport6();
-      test.testJFreeReport7();
+//      test.testJFreeReport1();
+//      test.testJFreeReport2();
+//      test.testJFreeReport3();
+//      test.testJFreeReport4();
+//      test.testJFreeReport5();
+//      test.testJFreeReport6();
+//      test.testJFreeReport7();
       test.testJFreeReport8();
-      test.testJFreeReport9();
-      test.testJFreeReport10();
+//      test.testJFreeReport9();
+//      test.testJFreeReport10();
       test.testJFreeReportParameterPage1();
       test.testJFreeReportParameterPage2();
-      test.testJFreeReportParameterPage3();
+//      test.testJFreeReportParameterPage3();
       test.testJFreeReportPlainText();
     } finally {
       test.tearDown();

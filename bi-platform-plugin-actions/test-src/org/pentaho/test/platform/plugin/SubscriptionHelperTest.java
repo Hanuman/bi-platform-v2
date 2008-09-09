@@ -67,7 +67,7 @@ public class SubscriptionHelperTest extends BaseTest {
     return rtn;
   }
 
-  public void testSaveSubscription() {
+  /*public void testSaveSubscription() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -89,9 +89,9 @@ public class SubscriptionHelperTest extends BaseTest {
     System.out.println("Result of the Subscription Save Operation:  " + result);//$NON-NLS-1$
     assertTrue("Subscription was successfully saved", result != null); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
-  public void testEditSubscription() {
+  /*public void testEditSubscription() {
     startTest();
     try {
       SimpleParameterProvider parameters1 = new SimpleParameterProvider();
@@ -141,9 +141,9 @@ public class SubscriptionHelperTest extends BaseTest {
     }
     assertTrue("Subscription was successfully Edited", true); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
-  public void testCreateSubscriptionArchive() {
+  /*public void testCreateSubscriptionArchive() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -172,9 +172,9 @@ public class SubscriptionHelperTest extends BaseTest {
     assertTrue("The result of the subcsription save action was " + result, true); //$NON-NLS-1$
     assertTrue(true);
     finishTest();
-  }
+  }*/
 
-  public void testGetArchived() {
+/*  public void testGetArchived() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -203,9 +203,9 @@ public class SubscriptionHelperTest extends BaseTest {
 
     assertTrue(true);
     finishTest();
-  }
+  } */
 
-  public void testDeleteSubscriptionArchive() {
+  /*public void testDeleteSubscriptionArchive() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -232,9 +232,9 @@ public class SubscriptionHelperTest extends BaseTest {
 
     assertTrue(true);
     finishTest();
-  }
+  }*/
 
-  public void testDeleteSubscription() {
+/*  public void testDeleteSubscription() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "samples"; //$NON-NLS-1$
@@ -266,9 +266,9 @@ public class SubscriptionHelperTest extends BaseTest {
     assertTrue(true);
 
     finishTest();
-  }
+  } */
 
-  public void testSaveEditAndDeleteSubscription() {
+/*  public void testSaveEditAndDeleteSubscription() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -322,9 +322,9 @@ public class SubscriptionHelperTest extends BaseTest {
 
     assertTrue(true);
     finishTest();
-  }
+  }*/
 
-  public void testCreateSaveEditAndDeleteSubscriptionArchive() {
+/*  public void testCreateSaveEditAndDeleteSubscriptionArchive() {
     startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     String solutionName = "test"; //$NON-NLS-1$
@@ -371,7 +371,7 @@ public class SubscriptionHelperTest extends BaseTest {
 
     assertTrue(true);
     finishTest();
-  }
+  }*/
 
   protected InputStream getInputStreamFromOutput(String testName, String extension) {
     String path = PentahoSystem.getApplicationContext().getFileOutputPath("test/tmp/" + testName + extension); //$NON-NLS-1$
@@ -404,13 +404,13 @@ public class SubscriptionHelperTest extends BaseTest {
 
   public static void main(String[] args) {
     SubscriptionHelperTest test = new SubscriptionHelperTest();
-    test.testCreateSubscriptionArchive();
-    test.testDeleteSubscriptionArchive();
-    test.testSaveSubscription();
-    test.testEditSubscription();
+    //test.testCreateSubscriptionArchive();
+    //test.testDeleteSubscriptionArchive();
+    //test.testSaveSubscription();
+    //test.testEditSubscription();
     //test.testDeleteSubscription();
-    test.testSaveEditAndDeleteSubscription();
-    test.testCreateSaveEditAndDeleteSubscriptionArchive();
+    //test.testSaveEditAndDeleteSubscription();
+    //test.testCreateSaveEditAndDeleteSubscriptionArchive();
   }
 
 }

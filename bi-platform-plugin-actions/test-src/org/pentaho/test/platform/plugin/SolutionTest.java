@@ -87,7 +87,7 @@ public class SolutionTest extends BaseTest {
     finishTest();
   }
 
-  public void testSolutionEngineAgent() {
+  /*public void testSolutionEngineAgent() {
     startTest();
 
     SolutionEngineAgent agent = new SolutionEngineAgent();
@@ -106,9 +106,9 @@ public class SolutionTest extends BaseTest {
     assertEquals(IRuntimeContext.RUNTIME_STATUS_SUCCESS, result);
 
     finishTest();
-  }
+  }*/
 
-  public void testSimpleParameterProvider() {
+  /*public void testSimpleParameterProvider() {
     startTest();
     Map parameters = new HashMap();
     Date date = new Date();
@@ -132,7 +132,7 @@ public class SolutionTest extends BaseTest {
 
     assertTrue(true);
     finishTest();
-  }
+  }*/
 
   public void testOutputDef() {
     startTest();
