@@ -115,6 +115,10 @@ public class AcegiPermissionMgr implements IPermissionMgr {
   }
 
   public void setPermissions(final Map<IPermissionRecipient, IPermissionMask> permissionsMap, final Object object) {
+    if (object == null || !(object instanceof IAclHolder)) {
+      // i would argue that the "object" parameter should be IAclHolder!
+      return;
+    }
     IAclHolder aclHolder = (IAclHolder) object;
     Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = permissionsMap.entrySet();
     ArrayList<PentahoAclEntry> aclList = new ArrayList<PentahoAclEntry>();
