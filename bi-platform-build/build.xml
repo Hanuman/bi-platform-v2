@@ -263,22 +263,54 @@
   </target>
 	
 	<target name="publish-pentaho">
-	    <ant antfile="build.xml" dir="../bi-platform-api" target="publish-pentaho" />
+		<sequential>
+	    <ant antfile="build.xml" dir="../bi-platform-api" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
+			<ant antfile="build.xml" dir="../bi-platform-api" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-util" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-util" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-util" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-engine-core" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-test-foundation" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-engine-security" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-engine-services" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-repository" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-repository" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-repository" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-plugin-services" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-scheduler" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-legacy" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-legacy" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-web" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-web" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-web-servlet" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="publish-pentaho" />
+	    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-all" />
+			<ant antfile="build.xml" dir="../bi-platform-web-portlet" target="resolve" />
 	    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="publish-pentaho" />
-	  </target>	
+	  </sequential>	 
+  </target>	
 
   <target name="resolve">
     <ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
