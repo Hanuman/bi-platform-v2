@@ -12,6 +12,7 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.servlet.AdhocWebService;
+import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -140,45 +141,7 @@ public class AdhocWebServiceTest extends BaseTestCase {
     Node nd = doc.selectSingleNode( xpath );
     return nd;
   }
-  
-  public void testGetWaqrRepositoryDoc() {
-    request.clearParameters();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "getWaqrRepositoryDoc"); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("folderPath", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    // need to look in the response to verify the content
-    String xpath = "/branch[@id='/solution/system/waqr']"; //$NON-NLS-1$   
-    Node nd = getNodeFromResponseDoc( response, xpath );
-    
-    assertTrue( "getWaqrRepositoryDoc service call failed.", nd != null ); //$NON-NLS-1$
-    System.out.println( "Done testGetWaqrRepositoryDoc." ); //$NON-NLS-1$   
-  }
-  
-  public void testGetWaqrRepositoryDoc2() {
-    request.clearParameters();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.setupAddParameter("component", "getWaqrRepositoryDoc"); //$NON-NLS-1$ //$NON-NLS-2$
-    request.setupAddParameter("folderPath", "/templates" ); //$NON-NLS-1$ //$NON-NLS-2$
-    try {
-      servlet.service(request, response);
-    } catch (Exception e) {
-      assertFalse( e.getMessage(), true );
-      return;
-    }
-    // need to look in the response to verify the content
-    String xpath = "/branch/branch[@id='/solution/system/waqr/templates/Pentaho']"; //$NON-NLS-1$   
-    Node nd = getNodeFromResponseDoc( response, xpath );
-    
-    assertTrue( "getWaqrRepositoryDoc service call failed.", nd != null ); //$NON-NLS-1$
-    
-    System.out.println( "Done testGetWaqrRepositoryDoc2." ); //$NON-NLS-1$   
-  }
+
   
   public void testGetJFreePaperSizes() {
     request.clearParameters();
@@ -221,4 +184,16 @@ public class AdhocWebServiceTest extends BaseTestCase {
     
     System.out.println( "Done testGetWaqrRepositoryIndexDoc." ); //$NON-NLS-1$   
   }
+  
+  
+  public static void main(String[] args) {
+    AdhocWebServiceTest test = new AdhocWebServiceTest();
+    test.setUp();
+    try {
+        test.testGetJFreePaperSizes();
+        test.testGetWaqrRepositoryIndexDoc();
+    } finally {
+        BaseTest.shutdown();
+    }
+}
 }
