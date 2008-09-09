@@ -66,10 +66,11 @@ public class AcegiPermissionMgrTest extends BaseTest {
     AcegiPermissionMgrTest test = new AcegiPermissionMgrTest();
     test.setUp();
     try {
-      test.testGetPermissions();
       test.testHasPermission();
       test.testSetPermission();
       test.testSetPermissions();
+      test.testAllInOne_Part1();
+      test.testAllInOne_Part2();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

@@ -156,68 +156,6 @@ public class SubscriptionHelperTest extends BaseTest {
     finishTest();
   }
 
-  public void testCreateSubscriptionArchive() {
-	  startTest();
-    SimpleParameterProvider parameters = new SimpleParameterProvider();
-    String solutionName = "test"; //$NON-NLS-1$
-    String actionPath = "dashboard"; //$NON-NLS-1$
-    String actionName = "departments.rule.xaction"; //$NON-NLS-1$
-    String name = "MyMonthlySubscriptionTest";//$NON-NLS-1$
-    parameters.setParameter("solution", solutionName); //$NON-NLS-1$
-    parameters.setParameter("path", actionPath); //$NON-NLS-1$
-    parameters.setParameter("action", actionName); //$NON-NLS-1$
-    parameters.setParameter("subscribe-name", name); //$NON-NLS-1$
-    UserSession session = new UserSession("Joe", Locale.US, true, parameters); //$NON-NLS-1$
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
-    List subscriptionList = subscriptionRepository.getUserSubscriptions("Joe"); //$NON-NLS-1$
-
-    String subscriptionId = null;
-    for (int i = 0; i < subscriptionList.size(); i++) {
-      Subscription subscription = (Subscription) subscriptionList.get(i);
-      String title = subscription.getTitle();
-      if ((title != null) && (title.equals(name))) {
-        subscriptionId = subscription.getId();
-        break;
-      }
-    }
-
-    String result = SubscriptionHelper.createSubscriptionArchive(subscriptionId, session, null, parameters);
-    assertTrue("The result of the subcsription save action was " + result, true); //$NON-NLS-1$
-    assertTrue(true);
-    finishTest();
-  }
-
-  public void testGetArchived() {
-	  startTest();
-    SimpleParameterProvider parameters = new SimpleParameterProvider();
-    String solutionName = "test"; //$NON-NLS-1$
-    String actionPath = "dashboard"; //$NON-NLS-1$
-    String actionName = "departments.rule.xaction"; //$NON-NLS-1$
-    String name = "MyMonthlySubscription";//$NON-NLS-1$
-    parameters.setParameter("solution", solutionName); //$NON-NLS-1$
-    parameters.setParameter("path", actionPath); //$NON-NLS-1$
-    parameters.setParameter("action", actionName); //$NON-NLS-1$
-    UserSession session = new UserSession("Joe", Locale.US, true, parameters); //$NON-NLS-1$
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
-    List subscriptionList = subscriptionRepository.getUserSubscriptions("Joe"); //$NON-NLS-1$
-    //List subscriptionList = subscriptionRepository.getAllSubscriptions(); //$NON-NLS-1$
-    OutputStream outputStream = getOutputStream("GetArchived", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    String subscriptionId = null;
-    for (int i = 0; i < subscriptionList.size(); i++) {
-      Subscription subscription = (Subscription) subscriptionList.get(i);
-      String title = subscription.getTitle();
-      if ((title != null) && (title.equals(name))) {
-        subscriptionId = subscription.getId();
-        break;
-      }
-    }
-    SimpleOutputHandler outputHandler = new SimpleOutputHandler(new SimpleContentItem(outputStream), true);
-    SubscriptionHelper.getArchived(subscriptionId, name, session, outputHandler);
-
-    assertTrue(true);
-    finishTest();
-  }
-
   public void testDeleteSubscriptionArchive() {
 	  startTest();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
@@ -247,95 +185,6 @@ public class SubscriptionHelperTest extends BaseTest {
     finishTest();
   }
 
-  public void testDeleteSubscription() {
-	  startTest();
-    SimpleParameterProvider parameters = new SimpleParameterProvider();
-    String solutionName = "samples"; //$NON-NLS-1$
-    String actionPath = "getting-started"; //$NON-NLS-1$
-    String actionName = "HelloEmail.xaction"; //$NON-NLS-1$
-    String name = "MyMonthlySubscription";//$NON-NLS-1$
-    String subscriberId = "24234234"; //$NON-NLS-1$
-    String subscriptionDestination = "c:/code/latest"; //$NON-NLS-1$
-    parameters.setParameter("solution", solutionName); //$NON-NLS-1$
-    parameters.setParameter("path", actionPath); //$NON-NLS-1$
-    parameters.setParameter("action", actionName); //$NON-NLS-1$
-    parameters.setParameter("subscribe-id", subscriberId); //$NON-NLS-1$    
-    parameters.setParameter("subscribe-name", name); //$NON-NLS-1$
-    parameters.setParameter("destination", subscriptionDestination); //$NON-NLS-1$
-    UserSession session = new UserSession("Joe", Locale.US, true, parameters); //$NON-NLS-1$
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
-    List subscriptionList = subscriptionRepository.getUserSubscriptions("Joe"); //$NON-NLS-1$
-    String subscriptionId = null;
-    for (int i = 0; i < subscriptionList.size(); i++) {
-      Subscription subscription = (Subscription) subscriptionList.get(i);
-      String title = subscription.getTitle();
-      if ((title != null) && (title.equals(name))) {
-        subscriptionId = subscription.getId();
-        break;
-      }
-    }
-    String result = SubscriptionHelper.deleteSubscription(subscriptionId, session);
-    assertTrue("The result of delete subcsription action was " + result, true); //$NON-NLS-1$
-    assertTrue(true);
-
-    finishTest();
-  }
-
-  public void testSaveEditAndDeleteSubscription() {
-	  startTest();
-    SimpleParameterProvider parameters = new SimpleParameterProvider();
-    String solutionName = "test"; //$NON-NLS-1$
-    String actionPath = "dashboard"; //$NON-NLS-1$
-    String actionName = "departments.rule.xaction"; //$NON-NLS-1$
-    String name = "MyMonthlySubscription";//$NON-NLS-1$
-
-    String subscriberId = "24234234"; //$NON-NLS-1$
-    String subscriptionDestination = "c:/code/latest"; //$NON-NLS-1$
-
-    parameters.setParameter("solution", solutionName); //$NON-NLS-1$
-    parameters.setParameter("path", actionPath); //$NON-NLS-1$
-    parameters.setParameter("action", actionName); //$NON-NLS-1$
-    parameters.setParameter("subscribe-id", subscriberId); //$NON-NLS-1$    
-    parameters.setParameter("subscribe-name", name); //$NON-NLS-1$
-    parameters.setParameter("destination", subscriptionDestination); //$NON-NLS-1$
-    OutputStream outputStream = getOutputStream("SaveSubscription", ".html"); //$NON-NLS-1$ //$NON-NLS-2$     
-    UserSession session = new UserSession("Joe", Locale.US, true, parameters); //$NON-NLS-1$
-
-    String actionReference = solutionName + "/" + actionPath + "/" + actionName; //$NON-NLS-1$ //$NON-NLS-2$
-    String result = SubscriptionHelper.saveSubscription(parameters, actionReference, session, true);
-
-    assertTrue("The result of the subcsription save action was " + result, true); //$NON-NLS-1$
-
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
-    List subscriptionList = subscriptionRepository.getUserSubscriptions("Joe"); //$NON-NLS-1$
-    String subscriptionId = null;
-    Subscription subscription = null;
-    for (int i = 0; i < subscriptionList.size(); i++) {
-      subscription = (Subscription) subscriptionList.get(i);
-      String title = subscription.getTitle();
-      if ((title != null) && (title.equals(name))) {
-        subscriptionId = subscription.getId();
-        break;
-      }
-    }
-
-    IScheduler scheduler = PentahoSystem.getScheduler(session);
-    boolean isScheduled = scheduler.scheduleSubscription(subscription);
-
-    // boolean isScheduled = SubscriptionHelper.scheduleSubscription(subscription);
-
-    if (isScheduled) {
-      assertTrue("Subscription was scheduled", true); //$NON-NLS-1$
-    }
-    SimpleOutputHandler outputHandler = new SimpleOutputHandler(new SimpleContentItem(outputStream), true);
-    SubscriptionHelper.runSubscription(subscriptionId, session, parameters, null, outputHandler);
-    outputStream = getOutputStream("EditSubscription", ".html"); //$NON-NLS-1$ //$NON-NLS-2$    
-    SubscriptionHelper.editSubscription(subscriptionId, session, null, outputStream);
-    result = SubscriptionHelper.deleteSubscription(subscriptionId, session);
-
-    assertTrue(true);
-    finishTest();
-  }
 
   public void testCreateSaveEditAndDeleteSubscriptionArchive() {
 	  startTest();
@@ -417,12 +266,8 @@ public class SubscriptionHelperTest extends BaseTest {
 
   public static void main(String[] args) {
     SubscriptionHelperTest test = new SubscriptionHelperTest();
-    test.testCreateSubscriptionArchive();
     test.testDeleteSubscriptionArchive();
     test.testSaveSubscription();
-    test.testEditSubscription();
-    //test.testDeleteSubscription();
-    test.testSaveEditAndDeleteSubscription();
     test.testCreateSaveEditAndDeleteSubscriptionArchive();
   }
 

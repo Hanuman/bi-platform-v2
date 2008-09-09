@@ -23,7 +23,6 @@
 package org.pentaho.test.platform.repository.content;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -43,21 +42,9 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.test.platform.repository.RepositoryTestCase;
 
 public class ContentRepositoryTest extends RepositoryTestCase {
-  private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
-
-  private static final String ALT_SOLUTION_PATH = "test-src/solution";
-
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-
+  private static final String SOLUTION_PATH = "test-src/solution";
   public String getSolutionPath() {
-    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-    if (file.exists()) {
-      System.out.println("File exist returning " + SOLUTION_PATH);
       return SOLUTION_PATH;
-    } else {
-      System.out.println("File does not exist returning " + ALT_SOLUTION_PATH);
-      return ALT_SOLUTION_PATH;
-    }
   }
 
   public static void main(String[] args) {
@@ -73,31 +60,27 @@ public class ContentRepositoryTest extends RepositoryTestCase {
 
     IContentLocation contLoc = null;
     try {
-      String path = Messages.getString("CONTREPTEST.FOLDER_PATH"); //$NON-NLS-1$
-      String folderName = Messages.getString("CONTREPTEST.FOLDER_NAME"); //$NON-NLS-1$
-      String description = Messages.getString("CONTREPTEST.FOLDER_DESCRIPTION"); //$NON-NLS-1$
+      String folderName = "test"; //$NON-NLS-1$
+      String description = "Test Description"; //$NON-NLS-1$
       String solnRoot = "ca825b3b-eb03-11d9-ad29-005056c00008"; //$NON-NLS-1$
-      info(Messages.getString("CONTREPTEST.USER_CREATING_LOCATION")); //$NON-NLS-1$
-      contLoc = createContentLocation(getPentahoSession(), path, folderName, description, solnRoot);
+      contLoc = createContentLocation(getPentahoSession(), getSolutionPath(), folderName, description, solnRoot);
 
       String itemName = "MyXML.xml"; //$NON-NLS-1$
-      String itemTitle = Messages.getString("CONTREPTEST.ITEM_TITLE"); //$NON-NLS-1$
+      String itemTitle = "Test Title"; //$NON-NLS-1$
       String itemExtension = "xml"; //$NON-NLS-1$
       String mimeType = "text/xml"; //$NON-NLS-1$
       StringBuffer content = new StringBuffer();
-      content.append(Messages.getString("CONTREPTEST.NODE_EXAMPLE1")); //$NON-NLS-1$
+      content.append("node example 1"); //$NON-NLS-1$
       info(Messages.getString("CONTREPTEST.USER_CREATING_ITEM")); //$NON-NLS-1$
-      createContentItem(getPentahoSession(), path, itemName, itemTitle, itemExtension, mimeType, content, Messages
-          .getString("CONTREPTEST.ACTION_NAME")); //$NON-NLS-1$
+      createContentItem(getPentahoSession(), getSolutionPath(), itemName, itemTitle, itemExtension, mimeType, content, "mytestaction.action"); //$NON-NLS-1$
 
       content = new StringBuffer();
-      content.append(Messages.getString("CONTREPTEST.NODE_EXAMPLE_2")); //$NON-NLS-1$
+      content.append("node example 2"); //$NON-NLS-1$
       info(Messages.getString("CONTREPTEST.USER_CREATING_ITEM")); //$NON-NLS-1$
-      createContentItem(getPentahoSession(), path, itemName, itemTitle, itemExtension, mimeType, content, Messages
-          .getString("CONTREPTEST.ACTION_NAME_2")); //$NON-NLS-1$
+      createContentItem(getPentahoSession(), getSolutionPath(), itemName, itemTitle, itemExtension, mimeType, content, "mytestaction1.action"); //$NON-NLS-1$
 
       info(Messages.getString("CONTREPTEST.USER_LOADING_ITEM")); //$NON-NLS-1$
-      IContentItem item3 = getContentItem(getPentahoSession(), path, itemName);
+      IContentItem item3 = getContentItem(getPentahoSession(), getSolutionPath(), itemName);
       exerciseContentItem(item3);
     } finally {
       try {

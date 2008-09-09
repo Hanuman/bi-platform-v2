@@ -17,6 +17,7 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
@@ -61,36 +62,12 @@ public class NonPooledDatasourceServiceTest extends BaseTest {
     }
 
   }
-
-  public void testDataSource() {
-    Connection connection = null;
-    try {
-      NonPooledDatasourceService service = new NonPooledDatasourceService();
-      DataSource ds = service.getDataSource("SampleData");
-      assertNotNull( "DataSource is null", ds );
-      connection = ds.getConnection();
-      assertNotNull( "Connection is null", ds );
-      String dsBoundName = service.getDSBoundName("SampleData");
-      assertNotNull( "Bound name is null", dsBoundName );
-      String dsUnBoundName = service.getDSUnboundName("SampleData");
-      assertNotNull( "Unbound name is null", dsUnBoundName );
-    } catch (Exception e) {
-      fail("Not expected to reach here");
-      e.printStackTrace();
-    } finally {
-      try {
-        connection.close();
-      } catch (Exception ee) {
-        ee.printStackTrace();
-      }
-    }
-  }
   
   public static void main(String[] args) {
     NonPooledDatasourceServiceTest test = new NonPooledDatasourceServiceTest();
     try {
       test.testGetDatasource();
-      test.testDataSource();
+
     } finally {
     }
   }
