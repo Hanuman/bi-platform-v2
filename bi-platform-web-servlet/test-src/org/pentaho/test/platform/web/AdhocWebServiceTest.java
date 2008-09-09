@@ -13,7 +13,6 @@ import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.servlet.AdhocWebService;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
-import org.pentaho.test.platform.security.MockUserDetailsRoleListService;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
