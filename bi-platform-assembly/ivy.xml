@@ -62,5 +62,8 @@
 		<dependency org="wsdl4j" name="wsdl4j" rev="1.5.0" />
 		<dependency org="opensymphony" name="quartz-oracle" rev="1.5.2" />
 		<dependency org="jexcelapi" name="jxl" rev="2.4.3" />
+    
+<!--  ZIP Files of Other Resources -->
+    <dependency org="pentaho" name="mantle-web" rev="${project.revision}" changing="true" />
 	</dependencies>
 </ivy-module>

@@ -1,8 +1,10 @@
 <project name="Open Platform Assembly" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<tstamp>
-		<format property="current.date" pattern="MM-dd-yyyy" locale="en" />
-	</tstamp>
+	<!-- Define the default location of the common build file -->
+	<property name="common.build.file" value="./common_build.xml" description="This is the location of the standardized common_build.xml file" />
+
+	<!-- Import the common_build.xml file which contains all the default tasks -->
+	<import file="${common.build.file}" />
 
 	<!-- =================================================================================
 	     Property Defaults
@@ -116,7 +118,7 @@
       task does not zip, tar or compress.          
      =================================================================== -->
 
-	<target name="prep-pentaho-tomcat" depends="init.stage.pentaho">
+	<target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
 		<sequential>
 
 			<!-- Copy pure tomcat 5.5.26 -->
@@ -242,6 +244,11 @@
 				<fileset dir="${bi.platform.util.dir}/res/log4j" />
 				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
 			</copy>
+			
+			<!-- Explode the mantle generated files -->
+			<unzip dest="${prep.pentaho.war.dir}">
+				<fileset dir="${lib.dir}" includes="mantle-web*.zip"/>
+			</unzip>
 
 			<!-- Add licenses -->
 			<copy todir="${stage.dir.server}/licenses">
@@ -651,5 +658,6 @@
 	</target>
 
 
+	<target name="resolve-test" description="Retrieves test configuration dependencies" />
 
 </project>
