@@ -36,7 +36,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.messages.Messages;
-import org.pentaho.test.platform.security.MockUserRoleListService;
 
 public class MockUserDetailsRoleListService implements IUserDetailsRoleListService {
   
