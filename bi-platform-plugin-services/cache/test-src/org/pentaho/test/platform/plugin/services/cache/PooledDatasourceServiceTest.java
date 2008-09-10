@@ -54,12 +54,4 @@ public class PooledDatasourceServiceTest extends TestCase {
 
   }
 
- 
-  public static void main(String[] args) {
-    ConnectionPoolingTest test = new ConnectionPoolingTest();
-    try {
-      test.testConnectionPoolWhenExhausted();
-    } finally {
-    }
-  }
 }

@@ -8,7 +8,7 @@ import org.pentaho.platform.plugin.services.security.userrole.memory.UserRoleLis
 import org.springframework.util.Assert;
 
 public class UserRoleListEnhancedUserMapFactoryBeanTests extends
-		AbstractUserMapFactoryBeanTest {
+		AbstractUserMapFactoryBeanTestBase {
 
 	public void testGetObject() throws Exception {
 		UserRoleListEnhancedUserMapFactoryBean bean = new UserRoleListEnhancedUserMapFactoryBean();

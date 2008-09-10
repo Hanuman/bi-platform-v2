@@ -4,7 +4,7 @@ package org.pentaho.test.platform.plugin.services.security.userrole.memory;
 import org.acegisecurity.userdetails.memory.UserMap;
 import org.pentaho.platform.plugin.services.security.userrole.memory.UserMapFactoryBean;
 
-public class UserMapFactoryBeanTests extends AbstractUserMapFactoryBeanTest {
+public class UserMapFactoryBeanTests extends AbstractUserMapFactoryBeanTestBase {
 
 	public void testGetObject() throws Exception {
 		UserMapFactoryBean bean = new UserMapFactoryBean();

@@ -46,38 +46,38 @@ public class ConnectionTest extends BaseTest {
         return listeners;
     }
 
-    public void testSQLConnection() {
-        startTest();
-        OutputStream outputStream = this.getOutputStream("ConnectionTest.testSQLConnection", ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
-        IPentahoSession session = new StandaloneSession("Joe");
-        IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, session, this); //$NON-NLS-1$
-        try {
-            IPentahoResultSet results = connection.executeQuery("select * from DEPARTMENT_MANAGERS"); //$NON-NLS-1$
-            Object[][] columnHeaders = results.getMetaData().getColumnHeaders();
-            for (int row = 0; row < columnHeaders.length; row++) {
-                for (int col = 0; col < columnHeaders[0].length; col++) {
-                    outputStream.write(columnHeaders[row][col].toString().getBytes());
-                    outputStream.write(",".getBytes()); //$NON-NLS-1$
-                }
-                outputStream.write("\n".getBytes()); //$NON-NLS-1$
-            }
-            Object[] row = results.next();
-            while (row != null) {
-                for (int i = 0; i < row.length; i++) {
-                    outputStream.write(row[i].toString().getBytes());
-                    outputStream.write(",".getBytes()); //$NON-NLS-1$
-                }
-                outputStream.write("\n".getBytes()); //$NON-NLS-1$
-                row = results.next();
-            }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        connection.close();
-        finishTest();
-    }
+//    public void testSQLConnection() {
+//        startTest();
+//        OutputStream outputStream = this.getOutputStream("ConnectionTest.testSQLConnection", ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
+//        IPentahoSession session = new StandaloneSession("Joe");
+//        IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, session, this); //$NON-NLS-1$
+//        try {
+//            IPentahoResultSet results = connection.executeQuery("select * from DEPARTMENT_MANAGERS"); //$NON-NLS-1$
+//            Object[][] columnHeaders = results.getMetaData().getColumnHeaders();
+//            for (int row = 0; row < columnHeaders.length; row++) {
+//                for (int col = 0; col < columnHeaders[0].length; col++) {
+//                    outputStream.write(columnHeaders[row][col].toString().getBytes());
+//                    outputStream.write(",".getBytes()); //$NON-NLS-1$
+//                }
+//                outputStream.write("\n".getBytes()); //$NON-NLS-1$
+//            }
+//            Object[] row = results.next();
+//            while (row != null) {
+//                for (int i = 0; i < row.length; i++) {
+//                    outputStream.write(row[i].toString().getBytes());
+//                    outputStream.write(",".getBytes()); //$NON-NLS-1$
+//                }
+//                outputStream.write("\n".getBytes()); //$NON-NLS-1$
+//                row = results.next();
+//            }
+//
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        connection.close();
+//        finishTest();
+//    }
 
 
     
@@ -326,112 +326,112 @@ public class ConnectionTest extends BaseTest {
         finishTest();
     }
 
-    public void testRelationalGrid() {
+//    public void testRelationalGrid() {
+//
+//        startTest();
+//        OutputStream outputStream = this.getOutputStream("ConnectionTest.testRelationalGrid", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
+//
+//        IPentahoResultSet resultSet = null;
+//        try {
+//            IRuntimeContext context = run("samples", "datasources", "query_rule.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+//
+//            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
+//            resultSet = (IPentahoResultSet) result;
+//            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
+//            dataGrid.populate(resultSet);
+//
+//            try {
+//                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
+//            } catch (Exception e) {
+//
+//            }
+//
+//        } finally {
+//            if (resultSet != null) {
+//                resultSet.closeConnection();
+//            }
+//        }
+//
+//        finishTest();
+//    }
 
-        startTest();
-        OutputStream outputStream = this.getOutputStream("ConnectionTest.testRelationalGrid", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
+//    public void testMdx() {
+//
+//        startTest();
+//        IPentahoSession session = new StandaloneSession("Joe");
+//        OutputStream outputStream = this.getOutputStream("ConnectionTest.testMdx", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
+//
+//        IPentahoResultSet resultSet = null;
+//        try {
+//            IRuntimeContext context = run("samples", "datasources", "MDX_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+//            // IRuntimeContext context = run( "ops", "analysis",
+//            // "MDX_Datasource.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
+//            // //$NON-NLS-3$
+//
+//            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
+//            resultSet = (IPentahoResultSet) result;
+//            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
+//            dataGrid.populate(resultSet);
+//
+//            try {
+//                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
+//            } catch (Exception e) {
+//
+//            }
+//
+//        } finally {
+//            if (resultSet != null) {
+//                resultSet.closeConnection();
+//            }
+//        }
+//
+//        finishTest();
+//    }
 
-        IPentahoResultSet resultSet = null;
-        try {
-            IRuntimeContext context = run("samples", "datasources", "query_rule.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
-            resultSet = (IPentahoResultSet) result;
-            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
-            dataGrid.populate(resultSet);
-
-            try {
-                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
-            } catch (Exception e) {
-
-            }
-
-        } finally {
-            if (resultSet != null) {
-                resultSet.closeConnection();
-            }
-        }
-
-        finishTest();
-    }
-
-    public void testMdx() {
-
-        startTest();
-        IPentahoSession session = new StandaloneSession("Joe");
-        OutputStream outputStream = this.getOutputStream("ConnectionTest.testMdx", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
-
-        IPentahoResultSet resultSet = null;
-        try {
-            IRuntimeContext context = run("samples", "datasources", "MDX_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-            // IRuntimeContext context = run( "ops", "analysis",
-            // "MDX_Datasource.xaction" ); //$NON-NLS-1$ //$NON-NLS-2$
-            // //$NON-NLS-3$
-
-            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
-            resultSet = (IPentahoResultSet) result;
-            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
-            dataGrid.populate(resultSet);
-
-            try {
-                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
-            } catch (Exception e) {
-
-            }
-
-        } finally {
-            if (resultSet != null) {
-                resultSet.closeConnection();
-            }
-        }
-
-        finishTest();
-    }
-
-    public void testXQueryAction() {
-
-        startTest();
-        IPentahoSession session = new StandaloneSession("Joe");
-        OutputStream outputStream = this.getOutputStream("ConnectionTest.testRelationalGrid", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
-
-        IPentahoResultSet resultSet = null;
-        try {
-            IRuntimeContext context = run("samples", "datasources", "XQ_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-
-            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
-            resultSet = (IPentahoResultSet) result;
-            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
-            dataGrid.populate(resultSet);
-
-            try {
-                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
-            } catch (Exception e) {
-
-            }
-
-        } finally {
-            if (resultSet != null) {
-                resultSet.closeConnection();
-            }
-        }
-
-        finishTest();
-    }
+//    public void testXQueryAction() {
+//
+//        startTest();
+//        IPentahoSession session = new StandaloneSession("Joe");
+//        OutputStream outputStream = this.getOutputStream("ConnectionTest.testRelationalGrid", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$  	
+//
+//        IPentahoResultSet resultSet = null;
+//        try {
+//            IRuntimeContext context = run("samples", "datasources", "XQ_Datasource.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//            assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+//
+//            Object result = context.getOutputParameter("rule-result").getValue(); //$NON-NLS-1$
+//            resultSet = (IPentahoResultSet) result;
+//            DataGrid dataGrid = new DataGrid(DataGrid.STYLE_ROWS);
+//            dataGrid.populate(resultSet);
+//
+//            try {
+//                outputStream.write(dataGrid.getDataDocument().asXML().getBytes());
+//            } catch (Exception e) {
+//
+//            }
+//
+//        } finally {
+//            if (resultSet != null) {
+//                resultSet.closeConnection();
+//            }
+//        }
+//
+//        finishTest();
+//    }
 
     public static void main(String[] args) {
         ConnectionTest test = new ConnectionTest();
         test.setUp();
         try {
-            test.testMdx();
-            test.testSQLConnection();
+//            test.testMdx();
+//            test.testSQLConnection();
             test.testMDXConnection();
             test.testMDX_VFS_zipped_Schema();
             test.testXQueryConnection();
-            test.testXQueryAction();
-            test.testRelationalGrid();
+//            test.testXQueryAction();
+//            test.testRelationalGrid();
             //test.testConnectionWithPropertyName();
             test.testMDXConnectionWithPropertiesFile();
             test.testSQLConnectionWithAllInfo();

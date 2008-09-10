@@ -25,31 +25,31 @@ public class JavaScriptResultSetTest extends BaseTest {
     }
     
   }
-  public void testRSCompareOK() {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-    IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
-    assertNotNull(rtn);
-    String compareResult = rtn.getStringValue();
-    assertEquals(compareResult, "No Mismatches"); //$NON-NLS-1$
-    finishTest();
-  }
+//  public void testRSCompareOK() {
+//    startTest();
+//    IRuntimeContext context = run("samples", "rules", "ResultSetTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+//    IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
+//    assertNotNull(rtn);
+//    String compareResult = rtn.getStringValue();
+//    assertEquals(compareResult, "No Mismatches"); //$NON-NLS-1$
+//    finishTest();
+//  }
   
-  public void testRSCompareNotOK1() {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-    finishTest();
-  }
+//  public void testRSCompareNotOK1() {
+//    startTest();
+//    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
+//    finishTest();
+//  }
   
-  public void testRSCompareNotOK2() {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
-
-    finishTest();
-  }
+//  public void testRSCompareNotOK2() {
+//    startTest();
+//    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
+//
+//    finishTest();
+//  }
   
   public void testRSCompareNotOK3()
   {
@@ -71,25 +71,25 @@ public class JavaScriptResultSetTest extends BaseTest {
     
   }
 
-  public void testRSCompareNotOK5()
-  {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error5.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
-
-    finishTest();
-    
-  }  
+//  public void testRSCompareNotOK5()
+//  {
+//    startTest();
+//    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error5.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
+//
+//    finishTest();
+//    
+//  }  
   public static void main(String[] args) {
     JavaScriptResultSetTest test = new JavaScriptResultSetTest();
     try {
       test.setUp();
-      test.testRSCompareOK();
-      test.testRSCompareNotOK1();
-      test.testRSCompareNotOK2();
+//      test.testRSCompareOK();
+//      test.testRSCompareNotOK1();
+//      test.testRSCompareNotOK2();
       test.testRSCompareNotOK3();
       test.testRSCompareNotOK4();
-      test.testRSCompareNotOK5();
+//      test.testRSCompareNotOK5();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

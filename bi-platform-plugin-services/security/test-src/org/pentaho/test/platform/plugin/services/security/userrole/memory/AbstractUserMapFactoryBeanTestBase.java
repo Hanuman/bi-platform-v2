@@ -9,7 +9,7 @@ import junit.framework.TestCase;
  * 
  * @author mlowery
  */
-public class AbstractUserMapFactoryBeanTest extends TestCase {
+public class AbstractUserMapFactoryBeanTestBase extends TestCase {
 	protected String userMapText;
 
 	protected void setUp() throws Exception {
