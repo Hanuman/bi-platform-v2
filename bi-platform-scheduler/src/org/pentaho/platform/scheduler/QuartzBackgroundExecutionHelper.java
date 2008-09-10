@@ -96,8 +96,14 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
   public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) {
     try {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
+      String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
+      String actionPath = parameterProvider.getStringParameter(StandardSettings.PATH, null); //$NON-NLS-1$
+      String actionName = parameterProvider.getStringParameter(StandardSettings.ACTION, null); //$NON-NLS-1$
 
       String actionSeqPath = parameterProvider.getStringParameter(StandardSettings.ACTIONS_REF, null);
+      if(actionSeqPath == null  || actionSeqPath.length() <= 0) {
+        actionSeqPath = solutionName + ISolutionRepository.SEPARATOR + actionPath + ISolutionRepository.SEPARATOR +  actionName;
+      }
       String cronString = parameterProvider.getStringParameter(StandardSettings.CRON_STRING, null);
       String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
       String description = parameterProvider.getStringParameter(StandardSettings.DESCRIPTION, null);
