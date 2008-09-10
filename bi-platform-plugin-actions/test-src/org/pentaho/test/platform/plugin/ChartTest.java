@@ -153,7 +153,7 @@ public class ChartTest extends BaseTestCase {
     }
   }
 */
-  public void testChartHelper_LineChart() {
+  /*public void testChartHelper_LineChart() {
     String region = "Central"; //$NON-NLS-1$
     ArrayList messages = new ArrayList();
     SimpleParameterProvider parameters = new SimpleParameterProvider();
@@ -175,7 +175,7 @@ public class ChartTest extends BaseTestCase {
     } catch (Exception e) {
 
     }
-  }
+  }*/
 
   /*public void testChartHelper_AreaChart() {
     String region = "Central"; //$NON-NLS-1$

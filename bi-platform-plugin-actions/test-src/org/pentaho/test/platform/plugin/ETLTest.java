@@ -63,8 +63,8 @@ public class ETLTest extends BaseTest {
 //      test.testKettleTransform1();
 //      test.testKettleJob1();
     } finally {
-      test.tearDown();
-      BaseTest.shutdown();
+//      test.tearDown();
+//      BaseTest.shutdown();
     }
   }
 
