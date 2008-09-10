@@ -74,13 +74,11 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //
 //  }
 
-  public void testDummyTest() {
-    // do nothing, get the above test to pass!
-  }
-  
-  public void setUp() {
-    // TODO: remove once tests are running
-  }
+// TODO: remove once tests are running  
+  public void setUp() {}
+  public void tearDown() {}
+  public void testDummyTest() {}
+    
   
   public static void main(String[] args) {
     SolutionRepositoryTest test = new SolutionRepositoryTest("testSolutionRepository"); //$NON-NLS-1$
