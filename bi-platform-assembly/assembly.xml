@@ -44,10 +44,31 @@
 
 	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-open-admin-console,init-tomcat-solutions,init-pentaho-data" />
 
+	<target name="assemble-dist" depends="assemble, assemble-zip, assemble-targz" />
+	
 	<!-- =================================================================================
 	     End wrapper target section -ejh
 	     =================================================================================-->
 
+	<!-- assemble dist targets -->
+	
+	<target name="assemble-zip">
+		<zip destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${project.revision}.zip">
+			<zipfileset dir="${stage.dir}/bi-platform" prefix="pentaho_tomcat_${rdbms}-${project.revision}"/>
+		</zip>
+	</target>
+	
+	<target name="assemble-targz">
+		<chmod dir="${stage.dir}" perm="ugo+rx" includes="**/*.sh"/>
+		<tar destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${project.revision}.tgz" longfile="gnu" compression="gzip">
+			<tarfileset dir="${stage.dir}/bi-platform" prefix="pentaho_tomcat_${rdbms}-${project.revision}">
+				<!-- do not include the windows jre in the dist -->
+				<exclude name="jre" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	
 	<!-- ========================================================================
 	target: Clean-all / Clean-stage / Clean-dist / Clean-lib 
 	======================================================================= -->
@@ -626,7 +647,6 @@
 			<param name="appserver.dir" value="${tomcat.dir}" />
 		</antcall>
 	</target>
-
 
 	<!-- =========================================================================
         target: tar-gz-pentaho-tomcat
