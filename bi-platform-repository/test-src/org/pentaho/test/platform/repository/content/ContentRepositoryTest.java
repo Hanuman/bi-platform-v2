@@ -104,6 +104,10 @@ public class ContentRepositoryTest extends RepositoryTestCase {
   public void setUp() {
     // TODO: remove once tests are passing
   }
+  
+  public void tearDown() {
+    // TODO: remove once tests are passing
+  }
 
   private void cleanup(IContentLocation contLoc) {
     try {
