@@ -64,7 +64,7 @@
 		<dependency org="jexcelapi" name="jxl" rev="2.4.3" />
     
 <!--  ZIP Files of Other Resources -->
-    <dependency org="pentaho" name="mantle-web" rev="${project.revision}" changing="true" />
+    <dependency org="pentaho" name="mantle-package" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-open-admin-console-package" rev="${project.revision}" changing="true" />
 	</dependencies>
 </ivy-module>

@@ -248,7 +248,7 @@
 
 			<!-- Explode the mantle generated files -->
 			<unzip dest="${prep.pentaho.war.dir}">
-				<fileset dir="${lib.dir}" includes="mantle-web-*.zip" />
+				<fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
 			</unzip>
 
 			<!-- Add licenses -->
