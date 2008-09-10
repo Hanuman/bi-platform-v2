@@ -54,7 +54,7 @@
   <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
   <property name="sample.solution.dir" value="../bi-platform-sample-solution" />
   <property name="sample.data.dir" value="../bi-platform-sample-data" />
-  
+
 
   <!-- =================================================================================
 	     "Wapper" target section: This section is set aside for the creation of those 
@@ -83,10 +83,13 @@
   </target>
 
   <target name="package-targz">
-    <chmod dir="${stage.dir}" perm="ugo+rx" includes="**/*.sh" />
     <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
+      <tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}" mode="755">
+        <include name="**/*.sh"/>
+        <exclude name="jre" />
+      </tarfileset>
       <tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}">
-        <!-- do not include the windows jre in the dist -->
+        <exclude name="**.sh"/>
         <exclude name="jre" />
       </tarfileset>
     </tar>
