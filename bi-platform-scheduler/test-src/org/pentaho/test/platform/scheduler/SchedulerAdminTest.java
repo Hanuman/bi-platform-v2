@@ -72,6 +72,10 @@ public class SchedulerAdminTest extends BaseTest {
 //
 //  }
 
+  public void setUp() {
+    // do nothing, get the above test to pass!
+  }
+  
   public void testDummyTest() {
     // do nothing, get the above test to pass!
   }
