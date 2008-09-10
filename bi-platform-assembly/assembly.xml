@@ -65,7 +65,7 @@
   <target name="assemble"
           depends="assemble.styles,prep-pentaho-tomcat,install-open-admin-console,init-tomcat-solutions,init-pentaho-data" />
 
-  <target name="assemble-dist" depends="assemble, assemble-zip, assemble-targz" />
+  <target name="package" depends="assemble, package-zip, package-targz" />
 
   <!-- =================================================================================
 	     End wrapper target section -ejh
@@ -73,13 +73,13 @@
 
   <!-- assemble dist targets -->
 
-  <target name="assemble-zip">
+  <target name="package-zip">
     <zip destfile="${dist.dir}/${package.basename}.zip">
       <zipfileset dir="${stage.dir}/bi-platform" prefix="${productId}-${releaseType}" />
     </zip>
   </target>
 
-  <target name="assemble-targz">
+  <target name="package-targz">
     <chmod dir="${stage.dir}" perm="ugo+rx" includes="**/*.sh" />
     <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
       <tarfileset dir="${stage.dir}/bi-platform" prefix="${productId}-${releaseType}">
