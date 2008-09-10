@@ -1035,7 +1035,12 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     int loopCount = 0;
 
     // TODO handle results sets directly instead of using Properties maps
-
+    
+    // Only if the result set is scrollable that is we CAN go back to the first record should we reset
+    // to the first record. This is to resolve multiple levels of looping on resultset.
+    if (loopSet.isScrollable()) {
+      loopSet.beforeFirst();
+    }    
     Object row[] = loopSet.next();
     Object headerSet[][] = loopSet.getMetaData().getColumnHeaders();
     // TODO handle OLAP result sets
