@@ -170,7 +170,8 @@
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
-					<exclude name="servlet-api*.jar" />
+					<exclude name="servlet-api-*.jar" />
+					<exclude name="gwt-user-*.jar" />
 				</fileset>
 			</copy>
 
@@ -196,7 +197,7 @@
 				</fileset>
 			</copy>
 
-			<copy todir="${prep.pentaho.war.dir}/WEB-INF/lib">
+			<copy todir="${prep.pentaho.war.lib.dir}">
 				<!-- get all pentaho jars from the build process -->
 				<fileset dir="${lib.dir}">
 					<include name="bi-platform*.jar" />
