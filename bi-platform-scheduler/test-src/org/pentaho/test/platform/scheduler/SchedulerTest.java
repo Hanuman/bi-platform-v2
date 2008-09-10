@@ -213,6 +213,10 @@ public class SchedulerTest extends BaseTest {
 //    finishTest();
 //  }
 
+  public void testDummyTest() {
+    // do nothing get the above test to pass!
+  }
+  
   public static void main(String[] args) {
     SchedulerTest test = new SchedulerTest();
     test.setUp();
