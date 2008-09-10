@@ -325,7 +325,7 @@ public class ChartTest extends BaseTestCase {
     // TODO need some validation of success
   }*/
 
-  public void testChartComponent_PieGridChart() {
+  /*public void testChartComponent_PieGridChart() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "piegrid"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -337,7 +337,7 @@ public class ChartTest extends BaseTestCase {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
-  }
+  }*/
 
   /*public void testChartComponent_TimeSeriesChart() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
