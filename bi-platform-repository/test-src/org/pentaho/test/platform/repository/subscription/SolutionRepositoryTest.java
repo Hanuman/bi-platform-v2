@@ -89,7 +89,6 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 		  }
 
   public void setup() {
-    TODO: uncomment once tests are passing
     super.setUp();
     // ACL The first one...
     HibernateUtil.beginTransaction();
@@ -112,7 +111,9 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
   // TODO: remove once tests are passing
   public void setUp() {}
   public void tearDown() {}
-  public void testDummyTest() {}
+  public void testDummyTest() {
+    // TODO: remove once tests are passing
+  }
 
   public SolutionRepositoryTest(String arg0) {
     super(arg0);
