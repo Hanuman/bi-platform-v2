@@ -3,6 +3,7 @@
 	<info organisation="pentaho" module="pentaho-bi-platform-assembly" revision="${project.revision}" />
 	<configurations>
 		<conf name="default" />
+		<conf name="test" visibility="private"/>
 	</configurations>
 	<dependencies defaultconf="default->default">
 	
