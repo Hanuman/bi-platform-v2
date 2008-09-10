@@ -72,7 +72,7 @@ public class PooledDatasourceServiceTest extends BaseTest {
   public static void main(String[] args) {
     ConnectionPoolingTest test = new ConnectionPoolingTest();
     try {
-      test.testConnectionPoolWhenClosed();
+//      test.testConnectionPoolWhenClosed();
     } finally {
     }
   }
