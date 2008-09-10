@@ -118,7 +118,7 @@ public class ContentOutputComponentTest extends BaseTest {
     finishTest();
   }
 
-  public void testErrorPaths() {
+  /*public void testErrorPaths() {
     startTest();
 
     // Tests with bad output stream
@@ -163,7 +163,7 @@ public class ContentOutputComponentTest extends BaseTest {
     assertEquals(IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus());
 
     finishTest();
-  }
+  }*/
 
   protected OutputStream getOutputStream(String testName, String extension) {
     if (testName.indexOf("BAD_OUTPUTSTREAM_") > 0) { //$NON-NLS-1$ 
@@ -195,7 +195,7 @@ public class ContentOutputComponentTest extends BaseTest {
     try {
       test.setUp();
       test.testSuccessPaths();
-      test.testErrorPaths();
+//      test.testErrorPaths();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

@@ -84,7 +84,7 @@ public class ReportingTest extends BaseTest {
      finishTest();
    }*/
 
-  public void testJasperReports1() {
+  /*public void testJasperReports1() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("REGION", "Eastern"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -113,7 +113,7 @@ public class ReportingTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
   /*
     public void testBIRTReport3() {
@@ -160,8 +160,8 @@ public class ReportingTest extends BaseTest {
           test.testBIRTReport3();
           test.testBIRTReport4();
           test.testBIRTIntparm();*/
-      test.testJasperReports1();
-      test.testJasperReports2();
+//      test.testJasperReports1();
+//      test.testJasperReports2();
       test.testActionComponent();
     } finally {
       test.tearDown();

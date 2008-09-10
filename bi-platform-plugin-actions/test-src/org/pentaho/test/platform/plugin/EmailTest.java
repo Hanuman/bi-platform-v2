@@ -40,7 +40,7 @@ public class EmailTest extends BaseTestCase {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
 
-  public void testEmailLoopProp() {
+  /*public void testEmailLoopProp() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "text_only_email-loop_property", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
@@ -48,7 +48,7 @@ public class EmailTest extends BaseTestCase {
         SOLUTION_PATH + "/test/email/", "text_only_email-loop_property.xaction", parameterProvider, outputHandler); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
-  }
+  }*/
 
   public void testEmailHtml() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -65,7 +65,7 @@ public class EmailTest extends BaseTestCase {
     try {
       test.testEmailLoop();
       test.testEmailOnly();
-      test.testEmailLoopProp();
+//      test.testEmailLoopProp();
       test.testEmailHtml();
     } finally {
     }

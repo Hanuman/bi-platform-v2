@@ -11,7 +11,7 @@ public class SolutionRepositoryCacheTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  public void testCache() {
+  /*public void testCache() {
     startTest();
     // this one should be added to the cache
     IRuntimeContext context = run("test", "rules", "script_rule1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -35,13 +35,13 @@ public class SolutionRepositoryCacheTest extends BaseTest {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     SolutionRepositoryCacheTest test = new SolutionRepositoryCacheTest();
     test.setUp();
     try {
-      test.testCache();
+//      test.testCache();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

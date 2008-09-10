@@ -339,7 +339,7 @@ public class ChartTest extends BaseTestCase {
     // TODO need some validation of success
   }
 
-  public void testChartComponent_TimeSeriesChart() {
+  /*public void testChartComponent_TimeSeriesChart() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "timeseries"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -351,7 +351,7 @@ public class ChartTest extends BaseTestCase {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
-  }
+  }*/
 
   public void testTimeSeriesChartCollection() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -366,7 +366,7 @@ public class ChartTest extends BaseTestCase {
     // TODO need some validation of success
   }
 
-  public void testXYZChart() {
+/*  public void testXYZChart() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_XYZ", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -378,7 +378,7 @@ public class ChartTest extends BaseTestCase {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
-  }
+  }*/
 
   public void runCategoryChartTest(int chartType, String path, String testName) {
 
@@ -421,7 +421,7 @@ public class ChartTest extends BaseTestCase {
 
   }
 
-  public void runPieChartTest(int chartType, String path, String testName) {
+ /* public void runPieChartTest(int chartType, String path, String testName) {
     SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
     ArrayList messages = new ArrayList();
 
@@ -456,7 +456,7 @@ public class ChartTest extends BaseTestCase {
       e.printStackTrace();
     }
 
-  }
+  }*/
 
   public void runTimeSeriesChartTest(int chartType, String path, String testName) {
 
@@ -508,14 +508,14 @@ public class ChartTest extends BaseTestCase {
 //      test.testChartHelper_PieChart();
 //      test.testChartHelper_PieGrid();
 //      test.testChartComponent_AreaChart();
-      test.testChartComponent_BarChart();
+//      test.testChartComponent_BarChart();
 //      test.testChartComponent_BarLineComboChart();
 //      test.testChartComponent_DialChart();
-      test.testChartComponent_LineChart();
-      test.testChartComponent_PieChart();
-      test.testChartComponent_PieGridChart();
+//      test.testChartComponent_LineChart();
+//      test.testChartComponent_PieChart();
+//      test.testChartComponent_PieGridChart();
       //test.testTimeSeriesChart();
-      test.testTimeSeriesChartCollection();
+//      test.testTimeSeriesChartCollection();
 //      test.testXYZChart();
 //      test.testChartComponent_BubbleChart();
       //test.testTimeSeriesChart();

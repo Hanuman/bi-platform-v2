@@ -24,7 +24,7 @@ public class FilterPanelTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  public void testFilterDefinition1() {
+ /* public void testFilterDefinition1() {
     startTest();
 
     String definitionPath = "test/dashboard/panel1.filterpanel.xml"; //$NON-NLS-1$
@@ -72,9 +72,9 @@ public class FilterPanelTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
-  public void testFilterDefinition3() {
+  /*public void testFilterDefinition3() {
     startTest();
 
     String definitionPath = "test/dashboard/panel3.filterpanel.xml"; //$NON-NLS-1$
@@ -125,9 +125,9 @@ public class FilterPanelTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
-  public void testFilterDefinition4() {
+  /*public void testFilterDefinition4() {
     startTest();
 
     String definitionPath = "test/dashboard/panel4.filterpanel.xml"; //$NON-NLS-1$
@@ -162,9 +162,9 @@ public class FilterPanelTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
-  public void testFilterDefinition5() {
+  /*public void testFilterDefinition5() {
     startTest();
 
     String definitionPath = "test/dashboard/panel5.filterpanel.xml"; //$NON-NLS-1$
@@ -199,16 +199,16 @@ public class FilterPanelTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     FilterPanelTest test = new FilterPanelTest();
     test.setUp();
     try {
-      test.testFilterDefinition1();
-      test.testFilterDefinition3();
-      test.testFilterDefinition4();
-      test.testFilterDefinition5();
+//      test.testFilterDefinition1();
+//      test.testFilterDefinition3();
+//      test.testFilterDefinition4();
+//      test.testFilterDefinition5();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

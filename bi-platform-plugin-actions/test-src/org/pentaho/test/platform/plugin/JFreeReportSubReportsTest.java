@@ -29,7 +29,7 @@ public class JFreeReportSubReportsTest extends BaseTest {
     return listeners;
   }
 
-  public void testJFreeReportSubReport() {
+  /*public void testJFreeReportSubReport() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -42,9 +42,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportBasicHTML() {
+  /*public void testJFreeReportSubReportBasicHTML() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -57,9 +57,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportBasicPDF() {
+  /*public void testJFreeReportSubReportBasicPDF() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "pdf"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,9 +72,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportBasicXLS() {
+  /*public void testJFreeReportSubReportBasicXLS() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "xls"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -87,9 +87,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportIPreparedComponentHTML() {
+ /* public void testJFreeReportSubReportIPreparedComponentHTML() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -102,9 +102,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportIPreparedComponentPDF() {
+ /* public void testJFreeReportSubReportIPreparedComponentPDF() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "pdf"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -117,9 +117,9 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
-  public void testJFreeReportSubReportIPreparedComponentXLS() {
+  /*public void testJFreeReportSubReportIPreparedComponentXLS() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "xls"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,19 +132,19 @@ public class JFreeReportSubReportsTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     JFreeReportSubReportsTest test = new JFreeReportSubReportsTest();
 
     try {
       test.setUp();
-      test.testJFreeReportSubReportBasicHTML();
-      test.testJFreeReportSubReportBasicPDF();
-      test.testJFreeReportSubReportBasicXLS();
-      test.testJFreeReportSubReportIPreparedComponentHTML();
-      test.testJFreeReportSubReportIPreparedComponentPDF();
-      test.testJFreeReportSubReportIPreparedComponentXLS();
+//      test.testJFreeReportSubReportBasicHTML();
+//      test.testJFreeReportSubReportBasicPDF();
+//      test.testJFreeReportSubReportBasicXLS();
+//      test.testJFreeReportSubReportIPreparedComponentHTML();
+//      test.testJFreeReportSubReportIPreparedComponentPDF();
+//      test.testJFreeReportSubReportIPreparedComponentXLS();
 
     } finally {
       test.tearDown();

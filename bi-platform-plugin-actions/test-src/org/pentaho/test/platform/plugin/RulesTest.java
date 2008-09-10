@@ -97,7 +97,7 @@ public class RulesTest extends BaseTest {
     finishTest();
   }
 
-  public void testQueryRule() {
+  /*public void testQueryRule() {
     startTest();
 
     IPentahoResultSet resultSet = null;
@@ -132,9 +132,9 @@ public class RulesTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
-  public void testQueryRule2() {
+  /*public void testQueryRule2() {
     startTest();
 
     IPentahoResultSet resultSet = null;
@@ -179,7 +179,7 @@ public class RulesTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     RulesTest test = new RulesTest();
@@ -191,8 +191,8 @@ public class RulesTest extends BaseTest {
       test.testScriptRuleError3();
       test.testScriptRuleError4();
       test.testScriptCompoundResult();
-      test.testQueryRule();
-      test.testQueryRule2();
+//     test.testQueryRule();
+//      test.testQueryRule2();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

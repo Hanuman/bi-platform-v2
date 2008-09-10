@@ -306,7 +306,7 @@ public class IPreparedComponentTest extends BaseTest {
     finishTest();
   }*/
 
-  public void testIPreparedComponentHQLShareConnection() {
+  /*public void testIPreparedComponentHQLShareConnection() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -324,7 +324,7 @@ public class IPreparedComponentTest extends BaseTest {
     assertNotNull(val1);
 
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     IPreparedComponentTest test = new IPreparedComponentTest();

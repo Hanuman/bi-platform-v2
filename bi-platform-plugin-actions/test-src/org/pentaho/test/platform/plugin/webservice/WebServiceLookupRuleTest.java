@@ -21,47 +21,47 @@ public class WebServiceLookupRuleTest extends BaseTest {
   /**
    * Tests the success path of the xmlEncodeUrl method in the WebServiceLookupRule class
    */
-  public void testSuccess() {
+  /*public void testSuccess() {
     startTest();
     IRuntimeContext context = run("test", "webservice", "webservice-test-success.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }
-
+*/
   /**
    * Tests the failure path of the xmlEncodeUrl method in the WebServiceLookupRule class.
    * This failure path is caused by an invalid URL
    */
-  public void testBadUrl() {
+ /* public void testBadUrl() {
     startTest();
     IRuntimeContext context = run("test", "webservice", "webservice-test-badurl.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
   /**
    * Tests the failure path of the xmlEncodeUrl method in the WebServiceLookupRule class.
    * This failure path is caused by an no URL
    */
-  public void testBadInput() {
+  /*public void testBadInput() {
     startTest();
     IRuntimeContext context = run("test", "webservice", "webservice-test-nourl.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
   /**
    * Tests the failure path of the xmlEncodeUrl method in the WebServiceLookupRule class.
    * This failure path is caused by an no URL
    */
-  public void testNoOutput() {
+  /*public void testNoOutput() {
     startTest();
     IRuntimeContext context = run("test", "webservice", "webservice-test-no-output.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 }

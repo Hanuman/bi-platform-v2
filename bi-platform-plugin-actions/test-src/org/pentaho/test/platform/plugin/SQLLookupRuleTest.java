@@ -13,7 +13,7 @@ public class SQLLookupRuleTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  public void testSQLLookupSingleStatement() {
+ /* public void testSQLLookupSingleStatement() {
     startTest();
     info("Expected: Successful lookup with one row of data"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "query_rule1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -27,13 +27,13 @@ public class SQLLookupRuleTest extends BaseTest {
     assertEquals("Expected first row to contain a 1 in the first column.", resultset.getValueAt(0, 0), new Integer(1)); //$NON-NLS-1$
 
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     SQLLookupRuleTest test = new SQLLookupRuleTest();
     try {
       test.setUp();
-      test.testSQLLookupSingleStatement();
+//      test.testSQLLookupSingleStatement();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

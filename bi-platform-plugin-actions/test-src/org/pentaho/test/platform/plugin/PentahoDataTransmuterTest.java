@@ -15,7 +15,7 @@ public class PentahoDataTransmuterTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  public void testTransmute() {
+  /*public void testTransmute() {
     startTest();
 
     IRuntimeContext context = run("test", "rules", "CrossTabTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -80,13 +80,13 @@ public class PentahoDataTransmuterTest extends BaseTest {
     assertEquals(transmutedResultSet12.getColumnCount(), 1);
 
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     PentahoDataTransmuterTest test = new PentahoDataTransmuterTest();
     test.setUp();
     try {
-      test.testTransmute();
+//      test.testTransmute();
     } finally {
       test.tearDown();
       BaseTest.shutdown();

@@ -23,7 +23,7 @@ public class ETLTest extends BaseTest {
     return listeners;
   }
 
-  public void testKettleTransform1() {
+  /*public void testKettleTransform1() {
 
     startTest();
     IRuntimeContext context = run("test", "etl", "ETLTransform1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -42,9 +42,9 @@ public class ETLTest extends BaseTest {
     }
     finishTest();
 
-  }
+  }*/
 
-  public void testKettleJob1() {
+ /* public void testKettleJob1() {
 
     startTest();
     // this writes a XML file directly into test/tmp/DataTest.testKettleJob1.xml
@@ -54,14 +54,14 @@ public class ETLTest extends BaseTest {
 
     finishTest();
 
-  }
+  }*/
 
   public static void main(String[] args) {
     ETLTest test = new ETLTest();
     test.setUp();
     try {
-      test.testKettleTransform1();
-      test.testKettleJob1();
+//      test.testKettleTransform1();
+//      test.testKettleJob1();
     } finally {
       test.tearDown();
       BaseTest.shutdown();
