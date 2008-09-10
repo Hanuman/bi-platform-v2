@@ -1,7 +1,7 @@
 <project name="Open Platform Assembly" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<!-- Define the default location of the common build file -->
-	<property name="common.build.file" value="./common_build.xml" description="This is the location of the standardized common_build.xml file" />
+	<property name="common.build.file" value="./common.xml" description="This is the location of the standardized common.xml file" />
 
 	<!-- Import the common_build.xml file which contains all the default tasks -->
 	<import file="${common.build.file}" />
@@ -11,7 +11,11 @@
 	     Any of these properties can be overridden in either build.properties or override.properties
 	     =================================================================================-->
 
-	<property file="assembly.properties" description="Properties customized for your particular project belong in this file." />
+  <!-- Load the properties files in the proper order -->
+  <property file="override.properties"
+            description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
+  <property file="assembly.properties"
+            description="Properties customized for your particular project belong in this file." />
 
 	<!-- Assembly properties -->
 	<property name="dist.dir" value="${basedir}/dist" />

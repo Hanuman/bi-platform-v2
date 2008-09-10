@@ -4,10 +4,10 @@
 	     Property Defaults
 	     Any of these properties can be overridden in either build.properties or override.properties
 	     =================================================================================-->
-  <property name="lib.dir"
-            value="${basedir}/lib"
-            description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
-
+    <property name="lib.dir"
+              value="${basedir}/lib"
+              description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
+  
   <!-- Build Cache properties -->
   <property name="build.cache.dir"
             value="${user.home}/.pentaho_build_cache"
@@ -24,6 +24,14 @@
   <property name="pentaho.build.cache.dir"
             value="${build.cache.dir}/pentaho"
             description="Directory where the Pentaho ant tasks jar (and dependencies) is placed after it is auto-downloaded by the build" />
+  <property name="svnant.build.cache.dir"
+            value="${build.cache.dir}/svnant"
+            description="Directory where the SVN ANT install is placed after it is auto downloaded by the build" />
+
+  <!-- Distribution and Assembly properties -->
+  <property name="dist.dir"
+            value="${basedir}/dist"
+            description="Base directory for all project artifacts (jar, zip, tar.gz, etc...)" />
 
   <!-- Ivy properties -->
   <property name="ivy.install.version" value="2.0.0-beta2" description="Specifies the version of IVY to fetch" />
@@ -33,7 +41,6 @@
   <property name="ivy.settingsurl"
             value="file:${basedir}/ivysettings.xml"
             description="URL to the (common) ivysettings.xml.  This file is required by the build to configure IVY.  Note you must escape the ':' if this property exists in a .properties file" />
-
 
   <!--=======================================================================
 	    install-antcontrib
@@ -95,6 +102,7 @@
     </copy>
   </target>
 
+
   <!--=======================================================================
 	    install-ivy
 	    
@@ -120,6 +128,7 @@
     </if>
   </target>
 
+
   <!--=======================================================================
 	    ivy.download-check
 	    
@@ -141,6 +150,7 @@
     <antcall target="ivy.download" />
   </target>
 
+
   <!--=======================================================================
 	    ivy.download
 	    
@@ -153,6 +163,8 @@
          usetimestamp="true" />
   </target>
 
+
+
   <!--=======================================================================
 	    resolve
 	    
@@ -160,14 +172,28 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve" depends="resolve-default" description="Retrieves all the dependent libraries" />
+  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy">
-    <ivy:resolve file="ivy.xml" />
-  </target>
+  <target name="resolve-init" depends="install-ivy" />
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="default" />
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="test" />
+    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-codegen" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="codegen" />
+    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-runtime" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="runtime" />
+    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision].[ext]" />
   </target>
 
 </project>
