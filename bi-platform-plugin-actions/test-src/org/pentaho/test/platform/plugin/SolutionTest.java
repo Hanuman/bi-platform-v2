@@ -159,8 +159,8 @@ public class SolutionTest extends BaseTest {
     test.testSolutionCompare();
     test.testSolutionCompare2();
     test.testSolutionHelper();
-    test.testSolutionEngineAgent();
-    test.testSimpleParameterProvider();
+//    test.testSolutionEngineAgent();
+//    test.testSimpleParameterProvider();
     test.testOutputDef();
     try {
 

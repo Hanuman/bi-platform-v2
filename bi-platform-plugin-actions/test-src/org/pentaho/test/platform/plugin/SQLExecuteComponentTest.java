@@ -116,10 +116,10 @@ public class SQLExecuteComponentTest extends BaseTest {
     SQLExecuteComponentTest test = new SQLExecuteComponentTest();
     try {
       test.setUp();
-      test.testSQLExecuteComponentSingleStatement();
-      test.testSQLExecuteComponentMultipleStatements();
-      test.testSQLExecuteForceSingle();
-      test.testSQLExecuteComponentMultipleStatementsNewSeparator();
+//      test.testSQLExecuteComponentSingleStatement();
+//      test.testSQLExecuteComponentMultipleStatements();
+//      test.testSQLExecuteForceSingle();
+//      test.testSQLExecuteComponentMultipleStatementsNewSeparator();
       test.testSQLExecuteErrorDropTable();
       test.testSQLExecuteErrorSQLWithSemiColons();
       test.testSQLExecuteErrorDropTableSingleStatement();

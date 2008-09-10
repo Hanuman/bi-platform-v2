@@ -270,7 +270,7 @@ public class JFreeReportTest extends BaseTest {
       test.testJFreeReportParameterPage1();
       test.testJFreeReportParameterPage2();
 //      test.testJFreeReportParameterPage3();
-      test.testJFreeReportPlainText();
+//      test.testJFreeReportPlainText();
     } finally {
       test.tearDown();
       BaseTest.shutdown();
