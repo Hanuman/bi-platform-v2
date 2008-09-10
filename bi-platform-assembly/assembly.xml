@@ -21,7 +21,7 @@
 	<property name="dist.dir" value="${basedir}/dist" />
 	<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
 	<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
-	<property name="stage.dir.server" value="${basedir}/stage/bi-platform" />
+	<property name="stage.dir.server" value="${basedir}/stage/biserver-ce" />
 	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
 	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
 	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
@@ -57,15 +57,15 @@
 	<!-- assemble dist targets -->
 	
 	<target name="assemble-zip">
-		<zip destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${project.revision}.zip">
-			<zipfileset dir="${stage.dir}/bi-platform" prefix="pentaho_tomcat_${rdbms}-${project.revision}"/>
+		<zip destfile="${dist.dir}/biserver-ce-${project.revision}.stable.zip">
+			<zipfileset dir="${stage.dir}/biserver-ce" prefix="biserver-ce-${project.revision}"/>
 		</zip>
 	</target>
 	
 	<target name="assemble-targz">
 		<chmod dir="${stage.dir}" perm="ugo+rx" includes="**/*.sh"/>
-		<tar destfile="${dist.dir}/pentaho_tomcat_${rdbms}-${project.revision}.tgz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${stage.dir}/bi-platform" prefix="pentaho_tomcat_${rdbms}-${project.revision}">
+		<tar destfile="${dist.dir}/biserver-ce-${project.revision}.stable.tar.gz" longfile="gnu" compression="gzip">
+			<tarfileset dir="${stage.dir}/bi-platform" prefix="biserver-ce-${project.revision}.stable">
 				<!-- do not include the windows jre in the dist -->
 				<exclude name="jre" />
 			</tarfileset>
