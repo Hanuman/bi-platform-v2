@@ -28,6 +28,8 @@ public class SQLLookupRuleTest extends BaseTest {
 
     finishTest();
   }*/
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     SQLLookupRuleTest test = new SQLLookupRuleTest();

@@ -133,6 +133,8 @@ public class JFreeReportSubReportsTest extends BaseTest {
     // TODO need some validation of success
     finishTest();
   }*/
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     JFreeReportSubReportsTest test = new JFreeReportSubReportsTest();

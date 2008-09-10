@@ -200,6 +200,8 @@ public class FilterPanelTest extends BaseTest {
 
     finishTest();
   }*/
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     FilterPanelTest test = new FilterPanelTest();

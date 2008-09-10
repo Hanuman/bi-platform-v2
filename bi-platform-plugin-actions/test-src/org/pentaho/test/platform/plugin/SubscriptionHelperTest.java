@@ -401,6 +401,8 @@ public class SubscriptionHelperTest extends BaseTest {
     }
     return outputStream;
   }
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     SubscriptionHelperTest test = new SubscriptionHelperTest();

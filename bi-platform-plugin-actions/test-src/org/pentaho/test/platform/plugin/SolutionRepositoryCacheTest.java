@@ -36,6 +36,8 @@ public class SolutionRepositoryCacheTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }*/
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     SolutionRepositoryCacheTest test = new SolutionRepositoryCacheTest();

@@ -14,6 +14,8 @@ public class PentahoDataTransmuterTest extends BaseTest {
   public String getSolutionPath() {
     return SOLUTION_PATH;
   }
+  
+  public void testDummyTest() {}
 
   /*public void testTransmute() {
     startTest();

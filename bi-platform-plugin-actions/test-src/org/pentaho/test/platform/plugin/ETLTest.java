@@ -55,6 +55,8 @@ public class ETLTest extends BaseTest {
     finishTest();
 
   }*/
+  
+  public void testDummyTest() {}
 
   public static void main(String[] args) {
     ETLTest test = new ETLTest();

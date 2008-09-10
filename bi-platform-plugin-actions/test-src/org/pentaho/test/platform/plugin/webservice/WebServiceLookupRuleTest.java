@@ -17,6 +17,8 @@ public class WebServiceLookupRuleTest extends BaseTest {
   public String getSolutionPath() {
     return SOLUTION_PATH;
   }
+  
+  public void testDummyTest() {}
 
   /**
    * Tests the success path of the xmlEncodeUrl method in the WebServiceLookupRule class
