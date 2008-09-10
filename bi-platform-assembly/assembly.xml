@@ -89,7 +89,7 @@
         <exclude name="jre" />
       </tarfileset>
       <tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}">
-        <exclude name="**.sh"/>
+        <exclude name="**/*.sh"/>
         <exclude name="jre" />
       </tarfileset>
     </tar>
