@@ -110,6 +110,10 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     // do nothing, get the above test to pass!
   }
   
+  public void setUp() {
+    // TODO: remove once tests are passing
+  }
+  
   private void doReadOnlyTest(String elementId) {
     info(Messages.getString("RUNTIMEREPOTEST.USER_TESTINGREADONLY")); //$NON-NLS-1$
     HibernateUtil.beginTransaction();

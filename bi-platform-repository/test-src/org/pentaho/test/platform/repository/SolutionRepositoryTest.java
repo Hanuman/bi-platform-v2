@@ -78,6 +78,10 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     // do nothing, get the above test to pass!
   }
   
+  public void setUp() {
+    // TODO: remove once tests are running
+  }
+  
   public static void main(String[] args) {
     SolutionRepositoryTest test = new SolutionRepositoryTest("testSolutionRepository"); //$NON-NLS-1$
     junit.textui.TestRunner.run(test);

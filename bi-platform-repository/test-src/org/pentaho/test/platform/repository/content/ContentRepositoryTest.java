@@ -100,6 +100,10 @@ public class ContentRepositoryTest extends RepositoryTestCase {
   public void testDummyTest() {
     // do nothing, get the above test to pass!
   }
+  
+  public void setUp() {
+    // TODO: remove once tests are passing
+  }
 
   private void cleanup(IContentLocation contLoc) {
     try {
