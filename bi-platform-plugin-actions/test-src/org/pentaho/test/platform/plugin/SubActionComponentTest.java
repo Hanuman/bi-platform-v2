@@ -70,7 +70,7 @@ public class SubActionComponentTest extends BaseTest {
    * parent action creates a connection, used by sub-action parent 
    * then re-uses connection
    */
-  public void testParentConnectionSharing() {
+  /*public void testParentConnectionSharing() {
 
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
@@ -91,13 +91,13 @@ public class SubActionComponentTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
   /**
    * sub-action creates connection, passes result set on to parent action
    *
    */
-  public void testChildResultSetSharing() {
+  /*public void testChildResultSetSharing() {
 
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class SubActionComponentTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
   /**
    * sub-action creates result set, uses, and passes nothing to parent action
@@ -139,7 +139,7 @@ public class SubActionComponentTest extends BaseTest {
   /**
    * sub-action creates connection, passes connection on to the parent action
    */
-  public void testChildConnectionSharing() {
+  /*public void testChildConnectionSharing() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "platform", "SubActionConnectionTest1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -163,7 +163,7 @@ public class SubActionComponentTest extends BaseTest {
     }
 
     finishTest();
-  }
+  }*/
 
   protected OutputStream getOutputStream(String testName, String extension) {
     if (testName.indexOf("BAD_OUTPUTSTREAM_") > 0) { //$NON-NLS-1$ 

@@ -23,7 +23,7 @@ public class KettleTest extends BaseTest {
     return listeners;
   }
 
-  public void testKettle() {
+  /*public void testKettle() {
     startTest();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -39,7 +39,7 @@ public class KettleTest extends BaseTest {
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
     finishTest();
-  }
+  }*/
 
   public void testKettleValidatationFailure() {
     startTest();
@@ -81,7 +81,7 @@ public class KettleTest extends BaseTest {
     KettleTest test = new KettleTest();
     test.setUp();
     try {
-      test.testKettle();
+//      test.testKettle();
       test.testKettleValidatationFailure();
       test.testKettleMissingTransform();
     } finally {

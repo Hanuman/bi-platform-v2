@@ -64,13 +64,13 @@ public class RuntimeTest extends BaseTest {
     finishTest();
   }
 
-  public void testMultiComponentLoop() {
+/*  public void testMultiComponentLoop() {
     startTest();
     IRuntimeContext context = run("test", "platform", "MultiComponentTestLoop.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
   public void testLooping() {
     startTest();
@@ -80,7 +80,7 @@ public class RuntimeTest extends BaseTest {
     finishTest();
   }
 
-  public void testBursting() {
+  /*public void testBursting() {
     startTest();
     IRuntimeContext context = run("test", "platform", "BurstingTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
@@ -94,7 +94,7 @@ public class RuntimeTest extends BaseTest {
     assertEquals(
         Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
-  }
+  }*/
 
   public static void main(String[] args) {
     RuntimeTest test = new RuntimeTest();
@@ -102,10 +102,10 @@ public class RuntimeTest extends BaseTest {
     try {
       test.testHelloWorld();
       test.testMultiComponent();
-      test.testMultiComponentLoop();
+//      test.testMultiComponentLoop();
       test.testLooping();
-      test.testBursting();
-      test.testHTMLBursting();
+//      test.testBursting();
+//      test.testHTMLBursting();
       test.testForcePrompt();
     } finally {
       test.tearDown();

@@ -38,7 +38,7 @@ public class IPreparedComponentTest extends BaseTest {
     finishTest();
   }
 
-  public void testIPreparedComponentSQLTempTables() {
+  /*public void testIPreparedComponentSQLTempTables() {
     startTest();
     info("Expected: Successful execution with one row of data"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_temptables.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -60,9 +60,9 @@ public class IPreparedComponentTest extends BaseTest {
         "Expected first row of 'no_results' to contain a 0 in the first column.", new Integer(0), resultset2.getValueAt(0, 0)); //$NON-NLS-1$
 
     finishTest();
-  }
+  }*/
 
-  public void testIPreparedComponentSQLPrepareLater() {
+  /*public void testIPreparedComponentSQLPrepareLater() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -91,9 +91,9 @@ public class IPreparedComponentTest extends BaseTest {
     assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
 
     finishTest();
-  }
+  }*/
 
-  public void testIPreparedComponentMDXAvailable() {
+  /*public void testIPreparedComponentMDXAvailable() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -107,9 +107,9 @@ public class IPreparedComponentTest extends BaseTest {
     assertNotNull(preparedComponent);
 
     finishTest();
-  }
+  }*/
 
-  public void testIPreparedComponentMDXShareConnection() {
+  /*public void testIPreparedComponentMDXShareConnection() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -129,9 +129,9 @@ public class IPreparedComponentTest extends BaseTest {
     assertNotNull(val1);
 
     finishTest();
-  }
+  }*/
 
-  public void testIPreparedComponentMDXPrepareLater() {
+  /*public void testIPreparedComponentMDXPrepareLater() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -162,7 +162,7 @@ public class IPreparedComponentTest extends BaseTest {
     assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
 
     finishTest();
-  }
+  }*/
 
   public void testIPreparedComponentXQueryAvailable() {
     startTest();
@@ -258,7 +258,7 @@ public class IPreparedComponentTest extends BaseTest {
     finishTest();
   }
 
-  public void testIPreparedComponentHQLAvailable() {
+  /*public void testIPreparedComponentHQLAvailable() {
     startTest();
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -304,7 +304,7 @@ public class IPreparedComponentTest extends BaseTest {
     assertEquals("Values from the first and second query should be equal", val1, val2); //$NON-NLS-1$
 
     finishTest();
-  }
+  }*/
 
   public void testIPreparedComponentHQLShareConnection() {
     startTest();
@@ -330,20 +330,20 @@ public class IPreparedComponentTest extends BaseTest {
     IPreparedComponentTest test = new IPreparedComponentTest();
     try {
       test.setUp();
-      test.testIPreparedComponentSQLTempTables();
-      test.testIPreparedComponentSQLAvailable();
-      test.testIPreparedComponentSQLPrepareLater();
-      test.testIPreparedComponentMDXAvailable();
-      test.testIPreparedComponentMDXPrepareLater();
-      test.testIPreparedComponentMDXShareConnection();
+//      test.testIPreparedComponentSQLTempTables();
+//      test.testIPreparedComponentSQLAvailable();
+//      test.testIPreparedComponentSQLPrepareLater();
+//      test.testIPreparedComponentMDXAvailable();
+//      test.testIPreparedComponentMDXPrepareLater();
+//      test.testIPreparedComponentMDXShareConnection();
       test.testIPreparedComponentXQueryAvailable();
       test.testIPreparedComponentXQueryAvailableErrorNoDocument();
       test.testIPreparedComponentXQueryAvailableErrorNoPrepareComponent();
       test.testIPreparedComponentXQueryPrepareLater();
       test.testIPreparedComponentXQueryShareConnection();
-      test.testIPreparedComponentHQLAvailable();
-      test.testIPreparedComponentHQLPrepareLater();
-      test.testIPreparedComponentHQLShareConnection();
+//      test.testIPreparedComponentHQLAvailable();
+//      test.testIPreparedComponentHQLPrepareLater();
+//      test.testIPreparedComponentHQLShareConnection();
 
     } finally {
       test.tearDown();
