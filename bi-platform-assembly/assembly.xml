@@ -24,24 +24,7 @@
   <property name="lib.dir"
             value="${basedir}/lib"
             description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
-  <property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
-	<property name="stage.dir.server" value="${basedir}/stage/biserver-ce" />
-  <property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
-  <property name="web.classes.dir" value="${stage.webdir.server}/classes" />
-  <property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
-  <property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
-  <property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
-  <property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
-  <property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
-  <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
-  <property name="sample.solution.dir" value="../bi-platform-sample-solution" />
-  <property name="sample.data.dir" value="../bi-platform-sample-data" />
-  <property name="stage.data.dir" value="${stage.dir.server}/data" />
-  <property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
-  <property name="res.dir" value="${basedir}/res" />
-  <property name="oac-res.dir" value="${res.dir}/oac" />
   <property name="stability.flag" value="false" />
-
 
   <!-- set the stability tag to add to the package filename -->
   <condition property="stability.tag" value="stable">
@@ -51,7 +34,27 @@
 
   <property name="productId" value="biserver" />
   <property name="releaseType" value="ce" />
+
   <property name="package.basename" value="${productId}-${releaseType}-${project.revision}.${stability.tag}" />
+  <property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
+  <property name="stage.dir.server" value="${stage.dir}/${productId}-${releaseType}" />
+  <property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
+  <property name="web.classes.dir" value="${stage.webdir.server}/classes" />
+  <property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
+  <property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
+  <property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
+  <property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
+  <property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
+  <property name="stage.data.dir" value="${stage.dir.server}/data" />
+  <property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
+  <property name="res.dir" value="${basedir}/res" />
+  <property name="oac-res.dir" value="${res.dir}/oac" />
+
+  <!-- default relative project paths -->
+  <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
+  <property name="sample.solution.dir" value="../bi-platform-sample-solution" />
+  <property name="sample.data.dir" value="../bi-platform-sample-data" />
+  
 
   <!-- =================================================================================
 	     "Wapper" target section: This section is set aside for the creation of those 
@@ -75,14 +78,14 @@
 
   <target name="package-zip">
     <zip destfile="${dist.dir}/${package.basename}.zip">
-      <zipfileset dir="${stage.dir}/bi-platform" prefix="${productId}-${releaseType}" />
+      <zipfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}" />
     </zip>
   </target>
 
   <target name="package-targz">
     <chmod dir="${stage.dir}" perm="ugo+rx" includes="**/*.sh" />
     <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
-      <tarfileset dir="${stage.dir}/bi-platform" prefix="${productId}-${releaseType}">
+      <tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}">
         <!-- do not include the windows jre in the dist -->
         <exclude name="jre" />
       </tarfileset>
