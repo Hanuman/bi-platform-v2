@@ -89,32 +89,30 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 		  }
 
   public void setup() {
-//    TODO: uncomment once tests are passing
-//    super.setUp();
-//    // ACL The first one...
-//    HibernateUtil.beginTransaction();
-//
-//    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
-//    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
-//    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
-//    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
-//    session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
-//    MockSecurityUtility.createPat(session);
-//    repository = getSolutionRepository(session);
-//    file = (RepositoryFile) repository.getFileByPath("samples");
-//    publisher = new AclPublisher(defaultAcls);
-//    publisher.publishDefaultAcls(file);
-//
-//    HibernateUtil.commitTransaction();
+    TODO: uncomment once tests are passing
+    super.setUp();
+    // ACL The first one...
+    HibernateUtil.beginTransaction();
+
+    defaultAcls.put(new SimpleRole("Admin"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-
+    defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
+    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
+    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+    session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    MockSecurityUtility.createPat(session);
+    repository = getSolutionRepository(session);
+    file = (RepositoryFile) repository.getFileByPath("samples");
+    publisher = new AclPublisher(defaultAcls);
+    publisher.publishDefaultAcls(file);
+
+    HibernateUtil.commitTransaction();
   }
+
   
-  public void tearDown() {
-    // TODO: remove once tests are passing
-  }
-  
-  public void testDummyTest() {
-    // TODO: remove once tests are passing
-  }
+  // TODO: remove once tests are passing
+  public void setUp() {}
+  public void tearDown() {}
+  public void testDummyTest() {}
 
   public SolutionRepositoryTest(String arg0) {
     super(arg0);
