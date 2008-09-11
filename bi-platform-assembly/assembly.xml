@@ -353,7 +353,7 @@
 		<copy todir="${stage.data.dir}">
 			<fileset dir="${sample.data.dir}">
 				<exclude name=".project" />
-				<exclude name="**/mysql5/**" />
+				<exclude name="**/mysql/**" />
 				<exclude name="**/oracle10g/**" />
 				<exclude name="**/postgresql/**" />
 			</fileset>
