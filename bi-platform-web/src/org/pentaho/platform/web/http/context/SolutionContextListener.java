@@ -121,7 +121,7 @@ public class SolutionContextListener implements ServletContextListener {
      * put them in the application context.
      */
     Properties props = new Properties();
-    Enumeration initParmNames = context.getInitParameterNames();
+    Enumeration<?> initParmNames = context.getInitParameterNames();
     String initParmName;
     while (initParmNames.hasMoreElements()) {
       initParmName = (String) initParmNames.nextElement();
@@ -153,7 +153,7 @@ public class SolutionContextListener implements ServletContextListener {
     // else objectFactoryCreatorCfgFile contains the full path.
     IObjectFactoryCreator facCreator;
     try {
-      Class classObject = Class.forName( objectFactoryCreatorClassName );
+      Class<?> classObject = Class.forName( objectFactoryCreatorClassName );
       facCreator = (IObjectFactoryCreator)classObject.newInstance();
       facCreator.configure( objectFactoryCreatorCfgFile );
     } catch (Exception e) {
