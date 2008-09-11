@@ -430,10 +430,12 @@ SolutionRepository.prototype.save = function( solution, path, filename, strConte
  */
 SolutionRepository.prototype.doesSolutionFileExist = function( solution, path, fullFilname )
 {
+  if (!this.solutionDoc) {
+    return false;
+  }
   var xpath = this.solutionFilePathToXPath( solution, path, fullFilname );
-	var node = XmlUtil.selectSingleNode( this.solutionDoc, xpath );
-	
-	return undefined != node && null != node;
+  var node = XmlUtil.selectSingleNode( this.solutionDoc, xpath );
+  return undefined != node && null != node;
 };
 
 SolutionRepository.prototype.solutionFilePathToXPath = function( solution, path, fileName )
