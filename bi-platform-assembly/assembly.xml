@@ -41,7 +41,7 @@
 	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
 	<property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
-	<property name="res.dir" value="${basedir}/res" />
+	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
 	<property name="oac-res.dir" value="${res.dir}/oac" />
 
 	<!-- default relative project paths -->
