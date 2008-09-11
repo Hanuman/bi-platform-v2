@@ -66,7 +66,7 @@
   <target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
   <target name="assemble"
-          depends="assemble.styles,prep-pentaho-tomcat,install-open-admin-console,init-tomcat-solutions,init-pentaho-data" />
+          depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data" />
 
   <target name="package" depends="assemble, package-zip, package-targz" />
 
@@ -309,20 +309,20 @@
 
 
   <!-- ===================================================================
-      target: install-open-admin-console
+      target: install-management-console
       
       Installs the Open Admin Console from the pentaho-open-admin-console.zip
       file in the lib directory. Once installed, a few settings in the 
       configuration file will need to be tweaked.          
      =================================================================== -->
-  <target name="install-open-admin-console">
+  <target name="install-management-console">
     <!-- Explode the Open Admin Console -->
     <unzip dest="${stage.dir.server}">
       <fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
     </unzip>
 
     <!-- Update the OAC's config.xml file -->
-    <copy file="${oac-res.dir}/resource-config-console.xml.open"
+    <copy file="${oac-res.dir}/oac/resource/config/console.xml"
           tofile="${stage.dir.server}/pentaho-open-admin-console/resource/config/console.xml" />
   </target>
 
