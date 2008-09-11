@@ -359,9 +359,9 @@
 			</fileset>
 		</copy>
 
-		<mkdir dir="${stage.data.dir}/mysql5" />
-		<copy todir="${stage.data.dir}/mysql5">
-			<fileset dir="${sample.data.dir}/mysql5" />
+		<mkdir dir="${stage.data.dir}/mysql" />
+		<copy todir="${stage.data.dir}/mysql">
+			<fileset dir="${sample.data.dir}/mysql" />
 		</copy>
 
 		<mkdir dir="${stage.data.dir}/oracle10g" />
