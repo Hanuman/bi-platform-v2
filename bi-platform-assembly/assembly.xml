@@ -322,8 +322,9 @@
     </unzip>
 
     <!-- Update the OAC's config.xml file -->
-    <copy file="${oac-res.dir}/oac/resource/config/console.xml"
-          tofile="${stage.dir.server}/pentaho-open-admin-console/resource/config/console.xml" />
+    <copy file="${oac-res.dir}/resource/config/console.xml"
+          tofile="${stage.dir.server}/pentaho-open-admin-console/resource/config/console.xml" 
+    	    overwrite="true"/>
   </target>
 
   <!--====================================================
