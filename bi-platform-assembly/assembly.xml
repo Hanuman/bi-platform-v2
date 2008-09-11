@@ -361,7 +361,7 @@
 
 		<mkdir dir="${stage.data.dir}/mysql" />
 		<copy todir="${stage.data.dir}/mysql">
-			<fileset dir="${sample.data.dir}/mysql" />
+			<fileset dir="${sample.data.dir}/mysql5" />
 		</copy>
 
 		<mkdir dir="${stage.data.dir}/oracle10g" />
