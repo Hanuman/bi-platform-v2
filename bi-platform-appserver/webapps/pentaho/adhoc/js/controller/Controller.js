@@ -1635,15 +1635,29 @@ Controller.prototype.handlePreview = function()
 		var templatePath = items.length > 0
 			? items[0].itemData.templateFolderPath + "/" + items[0].itemData.jfreeTemplate
 			: "";
-			
+
 		var form = document.forms['previewForm'];
 		form.acceptCharset = "UTF-8";
 		
+		// open a new mantle tab with empty named iframe
+		// submission target is the iframe name
 		form.elements['reportXml'].value = xml;
 		form.elements['outputType'].value = outputType;
 		form.elements['forceAttachment'].value = "false";
 		form.elements['templatePath'].value = templatePath;
-		form.submit();
+	
+		
+		if (window.parent != null && window.parent.mantle_initialized == true) {
+		  // open preview tab for waqr
+          var url = form.action + '?ajax=true&component=generatePreview';
+          url += '&reportXml=' + encodeURIComponent(xml);
+          url += '&outputType=' + outputType;
+          url += '&forceAttachment=' + false;
+          url += '&templatePath=' + templatePath;
+		  window.parent.mantle_openTab('Preview', 'Ad Hoc Preview', url);
+		} else {
+		  form.submit();
+		}
 	}
 	else
 	{
