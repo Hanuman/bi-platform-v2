@@ -112,12 +112,10 @@ RepositoryBrowserController.prototype.remoteSave= function( filename,
 /*private*/RepositoryBrowserController.prototype.saveReportSpecAs = function( filename,
   solution, path, bOverwrite )
 {
-
   if ( !this.repositoryBrowser )
   {
     this.init();
   }
-  
   if ( RepositoryBrowserController.isValidFilename( filename ) )
   {
     /*
@@ -152,7 +150,6 @@ RepositoryBrowserController.prototype.remoteSave= function( filename,
     this.path = path;
     this.filename = filename;
     var outputType = this.getOutputType();
-        alert(outputType);
     if ( "" == outputType )
     {
       outputType = "html,xls,pdf,csv";
@@ -198,6 +195,10 @@ RepositoryBrowserController.prototype.remoteSave= function( filename,
             localThis.onAfterSaveCallback()
           }
         }
+        if (window.parent != null && window.parent.mantle_initialized == true) {
+          window.parent.mantle_refreshRepository();
+        }
+        
       }
     );
     return true;
