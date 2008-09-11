@@ -44,7 +44,7 @@
 	
 
 	<!-- default relative project paths -->
-	<property name="bi.platform.assembly.dir" value="../bi-platform-assembly" />
+	<property name="bi.platform.assembly.dir" value="." />
 	<property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
 	<property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
 	<property name="bi.platform.plugin.actions.dir" value="../bi-platform-plugin-actions" />
