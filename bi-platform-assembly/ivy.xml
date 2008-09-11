@@ -64,8 +64,13 @@
 		<dependency org="opensymphony" name="quartz-oracle" rev="1.5.2" />
 		<dependency org="jexcelapi" name="jxl" rev="2.4.3" />
     
-<!--  ZIP Files of Other Resources -->
+    <!--  ZIP Files of Other Resources -->
     <dependency org="pentaho" name="mantle-package" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-open-admin-console-package" rev="${project.revision}" changing="true" />
-	</dependencies>
+    
+    <exclude org="javax.servlet" module="servlet-api"/>
+    
+  </dependencies>
+    
+  
 </ivy-module>
