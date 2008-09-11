@@ -247,10 +247,10 @@
         <equals arg1="${rdbms}" arg2="hsqldb" />
         <then>
           <copy todir="${stage.dir.server}">
-            <fileset dir="scripts/tomcat/hsqldb">
+            <fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/hsqldb">
               <include name="**" />
             </fileset>
-            <fileset dir="scripts/tomcat/general">
+            <fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/general">
               <include name="**" />
             </fileset>
           </copy>
@@ -260,10 +260,10 @@
         <equals arg1="${rdbms}" arg2="mysql" />
         <then>
           <copy todir="${stage.dir.server}">
-            <fileset dir="scripts/tomcat/mysql">
+            <fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/mysql">
               <include name="**" />
             </fileset>
-            <fileset dir="scripts/tomcat/general">
+            <fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/general">
               <include name="**" />
             </fileset>
           </copy>
