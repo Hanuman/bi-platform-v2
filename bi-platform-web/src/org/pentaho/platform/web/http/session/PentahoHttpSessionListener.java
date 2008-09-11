@@ -20,6 +20,7 @@ package org.pentaho.platform.web.http.session;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -37,7 +38,7 @@ public class PentahoHttpSessionListener implements HttpSessionListener {
 
   private static final boolean debug = PentahoSystem.debug;
 
-  private static final HashMap sessionMap = new HashMap();
+  private static final Map<String,String[]> sessionMap = new HashMap<String,String[]>();
 
   public void sessionCreated(final HttpSessionEvent event) {
     // we can't find out what the locale of the request is so we go with the
@@ -87,17 +88,17 @@ public class PentahoHttpSessionListener implements HttpSessionListener {
 
   }
 
-  public static synchronized void registerHttpSession(final String sessionId, final String processId, final String activityId,
+  public static void registerHttpSession(final String sessionId, final String processId, final String activityId,
       final String objectName, final String userName, final String id, final long start) {
     PentahoHttpSessionListener.sessionMap.put(id, new String[] { processId, activityId, objectName, userName, new Long(start).toString(),
         sessionId });
   }
 
-  public static synchronized void deregisterHttpSession(final String id) {
+  public static void deregisterHttpSession(final String id) {
     PentahoHttpSessionListener.sessionMap.remove(id);
   }
 
-  private static synchronized String[] getSessionInfo(final String id) {
+  private static String[] getSessionInfo(final String id) {
     return (String[]) PentahoHttpSessionListener.sessionMap.get(id);
   }
 
