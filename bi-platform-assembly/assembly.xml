@@ -41,10 +41,10 @@
 	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
 	<property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
-	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
-	<property name="oac-res.dir" value="${res.dir}/oac" />
+	
 
 	<!-- default relative project paths -->
+	<property name="bi.platform.assembly.dir" value="../bi-platform-assembly" />
 	<property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
 	<property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
 	<property name="bi.platform.plugin.actions.dir" value="../bi-platform-plugin-actions" />
@@ -58,6 +58,8 @@
 	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
 	<property name="sample.solution.dir" value="../bi-platform-sample-solution" />
 	<property name="sample.data.dir" value="../bi-platform-sample-data" />
+	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
+	<property name="oac-res.dir" value="${res.dir}/oac" />	
 
 
 	<!-- =================================================================================
