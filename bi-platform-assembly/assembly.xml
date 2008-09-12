@@ -73,7 +73,7 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data" />
+	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources" />
 
 	<target name="package" depends="assemble, package-zip, package-targz" />
 
@@ -101,6 +101,10 @@
 			</tarfileset>
 		</tar>
 	</target>
+	
+	<!-- override targets -->
+	
+	<target name="install-resources"/>
 
 
 	<!-- ========================================================================
@@ -186,7 +190,7 @@
 			<copy todir="${stage.dir.server}/tomcat/common/lib">
 				<fileset dir="${lib.dir}">
 					<include name="hsqldb-*.jar" />
-					<include name="mysql-connector-*.jar" />
+					<include name="mysql5-connector-*.jar" />
 					<include name="postgresql*.jar" />
 					<include name="jasper*.jar" />
 					<include name="naming*.jar" />
@@ -263,10 +267,10 @@
 				</then>
 			</if>
 			<if>
-				<equals arg1="${rdbms}" arg2="mysql" />
+				<equals arg1="${rdbms}" arg2="mysql5" />
 				<then>
 					<copy todir="${stage.dir.server}">
-						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/mysql">
+						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/mysql5">
 							<include name="**" />
 						</fileset>
 						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/general">
@@ -355,14 +359,14 @@
 		<copy todir="${stage.data.dir}">
 			<fileset dir="${sample.data.dir}">
 				<exclude name=".project" />
-				<exclude name="**/mysql/**" />
+				<exclude name="**/mysql5/**" />
 				<exclude name="**/oracle10g/**" />
 				<exclude name="**/postgresql/**" />
 			</fileset>
 		</copy>
 
-		<mkdir dir="${stage.data.dir}/mysql" />
-		<copy todir="${stage.data.dir}/mysql">
+		<mkdir dir="${stage.data.dir}/mysql5" />
+		<copy todir="${stage.data.dir}/mysql5">
 			<fileset dir="${sample.data.dir}/mysql5" />
 		</copy>
 
