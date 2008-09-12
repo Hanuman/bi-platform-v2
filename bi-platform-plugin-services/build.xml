@@ -208,7 +208,7 @@
       <formatter type="xml" />
       <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
       <batchtest todir="${testreports.xml.dir}" unless="testcase">
-        <!-- fileset dir="cache/test-src" casesensitive="yes">
+        <fileset dir="cache/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
@@ -227,7 +227,7 @@
         <fileset dir="versionchecker/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
-        </fileset -->
+        </fileset>
         <fileset dir="plugin-mgr/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
