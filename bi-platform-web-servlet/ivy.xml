@@ -16,7 +16,7 @@
     <dependency org="dom4j" name="dom4j" rev="1.6.1">
       <exclude org="xml-apis" name="xml-apis" />
     </dependency>
-    <dependency org="jfree" name="jcommon" rev="1.0.12" />
+    <dependency org="jfree" name="jcommon" rev="1.0.14" />
     <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
     <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
