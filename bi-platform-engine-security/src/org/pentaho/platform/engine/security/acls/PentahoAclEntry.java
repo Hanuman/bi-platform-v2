@@ -153,7 +153,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
   public synchronized int[] getValidPermissions() {
     if (null == PentahoAclEntry.validPermissions) {
       int maxPower = -1;
-      Field[] fields = PentahoAclEntry.class.getDeclaredFields();
+      Field[] fields = IPentahoAclEntry.class.getDeclaredFields();
       for (Field field : fields) {
         // if field is public static final int
         if ((int.class == field.getType()) && Modifier.isPublic(field.getModifiers())
