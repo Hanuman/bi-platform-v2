@@ -93,11 +93,11 @@
 		<tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
 			<tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}" mode="755">
 				<include name="**/*.sh" />
-				<exclude name="jre" />
+				<exclude name="jre/" />
 			</tarfileset>
 			<tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}">
 				<exclude name="**/*.sh" />
-				<exclude name="jre" />
+				<exclude name="jre/" />
 			</tarfileset>
 		</tar>
 	</target>
