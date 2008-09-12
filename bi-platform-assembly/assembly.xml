@@ -185,6 +185,11 @@
 				</fileset>
 			</copy>
 
+			<!-- Copy overlay files into tomcat -->
+			<copy todir="${stage.dir.server}/tomcat" overwrite="true">
+				<fileset dir="tomcat"/>
+			</copy>
+			
 			<!-- Copy required jars to common/lib -->
 			<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
 			<copy todir="${stage.dir.server}/tomcat/common/lib">
