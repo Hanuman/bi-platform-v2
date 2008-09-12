@@ -248,10 +248,9 @@ public class SchedulerHelper {
   public static CronTrigger createCronTrigger( String triggerName, String triggerGroupName, 
       String strStartDate, String strEndDate, String cronString ) throws ParseException {
 
-    DateFormat fmtr = SubscriptionHelper.getDateTimeFormatter();
-
-    Date startDate = ( null != strStartDate ) ? fmtr.parse( strStartDate ) : null;
-    Date endDate = ( null != strEndDate ) ? fmtr.parse( strEndDate ) : null;
+//    DateFormat fmtr = SubscriptionHelper.getDateTimeFormatter();
+    Date startDate = ( null != strStartDate ) ? new Date(Date.parse( strStartDate )) : null;
+    Date endDate = ( null != strEndDate ) ? new Date(Date.parse( strEndDate )) : null;
     CronTrigger trigger = new CronTrigger( triggerName, triggerGroupName, cronString );
     if ( null != startDate ) {
       trigger.setStartTime( startDate );
@@ -287,9 +286,9 @@ public class SchedulerHelper {
   public static SimpleTrigger createRepeatTrigger( String triggerName, String triggerGroupName, 
       String strStartDate, String strEndDate, String repeatCount, String strRepeatInterval ) throws ParseException {
 
-    DateFormat fmtr = SubscriptionHelper.getDateTimeFormatter();
-    Date startDate = ( null != strStartDate ) ? fmtr.parse( strStartDate ) : null;
-    Date endDate = ( null != strEndDate ) ? fmtr.parse( strEndDate ) : null;
+//    DateFormat fmtr = SubscriptionHelper.getDateTimeFormatter();
+    Date startDate = ( null != strStartDate ) ? new Date(Date.parse( strStartDate )) : null;
+    Date endDate = ( null != strEndDate ) ? new Date(Date.parse( strEndDate )) : null;
     int repeatInterval = Integer.parseInt( strRepeatInterval );
     int intRepeatCount = ( null == repeatCount )
       ? SimpleTrigger.REPEAT_INDEFINITELY
