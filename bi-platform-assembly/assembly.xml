@@ -42,8 +42,8 @@
 	<property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
 	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
-	<property name="oac.dir" value="${stage.dir.server}/pentaho-open-admin-console" />
-	
+	<property name="admin-console.name" value="administration-console"/>
+	<property name="admin-console.dir" value="${stage.dir.server}/administration-console" />
 
 	<!-- default relative project paths -->
 	<property name="bi.platform.assembly.dir" value="." />
@@ -61,7 +61,7 @@
 	<property name="sample.solution.dir" value="../bi-platform-sample-solution" />
 	<property name="sample.data.dir" value="../bi-platform-sample-data" />
 	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
-	<property name="oac-res.dir" value="${res.dir}/oac" />	
+	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />	
 
 
 	<!-- =================================================================================
@@ -131,7 +131,7 @@
 	<target name="init.stage.pentaho">
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${lib.dir}" />
-		<mkdir dir="${oac.dir}" />
+		<mkdir dir="${admin-console.dir}" />
 		<mkdir dir="${stage.dir.server}/tomcat" />
 		<mkdir dir="${stage.dir.server}/jre" />
 		<mkdir dir="${prep.pentaho.war.dir}" />
@@ -331,8 +331,11 @@
 			<fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
 		</unzip>
 
-		<!-- Update the OAC's config.xml file -->
-		<copy file="${oac-res.dir}/resource/config/console.xml" tofile="${stage.dir.server}/pentaho-open-admin-console/resource/config/console.xml" overwrite="true" />
+		<!-- Update the Admin Console's config.xml file -->
+		<copy 
+			file="${admin-console.res.dir}/resource/config/console.xml" 
+			tofile="${admin-console.dir}/resource/config/console.xml" 
+			overwrite="true" />
 	</target>
 
 	<!--====================================================
