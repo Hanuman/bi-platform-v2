@@ -48,7 +48,8 @@
       <src path="messages/src" />
       <src path="outputs/src" />
       <src path="security/src" />
-      <src path="versionchecker/src" />
+        <src path="versionchecker/src" />
+        <src path="plugin-mgr/src" />
     </javac>
   </target>
 
@@ -73,6 +74,7 @@
           <fileset dir="outputs/src" excludes="**/*.java" />
           <fileset dir="security/src" excludes="**/*.java" />
           <fileset dir="versionchecker/src" excludes="**/*.java" />
+          <fileset dir="plugin-mgr/src" excludes="**/*.java" />
         </copy>
       </then>
     </if>
@@ -92,6 +94,7 @@
       <fileset dir="outputs/src" />
       <fileset dir="security/src" />
       <fileset dir="versionchecker/src" />
+      <fileset dir="plugin-mgr/src" />
     </jar>
   </target>
 
@@ -109,6 +112,7 @@
       <fileset dir="outputs/src" />
       <fileset dir="security/src" />
       <fileset dir="versionchecker/src" />
+      <fileset dir="plugin-mgr/src" />
     </tar>
   </target>
 
@@ -131,6 +135,7 @@
       <src path="outputs/test-src" />
       <src path="security/test-src" />
       <src path="versionchecker/test-src" />
+      <src path="plugin-mgr/test-src" />
     </javac>
   </target>
 
@@ -163,6 +168,10 @@
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="versionchecker/test-src" casesensitive="yes">
+          <include name="**/Test*.java" />
+          <include name="**/*Test.java" />
+        </fileset>
+        <fileset dir="plugin-mgr/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
@@ -199,7 +208,7 @@
       <formatter type="xml" />
       <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
       <batchtest todir="${testreports.xml.dir}" unless="testcase">
-        <fileset dir="cache/test-src" casesensitive="yes">
+        <!-- fileset dir="cache/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
@@ -216,6 +225,10 @@
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="versionchecker/test-src" casesensitive="yes">
+          <include name="**/Test*.java" />
+          <include name="**/*Test.java" />
+        </fileset -->
+        <fileset dir="plugin-mgr/test-src" casesensitive="yes">
           <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
@@ -253,6 +266,9 @@
       <fileset dir="versionchecker/src">
         <include name="**/*.java" />
       </fileset>
+        <fileset dir="plugin-mgr/src">
+          <include name="**/*.java" />
+        </fileset>
     </cobertura-report>
   </target>
 
@@ -279,6 +295,9 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="versionchecker/src">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="plugin-mgr/src">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
@@ -316,6 +335,7 @@
         <pathelement path="outputs/src" />
         <pathelement path="security/src" />
         <pathelement path="versionchecker/src" />
+        <pathelement path="plugin-mgr/src" />
       </sourcepath>
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
       <classpath refid="classpath" />

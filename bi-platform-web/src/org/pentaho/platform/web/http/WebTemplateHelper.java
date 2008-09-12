@@ -64,6 +64,12 @@ public String processTemplate(String template, final String title, final String 
     template = template.replaceAll("\\{file-cache\\}", Messages.getString("UI.USER_FILE_CACHE")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{new-content\\}", Messages.getString("UI.USER_NEW_CONTENT")); //$NON-NLS-1$ //$NON-NLS-2$
 
+    template = template.replaceAll("\\{file\\}", Messages.getString("UI.USER_FILE")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{view\\}", Messages.getString("UI.USER_VIEW")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{nightly\\}", Messages.getString("UI.USER_NIGHTLY")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{tracker\\}", Messages.getString("UI.USER_TRACKER")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{new-report\\}", Messages.getString("UI.USER_NEW_REPORT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{new-view", Messages.getString("UI.USER_NEW_PIVOT")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{admin\\}", Messages.getString("UI.USER_ADMIN")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{about\\}", Messages.getString("UI.USER_ABOUT")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{pentaho.org\\}", Messages.getString("UI.USER_PENTAHO.COM")); //$NON-NLS-1$ //$NON-NLS-2$

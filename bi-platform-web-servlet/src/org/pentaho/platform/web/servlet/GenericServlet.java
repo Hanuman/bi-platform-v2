@@ -22,9 +22,9 @@ import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.PluginSettings;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.HttpOutputHandler;
@@ -56,8 +56,8 @@ public class GenericServlet extends ServletBase {
 	    try {
 	    	String servletPath = request.getServletPath();
 	    	String key = request.getPathInfo();
-	    	String contentGeneratorId = "";
-	    	String urlPath = "";
+	    	String contentGeneratorId = ""; //$NON-NLS-1$
+	    	String urlPath = ""; //$NON-NLS-1$
 	    	SimpleParameterProvider pathParams = new SimpleParameterProvider();
 	    	if( key == null ) {
 	    		contentGeneratorId = servletPath.substring(1);
@@ -66,17 +66,17 @@ public class GenericServlet extends ServletBase {
 	    		String path = key.substring( 1 );
 	    		int slashPos = path.indexOf( '/' );
 	    		if( slashPos != -1 ) {
-	    			pathParams.setParameter( "path" , key.substring( slashPos+1 ) );
+	    			pathParams.setParameter( "path" , key.substring( slashPos+1 ) ); //$NON-NLS-1$
 			    	contentGeneratorId = path.substring( 0, slashPos );
 	    		} else {
 			    	contentGeneratorId = path;
 	    		}
-		    	urlPath = "content/"+contentGeneratorId;
+		    	urlPath = "content/"+contentGeneratorId; //$NON-NLS-1$
 	    	}
 	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId );
 	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath );
 	    	IPentahoSession session = getPentahoSession( request );
-	    	PluginSettings pluginSettings = (PluginSettings) PentahoSystem.getObject( session, "IPluginSettings" );
+	    	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( session, "IPluginSettings" ); //$NON-NLS-1$
 		    if( pluginSettings == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";
@@ -137,7 +137,7 @@ public class GenericServlet extends ServletBase {
 	    	Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
 	    	parameterProviders.put( IParameterProvider.SCOPE_REQUEST , requestParameters );
 	    	parameterProviders.put( IParameterProvider.SCOPE_SESSION , sessionParameters );
-	    	parameterProviders.put( "path", pathParams );
+	    	parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
 	        SimpleUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl()
 	                + urlPath+"?"); //$NON-NLS-1$
 	    	List<String> messages = new ArrayList<String>();

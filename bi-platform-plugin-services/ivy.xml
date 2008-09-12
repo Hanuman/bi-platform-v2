@@ -50,6 +50,7 @@
         <!-- platform -->
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
       changing="true" />
+    <dependency org="pentaho" name="pentaho-xul-core" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"
       changing="true" />
@@ -77,5 +78,6 @@
     </dependency>
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" conf="test->default" />
     <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" conf="test->default" />
+    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.6" transitive="false" conf="test->default"/>
   </dependencies>
 </ivy-module>

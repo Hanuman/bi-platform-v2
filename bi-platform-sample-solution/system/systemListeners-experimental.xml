@@ -30,7 +30,7 @@ VersionCheckSystemListener.
 				</bean>
  			<!-- <bean class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/> -->	
  			<!-- <bean class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener"/> -->
-				<bean class="org.pentaho.platform.engine.services.PluginManager"/>
+				<bean class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager"/>
 			</list>
 		</constructor-arg>
 	</bean>

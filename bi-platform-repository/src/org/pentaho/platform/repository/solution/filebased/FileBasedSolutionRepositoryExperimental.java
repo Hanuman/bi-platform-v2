@@ -10,11 +10,11 @@ import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
+import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.PluginSettings;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -93,7 +93,7 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	          addUrlToRepository(element, parentNode, solutionPath);
 	        }
 	      boolean addFile = "xaction".equals( extension );
-	  	PluginSettings pluginSettings = (PluginSettings) PentahoSystem.getObject( getSession(), "IPluginSettings" );
+	  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getSession(), "IPluginSettings" );
 		if( pluginSettings != null ) {
 	    	Set<String> types = pluginSettings.getContentTypes();
 	    	addFile |= types != null && types.contains( extension );
@@ -132,7 +132,7 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 
 	  }
 	  
-	  protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, PluginSettings pluginSettings ) {
+	  protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginSettings pluginSettings ) {
 		  IFileInfo fileInfo = null;
 		  String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName;
 		try {

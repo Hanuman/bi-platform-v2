@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
@@ -44,13 +45,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.ICacheManager;
+import org.pentaho.platform.api.engine.IContentGeneratorInfo;
+import org.pentaho.platform.api.engine.IFileInfo;
+import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
+import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -227,13 +233,68 @@ public class SolutionRepositoryService extends ServletBase {
     ISolutionFile children[] = parentFile.listFiles();
     for (int i = 0; children != null && i < children.length; i++) {
       if (!accept(isAdministrator, repository, children[i])) {
+    	  // we don't want this file, skip to the next one
         continue;
       }
       String name = children[i].getFileName();
-      if (!name.startsWith(".") && (children[i].isDirectory() || acceptFilter(name, filters))) { //$NON-NLS-1$
-        Element child = parentElement.getOwnerDocument().createElement("file");
-        parentElement.appendChild(child);
-        if (name.endsWith(".xaction") || name.endsWith(".url")) {
+      if( name.startsWith( "." ) ) {
+    	  // these are hidden files of some type that are never shown
+    	  // we don't want this file, skip to the next one
+    	  continue;
+      }
+      if (children[i].isDirectory()) {
+    	  // we always process directories
+          Element child = parentElement.getOwnerDocument().createElement("file");
+	        parentElement.appendChild(child);
+          try {
+              String localizedName = repository.getLocalizedFileProperty(children[i], "name");
+              child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+            } catch (Exception e) {
+              child.setAttribute("localized-name", name); //$NON-NLS-1$
+            }
+          try {
+              String visible = repository.getLocalizedFileProperty(children[i], "visible");
+              child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
+            } catch (Exception e) {
+              e.printStackTrace();
+              child.setAttribute("visible", "false"); //$NON-NLS-1$
+          }
+            String description = repository.getLocalizedFileProperty(children[i], "description");
+            child.setAttribute("description", description == null || "".equals(description) ? name : description);
+            child.setAttribute("name", name); //$NON-NLS-1$
+            child.setAttribute("isDirectory", "true"); //$NON-NLS-1$
+            child.setAttribute("lastModifiedDate", "" + children[i].getLastModified()); //$NON-NLS-1$
+          processRepositoryFile(session, isAdministrator, repository, child, children[i], filters);
+    	  // we have finished processing this so skip to the next one
+          continue;
+        }
+
+      if ( acceptFilter(name, filters) ) { //$NON-NLS-1$
+	      int lastPoint = name.lastIndexOf('.');
+	      String extension = ""; //$NON-NLS-1$
+	      if( lastPoint != -1 ) {
+	      	// ignore anything with no extension
+	    	  extension = name.substring( lastPoint+1 ).toLowerCase();
+	      }
+
+	      // xaction and URL support are built in
+	      boolean addFile = "xaction".equals( extension ) || "url".equals( extension ); //$NON-NLS-1$ //$NON-NLS-2$
+	      boolean isPlugin = false;
+	      // see if there is a plugin for this file type
+		  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( session, "IPluginSettings" ); //$NON-NLS-1$
+			if( pluginSettings != null ) {
+		    	Set<String> types = pluginSettings.getContentTypes();
+		    	isPlugin = types != null && types.contains( extension );
+		    	addFile |= isPlugin;
+			}
+
+			if( !addFile ) {
+				continue;
+			}
+			
+	        Element child = parentElement.getOwnerDocument().createElement("file");
+	        parentElement.appendChild(child);
+        	IFileInfo fileInfo = null;
           try {
             String visible = repository.getLocalizedFileProperty(children[i], "visible");
             child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
@@ -262,16 +323,44 @@ public class SolutionRepositoryService extends ServletBase {
                 }
               }
             }
+          } else if (isPlugin) {
+        	  // must be a plugin - make it look like a URL
+  	    	IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, session);
+  	    	if( info != null ) {
+  		        IFileInfoGenerator fig = info.getFileInfoGenerator();
+  		        if( fig != null ) {
+  		        	fig.setLogger( this );
+  		        	// get the file info object for this file
+  		        	fileInfo = fig.getFileInfo(children[i].getSolution(), children[i].getSolutionPath(), name, children[i].getData() ); 
+  		        	String handlerId = pluginSettings.getContentGeneratorIdForType(extension, session );
+  		        	String fileUrl = pluginSettings.getContentGeneratorUrlForType(extension, session);
+  		        	String solution = children[i].getSolutionPath();
+  		        	String path = ""; //$NON-NLS-1$
+  		        	int pos = solution.indexOf( ISolutionRepository.SEPARATOR );
+  		        	if( pos != -1 ) {
+  		        		path = solution.substring( pos + 1 );
+  		        		solution = solution.substring( 0, pos );
+  		        	}
+  		        	String url;
+  		        	if( !fileUrl.equals("") ) { //$NON-NLS-1$
+  	  		        	url = PentahoSystem.getApplicationContext().getBaseUrl() + 
+  	  		        		fileUrl+"?solution="+solution+"&path="+path+"&action="+name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  		        	} else {
+  	  		        	url = PentahoSystem.getApplicationContext().getBaseUrl() + 
+  	  		        		"content/"+handlerId+"?solution="+solution+"&path="+path+"&action="+name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  		        	}
+                    child.setAttribute("url", url); //$NON-NLS-1$
+  		        }
+  	    	}
           }
-        }
 
         // localization
         try {
           String localizedName = null;
-          if (children[i].isDirectory()) {
-            localizedName = repository.getLocalizedFileProperty(children[i], "name");
-          } else if (name.endsWith(".url")) {
+          if (name.endsWith(".url")) {
             localizedName = repository.getLocalizedFileProperty(children[i], "url_name");
+          } else if( fileInfo != null ) {
+        	  localizedName = fileInfo.getTitle();
           } else {
             localizedName = repository.getLocalizedFileProperty(children[i], "title");
           }
@@ -279,15 +368,6 @@ public class SolutionRepositoryService extends ServletBase {
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
-        if (children[i].isDirectory()) {
-          try {
-            String visible = repository.getLocalizedFileProperty(children[i], "visible");
-            child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
-          } catch (Exception e) {
-            e.printStackTrace();
-            child.setAttribute("visible", "false"); //$NON-NLS-1$
-        }
-      }
         try {
           // only folders, urls and xactions have descriptions
           if (name.endsWith(".url")) {
@@ -298,9 +378,11 @@ public class SolutionRepositoryService extends ServletBase {
             } else {
               child.setAttribute("description", url_description == null || "".equals(url_description) ? description : url_description);
             }
-          } else if (name.endsWith(".xaction") || children[i].isDirectory()) {
+          } else if (name.endsWith(".xaction") ) {
             String description = repository.getLocalizedFileProperty(children[i], "description");
             child.setAttribute("description", description == null || "".equals(description) ? name : description);
+          } else if( fileInfo != null ) {
+        	  child.setAttribute("description", fileInfo.getDescription() ); //$NON-NLS-1$
           } else {
             child.setAttribute("description", name);
     }
@@ -312,9 +394,6 @@ public class SolutionRepositoryService extends ServletBase {
         child.setAttribute("name", name); //$NON-NLS-1$
         child.setAttribute("isDirectory", "" + children[i].isDirectory()); //$NON-NLS-1$
         child.setAttribute("lastModifiedDate", "" + children[i].getLastModified()); //$NON-NLS-1$
-        if (children[i].isDirectory()) {
-          processRepositoryFile(session, isAdministrator, repository, child, children[i], filters);
-        }
       }
       }
     }
