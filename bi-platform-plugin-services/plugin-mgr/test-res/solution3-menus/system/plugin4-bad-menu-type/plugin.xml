@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Plugin 4">
+
+    <menu-items>
+        <menu-item id="bad-item-1" anchor="admin-submenu" label="Bad 1" command="command1" how="LAST_CHILD"/>
+    </menu-items>
+
+</plugin>

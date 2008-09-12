@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>	
+	<bean id="pentahoObjectFactory" class="org.pentaho.platform.engine.core.system.objfac.PentahoObjectFactory" singleton="true">
+		<property name="objectCreators">
+			<map> 
+				<entry key="ISolutionEngine">
+					<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator">
+						<constructor-arg><value>org.pentaho.platform.engine.services.solution.SolutionEngine</value></constructor-arg>
+					</bean>	
+				</entry>
+				<entry key="IPluginSettings">
+					<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator">
+                        <constructor-arg><value>org.pentaho.platform.plugin.services.pluginmgr.PluginSettings</value></constructor-arg>
+					</bean>		
+				</entry>				
+<!--
+				<entry key="IMenuProvider">
+					<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator">
+                        <constructor-arg><value>org.pentaho.platform.web.html.HtmlMenuProvider</value></constructor-arg>
+					</bean>		
+				</entry>	
+-->							
+			</map>
+		</property>
+	</bean>
+</beans>
