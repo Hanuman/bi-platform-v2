@@ -73,7 +73,7 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources" />
+	<target name="assemble" depends="resolve,assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources" />
 
 	<target name="package" depends="assemble, package-zip, package-targz" />
 
@@ -187,7 +187,7 @@
 
 			<!-- Copy overlay files into tomcat -->
 			<copy todir="${stage.dir.server}/tomcat" overwrite="true">
-				<fileset dir="tomcat"/>
+				<fileset dir="${bi.platform.assembly.dir}/tomcat"/>
 			</copy>
 			
 			<!-- Copy required jars to common/lib -->
