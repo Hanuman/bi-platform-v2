@@ -187,7 +187,7 @@
 
 			<!-- Copy overlay files into tomcat -->
 			<copy todir="${stage.dir.server}/tomcat" overwrite="true">
-				<fileset dir="tomcat"/>
+				<fileset dir="${bi.platform.assembly.dir}/tomcat"/>
 			</copy>
 			
 			<!-- Copy required jars to common/lib -->
