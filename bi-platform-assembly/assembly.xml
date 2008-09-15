@@ -75,7 +75,7 @@
 
 	<target name="assemble" depends="resolve,assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources" />
 
-	<target name="package" depends="assemble, package-zip, package-targz" />
+	<target name="package" depends="assemble,package-zip,package-targz" />
 
 	<!-- =================================================================================
 	     End wrapper target section -ejh
