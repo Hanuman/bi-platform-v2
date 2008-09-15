@@ -285,23 +285,6 @@
   
   
   <!--=======================================================================
-        svn-revision
-    
-        Tests SVN by printing out the repository
-        ====================================================================-->
-  <target name="svn-revision"
-          depends="install-svnant"
-          description="Prints and sets the SVN revision for the repository at the current dir (if svn.revision is not set)">
-
-    <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
-      <status path="." revisionProperty="svn.revision" />
-    </svn>
-    <echo message="Subversion repository revision: ${svn.revision}" />
-  </target>
-
-
-  
-  <!--=======================================================================
         publish-all-pentaho
     
         cleans, resolves, and publishes all platform projects serially.
@@ -375,12 +358,12 @@
         <target name="resolve" />
         <target name="publish-pentaho" />
       </ant>
-      <ant antfile="build.xml" dir="../bi-platform-servlet">
+      <ant antfile="build.xml" dir="../bi-platform-web-servlet">
         <target name="clean-all" />
         <target name="resolve" />
         <target name="publish-pentaho" />
       </ant>
-      <ant antfile="build.xml" dir="../bi-platform-portlet">
+      <ant antfile="build.xml" dir="../bi-platform-web-portlet">
         <target name="clean-all" />
         <target name="resolve" />
         <target name="publish-pentaho" />
