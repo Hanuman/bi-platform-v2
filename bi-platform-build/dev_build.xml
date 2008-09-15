@@ -4,8 +4,8 @@
 
 <project name="pentaho-dist" basedir="." default="jar-all">
 
-  <property file="override.properties" />
-  <property file="build.properties" />
+  <property file="dev_override.properties" />
+  <property file="dev_build.properties" />
 
   <import file="common.xml" />
 
