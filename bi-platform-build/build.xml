@@ -282,6 +282,23 @@
       </else>
     </if>
   </target>
+  
+  
+  <!--=======================================================================
+        svn-revision
+    
+        Tests SVN by printing out the repository
+        ====================================================================-->
+  <target name="svn-revision"
+          depends="install-svnant"
+          description="Prints and sets the SVN revision for the repository at the current dir (if svn.revision is not set)">
+
+    <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
+      <status path="." revisionProperty="svn.revision" />
+    </svn>
+    <echo message="Subversion repository revision: ${svn.revision}" />
+  </target>
+
 
   
   <!--=======================================================================
