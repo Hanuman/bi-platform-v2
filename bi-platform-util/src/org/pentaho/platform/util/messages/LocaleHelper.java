@@ -172,10 +172,10 @@ public class LocaleHelper {
 	    		exactMatch = idx;
 	    		break;
 	    	}
-	    	else if( locales[idx].substring(0, 2).equals( localeLanguage ) ) {
+	    	else if( locales[idx].length() > 2 && locales[idx].substring(0, 2).equals( localeLanguage ) ) {
 	    		looseMatch = idx;
 	    	}
-	    	else if( locales[idx].substring(0, 5).equals( localeCountry ) ) {
+	    	else if( locales[idx].length() > 4 && locales[idx].substring(0, 5).equals( localeCountry ) ) {
 	    		closeMatch = idx;
 	    	}
 	    }
