@@ -176,9 +176,9 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   public String getSolutionPath() {
     ArrayList pathList = new ArrayList();
     ISolutionFile folder = parent;
-    while (!folder.isRoot() && (folder.retrieveParent().retrieveParent() != null)) {
-      folder = folder.retrieveParent();
+    while (!folder.isRoot() && folder.retrieveParent() != null) {
       pathList.add(folder.getFileName());
+      folder = folder.retrieveParent();
     }
     StringBuffer buffer = new StringBuffer(RepositoryFile.EMPTY_STRING);
     for (int i = pathList.size() - 1; i >= 0; i--) {
