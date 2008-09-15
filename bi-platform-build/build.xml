@@ -291,7 +291,7 @@
         Note the release process depends on this target working this way, please
         talk to the release manager if you need to change this target.
         ====================================================================-->
-  <target name="publish-all-pentaho" depends="set-build.id">
+  <target name="publish-all-pentaho" depends="set-build.id" description="cleans, resolves, and publishes all platform projects serially">
     <sequential>
       <ant antfile="build.xml" dir="../bi-platform-api">
         <target name="clean-all" />
