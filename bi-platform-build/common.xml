@@ -1,0 +1,277 @@
+<project name="Pentaho Ant Common" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- =================================================================================
+	     Property Defaults
+	     Any of these properties can be overridden in either build.properties or override.properties
+	     =================================================================================-->
+
+  <!-- Build Cache properties -->
+  <property name="build.cache.dir"
+            value="${user.home}/.pentaho_build_cache"
+            description="Base dir for runtime jars that are required exclusively by the build process" />
+  <property name="tmp.build.cache.dir"
+            value="${build.cache.dir}/tmp"
+            description="Temporary directory where files are prepared for build cache" />
+  <property name="ivy.build.cache.dir"
+            value="${build.cache.dir}/ivy"
+            description="Directory where the IVY jar is placed after it is auto downloaded by the build" />
+  <property name="antcontrib.build.cache.dir"
+            value="${build.cache.dir}/ant-contrib"
+            description="Directory where the Ant-Contrib jar (and dependencies) is placed after it is auto-downloaded by the build" />
+  <property name="pentaho.build.cache.dir"
+            value="${build.cache.dir}/pentaho"
+            description="Directory where the Pentaho ant tasks jar (and dependencies) is placed after it is auto-downloaded by the build" />
+  <property name="svnant.build.cache.dir"
+            value="${build.cache.dir}/svnant"
+            description="Directory where the SVN ANT install is placed after it is auto downloaded by the build" />
+
+  <!-- Ivy properties -->
+  <property name="ivy.install.version" value="2.0.0-beta2" description="Specifies the version of IVY to fetch" />
+  <property name="ivy.jar.file"
+            value="${ivy.build.cache.dir}/ivybeta1.jar"
+            description="The full path to the IVY jar file to use during the build.  If the file is not present, the build will attempt to fetch IVY and save the jar as specified by this property" />
+
+  <!-- SVN Ant Properties -->
+  <property name="svnant.url"
+            value="http://subclipse.tigris.org/files/documents/906/43359/svnant-1.2.0-RC1.zip"
+            description="The URL to the current release of SVN Ant" />
+  <property name="svnant.use-javahl"
+            value="false"
+            description="Prefer JNI JavaHL binding over the command line client for native svn support" />
+  <property name="svnant.use-svnkit"
+            value="true"
+            description="Prefer SVNKit binding over the command line client for native svn support (defaults to true)" />
+
+
+  <!--=======================================================================
+	    install-antcontrib
+	    
+	    (Fetches and) installs ant-contrib tasks.
+	    ====================================================================-->
+  <target name="install-antcontrib"
+          depends="antcontrib.download-check"
+          description="Fetch ant-contrib jar and install ant tasks">
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+      <classpath>
+        <fileset dir="${antcontrib.build.cache.dir}">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
+    </taskdef>
+  </target>
+
+  <!--=======================================================================
+	    antcontrib.download-check
+	    
+	    Fetches ant-contrib from sourceforge if it is not already present
+	    ====================================================================-->
+  <target name="antcontrib.download-check">
+    <condition property="antcontrib.available">
+      <and>
+        <available file="${antcontrib.build.cache.dir}" />
+        <available classname="net.sf.antcontrib.logic.IfTask">
+          <classpath>
+            <fileset dir="${antcontrib.build.cache.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="antcontrib.download" />
+  </target>
+
+  <!--=======================================================================
+	    antcontrib.download
+	    
+	    Fetches ant-contrib from sourceforge
+	    ====================================================================-->
+  <target name="antcontrib.download" unless="antcontrib.available">
+    <mkdir dir="${tmp.build.cache.dir}" />
+    <get src="http://downloads.sourceforge.net/ant-contrib/ant-contrib-1.0b3-bin.zip"
+         dest="${tmp.build.cache.dir}/antcontrib.zip"
+         usetimestamp="true" />
+    <unzip src="${tmp.build.cache.dir}/antcontrib.zip" dest="${tmp.build.cache.dir}">
+      <patternset>
+        <include name="**/*.jar" />
+      </patternset>
+    </unzip>
+    <copy todir="${antcontrib.build.cache.dir}">
+      <fileset dir="${tmp.build.cache.dir}/ant-contrib">
+        <include name="**/*.jar" />
+      </fileset>
+    </copy>
+  </target>
+
+
+  <!--=======================================================================
+	    install-ivy
+	    
+	    (Fetches and) installs the IVY jar for use by this ant script
+	    ====================================================================-->
+  <target name="install-ivy"
+          depends="install-antcontrib,ivy.download-check"
+          description="Installs IVY tasks for use by this build process">
+    <if>
+      <istrue value="${ivy.isinstalled}" />
+      <then>
+        <echo message="Skipping IVY install.  IVY has already been configured by the build" />
+      </then>
+      <else>
+        <echo message="Installing IVY..." />
+        <path id="ivy.lib.path">
+          <fileset dir="${ivy.build.cache.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+        <ivy:settings url="${ivy.settingsurl}" />
+        <property name="ivy.isinstalled" value="true" />
+      </else>
+    </if>
+  </target>
+
+
+  <!--=======================================================================
+	    ivy.download-check
+	    
+	    Fetch IVY jar from sourceforge if it is not already present
+	    ====================================================================-->
+  <target name="ivy.download-check">
+    <condition property="ivy.available">
+      <and>
+        <available file="${ivy.build.cache.dir}" />
+        <available classname="org.apache.ivy.ant.IvyTask">
+          <classpath>
+            <fileset dir="${ivy.build.cache.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="ivy.download" />
+  </target>
+
+
+  <!--=======================================================================
+	    ivy.download
+	    
+	    Downloads the IVY jar file for use by ant.
+	    ====================================================================-->
+  <target name="ivy.download" unless="ivy.available">
+    <mkdir dir="${ivy.build.cache.dir}" />
+    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+         dest="${ivy.jar.file}"
+         usetimestamp="true" />
+  </target>
+
+  <!--=======================================================================
+	    svnant.download-check
+	    
+	    Fetch SVN ANT zip if it is not already present
+	    ====================================================================-->
+  <target name="svnant.download-check">
+    <condition property="svnant.available">
+      <and>
+        <available file="${svnant.build.cache.dir}" />
+        <available classname="org.tigris.subversion.svnant.SvnTask">
+          <classpath>
+            <fileset dir="${svnant.build.cache.dir}">
+              <include name="**/*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="svnant.download" />
+  </target>
+
+
+  <!--=======================================================================
+      svnant.download
+    
+      Downloads the IVY jar file for use by ant.
+      ====================================================================-->
+  <target name="svnant.download" unless="svnant.available">
+    <mkdir dir="${svnant.build.cache.dir}" />
+    <get src="${svnant.url}" dest="${svnant.build.cache.dir}/svnant.zip" usetimestamp="true" />
+    <unzip src="${svnant.build.cache.dir}/svnant.zip" dest="${svnant.build.cache.dir}">
+      <patternset>
+        <include name="**/*.jar" />
+      </patternset>
+    </unzip>
+  </target>
+
+
+  <!--=======================================================================
+    install-svnant
+    
+    (Fetches and) installs the SVN ANT for use by this ant script
+    ====================================================================-->
+  <target name="install-svnant"
+          depends="install-antcontrib, svnant.download-check"
+          description="Installs SVN ANT tasks for use by this build process">
+    <if>
+      <istrue value="${svnant.isinstalled}" />
+      <then>
+        <echo message="Skipping SVN ANT install.  IVY has already been configured by the build" />
+      </then>
+      <else>
+        <echo message="Installing SVN ANT..." />
+        <path id="svnant.lib.path">
+          <fileset dir="${svnant.build.cache.dir}" includes="**/*.jar" />
+        </path>
+        <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.lib.path" />
+        <property name="svnant.isinstalled" value="true" />
+      </else>
+    </if>
+  </target>
+
+
+  <!--=======================================================================
+        svn-revision
+    
+        Tests SVN by printing out the repository
+        ====================================================================-->
+  <target name="svn-revision"
+          depends="install-svnant"
+          description="Prints and sets the SVN revision for the repository at the current dir (if svn.revision is not set)">
+
+    <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
+      <status path="." revisionProperty="svn.revision" />
+    </svn>
+    <echo message="Subversion repository revision: ${svn.revision}" />
+  </target>
+
+
+  <!--=======================================================================
+	    resolve
+	    
+	    Using ivy and the dependencies for the project (defined in the ivy.xml
+	    file), this task will retrieve the needed files and place them into 
+	    the defined directories.
+	    ====================================================================-->
+  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
+
+  <target name="resolve-init" depends="install-ivy" />
+
+  <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="default" />
+    <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="test" />
+    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-codegen" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="codegen" />
+    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+  <target name="resolve-runtime" depends="resolve-init">
+    <ivy:resolve file="ivy.xml" conf="runtime" />
+    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision].[ext]" />
+  </target>
+
+</project>
