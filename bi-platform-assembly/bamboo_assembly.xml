@@ -1,0 +1,6 @@
+<project name="bamboo global assembly">
+    <target name="assemble-all">
+        <ant antfile="assembly.xml" target="package" />
+        <ant antfile="manual_assembly.xml" target="package" />
+    </target>
+</project>

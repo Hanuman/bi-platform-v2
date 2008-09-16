@@ -1,0 +1,239 @@
+<project name="j2ee deployments assembly">
+    
+	<!-- Define the default location of the common build file -->
+	<property name="common.build.file" value="./common.xml" description="This is the location of the standardized common.xml file" />
+
+	<!-- Import the common_build.xml file which contains all the default tasks -->
+	<import file="${common.build.file}" />
+
+	<!-- Load the properties files in the proper order -->
+	<property file="override.properties" description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
+	<property file="assembly.properties" description="Properties customized for your particular project belong in this file." />
+	
+    <property name="stage.dir" value="manual-stage"/>
+	<property name="lib.dir" value="lib"/>
+    <property name="bi.platform.assembly.dir" value="." />
+	
+	<property name="bi.platform.util.dir" value="../bi-platform-util" />
+	<property name="bi.platform.engine.core.dir" value="../bi-platform-engine-core" />
+    <property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
+	<property name="bi.platform.engine.security.dir" value="../bi-platform-engine-security" />
+	<property name="bi.platform.repository.dir" value="../bi-platform-repository" />
+	<property name="bi.platform.ui.foundation.dir" value="../bi-platform-ui-foundation" />
+	<property name="bi.platform.scheduler.dir" value="../bi-platform-scheduler" />
+	<property name="bi.platform.plugin.actions.dir" value="../bi-platform-plugin-actions" />
+	<property name="bi.platform.plugin.services.dir" value="../bi-platform-plugin-services" />
+    <property name="bi.platform.sample.data.dir" value="../bi-platform-sample-data" />
+    <property name="bi.platform.sample.solution.dir" value="../bi-platform-sample-solution" />
+    <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />    
+    <property name="bi.platform.web.dir" value="../bi-platform-web" />
+    <property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
+	<property name="bi.platform.web.portlet.dir" value="../bi-platform-web-portlet" />
+	<property name="productId" value="biserver-manual" />
+	<property name="releaseType" value="ce" />
+	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
+    	
+    	
+    <target name="clean">
+    	<delete dir="${stage.dir}"/>
+    </target>
+    
+	<target name="package" depends="resolve, assemble, package-zip" />    		
+    		
+	<target name="package-zip">
+		<zip destfile="${dist.dir}/${package.basename}.zip">
+			<zipfileset dir="${stage.dir}" prefix="${productId}-${releaseType}" />
+		</zip>
+	</target>
+		
+    <target name="assemble">
+        <mkdir dir="${stage.dir}"/>
+        
+        <!--  pentaho-classes -->
+        
+        <mkdir dir="${stage.dir}/pentaho-classes"/>
+        <copy todir="${stage.dir}/pentaho-classes">
+            <fileset dir="${bi.platform.util.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.engine.core.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.engine.services.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.engine.security.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.repository.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.scheduler.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.ui.foundation.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.plugin.services.dir}/messages/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.plugin.actions.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>            
+            <fileset dir="${bi.platform.web.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.web.servlet.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.web.portlet.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.web.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+        </copy>
+
+        <!--  copy over license to pentaho-doc -->
+        
+        <mkdir dir="${stage.dir}/pentaho-doc"/>
+        <mkdir dir="${stage.dir}/pentaho-doc/licenses"/>
+        
+        <copy todir="${stage.dir}/pentaho-doc/licenses">
+            <fileset dir="${bi.platform.assembly.dir}/licenses">
+                <include name="**/**" />
+	        </fileset>
+	    </copy>
+        
+        <!--  copy over bi-platform jars -->
+
+        <mkdir dir="${stage.dir}/pentaho-jars"/>
+        <copy todir="${stage.dir}/pentaho-jars">
+            <fileset dir="${lib.dir}">
+                <include name="pentaho-bi-platform-*.jar"/>
+            </fileset>
+        </copy>
+        
+        <!--  copy over non bi-platform jars -->
+        
+        <mkdir dir="${stage.dir}/pentaho-third-party"/>
+        <copy todir="${stage.dir}/pentaho-third-party">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar" />
+                <exclude name="pentaho-bi-platform-*.jar"/>
+            </fileset>
+        </copy>
+        
+        <mkdir dir="${stage.dir}/pentaho-res"/>
+        
+        <!--  ear related files -->
+        
+        <copy todir="${stage.dir}/pentaho-res">
+            <fileset dir="${bi.platform.appserver.dir}/res"/>
+        </copy>
+        
+        <!--  ehcache related config -->
+        
+        <copy todir="${stage.dir}/pentaho-res">
+            <fileset dir="${bi.platform.engine.services.dir}/res"/>
+        </copy>        
+        
+        <!-- jboss datasources -->
+
+       	<mkdir dir="${stage.dir}/pentaho-res/jboss"/>
+        <copy todir="${stage.dir}/pentaho-res/jboss">
+            <fileset dir="${bi.platform.appserver.dir}/jboss/res"/>
+        </copy>
+        
+        <!-- portal-layout.war -->
+        
+        <mkdir dir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war"/>
+        <copy todir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war">
+            <fileset dir="${bi.platform.appserver.dir}/jboss/webapps/pentaho-portal-layout" />
+        </copy>
+
+        <!-- jfreereport files -->
+        
+    	<mkdir dir="${stage.dir}/pentaho-res/jfreereport"/>
+        <copy todir="${stage.dir}/pentaho-res/jfreereport">
+            <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
+        </copy>
+        
+        <!-- mondrian files -->
+        
+    	<mkdir dir="${stage.dir}/pentaho-res/mondrian"/>
+        <copy todir="${stage.dir}/pentaho-res/mondrian">
+            <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
+        </copy>
+        
+        <!-- log4j files -->
+        
+    	<copy todir="${stage.dir}/pentaho-res/log4j">
+            <fileset dir="${bi.platform.util.dir}/res/log4j" />        
+        </copy>
+        
+        <!--  orion files -->
+        
+		<mkdir dir="${stage.dir}/pentaho-res/orion"/>
+        <copy todir="${stage.dir}/pentaho-res/orion">
+            <fileset dir="${bi.platform.appserver.dir}/orion/res" />
+        </copy>
+
+        <!--  security example files -->
+        <mkdir dir="${stage.dir}/pentaho-res/security-samples"/>
+        <copy todir="${stage.dir}/pentaho-res/security-samples">
+            <fileset dir="${bi.platform.engine.security.dir}/res/samples" />
+        </copy>
+        
+        <!-- pentaho webapps -->
+        
+        <mkdir dir="${stage.dir}/pentaho-res/styles"/>
+        <mkdir dir="${stage.dir}/pentaho-res/styles/pentaho-style.war"/>
+        <mkdir dir="${stage.dir}/pentaho-res/styles/sw-style.war"/>
+        
+        <copy todir="${stage.dir}/pentaho-res/styles/pentaho-style.war">
+            <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style" />
+        </copy>
+        <copy todir="${stage.dir}/pentaho-res/styles/sw-style.war">
+            <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
+        </copy>
+
+        <!--  tomcat context.xml's -->        
+        <copy todir="${stage.dir}/pentaho-res/tomcat">
+            <fileset dir="${bi.platform.appserver.dir}/tomcat/res"/>
+        </copy>
+        
+        <!--  pentaho webapp -->
+        
+        <mkdir dir="${stage.dir}/pentaho-webapp"/>
+        <copy todir="${stage.dir}/pentaho-webapp">
+            <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho" />
+        </copy>
+        
+        <!--  mantle -->
+        
+        <unzip dest="${stage.dir}/pentaho-webapp">
+            <fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
+        </unzip>
+        
+        <!-- excludejars files -->
+        
+        <copy todir="${stage.dir}">
+            <fileset dir="${bi.platform.assembly.dir}">
+                <include name="excludejars*"/>
+            </fileset>
+        </copy>
+        
+        <!--  main build file for j2ee deployments -->
+        <copy todir="${stage.dir}">
+            <fileset dir="manual"/>
+        </copy>
+        
+        <!-- TODO: create version.properties -->
+        
+        <!-- TODO: pentaho solutions assembly ? -->
+        
+        <!-- TODO: pentaho data assembly ? -->
+        
+    </target>
+</project>
