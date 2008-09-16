@@ -1,0 +1,21 @@
+************* Required *************
+Modify web.xml:
+  <servlet>
+    <servlet-name>Home</servlet-name>
+    <jsp-file>/mantle/Mantle.jsp</jsp-file>
+  </servlet>
+  
+Add mantle service (servlet) to web.xml:
+  <servlet>
+    <servlet-name>MantleServlet</servlet-name>
+    <servlet-class>org.pentaho.mantle.server.MantleServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>MantleServlet</servlet-name>
+    <url-pattern>/MantleServlet</url-pattern>
+  </servlet-mapping>
+  
+************* Optional *************
+Add to applicationContext-acegi-security.xml
+\A/ajaxpci/.*\Z=Anonymous,Authenticated

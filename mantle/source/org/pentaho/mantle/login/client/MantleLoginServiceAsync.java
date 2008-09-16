@@ -1,0 +1,12 @@
+package org.pentaho.mantle.login.client;
+
+import java.util.List;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public interface MantleLoginServiceAsync {
+  public void getAllUsers(AsyncCallback callback);
+  public void isAuthenticated(AsyncCallback callback);
+}
+
+  

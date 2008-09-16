@@ -1,0 +1,31 @@
+<module rename-to="mantle">
+
+	<!-- Inherit the core Web Toolkit stuff. -->
+	<inherits name='com.google.gwt.user.User'/>
+	<inherits name='com.google.gwt.xml.XML'/>
+	<inherits name='com.google.gwt.i18n.I18N' />
+
+	<!-- <inherits name='com.google.gwt.widgetideas.WidgetIdeas'/> -->
+
+	<inherits name='org.pentaho.platform.repository.usersettings.pojo.UserSettings'/>
+	<!-- inherits name='org.pentaho.halogen.Halogen' /-->
+
+    <!--inherits name='com.google.gwt.user.theme.standard.Standard'/-->
+
+	<!-- supported locales (beyond english defaults) -->
+	<!-- commented out for debugging compilation speedup
+	<extend-property name="locale" values="fr"/>
+	<extend-property name="locale" values="es"/>
+	-->
+  
+  
+  <inherits name='org.pentaho.mantle.login.MantleLogin' />
+
+	<!-- Specify the app entry point class.                   -->
+	<entry-point class='org.pentaho.mantle.client.MantleApplication'/>
+	
+	<servlet path="/MantleService" class="org.pentaho.mantle.server.DebugMantleServlet" />
+	
+  <script src="nativeScripts.js"/>
+  
+</module>

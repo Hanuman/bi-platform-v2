@@ -1,0 +1,1121 @@
+<?xml version="1.0"?>
+<layout-output xmlns="http://reporting.pentaho.org/namespaces/output/layout-output">
+  <logical-page logical-page-number="0" width="540" height="720">
+    <page-area x="0.0" y="0.0" width="540.0" height="720.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false" type="Logical-Page-Watermark-Area">
+      <block x="0.0" y="0.0" width="540.0" height="720.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        <canvas x="0.0" y="0.0" width="540.0" height="720.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        </canvas>
+      </block>
+    </page-area>
+    <page-area x="0.0" y="0.0" width="540.0" height="32.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false" type="Logical-Page-Header-Area">
+      <block x="0.0" y="0.0" width="540.0" height="32.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        <canvas x="0.0" y="0.0" width="540.0" height="32.0" color="black" font-face="Serif" font-size="10" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          <canvas x="0.0" y="30.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <replaced-content x="0.0" y="30.0" width="540.0" height="0.0" source="null" content-width="100.0" content-height="0.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Line2D$Float">
+            </replaced-content>
+          </canvas>
+          <p x="0.0" y="0.0" width="540.0" height="20.0" color="black" font-face="Serif" font-size="10" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <line x="232.779" y="0.0" width="74.442" height="10.0" color="black" font-face="Serif" font-size="10" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <text x="232.779" y="0.0" width="37.214" height="10.0">Region:</text>
+              <spacer width="2.778" height="0.0" preserve="true"/>
+              <text x="272.771" y="0.0" width="34.45" height="10.0">Central</text>
+            </line>
+          </p>
+        </canvas>
+      </block>
+    </page-area>
+    <block x="0.0" y="32.0" width="540.0" height="664.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:extra-raw-header-content="&#x000a;    &lt;link rel=&quot;shortcut icon&quot; href=&quot;/pentaho-style/favicon.ico&quot; /&gt;&#x000a;  "/>
+      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:extra-raw-content="&#x000a;    &lt;script lang=&quot;javascript&quot;&gt;alert(&quot;I'm the first report-virus! Now open your addressbook and send me to all your contacts!&quot;)&lt;/script&gt;&#x000a;  "/>
+      <block x="0.0" y="32.0" width="540.0" height="50.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        <canvas x="0.0" y="32.0" width="540.0" height="50.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          <canvas x="0.0" y="32.0" width="540.0" height="50.0" color="#0000cc" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <replaced-content x="0.0" y="32.0" width="540.0" height="50.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+            </replaced-content>
+          </canvas>
+          <p x="0.0" y="32.0" width="540.0" height="50.0" color="white" font-face="Arial" font-size="18" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/swing" autoGenNs:tooltip="Swing got the virus too"/>
+            <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:extra-raw-content="&#x000a;          &lt;script lang=&quot;javascript&quot;&gt;alert(&quot;Its the virus again. Just a reminder: Have you sent me? &quot;)&lt;/script&gt;&#x000a;        "/>
+            <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:onclick="javascript:alert(&quot;Do you really believe that anyone finds Quadrant-Data exciting? Now go and send me!&quot;) "/>
+            <line x="170.487" y="32.0" width="199.025" height="18.0" color="white" font-face="Arial" font-size="18" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <text x="170.487" y="32.0" width="70.009" height="18.0">Exciting</text>
+              <spacer width="5.0" height="0.0" preserve="true"/>
+              <text x="245.496" y="32.0" width="80.003" height="18.0">Quadrant</text>
+              <spacer width="5.0" height="0.0" preserve="true"/>
+              <text x="330.499" y="32.0" width="39.013" height="18.0">Data</text>
+            </line>
+          </p>
+        </canvas>
+      </block>
+      <block x="0.0" y="82.0" width="540.0" height="614.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        <block x="0.0" y="82.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          <block x="0.0" y="82.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          </block>
+        </block>
+        <block x="0.0" y="82.0" width="540.0" height="614.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          <block x="0.0" y="82.0" width="540.0" height="614.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="RegionGroup"/>
+            <block x="0.0" y="82.0" width="540.0" height="23.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <canvas x="0.0" y="82.0" width="540.0" height="23.0" color="black" font-face="Arial" font-size="18" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <p x="0.0" y="82.0" width="310.0" height="23.0" color="#009999" font-face="Arial" font-size="18" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <line x="0.0" y="82.0" width="62.012" height="18.0" color="#009999" font-face="Arial" font-size="18" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <text x="0.0" y="82.0" width="62.012" height="18.0">Central</text>
+                  </line>
+                </p>
+              </canvas>
+            </block>
+            <block x="0.0" y="105.0" width="540.0" height="591.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <block x="0.0" y="105.0" width="540.0" height="111.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="DepartmentGroup"/>
+                <block x="0.0" y="105.0" width="540.0" height="39.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="105.0" width="540.0" height="39.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="105.0" width="540.0" height="39.0" color="#ff6600" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="0.0" y="105.0" width="540.0" height="39.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="0.0" y="109.0" width="540.0" height="18.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="0.0" y="109.0" width="206.707" height="12.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="0.0" y="109.0" width="70.671" height="12.0">Department:</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="74.004" y="109.0" width="56.027" height="12.0">Executive</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="133.364" y="109.0" width="73.343" height="12.0">Management</text>
+                      </line>
+                    </p>
+                    <p x="19.0" y="130.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="130.0" width="43.385" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="130.0" width="43.385" height="11.0">Position</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="130.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="246.0" y="130.0" width="33.615" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="246.0" y="130.0" width="33.615" height="11.0">Actual</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="130.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="344.0" y="130.0" width="37.88" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="344.0" y="130.0" width="37.88" height="11.0">Budget</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="130.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="442.0" y="130.0" width="45.859" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="442.0" y="130.0" width="45.859" height="11.0">Variance</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+                <block x="0.0" y="144.0" width="540.0" height="48.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <block x="0.0" y="144.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="144.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                  <block x="0.0" y="144.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="144.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="144.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="144.0" width="21.668" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="144.0" width="21.668" height="10.0">CEO</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="144.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="144.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="144.0" width="41.705" height="10.0">$549,625</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="144.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="144.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="144.0" width="41.705" height="10.0">$522,250</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="144.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="144.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="144.0" width="39.474" height="10.0">-$27,375</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="156.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="156.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="156.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="156.0" width="78.918" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="156.0" width="20.007" height="10.0">SVP</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="41.785" y="156.0" width="56.133" height="10.0">Partnerships</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="156.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="156.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="156.0" width="41.705" height="10.0">$367,415</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="156.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="156.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="156.0" width="41.705" height="10.0">$392,100</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="156.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="156.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="156.0" width="36.144" height="10.0">$24,685</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="168.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="168.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="168.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="168.0" width="123.938" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="168.0" width="20.007" height="10.0">SVP</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="41.785" y="168.0" width="39.459" height="10.0">Strategic</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="84.022" y="168.0" width="58.916" height="10.0">Development</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="168.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="168.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="168.0" width="41.705" height="10.0">$383,242</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="168.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="168.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="168.0" width="41.705" height="10.0">$403,405</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="168.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="168.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="168.0" width="36.144" height="10.0">$20,163</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="180.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="180.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="180.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="180.0" width="93.351" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="180.0" width="20.007" height="10.0">SVP</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="41.785" y="180.0" width="18.876" height="10.0">WW</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="63.439" y="180.0" width="48.912" height="10.0">Operations</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="180.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="180.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="180.0" width="41.705" height="10.0">$476,000</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="180.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="180.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="180.0" width="41.705" height="10.0">$725,887</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="180.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="498.295" y="180.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="498.295" y="180.0" width="41.705" height="10.0">$249,887</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="192.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="192.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                </block>
+                <block x="0.0" y="192.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="192.0" width="540.0" height="24.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="19.0" y="192.0" width="521.0" height="14.0" color="#66ff66" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="19.0" y="192.0" width="521.0" height="14.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="19.0" y="192.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="192.0" width="26.274" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="192.0" width="26.274" height="11.0">Total</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="192.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="288.952" y="192.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="288.952" y="192.0" width="55.048" height="11.0">$1,776,282</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="192.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="386.952" y="192.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="386.952" y="192.0" width="55.048" height="11.0">$2,043,642</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="192.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Department Field"/>
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:title="Now how do you explain these numbers? You can't? You're FIRED!"/>
+                      <line x="494.125" y="192.0" width="45.875" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="494.125" y="192.0" width="45.875" height="11.0">$267,360</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+              </block>
+              <block x="0.0" y="216.0" width="540.0" height="123.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="DepartmentGroup"/>
+                <block x="0.0" y="216.0" width="540.0" height="39.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="216.0" width="540.0" height="39.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="216.0" width="540.0" height="39.0" color="#ff6600" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="0.0" y="216.0" width="540.0" height="39.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="0.0" y="220.0" width="540.0" height="18.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="0.0" y="220.0" width="119.346" height="12.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="0.0" y="220.0" width="70.671" height="12.0">Department:</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="74.004" y="220.0" width="45.342" height="12.0">Finance</text>
+                      </line>
+                    </p>
+                    <p x="19.0" y="241.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="241.0" width="43.385" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="241.0" width="43.385" height="11.0">Position</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="241.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="246.0" y="241.0" width="33.615" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="246.0" y="241.0" width="33.615" height="11.0">Actual</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="241.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="344.0" y="241.0" width="37.88" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="344.0" y="241.0" width="37.88" height="11.0">Budget</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="241.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="442.0" y="241.0" width="45.859" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="442.0" y="241.0" width="45.859" height="11.0">Variance</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+                <block x="0.0" y="255.0" width="540.0" height="60.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <block x="0.0" y="255.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="255.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                  <block x="0.0" y="255.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="255.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="255.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="255.0" width="108.359" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="255.0" width="62.792" height="10.0">Administrative</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="84.57" y="255.0" width="42.789" height="10.0">Assisitant</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="255.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="255.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="255.0" width="41.705" height="10.0">$827,861</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="255.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="255.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="255.0" width="41.705" height="10.0">$760,990</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="255.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="255.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="255.0" width="39.474" height="10.0">-$66,871</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="267.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="267.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="267.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="267.0" width="21.107" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="267.0" width="21.107" height="10.0">CFO</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="267.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="267.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="267.0" width="41.705" height="10.0">$770,272</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="267.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="267.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="267.0" width="41.705" height="10.0">$719,855</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="267.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="267.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="267.0" width="39.474" height="10.0">-$50,417</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="279.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="279.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="279.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="279.0" width="43.345" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="279.0" width="43.345" height="10.0">Controller</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="279.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="279.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="279.0" width="41.705" height="10.0">$570,373</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="279.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="279.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="279.0" width="41.705" height="10.0">$577,070</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="279.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="509.417" y="279.0" width="30.583" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="509.417" y="279.0" width="30.583" height="10.0">$6,697</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="291.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="291.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="291.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="291.0" width="9.447" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="291.0" width="9.447" height="10.0">IS</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="291.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="291.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="291.0" width="41.705" height="10.0">$570,759</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="291.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="291.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="291.0" width="41.705" height="10.0">$577,346</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="291.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="509.417" y="291.0" width="30.583" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="509.417" y="291.0" width="30.583" height="10.0">$6,587</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="303.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="303.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="303.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="303.0" width="30.563" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="303.0" width="30.563" height="10.0">Payroll</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="303.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="303.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="303.0" width="41.705" height="10.0">$367,415</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="303.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="303.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="303.0" width="41.705" height="10.0">$432,100</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="303.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="303.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="303.0" width="36.144" height="10.0">$64,685</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="315.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="315.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                </block>
+                <block x="0.0" y="315.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="315.0" width="540.0" height="24.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="19.0" y="315.0" width="521.0" height="14.0" color="#66ff66" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="19.0" y="315.0" width="521.0" height="14.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="19.0" y="315.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="315.0" width="26.274" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="315.0" width="26.274" height="11.0">Total</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="315.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="288.952" y="315.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="288.952" y="315.0" width="55.048" height="11.0">$3,106,680</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="315.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="386.952" y="315.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="386.952" y="315.0" width="55.048" height="11.0">$3,067,361</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="315.0" width="98.0" height="14.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Department Field"/>
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:title="Now how do you explain these numbers? You can't? You're FIRED!"/>
+                      <line x="496.579" y="315.0" width="43.421" height="11.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="496.579" y="315.0" width="43.421" height="11.0">-$39,319</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+              </block>
+              <block x="0.0" y="339.0" width="540.0" height="135.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="DepartmentGroup"/>
+                <block x="0.0" y="339.0" width="540.0" height="39.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="339.0" width="540.0" height="39.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="339.0" width="540.0" height="39.0" color="#ff6600" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="0.0" y="339.0" width="540.0" height="39.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="0.0" y="343.0" width="540.0" height="18.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="0.0" y="343.0" width="172.692" height="12.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="0.0" y="343.0" width="70.671" height="12.0">Department:</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="74.004" y="343.0" width="40.668" height="12.0">Human</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="118.005" y="343.0" width="54.687" height="12.0">Resource</text>
+                      </line>
+                    </p>
+                    <p x="19.0" y="364.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="364.0" width="43.385" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="364.0" width="43.385" height="11.0">Position</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="364.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="246.0" y="364.0" width="33.615" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="246.0" y="364.0" width="33.615" height="11.0">Actual</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="364.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="344.0" y="364.0" width="37.88" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="344.0" y="364.0" width="37.88" height="11.0">Budget</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="364.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="442.0" y="364.0" width="45.859" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="442.0" y="364.0" width="45.859" height="11.0">Variance</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+                <block x="0.0" y="378.0" width="540.0" height="72.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <block x="0.0" y="378.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="378.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                  <block x="0.0" y="378.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="378.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="378.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="378.0" width="63.353" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="378.0" width="63.353" height="10.0">Administration</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="378.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="378.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="378.0" width="41.705" height="10.0">$549,625</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="378.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="378.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="378.0" width="41.705" height="10.0">$552,250</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="378.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="509.417" y="378.0" width="30.583" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="509.417" y="378.0" width="30.583" height="10.0">$2,625</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="390.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="390.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="390.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="390.0" width="21.116" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="390.0" width="21.116" height="10.0">EOE</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="390.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="390.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="390.0" width="41.705" height="10.0">$530,207</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="390.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="390.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="390.0" width="41.705" height="10.0">$538,380</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="390.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="509.417" y="390.0" width="30.583" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="509.417" y="390.0" width="30.583" height="10.0">$8,173</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="402.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="402.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="402.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="402.0" width="67.792" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="402.0" width="14.442" height="10.0">HR</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="36.22" y="402.0" width="50.572" height="10.0">Generalists</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="402.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="402.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="402.0" width="41.705" height="10.0">$856,190</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="402.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="402.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="402.0" width="41.705" height="10.0">$771,225</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="402.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="402.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="402.0" width="39.474" height="10.0">-$84,965</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="414.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="414.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="414.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="414.0" width="53.344" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="414.0" width="14.442" height="10.0">HR</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="36.22" y="414.0" width="36.124" height="10.0">Training</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="414.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="414.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="414.0" width="41.705" height="10.0">$397,473</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="414.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="414.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="414.0" width="41.705" height="10.0">$443,570</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="414.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="414.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="414.0" width="36.144" height="10.0">$46,097</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="426.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="426.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="426.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="426.0" width="37.227" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="426.0" width="20.007" height="10.0">SVP</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="41.785" y="426.0" width="14.442" height="10.0">HR</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="426.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="426.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="426.0" width="41.705" height="10.0">$574,895</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="426.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="426.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="426.0" width="41.705" height="10.0">$570,300</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="426.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="506.087" y="426.0" width="33.913" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="506.087" y="426.0" width="33.913" height="10.0">-$4,595</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="438.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="438.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="438.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="438.0" width="87.254" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="438.0" width="30.573" height="10.0">Sexual</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="52.351" y="438.0" width="53.903" height="10.0">Harassment</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="438.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="438.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="438.0" width="41.705" height="10.0">$530,473</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="438.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="438.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="438.0" width="41.705" height="10.0">$538,570</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="438.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="509.417" y="438.0" width="30.583" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="509.417" y="438.0" width="30.583" height="10.0">$8,097</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="450.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="450.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                </block>
+                <block x="0.0" y="450.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="450.0" width="540.0" height="24.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="19.0" y="450.0" width="521.0" height="14.0" color="#66ff66" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="19.0" y="450.0" width="521.0" height="14.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="19.0" y="450.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="450.0" width="26.274" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="450.0" width="26.274" height="11.0">Total</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="450.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="288.952" y="450.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="288.952" y="450.0" width="55.048" height="11.0">$3,438,863</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="450.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="386.952" y="450.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="386.952" y="450.0" width="55.048" height="11.0">$3,414,295</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="450.0" width="98.0" height="14.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Department Field"/>
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:title="Now how do you explain these numbers? You can't? You're FIRED!"/>
+                      <line x="496.579" y="450.0" width="43.421" height="11.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="496.579" y="450.0" width="43.421" height="11.0">-$24,568</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+              </block>
+              <block x="0.0" y="474.0" width="540.0" height="135.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="DepartmentGroup"/>
+                <block x="0.0" y="474.0" width="540.0" height="39.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="474.0" width="540.0" height="39.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="474.0" width="540.0" height="39.0" color="#ff6600" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="0.0" y="474.0" width="540.0" height="39.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="0.0" y="478.0" width="540.0" height="18.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="0.0" y="478.0" width="236.671" height="12.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="0.0" y="478.0" width="70.671" height="12.0">Department:</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="74.004" y="478.0" width="56.673" height="12.0">Marketing</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="134.01" y="478.0" width="8.666" height="12.0">&amp;</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="146.009" y="478.0" width="90.662" height="12.0">Communication</text>
+                      </line>
+                    </p>
+                    <p x="19.0" y="499.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="499.0" width="43.385" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="499.0" width="43.385" height="11.0">Position</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="499.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="246.0" y="499.0" width="33.615" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="246.0" y="499.0" width="33.615" height="11.0">Actual</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="499.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="344.0" y="499.0" width="37.88" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="344.0" y="499.0" width="37.88" height="11.0">Budget</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="499.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="442.0" y="499.0" width="45.859" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="442.0" y="499.0" width="45.859" height="11.0">Variance</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+                <block x="0.0" y="513.0" width="540.0" height="72.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <block x="0.0" y="513.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="513.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                  <block x="0.0" y="513.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="513.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="513.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="513.0" width="77.253" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="513.0" width="32.79" height="10.0">Analyst</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="54.568" y="513.0" width="41.685" height="10.0">Relations</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="513.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="513.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="513.0" width="41.705" height="10.0">$383,375</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="513.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="513.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="513.0" width="41.705" height="10.0">$443,500</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="513.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="513.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="513.0" width="36.144" height="10.0">$60,125</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="525.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="525.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="525.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="525.0" width="23.329" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="525.0" width="23.329" height="10.0">CMO</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="525.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="525.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="525.0" width="41.705" height="10.0">$827,861</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="525.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="525.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="525.0" width="41.705" height="10.0">$760,990</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="525.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="525.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="525.0" width="39.474" height="10.0">-$66,871</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="537.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="537.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="537.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="537.0" width="40.012" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="537.0" width="40.012" height="10.0">Graphics</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="537.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="537.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="537.0" width="41.705" height="10.0">$782,375</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="537.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="537.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="537.0" width="41.705" height="10.0">$728,500</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="537.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="537.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="537.0" width="39.474" height="10.0">-$53,875</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="549.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="549.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="549.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="549.0" width="70.023" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="549.0" width="25.56" height="10.0">Press</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="47.338" y="549.0" width="41.685" height="10.0">Relations</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="549.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="549.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="549.0" width="41.705" height="10.0">$497,296</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="549.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="549.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="549.0" width="41.705" height="10.0">$524,872</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="549.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="549.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="549.0" width="36.144" height="10.0">$27,576</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="561.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="561.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="561.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="561.0" width="101.14" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="561.0" width="34.46" height="10.0">Product</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="56.238" y="561.0" width="43.903" height="10.0">Marketing</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="102.919" y="561.0" width="17.221" height="10.0">Mgr</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="561.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="561.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="561.0" width="41.705" height="10.0">$693,531</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="561.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="561.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="561.0" width="41.705" height="10.0">$665,040</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="561.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="561.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="561.0" width="39.474" height="10.0">-$28,491</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="573.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="573.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="573.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="573.0" width="26.658" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="573.0" width="26.658" height="10.0">Writer</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="573.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="573.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="573.0" width="41.705" height="10.0">$405,985</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="573.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="573.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="573.0" width="41.705" height="10.0">$459,650</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="573.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="573.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="573.0" width="36.144" height="10.0">$53,665</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="585.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="585.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                </block>
+                <block x="0.0" y="585.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="585.0" width="540.0" height="24.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="19.0" y="585.0" width="521.0" height="14.0" color="#66ff66" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="19.0" y="585.0" width="521.0" height="14.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="19.0" y="585.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="585.0" width="26.274" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="585.0" width="26.274" height="11.0">Total</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="585.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="288.952" y="585.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="288.952" y="585.0" width="55.048" height="11.0">$3,590,423</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="585.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="386.952" y="585.0" width="55.048" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="386.952" y="585.0" width="55.048" height="11.0">$3,582,552</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="585.0" width="98.0" height="14.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Department Field"/>
+                      <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/html" autoGenNs:title="Now how do you explain these numbers? You can't? You're FIRED!"/>
+                      <line x="502.696" y="585.0" width="37.304" height="11.0" color="red" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="502.696" y="585.0" width="37.304" height="11.0">-$7,871</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+              </block>
+              <block x="0.0" y="609.0" width="540.0" height="87.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="DepartmentGroup"/>
+                <block x="0.0" y="609.0" width="540.0" height="39.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <canvas x="0.0" y="609.0" width="540.0" height="39.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="609.0" width="540.0" height="39.0" color="#ff6600" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <replaced-content x="0.0" y="609.0" width="540.0" height="39.0" source="null" content-width="100.0" content-height="100.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Rectangle2D$Float">
+                      </replaced-content>
+                    </canvas>
+                    <p x="0.0" y="613.0" width="540.0" height="18.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="0.0" y="613.0" width="198.014" height="12.0" color="white" font-face="Arial" font-size="12" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="0.0" y="613.0" width="70.671" height="12.0">Department:</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="74.004" y="613.0" width="45.331" height="12.0">Product</text>
+                        <spacer width="3.333" height="0.0" preserve="true"/>
+                        <text x="122.668" y="613.0" width="75.346" height="12.0">Development</text>
+                      </line>
+                    </p>
+                    <p x="19.0" y="634.0" width="227.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="19.0" y="634.0" width="43.385" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="19.0" y="634.0" width="43.385" height="11.0">Position</text>
+                      </line>
+                    </p>
+                    <p x="246.0" y="634.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="246.0" y="634.0" width="33.615" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="246.0" y="634.0" width="33.615" height="11.0">Actual</text>
+                      </line>
+                    </p>
+                    <p x="344.0" y="634.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="344.0" y="634.0" width="37.88" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="344.0" y="634.0" width="37.88" height="11.0">Budget</text>
+                      </line>
+                    </p>
+                    <p x="442.0" y="634.0" width="98.0" height="14.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <line x="442.0" y="634.0" width="45.859" height="11.0" color="black" font-face="Arial" font-size="11" font-style-bold="true" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <text x="442.0" y="634.0" width="45.859" height="11.0">Variance</text>
+                      </line>
+                    </p>
+                  </canvas>
+                </block>
+                <block x="0.0" y="648.0" width="540.0" height="48.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                  <block x="0.0" y="648.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <block x="0.0" y="648.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    </block>
+                  </block>
+                  <block x="0.0" y="648.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="648.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="648.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="648.0" width="21.107" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="648.0" width="21.107" height="10.0">CTO</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="648.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="648.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="648.0" width="41.705" height="10.0">$405,985</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="648.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="648.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="648.0" width="41.705" height="10.0">$459,650</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="648.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="648.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="648.0" width="36.144" height="10.0">$53,665</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="660.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="660.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="660.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="660.0" width="40.025" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="660.0" width="40.025" height="10.0">Engineer</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="660.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="660.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="660.0" width="41.705" height="10.0">$695,925</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="660.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="660.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="660.0" width="41.705" height="10.0">$666,750</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="660.0" width="98.0" height="12.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="500.526" y="660.0" width="39.474" height="10.0" color="red" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="500.526" y="660.0" width="39.474" height="10.0">-$29,175</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="672.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="672.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="672.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="672.0" width="57.25" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="672.0" width="14.447" height="10.0">QA</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="36.225" y="672.0" width="40.025" height="10.0">Engineer</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="672.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="672.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="672.0" width="41.705" height="10.0">$367,415</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="672.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="672.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="672.0" width="41.705" height="10.0">$432,100</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="672.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="672.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="672.0" width="36.144" height="10.0">$64,685</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                  <block x="0.0" y="684.0" width="540.0" height="12.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                    <canvas x="0.0" y="684.0" width="540.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                      <p x="19.0" y="684.0" width="227.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="19.0" y="684.0" width="56.69" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="19.0" y="684.0" width="14.447" height="10.0">QA</text>
+                          <spacer width="2.778" height="0.0" preserve="true"/>
+                          <text x="36.225" y="684.0" width="39.465" height="10.0">Manager</text>
+                        </line>
+                      </p>
+                      <p x="246.0" y="684.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="302.295" y="684.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="302.295" y="684.0" width="41.705" height="10.0">$374,863</text>
+                        </line>
+                      </p>
+                      <p x="344.0" y="684.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <line x="400.295" y="684.0" width="41.705" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="400.295" y="684.0" width="41.705" height="10.0">$437,420</text>
+                        </line>
+                      </p>
+                      <p x="442.0" y="684.0" width="98.0" height="12.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                        <attribute xmlns:autoGenNs="http://reporting.pentaho.org/namespaces/engine/attributes/core" autoGenNs:name="Variance Field"/>
+                        <line x="503.856" y="684.0" width="36.144" height="10.0" color="black" font-face="Arial" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+                          <text x="503.856" y="684.0" width="36.144" height="10.0">$62,557</text>
+                        </line>
+                      </p>
+                    </canvas>
+                  </block>
+                </block>
+              </block>
+            </block>
+          </block>
+        </block>
+      </block>
+    </block>
+    <page-area x="0.0" y="696.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false" type="Logical-Page-Footer-Area">
+      <block x="0.0" y="696.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="10" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+        <canvas x="0.0" y="696.0" width="540.0" height="24.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+          <canvas x="0.0" y="696.0" width="540.0" height="0.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <replaced-content x="0.0" y="696.0" width="540.0" height="0.0" source="null" content-width="100.0" content-height="0.0" computed-content-width="540.0" requested-width="auto" requested-height="auto" raw-object-type="java.awt.geom.Line2D$Float">
+            </replaced-content>
+          </canvas>
+          <p x="0.0" y="700.0" width="135.0" height="18.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <line x="0.0" y="700.0" width="50.028" height="9.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <text x="0.0" y="700.0" width="50.028" height="9.0">14-Apr-2008</text>
+            </line>
+          </p>
+          <p x="405.0" y="700.0" width="135.0" height="18.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+            <line x="522.49" y="700.0" width="17.51" height="9.0" color="black" font-face="Serif" font-size="9" font-style-bold="false" font-style-italics="false" font-style-underline="false" font-style-strikethrough="false">
+              <text x="522.49" y="700.0" width="5.005" height="9.0">1</text>
+              <spacer width="2.5" height="0.0" preserve="true"/>
+              <text x="529.995" y="700.0" width="2.5" height="9.0">/</text>
+              <spacer width="2.5" height="0.0" preserve="true"/>
+              <text x="534.995" y="700.0" width="5.005" height="9.0">8</text>
+            </line>
+          </p>
+        </canvas>
+      </block>
+    </page-area>
+  </logical-page>
+</layout-output>
