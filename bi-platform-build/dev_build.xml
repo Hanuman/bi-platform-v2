@@ -4,173 +4,84 @@
 -------------------------------------------------------------------------------
 Development build script for Pentaho BI Platform.
       
-Goals:
-  * Prepare a clean Tomcat instance with all Pentaho BI Platform dependencies 
-    (i.e. JDBC JAR, datasources, supporting WARs, etc), also known as a 
-    Pentaho-ready Tomcat.
-  * Copy changed artifacts into Tomcat instance.
+TARGETS
+=======
+    
+  * dev-rebuild: Prepares a clean Tomcat instance with all Pentaho BI Platform 
+    dependencies (i.e. JDBC JAR, datasources, supporting WARs, etc), also known
+    as a Pentaho-ready Tomcat.
+    
+  * dev-update:    
+    Copy changed artifacts into Tomcat instance.
       
-Assumptions:
+ASSUMPTIONS
+===========
+    
   * bi-platform-* projects are checked out from Subversion in the same 
     directory (e.g. basedir).
   * You are developing using Apache Tomcat.
 -------------------------------------------------------------------------------
   </description>
-  
+
   <property file="dev_override.properties" />
   <property file="dev_build.properties" />
-  
-  <condition property="is-hsqldb">
-    <equals arg1="${database-type}" arg2="hsqldb" />
-  </condition>
 
-  <target name="clean" description="Cleans target Tomcat, data, and solution.">
-    <delete dir="${target-solution}" />
-    <delete dir="${target-data}" />
-    <delete dir="${target-tomcat-dir}" />
+  <path id="classpath">
+    <dirset>
+      <!-- classes dir is both destination for classes and source of dependencies -->
+      <include name="${classes.dir}" />
+    </dirset>
+    <fileset dir="${web-inf.lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <target name="dev-rebuild" description="Creates a Pentaho-ready Tomcat instance.">
+    <mkdir dir="${jre.dir}" />
+    
+    <ant antfile="assembly.xml" dir="../bi-platform-assembly-open">
+      <target name="clean-all" />
+      <target name="resolve" />
+      <target name="assemble" />
+    </ant>
+    
+    <!-- Remove pentaho-bi-platform-*.jar since we want to use classes instead. -->
+    <delete>
+      <fileset dir="${target.tomcat.dir}/webapps/pentaho/WEB-INF/lib">
+        <include name="pentaho-bi-platform-*.jar" />
+      </fileset>
+    </delete>
+    <antcall target="dev-update" />
   </target>
 
-  <target name="copy-solution" description="Copies Pentaho solution.">
+  <target name="dev-update" description="">
+    <sequential>
+      <ant antfile="build.xml" dir="../bi-platform-api" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-util" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-engine-core" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-engine-security" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-engine-services" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-repository" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-scheduler" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-legacy" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-web" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile" />
+    </sequential>
+	<antcall target="copy-solution" />
+  </target>
+  
+  <target name="help" description="Displays help information.">
+    <echo level="info">Run 'ant -f dev_build.xml -projecthelp' for more information.</echo>
+  </target>
+  
+  <target name="copy-solution" description="Copies Pentaho solution files.">
     <copy todir="${target-solution}">
       <fileset dir="${source-solution}" />
     </copy>
   </target>
-  
-  <target name="copy-webapp-stuff" description="Copies WARs and supporting artifacts.">
-    <copy todir="${target-tomcat-dir}">
-      <fileset dir="${source-tomcat-dir}" />
-    </copy>
-    <copy todir="${target-pentaho-war}">
-      <fileset dir="${platform-webapp}" />
-    </copy>
-    <copy todir="${target-sw-style-war}">
-      <fileset dir="${sw-style-webapp}" />
-    </copy>
-    <copy todir="${target-pentaho-style-war}">
-      <fileset dir="${pentaho-style-webapp}" />
-    </copy>
-    
-    <copy todir="${target-tomcat-lib-dir}" file="${jdbc-jar-path}" />
-    <mkdir dir="${platform-webapp}/META-INF" />
-    <copy todir="${platform-webapp}/META-INF" file="${context-xml-dir}/context.xml" />
-  </target>
 
-
-  <target name="dev-update" depends="publish-all-local, copy-webapp-stuff, copy-all-jars, copy-solution, copy-data" 
-    description="Updates an existing Pentaho-ready Tomcat instance.">
-    <echo message="Updated" />
-  </target>
-
-  <target name="dev-rebuild" depends="clean-all, dev-update" description="Creates a Pentaho-ready Tomcat instance.">
-    <echo message="Updated" />
-  </target>
-
-  <target name="clean-all" depends="clean" description="Calls clean-all on all bi-platform-* projects.">
-    <ant antfile="build.xml" dir="../bi-platform-api" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-util" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-repository" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-web" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-all" />
-    <ant antfile="build.xml" dir="../bi-platform-appserver" target="clean-all" />
-  </target>
-
-  <target name="copy-all-jars" description="Copies all all bi-platform-* JARs to WEB-INF/lib.">
-    <ant antfile="assembly.xml" dir="../bi-platform-assembly-open" target="resolve" />
-    <copy todir="${target-pentaho-war}/WEB-INF/lib">
-    	<fileset dir="../bi-platform-assembly-open/lib"/>
-  	</copy>
-  </target>
-
-  <target name="publish-all-local" description="Builds and publishes all bi-platform-* JARs to local repo.">
-    <sequential>
-      <ant antfile="build.xml" dir="../bi-platform-api">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-util">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-core">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-test-foundation">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-security">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-services">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-repository">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-ui-foundation">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-services">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-actions">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-scheduler">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-legacy">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-servlet">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-portlet">
-        <target name="resolve" />
-        <target name="publish-local" />
-      </ant>
-    </sequential>
-  </target>
-  
-  <target name="copy-data" if="is-hsqldb" description="Copies HSQLDB sample data. (Only applicable for HSQLDB.)">
-    <copy todir="${target-data}">
-      <fileset dir="${source-data}">
-        <include name="hibernate/**" />  
-        <include name="quartz/**" />
-        <include name="sampledata/**" />
-        <include name="*_hypersonic.*" />
-      </fileset>
-    </copy>
-    <mkdir dir="${target-data}/lib" />
-    <copy todir="${target-data}/lib" file="${jdbc-jar-path}" />
-  </target>
-  
-  <target name="help" description="Displays help information.">
-		<echo level="info">Run 'ant -f dev_build.xml -projecthelp' for more information.</echo>
-  </target>
-  
 </project>
