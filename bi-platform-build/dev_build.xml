@@ -1,41 +1,23 @@
-<!-- ============================================================
-     description: main build file 
+<!-- 
+  Development build script for Pentaho BI Platform.
+  
+  Assumptions:
+    * bi-platform-* projects are checked out from Subversion in the same directory (e.g. basedir).
+    * You are developing using Apache Tomcat.
 -->
-
-<project name="pentaho-dist" basedir="." default="jar-all">
+<project name="bi-platform-dev" basedir="." default="dev-update">
 
   <property file="dev_override.properties" />
   <property file="dev_build.properties" />
+  
+  <condition property="is-hsqldb">
+    <equals arg1="${database-type}" arg2="hsqldb" />
+  </condition>
 
-  <import file="common.xml" />
-
-  <!-- ============================================================
-	     The pro build relies on these property names. Change the names and you're likely to break 
-	     the pro build.
-	-->
-  <property name="tomcat-pci" location="../tomcat-pci" />
-  <property name="platform-webapp" location="../bi-platform-appserver/webapps/pentaho" />
-  <property name="pentaho-style-webapp" location="../bi-platform-appserver/webapps/pentaho-style" />
-  <property name="sw-style-webapp" location="../bi-platform-appserver/webapps/sw-style" />
-  <property name="jboss-portal-webapp" location="../bi-platform-appserver/jboss/webapps/pentaho-jboss-portal-layout" />
-  <property name="source-solution" location="../bi-platform-sample-solution" />
-  <property name="target-solution" location="${tomcat-pci}/pentaho-solutions" />
-  <property name="target-pentaho-war" location="${tomcat-pci}/tomcat/webapps/pentaho" />
-  <property name="target-sw-style-war" location="${tomcat-pci}/tomcat/webapps/sw-style" />
-  <property name="target-pentaho-style-war" location="${tomcat-pci}/tomcat/webapps/pentaho-style" />
-  <property name="bi-platform-assembly-open-dir" location="../bi-platform-assembly-open" />
-
-
-  <tstamp>
-    <format property="current.date" pattern="yyyyMMdd-hh:mma" locale="en" />
-  </tstamp>
-
-
-  <target name="clean" depends="" description="create distribution">
-    <delete>
-      <fileset dir="." includes="pentaho-bi-platform-*.jar" />
-    </delete>
-    <delete dir="all-libs" />
+  <target name="clean" description="create distribution">
+    <delete dir="${target-solution}" />
+    <delete dir="${target-data}" />
+    <delete dir="${target-tomcat}" />
   </target>
 
   <target name="copy-solution">
@@ -43,7 +25,12 @@
       <fileset dir="${source-solution}" />
     </copy>
   </target>
-
+  
+  <target name="copy-tomcat">
+    <copy todir="${target-tomcat-dir}">
+      <fileset dir="${source-tomcat-dir}" />
+    </copy>
+  </target>
 
   <target name="copy-webapp-stuff">
     <copy todir="${target-pentaho-war}">
@@ -96,11 +83,11 @@
     </copy>
   </target>
 
-  <target name="dev_update" depends="jar-all, copy-jars, copy-webapp-stuff, copy-solution">
+  <target name="dev-update" depends="jar-all, copy-tomcat, copy-data, copy-jars, copy-webapp-stuff, copy-solution, copy-datasource-stuff">
     <echo message="Updated" />
   </target>
 
-  <target name="dev_rebuild" depends="clean-all, resolve, dev_update">
+  <target name="dev-rebuild" depends="clean-all, resolve, dev-update">
     <echo message="Updated" />
   </target>
 
@@ -244,27 +231,6 @@
     </delete>
   </target>
 
-  <target name="rebuild" depends="clean-all, jar-all" />
-
-  <target name="publish-all-local">
-    <ant antfile="build.xml" dir="../bi-platform-api" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-util" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-test-foundation" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-repository" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-legacy" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-web" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="publish-local" />
-    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="publish-local" />
-  </target>
-
-
   <target name="resolve">
     <ant antfile="build.xml" dir="../bi-platform-api" target="resolve" />
     <ant antfile="build.xml" dir="../bi-platform-util" target="resolve" />
@@ -302,5 +268,23 @@
     <ant antfile="build.xml" dir="../bi-platform-appserver" target="create-dot-classpath" />
   </target>
 
+  <target name="copy-data" if="is-hsqldb" description="Copies HSQLDB sample data.">
+    <copy todir="${target-data}">
+      <fileset dir="${source-data}">
+        <include name="hibernate/**" />  
+        <include name="quartz/**" />
+        <include name="sampledata/**" />
+        <include name="*_hypersonic.*" />
+      </fileset>
+    </copy>
+    <mkdir dir="${target-data}/lib" />
+    <copy todir="${target-data}/lib" file="${jdbc-jar-path}" />
+  </target>
+  
+  <target name="copy-datasource-stuff">
+    <copy todir="${target-tomcat-lib-dir}" file="${jdbc-jar-path}" />
+    <mkdir dir="${platform-webapp}/META-INF" />
+    <copy todir="${platform-webapp}/META-INF" file="${context-xml-dir}/context.xml" />
+  </target>
 
 </project>
