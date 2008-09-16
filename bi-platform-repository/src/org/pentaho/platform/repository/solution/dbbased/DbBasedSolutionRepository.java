@@ -163,9 +163,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * TODO mlowery This method trusts that actionOperation is what the caller really wants to do???
    */
   public Document getSolutionDocument(final String documentPath, final int actionOperation) {
-    RepositoryFile file = (RepositoryFile) getRepositoryObjectFromCache(documentPath);
+    ISolutionFile file = (ISolutionFile) getRepositoryObjectFromCache(documentPath);
     if (file == null) { // Not in cache... go to the solution repository
-      file = (RepositoryFile) getFileByPath(documentPath);
+      file = (ISolutionFile) getFileByPath(documentPath);
       if (file != null) {
         putRepositoryObjectInCache(documentPath, file);
       } else {
@@ -193,7 +193,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         return null;
       }
     } else {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0019_NO_DATA_IN_FILE", file.fileName)); //$NON-NLS-1$
+      error(Messages.getErrorString("SolutionRepository.ERROR_0019_NO_DATA_IN_FILE", file.getFileName())); //$NON-NLS-1$
       return null;
     }
     if ((document == null) && (file != null) && (file.getData() != null)) {

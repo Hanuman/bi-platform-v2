@@ -66,6 +66,10 @@ public class AcegiPermissionMgr implements IPermissionMgr {
 
   public boolean hasPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permissionMask,
       final Object object) {
+    if (object == null || !(object instanceof IAclHolder)) {
+	  // i would argue that the "object" parameter should be IAclHolder!
+      return true;
+    }
     IAclHolder aclHolder = (IAclHolder) object;
     IPentahoSession session = null;
     boolean isPermitted = false;
@@ -100,7 +104,11 @@ public class AcegiPermissionMgr implements IPermissionMgr {
 
   public void setPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permission,
       final Object object) {
-    IAclHolder aclHolder = (IAclHolder) object;
+    if (object == null || !(object instanceof IAclHolder)) {
+      // i would argue that the "object" parameter should be IAclHolder!
+      return;
+    }
+	  IAclHolder aclHolder = (IAclHolder) object;
     PentahoAclEntry entry = new PentahoAclEntry();
     // TODO mlowery instanceof is undesirable as it doesn't allow new concrete classes.    
     if (permissionRecipient instanceof SimpleRole) {
