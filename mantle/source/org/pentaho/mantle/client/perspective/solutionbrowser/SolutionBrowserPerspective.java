@@ -452,7 +452,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       
       //See if it's already loaded
       for(int i=0; i<contentTabPanel.getWidgetCount(); i++){
-        if(((ReloadableIFrameTabPanel) contentTabPanel.getWidget(i)).url.endsWith(url)){
+        Widget w = contentTabPanel.getWidget(i);
+        if(w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)){
           //Already up, select and exit
           contentTabPanel.selectTab(i);
           return;
