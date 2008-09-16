@@ -449,6 +449,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         url = "http://localhost:8080/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename="
             + filename;
       }
+      
+      //See if it's already loaded
+      for(int i=0; i<contentTabPanel.getWidgetCount(); i++){
+        if(((ReloadableIFrameTabPanel) contentTabPanel.getWidget(i)).url.endsWith(url)){
+          //Already up, select and exit
+          contentTabPanel.selectTab(i);
+          return;
+        }
+        
+      }
+      
       showNewURLTab("Editing: "+selectedFileItem.getLocalizedName(), "Editing: "+selectedFileItem.getLocalizedName(), url);
     }
   }
