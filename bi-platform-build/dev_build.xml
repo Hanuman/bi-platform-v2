@@ -27,7 +27,7 @@ Assumptions:
   <target name="clean" description="Cleans target Tomcat, data, and solution.">
     <delete dir="${target-solution}" />
     <delete dir="${target-data}" />
-    <delete dir="${target-tomcat}" />
+    <delete dir="${target-tomcat-dir}" />
   </target>
 
   <target name="copy-solution" description="Copies Pentaho solution.">
