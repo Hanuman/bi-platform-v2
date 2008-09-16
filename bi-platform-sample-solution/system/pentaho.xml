@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pentaho-system>
 
+	<!--
+ 		The hosted-demo-mode setting when set to true, will disable saving in WAQR and JPivot (analysis view)
+	-->
+	<hosted-demo-mode>false</hosted-demo-mode> 
+        
 	<log-file>server.log</log-file>
 	<log-level>DEBUG</log-level>
 

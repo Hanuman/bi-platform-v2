@@ -1373,6 +1373,10 @@ public class AdhocWebService extends ServletBase {
   private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
+	if ("true".equals(PentahoSystem.getSystemSetting("hosted-demo-mode", "false"))) {
+	  throw new AdhocWebServiceException("Save is disabled.");
+	}
+	  
     String fileName = parameterProvider.getStringParameter("name", null); //$NON-NLS-1$
     if (AdhocWebService.isWaqrFilename(fileName)) {
       saveReportSpec(fileName, parameterProvider, outputStream, userSession, wrapWithSoap);
