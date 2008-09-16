@@ -10,6 +10,8 @@
 	<property file="override.properties" description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
 	<property file="assembly.properties" description="Properties customized for your particular project belong in this file." />
 	
+
+  	<property name="dist.dir" value="dist"/>
     <property name="stage.dir" value="manual-stage"/>
 	<property name="lib.dir" value="lib"/>
     <property name="bi.platform.assembly.dir" value="." />
@@ -34,9 +36,23 @@
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
     	
     	
-    <target name="clean">
-    	<delete dir="${stage.dir}"/>
-    </target>
+	<!-- ========================================================================
+	target: Clean-all / Clean-stage / Clean-dist / Clean-lib 
+	======================================================================= -->
+	<target name="clean-all" depends="clean-stage,clean-dist,clean-lib" />
+
+	<!-- Clean Targets -->
+	<target name="clean-stage">
+		<delete dir="${stage.dir}" />
+	</target>
+
+	<target name="clean-dist">
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="clean-lib">
+		<delete dir="${lib.dir}" />
+	</target>
     
 	<target name="package" depends="resolve, assemble, package-zip" />    		
     		
@@ -47,6 +63,7 @@
 	</target>
 		
     <target name="assemble">
+    	<mkdir dir="${dist.dir}"/>
         <mkdir dir="${stage.dir}"/>
         
         <!--  pentaho-classes -->
