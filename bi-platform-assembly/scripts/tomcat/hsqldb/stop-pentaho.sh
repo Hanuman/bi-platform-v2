@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### ====================================================================== ###
 ##                                                                          ##
 ##  Pentaho Stop Script                                                     ##
@@ -6,6 +6,6 @@
 ### ====================================================================== ###
 
 cd data 
-sh stop_hypersonic.sh &
+bash stop_hypersonic.sh &
 cd ../tomcat/bin
-sh shutdown.sh
+bash shutdown.sh

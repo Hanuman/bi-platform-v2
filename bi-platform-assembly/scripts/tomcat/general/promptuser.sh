@@ -13,7 +13,7 @@ choicelower=`echo $choice| tr A-Z a-z`
 if [ "$choice" = "cancel" ]; then
   exit 1
 else
-  echo -e "#!/bin/sh\nexit 0" > promptuser.sh
+  echo -e "#!/bin/bash\nexit 0" > promptuser.sh
   exit 0
 fi
 
