@@ -27,11 +27,14 @@ ASSUMPTIONS
   <property file="dev_build.properties" />
 
   <path id="classpath">
-    <dirset>
-      <!-- classes dir is both destination for classes and source of dependencies -->
-      <include name="${classes.dir}" />
-    </dirset>
+    <!-- classes dir is both a destination for .class files and a source for dependencies -->
+    <dirset dir="${classes.dir}" />
+    <!-- WEB-INF/lib contains non-bi-platform-* dependencies (populated by dev_rebuild) -->
     <fileset dir="${web-inf.lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <!-- need this for servlet.jar -->
+    <fileset dir="${tomcat.lib.dir}">
       <include name="*.jar" />
     </fileset>
   </path>
@@ -54,24 +57,51 @@ ASSUMPTIONS
     <antcall target="dev-update" />
   </target>
 
-  <target name="dev-update" description="">
+  <target name="dev-update" description="Copies code and solution files.">
     <sequential>
-      <ant antfile="build.xml" dir="../bi-platform-api" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-util" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-engine-core" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-engine-security" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-engine-services" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-repository" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-scheduler" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-legacy" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-web" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile" />
-      <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile" />
+      <ant antfile="build.xml" dir="../bi-platform-api" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-util" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-engine-core" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-engine-security" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-engine-services" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-repository" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-scheduler" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-legacy" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-web" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile">
+        <reference refid="classpath" />
+      </ant>
+      <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile">
+        <reference refid="classpath" />
+      </ant>
     </sequential>
-	<antcall target="copy-solution" />
   </target>
   
   <target name="help" description="Displays help information.">
