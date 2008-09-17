@@ -202,7 +202,7 @@
             <fileset dir="${bi.platform.engine.security.dir}/res/samples" />
         </copy>
         
-        <!-- pentaho webapps -->
+        <!-- pentaho style webapps -->
         
         <mkdir dir="${stage.dir}/pentaho-res/styles"/>
         <mkdir dir="${stage.dir}/pentaho-res/styles/pentaho-style.war"/>
@@ -214,17 +214,14 @@
         <copy todir="${stage.dir}/pentaho-res/styles/sw-style.war">
             <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
         </copy>
-
-        <!--  tomcat context.xml's -->        
-        <copy todir="${stage.dir}/pentaho-res/tomcat">
-            <fileset dir="${bi.platform.appserver.dir}/tomcat/res"/>
-        </copy>
         
         <!--  pentaho webapp -->
         
         <mkdir dir="${stage.dir}/pentaho-webapp"/>
         <copy todir="${stage.dir}/pentaho-webapp">
-            <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho" />
+            <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
+            	<exclude name="**/classes/loader.properties"/>
+        	</fileset>
         </copy>
         
         <!--  mantle -->
@@ -246,11 +243,13 @@
             <fileset dir="manual"/>
         </copy>
         
+    	<mkdir dir="${stage.dir}/custom-pentaho-webapp"/>
+    	<mkdir dir="${stage.dir}/custom-pentaho-webapp/META-INF"/>
+    	<mkdir dir="${stage.dir}/custom-pentaho-webapp/WEB-INF"/>
+
+		<mkdir dir="${stage.dir}/custom-ear"/>
+    	
         <!-- TODO: create version.properties -->
-        
-        <!-- TODO: pentaho solutions assembly ? -->
-        
-        <!-- TODO: pentaho data assembly ? -->
         
     </target>
 </project>
