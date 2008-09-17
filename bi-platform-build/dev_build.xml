@@ -25,10 +25,10 @@ ASSUMPTIONS
 
   <property file="dev_override.properties" />
   <property file="dev_build.properties" />
-
+	
   <path id="classpath">
     <!-- classes dir is both a destination for .class files and a source for dependencies -->
-    <dirset dir="${classes.dir}" />
+    <pathelement location="${classes.dir}" />
     <!-- WEB-INF/lib contains non-bi-platform-* dependencies (populated by dev_rebuild) -->
     <fileset dir="${web-inf.lib.dir}">
       <include name="*.jar" />
