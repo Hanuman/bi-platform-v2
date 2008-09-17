@@ -25,12 +25,12 @@
 		</property>
 		<property name="authoritiesByUsernameQuery">
 			<value>
-				<![CDATA[SELECT username, authority FROM granted_authorities WHERE username = ? ORDER BY authority]]>
+				<![CDATA[SELECT username, authority FROM GRANTED_AUTHORITIES WHERE username = ? ORDER BY authority]]>
 			</value>
 		</property>
 		<property name="usersByUsernameQuery">
 			<value>
-				<![CDATA[SELECT username, password, enabled FROM users WHERE username = ? ORDER BY username]]>
+				<![CDATA[SELECT username, password, enabled FROM USERS WHERE username = ? ORDER BY username]]>
 			</value>
 		</property>
 	</bean>

@@ -13,17 +13,17 @@
 		<constructor-arg index="0" ref="userDetailsService" />
 		<property name="allAuthoritiesQuery">
 			<value>
-				<![CDATA[SELECT distinct(authority) as authority FROM authorities ORDER BY authority]]>
+				<![CDATA[SELECT distinct(authority) as authority FROM AUTHORITIES ORDER BY authority]]>
 			</value>
 		</property>
 		<property name="allUsernamesInRoleQuery">
 			<value>
-				<![CDATA[SELECT distinct(username) as username FROM granted_authorities where authority = ? ORDER BY username]]>
+				<![CDATA[SELECT distinct(username) as username FROM GRANTED_AUTHORITIES where authority = ? ORDER BY username]]>
 			</value>
 		</property>
 		<property name="allUsernamesQuery">
 			<value>
-				<![CDATA[SELECT distinct(username) as username FROM users ORDER BY username]]>
+				<![CDATA[SELECT distinct(username) as username FROM USERS ORDER BY username]]>
 			</value>
 		</property>
 		<property name="dataSource" ref="dataSource" />
