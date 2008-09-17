@@ -1,48 +1,12 @@
 <jboss-app>
-   <app-name>pentaho</app-name>   
-		<module>
-			<service>quartz-ds.xml</service>
-		</module>
-		<module>
-			<service>PentahoHibernate-ds.xml</service>
-		</module>
-		<module>
-			<service>sampledata-ds.xml</service>
-		</module>
-		<module>
-			<service>sampledata_admin-ds.xml</service>
-		</module>
-		<module>
-			<service>datasource1-ds.xml</service>
-		</module>
-		<module>
-			<service>datasource2-ds.xml</service>
-		</module>
-		<module>
-			<service>datasource3-ds.xml</service>
-		</module>
-		<module>
-			<service>datasource4-ds.xml</service>
-		</module>
-		<module>
-			<service>datasource5-ds.xml</service>
-		</module>
-		<module>
-			<service>solution1-ds.xml</service>
-		</module>
-		<module>
-			<service>solution2-ds.xml</service>
-		</module>
-		<module>
-			<service>solution3-ds.xml</service>
-		</module>
-		<module>
-			<service>solution4-ds.xml</service>
-		</module>
-		<module>
-			<service>solution5-ds.xml</service>
-		</module>
+  <app-name>pentaho</app-name>   
+  <module>
+    <service>quartz-ds.xml</service>
+  </module>
+  <module>
+    <service>PentahoHibernate-ds.xml</service>
+  </module>
 
+  <!-- add datasources -->
 
-<!-- add datasources -->
 </jboss-app>

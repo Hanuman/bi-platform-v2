@@ -861,20 +861,6 @@
 	<!-- insert additional tag libs -->
 
 	<resource-ref>
-		<description>SampleData Connection</description>
-		<res-ref-name>jdbc/SampleData</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>SampleData Administration</description>
-		<res-ref-name>jdbc/SampleDataAdmin</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
 		<description>Quartz Connection</description>
 		<res-ref-name>jdbc/Quartz</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
@@ -882,78 +868,8 @@
 	</resource-ref>
 
 	<resource-ref>
-		<description>Datasource 1</description>
-		<res-ref-name>jdbc/datasource1</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>Datasource 2</description>
-		<res-ref-name>jdbc/datasource2</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>Datasource 3</description>
-		<res-ref-name>jdbc/datasource3</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>Datasource 4</description>
-		<res-ref-name>jdbc/datasource4</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>Datasource 5</description>
-		<res-ref-name>jdbc/datasource5</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
 		<description>Hibernate</description>
 		<res-ref-name>jdbc/Hibernate</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>solution1</description>
-		<res-ref-name>jdbc/solution1</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>solution2</description>
-		<res-ref-name>jdbc/solution2</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>solution3</description>
-		<res-ref-name>jdbc/solution3</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>solution4</description>
-		<res-ref-name>jdbc/solution4</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
-
-	<resource-ref>
-		<description>solution5</description>
-		<res-ref-name>jdbc/solution5</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>

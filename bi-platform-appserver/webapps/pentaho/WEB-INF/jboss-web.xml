@@ -15,51 +15,9 @@
   </class-loading>
 
   <resource-ref> 
-    <res-ref-name>jdbc/SampleData</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/SampleData</jndi-name>
-  </resource-ref> 
-
-  <resource-ref> 
-    <res-ref-name>jdbc/SampleDataAdmin</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/SampleDataAdmin</jndi-name>
-  </resource-ref> 
-  
-  <resource-ref> 
     <res-ref-name>jdbc/Quartz</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
     <jndi-name>java:/Quartz</jndi-name>
-  </resource-ref> 
-
-  <resource-ref> 
-    <res-ref-name>jdbc/datasource1</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/datasource1</jndi-name>
-  </resource-ref> 
-
-  <resource-ref> 
-    <res-ref-name>jdbc/datasource2</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/datasource2</jndi-name>
-  </resource-ref> 
-  
-  <resource-ref> 
-    <res-ref-name>jdbc/datasource3</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/datasource3</jndi-name>
-  </resource-ref> 
-  
-  <resource-ref> 
-    <res-ref-name>jdbc/datasource4</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/datasource4</jndi-name>
-  </resource-ref> 
-
-  <resource-ref> 
-    <res-ref-name>jdbc/datasource5</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/datasource5</jndi-name>
   </resource-ref> 
 
   <resource-ref> 
@@ -68,35 +26,6 @@
     <jndi-name>java:/Hibernate</jndi-name>
   </resource-ref>
   
-  <resource-ref>
-      <res-ref-name>jdbc/solution1</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/solution1</jndi-name>
-  </resource-ref>
-    
-  <resource-ref>
-      <res-ref-name>jdbc/solution2</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/solution2</jndi-name>
-  </resource-ref>
-
-  <resource-ref>
-      <res-ref-name>jdbc/solution3</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/solution3</jndi-name>
-  </resource-ref>
-    
-  <resource-ref>
-      <res-ref-name>jdbc/solution4</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/solution4</jndi-name>
-  </resource-ref>
-    
-  <resource-ref>
-      <res-ref-name>jdbc/solution5</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <jndi-name>java:/solution5</jndi-name>
-  </resource-ref>
-
   <!-- insert additional jboss resource-refs -->
+  
 </jboss-web>
