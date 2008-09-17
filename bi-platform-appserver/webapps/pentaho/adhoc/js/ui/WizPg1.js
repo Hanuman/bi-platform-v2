@@ -42,7 +42,13 @@ WizPg1 = function()
 
 	// groups ----------------
 	var addGroupsBtnTd = document.getElementById( "addGroupsBtnTd" );
-	this.addGroupsBtn = new ButtonCtrl( ">", ButtonCtrl.LARGE );
+	
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_arrow_right.png";
+	img.alt = ">";
+	img.title = Messages.getString("addColumnsToGrps");
+	
+	this.addGroupsBtn = new ButtonCtrl(img, ButtonCtrl.LARGE );
 	this.addGroupsBtn.getRoot().title = Messages.getString("addColumnsToGrps");
 	addGroupsBtnTd.appendChild( this.addGroupsBtn.getRoot());
 	
@@ -59,7 +65,12 @@ WizPg1 = function()
 	
 	// details ----------------
 	var addDetailsBtnTd = document.getElementById( "addDetailsBtnTd" );
-	this.addDetailsBtn = new ButtonCtrl( ">", ButtonCtrl.LARGE );
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_arrow_right.png";
+	img.alt = ">";
+	img.title = Messages.getString("addColumnsToDetails");
+	
+	this.addDetailsBtn = new ButtonCtrl( img, ButtonCtrl.LARGE );
 	this.addDetailsBtn.getRoot().title = Messages.getString("addColumnsToDetails");
 	addDetailsBtnTd.appendChild( this.addDetailsBtn.getRoot());
 	
@@ -77,7 +88,13 @@ WizPg1 = function()
 	
 	// filters ----------------
 	var addFiltersBtnTd = document.getElementById( "addFiltersBtnTd" );
-	this.addFiltersBtn = new ButtonCtrl( ">", ButtonCtrl.LARGE );
+	
+	var img = document.createElement( "img" );
+	img.src = UIUtil.getImageFolderPath() + "icon_arrow_right.png";
+	img.alt = ">";
+	img.title = Messages.getString("addColumnsToFilters");
+	
+	this.addFiltersBtn = new ButtonCtrl( img, ButtonCtrl.LARGE );
 	this.addFiltersBtn.getRoot().title = Messages.getString("addColumnsToFilters");
 	addFiltersBtnTd.appendChild( this.addFiltersBtn.getRoot());
 	
