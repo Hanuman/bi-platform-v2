@@ -26,6 +26,16 @@ ASSUMPTIONS
   <property file="dev_override.properties" />
   <property file="dev_build.properties" />
 	
+	<!-- Properties with Default Values -->
+	<property name="tomcat.lib.dir"    value="${tomcat.dir}/common/lib"/>
+	<property name="stage.dir"         value="../tomcat-pci-test"/>
+	<property name="target.tomcat.dir" value="${stage.dir}/biserver-ce/tomcat"/>
+	<property name="classes.dir"       value="${target.tomcat.dir}/webapps/pentaho/WEB-INF/classes"/>
+	<property name="web-inf.lib.dir"   value="${target.tomcat.dir}/webapps/pentaho/WEB-INF/lib"/>
+	<property name="source-solution"   value="../bi-platform-sample-solution"/>
+	<property name="target-solution"   value="${stage.dir}/biserver-ce/pentaho-solutions"/>
+	<property name="jre.dir"           value="../dummy-jre"/>
+	
   <path id="classpath">
     <!-- classes dir is both a destination for .class files and a source for dependencies -->
     <pathelement location="${classes.dir}" />
@@ -113,5 +123,95 @@ ASSUMPTIONS
       <fileset dir="${source-solution}" />
     </copy>
   </target>
+	
+	<target name="resolve" description="Performs the resolve task on all the platform projects">
+    <ant antfile="build.xml" dir="../bi-platform-api" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-util" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-repository" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-legacy" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-web" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="resolve"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="resolve"/>
+    <ant antfile="build.xml" dir="../mantle" target="resolve"/>
+	</target>
+
+	<target name="clean-all" description="Performs the clean-all task on all the platform projects">
+    <ant antfile="build.xml" dir="../bi-platform-api" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-util" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-repository" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-web" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-all"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-all"/>
+    <ant antfile="build.xml" dir="../mantle" target="clean-all"/>
+	</target>
+
+	<target name="clean-dist" description="Performs the clean-dist task on all the platform projects">
+    <ant antfile="build.xml" dir="../bi-platform-api" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-util" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-repository" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-legacy" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-dist"/>
+    <ant antfile="build.xml" dir="../mantle" target="clean-dist"/>
+	</target>
+
+	<target name="compile" description="Performs the compile task on all the platform projects">
+    <ant antfile="build.xml" dir="../bi-platform-api" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-util" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-repository" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-legacy" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-web" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile"/>
+    <ant antfile="build.xml" dir="../mantle" target="compile"/>
+	</target>
+
+	<target name="dist" description="Performs the dist task on all the platform projects">
+    <ant antfile="build.xml" dir="../bi-platform-api" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-util" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-repository" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-legacy" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="dist"/>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="dist"/>
+    <ant antfile="build.xml" dir="../mantle" target="dist"/>
+	</target>
 
 </project>
