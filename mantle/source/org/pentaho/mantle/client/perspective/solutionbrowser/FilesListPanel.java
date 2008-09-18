@@ -44,40 +44,12 @@ public class FilesListPanel extends FlowPanel {
   
   public FilesListPanel(IFileItemCallback fileItemCallback) {
     super();
-    DockPanel dock = new DockPanel();
-    
-    // Create the panel that will hold the name of the panel and the toolbar
-    HorizontalPanel menuAndTitlePanel = new HorizontalPanel();
-    menuAndTitlePanel.setWidth("100%"); //$NON-NLS-1$
-
     // Create the toolbar
     toolbar = new FilesToolbar(fileItemCallback);
     toolbar.setWidth("100%"); //$NON-NLS-1$
     
-    // Create the panel name label
-    Label filesLabel = new Label(Messages.getInstance().files());
-    filesLabel.setHeight("28px"); //$NON-NLS-1$
-    filesLabel.addStyleName(FILES_LABEL_STYLE_NAME);
-    
-    // Add the label and then the toolbar
-    menuAndTitlePanel.add(filesLabel);
-    menuAndTitlePanel.setCellVerticalAlignment(filesLabel, DockPanel.ALIGN_MIDDLE);
-    menuAndTitlePanel.add(toolbar);
-
-    // add the name and toolbar to this panel at the top
-    // and then the filelist in the center.
-    
-    SimplePanel toolbarPanel = new SimplePanel();
-    toolbarPanel.add(menuAndTitlePanel);
-    toolbarPanel.setStyleName("titledToolbar");   //$NON-NLS-1$
-
-    SimplePanel filesPanel = new SimplePanel();
-    filesPanel.setStyleName("panelWithTitledToolbar-panel");
-    filesPanel.setWidth("100%");
-    filesPanel.add(filesList);
-    
-    this.add(toolbarPanel);
-    this.add(filesPanel);
+    this.add(toolbar);
+    this.add(filesList);
     this.setWidth("100%"); //$NON-NLS-1$
     this.setStyleName("panelWithTitledToolbar");  //$NON-NLS-1$  
   }

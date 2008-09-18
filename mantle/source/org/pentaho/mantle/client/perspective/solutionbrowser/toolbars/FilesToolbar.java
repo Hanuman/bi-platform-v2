@@ -64,11 +64,8 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    * 
    */
   private void createMenus() {
-    try {
-      add(new ToolbarGroup("Files"));
-    } catch (Throwable e) {
-      e.printStackTrace();
-    }
+    addSpacer(10);
+    add(new ToolbarGroup("Files"));
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);
