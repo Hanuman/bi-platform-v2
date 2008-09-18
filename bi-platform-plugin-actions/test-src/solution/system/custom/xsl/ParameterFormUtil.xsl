@@ -20,7 +20,7 @@
 		
 		<html>
 			<head>
-				<link rel='stylesheet' type='text/css' href='/pentaho-portal-layout/pentaho.css' />
+				<link rel='stylesheet' type='text/css' href='/pentaho-style/pentaho.css' />
 				<title><xsl:value-of select="title" disable-output-escaping="yes"/></title>
 				<link rel='stylesheet' type='text/css' href='/pentaho-style/active/default.css' />
 

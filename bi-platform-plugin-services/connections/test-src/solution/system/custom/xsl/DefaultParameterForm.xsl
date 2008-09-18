@@ -24,7 +24,7 @@
 					<xsl:when test="count(/filters/schedules/schedule) &lt; 0">
 						<html>
 							<head>
-								<link rel='stylesheet' type='text/css' href='/pentaho-portal-layout/pentaho.css'/>
+								<link rel='stylesheet' type='text/css' href='/pentaho-style/pentaho.css'/>
 								<title>
 									<xsl:value-of select="title" disable-output-escaping="yes"/>
 								</title>
