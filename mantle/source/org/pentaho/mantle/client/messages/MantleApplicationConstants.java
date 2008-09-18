@@ -73,4 +73,9 @@ public interface MantleApplicationConstants extends Constants {
   String newAnalysisView();
   String newAdhocReport();
   String workspace();
+  String publicSchedules();
+  String allSchedulesAdminOnly();
+  String mySchedules();
+  String waiting();
+  String complete();
 }

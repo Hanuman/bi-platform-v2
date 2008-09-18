@@ -15,7 +15,6 @@
  */
 package org.pentaho.mantle.client.perspective.workspace;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,9 +45,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -61,11 +58,11 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   private static final int MYSCHEDULES = 2;
   private static final int ALLSCHEDULES = 3;
   private boolean backgroundAlertRaised = false;
-  DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel("All Schedules (Admin Only)", false);
-  DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel("My Subscriptions", false);
-  DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel("My Schedules", false);
-  DisclosurePanel waitingContentDisclosure = new DisclosurePanel("Waiting", false);
-  DisclosurePanel completedContentDisclosure = new DisclosurePanel("Complete", false);
+  DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().allSchedulesAdminOnly(), false);
+  DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getInstance().publicSchedules(), false);
+  DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().mySchedules(), false);
+  DisclosurePanel waitingContentDisclosure = new DisclosurePanel(Messages.getInstance().waiting(), false);
+  DisclosurePanel completedContentDisclosure = new DisclosurePanel(Messages.getInstance().complete(), false);
   private FlexTable allScheduledContentTable;
   private FlexTable subscriptionsContentTable;
   private FlexTable myScheduledContentTable;
