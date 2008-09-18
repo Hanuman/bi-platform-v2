@@ -12,6 +12,7 @@
 	
 
   	<property name="dist.dir" value="dist"/>
+	<property name="manual.dir" value="manual"/>
     <property name="stage.dir" value="manual-stage"/>
 	<property name="lib.dir" value="lib"/>
     <property name="bi.platform.assembly.dir" value="." />
@@ -240,7 +241,7 @@
         
         <!--  main build file for j2ee deployments -->
         <copy todir="${stage.dir}">
-            <fileset dir="manual"/>
+            <fileset dir="${manual.dir}"/>
         </copy>
         
     	<mkdir dir="${stage.dir}/custom-pentaho-webapp"/>
