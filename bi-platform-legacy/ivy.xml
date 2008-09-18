@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-  <info organisation="pentaho" module="pentaho-bi-platform-legacy" revision="${project.revision}" />
+  <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-legacy" revision="${project.revision}" />
   <configurations>
     <conf name="default" />
     <conf name="test" visibility="private" />
@@ -32,12 +32,13 @@
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-scheduler" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions" rev="${project.revision}" changing="true" />
+    
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-scheduler" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions" rev="${project.revision}" changing="true" />
   </dependencies>
 </ivy-module>

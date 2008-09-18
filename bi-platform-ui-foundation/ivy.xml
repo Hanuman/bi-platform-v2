@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-  <info organisation="pentaho" module="pentaho-bi-platform-ui-foundation" revision="${project.revision}" />
+  <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-ui-foundation" revision="${project.revision}" />
   <configurations>
     <conf name="default" />
     <conf name="test" visibility="private" />
@@ -18,12 +18,13 @@
     </dependency>
 
         <!--  internal dependencies -->
-    <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" />
+    
     <dependency org="pentaho" name="pentaho-metadata"                    rev="${dependency.pentaho-metadata.revision}" changing="true" />
   </dependencies>
 </ivy-module>

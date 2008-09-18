@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
 
-    <info organisation="pentaho" module="pentaho-bi-platform-appserver" revision="${project.revision}"/>
+    <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-appserver" revision="${project.revision}"/>
     
     <configurations>
     	<conf name="default"/>
@@ -38,17 +38,18 @@
 	
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
-        <dependency org="pentaho" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
-        <dependency org="pentaho" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true"/>        
-        <dependency org="pentaho" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true"/>        
-        <dependency org="pentaho" name="pentaho-bi-platform-ui-foundation"   rev="${project.revision}" changing="true"/>        
-        <dependency org="pentaho" name="pentaho-bi-platform-scheduler"       rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-web"             rev="${project.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
+        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation"   rev="${project.revision}" changing="true"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-scheduler"       rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
         
     </dependencies>
     

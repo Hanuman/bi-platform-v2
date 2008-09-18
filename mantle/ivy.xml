@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-    <info organisation="pentaho" module="${ivy.artifact.id}" revision="${project.revision}" />
+    <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
     
     <configurations>
     	<conf name="default"/>
@@ -26,10 +26,12 @@
 
 		    <!--  Pentaho dependencies -->
     	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul-core.revision}" changing="true" />
-        <dependency org="pentaho" name="pentaho-bi-platform-api"             rev="${project.revision}" conf="default->default" changing="true" />
-        <dependency org="pentaho" name="pentaho-bi-platform-repository"      rev="${project.revision}" conf="default->default" changing="true" />
-        <dependency org="pentaho" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
-        <dependency org="pentaho" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
+        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" conf="default->default" changing="true" />
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" conf="default->default" changing="true" />
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
+        
         <dependency org="pentaho" name="pentaho-gwt-widgets"                 rev="${dependency.pentaho-gwt-widgets.revision}" conf="default->default" changing="true" />
 
         <dependency org="pentaho" name="pentaho-reporting-engine-classic" rev="0.8.9.8-ext" conf="default->default"/>
