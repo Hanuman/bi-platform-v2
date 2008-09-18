@@ -93,7 +93,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
         wind.onmousemove = funct;
         
         wind.onunload = unloader;
-        $wnd.previousLocation = null;
+        wind.mantleEventsIn = true;
         $wnd.watchWindow = null;
       }
       
@@ -101,19 +101,18 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
       
       // Called on iFrame unload, calls containing Window to start monitoring it for Url change
       var unloader = function(event){
-        $wnd.startIFrameWatcher(iwind.location.href, iwind);
+        $wnd.startIFrameWatcher(iwind);
       }
       
       // Starts the watching loop.
-      $wnd.startIFrameWatcher = function(href, wind){
-        $wnd.previousLocation = href;
+      $wnd.startIFrameWatcher = function(wind){
         $wnd.watchWindow = wind;
         $wnd.setTimeout("rehookEventsTimer()", 300);
       }
     
       // loop that's started when an iFrame unloads, when the url changes it adds back in the hooks
       $wnd.rehookEventsTimer = function(){
-        if($wnd.watchWindow.location.href != $wnd.previousLocation){
+        if($wnd.watchWindow.mantleEventsIn == undefined){
           //location changed hook back up event interceptors
           $wnd.setTimeout("hookEvents()", 300);
         } else {
