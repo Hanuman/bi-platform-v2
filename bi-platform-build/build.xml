@@ -8,6 +8,8 @@
   <property file="override.properties" />
   <property file="build.properties" />
 
+  <property name="publishTo" value="publish-local"/>
+	
   <import file="common.xml" />
 
 
@@ -38,89 +40,89 @@
         Note the release process depends on this target working this way, please
         talk to the release manager if you need to change this target.
         ====================================================================-->
-  <target name="publish-all-pentaho"
+  <target name="publish-all"
           depends="set-build.id"
           description="cleans, resolves, and publishes all platform projects serially">
     <sequential>
       <ant antfile="build.xml" dir="../bi-platform-api">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-util">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-engine-core">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-test-foundation">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-engine-security">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-engine-services">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-repository">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-ui-foundation">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-plugin-services">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-plugin-actions">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-scheduler">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-legacy">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-web">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-web-servlet">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../bi-platform-web-portlet">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
       <ant antfile="build.xml" dir="../mantle">
         <target name="clean-all" />
         <target name="resolve" />
-        <target name="publish-pentaho" />
+        <target name="${publishTo}" />
       </ant>
     </sequential>
   </target>
