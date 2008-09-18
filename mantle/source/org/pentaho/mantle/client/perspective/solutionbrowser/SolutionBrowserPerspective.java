@@ -48,7 +48,6 @@ import org.pentaho.mantle.client.service.Utility;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -281,7 +280,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     int tabCount = contentTabPanel.getTabBar().getTabCount();
     String startKey = "class=\"gwt-Label\">";
 
-    NodeList<Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div");
+    NodeList<com.google.gwt.dom.client.Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div");
     
     for(int i=0; i<divs.getLength(); i++){
       String tabHtml = divs.getItem(i).getInnerHTML();
@@ -429,9 +428,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     fileTreeItem.setSelected(true);
 
-    List<Element> files = (List<Element>) fileTreeItem.getUserObject();
+    List<com.google.gwt.xml.client.Element> files = (List<com.google.gwt.xml.client.Element>) fileTreeItem.getUserObject();
     if (files != null) {
-      for (Element fileElement : files) {
+      for (com.google.gwt.xml.client.Element fileElement : files) {
         if (name.equals(fileElement.getAttribute("name")) || name.equals(fileElement.getAttribute("localized-name"))) {
           selectedFileItem.setURL(fileElement.getAttribute("url"));
         }
