@@ -20,15 +20,10 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
-import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.xml.client.Element;
 
