@@ -22,7 +22,7 @@
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
 
         <!-- reporting -->
-    <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
+    <dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
       changing="true" />
     <dependency org="saaj-ri" name="saaj-ri" rev="1.1_02" />
     <dependency org="org.codehaus.castor" name="castor" rev="1.0.5" transitive="false" />
