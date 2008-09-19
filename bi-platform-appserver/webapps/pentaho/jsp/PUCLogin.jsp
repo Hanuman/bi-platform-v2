@@ -336,7 +336,7 @@ A:hover {
 				Started</td>
 			</tr>
 			<tr>
-				<td class="sm_box_bottom" onClick="document.location='foo'">Deploy
+				<td class="sm_box_bottom" onClick="window.open('http://www.pentaho.com/products/enterprise', '_blank');">Deploy
 				the world's most popular open source BI suite with confidence,
 				security, and far lower total cost of ownership than proprietary
 				alternatives with the Pentaho Enterprise Edition.<br />
