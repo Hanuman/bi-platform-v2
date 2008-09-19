@@ -363,6 +363,12 @@
         <include name="**/**" />
       </fileset>
     </copy>
+  	<!-- copy db specific changes into system -->
+    <copy todir="${stage.dir.server}/pentaho-solutions/system" overwrite="true">
+      <fileset dir="${stage.dir.server}/pentaho-solutions/system/dialects/${rdbms}">
+        <include name="**/**" />
+      </fileset>
+    </copy>
   </target>
 
   <!-- =================================
