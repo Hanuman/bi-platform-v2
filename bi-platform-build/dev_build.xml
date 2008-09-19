@@ -29,8 +29,6 @@ INSTRUCTIONS
   * Add the property tomcat.dir and make the value the absolute path to your 
     unzipped Tomcat installation.
   * Run ant -f dev_build.xml dev-rebuild in the bi-platform-build directory.
-  * Linux: Make sure all .sh files are executable in the resulting 
-    tomcat-pci-test directory and subdirectories.
   * Eclipse: Create a new server using the Server view. Be sure to set Eclipse 
     to "takeover Tomcat installation." Add source paths and any additional
     arguments to server launch configuration. Optionally configure 
