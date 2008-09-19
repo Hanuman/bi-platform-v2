@@ -161,7 +161,7 @@
 }
 
 .fileLabelSelected {
-  background-color: #C3D9FF;
+  background-color: #B9B9B9;
   cursor: pointer;
   cursor: hand;
 }
@@ -578,7 +578,7 @@ a:active, a:hover {
 
 .gwt-Tree .gwt-TreeItem-selected {
   white-space: nowrap;
-  background-color: #C3D9FF;
+  background-color: #DDDDDD;
   cursor: pointer;
   cursor: hand;
 }
