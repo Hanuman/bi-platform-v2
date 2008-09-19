@@ -277,21 +277,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   private boolean existingTabMatchesName(String name){
-    int tabCount = contentTabPanel.getTabBar().getTabCount();
-    String startKey = "class=\"gwt-Label\">";
+    String key = "title=\""+name + "\"";
 
     NodeList<com.google.gwt.dom.client.Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div");
     
     for(int i=0; i<divs.getLength(); i++){
       String tabHtml = divs.getItem(i).getInnerHTML();
-      //TODO: rmove once a more elegent tab solution is in place
-      if(tabHtml.indexOf(startKey) == -1){
-        continue;
-      }
-      int startOffset = tabHtml.indexOf(startKey)+startKey.length();
-      String tabLabel = tabHtml.substring(startOffset, tabHtml.indexOf("</div>", startOffset));
-      
-      if(tabLabel.equals(name)){
+      //TODO: remove once a more elegant tab solution is in place
+      if(tabHtml.indexOf(key) > -1){
         return true;
       }
     }
@@ -311,22 +304,26 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     DOM.setElementAttribute(frame.getElement(), "id", "frameID: " + elementId);
 
     String finalTabName = tabName;
+    String finalTabTooltip = tabTooltip;
     //check for other tabs with this name
     if(existingTabMatchesName(tabName)){
       int counter = 2;
       while(true){
+        // Loop until a unique tab name is not found 
+        // i.e. get the last counter number and then add 1 to it for the new tab name 
         if(existingTabMatchesName(tabName+" ("+counter+")")){ //unique
           counter++;
           continue;
         } else {
           finalTabName = tabName+" ("+counter+")";
+          finalTabTooltip = tabTooltip + " ("+counter+")";
           break;
         }
       }
     }
     
     
-    contentTabPanel.add(panel, new TabWidget(finalTabName, tabTooltip, this, contentTabPanel, panel));
+    contentTabPanel.add(panel, new TabWidget(finalTabName, finalTabTooltip, this, contentTabPanel, panel));
     contentTabPanel.selectTab(elementId);
 
     final List<com.google.gwt.dom.client.Element> parentList = new ArrayList<com.google.gwt.dom.client.Element>();
@@ -372,10 +369,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void openFile(int mode) {
-    String name = selectedFileItem.getName();
+    String name = selectedFileItem.getName();    
     if (name.endsWith(".xaction")) {
       executeActionSequence(mode);
-    } else if (name.endsWith(".url")) {
+    } else if (name.endsWith(".url")) {    
       showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) {
       // open jfreereport!!
@@ -390,7 +387,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
   }
 
-  public void openFile(String path, String name) {
+  public void openFile(String path, String name, String localizedFileName) {
     List<String> pathSegments = new ArrayList<String>();
     if (path != null) {
       int index = path.indexOf("/", 0);
@@ -409,7 +406,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       repoPath += "/" + pathSegments.get(i);
     }
 
-    selectedFileItem = new FileItem(name, name, false, pathSegments.get(0), repoPath, "", null, null);
+    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null);
 
     pathSegments.add(name);
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);

@@ -25,15 +25,14 @@ public class OpenFileCommand implements Command {
     }
     dialog.addFileChooserListener(new FileChooserListener() {
 
-      public void fileSelected(String solution, String path, String name) {
+      public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
         lastPath = "/" + solution + path;
-        navigatorPerspective.openFile("/" + solution + path, name);
+        navigatorPerspective.openFile("/" + solution + path, name, localizedFileName);
       }
 
       public void fileSelectionChanged(String solution, String path, String name) {
       }
-
     });
     dialog.center();
   }

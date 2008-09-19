@@ -34,7 +34,7 @@ public class SaveCommand implements Command {
       }
       dialog.addFileChooserListener(new FileChooserListener() {
 
-        public void fileSelected(final String solution, final String path, final String name) {
+        public void fileSelected(final String solution, final String path, final String name, String localizedFileName) {
           SaveCommand.solution = solution;
           SaveCommand.path = path;
           SaveCommand.name = name;
