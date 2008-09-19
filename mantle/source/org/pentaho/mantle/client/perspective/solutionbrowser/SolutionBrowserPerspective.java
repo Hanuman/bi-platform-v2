@@ -257,6 +257,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
   }
 
+  public boolean isWorkspaceShowing() {
+    if (contentPanel.getWidgetCount() > 0) {
+      return contentPanel.getWidgetIndex(workspacePanel) == contentPanel.getVisibleWidget();
+    }
+    return false;
+  }
+
   public void showWorkspace() {
     workspacePanel.refreshPerspective(false);
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
@@ -276,21 +283,21 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     fireSolutionBrowserListenerEvent();
   }
 
-  private boolean existingTabMatchesName(String name){
-    String key = "title=\""+name + "\"";
+  private boolean existingTabMatchesName(String name) {
+    String key = "title=\"" + name + "\"";
 
     NodeList<com.google.gwt.dom.client.Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div");
-    
-    for(int i=0; i<divs.getLength(); i++){
+
+    for (int i = 0; i < divs.getLength(); i++) {
       String tabHtml = divs.getItem(i).getInnerHTML();
-      //TODO: remove once a more elegant tab solution is in place
-      if(tabHtml.indexOf(key) > -1){
+      // TODO: remove once a more elegant tab solution is in place
+      if (tabHtml.indexOf(key) > -1) {
         return true;
       }
     }
     return false;
   }
-  
+
   public void showNewURLTab(String tabName, String tabTooltip, String url) {
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(url);
     Frame frame = panel.getFrame();
@@ -305,24 +312,23 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     String finalTabName = tabName;
     String finalTabTooltip = tabTooltip;
-    //check for other tabs with this name
-    if(existingTabMatchesName(tabName)){
+    // check for other tabs with this name
+    if (existingTabMatchesName(tabName)) {
       int counter = 2;
-      while(true){
-        // Loop until a unique tab name is not found 
-        // i.e. get the last counter number and then add 1 to it for the new tab name 
-        if(existingTabMatchesName(tabName+" ("+counter+")")){ //unique
+      while (true) {
+        // Loop until a unique tab name is not found
+        // i.e. get the last counter number and then add 1 to it for the new tab name
+        if (existingTabMatchesName(tabName + " (" + counter + ")")) { // unique
           counter++;
           continue;
         } else {
-          finalTabName = tabName+" ("+counter+")";
-          finalTabTooltip = tabTooltip + " ("+counter+")";
+          finalTabName = tabName + " (" + counter + ")";
+          finalTabTooltip = tabTooltip + " (" + counter + ")";
           break;
         }
       }
     }
-    
-    
+
     contentTabPanel.add(panel, new TabWidget(finalTabName, finalTabTooltip, this, contentTabPanel, panel));
     contentTabPanel.selectTab(elementId);
 
@@ -369,10 +375,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void openFile(int mode) {
-    String name = selectedFileItem.getName();    
+    String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) {
       executeActionSequence(mode);
-    } else if (name.endsWith(".url")) {    
+    } else if (name.endsWith(".url")) {
       showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) {
       // open jfreereport!!
@@ -387,7 +393,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
   }
 
-  public void openFile(String path, String name, String localizedFileName) {
+  public enum OPEN_METHOD {
+    OPEN, EDIT, SHARE, SCHEDULE
+  }
+  
+  public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
     List<String> pathSegments = new ArrayList<String>();
     if (path != null) {
       int index = path.indexOf("/", 0);
@@ -434,7 +444,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
 
-    openFile(FileCommand.RUN);
+    if (openMethod == OPEN_METHOD.EDIT) {
+      editFile();
+    } else if (openMethod == OPEN_METHOD.OPEN){
+      openFile(FileCommand.RUN);
+    } else if (openMethod == OPEN_METHOD.SCHEDULE){
+      createSchedule();
+    }
   }
 
   public void editFile() {
@@ -445,19 +461,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         url = "http://localhost:8080/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename="
             + filename;
       }
-      
-      //See if it's already loaded
-      for(int i=0; i<contentTabPanel.getWidgetCount(); i++){
+
+      // See if it's already loaded
+      for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
-        if(w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)){
-          //Already up, select and exit
+        if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)) {
+          // Already up, select and exit
           contentTabPanel.selectTab(i);
           return;
         }
-        
+
       }
-      
-      showNewURLTab("Editing: "+selectedFileItem.getLocalizedName(), "Editing: "+selectedFileItem.getLocalizedName(), url);
+
+      showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
     }
   }
 

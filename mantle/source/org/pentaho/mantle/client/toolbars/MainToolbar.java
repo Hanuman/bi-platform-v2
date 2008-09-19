@@ -32,6 +32,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserList
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -103,7 +104,13 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image toggleWorkspaceImageDisabled = saveAsDisabledImage = new Image();
     MantleImages.images.workspace_32().applyTo(toggleWorkspaceImageDisabled);
     workspaceToggleButton = new ToolbarToggleButton(toggleWorkspaceImage, toggleWorkspaceImageDisabled, solutionBrowser.isNavigatorShowing());
-    workspaceToggleButton.setCommand(new ToggleWorkspaceCommand(solutionBrowser));
+    final Command workspaceCmd = new ToggleWorkspaceCommand(solutionBrowser);
+    workspaceToggleButton.setCommand(new Command() {
+     public void execute() {
+         workspaceCmd.execute();
+      }  
+    });
+    toggleWorkspaceButton();
     workspaceToggleButton.setToolTip(Messages.getInstance().workspace());
 
     MantleImages.images.browser_show_32().applyTo(browseShowImage);
@@ -132,6 +139,10 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     add(showBrowserToggleButton);
   }
 
+  public void toggleWorkspaceButton() {
+    workspaceToggleButton.setSelected(solutionBrowser.isWorkspaceShowing(), false);
+  }
+  
   public void toggleBrowserButton() {
     showBrowserToggleButton.setEnabled(false);
     if (solutionBrowser.isNavigatorShowing()) {
@@ -144,6 +155,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
     toggleBrowserButton();
+    toggleWorkspaceButton();
     printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
     boolean saveEnabled = false;
     if (selectedTabURL != null) {

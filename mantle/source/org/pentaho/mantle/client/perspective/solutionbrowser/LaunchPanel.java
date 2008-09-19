@@ -1,6 +1,7 @@
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
+import org.pentaho.mantle.client.commands.ManageContentCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.messages.Messages;
 
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class LaunchPanel extends VerticalPanel implements ClickListener {
   Image launchWaqrImage = new Image();
   Image launchAnalysisViewImage = new Image();
-  Image showExplorerImage = new Image();
+  Image manageContentImage = new Image();
   SolutionBrowserPerspective perspective;
 
   public LaunchPanel(SolutionBrowserPerspective perspective) {
@@ -45,16 +46,16 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
 
     
     if (GWT.isScript()) {
-      showExplorerImage.setUrl("/pentaho/mantle/btn_ql_browse.png");
+      manageContentImage.setUrl("/pentaho/mantle/btn_ql_browse.png");
     } else {
-      showExplorerImage.setUrl("btn_ql_browse.png");
+      manageContentImage.setUrl("btn_ql_browse.png");
     }
-    showExplorerImage.setTitle(Messages.getInstance().solutionBrowser());
-    showExplorerImage.addClickListener(this);
+    manageContentImage.setTitle(Messages.getInstance().manageContent());
+    manageContentImage.addClickListener(this);
 
     launchWaqrImage.setStyleName("launchImage");
     launchAnalysisViewImage.setStyleName("launchImage");
-    showExplorerImage.setStyleName("launchImage");
+    manageContentImage.setStyleName("launchImage");
 
     // set the style of contentTabPanel's "deck" (bottom)
     setStyleName("launchPanel");
@@ -62,11 +63,11 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     // set debug id's for selenium
     launchWaqrImage.getElement().setAttribute("id", "launch_new_report");
     launchAnalysisViewImage.getElement().setAttribute("id", "launch_new_analysis");
-    showExplorerImage.getElement().setAttribute("id", "show_browser");
+    manageContentImage.getElement().setAttribute("id", "manage_content");
     
     table.setWidget(0, 0, launchWaqrImage);
     table.setWidget(0, 1, launchAnalysisViewImage);
-    table.setWidget(0, 2, showExplorerImage);
+    table.setWidget(0, 2, manageContentImage);
     table.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
     table.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
     table.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_CENTER);
@@ -84,8 +85,9 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     } else if (sender == launchAnalysisViewImage) {
       AnalysisViewCommand command = new AnalysisViewCommand(perspective);
       command.execute();
-    } else if (sender == showExplorerImage) {
-      perspective.setNavigatorShowing(true);
+    } else if (sender == manageContentImage) {
+      ManageContentCommand command = new ManageContentCommand(perspective);
+      command.execute();
     }
   }
 

@@ -447,7 +447,7 @@ a:active, a:hover {
 }
 
 .viewContentDialogBox {
-  background-color: white;
+  background-color: #ececec;
   border: 3px solid #000000;
   padding: 2px 2px 2px 2px;
 }

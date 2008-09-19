@@ -4,20 +4,16 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 
 import com.google.gwt.user.client.Command;
 
-public class ToggleWorkspaceCommand implements Command {
+public class ManageContentEditCommand implements Command {
 
   SolutionBrowserPerspective solutionBrowserPerspective;
   
-  public ToggleWorkspaceCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
+  public ManageContentEditCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
     this.solutionBrowserPerspective = solutionBrowserPerspective;
   }
 
   public void execute() {
-    if (solutionBrowserPerspective.isWorkspaceShowing()) {
-      solutionBrowserPerspective.showLaunchOrContent();
-    } else {
-      solutionBrowserPerspective.showWorkspace();
-    }
+    EditFileCommand cmd = new EditFileCommand(solutionBrowserPerspective);
+    cmd.execute();
   }
-
 }

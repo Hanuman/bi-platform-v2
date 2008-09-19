@@ -8,18 +8,18 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 
 import com.google.gwt.user.client.Command;
 
-public class OpenFileCommand implements Command {
+public class EditFileCommand implements Command {
 
   private static String lastPath = "/";
-  
-  SolutionBrowserPerspective navigatorPerspective;
 
-  public OpenFileCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  SolutionBrowserPerspective solutionBrowserPerspective;
+
+  public EditFileCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
+    this.solutionBrowserPerspective = solutionBrowserPerspective;
   }
 
   public void execute() {
-    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, navigatorPerspective.getSolutionDocument(), false, true);
+    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, solutionBrowserPerspective.getSolutionDocument(), false, true);
     if (!MantleApplication.showAdvancedFeatures) {
       dialog.setShowSearch(false);
     }
@@ -28,7 +28,11 @@ public class OpenFileCommand implements Command {
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
         lastPath = "/" + solution + path;
-        navigatorPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN);
+        if (name.contains("analysisview.xaction")) {
+          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN);
+        } else {
+          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.EDIT);
+        }
       }
 
       public void fileSelectionChanged(String solution, String path, String name) {

@@ -24,6 +24,9 @@ import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
 import org.pentaho.mantle.client.commands.ExecuteGlobalActionsCommand;
+import org.pentaho.mantle.client.commands.ManageContentEditCommand;
+import org.pentaho.mantle.client.commands.ManageContentScheduleCommand;
+import org.pentaho.mantle.client.commands.ManageContentShareCommand;
 import org.pentaho.mantle.client.commands.OpenDocCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.OpenURLCommand;
@@ -336,6 +339,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
             dialogBox.center();
           }
         }
+        mainToolbar.solutionBrowserEvent(null, null);
       }
     };
     MantleServiceCache.getService().getUserSettings(callback);
@@ -367,7 +371,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         showAdvancedFeatures = "true".equals(settings.get("show-advanced-features"));
         buildMenuBar(settings);
         navigatorPerspective.setExplorerViewShowing(showExplorerViewOnStartup);
-
+        
         int numStartupURLs = Integer.parseInt(settings.get("num-startup-urls"));
         for (int i = 0; i < numStartupURLs; i++) {
           String url = settings.get("startup-url-" + (i + 1));
@@ -386,6 +390,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           startupURL = URL.decodeComponent(startupURL);
           navigatorPerspective.showNewURLTab(startupURL, startupURL, startupURL);
         }
+        
+        mainToolbar.solutionBrowserEvent(null, null);
       }
 
       public void onFailure(Throwable caught) {
@@ -458,10 +464,14 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           fileMenu.addItem("Preferences...", preferencesCommand);
           fileMenu.addSeparator();
         }
-        fileMenu.addItem(propertiesMenuItem);
-
+        MenuBar manageContentMenu = new MenuBar(true);
+        manageContentMenu.addItem(new MenuItem(Messages.getInstance().edit(), new ManageContentEditCommand(navigatorPerspective)));
+        manageContentMenu.addItem(new MenuItem(Messages.getInstance().share(), new ManageContentShareCommand()));
+        manageContentMenu.addItem(new MenuItem(Messages.getInstance().schedule(), new ManageContentScheduleCommand(navigatorPerspective)));
+        fileMenu.addItem(Messages.getInstance().manage(), manageContentMenu);
         fileMenu.addSeparator();
-
+        fileMenu.addItem(propertiesMenuItem);
+        fileMenu.addSeparator();
         fileMenu.addItem(Messages.getInstance().logout(), true, logoutCommand);
 
         // add additions to the file menu

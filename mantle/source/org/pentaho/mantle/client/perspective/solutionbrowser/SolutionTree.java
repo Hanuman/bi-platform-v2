@@ -186,6 +186,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     for (int i = 0; i < children.getLength(); i++) {
       Element childElement = (Element) children.item(i);
       boolean isVisible = "true".equals(childElement.getAttribute("visible"));
+      boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory"));
       if (isVisible || showHiddenFiles) {
         String fileName = childElement.getAttribute("name");
         String localizedName = childElement.getAttribute("localized-name");
@@ -199,7 +200,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           childTreeItem.setTitle(localizedName);
         }
         childTreeItem.setFileName(fileName);
-        if (parentTreeItem == null) {
+        if (parentTreeItem == null && isDirectory) {
           addItem(childTreeItem);
         } else {
           // find the spot in the parentTreeItem to insert the node (based on showLocalizedFileNames)
@@ -255,7 +256,6 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           files.add(childElement);
         }
 
-        boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory"));
         if (isDirectory) {
           buildSolutionTree(childTreeItem, childElement);
         } else {

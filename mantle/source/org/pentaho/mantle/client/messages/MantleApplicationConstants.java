@@ -78,4 +78,7 @@ public interface MantleApplicationConstants extends Constants {
   String mySchedules();
   String waiting();
   String complete();
+  String manage();
+  String manageContent();
+
 }
