@@ -1490,11 +1490,11 @@ public class AdhocWebService extends ServletBase {
       // TODO sbarkdull, if any of the saves fails, remove the saved files
       // that succeeded (simulate a transaction)
       String[] FILE_STATUS_MSG = { "", // item 0 does not exist//$NON-NLS-1$ 
-        "ISolutionRepository.ERROR_0001_FILE_EXISTS",//$NON-NLS-1$ 
-        "ISolutionRepository.ERROR_0002_FILE_ADD_FAILED",//$NON-NLS-1$ 
-        "ISolutionRepository.STATUS_0003_FILE_ADD_SUCCESSFUL",//$NON-NLS-1$ 
-        "ISolutionRepository.ERROR_0004_FILE_ADD_INVALID_PUBLISH_PASSWORD",//$NON-NLS-1$ 
-        "ISolutionRepository.ERROR_0005_FILE_ADD_INVALID_USER_CREDENTIALS"//$NON-NLS-1$ 
+        "AdhocWebService.ERROR_0001_FILE_EXISTS",//$NON-NLS-1$ 
+        "AdhocWebService.ERROR_0002_FILE_ADD_FAILED",//$NON-NLS-1$ 
+        "AdhocWebService.STATUS_0003_FILE_ADD_SUCCESSFUL",//$NON-NLS-1$ 
+        "AdhocWebService.ERROR_0004_FILE_ADD_INVALID_PUBLISH_PASSWORD",//$NON-NLS-1$ 
+        "AdhocWebService.ERROR_0005_FILE_ADD_INVALID_USER_CREDENTIALS"//$NON-NLS-1$ 
       };
       
       String msg = Messages.getString("AdhocWebService.ERROR_0009_SAVE_FAILED") + " " + Messages.getString( FILE_STATUS_MSG[errorStatus] ); //$NON-NLS-1$ //$NON-NLS-2$
