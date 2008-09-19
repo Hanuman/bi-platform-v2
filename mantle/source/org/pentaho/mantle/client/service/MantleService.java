@@ -81,9 +81,11 @@ public interface MantleService extends RemoteService {
   public List<String> getAllRoles();
   public boolean doesSolutionRepositorySupportPermissions();
   
-
   // mantle settings
   public HashMap<String,String> getMantleSettings();
+
+  // version information
+  public String getVersion();
   
   // pentaho reporting interaction api
   public ReportContainer getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage) throws SimpleMessageException;

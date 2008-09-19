@@ -78,6 +78,9 @@ public interface MantleServiceAsync {
   // mantle settings
   public void getMantleSettings(AsyncCallback callback);
 
+  // version information
+  public void getVersion(AsyncCallback callback);
+
   // pentaho reporting interaction api
   public void getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage, AsyncCallback callback);
   // For New Analysis View

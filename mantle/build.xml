@@ -33,33 +33,6 @@
 	<property name="temp-src.dir" value="${bin.dir}/src" />
 
 	<!--=======================================================================
-	    compile.compile
-	    
-	    Copy the source to a new directory, modify one of the files so that
-	    the version information is speciefied, and then compile.
-	    ====================================================================-->
-	<target name="compile.compile" depends="init" description="Performs the actual javac compile">
-		<delete dir="${temp-src.dir}" />
-		<mkdir dir="${temp-src.dir}" />
-
-		<copy todir="${temp-src.dir}">
-			<fileset dir="${src.dir}" includes="**/*.*" />
-		</copy>
-
-		<replace file="${temp-src.dir}/org/pentaho/mantle/client/MantleApplication.java">
-			<replacefilter token="$VERSION$" value="${project.revision}" />
-		</replace>
-		<replace file="${temp-src.dir}/org/pentaho/mantle/MantleApplication.gwt.xml" token="org.pentaho.mantle.server.DebugMantleServlet" value="org.pentaho.mantle.server.MantleServlet" />
-
-		<ant antfile="${gwt.common.build.file}" target="compile.compile">
-			<property name="src.dir" value="${temp-src.dir}" />
-		</ant>
-
-		<delete dir="${temp-src.dir}"/>
-	</target>
-
-
-	<!--=======================================================================
       gwt-compile
       
       Performs the required gwt compiles

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -93,6 +92,8 @@ import org.pentaho.platform.repository.subscription.Schedule;
 import org.pentaho.platform.repository.subscription.Subscription;
 import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.platform.scheduler.SchedulerHelper;
+import org.pentaho.platform.util.VersionHelper;
+import org.pentaho.platform.util.VersionInfo;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
@@ -943,5 +944,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public boolean repositorySupportsACLS() {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
     return repository.supportsAccessControls();
+  }
+
+  public String getVersion() {
+    VersionInfo versionInfo = VersionHelper.getVersionInfo(PentahoSystem.class);
+    return versionInfo.getVersionNumber();
   }
 }

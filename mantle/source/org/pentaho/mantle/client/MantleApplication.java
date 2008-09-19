@@ -75,27 +75,35 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   public static final String PRODUCT_NAME = "Pentaho User Console";
 
-  public static final String VERSION = "$VERSION$";
-
-  public static final String getVersion() {
-    return VERSION;
-  }
-
   VerticalPanel applicationPanel = new VerticalPanel();
+
   FlexTable menuAndLogoPanel = new FlexTable();
+
   MenuBar menuBar = new MenuBar();
+
   DeckPanel perspectivesPanel = new DeckPanel();
+
   SolutionBrowserPerspective navigatorPerspective = new SolutionBrowserPerspective(this);
+
   // menu items (to be enabled/disabled)
   MenuBar viewMenu = new MenuBar(true);
-  PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(navigatorPerspective));
-  PentahoMenuItem saveMenuItem = new PentahoMenuItem(Messages.getInstance().save(), new SaveCommand(navigatorPerspective, false));
-  PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(navigatorPerspective, true));
-  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, null, MantleApplication.this.navigatorPerspective));
-  
+
+  PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(
+      navigatorPerspective));
+
+  PentahoMenuItem saveMenuItem = new PentahoMenuItem(Messages.getInstance().save(), new SaveCommand(
+      navigatorPerspective, false));
+
+  PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(
+      navigatorPerspective, true));
+
+  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), new FileCommand(
+      FileCommand.PROPERTIES, null, MantleApplication.this.navigatorPerspective));
+
   MainToolbar mainToolbar = new MainToolbar(navigatorPerspective);
 
   public boolean isAdministrator = false;
+
   public static boolean showAdvancedFeatures;
 
   public void activatePerspective(IPerspective perspective) {
@@ -125,6 +133,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       navigatorPerspective.showLaunchOrContent();
     }
   };
+
   Command showWorkspaceCommand = new Command() {
     public void execute() {
       showNavigatorCommand.execute();
@@ -137,32 +146,46 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       Window.open("http://jira.pentaho.org", "_blank", "");
     }
   };
+
   Command pentahoCommand = new Command() {
     public void execute() {
       Window.open("http://www.pentaho.com", "_blank", "");
     }
   };
+
   Command aboutCommand = new Command() {
     public void execute() {
-      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().about(), getVersion(), false, false, true);
-      dialogBox.center();
+      AsyncCallback<String> callback = new AsyncCallback<String>() {
+        public void onFailure(Throwable caught) {
+        }
+
+        public void onSuccess(String version) {
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().about(), version, false, false, true);
+          dialogBox.center();
+        }
+      };
+      MantleServiceCache.getService().getVersion(callback);
     }
   };
+
   Command demosCommand = new Command() {
     public void execute() {
       Window.open("http://www.pentaho.com/products/demos/", "_blank", "");
     }
   };
+
   Command downloadsCommand = new Command() {
     public void execute() {
       Window.open("http://www.pentaho.com/download/", "_blank", "");
     }
   };
+
   Command nightlyBuildsCommand = new Command() {
     public void execute() {
       Window.open("ftp://download.pentaho.org", "_blank", "");
     }
   };
+
   Command forumsCommand = new Command() {
     public void execute() {
       Window.open("http://forums.pentaho.org/", "_blank", "");
@@ -263,21 +286,21 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator) /*-{
-           $wnd.mantle_openTab = function(name, title, url) {
-             solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
-           }
-           $wnd.mantle_initialized = true;
-           $wnd.sendMouseEvent = function(event) {
-             return solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
-           }
-           $wnd.closeTab = function(url) {
-             solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
-           }
-           $wnd.mantle_refreshRepository = function() {
-             var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
-             cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
-           }
-         }-*/;
+            $wnd.mantle_openTab = function(name, title, url) {
+              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
+            }
+            $wnd.mantle_initialized = true;
+            $wnd.sendMouseEvent = function(event) {
+              return solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
+            }
+            $wnd.closeTab = function(url) {
+              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
+            }
+            $wnd.mantle_refreshRepository = function() {
+              var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
+              cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
+            }
+          }-*/;
 
   public void loadAndApplyUserSettings() {
     AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
