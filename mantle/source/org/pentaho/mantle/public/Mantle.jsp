@@ -7,6 +7,9 @@
 		<meta name="gwt:property" content="locale=<%=request.getLocale()%>">
 		<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
 		<link rel='stylesheet' href='/pentaho/mantle/MantleStyle.css'/>
+		<!--[if lt IE 7.]>
+			<script defer type="text/javascript" src="pngfix.js"></script>
+		<![endif]-->
 	</head>
 
 	<body oncontextmenu="return false;">

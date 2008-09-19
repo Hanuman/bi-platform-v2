@@ -143,6 +143,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   }
   
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
+    toggleBrowserButton();
     printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
