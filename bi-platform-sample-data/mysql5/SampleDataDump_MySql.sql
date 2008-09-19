@@ -55,16 +55,7 @@ INSERT INTO DATASOURCE VALUES('Hibernate',5,'com.mysql.jdbc.Driver',5,'hibuser',
 INSERT INTO DATASOURCE VALUES('Quartz',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/quartz','select 1 from dual',1000);
 INSERT INTO DATASOURCE VALUES('SampleData',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual',1000);
 INSERT INTO DATASOURCE VALUES('SampleDataAdmin',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource1',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('datasource2',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('datasource3',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('datasource4',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('datasource5',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('solution1',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('solution2',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('solution3',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('solution4',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
-INSERT INTO DATASOURCE VALUES('solution5',5,'com.mysql.jdbc.Driver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:mysql://localhost:3306/sampledata','select 1 from dual;',1000);
+
 
 GRANT ALL ON *.* TO 'hibuser'@'localhost' identified by 'password'; 
 

@@ -4016,17 +4016,6 @@ INSERT INTO DATASOURCE VALUES('Hibernate',20,'org.hsqldb.jdbcDriver',5,'hibuser'
 INSERT INTO DATASOURCE VALUES('Quartz',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:quartz','select 1 from dual',1000);
 INSERT INTO DATASOURCE VALUES('SampleData',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
 INSERT INTO DATASOURCE VALUES('SampleDataAdmin',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('Shark',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:shark','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource1',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource2',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource3',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource4',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('datasource5',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('solution1',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('solution2',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('solution3',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('solution4',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
-INSERT INTO DATASOURCE VALUES('solution5',20,'org.hsqldb.jdbcDriver',5,'pentaho_user','cGFzc3dvcmQ=','jdbc:oracle:thin:@localhost:1521:sampledata','select 1 from dual',1000);
 
 
 commit;

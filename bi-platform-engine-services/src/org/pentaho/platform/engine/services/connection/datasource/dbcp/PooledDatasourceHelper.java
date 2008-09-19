@@ -39,17 +39,26 @@ public class PooledDatasourceHelper {
 	    PoolingDataSource poolingDataSource = null;
 	    ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
 	    // Read default connecion pooling parameter
-	    
-	    String maxActConn = PentahoSystem.getSystemSetting("dbcp-defaults/max-act-conn", null);
-	    String numIdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/num-idle-conn", null);
-	    String validQuery = PentahoSystem.getSystemSetting("dbcp-defaults/valid-query", null);
-	    String whenExhaustedAction = PentahoSystem.getSystemSetting("dbcp-defaults/when-exhausted-action", null);
-	    String wait = PentahoSystem.getSystemSetting("dbcp-defaults/wait", null);
+      String maxdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/max-idle-conn", null);  //$NON-NLS-1$ 
+      String minIdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/min-idle-conn", null);  //$NON-NLS-1$    
+	    String maxActConn = PentahoSystem.getSystemSetting("dbcp-defaults/max-act-conn", null);  //$NON-NLS-1$
+	    String numIdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/num-idle-conn", null);  //$NON-NLS-1$
+	    String validQuery = PentahoSystem.getSystemSetting("dbcp-defaults/valid-query", null);  //$NON-NLS-1$
+	    String whenExhaustedAction = PentahoSystem.getSystemSetting("dbcp-defaults/when-exhausted-action", null);  //$NON-NLS-1$
+	    String wait = PentahoSystem.getSystemSetting("dbcp-defaults/wait", null);  //$NON-NLS-1$
+	    String testWhileIdleValue = PentahoSystem.getSystemSetting("dbcp-defaults/test-while-idle", null);  //$NON-NLS-1$
+	    String testOnBorrowValue = PentahoSystem.getSystemSetting("dbcp-defaults/test-on-borrow", null);  //$NON-NLS-1$
+	    String testOnReturnValue = PentahoSystem.getSystemSetting("dbcp-defaults/test-on-return", null);  //$NON-NLS-1$
+	    boolean testWhileIdle = !StringUtil.isEmpty(testWhileIdleValue) ? Boolean.parseBoolean(testWhileIdleValue) : false;
+	    boolean testOnBorrow = !StringUtil.isEmpty(testOnBorrowValue) ? Boolean.parseBoolean(testOnBorrowValue) : false;
+	    boolean testOnReturn = !StringUtil.isEmpty(testOnReturnValue) ? Boolean.parseBoolean(testOnReturnValue) : false;
 	    int maxActiveConnection = -1;
 	    int numIdleConnection = -1;
 	    long waitTime = -1;
 	    byte whenExhaustedActionType = -1;
-	    
+	    int minIdleConnection =  !StringUtil.isEmpty(minIdleConn) ? Integer.parseInt(minIdleConn) : -1;
+	    int maxIdleConnection =  !StringUtil.isEmpty(maxdleConn) ? Integer.parseInt(maxdleConn) : -1;
+
 	    if(datasource.getMaxActConn() >0) {
 	      maxActiveConnection = datasource.getMaxActConn();
 	    } else  {
@@ -84,7 +93,16 @@ public class PooledDatasourceHelper {
 	    // As the name says, this is a generic pool; it returns  basic Object-class objects.
 	    final GenericObjectPool pool = new GenericObjectPool(null);
       pool.setWhenExhaustedAction(whenExhaustedActionType);  
-
+      
+      // Tuning the connection pool
+      pool.setMaxActive(maxActiveConnection);
+      pool.setMaxIdle(maxIdleConnection);
+      pool.setMaxWait(waitTime);
+      pool.setMinIdle(minIdleConnection);
+      pool.setTestWhileIdle(testWhileIdle);
+      pool.setTestOnReturn(testOnReturn);
+      pool.setTestOnBorrow(testOnBorrow);
+      pool.setTestWhileIdle(testWhileIdle);
 	    /*
 	    ConnectionFactory creates connections on behalf of the pool.
 	    Here, we use the DriverManagerConnectionFactory because that essentially
@@ -108,10 +126,10 @@ public class PooledDatasourceHelper {
 	    /*
 	    initialize the pool to X connections
 	    */
-	    Logger.debug(PooledDatasourceHelper.class, "Pool defaults to " + maxActiveConnection + " active/" + numIdleConnection + "with " + waitTime + "wait time"//$NON-NLS-1$ //$NON-NLS-2$
+	    Logger.debug(PooledDatasourceHelper.class, "Pool defaults to " + maxActiveConnection + " max active/" + maxIdleConnection + "max idle"  + "with " + waitTime + "wait time"//$NON-NLS-1$ //$NON-NLS-2$
 	        + " idle connections."); //$NON-NLS-1$
 	    
-	     for (int i = 0; i < maxActiveConnection; ++i) {
+	     for (int i = 0; i < maxIdleConnection; ++i) {
 	      pool.addObject();
 	     }
 	     Logger.debug(PooledDatasourceHelper.class, "Pool now has " + pool.getNumActive() + " active/" + pool.getNumIdle() + " idle connections."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -123,7 +141,7 @@ public class PooledDatasourceHelper {
 	    poolingDataSource.setPool(pool);
 
 	    // store the pool, so we can get to it later
-      	cacheManager.putInRegionCache(IDatasourceService.JDBC_POOL, datasource.getName(), pool);
+      cacheManager.putInRegionCache(IDatasourceService.JDBC_POOL, datasource.getName(), pool);
 	    return (poolingDataSource);
 	  } catch(Exception e) {
 	      throw new DatasourceServiceException(e);

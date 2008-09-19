@@ -174,10 +174,14 @@
     <entry name="org.jfree.report.modules.output.table.html.EmptyCellsUseCSS" value="true"/>
   </report-config>
   <dbcp-defaults>
-	  <max-act-conn>10</max-act-conn>
+	  <max-act-conn>20</max-act-conn>
+	  <max-idle-conn>2</max-idle-conn>
+	  <min-idle-conn>1</min-idle-conn>
 	  <num-idle-conn>5</num-idle-conn>
-	  <valid-query>select * from orders</valid-query>
+	  <valid-query>select 1 from dual</valid-query>
 	  <when-exhausted-action>1</when-exhausted-action>
 	  <wait>100</wait>
-  </dbcp-defaults>
+	  <test-while-idle>false</test-while-idle>
+	  <test-on-borrow>true</test-on-borrow>
+	  <test-on-return>false</test-on-return></dbcp-defaults>
 </pentaho-system>
