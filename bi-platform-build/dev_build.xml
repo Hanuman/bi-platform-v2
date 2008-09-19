@@ -2,24 +2,40 @@
 
   <description>
 -------------------------------------------------------------------------------
-Development build script for Pentaho BI Platform.
+Development build script for Pentaho BI Server CE.
       
-TARGETS
-=======
+MAIN TARGETS
+============
     
   * dev-rebuild: Prepares a clean Tomcat instance with all Pentaho BI Platform 
     dependencies (i.e. JDBC JAR, datasources, supporting WARs, etc), also known
-    as a Pentaho-ready Tomcat.
+    as a Pentaho-ready Tomcat. This must be called at least once before any 
+    call to dev-update.
     
   * dev-update:    
     Copy changed artifacts into Tomcat instance.
-      
-ASSUMPTIONS
-===========
-    
-  * bi-platform-* projects are checked out from Subversion in the same 
-    directory (e.g. basedir).
-  * You are developing using Apache Tomcat.
+   
+PREREQUISITES
+=============
+        
+  * Checkout bi-platform-* and mantle projects from 
+    svn://source.pentaho.org/svnroot/bi-platform-v2/trunk.
+  * Download and unzip Apache Tomcat 5.5 or greater.
+
+INSTRUCTIONS
+============
+
+  * Create dev_override.properties in the bi-platform-build directory.
+  * Add the property tomcat.dir and make the value the absolute path to your 
+    unzipped Tomcat installation.
+  * Run ant -f dev_build.xml dev-rebuild in the bi-platform-build directory.
+  * Linux: Make sure all .sh files are executable in the resulting 
+    tomcat-pci-test directory and subdirectories.
+  * Eclipse: Create a new server using the Server view. Be sure to set Eclipse 
+    to "takeover Tomcat installation." Add source paths and any additional
+    arguments to server launch configuration. Optionally configure 
+    start-hypersonic and stop-hypersonic scripts under External Tools. Start
+    HSQLDB and then start the server.
 -------------------------------------------------------------------------------
   </description>
 
