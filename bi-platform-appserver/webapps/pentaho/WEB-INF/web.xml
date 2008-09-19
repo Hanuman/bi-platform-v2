@@ -490,7 +490,7 @@
 
 	<servlet>
 		<servlet-name>Login</servlet-name>
-		<jsp-file>/mantleLogin/MantleLogin.jsp</jsp-file>
+		<jsp-file>/jsp/PUCLogin.jsp</jsp-file>
 		<init-param>
 			<param-name>send401List</param-name>
 			<param-value>AdhocWebService,AnalysisViewService,MondrianCatalogPublisher</param-value>
