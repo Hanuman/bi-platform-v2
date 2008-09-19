@@ -40,8 +40,9 @@ th, td {
 
 #folder-options {
     background-image: url(/pentaho/jpivot/table/toolbar_bg.png);
-    height: 31px;
-    vertical-align: middle;
+    height: 32px;
+    vertical-align: top;
+    border-bottom: 1px solid #848484;
 }
 
 /* headings */
@@ -222,3 +223,11 @@ div.table-message {
   font-size :12pt;
 }
 
+.body_dialog01 {
+	padding: 0px;
+	margin: 0px;
+}
+
+.content_body {
+	padding: 0px;
+}
