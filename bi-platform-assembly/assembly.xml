@@ -64,8 +64,6 @@
   <property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
   <property name="bi.platform.repository.dir" value="../bi-platform-repository" />
   <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
-  <property name="sample.solution.dir" value="../bi-platform-sample-solution" />
-  <property name="sample.data.dir" value="../bi-platform-sample-data" />
   <property name="res.dir" value="${bi.platform.assembly.dir}/res" />
   <property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
 
@@ -359,7 +357,7 @@
   <target name="init-tomcat-solutions">
     <mkdir dir="${stage.dir.server}/pentaho-solutions/tmp" />
     <copy todir="${stage.dir.server}/pentaho-solutions">
-      <fileset dir="${sample.solution.dir}">
+      <fileset dir="${bi.platform.sample.solution.dir}">
         <include name="**/**" />
       </fileset>
     </copy>
@@ -380,7 +378,7 @@
     <mkdir dir="${stage.data.dir}" />
 
     <copy todir="${stage.data.dir}">
-      <fileset dir="${sample.data.dir}">
+      <fileset dir="${bi.platform.sample.data.dir}">
         <exclude name=".project" />
         <exclude name="**/mysql5/**" />
         <exclude name="**/oracle10g/**" />
@@ -390,17 +388,17 @@
 
     <mkdir dir="${stage.data.dir}/mysql5" />
     <copy todir="${stage.data.dir}/mysql5">
-      <fileset dir="${sample.data.dir}/mysql5" />
+      <fileset dir="${bi.platform.sample.data.dir}/mysql5" />
     </copy>
 
     <mkdir dir="${stage.data.dir}/oracle10g" />
     <copy todir="${stage.data.dir}/oracle10g">
-      <fileset dir="${sample.data.dir}/oracle10g" />
+      <fileset dir="${bi.platform.sample.data.dir}/oracle10g" />
     </copy>
 
     <mkdir dir="${stage.data.dir}/postgresql" />
     <copy todir="${stage.data.dir}/postgresql">
-      <fileset dir="${sample.data.dir}/postgresql" />
+      <fileset dir="${bi.platform.sample.data.dir}/postgresql" />
     </copy>
 
     <copy todir="${stage.data.dir}/lib">
