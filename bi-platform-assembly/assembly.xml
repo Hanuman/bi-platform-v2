@@ -80,7 +80,7 @@
   <target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
   <target name="assemble"
-          depends="resolve,assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources">
+          depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources">
     <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
   </target>
 
