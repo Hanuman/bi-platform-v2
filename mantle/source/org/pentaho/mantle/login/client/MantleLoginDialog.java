@@ -145,18 +145,11 @@ public class MantleLoginDialog {
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px");
 
-      HorizontalPanel hbox = new HorizontalPanel();
-
       newWindowChk = new CheckBox();
+      newWindowChk.setText(MSGS.launchInNewWindow());
       newWindowChk.setChecked(true);
-      hbox.add(newWindowChk);
 
-      Label lbl = new Label(MSGS.launchInNewWindow());
-      hbox.add(lbl);
-      hbox.setCellWidth(lbl, "100%");
-      hbox.setCellHorizontalAlignment(lbl, HorizontalPanel.ALIGN_LEFT);
-
-      loginPanel.add(hbox);
+      loginPanel.add(newWindowChk);
     }
 
     return loginPanel;
