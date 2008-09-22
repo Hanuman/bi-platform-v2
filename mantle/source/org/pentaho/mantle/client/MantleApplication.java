@@ -590,4 +590,5 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     this.isAdministrator = isAdministrator;
   }
 
+  
 }
