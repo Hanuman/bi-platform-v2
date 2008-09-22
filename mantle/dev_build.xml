@@ -66,7 +66,7 @@
 	</target>
 
 	<target name="compile-mantle-dev" depends="compile, compile-mantle-login-dev">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" maxmemory="512M">
+		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
 			<classpath>
 				<pathelement location="_source" />
 				<path refid="classpath" />
@@ -84,7 +84,7 @@
 	</target>
 
 	<target name="compile-mantle-login" depends="clean, compile">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" maxmemory="512M">
+		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
 			<classpath>
 				<path refid="classpath" />
         <pathelement location="_source" />
@@ -101,7 +101,7 @@
 	</target>
   
   <target name="compile-mantle-login-dev" depends="clean, compile">
-    <java classname="com.google.gwt.dev.GWTCompiler" fork="true" maxmemory="512M">
+    <java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
       <classpath>
         <pathelement location="_source" />
         <path refid="classpath" />
@@ -118,7 +118,7 @@
   </target>
   
 	<target name="compile-mantle" depends="clean, compile, compile-mantle-login">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" maxmemory="512M">
+		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
 			<classpath>
         <path refid="classpath" />
         <pathelement location="_source" />
