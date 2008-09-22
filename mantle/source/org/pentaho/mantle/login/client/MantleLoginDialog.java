@@ -30,24 +30,24 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MantleLoginDialog {
 
-  private AsyncCallback<Boolean> outterCallback;  //from outside context
+  private AsyncCallback<Boolean> outterCallback; // from outside context
   private final TextBox userTextBox = new TextBox();
   private final PasswordTextBox passwordTextBox = new PasswordTextBox();
   private PromptDialogBox dialog;
   private CheckBox newWindowChk;
-  
+
   private static MantleLoginServiceAsync SERVICE;
   private static MantleLoginMessages MSGS = Messages.getInstance();
-  
+
   private boolean showNewWindowOption;
-  
-  static{
+
+  static {
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService";
     endpoint.setServiceEntryPoint(moduleRelativeURL);
   }
-  
+
   private final IDialogCallback myCallback = new IDialogCallback() {
 
     public void cancelPressed() {
@@ -64,23 +64,29 @@ public class MantleLoginDialog {
         }
 
         public void onResponseReceived(Request request, Response response) {
-           
+
           final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onSuccess(Boolean result) {
-              
-              if(result){
+
+              if (result) {
                 outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
-              } else  {
+              } else {
                 outterCallback.onFailure(new Throwable(MSGS.authFailed()));
               }
             }
 
-            public void onFailure(Throwable caught) {
-              
+            public void onFailure(final Throwable caught) {
               MessageDialogBox errBox = new MessageDialogBox(MSGS.loginError(), MSGS.authFailed(), false, false, true);
+              errBox.setCallback(new IDialogCallback() {
+                public void cancelPressed() {
+                }
+
+                public void okPressed() {
+                  outterCallback.onFailure(caught);
+                }
+              });
               errBox.show();
-              outterCallback.onFailure(caught);
             }
           };
           SERVICE.isAuthenticated(callback);
@@ -95,22 +101,21 @@ public class MantleLoginDialog {
 
   };
 
-  
   public MantleLoginDialog() {
     dialog = new PromptDialogBox(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
     dialog.setCallback(myCallback);
   }
-  
+
   public MantleLoginDialog(AsyncCallback callback, boolean showNewWindowOption) {
     this();
     setCallback(callback);
     this.setShowNewWindowOption(showNewWindowOption);
   }
-  
-  public void setShowNewWindowOption(boolean show){
+
+  public void setShowNewWindowOption(boolean show) {
     showNewWindowOption = show;
   }
-  
+
   public static void performLogin(AsyncCallback callback) {
     MantleLoginDialog dialog = new MantleLoginDialog(callback, false);
     dialog.show();
@@ -119,47 +124,48 @@ public class MantleLoginDialog {
   private Widget buildLoginPanel() {
     userTextBox.setWidth("100%");
     passwordTextBox.setWidth("100%");
-    
+
     VerticalPanel loginPanel = new VerticalPanel();
-    
+
     loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-    loginPanel.add(new Label(MSGS.username()+":"));
+    loginPanel.add(new Label(MSGS.username() + ":"));
     loginPanel.add(userTextBox);
     SimplePanel spacer = new SimplePanel();
     spacer.setHeight("8px");
     loginPanel.add(spacer);
     loginPanel.setCellHeight(spacer, "8px");
-    loginPanel.add(new Label(MSGS.password()+":"));
+    loginPanel.add(new Label(MSGS.password() + ":"));
     loginPanel.add(passwordTextBox);
-    
-    //New Window checkbox
-    if(this.showNewWindowOption){
+
+    // New Window checkbox
+    if (this.showNewWindowOption) {
       spacer = new SimplePanel();
       spacer.setHeight("8px");
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px");
-  
+
       HorizontalPanel hbox = new HorizontalPanel();
-      
+
       newWindowChk = new CheckBox();
+      newWindowChk.setChecked(true);
       hbox.add(newWindowChk);
-      
+
       Label lbl = new Label(MSGS.launchInNewWindow());
       hbox.add(lbl);
       hbox.setCellWidth(lbl, "100%");
       hbox.setCellHorizontalAlignment(lbl, HorizontalPanel.ALIGN_LEFT);
-      
+
       loginPanel.add(hbox);
     }
-    
+
     return loginPanel;
   }
 
-  public void setCallback(AsyncCallback<Boolean> callback){
+  public void setCallback(AsyncCallback<Boolean> callback) {
     outterCallback = callback;
   }
-  
+
   private String getUser() {
     return userTextBox.getText();
   }
@@ -167,25 +173,24 @@ public class MantleLoginDialog {
   private String getPassword() {
     return passwordTextBox.getText();
   }
-  
-  public void show(){
 
-    dialog.setContent(buildLoginPanel());
-    userTextBox.setTabIndex(1);
-    userTextBox.setText("");
-    passwordTextBox.setTabIndex(2);
-    passwordTextBox.setText("");
-    dialog.setFocusWidget(userTextBox);
-    
+  public void center() {
+    // called to 'reshow' the dialog after failure
     dialog.center();
   }
   
-  public void hide(){
+  public void show() {
+    dialog.setContent(buildLoginPanel());
+    userTextBox.setTabIndex(1);
+    passwordTextBox.setTabIndex(2);
+    passwordTextBox.setText("");
+    dialog.setFocusWidget(userTextBox);
+
+    dialog.center();
+  }
+
+  public void hide() {
     dialog.hide();
   }
-  
 
-  
 }
-
-  
