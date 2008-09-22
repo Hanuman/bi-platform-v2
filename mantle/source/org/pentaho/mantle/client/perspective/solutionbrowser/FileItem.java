@@ -51,17 +51,13 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       IFileItemCallback fileItemCallback) {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
     fileLabel.setWordWrap(false);
-    if (useLocalizedName) {
-      fileLabel.setText(localizedName);
-      fileLabel.setTitle(name);
-    } else {
-      fileLabel.setText(name);
-      fileLabel.setTitle(localizedName);
-    }
+    fileLabel.setText(localizedName);
+    fileLabel.setTitle(localizedName);
     fileLabel.setStyleName("fileLabel");
     Image fileIcon = new Image() {
       public void onBrowserEvent(Event event) {
-        if ((DOM.eventGetType(event) & Event.BUTTON_LEFT) == Event.BUTTON_LEFT && (DOM.eventGetButton(event) == Event.BUTTON_LEFT || DOM.eventGetButton(event) == Event.BUTTON_RIGHT)) {
+        if ((DOM.eventGetType(event) & Event.BUTTON_LEFT) == Event.BUTTON_LEFT
+            && (DOM.eventGetButton(event) == Event.BUTTON_LEFT || DOM.eventGetButton(event) == Event.BUTTON_RIGHT)) {
           final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
           final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
           handleRightClick(left, top);
@@ -74,7 +70,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     if (name.endsWith(".waqr.xaction")) {
       MantleImages.images.file_report().applyTo(fileIcon);
     } else if (name.endsWith(".analysisview.xaction")) {
-        MantleImages.images.file_analysis().applyTo(fileIcon);
+      MantleImages.images.file_analysis().applyTo(fileIcon);
     } else if (name.endsWith(".xaction")) {
       MantleImages.images.file_action().applyTo(fileIcon);
     } else if (name.endsWith(".url")) {
@@ -95,13 +91,6 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     this.path = path;
     this.lastModifiedDateStr = lastModifiedDateStr;
     this.url = url;
-  }
-
-  public void toggleLocalizedFileName() {
-    String title = fileLabel.getTitle();
-    String text = fileLabel.getText();
-    fileLabel.setText(title);
-    fileLabel.setTitle(text);
   }
 
   public void onBrowserEvent(Event event) {

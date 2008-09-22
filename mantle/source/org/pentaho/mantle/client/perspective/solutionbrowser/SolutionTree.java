@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
+import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -341,7 +342,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     String path = getPath().substring(0, getPath().lastIndexOf("/"));
     FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null, null,
         null);
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator, new TabPanel(), null);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
   }
 

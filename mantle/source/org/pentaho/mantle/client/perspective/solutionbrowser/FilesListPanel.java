@@ -85,13 +85,6 @@ public class FilesListPanel extends FlowPanel {
   }
 
   /**
-   * @param fileNum
-   */
-  public void toggleLocalizedFileName(int fileNum) {
-    ((FileItem) filesList.getWidget(fileNum, 0)).toggleLocalizedFileName();
-  }
-
-  /**
    * @return
    */
   public Toolbar getToolbar() {

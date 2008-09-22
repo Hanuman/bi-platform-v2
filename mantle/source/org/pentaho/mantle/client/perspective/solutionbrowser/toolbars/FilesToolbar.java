@@ -104,7 +104,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
       public void onSuccess(Boolean result) {
         if (result) {
-          shareCmd = new FileCommand(FileCommand.PROPERTIES, miscComboBtn.getPopup(), callback);
+          shareCmd = new FileCommand(FileCommand.SHARE, miscComboBtn.getPopup(), callback);
           miscMenus.addItem(Messages.getInstance().share(), shareCmd); //$NON-NLS-1$
         }
         scheduleCmd = new FileCommand(FileCommand.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);

@@ -785,23 +785,20 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void loadPropertiesDialog() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.GENERAL);
     dialog.showTab(FilePropertiesDialog.Tabs.GENERAL);
     dialog.center();
   }
 
   public void shareFile() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.PERMISSION);
     dialog.showTab(FilePropertiesDialog.Tabs.PERMISSION);
     dialog.center();
   }
 
   public void setUseLocalizedFileNames(boolean showLocalizedFileNames) {
     solutionTree.setShowLocalizedFileNames(showLocalizedFileNames);
-    for (int i = 0; i < filesListPanel.getFileCount(); i++) {
-      filesListPanel.toggleLocalizedFileName(i);
-    }
     // update view menu
     installViewMenu(perspectiveCallback);
   }

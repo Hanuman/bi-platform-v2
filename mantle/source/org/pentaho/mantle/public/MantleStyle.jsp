@@ -353,20 +353,18 @@ a:active, a:hover {
 
 .backgroundContentTable {
  border: 1px solid black;
- background: #FEF9CE;
+ background: white;
 }
 
 .backgroundContentHeaderTableCell {
- color: white;
- background: #87944C;
+ background: #c8c8c8;
  padding: 0px 10px 0px 10px;
  border-right: 1px solid black;
  border-bottom: 1px solid black;
 }
 
 .backgroundContentHeaderTableCellRight {
- color: white;
- background: #87944C;
+ background: #c8c8c8;
  padding: 0px 10px 0px 10px;
  border-bottom: 1px solid black;
 }

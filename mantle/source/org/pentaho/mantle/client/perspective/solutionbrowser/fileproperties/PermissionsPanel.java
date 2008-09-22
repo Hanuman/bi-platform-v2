@@ -138,7 +138,6 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     setWidget(row++, 0, buttonPanel);
     setWidget(row++, 0, permissionsLabel);
     setWidget(row++, 0, permissionsTable);
-    setStyleName("filePropertyTabContent");
     setWidth("100%");
   }
 

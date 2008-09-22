@@ -47,7 +47,6 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     setWidget(4, 1, sizeLabel);
     setWidget(5, 0, new Label("Last Modified:"));
     setWidget(5, 1, lastModifiedDateLabel);
-    setStyleName("filePropertyTabContent");
   }
 
   public void apply() {

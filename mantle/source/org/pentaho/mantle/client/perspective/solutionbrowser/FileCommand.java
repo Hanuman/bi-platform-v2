@@ -54,12 +54,10 @@ public class FileCommand implements Command {
   public static final int SCHEDULE_MONTHLY_LAST_DAY = 24;
   public static final int SCHEDULE_ANUALLY = 25;
   public static final int SCHEDULE_CUSTOM = 26;
-  public static final int SCHEDULE_NEW = 28;
+  public static final int SCHEDULE_NEW = 27;
   
-  public static final int SUBSCRIBE = 27;
-  public static final int SHARE = 28;
-  
-  
+  public static final int SUBSCRIBE = 28;
+  public static final int SHARE = 29;
 
   int mode = RUN;
   PopupPanel popupMenu;

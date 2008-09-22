@@ -33,6 +33,7 @@ import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -203,6 +204,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         }
 
         workspaceTable.setWidget(5, 0, subscriptionsContentDisclosure);
+        DOM.setStyleAttribute(workspaceTable.getElement(), "margin", "10px");
         setWidget(workspaceTable);
       }
 

@@ -30,16 +30,22 @@ import com.google.gwt.user.client.ui.Widget;
 public class FilePropertiesDialog extends PromptDialogBox {
   public enum Tabs { GENERAL, PERMISSION, SUBSCRIBE };
   private TabPanel propertyTabs;
-  private GeneralPanel generalTab = new GeneralPanel();
-  private PermissionsPanel permissionsTab = new PermissionsPanel();
-  private SubscriptionsPanel subscriptionsTab = new SubscriptionsPanel();
+  private GeneralPanel generalTab;
+  private PermissionsPanel permissionsTab;
+  private SubscriptionsPanel subscriptionsTab;
 
   private FileItem fileItem;
   private boolean isAdministrator = false;
-
-  public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback) {
-    super("Properties" + (fileItem == null ? "" : " (" + fileItem.getName() + ")"), "OK", "Cancel", false, true);
+  private Tabs defaultTab = Tabs.GENERAL;
+  
+  public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
+    super("Properties" + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), "OK", "Cancel", false, true);
     setContent(propertyTabs);
+    
+    generalTab = new GeneralPanel();
+    permissionsTab = new PermissionsPanel();
+    subscriptionsTab = new SubscriptionsPanel();
+    this.defaultTab = defaultTab;
     
     super.setCallback(new IDialogCallback() {
 
@@ -65,9 +71,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
     this.propertyTabs = propertyTabs;
     this.isAdministrator = isAdministrator;
     propertyTabs.add(generalTab, new TabWidget("General", "General", null, propertyTabs, generalTab));
-    propertyTabs.selectTab(0);
     fetchFileInfoAndInitTabs();
-    getWidget().setStyleName("filePropertiesDialogContent");
     getWidget().setHeight("100%");
     getWidget().setWidth("100%");
     setPixelSize(360, 420);
@@ -97,12 +101,14 @@ public class FilePropertiesDialog extends PromptDialogBox {
             ((IFileModifier) w).init(fileItem, fileInfo);
           }
         }
+        showTab(defaultTab);
       }
     };
     MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
   }
 
   public void showTab(Tabs tab) {
+    this.defaultTab = tab;
     if (tab == Tabs.GENERAL  && propertyTabs.getWidgetIndex(generalTab) > -1) {
       propertyTabs.selectTab(propertyTabs.getWidgetIndex(generalTab));
     } else if (tab == Tabs.PERMISSION && propertyTabs.getWidgetIndex(permissionsTab) > -1) {
