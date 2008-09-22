@@ -447,7 +447,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         newMenu.addItem("Report", new WAQRCommand(navigatorPerspective));
         newMenu.addItem("Analysis View", new AnalysisViewCommand(navigatorPerspective));
         fileMenu.addItem("New", newMenu);
-        fileMenu.addSeparator();
         fileMenu.addItem("Open", new OpenFileCommand(navigatorPerspective));
         if (showAdvancedFeatures) {
           fileMenu.addItem("Open URL..", new OpenURLCommand(navigatorPerspective));
