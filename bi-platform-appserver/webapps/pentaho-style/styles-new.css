@@ -113,7 +113,7 @@ A:active {
 
 /* commonly used */
 .content_body {
-	padding: 5px 0px 5px 0px;
+	padding: 0px;
 	vertical-align: top;
 	}
 
@@ -978,7 +978,7 @@ A:active {
 
 .content_body {
 
-    padding: 5px 0px 5px 0px;
+    padding: 0px;
 
     vertical-align: top;
 
