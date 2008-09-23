@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
 import mondrian.olap.Connection;
 import mondrian.olap.DriverManager;
 import mondrian.olap.Query;
@@ -28,8 +30,10 @@ import mondrian.olap.Util;
 
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 
@@ -107,8 +111,27 @@ public class MDXConnection implements IPentahoLoggingConnection {
       if (nativeConnection != null) { // Assume we're open
         close();
       }
-      // System.out.println("connectStr = " + connectStr);
-      nativeConnection = DriverManager.getConnection(connectStr, null);
+
+      // parse the connect string, replace datasource with actual
+      // datasource object if possible
+      
+      Util.PropertyList properties = Util.parseConnectString(connectStr);
+      
+      String dataSourceName = properties.get("DataSource"); //$NON-NLS-1$
+      
+      if (dataSourceName != null) {
+        IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+        DataSource dataSourceImpl = datasourceService.getDataSource(dataSourceName);      
+        if (dataSourceImpl != null) {
+          properties.remove("DataSource"); //$NON-NLS-1$
+          nativeConnection = DriverManager.getConnection(properties, null,  dataSourceImpl);
+        } else {
+          nativeConnection = DriverManager.getConnection(connectStr, null);
+        }
+      } else {
+        nativeConnection = DriverManager.getConnection(connectStr, null);
+      }
+      
       if (nativeConnection == null) {
         logger.error(Messages.getErrorString(
             "MDXConnection.ERROR_0002_INVALID_CONNECTION", connectStr != null ? connectStr : "null")); //$NON-NLS-1$ //$NON-NLS-2$

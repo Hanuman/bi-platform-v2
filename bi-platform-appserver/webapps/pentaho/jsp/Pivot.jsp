@@ -2,11 +2,14 @@
 	import="
 	java.util.*,
 	java.io.ByteArrayOutputStream,
+	javax.sql.DataSource,
+	
 	org.dom4j.DocumentHelper,
 	org.dom4j.Element,
 	org.dom4j.Document,
 	org.pentaho.platform.util.VersionHelper,
     org.pentaho.platform.api.engine.IPentahoSession,
+    org.pentaho.platform.api.data.IDatasourceService,
     org.pentaho.platform.web.http.WebTemplateHelper,
 	org.pentaho.platform.engine.services.solution.SimpleParameterSetter,
 	org.pentaho.platform.engine.core.output.SimpleOutputHandler,
@@ -608,19 +611,32 @@
 
 	  } 	
 	}
-	
+ 
+  if( query != null ) { 
+    IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
+    DataSource currDataSource = datasourceService.getDataSource(dataSource);
+    if (currDataSource != null) {
+      request.setAttribute("currDataSource", currDataSource);
 %>
-
-<% if( query != null ) { %>
+	<jp:mondrianQuery id="<%=queryId%>" dataSource="${currDataSource}"
+	dynResolver="mondrian.i18n.LocalizingDynamicSchemaProcessor"
+	dynLocale="<%= userSession.getLocale().toString() %>"
+	role="<%=role%>" catalogUri="<%=catalogUri%>">
+	<%=query%>
+	</jp:mondrianQuery> 
+<% 
+    } else {
+%>
 	<jp:mondrianQuery id="<%=queryId%>" dataSource="<%=dataSource%>"
 	dynResolver="mondrian.i18n.LocalizingDynamicSchemaProcessor"
 	dynLocale="<%= userSession.getLocale().toString() %>"
 	role="<%=role%>" catalogUri="<%=catalogUri%>">
 	<%=query%>
-	
 	</jp:mondrianQuery> 
-<% } %>
-
+<% 
+    }
+  }    
+%>
 <c:set var="title01" scope="session">
 	<%
 

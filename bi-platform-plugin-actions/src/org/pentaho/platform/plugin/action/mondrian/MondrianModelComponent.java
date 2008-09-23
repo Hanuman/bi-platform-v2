@@ -224,8 +224,6 @@ public class MondrianModelComponent extends ComponentBase {
       }
       properties.put("Catalog", modelPath); //$NON-NLS-1$
     }
-    IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
-    jndi = datasourceService.getDSBoundName(jndi);
 
     properties.put("Provider", "mondrian"); //$NON-NLS-1$ //$NON-NLS-2$
     properties.put("PoolNeeded", "false"); //$NON-NLS-1$ //$NON-NLS-2$

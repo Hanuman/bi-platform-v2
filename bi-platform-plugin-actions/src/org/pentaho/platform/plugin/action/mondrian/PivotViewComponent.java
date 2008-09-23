@@ -454,7 +454,7 @@ public class PivotViewComponent extends ComponentBase {
 
     // process the data source connection
     String dataSource = getInputStringValue(StandardSettings.JNDI);
-    setOutputValue(StandardSettings.CONNECTION, "jdbc/" + dataSource); //$NON-NLS-1$
+    setOutputValue(StandardSettings.CONNECTION, dataSource); //$NON-NLS-1$
 
     // process the query
     String queryName = StandardSettings.SQL_QUERY;
