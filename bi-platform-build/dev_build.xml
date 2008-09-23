@@ -21,8 +21,10 @@ PREREQUISITES
   * Checkout bi-platform-* and mantle projects from 
     svn://source.pentaho.org/svnroot/bi-platform-v2/trunk.
   * Download and unzip Apache Tomcat 5.5 or greater.
-  * Download XMLTask, a third-party Ant task. Download the JAR and copy into
-    ${user.home}/.ant/lib.
+  * Download XMLTask, a third-party Ant task. If building from the command
+    line, download the JAR and copy into ${user.home}/.ant/lib. If building
+    from Eclipse, download the JAR and add it to the classpath of the Ant 
+    plugin (Window > Preferences > Ant > Runtime > Classpath).
 
 INSTRUCTIONS
 ============
