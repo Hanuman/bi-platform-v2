@@ -69,6 +69,8 @@ public class FilePropertiesDialog extends PromptDialogBox {
     });
     this.fileItem = fileItem;
     this.propertyTabs = propertyTabs;
+    this.propertyTabs.setStyleName("gwt-Dialog-TabPanel");
+    this.propertyTabs.getTabBar().setStyleName("gwt-Dialog-TabBar");
     this.isAdministrator = isAdministrator;
     propertyTabs.add(generalTab, new TabWidget("General", "General", null, propertyTabs, generalTab));
     fetchFileInfoAndInitTabs();

@@ -19,6 +19,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -29,7 +30,6 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -56,13 +56,13 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
 
   ListBox appliedLB = new ListBox();
 
-  Button moveRightBtn = new Button();
+  RoundedButton moveRightBtn = new RoundedButton();
 
-  Button moveLeftBtn = new Button();
+  RoundedButton moveLeftBtn = new RoundedButton();
 
-  Button moveAllRightBtn = new Button();
+  RoundedButton moveAllRightBtn = new RoundedButton();
 
-  Button moveAllLeftBtn = new Button();
+  RoundedButton moveAllLeftBtn = new RoundedButton();
 
   FileItem fileItem = null;
 

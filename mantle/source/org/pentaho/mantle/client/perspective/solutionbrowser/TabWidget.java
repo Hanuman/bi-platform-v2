@@ -17,6 +17,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.objects.Bookmark;
@@ -93,6 +94,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       }
 
       public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
+        ElementUtils.blur(getElement().getParentElement());
         if (tabIndex == tabPanel.getWidgetIndex(tabContent)) {
           panel.setStyleName("tabWidget-selected");
           leftCap.setStyleName("tabWidgetCap-selected");
@@ -124,7 +126,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
     } else {
       DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 5px 5px 5px");
-      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 5px 5px 5px");
+      DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px");
+      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
     }
 
     add(leftCap);

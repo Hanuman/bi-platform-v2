@@ -18,6 +18,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.objects.RolePermission;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -26,7 +27,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -54,8 +54,8 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
   ListBox usersAndRolesList = new ListBox(false);
   Label permissionsLabel = new Label("Permissions:");
   FlexTable permissionsTable = new FlexTable();
-  Button removeButton = new Button("Remove");
-  Button addButton = new Button("Add...");
+  RoundedButton removeButton = new RoundedButton("Remove");
+  RoundedButton addButton = new RoundedButton("Add...");
 
   public PermissionsPanel() {
     removeButton.addClickListener(new ClickListener() {
@@ -132,7 +132,6 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     permissionsTable.setHeight("100%");
 
     int row = 0;
-    setWidget(row++, 0, new HTML("<HR>"));
     setWidget(row++, 0, new Label("Users and Roles:"));
     setWidget(row++, 0, usersAndRolesList);
     setWidget(row++, 0, buttonPanel);

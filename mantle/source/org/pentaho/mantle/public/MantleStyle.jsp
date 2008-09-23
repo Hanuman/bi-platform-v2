@@ -515,13 +515,17 @@ a:active, a:hover {
   background-repeat: no-repeat;
 }
 
-.gwt-TabBar {
-  color: <%= MantleStyleManager.getTabPanelColor(request) %>;
-  padding-top: 2px;
-  border-bottom: 1px solid <%= MantleStyleManager.getTabPanelDecoratorColor(request) %>;
-  background-color: #b5b5b5;
+
+gwt-TabPanelBottom {
+  background-color: #d8d8d8;
 }
 
+
+.gwt-TabBar {
+  background-image: url(/pentaho/mantle/tab_background.png);
+  background-repeat: repeat-x;
+  height: 37px;
+}
 
 .gwt-TabBar .tabWidget {
   background-image: url(/pentaho/mantle/tabright.png);
@@ -529,6 +533,8 @@ a:active, a:hover {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;
 }
 
 .gwt-TabBar .tabWidget-selected {
@@ -537,6 +543,8 @@ a:active, a:hover {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;
 }
 
 .gwt-TabBar .tabWidget-hover {
@@ -545,6 +553,8 @@ a:active, a:hover {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;  
 }
 
 .gwt-TabBar .tabWidgetCap {
@@ -552,6 +562,8 @@ a:active, a:hover {
   background-position: 100% 0px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;
 }
 
 .gwt-TabBar .tabWidgetCap-selected {
@@ -559,6 +571,8 @@ a:active, a:hover {
   background-position: 100% -42px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;
 }
 
 .gwt-TabBar .tabWidgetCap-hover {
@@ -566,7 +580,106 @@ a:active, a:hover {
   background-position: 100% -84px;
   cursor: pointer;
   cursor: hand;
+  height: 32px;
+  margin-top: 5px;
 }
+
+
+
+
+.gwt-Dialog-TabPanel .gwt-TabPanelBottom {
+  background-color: #dddddd;
+  border-left: 1px solid #8d8d8d;
+  border-bottom: 1px solid #8d8d8d;
+  border-right: 1px solid #8d8d8d;
+  padding: 5px;
+}
+
+.gwt-Dialog-TabBar {
+  background-image: url(/pentaho/mantle/dialog_tab_bg.png);
+  background-repeat: repeat-x;
+  height: 37px;
+}
+
+.gwt-Dialog-TabBar .tabWidget {
+  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-position: 100% 0px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-Dialog-TabBar .tabWidget-selected {
+  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-position: 100% -42px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-Dialog-TabBar .tabWidget-hover {
+  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-position: 100% -84px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;  
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap {
+  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-position: 100% 0px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap-selected {
+  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-position: 100% -42px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap-hover {
+  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-position: 100% -84px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .gwt-TextBox-readonly {
   color: #888;
@@ -822,7 +935,6 @@ a:active, a:hover {
   width:100%;
   overflow:auto;
 }
-
 .files-toolbar{
   width:100%;
   height:29px;

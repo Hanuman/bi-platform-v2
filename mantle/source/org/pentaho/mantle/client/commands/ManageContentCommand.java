@@ -22,7 +22,7 @@ public class ManageContentCommand implements Command {
           ManageContentEditCommand cmd = new ManageContentEditCommand(solutionBrowserPerspective);
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SHARE) {
-          ManageContentShareCommand cmd = new ManageContentShareCommand();
+          ManageContentShareCommand cmd = new ManageContentShareCommand(solutionBrowserPerspective);
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SCHEDULE) {
           ManageContentScheduleCommand cmd = new ManageContentScheduleCommand(solutionBrowserPerspective);

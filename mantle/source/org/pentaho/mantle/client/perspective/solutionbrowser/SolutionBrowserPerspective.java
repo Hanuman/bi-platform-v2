@@ -205,7 +205,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).frame;
-          refreshIfPDF(frame.getElement());
+          //refreshIfPDF(frame.getElement());
         }
       }
     });
@@ -460,6 +460,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       openFile(FileCommand.RUN);
     } else if (openMethod == OPEN_METHOD.SCHEDULE){
       createSchedule();
+    } else if (openMethod == OPEN_METHOD.SHARE){
+      shareFile();
     }
   }
 

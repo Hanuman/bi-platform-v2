@@ -509,12 +509,11 @@ a:active, a:hover {
 }
 
 .gwt-TabBar {
-  color: black;
+  background-image: url(tab_background.png);
+  background-position: top;
+  background-repeat: repeat-x;
   padding-top: 2px;
-  border-bottom: 1px solid #d0d0d0;
-  background-color: #b5b5b5;
 }
-
 
 .gwt-TabBar .tabWidget {
   background-image: url(tabright.png);
