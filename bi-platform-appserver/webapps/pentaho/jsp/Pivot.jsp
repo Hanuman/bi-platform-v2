@@ -3,7 +3,6 @@
 	java.util.*,
 	java.io.ByteArrayOutputStream,
 	javax.sql.DataSource,
-	
 	org.dom4j.DocumentHelper,
 	org.dom4j.Element,
 	org.dom4j.Document,
@@ -613,8 +612,13 @@
 	}
  
   if( query != null ) { 
-    IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
-    DataSource currDataSource = datasourceService.getDataSource(dataSource);
+    IDatasourceService datasourceService = (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
+    DataSource currDataSource = null; 
+    try {
+      currDataSource = datasourceService.getDataSource(dataSource);
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
     if (currDataSource != null) {
       request.setAttribute("currDataSource", currDataSource);
 %>
@@ -1337,6 +1341,7 @@
 </html>
 <% 
    } catch (Throwable t ) {
+     %> An error occurred while rendering Pivot.jsp.  Please see the log for details. <%
 	// TODO log an error
 	t.printStackTrace();
    } finally {
