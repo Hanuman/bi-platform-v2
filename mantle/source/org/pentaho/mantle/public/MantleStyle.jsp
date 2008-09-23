@@ -588,7 +588,7 @@ gwt-TabPanelBottom {
 
 
 .gwt-Dialog-TabPanel .gwt-TabPanelBottom {
-  background-color: #dddddd;
+  background-color: #e2e2e2;
   border-left: 1px solid #8d8d8d;
   border-bottom: 1px solid #8d8d8d;
   border-right: 1px solid #8d8d8d;
@@ -638,6 +638,7 @@ gwt-TabPanelBottom {
   cursor: hand;
   height: 24px;
   margin-top: 4px;
+  width: 6px;
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-selected {
@@ -647,6 +648,7 @@ gwt-TabPanelBottom {
   cursor: hand;
   height: 24px;
   margin-top: 4px;
+  width: 6px;
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-hover {
@@ -656,6 +658,7 @@ gwt-TabPanelBottom {
   cursor: hand;
   height: 24px;
   margin-top: 4px;
+  width: 6px;
 }
 
 
