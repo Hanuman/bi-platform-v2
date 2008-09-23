@@ -17,15 +17,25 @@
  */
 package org.pentaho.platform.engine.services.metadata.cwm;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.acegisecurity.Authentication;
+import org.acegisecurity.GrantedAuthority;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.schema.security.RowLevelSecurity;
 
 public class SecurityAwareCwmSchemaFactory extends PlatformCWMSchemaFactory implements IPentahoInitializer {
-
+  private static final Log logger = LogFactory.getLog(SecurityAwareCwmSchemaFactory.class);
+  
   IPentahoSession session;
 
   public SecurityAwareCwmSchemaFactory() {
@@ -62,4 +72,22 @@ public class SecurityAwareCwmSchemaFactory extends PlatformCWMSchemaFactory impl
     return true;
   }
 
+  @Override
+  public String generateRowLevelSecurityConstraint(BusinessModel businessModel) {
+    RowLevelSecurity rls = businessModel.getRowLevelSecurity();
+    if (rls.getType() == RowLevelSecurity.Type.NONE) {
+      return null;
+    }
+    Authentication auth = SecurityHelper.getAuthentication(getSession(), true);
+    if (auth == null) {
+      logger.info("authentication from session was null; continuing with restrictive rls constraint");
+      return "FALSE()"; //$NON-NLS-1$
+    }
+    String username = auth.getName();
+    List<String> roles = new ArrayList<String>();
+    for (GrantedAuthority role : auth.getAuthorities()) {
+      roles.add(role.getAuthority());
+    }
+    return rls.getMQLFormula(username, roles);
+  }
 }
