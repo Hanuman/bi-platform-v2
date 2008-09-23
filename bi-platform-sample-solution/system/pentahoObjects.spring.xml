@@ -180,11 +180,11 @@
         <entry key="IDatasourceService">
           <bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator">
             <!--
-              <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService</value></constructor-arg
+              <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService</value></constructor-arg>
+              <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledOrJndiDatasourceService</value></constructor-arg>
+              <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService</value></constructor-arg>
             -->
-            <constructor-arg>
-              <value>org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService</value>
-            </constructor-arg>
+            <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService</value></constructor-arg>
             <!--
               <constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceService</value></constructor-arg>
             -->

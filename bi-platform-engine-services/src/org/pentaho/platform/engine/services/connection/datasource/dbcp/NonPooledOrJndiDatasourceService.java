@@ -30,9 +30,8 @@ import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceExcep
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.messages.Messages;
 
-public class NonPooledDatasourceService extends BaseDatasourceService {
+public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
   /**
    * Since JNDI is supported different ways in different app servers, it's
    * nearly impossible to have a ubiquitous way to look up a datasource. This
@@ -57,46 +56,20 @@ public class NonPooledDatasourceService extends BaseDatasourceService {
     try {
       IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null); 
       IDatasource datasource = datasourceMgmtSvc.getDatasource(dsName);
+      // Look in the database for the datasource
       if(datasource != null) {
         dataSource = convert(datasource);
         cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE,dsName, (DataSource) dataSource);  
       } else {
-        throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"));
+        // Database does not have the datasource, look in jndi now
+        dataSource = getJndiDataSource(dsName);
       }
     } catch (ObjectFactoryException objface) {
-      throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_INSTANTIATE_OBJECT"),objface);
+      dataSource = getJndiDataSource(dsName);
     } catch (DatasourceMgmtServiceException daoe) {
-      throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"),daoe);
+      dataSource = getJndiDataSource(dsName);
     }
     return dataSource;
-  }
-
-  /**
-   * Since JNDI is supported different ways in different app servers, it's
-   * nearly impossible to have a ubiquitous way to look up a datasource. This
-   * method is intended to hide all the lookups that may be required to find a
-   * jndi name, and return the actual bound name.
-   * 
-   * @param dsName
-   *            The Datasource name (like SampleData)
-   * @return The bound DS name if it is bound in JNDI (like "jdbc/SampleData")
-   * @throws DatasourceServiceException
-   */
-  public String getDSBoundName(final String dsName) throws DatasourceServiceException {
-    return dsName;
-  }
-
-
-  /**
-   * Since JNDI is supported different ways in different app servers, it's
-   * nearly impossible to have a ubiquitous way to look up a datasource. This
-   * method is intended to extract just the regular name of a specified JNDI source.
-   * 
-   * @param dsName The Datasource name (like "jdbc/SampleData")
-   * @return The unbound DS name (like "SampleData")
-   */
-  public String getDSUnboundName(final String dsName) {
-    return dsName;
   }
 
   private DataSource convert(IDatasource datasource) {

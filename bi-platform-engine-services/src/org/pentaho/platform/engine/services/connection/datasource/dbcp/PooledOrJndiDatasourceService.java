@@ -29,26 +29,33 @@ import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceExcep
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.messages.Messages;
 
-public class PooledDatasourceService extends BaseDatasourceService {
+public class PooledOrJndiDatasourceService extends BaseDatasourceService {
 
-  public PooledDatasourceService() {
+  public PooledOrJndiDatasourceService() {
 	}
 
 	DataSource retrieve(String datasource) throws DatasourceServiceException {
 		DataSource ds = null;
 		try {
       IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null);
-			IDatasource dataSource = datasourceMgmtSvc
-					.getDatasource(datasource);
-			ds = PooledDatasourceHelper
-					.setupPooledDataSource(dataSource);
-			cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource, ds);
+			IDatasource dataSource = datasourceMgmtSvc.getDatasource(datasource);
+			// Look in the database for the datasource
+			if(dataSource != null) {
+			  ds = PooledDatasourceHelper.setupPooledDataSource(dataSource);
+			// Database does not have the datasource, look in jndi now
+			} else {
+			  ds = getJndiDataSource(datasource);
+			}
+			// if the resulting datasource is not null then store it in the cache
+			if(ds != null) {
+			  cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource, ds);  
+			}
+
     } catch (ObjectFactoryException objface) {
-      throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_INSTANTIATE_OBJECT"),objface);
+      return getJndiDataSource(datasource);
 		} catch (DatasourceMgmtServiceException daoe) {
-		  throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"),daoe);
+		  return getJndiDataSource(datasource);
 		}
 		return ds;
 	}
@@ -97,30 +104,4 @@ public class PooledDatasourceService extends BaseDatasourceService {
 		return dataSource;
 	}
 
-  /**
-   * Since JNDI is supported different ways in different app servers, it's
-   * nearly impossible to have a ubiquitous way to look up a datasource. This
-   * method is intended to hide all the lookups that may be required to find a
-   * jndi name, and return the actual bound name.
-   * 
-   * @param dsName
-   *            The Datasource name (like SampleData)
-   * @return The bound DS name if it is bound in JNDI (like "jdbc/SampleData")
-   * @throws DatasourceServiceException
-   */
-  public String getDSBoundName(final String dsName) throws DatasourceServiceException {
-    return dsName;
-  }
-
-  /**
-   * Since JNDI is supported different ways in different app servers, it's
-   * nearly impossible to have a ubiquitous way to look up a datasource. This
-   * method is intended to extract just the regular name of a specified JNDI source.
-   * 
-   * @param dsName The Datasource name (like "jdbc/SampleData")
-   * @return The unbound DS name (like "SampleData")
-   */
-  public String getDSUnboundName(final String dsName) {
-     return dsName;
-  }
 }
