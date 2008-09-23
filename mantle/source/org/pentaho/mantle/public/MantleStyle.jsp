@@ -598,7 +598,7 @@ gwt-TabPanelBottom {
 .gwt-Dialog-TabBar {
   background-image: url(/pentaho/mantle/dialog_tab_bg.png);
   background-repeat: repeat-x;
-  height: 37px;
+  height: 29px;
 }
 
 .gwt-Dialog-TabBar .tabWidget {
@@ -607,8 +607,8 @@ gwt-TabPanelBottom {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 4px;
 }
 
 .gwt-Dialog-TabBar .tabWidget-selected {
@@ -617,8 +617,8 @@ gwt-TabPanelBottom {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 4px;
 }
 
 .gwt-Dialog-TabBar .tabWidget-hover {
@@ -627,8 +627,8 @@ gwt-TabPanelBottom {
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;  
+  height: 24px;
+  margin-top: 4px;  
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap {
@@ -636,8 +636,8 @@ gwt-TabPanelBottom {
   background-position: 100% 0px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 4px;
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-selected {
@@ -645,8 +645,8 @@ gwt-TabPanelBottom {
   background-position: 100% -42px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 4px;
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-hover {
@@ -654,8 +654,8 @@ gwt-TabPanelBottom {
   background-position: 100% -84px;
   cursor: pointer;
   cursor: hand;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 4px;
 }
 
 

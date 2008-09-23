@@ -125,9 +125,9 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 0px 5px 0px");
       DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
     } else {
-      DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 5px 5px 5px");
+      DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 4px 5px");
       DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px");
-      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
+      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "4px 0px 4px 0px");
     }
 
     add(leftCap);

@@ -176,6 +176,7 @@ public class MantleLoginDialog {
     dialog.setContent(buildLoginPanel());
     userTextBox.setTabIndex(1);
     passwordTextBox.setTabIndex(2);
+    newWindowChk.setTabIndex(3);
     passwordTextBox.setText("");
     dialog.setFocusWidget(userTextBox);
 
