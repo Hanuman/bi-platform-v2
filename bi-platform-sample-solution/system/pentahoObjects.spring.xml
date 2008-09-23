@@ -83,13 +83,23 @@
             </constructor-arg>
           </bean>
         </entry>
+        <!--  Use this schema factory to enable PMD security -->
         <entry key="ICwmSchemaFactory">
           <bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
             <constructor-arg>
-              <value>org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory</value>
+              <value>org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCWMSchemaFactory</value>
             </constructor-arg>
           </bean>
+        </entry> 
+
+        <!--  Use this schema factory to disable PMD security -->
+        <!-- 
+        <entry key="ICwmSchemaFactory">
+          <bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
+            <constructor-arg><value>org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory</value></constructor-arg>
+          </bean>
         </entry>
+        -->
         <entry key="IUserSettingService">
           <bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
             <constructor-arg>
