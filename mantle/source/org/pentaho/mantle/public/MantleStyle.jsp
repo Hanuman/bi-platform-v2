@@ -491,7 +491,7 @@ a:active, a:hover {
   background-image:url(/pentaho/mantle/menubar_bg.png);
   background-position: top;
   background-repeat: repeat-x;
-  border: 1px solid #848484;
+  border-bottom: 1px solid #848484;
   
 }
 
