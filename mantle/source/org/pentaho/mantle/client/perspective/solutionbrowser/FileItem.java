@@ -130,10 +130,6 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     menuBar.setAutoOpen(true);
 
     if (name.endsWith(".xaction")) {
-      MenuBar runMenu = new MenuBar(true);
-      runMenu.addItem(new MenuItem("New Tab", new FileCommand(FileCommand.RUN, popupMenu, fileItemCallback)));
-      runMenu.addItem(new MenuItem("New Window", new FileCommand(FileCommand.NEWWINDOW, popupMenu, fileItemCallback)));
-      runMenu.addItem(new MenuItem("Background", new FileCommand(FileCommand.BACKGROUND, popupMenu, fileItemCallback)));
       // runMenu.addSeparator();
       // runMenu.addItem(new MenuItem("Subscribe", new FileCommand(FileCommand.SUBSCRIBE, popupMenu, fileItemCallback)));
 
@@ -167,10 +163,17 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       // scheduleMenu.addItem("Custom...", new FileCommand(FileCommand.SCHEDULE_CUSTOM, popupMenu, fileItemCallback));
       // scheduleMenu.addItem("New...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
 
-      menuBar.addItem("Run ", runMenu);
+      menuBar.addItem(new MenuItem("Open", new FileCommand(FileCommand.RUN, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem("Open in New Window", new FileCommand(FileCommand.NEWWINDOW, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem("Run in Background", new FileCommand(FileCommand.BACKGROUND, popupMenu, fileItemCallback)));
+      
       menuBar.addSeparator();
-      menuBar.addItem("Schedule... ", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
-      menuBar.addSeparator();
+      menuBar.addItem("Schedule...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
+      
+      final FileCommand nullFileCommand = null;
+      final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
+      editMenuItem.setStyleName("disabledMenuItem");
+      menuBar.addItem(editMenuItem);
     }
 
     /*
@@ -178,23 +181,17 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
      * clicked on WAQR report. Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
      * nullifying the command attached to MenutItem click.
      */
-    if (name.contains("waqr")) {
-      menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
-      menuBar.addSeparator();
-
+    if (name.contains("waqr")) { 
       menuBar.addItem(new MenuItem("Delete", new FileCommand(FileCommand.DELETE, popupMenu, fileItemCallback)));
       menuBar.addSeparator();
     } else {
-      final FileCommand nullFileCommand = null;
-      final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
-      editMenuItem.setStyleName("disabledMenuItem");
-      menuBar.addItem(editMenuItem);
+
       menuBar.addSeparator();
 
-      final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
-      deleteMenuItem.setStyleName("disabledMenuItem");
-      menuBar.addItem(deleteMenuItem);
-      menuBar.addSeparator();
+//      final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
+//      deleteMenuItem.setStyleName("disabledMenuItem");
+//      menuBar.addItem(deleteMenuItem);
+//      menuBar.addSeparator();
     }
 
     menuBar.addItem(new MenuItem("Properties", new FileCommand(FileCommand.PROPERTIES, popupMenu, fileItemCallback)));

@@ -56,6 +56,8 @@ import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowCloseListener;
@@ -66,6 +68,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -82,7 +85,14 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   FlexTable menuAndLogoPanel = new FlexTable();
 
-  MenuBar menuBar = new MenuBar();
+  MenuBar menuBar = new MenuBar(){
+    MenuItem selectedItem;
+    @Override
+    public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+      super.onPopupClosed(sender, autoClosed);
+      this.getSelectedItem().removeStyleDependentName("selected");  
+    }
+  };
 
   DeckPanel perspectivesPanel = new DeckPanel();
 
@@ -447,7 +457,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         newMenu.addItem("Report", new WAQRCommand(navigatorPerspective));
         newMenu.addItem("Analysis View", new AnalysisViewCommand(navigatorPerspective));
         fileMenu.addItem("New", newMenu);
-        fileMenu.addItem("Open", new OpenFileCommand(navigatorPerspective));
+        fileMenu.addItem("Open...", new OpenFileCommand(navigatorPerspective));
         if (showAdvancedFeatures) {
           fileMenu.addItem("Open URL..", new OpenURLCommand(navigatorPerspective));
         }
@@ -504,15 +514,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           customizeMenu(adminMenu, "admin", settings); //$NON-NLS-1$
 
           toolsMenu.addItem(Messages.getInstance().refresh(), adminMenu);
+          toolsMenu.addSeparator();
+          toolsMenu.addItem(Messages.getInstance().softwareUpdates(), new CheckForSoftwareUpdatesCommand());
+          menuBar.addItem(Messages.getInstance().tools(), toolsMenu);   
         }
-        toolsMenu.addSeparator();
-        toolsMenu.addItem(Messages.getInstance().softwareUpdates(), new CheckForSoftwareUpdatesCommand());
-        menuBar.addItem(Messages.getInstance().tools(), toolsMenu);
-
+       
         MenuBar helpMenu = new MenuBar(true);
-        helpMenu.addItem("Documentation", new OpenDocCommand(navigatorPerspective));
+        helpMenu.addItem("Documentation...", new OpenDocCommand(navigatorPerspective));
         helpMenu.addSeparator();
-        helpMenu.addItem("Pentaho.com", pentahoCommand);
+        helpMenu.addItem("Pentaho.com...", pentahoCommand);
         helpMenu.addSeparator();
         helpMenu.addItem(Messages.getInstance().about(), aboutCommand);
         // add additions to the help menu
