@@ -42,8 +42,12 @@ public class PooledDatasourceService extends BaseDatasourceService {
       IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null);
 			IDatasource dataSource = datasourceMgmtSvc
 					.getDatasource(datasource);
-			ds = PooledDatasourceHelper
-					.setupPooledDataSource(dataSource);
+			if(datasource != null) {
+	      ds = PooledDatasourceHelper
+        .setupPooledDataSource(dataSource);
+			} else  {
+			  throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"));
+			}
 			cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource, ds);
     } catch (ObjectFactoryException objface) {
       throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_INSTANTIATE_OBJECT"),objface);
