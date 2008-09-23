@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
@@ -68,6 +69,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -213,10 +215,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void buildUI() {
     clear();
     if (explorerMode) {
+      
       solutionNavigatorPanel.setHeight("100%");
       // ----- Create the top panel ----
       DockPanel topPanel = new DockPanel();
-      topPanel.add(solutionTree, DockPanel.CENTER);
+      topPanel.add(new ScrollPanel(solutionTree), DockPanel.CENTER);
       topPanel.setWidth("100%");
       Label browseLabel = new Label(Messages.getInstance().browse());
       browseLabel.setHeight("28px"); //$NON-NLS-1$
@@ -224,7 +227,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       browseLabel.addStyleName(BROWSE_LABEL_STYLE_NAME);
       topPanel.add(browseLabel, DockPanel.NORTH);
       // --------------------------------
+      
       solutionNavigatorPanel.setTopWidget(topPanel);
+      filesListPanel.setWidth("100%");
       solutionNavigatorPanel.setBottomWidget(filesListPanel);
       solutionNavigatorPanel.setSplitPosition("60%");
       solutionNavigatorAndContentPanel.setLeftWidget(solutionNavigatorPanel);
@@ -246,6 +251,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       setHeight("100%");
       setWidth("100%");
       add(solutionNavigatorAndContentPanel);
+      
+      ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
+      ElementUtils.removeScrollingFromUpTo(
+          solutionNavigatorAndContentPanel.getLeftWidget().getElement(), 
+          solutionNavigatorAndContentPanel.getElement());
     } else {
       // load classic view
       // we've got the tree

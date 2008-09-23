@@ -22,8 +22,11 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.xml.client.Element;
 
@@ -41,11 +44,17 @@ public class FilesListPanel extends FlowPanel {
     super();
     // Create the toolbar
     toolbar = new FilesToolbar(fileItemCallback);
-    toolbar.setWidth("100%"); //$NON-NLS-1$
+    SimplePanel toolbarWrapper = new SimplePanel();
+    toolbarWrapper.add(toolbar);
+    toolbarWrapper.setStyleName("files-toolbar");
+    add(toolbarWrapper);
     
-    this.add(toolbar);
-    this.add(filesList);
-    this.setWidth("100%"); //$NON-NLS-1$
+    SimplePanel filesListWrapper = new SimplePanel();
+    filesListWrapper.add(filesList);
+    filesList.getElement().getStyle().setProperty("marginTop", "29px");
+    filesListWrapper.setStyleName("files-list-panel");
+    add(filesListWrapper);
+    
     this.setStyleName("panelWithTitledToolbar");  //$NON-NLS-1$  
   }
   

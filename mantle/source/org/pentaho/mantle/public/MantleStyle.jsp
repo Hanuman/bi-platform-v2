@@ -2,6 +2,14 @@
 
 <%@page import="org.pentaho.mantle.server.*" %>
 
+html{
+  height: 100%;
+}
+
+body{
+  height: 100%;
+}
+
 .launchImage {
   cursor: pointer;
   cursor: hand;
@@ -795,7 +803,9 @@ a:active, a:hover {
   
 }
 
-.panelWithTitledToolbar{}
+.panelWithTitledToolbar{
+  height: 100%;
+}
 
 .panelWithTitledToolbar-panel{
   position:absolute;
@@ -803,4 +813,19 @@ a:active, a:hover {
 	/* adds spacer area for the toolbar which is floating above content */
 	top: 30px;
 
+}
+
+.files-list-panel{
+  position:absolute;
+  height:100% !important;
+  height:100% -29px;
+  width:100%;
+  overflow:auto;
+}
+
+.files-toolbar{
+  width:100%;
+  height:29px;
+  position:absolute;
+  z-index: 10;
 }
