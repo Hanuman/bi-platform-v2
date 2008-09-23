@@ -233,7 +233,19 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     paramManager = new ParameterManager();
 
     // Set the default XSL for parameter forms
-    parameterXsl = RuntimeContext.DEFAULT_PARAMETER_XSL;
+    //Proposed fix for bug BISERVER-97 by Ezequiel Cuellar
+    //If the component-definition's action-definition does not have an xsl element it reuses the one already
+    //set by its previous component-definition's action-definition peer. 
+    //If the xsl element is not present for the component-definition then reset to the default xsl value 
+    //specified in the Pentaho.xml tag "default-parameter-xsl"
+
+    //Proposed fix for bug BISERVER-238 by Ezequiel Cuellar
+    //Added a default value of DefaultParameterForm.xsl when getting the value of default-parameter-xsl
+    ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
+    String defaultParameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", null); //$NON-NLS-1$
+    if ((defaultParameterXsl != null) && (defaultParameterXsl.length() > 0)) {
+      setParameterXsl(defaultParameterXsl);
+    }
 
   }
 
@@ -819,6 +831,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       Element element;
       String name;
       String value;
+      String customXsl = null;
       for (int idx = 0; idx < elements.size(); idx++) {
         element = (Element) elements.get(idx);
         name = element.getName();
@@ -826,30 +839,17 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         // see if we have a target window for the output
         if ("target".equals(name)) {
           setParameterTarget(value);
-        } else {
-          // see if we have a custom XSL for the parameter page, if required
-          if ("xsl".equals(name)) {
-            setParameterXsl(value);
-          } else {
-            //Proposed fix for bug BISERVER-97 by Ezequiel Cuellar
-            //If the component-definition's action-definition does not have an xsl element it reuses the one already
-            //set by its previous component-definition's action-definition peer. 
-            //If the xsl element is not present for the component-definition then reset to the default xsl value 
-            //specified in the Pentaho.xml tag "default-parameter-xsl"
-
-            //Proposed fix for bug BISERVER-238 by Ezequiel Cuellar
-            //Added a default value of DefaultParameterForm.xsl when getting the value of default-parameter-xsl
-            ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
-            String defaultParameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", null); //$NON-NLS-1$
-            if ((defaultParameterXsl != null) && (defaultParameterXsl.length() > 0)) {
-              setParameterXsl(defaultParameterXsl);
-            }
-          }
-
+        } else if ("xsl".equals(name)) {
+          customXsl = value; //setParameterXsl(value);
         }
 
         componentDefinitionMap.put(element.getName(), element.getText());
       }
+      
+      if(customXsl != null){
+        setParameterXsl(customXsl);
+      }
+      
 
       component.setComponentDefinitionMap(componentDefinitionMap);
       component.setComponentDefinition(componentDefinition);
