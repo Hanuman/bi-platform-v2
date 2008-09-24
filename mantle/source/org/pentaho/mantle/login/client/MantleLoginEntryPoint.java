@@ -31,8 +31,8 @@ public class MantleLoginEntryPoint implements EntryPoint {
 
       public void onSuccess(Boolean newWindow) {
         if (newWindow) {
-          String URL = (returnLocation != null && !"".equals(returnLocation)) ? returnLocation : "http://" + Window.Location.getHost()
-              + Window.Location.getPath().replace("Login", "Home");
+          String URL = (!returnLocation.equals("")) ? returnLocation : Window.Location.getPath().replace("Login", "Home");
+
           Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
         } else if (!returnLocation.equals("")) {
           Window.Location.assign(returnLocation);

@@ -7,8 +7,10 @@ import javax.servlet.http.HttpSession;
 
 import org.pentaho.mantle.login.client.MantleLoginService;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 
@@ -49,6 +51,17 @@ public class MantleLoginServlet extends RemoteServiceServlet implements MantleLo
     return userSession;
   }
 
+  public boolean isSubscription(){
+    HttpSession session = getThreadLocalRequest().getSession();
+    IPentahoSession userSession = (IPentahoSession) session.getAttribute(IPentahoSession.PENTAHO_SESSION_KEY);
+    ISolutionEngine engine = PentahoSystem.getSolutionEngineInstance(userSession);
+    if(engine.getClass().getSuperclass().isAssignableFrom(SolutionEngine.class) ){
+      return true;
+    } else {
+      return false;
+    }
+    
+  }
 }
 
   
