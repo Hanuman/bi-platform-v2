@@ -94,7 +94,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
         }
         if (fileInfo.supportsAccessControls) {
           propertyTabs.remove(permissionsTab);
-          propertyTabs.add(permissionsTab, new TabWidget("Permissions", "Permissions", null, propertyTabs, permissionsTab));
+          propertyTabs.add(permissionsTab, new TabWidget("Share", "Share", null, propertyTabs, permissionsTab));
         }
         // init all tabs
         for (int i = 0; i < propertyTabs.getTabBar().getTabCount(); i++) {
