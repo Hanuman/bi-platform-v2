@@ -18,7 +18,7 @@ REM -----------------------
 REM - Run the application -
 REM -----------------------
 :startApp
-SET command=java -cp %tempclasspath% org.hsqldb.Server -database.0 sampledata\sampledata -dbname.0 sampledata -database.1 hibernate\hibernate -dbname.1 hibernate -database.2 quartz\quartz -dbname.2 quartz
+SET command=java -cp %tempclasspath% org.hsqldb.Server -database.0 hsqldb\sampledata -dbname.0 sampledata -database.1 hsqldb\hibernate -dbname.1 hibernate -database.2 hsqldb\quartz -dbname.2 quartz
 echo %command%
 %command%
 exit

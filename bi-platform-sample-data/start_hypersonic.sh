@@ -27,5 +27,5 @@ do
 done
 echo "classpath is $THE_CLASSPATH"
 
-$JAVA -cp $THE_CLASSPATH org.hsqldb.Server -database.0 sampledata/sampledata -dbname.0 sampledata -database.1 hibernate/hibernate -dbname.1 hibernate -database.2 quartz/quartz -dbname.2 quartz
+$JAVA -cp $THE_CLASSPATH org.hsqldb.Server -database.0 hsqldb/sampledata -dbname.0 sampledata -database.1 hsqldb/hibernate -dbname.1 hibernate -database.2 hsqldb/quartz -dbname.2 quartz
 

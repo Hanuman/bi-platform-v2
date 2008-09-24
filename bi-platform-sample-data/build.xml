@@ -1,0 +1,20 @@
+<project name="bi-platform-sample-data">
+	
+	<import file="common_build.xml"/>
+	
+	<target name="dist" depends="clean-all, resolve">
+		<mkdir dir="dist"/>
+		<zip file="dist/bi-platform-sample-data-${project.revision}.zip">
+			<zipfileset dir=".">
+				<include name="hsqldb"/>
+				<include name="mysql5"/>
+				<include name="oracle10g"/>
+				<include name="postgresql"/>
+				<include name="lib"/>
+				<include name="start_*"/>
+				<include name="stop_*"/>
+			</zipfileset>
+		</zip>
+	</target>
+	
+</project>
