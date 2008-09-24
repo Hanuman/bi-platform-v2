@@ -29,7 +29,7 @@
       <default-value>simple</default-value> 
     </triggerType>  
     <triggerName type="string"> 
-      <default-value>DailyTrigger</default-value> 
+      <default-value>CleanRepositoryTrigger</default-value> 
     </triggerName>  
     <repeatInterval type="string"> 
       <default-value>86400</default-value> 
