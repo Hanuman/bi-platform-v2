@@ -366,7 +366,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       parameterProvider.setParameter(StandardSettings.DESCRIPTION, description);
       backgroundExecutionHandler.backgroundExecuteAction(getPentahoSession(), parameterProvider);
     } catch (Exception e) {
-      PentahoSystem.systemExitPoint();
+      throw new SimpleMessageException(e.getMessage());
     } finally {
       PentahoSystem.systemExitPoint();
     }
