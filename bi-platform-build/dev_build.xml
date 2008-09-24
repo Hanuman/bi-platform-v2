@@ -148,6 +148,7 @@ INSTRUCTIONS
         <reference refid="classpath" />
       </ant>
     </sequential>
+    <antcall target="copy-solution" />
   </target>
 
   <target name="help" description="Displays help information.">
