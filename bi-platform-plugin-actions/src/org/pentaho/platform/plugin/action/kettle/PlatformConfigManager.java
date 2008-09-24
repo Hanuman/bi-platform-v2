@@ -29,7 +29,6 @@ public class PlatformConfigManager<T extends PluginLocation> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public Collection<T> load()  {
 		Set<T> configObjs = new LinkedHashSet<T>();
 		PluginLocation pl = new PluginLocation();
