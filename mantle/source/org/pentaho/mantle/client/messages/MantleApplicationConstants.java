@@ -80,5 +80,5 @@ public interface MantleApplicationConstants extends Constants {
   String complete();
   String manage();
   String manageContent();
-
+  String openToolTip();
 }
