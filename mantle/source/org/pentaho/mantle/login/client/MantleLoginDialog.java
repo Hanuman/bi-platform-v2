@@ -1,6 +1,5 @@
 package org.pentaho.mantle.login.client;
 
-import java.util.List;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
@@ -13,15 +12,12 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -30,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MantleLoginDialog {
 
-  private AsyncCallback<Boolean> outterCallback; // from outside context
+  private AsyncCallback<Boolean> outerCallback; // from outside context
   private final TextBox userTextBox = new TextBox();
   private final PasswordTextBox passwordTextBox = new PasswordTextBox();
   private PromptDialogBox dialog;
@@ -60,7 +56,7 @@ public class MantleLoginDialog {
       RequestCallback callback = new RequestCallback() {
 
         public void onError(Request request, Throwable exception) {
-          outterCallback.onFailure(exception);
+          outerCallback.onFailure(exception);
         }
 
         public void onResponseReceived(Request request, Response response) {
@@ -70,9 +66,9 @@ public class MantleLoginDialog {
             public void onSuccess(Boolean result) {
 
               if (result) {
-                outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
+                outerCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
-                outterCallback.onFailure(new Throwable(MSGS.authFailed()));
+                outerCallback.onFailure(new Throwable(MSGS.authFailed()));
               }
             }
 
@@ -83,7 +79,7 @@ public class MantleLoginDialog {
                 }
 
                 public void okPressed() {
-                  outterCallback.onFailure(caught);
+                  outerCallback.onFailure(caught);
                 }
               });
               errBox.show();
@@ -156,7 +152,7 @@ public class MantleLoginDialog {
   }
 
   public void setCallback(AsyncCallback<Boolean> callback) {
-    outterCallback = callback;
+    outerCallback = callback;
   }
 
   private String getUser() {

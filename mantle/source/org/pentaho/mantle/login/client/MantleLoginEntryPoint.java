@@ -31,9 +31,9 @@ public class MantleLoginEntryPoint implements EntryPoint {
 
       public void onSuccess(Boolean newWindow) {
         if (newWindow) {
-          String URL = (!returnLocation.equals("")) ? returnLocation : "http://" + Window.Location.getHost()
+          String URL = (returnLocation != null && !"".equals(returnLocation)) ? returnLocation : "http://" + Window.Location.getHost()
               + Window.Location.getPath().replace("Login", "Home");
-          Window.open(URL, "Pentaho User Console", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
+          Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
         } else if (!returnLocation.equals("")) {
           Window.Location.assign(returnLocation);
         } else {
@@ -55,10 +55,10 @@ public class MantleLoginEntryPoint implements EntryPoint {
   }
 
   public native void setupNativeHooks(MantleLoginDialog dialog, MantleLoginEntryPoint entry) /*-{
-     $wnd.openLoginDialog = function(location) {
-       entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::setReturnLocation(Ljava/lang/String;)(location);
-       dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::show()();
-     }
-   }-*/;
+      $wnd.openLoginDialog = function(location) {
+        entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::setReturnLocation(Ljava/lang/String;)(location);
+        dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::show()();
+      }
+    }-*/;
 
 }
