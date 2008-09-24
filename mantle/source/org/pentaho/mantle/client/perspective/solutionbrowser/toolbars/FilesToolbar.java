@@ -74,6 +74,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     runBtn = new ToolbarButton(runImage, runDisabledImage);
     runCmd = new FileCommand(FileCommand.RUN, null, callback);
     runBtn.setCommand(runCmd);
+    runBtn.setToolTip(Messages.getInstance().openToolTip());
     add(runBtn);
 
     Image editImage = new Image();
@@ -83,6 +84,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     editBtn = new ToolbarButton(editImage, editDisabledImage);
     editCmd = new FileCommand(FileCommand.EDIT, null, callback);
     editBtn.setCommand(editCmd);
+    editBtn.setToolTip(Messages.getInstance().edit());
     add(editBtn);
 
     Image miscImage = new Image();
@@ -115,6 +117,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       }
 
     });
+    miscComboBtn.setToolTip(Messages.getInstance().options());
     add(miscComboBtn);
 
     setEnabled(false);
