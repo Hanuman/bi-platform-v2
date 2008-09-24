@@ -17,6 +17,7 @@
 package org.pentaho.platform.scheduler.action;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -315,7 +316,10 @@ public class JobSchedulerComponent extends ComponentBase {
         deleteJob(jobDetail.getName(), Scheduler.DEFAULT_GROUP);
       }
       sched.scheduleJob(jobDetail, trigger);
-      getFeedbackOutputStream().write(Messages.getString("JobSchedulerComponent.INFO_0001").getBytes()); //$NON-NLS-1$
+      OutputStream feedbackOutputStream = getFeedbackOutputStream();
+      if (feedbackOutputStream != null) {
+        feedbackOutputStream.write(Messages.getString("JobSchedulerComponent.INFO_0001").getBytes()); //$NON-NLS-1$
+      }
     } catch (SchedulerException e) {
       error(e.getLocalizedMessage());
       return false;
