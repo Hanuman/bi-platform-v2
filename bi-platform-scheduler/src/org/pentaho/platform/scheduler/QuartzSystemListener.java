@@ -29,6 +29,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 import org.pentaho.platform.scheduler.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 import org.quartz.Scheduler;
@@ -40,7 +41,18 @@ public class QuartzSystemListener implements IPentahoSystemListener {
   protected static Scheduler schedulerInstance = null;
 
   private final static boolean debug = PentahoSystem.debug;
+  private static boolean useNewDatasourceService = false;
 
+
+  public synchronized void setUseNewDatasourceService(boolean useNewService) {
+    //
+    // The platform should not be calling this method. But, in case someone really 
+    // really wants to use the new datasource service features to talk to
+    // a core service like Quartz, this is now toggle-able. 
+    //
+    useNewDatasourceService = useNewService;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -72,8 +84,10 @@ public class QuartzSystemListener implements IPentahoSystemListener {
     String dsName = quartzProps.getProperty("org.quartz.dataSource.myDS.jndiURL"); //$NON-NLS-1$
     if (dsName != null) {
       try {
-   	    IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,session);    	  
+
+        IDatasourceService datasourceService = getQuartzDatasourceService(session);
         String boundDsName = datasourceService.getDSBoundName(dsName);
+        
         if (boundDsName != null) {
           quartzProps.setProperty("org.quartz.dataSource.myDS.jndiURL", boundDsName); //$NON-NLS-1$
         }
@@ -103,6 +117,26 @@ public class QuartzSystemListener implements IPentahoSystemListener {
     return true;
   }
 
+  private IDatasourceService getQuartzDatasourceService(IPentahoSession session) throws ObjectFactoryException {
+    //
+    // Our new datasource stuff is provided for running queries and acquiring data. It is
+    // NOT there for the inner workings of the platform. So, the Quartz datasource should ALWAYS
+    // be provided by JNDI. However, the class could be twiddled so that it will use the factory. 
+    //
+    // And, since the default shipping condition should be to NOT use the factory (and force JNDI), 
+    // I've reversed the logic in the class to have the negative condition first (the default execution
+    // path).
+    //
+    // Marc - BISERVER-2004
+    //
+    if (!useNewDatasourceService) {
+      return new JndiDatasourceService();
+    } else {
+      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,session);
+      return datasourceService;
+    }
+  }
+  
   private Properties findPropertiesInClasspath() throws IOException {
     // Do my best to find the properties file...
     File propFile = new File("quartz.properties"); //$NON-NLS-1$

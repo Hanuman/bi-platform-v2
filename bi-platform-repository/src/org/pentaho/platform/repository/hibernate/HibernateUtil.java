@@ -48,11 +48,13 @@ import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoSystemEntryPoint;
 import org.pentaho.platform.api.engine.IPentahoSystemExitPoint;
 import org.pentaho.platform.api.engine.ISystemSettings;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ContentException;
 import org.pentaho.platform.api.repository.IHibernatedObjectExtensionList;
 import org.pentaho.platform.api.repository.ISearchable;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
@@ -64,6 +66,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
 
   private final static boolean debug = PentahoSystem.debug;
 
+  private static boolean useNewDatasourceService = false;
+  
   private static Configuration configuration;
 
   private static SessionFactory sessionFactory;
@@ -95,6 +99,18 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     HibernateUtil.initialize();
   }
 
+  public void setUseNewDatasourceService(boolean useNewService) {
+    //
+    // The platform should not be calling this method. But, in case someone really 
+    // really wants to use the new datasource service features to hook up
+    // a core service like Hibernate, this is now toggle-able.
+    //
+    synchronized (HibernateUtil.lock) {
+        useNewDatasourceService = useNewService;
+    }
+  }
+  
+  
   //
   private HibernateUtil() {
   }
@@ -148,7 +164,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
       }
       String dsName = HibernateUtil.configuration.getProperty("connection.datasource"); //$NON-NLS-1$
       if ((dsName != null) && dsName.toUpperCase().endsWith("HIBERNATE")) { //$NON-NLS-1$
-    	IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject("IDatasourceService",null);     //$NON-NLS-1$	  
+    	  // IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject("IDatasourceService",null);     //$NON-NLS-1$
+        IDatasourceService datasourceService = getDatasourceService(); 
         String actualDSName = datasourceService.getDSBoundName("Hibernate"); //$NON-NLS-1$
         HibernateUtil.configuration.setProperty("hibernate.connection.datasource", actualDSName); //$NON-NLS-1$
       }
@@ -198,6 +215,26 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     } catch (Throwable ex) {
       HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0006_BUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
       throw new ExceptionInInitializerError(ex);
+    }
+  }
+  
+  private static IDatasourceService getDatasourceService( ) throws ObjectFactoryException {
+    //
+    // Our new datasource stuff is provided for running queries and acquiring data. It is
+    // NOT there for the inner workings of the platform. So, the Hibernate datasource should ALWAYS
+    // be provided by JNDI. However, the class could be twiddled so that it will use the factory. 
+    //
+    // And, since the default shipping condition should be to NOT use the factory (and force JNDI), 
+    // I've reversed the logic in the class to have the negative condition first (the default execution
+    // path).
+    //
+    // Marc - BISERVER-2004
+    //
+    if (!useNewDatasourceService) {
+      return new JndiDatasourceService();
+    } else {
+      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
+      return datasourceService;
     }
   }
 
