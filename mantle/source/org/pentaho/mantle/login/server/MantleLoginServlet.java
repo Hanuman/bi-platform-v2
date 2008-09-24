@@ -55,10 +55,10 @@ public class MantleLoginServlet extends RemoteServiceServlet implements MantleLo
     HttpSession session = getThreadLocalRequest().getSession();
     IPentahoSession userSession = (IPentahoSession) session.getAttribute(IPentahoSession.PENTAHO_SESSION_KEY);
     ISolutionEngine engine = PentahoSystem.getSolutionEngineInstance(userSession);
-    if(engine.getClass().getSuperclass().isAssignableFrom(SolutionEngine.class) ){
-      return true;
-    } else {
+    if(engine.getClass() ==SolutionEngine.class ){
       return false;
+    } else {
+      return true;
     }
     
   }

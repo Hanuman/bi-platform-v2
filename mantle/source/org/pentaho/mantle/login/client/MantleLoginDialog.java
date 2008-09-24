@@ -146,14 +146,16 @@ public class MantleLoginDialog {
 
     loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-
-    loginPanel.add(new Label(MSGS.sampleUser() + ":"));
-    loginPanel.add(usersListBox);
+    SimplePanel spacer;
+    if(!this.subscription){
+      loginPanel.add(new Label(MSGS.sampleUser() + ":"));
+      loginPanel.add(usersListBox);
     
-    SimplePanel spacer = new SimplePanel();
-    spacer.setHeight("8px");
-    loginPanel.add(spacer);
     
+      spacer = new SimplePanel();
+      spacer.setHeight("8px");
+      loginPanel.add(spacer);
+    }
     loginPanel.add(new Label(MSGS.username() + ":"));
     loginPanel.add(userTextBox);
     
