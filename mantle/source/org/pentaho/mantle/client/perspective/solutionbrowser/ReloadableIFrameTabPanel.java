@@ -85,16 +85,20 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
       
       // Hooks up mouse and unload events
       $wnd.hookEvents = function(wind){
-        if(wind == null){
-          wind = $wnd.watchWindow
+        try{
+          if(wind == null){
+            wind = $wnd.watchWindow
+          }
+          wind.onmouseup = funct;
+          wind.onmousedown = funct;
+          wind.onmousemove = funct;
+          
+          wind.onunload = unloader;
+          wind.mantleEventsIn = true;
+          $wnd.watchWindow = null;
+        } catch(e){
+          //You're most likely here because of Cross-site scripting permissions... consuming
         }
-        wind.onmouseup = funct;
-        wind.onmousedown = funct;
-        wind.onmousemove = funct;
-        
-        wind.onunload = unloader;
-        wind.mantleEventsIn = true;
-        $wnd.watchWindow = null;
       }
       
       // IFrame URL watching code
