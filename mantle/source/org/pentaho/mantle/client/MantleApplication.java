@@ -56,8 +56,6 @@ import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowCloseListener;
@@ -207,7 +205,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   Command logoutCommand = new Command() {
     public void execute() {
-      String location = Window.Location.getPath().substring(0, Window.Location.getPath().lastIndexOf('/')) + "/Login";
+      String location = Window.Location.getPath().substring(0, Window.Location.getPath().lastIndexOf('/')) + "/Logout";
       Window.open(location, "_top", "");
     }
   };
@@ -312,6 +310,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
             $wnd.mantle_refreshRepository = function() {
               var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
               cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
+            }
+            $wnd.mantle_waqr_preview = function(url, xml) {
+              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::handleWAQRPreview(Ljava/lang/String;Ljava/lang/String;)(url, xml);
             }
           }-*/;
 

@@ -56,19 +56,22 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
+import com.google.gwt.user.client.ui.NamedFrame;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -205,7 +208,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).frame;
-          //refreshIfPDF(frame.getElement());
+          refreshIfPDF(frame.getElement());
         }
       }
     });
@@ -309,16 +312,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void showNewURLTab(String tabName, String tabTooltip, String url) {
-    ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(url);
+    final int elementId = contentTabPanel.getWidgetCount();
+    String frameName = "frameID: " + elementId;
+    ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
     Frame frame = panel.getFrame();
-
+    frame.getElement().setAttribute("id", frameName);
     frame.setStyleName("gwt-Frame");
     panel.add(frame);
     frame.setWidth("100%");
     frame.setHeight("100%");
-
-    final int elementId = contentTabPanel.getWidgetCount();
-    DOM.setElementAttribute(frame.getElement(), "id", "frameID: " + elementId);
 
     String finalTabName = tabName;
     String finalTabTooltip = tabTooltip;
@@ -1084,9 +1086,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public String getCurrentFrameElementId() {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
     final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
-    final Frame currFrame = curPanel.getFrame();
-    final String elementId = DOM.getElementAttribute(currFrame.getElement(), "id");
-    return elementId;
+    return curPanel.getFrame().getElement().getAttribute("id");
   }
 
   private native void refreshIfPDF(com.google.gwt.dom.client.Element frame)
@@ -1100,4 +1100,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     showWorkspace();
   }
 
+  public void handleWAQRPreview(String url, String xml) {
+    showNewURLTab("Preview", "Ad Hoc Report Preview", "about:blank");
+    NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
+    final FormPanel form = new FormPanel(namedFrame);
+    RootPanel.get().add(form);
+    form.setMethod(FormPanel.METHOD_POST);
+    form.setAction(url);
+    form.add(new Hidden("reportXml", xml));
+    form.submit();
+  }
+  
 }

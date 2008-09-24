@@ -17,6 +17,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.pentaho.mantle.client.images.MantleImages;
@@ -104,6 +105,20 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       buildSolutionTree(rootItem, solutionRoot);
     } else {
       buildSolutionTree(null, solutionRoot);
+      // sort the root elements
+      List<TreeItem> roots = new ArrayList<TreeItem>();
+      for (int i = 0; i < getItemCount(); i++) {
+        roots.add(getItem(i));
+      }
+      Collections.sort(roots, new Comparator<TreeItem>() {
+        public int compare(TreeItem o1, TreeItem o2) {
+          return o1.getText().compareTo(o2.getText());
+        }
+      });
+      clear();
+      for (TreeItem myRootItem : roots) {
+        addItem(myRootItem);
+      }
     }
     if (selectedItem != null) {
       List<FileTreeItem> parents = new ArrayList<FileTreeItem>();
@@ -208,6 +223,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           if (parentTreeItem.getChildCount() == 0) {
             parentTreeItem.addItem(childTreeItem);
           } else {
+            // this does sorting
             boolean inserted = false;
             for (int j = 0; j < parentTreeItem.getChildCount(); j++) {
               FileTreeItem kid = (FileTreeItem) parentTreeItem.getChild(j);
@@ -302,7 +318,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
     // if each solution is a root, then 1st item is solution
     // else solution is 2nd item
-    return parents.get(parents.size() - (isCreateRootNode()?2:1)).getFileName();
+    return parents.get(parents.size() - (isCreateRootNode() ? 2 : 1)).getFileName();
   }
 
   public String getPath() {
@@ -324,7 +340,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // else solution is 2nd item
     // so we start from either of these positions
     String path = "";
-    for (int i = parents.size() - (isCreateRootNode()?3:2); i >= 0; i--) {
+    for (int i = parents.size() - (isCreateRootNode() ? 3 : 2); i >= 0; i--) {
       FileTreeItem parent = parents.get(i);
       path += "/" + parent.getFileName();
     }
@@ -392,7 +408,9 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     this.isAdministrator = isAdministrator;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#shareFile()
    */
   public void shareFile() {
@@ -400,8 +418,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // noop
   }
 
-public boolean isCreateRootNode() {
-	return createRootNode;
-}
+  public boolean isCreateRootNode() {
+    return createRootNode;
+  }
 
 }

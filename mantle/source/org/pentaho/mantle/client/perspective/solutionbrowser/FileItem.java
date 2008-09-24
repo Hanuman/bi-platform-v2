@@ -166,14 +166,9 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       menuBar.addItem(new MenuItem("Open", new FileCommand(FileCommand.RUN, popupMenu, fileItemCallback)));
       menuBar.addItem(new MenuItem("Open in New Window", new FileCommand(FileCommand.NEWWINDOW, popupMenu, fileItemCallback)));
       menuBar.addItem(new MenuItem("Run in Background", new FileCommand(FileCommand.BACKGROUND, popupMenu, fileItemCallback)));
-      
+
       menuBar.addSeparator();
       menuBar.addItem("Schedule...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
-      
-      final FileCommand nullFileCommand = null;
-      final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
-      editMenuItem.setStyleName("disabledMenuItem");
-      menuBar.addItem(editMenuItem);
     }
 
     /*
@@ -181,17 +176,24 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
      * clicked on WAQR report. Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
      * nullifying the command attached to MenutItem click.
      */
-    if (name.contains("waqr")) { 
+    if (name.contains("waqr.xaction")) {
+      menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
       menuBar.addItem(new MenuItem("Delete", new FileCommand(FileCommand.DELETE, popupMenu, fileItemCallback)));
       menuBar.addSeparator();
-    } else {
-
+    } else if (name.contains("analysisview.xaction")) {
+      menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
+      final FileCommand nullFileCommand = null;
+      menuBar.addItem(new MenuItem("Delete", nullFileCommand));
       menuBar.addSeparator();
-
-//      final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
-//      deleteMenuItem.setStyleName("disabledMenuItem");
-//      menuBar.addItem(deleteMenuItem);
-//      menuBar.addSeparator();
+    } else {
+      final FileCommand nullFileCommand = null;
+      final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
+      editMenuItem.setStyleName("disabledMenuItem");
+      menuBar.addItem(editMenuItem);
+      final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
+      deleteMenuItem.setStyleName("disabledMenuItem");
+      menuBar.addItem(deleteMenuItem);
+      menuBar.addSeparator();
     }
 
     menuBar.addItem(new MenuItem("Properties", new FileCommand(FileCommand.PROPERTIES, popupMenu, fileItemCallback)));

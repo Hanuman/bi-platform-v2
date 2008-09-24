@@ -18,17 +18,23 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
 
   String url;
-  Frame frame;
+  NamedFrame frame;
 
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
-    frame = new CustomFrame(url);
+    frame = new CustomFrame(""+System.currentTimeMillis(), url);
+    add(frame);
+  }  
+  
+  public ReloadableIFrameTabPanel(String name, String url) {
+    this.url = url;
+    frame = new CustomFrame(name, url);
     add(frame);
   }
 
@@ -58,21 +64,22 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
     Window.open(getCurrentUrl(), "_blank", "");
   }
 
-  public Frame getFrame() {
+  public NamedFrame getFrame() {
     return frame;
   }
 
-  public void setFrame(Frame frame) {
+  public void setFrame(NamedFrame frame) {
     this.frame = frame;
   }
   
-  public class CustomFrame extends Frame{
-    private CustomFrame(){
-      super();
+  public class CustomFrame extends NamedFrame{
+    private CustomFrame(String name){
+      super(name);
     }
     
-    private CustomFrame(String url){
-      super(url);
+    private CustomFrame(String name, String url){
+      super(name);
+      setUrl(url);
     }
     
     public native void attachEventListeners(Element ele)/*-{

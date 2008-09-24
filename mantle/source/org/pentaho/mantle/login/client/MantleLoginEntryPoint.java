@@ -34,6 +34,8 @@ public class MantleLoginEntryPoint implements EntryPoint {
           String URL = (!returnLocation.equals("")) ? returnLocation : Window.Location.getPath().replace("Login", "Home");
 
           Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
+          // calling reload here will make the login button say logout
+          Window.Location.reload();
         } else if (!returnLocation.equals("")) {
           Window.Location.assign(returnLocation);
         } else {

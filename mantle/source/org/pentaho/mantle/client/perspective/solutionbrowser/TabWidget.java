@@ -125,9 +125,9 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 0px 5px 0px");
       DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
     } else {
-      DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 4px 5px");
+      DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 5px 5px");
       DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px");
-      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "4px 0px 4px 0px");
+      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "4px 0px 5px 0px");
     }
 
     add(leftCap);
@@ -154,14 +154,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
   public void closeOtherTabs() {
     // remove from 0 -> me
-    while (tabContent != tabPanel.getWidget(0)) {
-      tabPanel.remove(tabPanel.getWidget(0));
-    }
-    // remove from END -> me
-    while (tabContent != tabPanel.getWidget(tabPanel.getTabBar().getTabCount() - 1)) {
-      tabPanel.remove(tabPanel.getWidget(tabPanel.getTabBar().getTabCount() - 1));
-    }
-    tabPanel.selectTab(0);
+    tabPanel.clear();
+    tabPanel.add(tabContent, this);
   }
 
   public void closeAllTabs() {

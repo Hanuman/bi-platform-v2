@@ -78,6 +78,8 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   public WorkspacePerspective(final IWorkspaceCallback workspaceCallback, final IPerspectiveCallback perspectiveCallback) {
     this.perspectiveCallback = perspectiveCallback;
 
+    DOM.setStyleAttribute(getElement(), "backgroundColor", "white");
+    
     Timer backgroundContentAlerter = new Timer() {
 
       public void run() {
