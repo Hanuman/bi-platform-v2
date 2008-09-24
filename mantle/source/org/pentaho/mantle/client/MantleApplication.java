@@ -456,6 +456,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         MenuBar newMenu = new MenuBar(true);
         newMenu.addItem("Report", new WAQRCommand(solutionBrowserPerspective));
         newMenu.addItem("Analysis View", new AnalysisViewCommand(solutionBrowserPerspective));
+        // add additions to the file menu
+        customizeMenu(newMenu, "file-new", settings); //$NON-NLS-1$
+
         fileMenu.addItem("New", newMenu);
         fileMenu.addItem("Open...", new OpenFileCommand(solutionBrowserPerspective));
         if (showAdvancedFeatures) {
@@ -477,6 +480,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         manageContentMenu.addItem(new MenuItem(Messages.getInstance().edit(), new ManageContentEditCommand(solutionBrowserPerspective)));
         manageContentMenu.addItem(new MenuItem(Messages.getInstance().share(), new ManageContentShareCommand(solutionBrowserPerspective)));
         manageContentMenu.addItem(new MenuItem(Messages.getInstance().schedule(), new ManageContentScheduleCommand(solutionBrowserPerspective)));
+        customizeMenu(manageContentMenu, "file-manage", settings); //$NON-NLS-1$
         fileMenu.addItem(Messages.getInstance().manage(), manageContentMenu);
         fileMenu.addSeparator();
         fileMenu.addItem(propertiesMenuItem);
@@ -511,12 +515,14 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           adminMenu.addItem(Messages.getInstance().executeGlobalActions(), new ExecuteGlobalActionsCommand());
           adminMenu.addItem(Messages.getInstance().purgeMondrianSchemaCache(), new PurgeMondrianSchemaCacheCommand());
           // add additions to the admin menu
-          customizeMenu(adminMenu, "admin", settings); //$NON-NLS-1$
 
           toolsMenu.addItem(Messages.getInstance().refresh(), adminMenu);
           toolsMenu.addSeparator();
           toolsMenu.addItem(Messages.getInstance().softwareUpdates(), new CheckForSoftwareUpdatesCommand());
           menuBar.addItem(Messages.getInstance().tools(), toolsMenu);   
+          // add additions to the admin menu
+          customizeMenu(toolsMenu, "tools", settings); //$NON-NLS-1$
+          customizeMenu(adminMenu, "tools-refresh", settings); //$NON-NLS-1$
         }
        
         MenuBar helpMenu = new MenuBar(true);

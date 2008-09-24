@@ -581,10 +581,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 		if( pluginSettings != null ) {
 			// get the menu customizations for the plugins, if any
 			List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();
-			int fileIdx = 0;
+      int fileIdx = 0;
+      int fileNewIdx = 0;
+      int fileManageIdx = 0;
 			int viewIdx = 0;
-			int adminIdx = 0;
-			int helpIdx = 0;
+      int toolsIdx = 0;
+      int toolsRefreshIdx = 0;
+			int aboutIdx = 0;
 			// process each customization
 			for( IMenuCustomization custom: customs ) {
 				// we only support appending children to the first level sub-menus
@@ -592,28 +595,44 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 					String anchor = custom.getAnchorId();
 					// do we have any additions to the file menu?
 					// TODO: support file->new
-					if( "file-submenu".equals( anchor ) ) { //$NON-NLS-1$
-						settings.put( "fileMenuTitle"+fileIdx, custom.getLabel()); //$NON-NLS-1$
-						settings.put( "fileMenuCommand"+fileIdx, custom.getCommand()); //$NON-NLS-1$
-						fileIdx++;
-					}
+          if( "file-submenu".equals( anchor ) ) { //$NON-NLS-1$
+            settings.put( "fileMenuTitle"+fileIdx, custom.getLabel()); //$NON-NLS-1$
+            settings.put( "fileMenuCommand"+fileIdx, custom.getCommand()); //$NON-NLS-1$
+            fileIdx++;
+          }
+          else if( "file-new-submenu".equals( anchor ) ) { //$NON-NLS-1$
+            settings.put( "file-newMenuTitle"+fileNewIdx, custom.getLabel()); //$NON-NLS-1$
+            settings.put( "file-newMenuCommand"+fileNewIdx, custom.getCommand()); //$NON-NLS-1$
+            fileNewIdx++;
+          }
+          else if( "file-manage-submenu".equals( anchor ) ) { //$NON-NLS-1$
+            settings.put( "file-manageMenuTitle"+fileManageIdx, custom.getLabel()); //$NON-NLS-1$
+            settings.put( "file-manageMenuCommand"+fileManageIdx, custom.getCommand()); //$NON-NLS-1$
+            fileManageIdx++;
+          }
 					// do we have any additions to the view menu?
 					else if( "view-submenu".equals( anchor ) ) { //$NON-NLS-1$
 						settings.put( "viewMenuTitle"+viewIdx, custom.getLabel()); //$NON-NLS-1$
 						settings.put( "viewMenuCommand"+viewIdx, custom.getCommand()); //$NON-NLS-1$
 						viewIdx++;
 					}
-					// do we have any additions to the admin menu?
-					else if( "admin-submenu".equals( anchor ) ) { //$NON-NLS-1$
-						settings.put( "adminMenuTitle"+adminIdx, custom.getLabel()); //$NON-NLS-1$
-						settings.put( "adminMenuCommand"+adminIdx, custom.getCommand()); //$NON-NLS-1$
-						adminIdx++;
-					}
+          // do we have any additions to the tools menu?
+          else if( "tools-submenu".equals( anchor ) ) { //$NON-NLS-1$
+            settings.put( "toolsMenuTitle"+toolsIdx, custom.getLabel()); //$NON-NLS-1$
+            settings.put( "toolsMenuCommand"+toolsIdx, custom.getCommand()); //$NON-NLS-1$
+            toolsIdx++;
+          }
+          // do we have any additions to the refresh menu?
+          else if( "tools-refresh-submenu".equals( anchor ) ) { //$NON-NLS-1$
+            settings.put( "tools-refreshMenuTitle"+toolsRefreshIdx, custom.getLabel()); //$NON-NLS-1$
+            settings.put( "tools-refreshMenuCommand"+toolsRefreshIdx, custom.getCommand()); //$NON-NLS-1$
+            toolsRefreshIdx++;
+          }
 					// do we have any additions to the about menu?
 					else if( "about-submenu".equals( anchor ) ) { //$NON-NLS-1$
-						settings.put( "helpMenuTitle"+helpIdx, custom.getLabel()); //$NON-NLS-1$
-						settings.put( "helpMenuCommand"+helpIdx, custom.getCommand()); //$NON-NLS-1$
-						helpIdx++;
+						settings.put( "helpMenuTitle"+aboutIdx, custom.getLabel()); //$NON-NLS-1$
+						settings.put( "helpMenuCommand"+aboutIdx, custom.getCommand()); //$NON-NLS-1$
+						aboutIdx++;
 					}
 				}
 			}
