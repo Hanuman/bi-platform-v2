@@ -921,14 +921,7 @@ gwt-TabPanelBottom {
 
 .panelWithTitledToolbar{
   height: 100%;
-}
-
-.panelWithTitledToolbar-panel{
-  position:absolute;
-  width:100%;
-	/* adds spacer area for the toolbar which is floating above content */
-	top: 30px;
-
+  background-color: #FFF;
 }
 
 .files-list-panel{
@@ -943,4 +936,5 @@ gwt-TabPanelBottom {
   height:29px;
   position:absolute;
   z-index: 10;
+  overflow: hidden;
 }
