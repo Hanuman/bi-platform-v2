@@ -73,6 +73,8 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
 
   IPerspectiveCallback perspectiveCallback;
 
+  private static final String DELETE="delete";
+  
   public WorkspacePerspective(final IWorkspaceCallback workspaceCallback, final IPerspectiveCallback perspectiveCallback) {
     this.perspectiveCallback = perspectiveCallback;
 
@@ -356,7 +358,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       Button btnDelete = new Button(Messages.getInstance().delete());
       btnDelete.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription("delete", subscrName);
+          performActionOnSubscription(DELETE, subscrName);
         }
       });
 
@@ -443,7 +445,14 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
     }
     final Frame iframe = new Frame(url);
-    iframe.setPixelSize(800, 600);
+    
+    // BISERVER-1931: Reducing the size of the dialog box when 
+    // subscription is to be deleted    
+    if (action.equals(DELETE)) {
+      iframe.setSize("100%", "100%");
+    } else {
+      iframe.setPixelSize(800, 600);
+    }    
 
     final Button btnOk = new Button(Messages.getInstance().close());
     btnOk.setWidth("100");
