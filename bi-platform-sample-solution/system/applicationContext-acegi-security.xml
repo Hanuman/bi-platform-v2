@@ -231,6 +231,7 @@
       <value>
         <![CDATA[
 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+\A/docs/pentaho_ce_user_guide.*\Z=Anonymous,Authenticated
 \A/mantlelogin/.*\Z=Anonymous,Authenticated
 \A/mantle/mantleloginservice/*\Z=Anonymous,Authenticated
 \A/mantle/.*\Z=Authenticated
