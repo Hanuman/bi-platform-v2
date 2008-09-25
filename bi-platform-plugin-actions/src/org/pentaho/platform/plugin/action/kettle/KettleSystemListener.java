@@ -65,7 +65,8 @@ public class KettleSystemListener implements IPentahoSystemListener {
   			  PluginLoader.getInstance().load("platform-kettle-cfg");
   		  }
   		  catch(KettleConfigException e) {
-  			 Logger.error("Kettle plugins not available",e.getLocalizedMessage());
+  			 Logger.error(KettleSystemListener.class.getName(),Messages
+  			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED",pluginsFolder.getAbsolutePath())); //$NON-NLS-1$
   		  }
   	  }
     
