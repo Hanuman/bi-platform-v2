@@ -122,6 +122,9 @@
 				<target name="resolve" />
 				<target name="${publishTo}" />
 			</ant>
+            <ant antfile="build.xml" dir="../bi-platform-sample-data">
+              <target name="${publishTo}" />
+            </ant>
 		</sequential>
 	</target>
 
