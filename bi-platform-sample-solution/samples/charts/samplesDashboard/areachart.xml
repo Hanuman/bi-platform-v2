@@ -28,7 +28,7 @@
 	</color-palette>
 	<include-legend>true</include-legend>
 	<data>
-		<data-solution>samples</data-solution>
+		<data-solution>bi-developers</data-solution>
 		<data-path>charts/samplesDashboard</data-path>
 		<data-action>areachart_data.xaction</data-action>
 		<data-output>query_result</data-output>
