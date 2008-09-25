@@ -160,7 +160,11 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
   
   public static final String ACTION_ADD_SCHEDULE_AND_CONTENT = "doAddScheduleAndContent"; //$NON-NLS-1$
   
+  public static final String ACTION_ADD_SCHEDULE_WITHOUT_CONTENT = "doAddScheduleWithoutContent"; //$NON-NLS-1$
+    
   public static final String ACTION_EDIT_SCHEDULE_AND_CONTENT = "doEditScheduleAndContent"; //$NON-NLS-1$
+  
+  public static final String ACTION_EDIT_SCHEDULE_WITHOUT_CONTENT = "doEditScheduleWithoutContent"; //$NON-NLS-1$
   
   public static final String ACTION_DELETE_SCHEDULE_CONTENT_AND_SUBSCRIPTION = "doDeleteScheduleContentAndSubscription"; //$NON-NLS-1$
   
@@ -274,9 +278,15 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       if (SubscriptionAdminUIComponent.ACTION_ADD_SCHEDULE_AND_CONTENT.equals(schedulerActionStr)) {
         return doAddScheduleAndContent();
       }
+      if (SubscriptionAdminUIComponent.ACTION_ADD_SCHEDULE_WITHOUT_CONTENT.equals(schedulerActionStr)) {
+        return doAddScheduleWithoutContent();
+      }
       if (SubscriptionAdminUIComponent.ACTION_EDIT_SCHEDULE_AND_CONTENT.equals(schedulerActionStr)) {
         return doEditScheduleAndContent();
       }
+      if (SubscriptionAdminUIComponent.ACTION_EDIT_SCHEDULE_WITHOUT_CONTENT.equals(schedulerActionStr)) {
+        return doEditScheduleWithoutContent();
+      }      
       if (SubscriptionAdminUIComponent.ACTION_DELETE_SCHEDULE_CONTENT_AND_SUBSCRIPTION.equals(schedulerActionStr)) {
         return doDeleteScheduleContentAndSubscription();
       }
@@ -831,6 +841,62 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
         "SubscriptionAdminUIComponent.USER_MODIFIED_SCHEDULE", sched.getScheduleReference())), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
+  
+  private Document doEditScheduleWithoutContent() throws ParameterValidationException, CronStringException, SubscriptionRepositoryCheckedException {
+
+    String paramNames[] = new String[] { "schedId", "title", "group" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    validateParametersEx(paramNames, true );
+
+    String schedId = getParameter("schedId", null); //$NON-NLS-1$
+    String cronExpr = getParameter("cron", null); //$NON-NLS-1$
+    String strRepeatInterval = getParameter("repeat-time-millisecs", null); //$NON-NLS-1$
+    String strRepeatCount = getParameter("repeat-count", null); //$NON-NLS-1$
+    String schedRef = getParameter("schedRef", null); //$NON-NLS-1$
+    String title = getParameter("title", null); //$NON-NLS-1$
+    String desc = getParameter("desc", null); //$NON-NLS-1$
+    String group = getParameter("group", null); //$NON-NLS-1$
+    String strStartDate = getParameter(StandardSettings.START_DATE_TIME, null);
+    String strEndDate = getParameter(StandardSettings.END_DATE_TIME, null);
+    
+    if ( null != cronExpr ) {
+      validateCronExpressionEx(cronExpr);
+    } else {
+      if ( null == strRepeatInterval ) {
+        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+      }
+    }
+    Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
+    Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
+    assert repeatInterval == null || repeatInterval >= 0 : "Invalid repeat interval " + repeatInterval;
+    DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
+    Date startDate;
+    Date endDate;
+    try {
+      startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
+    } catch (ParseException e) {
+      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+    }
+    try {
+      endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
+    } catch (ParseException e) {
+      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+    }
+    
+    SubscriptionRepositoryHelper.editScheduleWithoutContent( subscriptionRepository, schedId, title, schedRef, desc,
+        cronExpr, repeatCount, repeatInterval, group, startDate, endDate);
+    
+    return (showCommandResultUI(getOkMessage(Messages.getString(
+        "SubscriptionAdminUIComponent.USER_MODIFIED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
+
+  }
+  
+  
+  
+  
+  
+  
+  
+  
   /**
    * Creates XML Document for the Add Schedules Page - Add a new schedule
    */
@@ -874,6 +940,56 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
 
     return (showCommandResultUI(getOkMessage(Messages.getString(
         "SubscriptionAdminUIComponent.USER_ADDED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
+  }
+
+  
+  /**
+   * Performs the Add Schedule function with out content
+   * 
+   */
+  Document doAddScheduleWithoutContent() throws ParameterValidationException, CronStringException, SubscriptionRepositoryCheckedException, SubscriptionSchedulerException {
+    String paramNames[] = new String[] { "title", "schedRef", "desc", "group" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    validateParametersEx(paramNames, true );
+
+    String cronExpr = getParameter("cron", null); //$NON-NLS-1$
+    String strRepeatInterval = getParameter("repeat-time-millisecs", null); //$NON-NLS-1$
+    String strRepeatCount = getParameter("repeat-count", null); //$NON-NLS-1$
+    String schedRef = getParameter("schedRef", null); //$NON-NLS-1$
+    String title = getParameter("title", null); //$NON-NLS-1$
+    String desc = getParameter("desc", null); //$NON-NLS-1$
+    String group = getParameter("group", null); //$NON-NLS-1$
+    String strStartDate = getParameter(StandardSettings.START_DATE_TIME, null); //$NON-NLS-1$
+    String strEndDate = getParameter(StandardSettings.END_DATE_TIME, null); //$NON-NLS-1$
+    
+    if ( null != cronExpr ) {
+      validateCronExpressionEx(cronExpr);
+    } else {
+      if ( null == strRepeatInterval ) {
+        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+      }
+    }
+    Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
+    Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
+    DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
+    Date startDate;
+    Date endDate;
+    try {
+      startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
+    } catch (ParseException e) {
+      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+    }
+    try {
+      endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
+    } catch (ParseException e) {
+      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+    }
+    
+    SubscriptionRepositoryHelper.addScheduleWithoutContent( subscriptionRepository, title, schedRef, desc,
+        cronExpr, repeatCount, repeatInterval, group, startDate, endDate);
+
+    return (showCommandResultUI(getOkMessage(Messages.getString(
+        "SubscriptionAdminUIComponent.USER_ADDED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
+
   }
 
   /**

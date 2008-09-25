@@ -45,7 +45,7 @@ public class SubscriptionRepositoryHelper {
   private SubscriptionRepositoryHelper() {
 
   }
-  
+
   /**
    * 
    * @param subscriptionRepository
@@ -80,10 +80,9 @@ public class SubscriptionRepositoryHelper {
     }
 
     boolean deleteSuccess = subscriptionRepository.deleteSchedule(schedule);
-    if ( !deleteSuccess ) {
-      throw new SubscriptionSchedulerException( "Failed to delete schedule with id: "
-          + schedule.getId() 
-          + "and description: " + schedule.getDescription() );
+    if (!deleteSuccess) {
+      throw new SubscriptionSchedulerException("Failed to delete schedule with id: " + schedule.getId()
+          + "and description: " + schedule.getDescription());
     }
   }
 
@@ -93,11 +92,11 @@ public class SubscriptionRepositoryHelper {
 
     ISchedule sched = null;
     if (null != cronExpr) {
-      sched = subscriptionRepository.editCronSchedule(schedId, title, schedRef, desc, 
-          cronExpr, group, startDate, endDate);
+      sched = subscriptionRepository.editCronSchedule(schedId, title, schedRef, desc, cronExpr, group, startDate,
+          endDate);
     } else {
-      sched = subscriptionRepository.editRepeatSchedule(schedId, title, schedRef,
-        desc, repeatCount, repeatInterval, group, startDate, endDate);
+      sched = subscriptionRepository.editRepeatSchedule(schedId, title, schedRef, desc, repeatCount, repeatInterval,
+          group, startDate, endDate);
     }
 
     List<ISubscribeContent> contentList = subscriptionRepository.getContentBySchedule(sched);
@@ -116,6 +115,23 @@ public class SubscriptionRepositoryHelper {
 
     return sched;
   }
+  
+  
+  public static ISchedule editScheduleWithoutContent(ISubscriptionRepository subscriptionRepository, String schedId,
+      String title, String schedRef, String desc, String cronExpr, Integer repeatCount, Integer repeatInterval,
+      String group, Date startDate, Date endDate) throws SubscriptionRepositoryCheckedException {
+
+    ISchedule sched = null;
+    if (null != cronExpr) {
+      sched = subscriptionRepository.editCronSchedule(schedId, title, schedRef, desc, cronExpr, group, startDate,
+          endDate);
+    } else {
+      sched = subscriptionRepository.editRepeatSchedule(schedId, title, schedRef, desc, repeatCount, repeatInterval,
+          group, startDate, endDate);
+    }
+
+    return sched;
+  }
 
   public static ISchedule addScheduleAndContent(ISubscriptionRepository subscriptionRepository, String title,
       String schedRef, String desc, String cronExpr, Integer repeatCount, Integer repeatInterval, String group,
@@ -123,12 +139,11 @@ public class SubscriptionRepositoryHelper {
 
     // create a new schedule
     ISchedule sched = null;
-    if ( null != cronExpr ) {
-      sched = subscriptionRepository.addCronSchedule(title, schedRef, desc, cronExpr, group,
-          startDate, endDate );
+    if (null != cronExpr) {
+      sched = subscriptionRepository.addCronSchedule(title, schedRef, desc, cronExpr, group, startDate, endDate);
     } else {
-      sched = subscriptionRepository.addRepeatSchedule(title, schedRef, desc, repeatCount,
-        repeatInterval, group, startDate, endDate);
+      sched = subscriptionRepository.addRepeatSchedule(title, schedRef, desc, repeatCount, repeatInterval, group,
+          startDate, endDate);
     }
 
     // add each of the action sequences in actionRefs to the repository as new
@@ -144,4 +159,19 @@ public class SubscriptionRepositoryHelper {
     return sched;
   }
 
+  public static ISchedule addScheduleWithoutContent(ISubscriptionRepository subscriptionRepository, String title, String schedRef,
+      String desc, String cronExpr, Integer repeatCount, Integer repeatInterval, String group, Date startDate,
+      Date endDate) throws SubscriptionRepositoryCheckedException {
+
+    // create a new schedule
+    ISchedule sched = null;
+    if (null != cronExpr) {
+      sched = subscriptionRepository.addCronSchedule(title, schedRef, desc, cronExpr, group, startDate, endDate);
+    } else {
+      sched = subscriptionRepository.addRepeatSchedule(title, schedRef, desc, repeatCount, repeatInterval, group,
+          startDate, endDate);
+    }
+
+    return sched;
+  }
 }

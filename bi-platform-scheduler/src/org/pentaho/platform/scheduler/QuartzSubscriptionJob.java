@@ -16,15 +16,19 @@ import org.pentaho.platform.repository.subscription.SubscriptionExecute;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Trigger;
 
 public class QuartzSubscriptionJob implements Job {
-
+  public static String TRIGGER_GROUP = "MANUAL_TRIGGER"; //$NON-NLS-1$
   public QuartzSubscriptionJob() {
   }
 
   public void execute(final JobExecutionContext context) throws JobExecutionException {
     SubscriptionExecute subscriptionExecute = new SubscriptionExecute();
-    subscriptionExecute.execute( context.getJobDetail().getName(), /*is last fire time?*/context.getNextFireTime() == null );
+    Trigger trigger = context.getTrigger();
+    subscriptionExecute.execute( context.getJobDetail().getName(), /*is last fire time?*/ !TRIGGER_GROUP.equals(trigger.getGroup()) && context.getNextFireTime() == null );
+
+    ;
   }
 
 }
