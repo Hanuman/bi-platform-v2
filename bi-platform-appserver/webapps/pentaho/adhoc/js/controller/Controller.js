@@ -1663,14 +1663,12 @@ Controller.prototype.handlePreview = function()
           url += '&forceAttachment=' + false;
           url += '&templatePath=' + templatePath;
 		  window.parent.mantle_waqr_preview(url, xml);
-		} else {
-		  form.submit();
-		}
-	}
-	else
-	{
-		this.wiz.msgCtrl.warn( rsStatus.message );
-	}
+	} else {
+	  form.submit();
+    }
+  }	else {
+	this.wiz.msgCtrl.warn( rsStatus.message );
+  }
 };
 
 Controller.prototype.handleCancel = function()
