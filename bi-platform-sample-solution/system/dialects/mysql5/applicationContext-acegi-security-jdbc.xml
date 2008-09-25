@@ -45,6 +45,6 @@
 	</bean>
 
 	<bean id="passwordEncoder"
-		class="org.acegisecurity.providers.encoding.PlaintextPasswordEncoder" />
+		class="org.pentaho.platform.engine.security.DefaultPentahoPasswordEncoder" /> 
 
 </beans>
