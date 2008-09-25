@@ -147,7 +147,7 @@ public class GenericServlet extends ServletBase {
 	    	contentGenerator.setSession(session);
 	    	contentGenerator.setUrlFactory(urlFactory);
 	    	contentGenerator.createContent();
-	    	error( "Generic Servlet content generate successfully" );
+	    	if (PentahoSystem.debug) debug( "Generic Servlet content generate successfully" ); //$NON-NLS-1$
 
 	    } catch ( Exception e ) {
 	    	error( "Errors trying to generate content: "+request.getQueryString(), e );
