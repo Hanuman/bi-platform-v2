@@ -5,223 +5,271 @@
 
 <project name="Pentaho BI Platform Open Build" basedir=".">
 
-  <property file="override.properties" />
-  <property file="build.properties" />
+	<property file="override.properties" />
+	<property file="build.properties" />
 
-  <property name="publishTo" value="publish-local"/>
-	
-  <import file="common.xml" />
+	<property name="publishTo" value="publish-local" />
+
+	<import file="common.xml" />
 
 
-  <!--=======================================================================
+	<!--=======================================================================
         set-build.id
     
         Sets a property build.id to the either "development" or the svn revision
         if in release mode
         ====================================================================-->
-  <target name="set-build.id" unless="build.id" depends="install-antcontrib">
-    <if>
-      <istrue value="${release}" />
-      <then>
-        <antcallback target="svn-revision" return="svn.revision" />
-        <property name="build.id" value="${svn.revision}" />
-      </then>
-      <else>
-        <property name="build.id" value="development" />
-      </else>
-    </if>
-  </target>
+	<target name="set-build.id" unless="build.id" depends="install-antcontrib">
+		<if>
+			<istrue value="${release}" />
+			<then>
+				<antcallback target="svn-revision" return="svn.revision" />
+				<property name="build.id" value="${svn.revision}" />
+			</then>
+			<else>
+				<property name="build.id" value="development" />
+			</else>
+		</if>
+	</target>
 
 
-  <!--=======================================================================
+	<!--=======================================================================
         publish-all-pentaho
     
         cleans, resolves, and publishes all platform projects serially.
         Note the release process depends on this target working this way, please
         talk to the release manager if you need to change this target.
         ====================================================================-->
-  <target name="publish-all"
-          depends="set-build.id"
-          description="cleans, resolves, and publishes all platform projects serially">
-    <sequential>
-      <ant antfile="build.xml" dir="../bi-platform-api">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-util">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-core">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-test-foundation">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-security">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-services">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-repository">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-ui-foundation">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-services">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-actions">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-scheduler">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-legacy">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-servlet">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-portlet">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-      <ant antfile="build.xml" dir="../mantle">
-        <target name="clean-all" />
-        <target name="resolve" />
-        <target name="${publishTo}" />
-      </ant>
-    </sequential>
-  </target>
-	
- <!--=======================================================================
+	<target name="publish-all" depends="set-build.id" description="cleans, resolves, and publishes all platform projects serially">
+		<sequential>
+			<ant antfile="build.xml" dir="../bi-platform-api">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-util">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-engine-core">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-test-foundation">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-engine-security">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-engine-services">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-repository">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-ui-foundation">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-plugin-services">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-plugin-actions">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-scheduler">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-legacy">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-web">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-web-servlet">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../bi-platform-web-portlet">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+			<ant antfile="build.xml" dir="../mantle">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="${publishTo}" />
+			</ant>
+		</sequential>
+	</target>
+
+
+	<!--=======================================================================
         dist-all-javadoc
     
-        cleans, resolves, and generates all platform javadocs serially.
+        cleans, resolves, generates and copies all platform javadocs serially.
         Note the release process depends on this target working this way, please
         talk to the release manager if you need to change this target.
         ====================================================================-->
 
-  <target name="dist-all-javadoc"
-    depends="set-build.id"
-    description="cleans, resolves, and publishes all platform projects serially">
-    <sequential>
-      <ant antfile="build.xml" dir="../bi-platform-api">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-util">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-core">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-test-foundation">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-security">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-engine-services">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-repository">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-ui-foundation">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-services">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-plugin-actions">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-scheduler">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-legacy">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-servlet">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../bi-platform-web-portlet">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-      <ant antfile="build.xml" dir="../mantle">
-        <target name="clean-all" />
-        <target name="resolve" />
-      	<target name="dist-javadoc" />
-      </ant>
-    </sequential>
-  </target>
-	
-	
-	
+	<target name="dist-all-javadoc" depends="set-build.id" description="cleans, resolves, generates and copies all platform javadocs serially">
+		<sequential>
+			<property name="platform.javadoc.dir" value="${basedir}/platform-javadocs" />
+			<delete dir="${platform.javadoc.dir}" />
+			<mkdir dir="${platform.javadoc.dir}" />
+			<ant antfile="build.xml" dir="../bi-platform-api">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-api/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-util">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-util/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-engine-core">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-engine-core/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-test-foundation">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-test-foundation/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-engine-security">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-engine-security/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-engine-services">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-engine-services/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-repository">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-repository/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-ui-foundation">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-ui-foundation/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-plugin-services">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-plugin-services/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-plugin-actions">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-plugin-actions/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-scheduler">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-scheduler/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-legacy">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-legacy/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-web">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-web/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-web-servlet">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-web-servlet/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../bi-platform-web-portlet">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+				<fileset dir="../bi-platform-web-portlet/dist" includes="**/*javadoc.*" />
+			</copy>
+			<ant antfile="build.xml" dir="../mantle">
+				<target name="clean-all" />
+				<target name="resolve" />
+				<target name="dist-javadoc" />
+			</ant>
+			<copy todir="${platform.javadoc.dir}">
+			  <fileset dir="../mantle/dist" includes="**/*javadoc.*" />
+			</copy>			
+		</sequential>
+	</target>
+
+
+
 </project>
