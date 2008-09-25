@@ -27,9 +27,9 @@
         <query-result type="result-set" mapping="results"/> 
       </action-outputs>
       <component-definition> 
-        <jndi><![CDATA[datasource1]]></jndi>  
+        <jndi><![CDATA[SampleData]]></jndi>  
         <live><![CDATA[true]]></live>  
-        <query><![CDATA[select department, sum(actual) as actual, sum(budget) as budget, sum(variance) as variance from QUADRANT_ACTUALS WHERE NOT department like 'Prof%'  GROUP BY department]]></query>
+        <query><![CDATA[select department, sum(actual) as actual, sum(budget) as budget, sum(variance) as variance from QUADRANT_ACTUALS WHERE NOT department like 'Prof%'  GROUP BY department]]></query> 
       </component-definition> 
     </action-definition>
  
