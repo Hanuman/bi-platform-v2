@@ -1659,19 +1659,18 @@ Controller.prototype.handlePreview = function()
           }
           
           url += '?ajax=true&component=generatePreview';
-          url += '&reportXml=' + encodeURIComponent(xml);
           url += '&outputType=' + outputType;
           url += '&forceAttachment=' + false;
           url += '&templatePath=' + templatePath;
-      window.parent.mantle_openTab('Preview', 'Ad Hoc Preview', url);
-    } else {
-      form.submit();
-    }
-  }
-  else
-  {
-    this.wiz.msgCtrl.warn( rsStatus.message );
-  }
+		  window.parent.mantle_waqr_preview(url, xml);
+		} else {
+		  form.submit();
+		}
+	}
+	else
+	{
+		this.wiz.msgCtrl.warn( rsStatus.message );
+	}
 };
 
 Controller.prototype.handleCancel = function()
