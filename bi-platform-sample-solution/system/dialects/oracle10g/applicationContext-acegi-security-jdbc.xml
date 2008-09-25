@@ -39,7 +39,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url"
-			value="jdbc:oracle:thin:@localhost:1521:hibernate" />
+			value="jdbc:oracle:thin:@localhost:1521:pentaho" />
 		<property name="username" value="hibuser" />
 		<property name="password" value="password" />
 	</bean>
