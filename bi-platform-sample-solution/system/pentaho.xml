@@ -178,10 +178,9 @@
 	  <max-idle-conn>2</max-idle-conn>
 	  <min-idle-conn>1</min-idle-conn>
 	  <num-idle-conn>5</num-idle-conn>
-	  <valid-query>select 1 from dual</valid-query>
 	  <when-exhausted-action>1</when-exhausted-action>
 	  <wait>100</wait>
 	  <test-while-idle>false</test-while-idle>
-	  <test-on-borrow>false</test-on-borrow>
+	  <test-on-borrow>true</test-on-borrow>
 	  <test-on-return>false</test-on-return></dbcp-defaults>
 </pentaho-system>

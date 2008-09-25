@@ -23,6 +23,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.pentaho.di.core.util.Messages;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
@@ -30,6 +31,7 @@ import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceExcep
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.util.logging.Logger;
 
 public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
   /**
@@ -65,9 +67,23 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
         dataSource = getJndiDataSource(dsName);
       }
     } catch (ObjectFactoryException objface) {
-      dataSource = getJndiDataSource(dsName);
+      try {
+        return getJndiDataSource(dsName);  
+      }
+      catch(DatasourceServiceException dse) {
+       Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
+       throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
+      }
+
     } catch (DatasourceMgmtServiceException daoe) {
-      dataSource = getJndiDataSource(dsName);
+      try {
+        return getJndiDataSource(dsName);  
+      }
+      catch(DatasourceServiceException dse) {
+       Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
+       throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
+      }
+
     }
     return dataSource;
   }

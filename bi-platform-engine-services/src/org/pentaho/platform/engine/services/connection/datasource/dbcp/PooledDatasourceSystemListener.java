@@ -48,10 +48,17 @@ public class PooledDatasourceSystemListener implements IPentahoSystemListener {
       cacheManager.addCacheRegion(IDatasourceService.JDBC_DATASOURCE);
       List<IDatasource> datasources = datasourceMgmtSvc.getDatasources();
       for (IDatasource datasource : datasources) {
-        final DataSource ds = PooledDatasourceHelper.setupPooledDataSource(datasource);
-        Logger.debug(this, "(storing DataSource under key \"" + IDatasourceService.JDBC_DATASOURCE //$NON-NLS-1$
-            + datasource.getName() + "\")"); //$NON-NLS-1$
-        cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource.getName(), ds);
+        try {
+          final DataSource ds = PooledDatasourceHelper.setupPooledDataSource(datasource);
+          Logger.debug(this, "(storing DataSource under key \"" + IDatasourceService.JDBC_DATASOURCE //$NON-NLS-1$
+              + datasource.getName() + "\")"); //$NON-NLS-1$
+          cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource.getName(), ds);
+        } catch (DatasourceServiceException dse) {
+          // Skip this datasource pooling
+          Logger.warn(this, Messages.getErrorString(
+              "DatasourceSystemListener.UNABLE_TO_POOL_DATASOURCE",datasource.getName(), PooledDatasourceSystemListener.class.getName()), dse); //$NON-NLS-1$
+          continue;
+        }
        }
       Logger.debug(this, "PooledDatasourceSystemListener: done with init"); //$NON-NLS-1$
       return true;
@@ -62,11 +69,7 @@ public class PooledDatasourceSystemListener implements IPentahoSystemListener {
     } catch (DatasourceMgmtServiceException dmse) {
       Logger.error(this, Messages.getErrorString(
           "DatasourceSystemListener.UNABLE_TO_GET_DATASOURCE",PooledDatasourceSystemListener.class.getName()), dmse); //$NON-NLS-1$
-      return false;        
-    } catch (DatasourceServiceException dse) {
-      Logger.error(this, Messages.getErrorString(
-          "DatasourceSystemListener.UNABLE_TO_GET_DATASOURCE",PooledDatasourceSystemListener.class.getName()), dse); //$NON-NLS-1$
-      return false;        
+      return false;
     }
   }
 

@@ -43,7 +43,7 @@ public class PooledDatasourceHelper {
       String minIdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/min-idle-conn", null);  //$NON-NLS-1$    
 	    String maxActConn = PentahoSystem.getSystemSetting("dbcp-defaults/max-act-conn", null);  //$NON-NLS-1$
 	    String numIdleConn = PentahoSystem.getSystemSetting("dbcp-defaults/num-idle-conn", null);  //$NON-NLS-1$
-	    String validQuery = PentahoSystem.getSystemSetting("dbcp-defaults/valid-query", null);  //$NON-NLS-1$
+	    String validQuery = null;
 	    String whenExhaustedAction = PentahoSystem.getSystemSetting("dbcp-defaults/when-exhausted-action", null);  //$NON-NLS-1$
 	    String wait = PentahoSystem.getSystemSetting("dbcp-defaults/wait", null);  //$NON-NLS-1$
 	    String testWhileIdleValue = PentahoSystem.getSystemSetting("dbcp-defaults/test-while-idle", null);  //$NON-NLS-1$
