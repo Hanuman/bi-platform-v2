@@ -108,52 +108,11 @@ public class MDXConnection implements IPentahoLoggingConnection {
   }
 
   private void init(final String connectStr) {
-    try {
-      if (nativeConnection != null) { // Assume we're open
-        close();
-      }
-
-      // parse the connect string, replace datasource with actual
-      // datasource object if possible
-      
       Util.PropertyList properties = Util.parseConnectString(connectStr);
-      
-      String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name()); //$NON-NLS-1$
-      
-      if (dataSourceName != null) {
-        IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
-        DataSource dataSourceImpl = datasourceService.getDataSource(dataSourceName);      
-        if (dataSourceImpl != null) {
-          properties.remove(RolapConnectionProperties.DataSource.name()); //$NON-NLS-1$
-          nativeConnection = DriverManager.getConnection(properties, null,  dataSourceImpl);
-        } else {
-          nativeConnection = DriverManager.getConnection(connectStr, null);
-        }
-      } else {
-        nativeConnection = DriverManager.getConnection(connectStr, null);
-      }
-      
-      if (nativeConnection == null) {
-        logger.error(Messages.getErrorString(
-            "MDXConnection.ERROR_0002_INVALID_CONNECTION", connectStr != null ? connectStr : "null")); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    } catch (Throwable t) {
-      if (logger != null) {
-        logger.error(Messages.getErrorString(
-            "MDXConnection.ERROR_0002_INVALID_CONNECTION", connectStr != null ? connectStr : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
-      } else {
-        Logger.error(this.getClass().getName(), Messages.getErrorString(
-            "MDXConnection.ERROR_0002_INVALID_CONNECTION", connectStr != null ? connectStr : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    }
+      init(properties);
   }
 
   private void init(final Properties properties) {
-    try {
-      if (nativeConnection != null) { // Assume we're open
-        close();
-      }
-
       Util.PropertyList pl = new Util.PropertyList();
       Enumeration enum1 = properties.keys();
       while (enum1.hasMoreElements()) {
@@ -161,17 +120,9 @@ public class MDXConnection implements IPentahoLoggingConnection {
         Object value = properties.get(key);
         pl.put(key.toString(), value.toString());
       }
-      nativeConnection = DriverManager.getConnection(pl, null);
-    } catch (Throwable t) {
-      if (logger != null) {
-        logger.error(Messages.getErrorString("MDXConnection.ERROR_0002_INVALID_CONNECTION", t.getMessage())); //$NON-NLS-1$
-      } else {
-        Logger.error(this.getClass().getName(), Messages.getErrorString(
-            "MDXConnection.ERROR_0002_INVALID_CONNECTION", t.getMessage()), t); //$NON-NLS-1$ 
-      }
-    }
+      init(pl);
   }
-
+  
   private void init(final String driver, final String provider, final String userName, final String password) {
     StringBuffer buffer = new StringBuffer();
     buffer.append("provider=" + provider); //$NON-NLS-1$
@@ -201,6 +152,42 @@ public class MDXConnection implements IPentahoLoggingConnection {
     init(buffer.toString());
   }
 
+  private void init(Util.PropertyList properties) {
+    try {
+      if (nativeConnection != null) { // Assume we're open
+        close();
+      }
+
+      String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name());
+      
+      if (dataSourceName != null) {
+        IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+        DataSource dataSourceImpl = datasourceService.getDataSource(dataSourceName);      
+        if (dataSourceImpl != null) {
+          properties.remove(RolapConnectionProperties.DataSource.name());
+          nativeConnection = DriverManager.getConnection(properties, null, dataSourceImpl);
+        } else {
+          nativeConnection = DriverManager.getConnection(properties, null);
+        }
+      } else {
+        nativeConnection = DriverManager.getConnection(properties, null);
+      }
+      
+      if (nativeConnection == null) {
+        logger.error(Messages.getErrorString(
+            "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    } catch (Throwable t) {
+      if (logger != null) {
+        logger.error(Messages.getErrorString(
+            "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
+      } else {
+        Logger.error(this.getClass().getName(), Messages.getErrorString(
+            "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    }
+  }
+  
   public boolean initialized() {
     return nativeConnection != null;
   }
