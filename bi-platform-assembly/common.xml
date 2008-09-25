@@ -163,6 +163,16 @@
          usetimestamp="true" />
   </target>
 
+  <!--=======================================================================
+	    clean-jars
+	    
+	    Removes all the libraries that have been downloaded for this project
+	    using the ivy dependencies.
+	    ====================================================================-->
+  <target name="clean-lib" description="Cleans the libraries that have been downloaded">
+    <delete dir="${lib.dir}" />
+    <delete dir="${testlib.dir}" />
+  </target>
 
 
   <!--=======================================================================
@@ -174,7 +184,11 @@
 	    ====================================================================-->
   <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy" />
+  <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy" >
+  	<!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
+  	<antcall target="clean-lib"/>
+  	<property name="resolve-init.skip" value=""/>
+	</target>
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="default" />

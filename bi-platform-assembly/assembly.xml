@@ -128,10 +128,6 @@
     <delete dir="${dist.dir}" />
   </target>
 
-  <target name="clean-lib">
-    <delete dir="${lib.dir}" />
-  </target>
-
   <!-- - - - - - - - - - - - - - - - - - 
       private target: init.stage.pentaho                      
      - - - - - - - - - - - - - - - - - -->
