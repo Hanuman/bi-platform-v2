@@ -284,7 +284,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * private void processDir(Element parentNode, RepositoryFile parentDir, String solutionId, int actionOperation) {
    * processDir(parentNode, parentDir, solutionId, actionOperation, true); }
    */
-  private void processDir(final Element parentNode, final RepositoryFile parentDir, final String solutionId,
+  protected void processDir(final Element parentNode, final RepositoryFile parentDir, final String solutionId,
       final int actionOperation, final int recurseLevels) {
     if (recurseLevels <= 0) {
       return;
@@ -357,7 +357,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
   }
 
-  private String getSolutionId(final RepositoryFile file) {
+  protected String getSolutionId(final RepositoryFile file) {
     String path = file.getFullPath();
     if (path.length() < repositoryName.length()) {
       return ""; //$NON-NLS-1$
@@ -371,7 +371,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     return path;
   }
 
-  private String getSolutionPath(final RepositoryFile file) {
+  protected String getSolutionPath(final RepositoryFile file) {
     String path = file.getFullPath();
     try {
       path = path.substring(repositoryName.length()); // Strip off the
@@ -394,7 +394,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     return path;
   }
 
-  private void addIndexToRepository(final Document indexDoc, final RepositoryFile directoryFile,
+  protected void addIndexToRepository(final Document indexDoc, final RepositoryFile directoryFile,
       final Element directoryNode, String path, final String solution) {
     if (!directoryFile.isDirectory()) {
       return;
@@ -483,7 +483,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
   }
 
-  private void addUrlToRepository(final RepositoryFile file, final Element parentNode) {
+  protected void addUrlToRepository(final RepositoryFile file, final Element parentNode) {
     String urlContent = new String(file.getData());
     StringTokenizer tokenizer = new StringTokenizer(urlContent, "\n"); //$NON-NLS-1$
     String url = null;
@@ -556,7 +556,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
   }
 
-  private void addToRepository(final IActionSequence actionSequence, final Element parentNode, final RepositoryFile file) {
+  protected void addToRepository(final IActionSequence actionSequence, final Element parentNode, final RepositoryFile file) {
     Element dirNode = parentNode.addElement("file"); //$NON-NLS-1$
     dirNode.addAttribute("type", FileInfo.FILE_TYPE_ACTIVITY); //$NON-NLS-1$
     contributeAttributes(file, dirNode);
@@ -621,7 +621,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     dirNode.addElement("properties").setText("subscribable=" + Boolean.toString(subscribable)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  private boolean publishIcon(final String dirPath, String iconPath) {
+  protected boolean publishIcon(final String dirPath, String iconPath) {
     String pathSeperator = new StringBuffer().append(ISolutionRepository.SEPARATOR).toString();
     if (!iconPath.startsWith(pathSeperator)) {
       iconPath = pathSeperator + iconPath;
