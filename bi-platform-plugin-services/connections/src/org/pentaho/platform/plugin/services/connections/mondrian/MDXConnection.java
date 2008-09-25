@@ -27,6 +27,7 @@ import mondrian.olap.DriverManager;
 import mondrian.olap.Query;
 import mondrian.olap.Result;
 import mondrian.olap.Util;
+import mondrian.rolap.RolapConnectionProperties;
 
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
@@ -117,13 +118,13 @@ public class MDXConnection implements IPentahoLoggingConnection {
       
       Util.PropertyList properties = Util.parseConnectString(connectStr);
       
-      String dataSourceName = properties.get("DataSource"); //$NON-NLS-1$
+      String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name()); //$NON-NLS-1$
       
       if (dataSourceName != null) {
         IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
         DataSource dataSourceImpl = datasourceService.getDataSource(dataSourceName);      
         if (dataSourceImpl != null) {
-          properties.remove("DataSource"); //$NON-NLS-1$
+          properties.remove(RolapConnectionProperties.DataSource.name()); //$NON-NLS-1$
           nativeConnection = DriverManager.getConnection(properties, null,  dataSourceImpl);
         } else {
           nativeConnection = DriverManager.getConnection(connectStr, null);
