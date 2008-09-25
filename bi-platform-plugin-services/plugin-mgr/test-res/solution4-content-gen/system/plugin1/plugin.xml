@@ -56,14 +56,14 @@
 
     <content-generator scope="global" id="test9" type="test-type-bad">
         <!-- this is the wrong type -->
-        <classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGenTest</classname>
+        <classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGeneratorTest</classname>
         <title>Test Generator 9</title>
     </content-generator>
 
     <content-generator scope="global" id="test10" type="test-type-bad">
         <classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1</classname>
         <!-- this is the wrong type -->
-        <fileinfo-classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGenTest</fileinfo-classname>
+        <fileinfo-classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGeneratorTest</fileinfo-classname>
         <title>Test Generator 10</title>
     </content-generator>
     

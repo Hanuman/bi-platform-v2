@@ -11,7 +11,7 @@
 				</entry>
 				<entry key="ISolutionRepository">
 					<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
-						<constructor-arg><value>org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepositoryExperimental</value></constructor-arg>
+						<constructor-arg><value>org.pentaho.platform.repository.solution.filebased.ExtensionFileBasedSolutionRepository</value></constructor-arg>
 					</bean>
 				</entry>
 				<entry key="IPluginSettings">

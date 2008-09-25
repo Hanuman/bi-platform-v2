@@ -1,6 +1,8 @@
 
 package org.pentaho.test.platform.plugin.pluginmgr;
 
+import java.util.HashMap;
+
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.plugin.services.pluginmgr.BaseMenuProvider;
 import org.pentaho.platform.util.logging.Logger;
@@ -37,7 +39,7 @@ public class MenuProvider extends BaseMenuProvider {
 	    StringBuilder sb = new StringBuilder();
 		if( popup instanceof IHtmlElement ) {
 			((IHtmlElement) popup).getHtml(sb);
-			((IHtmlElement) popup).getScript(sb);
+			((IHtmlElement) popup).getScript( new HashMap<String,String>(), sb);
 		}
 		return sb.toString();
 	}
