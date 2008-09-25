@@ -1152,7 +1152,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
       path = path.substring(0, path.length() - 1);
     }
-    if (SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator()) {
+    // allow any user to add to system/tmp (e.g. during new analysis view) 
+    if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase.isSystemTmpPath(path))) {
       // add file using file based technique to send it to disk
       return super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
     }

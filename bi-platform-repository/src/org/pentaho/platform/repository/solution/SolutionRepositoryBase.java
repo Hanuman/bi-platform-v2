@@ -115,7 +115,11 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
    */
   private static final String RE_SYSTEM_PATH = "^[/\\\\]?system($|[/\\\\].*$)"; //$NON-NLS-1$
 
+  private static final String RE_SYSTEM_TMP_PATH = "^[/\\\\]?system/tmp($|[/\\\\].*$)"; //$NON-NLS-1$
+  
   private static final Pattern SYSTEM_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_PATH);
+  
+  private static final Pattern SYSTEM_TMP_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_TMP_PATH);
 
   protected ThreadLocal session = new ThreadLocal();
 
@@ -225,6 +229,14 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   public static boolean isSystemPath(final String path) {
 
     Matcher m = SolutionRepositoryBase.SYSTEM_PATH_PATTERN.matcher(path.toLowerCase());
+    return m.matches();
+  }
+  
+  /**
+   * Returns true if the path is the tmp directory in the system solution.
+   */
+  public static boolean isSystemTmpPath(final String path) {
+    Matcher m = SolutionRepositoryBase.SYSTEM_TMP_PATH_PATTERN.matcher(path.toLowerCase());
     return m.matches();
   }
 
