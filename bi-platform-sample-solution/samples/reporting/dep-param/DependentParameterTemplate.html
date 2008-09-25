@@ -191,11 +191,11 @@
       outputControl.onchange=doForm;
 
 	  function departmentChangeFunction() {
-        paramService(new Array( "dept", deptControl.value, "solution", "samples", "path", "reporting/dep-param", "action", "PositionTitlesForDept.xaction" ), "parseSOAPResultSet(\"POSITIONTITLE\", ", "");
+        paramService(new Array( "dept", deptControl.value, "solution", "bi-developers", "path", "reporting/dep-param", "action", "PositionTitlesForDept.xaction" ), "parseSOAPResultSet(\"POSITIONTITLE\", ", "");
       }
 
 	  function regionChangeFunction() {
-        paramService(new Array( "region", regionControl.value, "solution", "samples", "path", "reporting/dep-param", "action", "DepartmentsForRegion.xaction" ), "parseSOAPResultSet(\"DEPARTMENT\", ", "departmentChangeFunction()");
+        paramService(new Array( "region", regionControl.value, "solution", "bi-developers", "path", "reporting/dep-param", "action", "DepartmentsForRegion.xaction" ), "parseSOAPResultSet(\"DEPARTMENT\", ", "departmentChangeFunction()");
       }
 
       

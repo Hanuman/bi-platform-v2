@@ -3,6 +3,7 @@
   <name>DepartmentsForRegion.xaction</name>
   <title>%title</title>
   <version>1</version>
+    <visible>false</visible>
   <logging-level>debug</logging-level>
   <documentation> 
     <author>Michael D'Amour</author>  
