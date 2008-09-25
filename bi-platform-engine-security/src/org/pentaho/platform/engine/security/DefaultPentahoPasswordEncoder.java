@@ -6,6 +6,7 @@ import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.util.IPasswordService;
 import org.pentaho.platform.api.util.PasswordServiceException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.security.messages.Messages;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -22,26 +23,28 @@ import org.springframework.dao.DataAccessException;
 public class DefaultPentahoPasswordEncoder implements PasswordEncoder {
 
   public String encodePassword(final String rawPass, final Object salt) throws DataAccessException {
-    Validate.notNull(rawPass, "rawPass cannot be null");
+    Validate.notNull(rawPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
     IPasswordService passwordService = null;
     try {
       passwordService = (IPasswordService) PentahoSystem.getObjectFactory().getObject(
           IPasswordService.IPASSWORD_SERVICE, null);
     } catch (ObjectFactoryException e) {
-      throw new PasswordEncoderException("password service could not be created", e);
+      throw new PasswordEncoderException(Messages
+          .getString("DefaultPentahoPasswordEncoder.ERROR_0003_PASSWORD_SERVICE_CANNOT_BE_CREATED"), e); //$NON-NLS-1$
     }
 
     try {
       return passwordService.encrypt(rawPass);
     } catch (PasswordServiceException e) {
-      throw new PasswordEncoderException("password service could not encrypt", e);
+      throw new PasswordEncoderException(Messages
+          .getString("DefaultPentahoPasswordEncoder.ERROR_0004_PASSWORD_SERVICE_COULD_NOT_ENCRYPT"), e); //$NON-NLS-1$
     }
   }
 
   public boolean isPasswordValid(final String encPass, final String rawPass, final Object salt)
       throws DataAccessException {
-    Validate.notNull(encPass, "encPass cannot be null");
-    Validate.notNull(rawPass, "rawPass cannot be null");
+    Validate.notNull(encPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0002_ENCPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Validate.notNull(rawPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
     String encodedRawPass = encodePassword(rawPass, salt);
     return encPass.equals(encodedRawPass);
   }
