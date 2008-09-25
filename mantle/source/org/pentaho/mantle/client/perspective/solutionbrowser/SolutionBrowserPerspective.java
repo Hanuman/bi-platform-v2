@@ -42,7 +42,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.File
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.PermissionsPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
-import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 import org.pentaho.mantle.client.perspective.workspace.IWorkspaceCallback;
 import org.pentaho.mantle.client.perspective.workspace.WorkspacePerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -61,7 +60,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -74,7 +72,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -210,43 +207,54 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
-          Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).frame;
+          Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
+          frame.setVisible(true);
           refreshIfPDF(frame.getElement());
+        }
+        for (int i = 0; i < tabIndex; i++) {
+          hideFrame(i);
+        }
+        for (int i = tabIndex + 1; i < contentTabPanel.getTabBar().getTabCount(); i++) {
+          hideFrame(i);
         }
       }
     });
     buildUI();
   }
 
+  public void hideFrame(int tabIndex) {
+    Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
+    frame.setVisible(false);
+  }
+
   public void buildUI() {
     clear();
     if (explorerMode) {
-      
+
       solutionNavigatorPanel.setHeight("100%");
       // ----- Create the top panel ----
-
 
       Label browseLabel = new Label(Messages.getInstance().browse());
       browseLabel.setHeight("28px"); //$NON-NLS-1$
       browseLabel.setWidth("100%");
       browseLabel.addStyleName(BROWSE_LABEL_STYLE_NAME);
-      
+
       FlowPanel topPanel = new FlowPanel();
       SimplePanel toolbarWrapper = new SimplePanel();
       toolbarWrapper.add(browseLabel);
       toolbarWrapper.setStyleName("files-toolbar");
       topPanel.add(toolbarWrapper);
-      
+
       SimplePanel filesListWrapper = new SimplePanel();
       filesListWrapper.add(solutionTree);
       solutionTree.getElement().getStyle().setProperty("marginTop", "29px");
       filesListWrapper.setStyleName("files-list-panel");
       topPanel.add(filesListWrapper);
-      
-      this.setStyleName("panelWithTitledToolbar");  //$NON-NLS-1$  
-      
+
+      this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
+
       // --------------------------------
-      
+
       solutionNavigatorPanel.setTopWidget(topPanel);
       filesListPanel.setWidth("100%");
       solutionNavigatorPanel.setBottomWidget(filesListPanel);
@@ -270,12 +278,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       setHeight("100%");
       setWidth("100%");
       add(solutionNavigatorAndContentPanel);
-      
+
       ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
-      
-      ElementUtils.removeScrollingFromUpTo(
-          solutionNavigatorAndContentPanel.getLeftWidget().getElement(), 
-          solutionNavigatorAndContentPanel.getElement());
+
+      ElementUtils.removeScrollingFromUpTo(solutionNavigatorAndContentPanel.getLeftWidget().getElement(), solutionNavigatorAndContentPanel.getElement());
     } else {
       // load classic view
       // we've got the tree
@@ -373,7 +379,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     showLaunchOrContent();
     // wire up client-side javascript to handle mouse events
-    ((CustomFrame) frame).attachEventListeners(frame.getElement());
+    // ((CustomFrame) frame).attachEventListeners(frame.getElement());
 
     // update state to workspace state flag
     showWorkspaceMenuItem.setChecked(false);
@@ -425,7 +431,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
   }
-  
+
   public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
     List<String> pathSegments = new ArrayList<String>();
     if (path != null) {
@@ -475,11 +481,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     if (openMethod == OPEN_METHOD.EDIT) {
       editFile();
-    } else if (openMethod == OPEN_METHOD.OPEN){
+    } else if (openMethod == OPEN_METHOD.OPEN) {
       openFile(FileCommand.RUN);
-    } else if (openMethod == OPEN_METHOD.SCHEDULE){
+    } else if (openMethod == OPEN_METHOD.SCHEDULE) {
       createSchedule();
-    } else if (openMethod == OPEN_METHOD.SHARE){
+    } else if (openMethod == OPEN_METHOD.SHARE) {
       shareFile();
     }
   }
@@ -645,7 +651,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             Utility.setDefaultCursor();
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
-            if(solutionTree.isAttached()){
+            if (solutionTree.isAttached()) {
               solutionTree.buildSolutionTree(solutionDocument);
             }
             // update classic view
@@ -1108,6 +1114,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return curPanel.getFrame().getElement().getAttribute("id");
   }
 
+  private native boolean isPDF(com.google.gwt.dom.client.Element frame)
+  /*-{
+    return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
+  }-*/;
+
   private native void refreshIfPDF(com.google.gwt.dom.client.Element frame)
   /*-{
     if(frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0){
@@ -1129,5 +1140,5 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     form.add(new Hidden("reportXml", xml));
     form.submit();
   }
-  
+
 }
