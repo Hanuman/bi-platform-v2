@@ -71,6 +71,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Event;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -84,11 +85,18 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   FlexTable menuAndLogoPanel = new FlexTable();
 
   MenuBar menuBar = new MenuBar(){
-    MenuItem selectedItem;
     @Override
     public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
       super.onPopupClosed(sender, autoClosed);
-      this.getSelectedItem().removeStyleDependentName("selected");  
+      this.getSelectedItem().removeStyleDependentName("selected");
+    }
+    @Override
+    public void onBrowserEvent(Event e){
+      super.onBrowserEvent(e);
+      
+      if ("mouseover".equals(e.getType())){
+        this.getSelectedItem().addStyleDependentName("selected");
+      }
     }
   };
 
