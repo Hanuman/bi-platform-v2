@@ -43,7 +43,7 @@
   <target name="publish-pentaho-nojar" depends="install-antcontrib,create-pom,ivy.deliver"
     description="Publishes the jar file to a Maven2 repository">
     <antcall target="maven-publish-artifact">
-      <param name="publish.pomFile" value="${dist.jar}/pom.xml" />
+      <param name="publish.pomFile" value="${dist.dir}/pom.xml" />
       <param name="publish.file" value="${package.zipfile}" />
     </antcall>
   </target>
