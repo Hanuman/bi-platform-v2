@@ -1,20 +1,65 @@
-<project name="bi-platform-sample-data">
-	
-	<import file="common_build.xml"/>
-	
-	<target name="dist" depends="clean-all, resolve">
-		<mkdir dir="dist"/>
-		<zip file="dist/bi-platform-sample-data-${project.revision}.zip">
-			<zipfileset dir=".">
-				<include name="hsqldb"/>
-				<include name="mysql5"/>
-				<include name="oracle10g"/>
-				<include name="postgresql"/>
-				<include name="lib"/>
-				<include name="start_*"/>
-				<include name="stop_*"/>
-			</zipfileset>
-		</zip>
-	</target>
-	
+<project name="bi-platform-sample-data" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <property name="common.build.file" value="common_build.xml" />
+
+  <import file="${common.build.file}" />
+
+  <property name="package.zipfile"
+    value="${dist.dir}/${ivy.artifact.id}-${project.revision}.zip" />
+    
+  <target name="dist" depends="clean-all, resolve">
+    <mkdir dir="${dist.dir}" />
+    <zip file="${dist.dir}/${ivy.artifact.id}-${project.revision}.zip">
+      <zipfileset dir=".">
+        <include name="hsqldb/**" />
+        <include name="mysql5/**" />
+        <include name="oracle10g/**" />
+        <include name="postgresql/**" />
+        <include name="lib/**" />
+        <include name="start_*" />
+        <include name="stop_*" />
+      	<include name="README.TXT"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+  <!--
+    =======================================================================
+    create the pom, replacing the jar ref with zip.
+    ====================================================================
+  -->
+  <target name="create-pom" depends="install-ivy"
+    description="Creates a POM file based on the ivy dependencies for a separate package">
+    <ivy:makepom ivyfile="ivy.xml" pomfile="${dist.dir}/pom.xml" />
+    <replace file="${dist.dir}/pom.xml" token="jar" value="zip" />
+  </target>
+  
+  <!--
+    =======================================================================
+    publish-pentaho-nojar (override) Publishes the zip package to the
+    Maven repository
+    ====================================================================
+  -->
+  <target name="publish-pentaho-nojar" depends="install-antcontrib,create-pom,ivy.deliver"
+    description="Publishes the jar file to a Maven2 repository">
+    <antcall target="maven-publish-artifact">
+      <param name="publish.pomFile" value="${dist.jar}/pom.xml" />
+      <param name="publish.file" value="${package.zipfile}" />
+    </antcall>
+  </target>
+  
+  <!--
+    =======================================================================
+    publish-local-nojar (override) Publishes the zip package locally
+    ====================================================================
+  -->
+  <target name="publish-local-nojar" depends="install-ivy"
+    description="Publishes the jar file to the local repository">
+    <ant antfile="${common.build.file}" target="publish-local-nojar" />
+    <ivy:resolve file="ivy.xml" />
+    <ivy:publish resolver="local" pubrevision="${project.revision}"
+      overwrite="true" forcedeliver="true">
+      <artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
+    </ivy:publish>
+  </target>
 </project>
