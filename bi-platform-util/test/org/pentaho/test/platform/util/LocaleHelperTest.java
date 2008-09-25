@@ -109,26 +109,26 @@ public class LocaleHelperTest extends TestCase {
   public void testClosestLocale() {
 	  
 	  // should return the locale passed in
-	  String locale = LocaleHelper.getClosestLocale( "en-US", null );
-	  assertEquals( "Locale is wrong", "en-US", locale );
+	  String locale = LocaleHelper.getClosestLocale( "en-US", null ); //$NON-NLS-1$
+	  assertEquals( "Locale is wrong", "en-US", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
 	  // should return the locale passed in
-	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] {} );
-	  assertEquals( "Locale is wrong", "en-US", locale );
+	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] {} ); //$NON-NLS-1$
+	  assertEquals( "Locale is wrong", "en-US", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
 	  // should return the first locale in the list
-	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES" } );
-	  assertEquals( "Locale is wrong", "fr-FR", locale );
+	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	  assertEquals( "Locale is wrong", "fr-FR", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
 	  // should return the only English variant
-	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES", "en" } );
-	  assertEquals( "Locale is wrong", "en", locale );
+	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES", "en" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	  assertEquals( "Locale is wrong", "en", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
-	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES", "en-UK" } );
-	  assertEquals( "Locale is wrong", "en-UK", locale );
+	  locale = LocaleHelper.getClosestLocale( "en-US", new String[] { "fr-FR", "es-ES", "en-UK" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	  assertEquals( "Locale is wrong", "en-UK", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
-	  locale = LocaleHelper.getClosestLocale( "en", new String[] { "fr-FR", "es-ES", "en-UK" } );
-	  assertEquals( "Locale is wrong", "en-UK", locale );
+	  locale = LocaleHelper.getClosestLocale( "en", new String[] { "fr-FR", "es-ES", "en-UK" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	  assertEquals( "Locale is wrong", "en-UK", locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
   
