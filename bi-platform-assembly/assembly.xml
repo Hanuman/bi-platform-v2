@@ -373,35 +373,11 @@
 
     <mkdir dir="${stage.data.dir}" />
 
-    <copy todir="${stage.data.dir}">
-      <fileset dir="${bi.platform.sample.data.dir}">
-        <exclude name=".project" />
-        <exclude name="**/mysql5/**" />
-        <exclude name="**/oracle10g/**" />
-        <exclude name="**/postgresql/**" />
-      </fileset>
-    </copy>
+    <!-- Explode the sample data dist -->
+    <unzip dest="${stage.data.dir}">
+      <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
+    </unzip>
 
-    <mkdir dir="${stage.data.dir}/mysql5" />
-    <copy todir="${stage.data.dir}/mysql5">
-      <fileset dir="${bi.platform.sample.data.dir}/mysql5" />
-    </copy>
-
-    <mkdir dir="${stage.data.dir}/oracle10g" />
-    <copy todir="${stage.data.dir}/oracle10g">
-      <fileset dir="${bi.platform.sample.data.dir}/oracle10g" />
-    </copy>
-
-    <mkdir dir="${stage.data.dir}/postgresql" />
-    <copy todir="${stage.data.dir}/postgresql">
-      <fileset dir="${bi.platform.sample.data.dir}/postgresql" />
-    </copy>
-
-    <copy todir="${stage.data.dir}/lib">
-      <fileset dir="${lib.dir}">
-        <include name="hsqldb-*.jar" />
-      </fileset>
-    </copy>
   </target>
 
 </project>
