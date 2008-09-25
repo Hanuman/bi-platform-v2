@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>DEBUG</logging-level>
+  <documentation> 
+    <author>Doug Moran</author>  
+    <description>%description</description>  
+    <help/>  
+    <result-type>email</result-type>  
+    <icon>BurstActionSequence.png</icon> 
+  </documentation>
+
+  <inputs> 
+    <output-type type="string"> 
+      <default-value>xls</default-value> 
+    </output-type>  
+    <print-prefix type="string"> 
+      <default-value>Generating</default-value> 
+    </print-prefix> 
+  </inputs>
+
+  <outputs/>
+
+  <resources> 
+    <report-definition> 
+      <solution-file> 
+        <location>JFreeQuadrantForRegion.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </report-definition> 
+  </resources>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Query For Manager Information</action-type>
+      <action-outputs> 
+        <query-result type="result-set" mapping="burst-data"/>  
+        <REGION type="string"/>  
+        <EMAIL type="string"/>  
+        <MANAGER_NAME type="string"/> 
+      </action-outputs>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[select distinct REGION, MANAGER_NAME, EMAIL from DEPARTMENT_MANAGERS]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <actions loop-on="burst-data"> 
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Format The Email Attach Name</action-type>
+        <action-inputs> 
+          <REGION type="string"/>  
+          <output-type type="string"/> 
+        </action-inputs>
+        <action-outputs> 
+          <output-message type="string" mapping="attach_name"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[%filename-msg]]></template> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Format The Email Subject</action-type>
+        <action-inputs> 
+          <REGION type="string"/> 
+        </action-inputs>
+        <action-outputs> 
+          <output-message type="string" mapping="subject"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[%subject-msg]]></template> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Format The Email Msg</action-type>
+        <action-inputs> 
+          <MANAGER_NAME type="string"/>  
+          <subject type="string"/> 
+        </action-inputs>
+        <action-outputs> 
+          <output-message type="string" mapping="message_html"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[%message-msg]]></template> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Query For Report Data</action-type>
+        <action-inputs> 
+          <REGION type="string"/> 
+        </action-inputs>
+        <action-outputs> 
+          <query-result type="result-set" mapping="reportData"/> 
+        </action-outputs>
+        <component-definition> 
+          <jndi>SampleData</jndi>  
+          <live>true</live>  
+          <query><![CDATA[select   QUADRANT_ACTUALS.REGION,   QUADRANT_ACTUALS.DEPARTMENT,   QUADRANT_ACTUALS.POSITIONTITLE,   QUADRANT_ACTUALS.ACTUAL,   QUADRANT_ACTUALS.BUDGET,   QUADRANT_ACTUALS.VARIANCE  from QUADRANT_ACTUALS where QUADRANT_ACTUALS.REGION={PREPARE:REGION} order by QUADRANT_ACTUALS.REGION, QUADRANT_ACTUALS.DEPARTMENT]]></query> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>JFreeReportComponent</component-name>
+        <action-type>Create The Report</action-type>
+        <action-inputs> 
+          <data type="result-set" mapping="reportData"/>  
+          <output-type type="string"/> 
+        </action-inputs>
+        <action-resources> 
+          <report-definition type="resource"/> 
+        </action-resources>
+        <action-outputs> 
+          <report-output type="content" mapping="reportOutput"/> 
+        </action-outputs>
+        <component-definition/> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>EmailComponent</component-name>
+        <action-type>Email</action-type>
+        <action-inputs> 
+          <subject type="string"/>  
+          <message-html type="string" mapping="message_html"/>  
+          <to type="string" mapping="EMAIL"/>  
+          <attach-name type="string" mapping="attach_name"/>  
+          <reportOutput type="content"/>
+        </action-inputs>
+        <component-definition>
+          <attachment-ref name-param="attach-name" input-param="reportOutput"/>
+        </component-definition> 
+      </action-definition>
+    </actions>
+ 
+  </actions> 
+</action-sequence>
