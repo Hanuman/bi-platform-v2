@@ -28,6 +28,7 @@ import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -35,7 +36,7 @@ import org.pentaho.pms.schema.security.RowLevelSecurity;
 
 public class SecurityAwareCwmSchemaFactory extends PlatformCWMSchemaFactory implements IPentahoInitializer {
   private static final Log logger = LogFactory.getLog(SecurityAwareCwmSchemaFactory.class);
-  
+
   IPentahoSession session;
 
   public SecurityAwareCwmSchemaFactory() {
@@ -80,7 +81,7 @@ public class SecurityAwareCwmSchemaFactory extends PlatformCWMSchemaFactory impl
     }
     Authentication auth = SecurityHelper.getAuthentication(getSession(), true);
     if (auth == null) {
-      logger.info("authentication from session was null; continuing with restrictive rls constraint");
+      logger.info(Messages.getString("SecurityAwareCwmSchemaFactory.INFO_AUTH_NULL_CONTINUE")); //$NON-NLS-1$
       return "FALSE()"; //$NON-NLS-1$
     }
     String username = auth.getName();
