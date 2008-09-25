@@ -29,9 +29,9 @@ import org.pentaho.platform.util.messages.MessageUtil;
 public class Messages {
   private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
 
-  private static final Map locales = Collections.synchronizedMap(new HashMap());
+  private static final Map<Locale,ResourceBundle> locales = Collections.synchronizedMap(new HashMap<Locale,ResourceBundle>());
 
-  protected static Map getLocales() {
+  protected static Map<Locale,ResourceBundle> getLocales() {
     return Messages.locales;
   }
 
