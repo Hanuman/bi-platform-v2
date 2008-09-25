@@ -56,7 +56,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			StringBuffer content = new StringBuffer(); 
       		ArrayList messages = new ArrayList();
-       		ChartHelper.doChart( "samples", "charts/samplesDashboard", "barchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+       		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "barchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 
        	%>
 		<br/>
@@ -72,7 +72,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "linechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "linechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -87,7 +87,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "areachart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "areachart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -103,7 +103,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "dialchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "dialchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -117,7 +117,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "piechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "piechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -131,7 +131,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "timeserieschart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "timeserieschart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -147,7 +147,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "barlinecombochart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "barlinecombochart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -161,7 +161,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "xychart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "xychart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -174,7 +174,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "bubblechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "bubblechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -190,7 +190,7 @@
       		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "samples", "charts/samplesDashboard", "piegridchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "piegridchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>

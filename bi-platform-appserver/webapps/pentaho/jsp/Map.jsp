@@ -98,7 +98,7 @@
 		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
-		// Load the customer data. Do this by running an action sequence defined in pentaho-solutions/samples/google/map1.xaction
+		// Load the customer data. Do this by running an action sequence defined in pentaho-solutions/steel-wheels/google/map1.xaction
 		SimpleParameterProvider parameters = new SimpleParameterProvider();
 		ArrayList messages = new ArrayList();
 		// 'results' will store the customer data
@@ -106,7 +106,7 @@
         IRuntimeContext runtime = null;
         try {
 			// Run the action sequence
-			runtime = SolutionHelper.doAction( "samples",  "google",  "map1.xaction",  "Map.jsp",  parameters,  userSession,  messages,  null );
+			runtime = SolutionHelper.doAction( "steel-wheels",  "google",  "map1.xaction",  "Map.jsp",  parameters,  userSession,  messages,  null );
 			// See if we have a valid result
             if( runtime != null ) {
 				if( runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS ) {

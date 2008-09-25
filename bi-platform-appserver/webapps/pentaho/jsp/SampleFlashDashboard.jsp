@@ -86,7 +86,7 @@ else if ( region != null ) {
         parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
         parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuffer content = new StringBuffer(); 
-        FlashChartHelper.doFlashChart( "samples", "dashboard", "regions.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        FlashChartHelper.doFlashChart( "bi-developers", "dashboard", "regions.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 		</td>	
@@ -106,7 +106,7 @@ else if ( region != null ) {
 		parameters.setParameter( "outer-params", "REGION" );
         	parameters.setParameter( "drill-url", "SampleFlashDashboard?prochart=true&amp;region="+region+"&amp;categoryName=department" );
 		content = new StringBuffer(); 
-        	FlashChartHelper.doFlashChart( "samples", "dashboard", "departments.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	FlashChartHelper.doFlashChart( "bi-developers", "dashboard", "departments.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 <%
@@ -131,7 +131,7 @@ else if ( region != null ) {
         parameters.setParameter( "image-height", "250"); //$NON-NLS-1$ //$NON-NLS-2$
 		parameters.setParameter( "value", Long.toString( dialValue ) );
 		content = new StringBuffer();
-        FlashChartHelper.doFlashDial( "samples", "dashboard", "flashdial.widget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        FlashChartHelper.doFlashDial( "bi-developers", "dashboard", "flashdial.widget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 <%
@@ -150,7 +150,7 @@ else if ( region != null ) {
 		parameters.setParameter( "department", department );
 		content = new StringBuffer(); 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        	SolutionHelper.doAction( "samples", "dashboard/jsp", "embedded_report.xaction", "SampleFlashDashboard", parameters, outputStream , userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	SolutionHelper.doAction( "bi-developers", "dashboard/jsp", "embedded_report.xaction", "SampleFlashDashboard", parameters, outputStream , userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		out.write( outputStream.toString() );
 	}
 %>

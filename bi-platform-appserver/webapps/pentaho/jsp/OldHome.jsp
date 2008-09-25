@@ -40,24 +40,7 @@
 
 	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
 
-	String intro = "";
-	String footer = "";
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
-	if( templater != null ) {
-		String sections[] = templater.breakTemplate( "template-home.html", "", userSession ); //$NON-NLS-1$ //$NON-NLS-2$
-		if( sections != null && sections.length > 0 ) {
-			intro = sections[0];
-		}
-		if( sections != null && sections.length > 1 ) {
-			footer = sections[1];
-		}
-	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
-	}
-
 %>
-
-	<%= intro %>
 	
 <%
 	// See if we have a 'territory' parameter
@@ -91,7 +74,7 @@
 	parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
 	StringBuffer content = new StringBuffer(); 
 	ArrayList messages = new ArrayList();
-	ChartHelper.doPieChart( "samples", "steel-wheels/homeDashboard", "territory.widget.xml", parameters, content, userSession, messages, null ); 
+	ChartHelper.doPieChart( "steel-wheels", "homeDashboard", "territory.widget.xml", parameters, content, userSession, messages, null ); 
 
 	pie1 = content.toString();
 	 
@@ -111,7 +94,7 @@
 	parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
 	content = new StringBuffer(); 
 	messages = new ArrayList();
-    ChartHelper.doPieChart( "samples", "steel-wheels/homeDashboard", "productline.widget.xml", parameters, content, userSession, messages, null ); 
+    ChartHelper.doPieChart( "steel-wheels", "homeDashboard", "productline.widget.xml", parameters, content, userSession, messages, null ); 
 	pie2 = content.toString();
 	
 	parameters = new SimpleParameterProvider();
@@ -124,34 +107,36 @@
 
 	content = new StringBuffer(); 
 	messages = new ArrayList();
-	ChartHelper.doChart( "samples/steel-wheels", "homeDashboard", "customer.widget.xml", parameters, content, userSession, messages, null ); 
+	ChartHelper.doChart( "steel-wheels", "homeDashboard", "customer.widget.xml", parameters, content, userSession, messages, null ); 
 	chart = content.toString();
 
 	%>
 
-	<%@page%>
+<html>
+	<head>
+		<title>Steel Wheels</title>
+	</head>
+	<body>
 <center>
 	
 		<BR/>
-	
-		<table style="width:1000" border="0">
-			<tr>
-				<!-- td>
-					<span class="welcome_message"><%= Messages.getString("UI.USER_WELCOME") %></span>
-				</td -->
-				<td colspan='2' class='content_pagehead'>
-					<%= Messages.getString( "UI.USER_HOME_INTRO" ) %>
-				</td>
-			</tr>
-		</table>
-
+  	<table>
+  		<tr>
+  			<td width="75%"><img src="/sw-style/active/logo_backup.png" border="0" /></a>
+  			</td>
+  			<td align="right" style="font-family:Arial;font-weight:bold" background="/sw-style/active/banner.png" valign="middle" width="25%"></a><%= title %></td>
+  		</tr>
+  		<tr>
+  			<td  width="75%">
+  			</td>
+  			<td align="right" valign="top" width="25%"></td>
+  		</tr>  		
+  	</table>	
 		<BR/>
-
   		<table class="homeDashboard" cellpadding="0" cellspacing="0" border="0" >
 			<tr>
 				<td valign="top" align="center"><%= pie1 %></td>
 				<td rowspan="2" valign="top">
-					<%= title %>
 					<%= chart %>
 				</td>
 			</tr>
@@ -160,29 +145,8 @@
 					<%= pie2 %>
 				</td>
 			</tr>
- 		</table>	
-
-		<table width="1000" style="padding: 5px 5px 5px 5px">
-			<tr>
-				<td width="500" class="content_header"><%= Messages.getString( "UI.USER_LINKS" ) %></td>
-				<td width="500" class="content_header"><%= Messages.getString( "UI.USER_WHATS_NEW") %></td>
-			</tr>
-			<tr>
-				<td valign="top" class="content_container3" style="text-align:left">
-<%  messages = new ArrayList();
-	HtmlComponent html = new HtmlComponent( HtmlComponent.TYPE_URL, "http://www.pentaho.org/demo/links.htm", Messages.getString("UI.USER_OFFLINE"), null, messages);
-	html.validate( userSession, null ); %>
-					<%=  html.getContent( "text/html" ) %>		
-				</td>
-				<td valign="top" class="content_container3" style="text-align:left">
-<%	messages = new ArrayList();
-	html = new HtmlComponent( HtmlComponent.TYPE_URL, "http://www.pentaho.org/demo/news1.htm", Messages.getString("UI.USER_OFFLINE"), null, messages);
-	html.validate( userSession, null ); %>
-					<%=  html.getContent( "text/html" ) %>
-				</td>
-			</tr>
-		</table>
+ 		</table>
   </center>
-
-	<%= footer %>
+</body>
+</html>	
 	

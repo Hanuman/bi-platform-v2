@@ -88,8 +88,8 @@
 		StringBuffer content = new StringBuffer(); 
 	        ArrayList messages = new ArrayList();
 		// call the chart helper to generate the pie chart image and to get the HTML content
-		// use the chart definition in 'samples/dashboard/regions.widget.xml'
-        	ChartHelper.doPieChart( "samples", "dashboard", "regions.widget.xml", parameters, content, userSession, messages, null ); 
+		// use the chart definition in 'bi-developers/dashboard/regions.widget.xml'
+        	ChartHelper.doPieChart( "bi-developers", "dashboard", "regions.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 
 		<%= content.toString() %>
@@ -117,8 +117,8 @@
 			content = new StringBuffer(); 
         		messages = new ArrayList();
 			// call the chart helper to generate the pie chart image and to get the HTML content
-			// use the chart definition in 'samples/dashboard/regions.widget.xml'
-	        	ChartHelper.doChart( "samples", "dashboard", "departments.widget.xml", parameters, content, userSession, messages, null ); 
+			// use the chart definition in 'bi-developers/dashboard/regions.widget.xml'
+	        	ChartHelper.doChart( "bi-developers", "dashboard", "departments.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 			</span>
 			<br/>
@@ -154,8 +154,8 @@
 			content = new StringBuffer(); 
         		messages = new ArrayList();
 			// call the chart helper to generate the pie chart image and to get the HTML content
-			// use the chart definition in 'samples/dashboard/regions.widget.xml'
-  		      	ChartHelper.doDial( "samples", "dashboard", "sampledial.widget.xml", parameters, content, userSession, messages, null ); 
+			// use the chart definition in 'bi-developers/dashboard/regions.widget.xml'
+  		      	ChartHelper.doDial( "bi-developers", "dashboard", "sampledial.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 			The value of this dial is based on the current time
 			</span>
@@ -184,8 +184,8 @@
 			// create an output stream for the report content 
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         		messages = new ArrayList();
-			// run the action sequence 'samples/dashboard/jsp/report.xaction'
-        		SolutionHelper.doAction( "samples", "dashboard/jsp", "embedded_report.xaction", "SampleDashboard", parameters, outputStream , userSession, messages, null ); 
+			// run the action sequence 'bi-developers/dashboard/jsp/report.xaction'
+        		SolutionHelper.doAction( "bi-developers", "dashboard/jsp", "embedded_report.xaction", "SampleDashboard", parameters, outputStream , userSession, messages, null ); 
 			// write the report content into this page
 	%>
 			Click on a position title to drill to another page

@@ -103,8 +103,8 @@
 		StringBuffer content = new StringBuffer(); 
 	        ArrayList messages = new ArrayList();
 		// call the chart helper to generate the pie chart image and to get the HTML content
-		// use the chart definition in 'samples/dashboard/territory.widget.xml'
-        	ChartHelper.doPieChart( "samples/steel-wheels", "dashboards", "territory.widget.xml", parameters, content, userSession, messages, null ); 
+		// use the chart definition in 'steel-wheels/dashboard/territory.widget.xml'
+        	ChartHelper.doPieChart( "steel-wheels", "dashboards", "territory.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 
 		<%= content.toString() %>
@@ -135,8 +135,8 @@
 			content = new StringBuffer(); 
 			messages = new ArrayList();
 			// call the chart helper to generate the pie chart image and to get the HTML content
-			// use the chart definition in 'samples/dashboard/productline.widget.xml'
-			ChartHelper.doChart( "samples/steel-wheels", "dashboards", "productline_all.widget.xml", parameters, content, userSession, messages, null ); 
+			// use the chart definition in 'steel-wheels/dashboard/productline.widget.xml'
+			ChartHelper.doChart( "steel-wheels", "dashboards", "productline_all.widget.xml", parameters, content, userSession, messages, null ); 
 		%>
 		
 		<%= content.toString() %>
@@ -167,8 +167,8 @@
 			content = new StringBuffer(); 
         		messages = new ArrayList();
 			// call the chart helper to generate the pie chart image and to get the HTML content
-			// use the chart definition in 'samples/dashboard/productline.widget.xml'
-	        	ChartHelper.doChart( "samples/steel-wheels", "dashboards", "productline.widget.xml", parameters, content, userSession, messages, null ); 
+			// use the chart definition in 'steel-wheels/dashboard/productline.widget.xml'
+	        	ChartHelper.doChart( "steel-wheels", "dashboards", "productline.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 			<%= content.toString() %>
 				<span style="font-family:Arial;font-size:12;font-weight:plain"> (Click on a Product Line) </span>
@@ -205,8 +205,8 @@
   				content = new StringBuffer(); 
   				messages = new ArrayList();
   				// call the chart helper to generate the pie chart image and to get the HTML content
-  				// use the chart definition in 'samples/dashboard/regions.widget.xml'
-  				ChartHelper.doChart( "samples/steel-wheels", "dashboards", "SalesOvertime.widget.xml", parameters, content, userSession, messages, null ); 
+  				// use the chart definition in 'steel-wheels/dashboard/regions.widget.xml'
+  				ChartHelper.doChart( "steel-wheels", "dashboards", "SalesOvertime.widget.xml", parameters, content, userSession, messages, null ); 
   	%>
   				
   				<span style="font-family:Arial;font-weight:bold"></span>
@@ -234,8 +234,8 @@
   				content = new StringBuffer(); 
   				messages = new ArrayList();
   				// call the chart helper to generate the pie chart image and to get the HTML content
-  				// use the chart definition in 'samples/dashboard/regions.widget.xml'
-  				ChartHelper.doChart( "samples/steel-wheels", "dashboards", "SalesOvertime_All.widget.xml", parameters, content, userSession, messages, null ); 
+  				// use the chart definition in 'steel-wheels/dashboard/regions.widget.xml'
+  				ChartHelper.doChart( "steel-wheels", "dashboards", "SalesOvertime_All.widget.xml", parameters, content, userSession, messages, null ); 
   	%>
   		
   		<span style="font-family:Arial;font-weight:bold"></span>
