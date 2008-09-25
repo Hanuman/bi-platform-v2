@@ -87,7 +87,7 @@
         <entry key="ICwmSchemaFactory">
           <bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
             <constructor-arg>
-              <value>org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCWMSchemaFactory</value>
+              <value>org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCwmSchemaFactory</value>
             </constructor-arg>
           </bean>
         </entry> 
