@@ -14,12 +14,12 @@ VersionCheckSystemListener.
 	<bean id="systemListenersList" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
-				<bean class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener"/>
-				<bean class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener"/>
-				<bean class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener"/>
-				<bean class="org.pentaho.platform.scheduler.QuartzSystemListener"/>
-				<bean class="org.pentaho.platform.engine.services.metadata.PMDSystemListener"/>
-				<bean class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
+				<bean id="jfreeReportSystemListener" class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener"/>
+				<bean id="kettleSystemListener" class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener"/>
+				<bean id="mondrianSystemListener" class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener"/>
+				<bean id="quartzSystemListener" class="org.pentaho.platform.scheduler.QuartzSystemListener"/>
+				<bean id="metadataSystemListener" class="org.pentaho.platform.engine.services.metadata.PMDSystemListener"/>
+				<bean id="versionCheckerSystemListener" class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
 					<property name="repeatIntervalSeconds">
 						<value>86400</value>
 					</property>
@@ -28,9 +28,10 @@ VersionCheckSystemListener.
 						<value>false</value>
 					</property>
 				</bean>
- 			<!-- <bean class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/> -->	
- 			<!-- <bean class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener"/> -->
-				<bean class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager"/>
+ 				<bean id="pooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener"/>
+ 				<!-- <bean id="nonPooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/> -->
+				<!-- Insert system-listeners -->
+				<bean id="pluginSystemListener" class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager"/>
 			</list>
 		</constructor-arg>
 	</bean>

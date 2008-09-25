@@ -19,7 +19,7 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.xml.XmlHelper;
 
-public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRepository {
+public class ExtensionFileBasedSolutionRepository extends FileBasedSolutionRepository {
 
 	private static final long serialVersionUID = -5819989582893333448L;
 
@@ -92,8 +92,8 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	        if ("url".equals( extension )) { //$NON-NLS-1$
 	          addUrlToRepository(element, parentNode, solutionPath);
 	        }
-	      boolean addFile = "xaction".equals( extension );
-	  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getSession(), "IPluginSettings" );
+	      boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
+	  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getSession(), "IPluginSettings" ); //$NON-NLS-1$
 		if( pluginSettings != null ) {
 	    	Set<String> types = pluginSettings.getContentTypes();
 	    	addFile |= types != null && types.contains( extension );
@@ -121,12 +121,12 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	          }
 	        }
 	        else if( pluginSettings != null ) {
-	        	String fullPath = solutionId+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName;
+	        	String fullPath = solutionId+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
 	        	try {
 	            	IFileInfo fileInfo = getFileInfo( solutionId, path, fileName, extension, pluginSettings );
 	                addToRepository( fileInfo, solutionId, path, fileName, parentNode, element);
 	        	} catch (Exception e) {
-	        		error( "Could not add file to repository index: "+fullPath, e );
+	            error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
 	        	}
 	        }
 
@@ -134,7 +134,7 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	  
 	  protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginSettings pluginSettings ) {
 		  IFileInfo fileInfo = null;
-		  String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName;
+		  String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
 		try {
 			
 	    	IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, getSession());
@@ -160,7 +160,7 @@ public class FileBasedSolutionRepositoryExperimental extends FileBasedSolutionRe
 	        	}
 	        }
 		} catch (Exception e) {
-			error( "Could not add file to repository index: "+fullPath, e );
+      error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
 		}
 		return fileInfo;
 	  }
