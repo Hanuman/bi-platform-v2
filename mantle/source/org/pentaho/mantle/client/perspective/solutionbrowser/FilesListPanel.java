@@ -20,6 +20,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 
 import com.google.gwt.user.client.ui.DockPanel;

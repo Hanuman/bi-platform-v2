@@ -250,6 +250,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
                 }
               } else {
                 parentTreeItem.addItem(childTreeItem);
+                inserted = true;
               }
             }
             if (!inserted) {

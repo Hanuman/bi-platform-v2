@@ -15,6 +15,7 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.FileSelectionListenerCollection;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
@@ -54,6 +55,8 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     fileLabel.setText(localizedName);
     fileLabel.setTitle(localizedName);
     fileLabel.setStyleName("fileLabel");
+    ElementUtils.preventTextSelection(fileLabel.getElement());
+    
     Image fileIcon = new Image() {
       public void onBrowserEvent(Event event) {
         if ((DOM.eventGetType(event) & Event.BUTTON_LEFT) == Event.BUTTON_LEFT

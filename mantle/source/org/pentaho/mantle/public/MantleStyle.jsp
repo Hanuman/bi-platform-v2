@@ -938,3 +938,7 @@ gwt-TabPanelBottom {
   z-index: 10;
   overflow: hidden;
 }
+
+.gwt-PopupPanel{
+  z-index:100;
+}

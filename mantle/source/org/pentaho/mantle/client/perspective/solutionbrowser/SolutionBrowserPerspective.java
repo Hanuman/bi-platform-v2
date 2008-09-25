@@ -42,6 +42,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.File
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.PermissionsPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
+import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 import org.pentaho.mantle.client.perspective.workspace.IWorkspaceCallback;
 import org.pentaho.mantle.client.perspective.workspace.WorkspacePerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -61,6 +62,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Hidden;
@@ -73,6 +75,7 @@ import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -221,14 +224,27 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       
       solutionNavigatorPanel.setHeight("100%");
       // ----- Create the top panel ----
-      DockPanel topPanel = new DockPanel();
-      topPanel.add(new ScrollPanel(solutionTree), DockPanel.CENTER);
-      topPanel.setWidth("100%");
+
+
       Label browseLabel = new Label(Messages.getInstance().browse());
       browseLabel.setHeight("28px"); //$NON-NLS-1$
       browseLabel.setWidth("100%");
       browseLabel.addStyleName(BROWSE_LABEL_STYLE_NAME);
-      topPanel.add(browseLabel, DockPanel.NORTH);
+      
+      FlowPanel topPanel = new FlowPanel();
+      SimplePanel toolbarWrapper = new SimplePanel();
+      toolbarWrapper.add(browseLabel);
+      toolbarWrapper.setStyleName("files-toolbar");
+      topPanel.add(toolbarWrapper);
+      
+      SimplePanel filesListWrapper = new SimplePanel();
+      filesListWrapper.add(solutionTree);
+      solutionTree.getElement().getStyle().setProperty("marginTop", "29px");
+      filesListWrapper.setStyleName("files-list-panel");
+      topPanel.add(filesListWrapper);
+      
+      this.setStyleName("panelWithTitledToolbar");  //$NON-NLS-1$  
+      
       // --------------------------------
       
       solutionNavigatorPanel.setTopWidget(topPanel);
@@ -256,6 +272,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       add(solutionNavigatorAndContentPanel);
       
       ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
+      
       ElementUtils.removeScrollingFromUpTo(
           solutionNavigatorAndContentPanel.getLeftWidget().getElement(), 
           solutionNavigatorAndContentPanel.getElement());
@@ -628,7 +645,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             Utility.setDefaultCursor();
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
-            solutionTree.buildSolutionTree(solutionDocument);
+            if(solutionTree.isAttached()){
+              solutionTree.buildSolutionTree(solutionDocument);
+            }
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();

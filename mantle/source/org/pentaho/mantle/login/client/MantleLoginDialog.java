@@ -1,6 +1,13 @@
 package org.pentaho.mantle.login.client;
 
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.exolab.castor.util.OrderedMap;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
@@ -13,10 +20,12 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -46,7 +55,17 @@ public class MantleLoginDialog {
   private static MantleLoginMessages MSGS = Messages.getInstance();
 
   private boolean showNewWindowOption;
+  
+  private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
+  static {
+    defaultUsers.put("Select a User", new String[]{"",""});
+    defaultUsers.put("Joe (admin)", new String[]{"joe","password"});
+    defaultUsers.put("Suzy", new String[]{"suzy","password"});
+    defaultUsers.put("Pat", new String[]{"pat","password"});
+    defaultUsers.put("Tiffany", new String[]{"tiffany","password"});
+  }
+  
   static {
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
@@ -76,6 +95,9 @@ public class MantleLoginDialog {
             public void onSuccess(Boolean result) {
 
               if (result) {
+                Date dte = new Date(2010,1,1);
+                Cookies.setCookie("loginNewWindowChecked", ""+newWindowChk.isChecked(), dte);
+                
                 outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
                 outterCallback.onFailure(new Throwable(MSGS.authFailed()));
@@ -99,14 +121,7 @@ public class MantleLoginDialog {
         }
       };
       try {
-        int selectedIdx = usersListBox.getSelectedIndex();
-        String username = "";
-        if(selectedIdx > 0){
-          username = usersListBox.getItemText(selectedIdx);
-        } else {
-          username = userTextBox.getText();
-        }
-        
+        String username = userTextBox.getText();
         builder.sendRequest("j_username=" + username + "&j_password=" + passwordTextBox.getText(), callback);
       } catch (RequestException e) {
         e.printStackTrace();
@@ -119,7 +134,7 @@ public class MantleLoginDialog {
     dialog = new PromptDialogBox(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
     dialog.setCallback(myCallback);
     getSubscriptionLevel();
-    fetchAllUsers();
+    addDefaultUsers();
   }
 
   public MantleLoginDialog(AsyncCallback callback, boolean showNewWindowOption) {
@@ -173,10 +188,16 @@ public class MantleLoginDialog {
       spacer.setHeight("8px");
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px");
-
+      
       newWindowChk = new CheckBox();
       newWindowChk.setText(MSGS.launchInNewWindow());
-      newWindowChk.setChecked(true);
+
+      String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked");
+      if(cookieCheckedVal != null){
+        newWindowChk.setChecked(Boolean.parseBoolean(cookieCheckedVal));
+      } else {
+        newWindowChk.setChecked(true);
+      }
 
       loginPanel.add(newWindowChk);
     }
@@ -229,26 +250,20 @@ public class MantleLoginDialog {
   }
   
   
-  public void fetchAllUsers() {
-    final AsyncCallback callback = new AsyncCallback() {
+  public void addDefaultUsers() {
+    for(Map.Entry<String, String[]> entry : defaultUsers.entrySet()){
+      usersListBox.addItem(entry.getKey());
+    }
+    usersListBox.addChangeListener(new ChangeListener(){
 
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(MSGS.error(), caught.toString(), false, false, true);
-        dialogBox.center();
+      public void onChange(Widget sender) {
+        String key = usersListBox.getValue(usersListBox.getSelectedIndex());
+        userTextBox.setText(defaultUsers.get(key)[0]); 
+        passwordTextBox.setText(defaultUsers.get(key)[1]);
       }
-
-      public void onSuccess(Object result) {
-        // filter out existing
-        usersListBox.clear();
-        usersListBox.addItem("Select a User");
-        List<String> users = (List<String>) result;
-        for (String user : users) {
-          usersListBox.addItem(user);
-        }
-      }
-    };
+      
+    });
     
-    SERVICE.getAllUsers(callback);
   }
   
   private void getSubscriptionLevel() {
