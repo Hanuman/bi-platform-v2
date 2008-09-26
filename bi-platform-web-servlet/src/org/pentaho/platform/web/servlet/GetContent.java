@@ -115,10 +115,11 @@ public class GetContent extends ServletBase {
           IOUtils.getInstance().copyStreams(inStr, outStr);
         } finally {
           inStr.close();
-          outStr.close();
+          // You are not allowed to close this output stream
+          // outStr.close();
         }
-      } catch (Throwable t) {
-        error(Messages.getString("GetContent.ERROR_0003_CONTENT_READ_ERROR")); //$NON-NLS-1$
+      } catch (Exception ex) {
+        error(Messages.getErrorString("GetContent.ERROR_0003_CONTENT_READ_ERROR"), ex); //$NON-NLS-1$
       }
 
     } finally {
