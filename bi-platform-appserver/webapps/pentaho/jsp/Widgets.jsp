@@ -39,7 +39,7 @@
 	SimpleUrlFactory urlFactory = new SimpleUrlFactory( thisUrl );
 	ArrayList messages = new ArrayList();
 
-	DashboardWidgetComponent widget = new DashboardWidgetComponent( DashboardWidgetComponent.TYPE_DIAL, "samples/charts/dashboardwidget1.dial.xml", 200, 200, urlFactory, messages ); //$NON-NLS-1$
+	DashboardWidgetComponent widget = new DashboardWidgetComponent( DashboardWidgetComponent.TYPE_DIAL, "bi-developers/charts/dashboardwidget1.dial.xml", 200, 200, urlFactory, messages ); //$NON-NLS-1$
 
 	widget.setValue( 49 );
 	widget.setTitle( "test widget 1" );
