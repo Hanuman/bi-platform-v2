@@ -372,33 +372,29 @@
 
 	</target>
 
-	<!--===================================================
-			target: unified javadocs
-	==================================================== -->
-
-	<property name="bi.javadoc.list" value="bi-platform-api,
-										 bi-platform-util,
-										 bi-platform-engine-core,
-		                 bi-platform-test-foundation,
-										 bi-platform-engine-security,
-										 bi-platform-engine-services,
-										 bi-platform-repository,
-										 bi-platform-ui-foundation,
-										 bi-platform-plugin-services,
-										 bi-platform-plugin-actions,
-										 bi-platform-scheduler,
-										 bi-platform-legacy,
-										 bi-platform-web,
-										 bi-platform-web-servlet,
-										 bi-platform-web-portlet" />
-
 	<!--=======================================================================
-	        unified-platform-javadoc
-	    
-	        cleans, resolves, generates and copies all platform javadocs serially.
-	        Note the release process depends on this target working this way, please
-	        talk to the release manager if you need to change this target.
-	        ====================================================================-->
+		        unified-platform-javadoc
+		    
+		        cleans, resolves, generates and copies all platform javadocs serially.
+		        Note the release process depends on this target working this way, please
+		        talk to the release manager if you need to change this target.
+		        ====================================================================-->
+
+	<property name="bi.javadoc.list" value="${bi.platform.api.dir},
+										 ${bi.platform.util.dir},
+										 ${bi.platform.engine.core.dir},
+		                 ${bi.platform.test.foundation.dir},
+										 ${bi.platform.engine.security.dir},
+										 ${bi.platform.engine.services.dir},
+										 ${bi.platform.repository.dir},
+										 ${bi.platform.ui.foundation.dir},
+										 ${bi.platform.plugin.services.dir},
+										 ${bi.platform.plugin.actions.dir},
+										 ${bi.platform.scheduler.dir},
+										 ${bi.platform.legacy.dir},
+										 ${bi.platform.web.dir},
+										 ${bi.platform.web.servlet.dir},
+										 ${bi.platform.web.portlet.dir}" />
 
 	<!-- Setup the javadoc classpath -->
 	<path id="jdoc.classpath">
@@ -433,22 +429,7 @@
 				</sequential>
 			</for>
 
-			<javadoc destdir="${unified.javadoc.dir}" 
-				access="public" 
-				source="1.5" 
-				use="true" 
-				notree="false" 
-				nonavbar="false" 
-				noindex="false" 
-				splitindex="true" 
-				author="true" 
-				version="true" 
-				sourcepath="${unified.javadoc.src}" 
-				packagenames="org.pentaho.*" 
-				maxmemory="256M" 
-				nodeprecatedlist="false" 
-				nodeprecated="false" 
-				doctitle="Pentaho BI Platform documentation">
+			<javadoc destdir="${unified.javadoc.dir}" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" sourcepath="${unified.javadoc.src}" packagenames="org.pentaho.*" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" doctitle="Pentaho BI Platform documentation">
 				<link href="http://java.sun.com/j2se/1.5.0/docs/bi_platform/" />
 				<classpath refid="jdoc.classpath" />
 			</javadoc>
