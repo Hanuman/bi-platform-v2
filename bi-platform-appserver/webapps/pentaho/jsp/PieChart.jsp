@@ -41,7 +41,7 @@
 	SimpleUrlFactory urlFactory = new SimpleUrlFactory( thisUrl );
 	ArrayList messages = new ArrayList();
 
-	PieDatasetChartComponent pieChart = new PieDatasetChartComponent( 2, "samples/charts/pieChart.xml", 600, 400, urlFactory, messages ); //$NON-NLS-1$
+	PieDatasetChartComponent pieChart = new PieDatasetChartComponent( 2, "bi-developers/charts/pieChart.xml", 600, 400, urlFactory, messages ); //$NON-NLS-1$
 	String intro = ""; //$NON-NLS-1$
 	String footer = ""; //$NON-NLS-1$
 	String content = ""; //$NON-NLS-1$
