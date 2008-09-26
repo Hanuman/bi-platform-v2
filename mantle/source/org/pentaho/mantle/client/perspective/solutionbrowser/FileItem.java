@@ -27,6 +27,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -50,7 +52,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
   public FileItem(String name, String localizedName, boolean useLocalizedName, String solution, String path, String lastModifiedDateStr, String url,
       IFileItemCallback fileItemCallback) {
-    sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
+    sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP | Event.ONKEYDOWN);
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
     fileLabel.setTitle(localizedName);
@@ -114,7 +116,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
       final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
       handleRightClick(left, top);
-    }
+    } else if (DOM.eventGetKeyCode(event) == KeyboardListener.)
     fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
 
     super.onBrowserEvent(event);

@@ -66,7 +66,6 @@ import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -209,7 +208,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         if (previousIndex != tabIndex) {
           Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
           frame.setVisible(true);
-          //refreshIfPDF(frame.getElement());
+          refreshIfPDF(frame.getElement());
         }
         for (int i = 0; i < tabIndex; i++) {
           hideFrame(i);
