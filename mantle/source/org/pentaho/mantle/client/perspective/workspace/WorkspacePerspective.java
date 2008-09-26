@@ -46,6 +46,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -240,14 +241,15 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         viewLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
-            DialogBox viewDialog = new DialogBox(true, true);
-            viewDialog.setStyleName("viewContentDialogBox");
-            viewDialog.setText(jobDetail.name + "  (Click outside this frame to close)");
-            Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
-            iframe.setPixelSize(1024, 600);
-            viewDialog.setWidget(iframe);
+            PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
             viewDialog.setPixelSize(1024, 600);
             viewDialog.center();
+            // if this iframe is placed above the show/center of the dialog, the browser will
+            // end up making 2 requests for the url in the iframe (one of which will be terminated and
+            // we'll see an error on the server about a broken pipe).
+            Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
+            viewDialog.setContent(iframe);
+            iframe.setPixelSize(1024, 600);
           }
 
         });
