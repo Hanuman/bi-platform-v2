@@ -844,6 +844,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
         try {
           document = XmlDom4JHelper.getDocFromString(xml, this.getResourceLoader());
           value = document.selectSingleNode("/action-sequence/" + key).getText(); //$NON-NLS-1$
+          if (value == null || "".equals(value)) {
+            value = document.selectSingleNode("/action-sequence/documentation/" + key).getText(); //$NON-NLS-1$
+          }
         } catch (Throwable t) {
           value = null;
         }
