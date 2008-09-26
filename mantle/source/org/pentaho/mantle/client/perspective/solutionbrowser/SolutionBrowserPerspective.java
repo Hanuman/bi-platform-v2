@@ -784,7 +784,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         myIndex = i;
       }
     }
-    if (myIndex >= 0 && myIndex < filesListPanel.getFileCount()-1) {
+    if (myIndex > 0 && myIndex < filesListPanel.getFileCount()-1) {
       currentItem.setStyleName("fileLabel");
       FileItem nextItem = filesListPanel.getFileItem(myIndex+1);
       nextItem.setStyleName("fileLabelSelected");
@@ -812,7 +812,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
   
   public void createSchedule() {
-    Window.alert("createSchedule");
     final AsyncCallback authenticatedCallback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {

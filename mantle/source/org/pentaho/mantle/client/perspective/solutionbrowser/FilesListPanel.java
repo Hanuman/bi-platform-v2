@@ -26,6 +26,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -42,7 +43,7 @@ public class FilesListPanel extends FlowPanel {
   FilesToolbar toolbar;
   IFileItemCallback fileItemCallback;
 
-  public FilesListPanel(IFileItemCallback fileItemCallback) {
+  public FilesListPanel(final IFileItemCallback fileItemCallback) {
     super();
     this.fileItemCallback = fileItemCallback;
     // Create the toolbar
@@ -53,28 +54,28 @@ public class FilesListPanel extends FlowPanel {
     add(toolbarWrapper);
 
     SimplePanel filesListWrapper = new SimplePanel();
-    filesListWrapper.add(filesList);
-    filesList.getElement().getStyle().setProperty("marginTop", "29px");
+    FocusPanel fp = new FocusPanel(filesList) {
+      public void onBrowserEvent(Event event) {
+        if ((DOM.eventGetType(event) & Event.ONKEYDOWN) == Event.ONKEYDOWN) {
+          if (event.getKeyCode() == KeyboardListener.KEY_UP) {
+            fileItemCallback.selectPreviousItem(fileItemCallback.getSelectedFileItem());
+          } else if (event.getKeyCode() == KeyboardListener.KEY_DOWN) {
+            fileItemCallback.selectNextItem(fileItemCallback.getSelectedFileItem());
+          } else if (event.getKeyCode() == KeyboardListener.KEY_ENTER) {
+            fileItemCallback.openFile(FileCommand.RUN);
+          }
+        }
+        super.onBrowserEvent(event);
+      }
+    };
+    fp.sinkEvents(Event.KEYEVENTS);
+
+    filesListWrapper.add(fp);
+    fp.getElement().getStyle().setProperty("marginTop", "29px");
     filesListWrapper.setStyleName("files-list-panel");
     add(filesListWrapper);
 
     this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
-    sinkEvents(Event.KEYEVENTS);
-  }
-
-  public void onBrowserEvent(Event event) {
-    Window.alert("onbrowserevent");
-    if ((DOM.eventGetType(event) & Event.ONKEYDOWN) == Event.ONKEYDOWN) {
-      Window.alert("down");
-      if (event.getKeyCode() == KeyboardListener.KEY_UP) {
-        fileItemCallback.selectPreviousItem(fileItemCallback.getSelectedFileItem());
-      } else if (event.getKeyCode() == KeyboardListener.KEY_DOWN) {
-        fileItemCallback.selectNextItem(fileItemCallback.getSelectedFileItem());
-      } else if (event.getKeyCode() == KeyboardListener.KEY_ENTER) {
-        fileItemCallback.openFile(FileCommand.RUN);
-      }
-    }
-    super.onBrowserEvent(event);
   }
 
   public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, FileItem selectedFileItem, TreeItem item) {
