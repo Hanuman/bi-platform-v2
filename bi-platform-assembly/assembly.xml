@@ -417,7 +417,7 @@
 			<for list="${bi.javadoc.list}" param="module" trim="true">
 				<sequential>
 					<copy todir="${unified.javadoc.src}">
-						<fileset dir="../@{module}/src">
+						<fileset dir="@{module}/src">
 							<include name="${java.incl}" />
 							<exclude name="${test.excl}" />
 						</fileset>
