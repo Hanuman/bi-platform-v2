@@ -48,7 +48,7 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     if (GWT.isScript()) {
       manageContentImage.setUrl("/pentaho/mantle/btn_ql_manage.png");
     } else {
-      manageContentImage.setUrl("btn_ql_browse.png");
+      manageContentImage.setUrl("btn_ql_manage.png");
     }
     manageContentImage.setTitle(Messages.getInstance().manageContent());
     manageContentImage.addClickListener(this);
