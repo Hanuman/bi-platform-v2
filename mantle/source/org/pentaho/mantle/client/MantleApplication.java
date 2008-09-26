@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
 import org.pentaho.mantle.client.commands.ExecuteGlobalActionsCommand;
@@ -302,6 +303,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     // show stuff we've created/configured
     applicationPanel.add(perspectivesPanel);
 
+    ElementUtils.convertPNGs();
   }
 
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator) /*-{

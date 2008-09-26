@@ -939,6 +939,14 @@ gwt-TabPanelBottom {
   overflow: hidden;
 }
 
+.folder-list-panel{
+  position:absolute;
+  height:100% !important;
+  height:100% -29px;
+  width:100%;
+  overflow:auto;
+}
+
 .gwt-PopupPanel{
   z-index:100;
 }

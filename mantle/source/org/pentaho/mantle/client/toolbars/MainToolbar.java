@@ -20,6 +20,7 @@ import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarButton;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarToggleButton;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
+import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
@@ -46,6 +47,8 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
 
   SolutionBrowserPerspective solutionBrowser;
   
+  
+  ToolbarButton openFileButton;
   ToolbarButton newAnalysisButton;
   ToolbarButton newAdhocButton;
   ToolbarButton printButton;
@@ -60,18 +63,28 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     super();
     this.solutionBrowser = solutionBrowser;
     this.setStylePrimaryName(MAIN_TOOBAR_STYLE_NAME);
+
+    Image openImage = new Image();
+    MantleImages.images.open_32().applyTo(openImage);
+    openFileButton = new ToolbarButton(openImage);
+    openFileButton.setCommand(new OpenFileCommand(solutionBrowser));
+    openFileButton.setToolTip("Open...");
+
+    
     Image newAnalysisImage = new Image();
     MantleImages.images.new_analysis_32().applyTo(newAnalysisImage);
     newAnalysisButton = new ToolbarButton(newAnalysisImage);
     newAnalysisButton.setCommand(new AnalysisViewCommand(solutionBrowser));
-    newAnalysisButton.setToolTip("New Analysis View");
+    newAnalysisButton.setToolTip("New Analysis View...");
 
     Image newAdhocImage = new Image();
     MantleImages.images.new_report_32().applyTo(newAdhocImage);
     newAdhocButton = new ToolbarButton(newAdhocImage);
     newAdhocButton.setCommand(new WAQRCommand(solutionBrowser));
-    newAdhocButton.setToolTip("New Report");
+    newAdhocButton.setToolTip("New Report...");
 
+    
+    
     Image printImage = new Image();
     MantleImages.images.print_32().applyTo(printImage);
     Image printDisabledImage = new Image();
@@ -127,6 +140,8 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     showBrowserToggleButton.setToolTip(Messages.getInstance().toggleSolutionBrowser());
 
     addSpacer(10);
+    add(openFileButton);
+    addSpacer(20);
     add(newAdhocButton);
     add(newAnalysisButton);
     addSpacer(20);

@@ -214,7 +214,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
         for (int i = 0; i < tabIndex; i++) {
           hideFrame(i);
-        }
+      }
         for (int i = tabIndex + 1; i < contentTabPanel.getTabBar().getTabCount(); i++) {
           hideFrame(i);
         }
@@ -231,26 +231,31 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void buildUI() {
     clear();
     if (explorerMode) {
-
+      
       solutionNavigatorPanel.setHeight("100%");
       // ----- Create the top panel ----
+
 
       BrowserToolbar browserToolbar = new BrowserToolbar(this);
       browserToolbar.setHeight("28px"); //$NON-NLS-1$
       browserToolbar.setWidth("100%");
 
       FlowPanel topPanel = new FlowPanel();
-      topPanel.add(browserToolbar);
-
+      SimplePanel toolbarWrapper = new SimplePanel();
+      toolbarWrapper.add(browserToolbar);
+      toolbarWrapper.setStyleName("files-toolbar");
+      topPanel.add(toolbarWrapper);
+      
       SimplePanel filesListWrapper = new SimplePanel();
       filesListWrapper.add(solutionTree);
       filesListWrapper.setStyleName("files-list-panel");
       topPanel.add(filesListWrapper);
+      solutionTree.getElement().getStyle().setProperty("marginTop", "29px");
 
       this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
 
       // --------------------------------
-
+      
       solutionNavigatorPanel.setTopWidget(topPanel);
       filesListPanel.setWidth("100%");
       solutionNavigatorPanel.setBottomWidget(filesListPanel);
@@ -274,9 +279,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       setHeight("100%");
       setWidth("100%");
       add(solutionNavigatorAndContentPanel);
-
+      
       ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
-
+      
       ElementUtils.removeScrollingFromUpTo(solutionNavigatorAndContentPanel.getLeftWidget().getElement(), solutionNavigatorAndContentPanel.getElement());
     } else {
       // load classic view
@@ -427,7 +432,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
   }
-
+  
   
   public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
     List<String> pathSegments = new ArrayList<String>();
@@ -476,11 +481,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     if (openMethod == OPEN_METHOD.EDIT) {
       editFile();
-    } else if (openMethod == OPEN_METHOD.OPEN) {
+    } else if (openMethod == OPEN_METHOD.OPEN){
       openFile(FileCommand.RUN);
-    } else if (openMethod == OPEN_METHOD.SCHEDULE) {
+    } else if (openMethod == OPEN_METHOD.SCHEDULE){
       createSchedule();
-    } else if (openMethod == OPEN_METHOD.SHARE) {
+    } else if (openMethod == OPEN_METHOD.SHARE){
       shareFile();
     }
   }
@@ -644,9 +649,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             Utility.setDefaultCursor();
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
-            if (solutionTree.isAttached()) {
-              solutionTree.buildSolutionTree(solutionDocument);
-            }
+            solutionTree.buildSolutionTree(solutionDocument);
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
@@ -1166,5 +1169,5 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     form.add(new Hidden("reportXml", xml));
     form.submit();
   }
-
+  
 }

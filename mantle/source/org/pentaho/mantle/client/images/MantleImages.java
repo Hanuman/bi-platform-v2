@@ -105,4 +105,6 @@ public interface MantleImages extends ImageBundle, TreeImages, HorizontalSplitPa
   AbstractImagePrototype workspace_32();
     
   AbstractImagePrototype refresh();
+  
+  AbstractImagePrototype open_32();
 }
