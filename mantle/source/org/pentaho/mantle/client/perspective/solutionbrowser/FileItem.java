@@ -58,7 +58,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     fileLabel.setTitle(localizedName);
     fileLabel.setStyleName("fileLabel");
     ElementUtils.preventTextSelection(fileLabel.getElement());
-    
+
     Image fileIcon = new Image() {
       public void onBrowserEvent(Event event) {
         if ((DOM.eventGetType(event) & Event.BUTTON_LEFT) == Event.BUTTON_LEFT
@@ -116,9 +116,8 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
       final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
       handleRightClick(left, top);
-    } else if (DOM.eventGetKeyCode(event) == KeyboardListener.)
-    fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
-
+      fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
+    }
     super.onBrowserEvent(event);
   }
 
