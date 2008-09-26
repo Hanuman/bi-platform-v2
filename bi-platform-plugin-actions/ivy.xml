@@ -86,8 +86,8 @@
 
         <!-- metadata -->
     <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" transitive="false" />
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.1" />
-    <dependency org="pentaho.kettle" name="kettle-core"   rev="3.1.1" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.0.4" />
+
 
         <!-- olap -->
     <dependency org="pentaho" name="mondrian" rev="3.0.4">
