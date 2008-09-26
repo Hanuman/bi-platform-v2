@@ -109,6 +109,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       }
       fileItemCallback.setSelectedFileItem(this);
       fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+      fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
     } else if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
       final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
       final int top = Window.getScrollTop() + DOM.eventGetClientY(event);

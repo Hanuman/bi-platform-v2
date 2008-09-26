@@ -152,18 +152,24 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
   public FileTreeItem getTreeItem(List<String> pathSegments) {
     // find the tree node whose location matches the pathSegment paths
-    FileTreeItem selectedItem = (FileTreeItem) getItem(0);
-    for (String segment : pathSegments) {
-      for (int i = 0; i < selectedItem.getChildCount(); i++) {
-        FileTreeItem item = (FileTreeItem) selectedItem.getChild(i);
-        if (segment.equals(item.getFileName())) {
-          selectedItem = item;
-          break;
+    for (int x = 0; x < getItemCount(); x++) {
+      FileTreeItem rootItem = (FileTreeItem) getItem(x);
+      FileTreeItem selectedItem = rootItem;
+      for (String segment : pathSegments) {
+        for (int i = 0; i < selectedItem.getChildCount(); i++) {
+          FileTreeItem item = (FileTreeItem) selectedItem.getChild(i);
+          if (segment.equals(item.getFileName())) {
+            selectedItem = item;
+            break;
+          }
         }
       }
+      // if we actually found something meaningful
+      if (selectedItem != rootItem) {
+        return selectedItem;
+      }
     }
-
-    return selectedItem;
+    return null;
   }
 
   private void selectFromList(List<FileTreeItem> parents) {

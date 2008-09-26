@@ -63,7 +63,9 @@ public class FilesListPanel extends FlowPanel {
   }
 
   public void onBrowserEvent(Event event) {
+    Window.alert("onbrowserevent");
     if ((DOM.eventGetType(event) & Event.ONKEYDOWN) == Event.ONKEYDOWN) {
+      Window.alert("down");
       if (event.getKeyCode() == KeyboardListener.KEY_UP) {
         fileItemCallback.selectPreviousItem(fileItemCallback.getSelectedFileItem());
       } else if (event.getKeyCode() == KeyboardListener.KEY_DOWN) {
@@ -95,7 +97,7 @@ public class FilesListPanel extends FlowPanel {
           filesList.setWidget(rowCounter++, 0, fileLabel);
 
           if (selectedFileItem != null && selectedFileItem.getFullPath().equals(fileLabel.getFullPath())) {
-            fileLabel.fileLabel.setStyleName("fileLabelSelected"); //$NON-NLS-1$
+            fileLabel.setStyleName("fileLabelSelected"); //$NON-NLS-1$
             selectedFileItem = fileLabel;
           }
         }

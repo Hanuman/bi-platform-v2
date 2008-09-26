@@ -24,6 +24,7 @@ import java.util.Map;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
@@ -427,18 +428,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     OPEN, EDIT, SHARE, SCHEDULE
   }
 
+  
   public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
     List<String> pathSegments = new ArrayList<String>();
     if (path != null) {
-      int index = path.indexOf("/", 0);
-      while (index >= 0) {
-        int oldIndex = index;
-        index = path.indexOf("/", oldIndex + 1);
-        if (index >= 0) {
-          pathSegments.add(path.substring(oldIndex + 1, index));
-        }
+      if (path.startsWith("/")) {
+        path = path.substring(1);
       }
-      pathSegments.add(path.substring(path.lastIndexOf("/") + 1));
+      StringTokenizer st = new StringTokenizer(path, '/');
+      for (int i=0;i<st.countTokens();i++) {
+        pathSegments.add(st.tokenAt(i));
+      }
     }
 
     String repoPath = "";
@@ -812,13 +812,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
   
   public void createSchedule() {
+    Window.alert("createSchedule");
     final AsyncCallback authenticatedCallback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
         MantleLoginDialog.performLogin(new AsyncCallback() {
 
           public void onFailure(Throwable caught) {
-
           }
 
           public void onSuccess(Object result) {
@@ -828,11 +828,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
       public void onSuccess(Object result) {
-        String solutionName = solutionTree.getSolution();
-        String path = solutionTree.getPath();
-        String actionName = selectedFileItem.getName();
-
-        MantleServiceCache.getService().getSolutionFileInfo(solutionName, path, actionName, new AsyncCallback<SolutionFileInfo>() {
+        MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), new AsyncCallback<SolutionFileInfo>() {
 
           public void onFailure(Throwable caught) {
           }
