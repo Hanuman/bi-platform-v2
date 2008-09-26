@@ -310,9 +310,6 @@
 		    <fileset dir="../bi-platform-plugin-actions/src">
 		      <include name="**/**"/>
 		    </fileset>
-			  <fileset dir="../bi-platform-plugin-services/src">
-			    <include name="**/**"/>
-			  </fileset>
 		    <fileset dir="../bi-platform-repository/src">
 		      <include name="**/**"/>
 		    </fileset>
