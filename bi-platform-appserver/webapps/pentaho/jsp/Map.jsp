@@ -192,7 +192,7 @@ Once you have the new key you need to add it to the Google settings file in the 
       				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0px; padding:0px">
           				<tr>
             					<td style="height: 25px; width: 25px;">
-            						<img border="0" src="/pentaho-style/images/fly-top-left1.png" />
+            						<img border="0" src="/pentaho-style/images/fly-top-left1.png" /> <br /> 
             					</td>
             					<td style="background-image: url(/pentaho-style/images/fly-top1.png); background-repeat: repeat-x; height: 25px; margin:0px; padding:0px ">
 								<span class="a" style="">Select Sales Thresholds</span>
@@ -220,7 +220,7 @@ Once you have the new key you need to add it to the Google settings file in the 
 											<table>
 												<tr>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_red.png"/>
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_red.png"/> <br /> 
 													</td>
 													<td>
 														< 
@@ -249,7 +249,7 @@ Once you have the new key you need to add it to the Google settings file in the 
 														</select> <
 													</td>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_yellow.png"/>
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_yellow.png"/><br /> 
 													</td>
 													<td>
 														<
@@ -278,7 +278,7 @@ Once you have the new key you need to add it to the Google settings file in the 
 														</select> <
 													</td>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_green.png"/>
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_green.png"/><br /> 
 													</td>
 												</tr>
 											</table>
@@ -290,7 +290,7 @@ Once you have the new key you need to add it to the Google settings file in the 
           				</tr>
           				<tr>
             					<td style="height: 25px; width: 25px;">
-            						<img border="0" src="/pentaho-style/images/fly-bot-left1.png" />
+            						<img border="0" src="/pentaho-style/images/fly-bot-left1.png" /><br /> 
             					</td>
             					<td style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x">
             						&nbsp;
@@ -345,7 +345,7 @@ Once you have the new key you need to add it to the Google settings file in the 
           				</tr>
           				<tr>
             					<td style="height: 25px; width: 25px;">
-								<img border="0" src="/pentaho-style/images/fly-bot-left1.png" />
+								<img border="0" src="/pentaho-style/images/fly-bot-left1.png" /><br /> 
 							</td>
             					<td style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x">
             						&nbsp;
