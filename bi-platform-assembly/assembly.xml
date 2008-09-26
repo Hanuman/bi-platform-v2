@@ -170,6 +170,9 @@
       and the structure for the wars that will go into the container.  This
       task does not zip, tar or compress.          
      =================================================================== -->
+	
+	
+	
   <target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
     <sequential>
 
@@ -378,5 +381,108 @@
     </unzip>
 
   </target>
+	
+	<!--===================================================
+			target: unified javadocs
+	==================================================== -->
+	
+	<property name="bi.javadoc.list"
+				      value="bi-platform-api,
+										 bi-platform-util,
+										 bi-platform-engine-core,
+		                 bi-platform-test-foundation,
+										 bi-platform-engine-security,
+										 bi-platform-engine-services,
+										 bi-platform-repository,
+										 bi-platform-ui-foundation,
+										 bi-platform-plugin-services,
+										 bi-platform-plugin-actions,
+										 bi-platform-scheduler,
+										 bi-platform-legacy,
+										 bi-platform-web,
+										 bi-platform-web-servlet,
+										 bi-platform-web-portlet" />
+	
+	<!--=======================================================================
+	        dist-all-javadoc / unified-platform-javadoc
+	    
+	        cleans, resolves, generates and copies all platform javadocs serially.
+	        Note the release process depends on this target working this way, please
+	        talk to the release manager if you need to change this target.
+	        ====================================================================-->
+	
+  <!-- Setup the javadoc classpath -->
+  <path id="jdoc.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+	</path>
+
+		<target name="dist-all-javadoc" description="cleans, resolves, generates and copies all platform javadocs serially">
+			<sequential>
+				<property name="platform.javadoc.dir" value="${basedir}/platform-javadocs" />
+				<delete dir="${platform.javadoc.dir}" />
+				<mkdir dir="${platform.javadoc.dir}" />
+				<for list="${bi.javadoc.list}" param="module" trim="true">
+					<sequential>
+						<ant antfile="build.xml" dir="../@{module}">
+							<target name="clean-all" />
+							<target name="resolve" />
+							<target name="dist-javadoc" />
+						</ant>
+						<copy todir="${platform.javadoc.dir}">
+							<fileset dir="../@{module}/dist" includes="**/*javadoc.*" />
+						</copy>					
+					</sequential>
+				</for>
+			</sequential>	
+		</target>
+	
+	<target name="unified-platform-javadoc" 
+		description="Generates unified javadoc source documentation for the open bi platform">
+				<delete dir="${unified.javadoc.dir}" />
+				<property name="unified.javadoc.dir" value="${basedir}/javadoc/bi_platform"/>
+				<mkdir dir="${unified.javadoc.dir}/src"/>
+				<property name="unified.javadoc.src" value="${unified.javadoc.dir}/src"/>
+				<property name="java.incl" value="**/*.java"/>
+				<property name="test.excl" value="**/test/*.java"/>
+		
+	     <!-- iterate through the module list and copy src -->
+		
+				<for list="${bi.javadoc.list}" param="module" trim="true">
+		 			<sequential>
+						<copy todir="${unified.javadoc.src}"> 
+							<fileset dir="../@{module}/src">
+								<include name="${java.incl}" />
+								<exclude name="${test.excl}" />
+							</fileset>
+							<fileset dir="../mantle/source">
+								<include name="${java.incl}" />
+								<exclude name="${test.excl}" />
+							</fileset>
+						</copy>		
+					</sequential>
+				</for>
+		
+		    <javadoc destdir="${unified.javadoc.dir}"
+		             access="public"
+		             source="1.5"
+		             use="true"
+		             notree="false"
+		             nonavbar="false"
+		             noindex="false"
+		             splitindex="true"
+		             author="true"
+		             version="true"
+								 sourcepath="${unified.javadoc.src}"
+		    				 packagenames="org.pentaho.*"
+		    				 maxmemory="256M"
+		             nodeprecatedlist="false"
+		             nodeprecated="false"
+		             doctitle="Pentaho BI Platform documentation">
+		      <link href="http://java.sun.com/j2se/1.5.0/docs/bi_platform/" />
+		    	<classpath refid="jdoc.classpath" />
+		    </javadoc>
+		  </target>
 
 </project>
