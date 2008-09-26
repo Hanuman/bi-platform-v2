@@ -55,7 +55,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     fileLabel.setText(localizedName);
     fileLabel.setTitle(localizedName);
     fileLabel.setStyleName("fileLabel");
-    //ElementUtils.preventTextSelection(fileLabel.getElement());
+    ElementUtils.preventTextSelection(fileLabel.getElement());
     
     Image fileIcon = new Image() {
       public void onBrowserEvent(Event event) {
