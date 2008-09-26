@@ -388,7 +388,6 @@
 										 ${bi.platform.engine.services.dir},
 										 ${bi.platform.repository.dir},
 										 ../bi-platform-ui-foundation,
-										 ../bi-platform-plugin-services,
 										 ${bi.platform.plugin.actions.dir},
 										 ../bi-platform-scheduler,
 										 ../bi-platform-legacy,
