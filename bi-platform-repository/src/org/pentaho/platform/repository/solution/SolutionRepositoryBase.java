@@ -104,10 +104,10 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   protected static final long PUBLISH_TIMEOUT = 1500; // 1.5 seconds
 
-  protected static final Map<String,Properties> propertyMap = new HashMap<String,Properties>();
+  protected static final Map<String, Properties> propertyMap = new HashMap<String, Properties>();
 
   protected static final String LOG_NAME = "SOLUTION-REPOSITORY"; //$NON-NLS-1$
-  
+
   protected static final String PROPERTIES_SUFFIX = ".properties"; //$NON-NLS-1$
 
   /*
@@ -116,9 +116,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   private static final String RE_SYSTEM_PATH = "^[/\\\\]?system($|[/\\\\].*$)"; //$NON-NLS-1$
 
   private static final String RE_SYSTEM_TMP_PATH = "^[/\\\\]?system/tmp($|[/\\\\].*$)"; //$NON-NLS-1$
-  
+
   private static final Pattern SYSTEM_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_PATH);
-  
+
   private static final Pattern SYSTEM_TMP_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_TMP_PATH);
 
   protected ThreadLocal session = new ThreadLocal();
@@ -143,11 +143,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   /**
-   * NOTE regarding old code: the cacheManager cannot be cached, because it
-   * is possible that the SolutionRepository implementation has a scope
-   * that is longer lived than the cacheManager. When the cacheManager
-   * goes out of scope, this class would have maintained a stale reference
-   * to a now obsolete cacheManager. (sbarkdull)
+   * NOTE regarding old code: the cacheManager cannot be cached, because it is possible that the SolutionRepository implementation has a scope that is longer
+   * lived than the cacheManager. When the cacheManager goes out of scope, this class would have maintained a stale reference to a now obsolete cacheManager.
+   * (sbarkdull)
    * 
    */
   public void init(final IPentahoSession pentahoSession) {
@@ -231,7 +229,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     Matcher m = SolutionRepositoryBase.SYSTEM_PATH_PATTERN.matcher(path.toLowerCase());
     return m.matches();
   }
-  
+
   /**
    * Returns true if the path is the tmp directory in the system solution.
    */
@@ -240,14 +238,12 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return m.matches();
   }
 
-  public InputStream getResourceInputStream(final IActionSequenceResource actionResource,
-      final boolean getLocalizedResource) throws FileNotFoundException {
+  public InputStream getResourceInputStream(final IActionSequenceResource actionResource, final boolean getLocalizedResource) throws FileNotFoundException {
     int resourceSource = actionResource.getSourceType();
     InputStream inputStream = null;
     if (resourceSource == IActionSequenceResource.URL_RESOURCE) {
       inputStream = HttpUtil.getURLInputStream(actionResource.getAddress());
-    } else if ((resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE)
-        || (resourceSource == IActionSequenceResource.FILE_RESOURCE)) {
+    } else if ((resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE) || (resourceSource == IActionSequenceResource.FILE_RESOURCE)) {
       ISolutionFile solutionFile = getSolutionFile(actionResource);
       if (solutionFile == null) {
         String msg = Messages.getErrorString("SOLREPO.ERROR_0006_MISSING_RESOURCE", actionResource.getAddress()); //$NON-NLS-1$
@@ -280,9 +276,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
               node.setText(localeText);
             }
           } catch (Exception e) {
-            warn(Messages
-                .getString(
-                    "SolutionRepository.WARN_MISSING_RESOURCE_PROPERTY", name.substring(1), baseName, getLocale().toString())); //$NON-NLS-1$
+            warn(Messages.getString("SolutionRepository.WARN_MISSING_RESOURCE_PROPERTY", name.substring(1), baseName, getLocale().toString())); //$NON-NLS-1$
           }
         }
       }
@@ -298,15 +292,14 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   // TODO sbarkdull, needs to be refactored, consider if
   // how it should work with/, etc. XmlHelper getLocalizedFile
-  protected String getLocaleString(final String key, String baseName, final ISolutionFile baseFile,
-      boolean marchUpParents) {
+  protected String getLocaleString(final String key, String baseName, final ISolutionFile baseFile, boolean marchUpParents) {
 
     ISolutionFile searchDir = baseFile.retrieveParent();
     if (baseFile.isDirectory()) {
       searchDir = baseFile;
     }
     try {
-      boolean searching = true; 
+      boolean searching = true;
       while (searching) {
 
         ISolutionFile[] propertyFiles = searchDir.listFiles(new IFileFilter() {
@@ -320,12 +313,10 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
         ISolutionFile b = null;
         for (ISolutionFile element : propertyFiles) {
           if (element.getFileName().equalsIgnoreCase(
-              baseName + '_' + getLocale().getLanguage() + '_' + getLocale().getCountry() + '_'
-                  + getLocale().getVariant() + PROPERTIES_SUFFIX)) {
+              baseName + '_' + getLocale().getLanguage() + '_' + getLocale().getCountry() + '_' + getLocale().getVariant() + PROPERTIES_SUFFIX)) {
             blcv = element;
           }
-          if (element.getFileName().equalsIgnoreCase(
-              baseName + '_' + getLocale().getLanguage() + '_' + getLocale().getCountry() + PROPERTIES_SUFFIX)) {
+          if (element.getFileName().equalsIgnoreCase(baseName + '_' + getLocale().getLanguage() + '_' + getLocale().getCountry() + PROPERTIES_SUFFIX)) {
             blc = element;
           }
           if (element.getFileName().equalsIgnoreCase(baseName + '_' + getLocale().getLanguage() + PROPERTIES_SUFFIX)) {
@@ -365,8 +356,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
       }
       return null;
     } catch (Exception e) {
-      error(
-          Messages.getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
+      error(Messages.getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -390,22 +380,18 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return null;
   }
 
-  public InputStream getResourceInputStream(final String solutionPath, final boolean getLocalizedResource)
-      throws FileNotFoundException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+  public InputStream getResourceInputStream(final String solutionPath, final boolean getLocalizedResource) throws FileNotFoundException {
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceInputStream(resource, getLocalizedResource);
   }
 
-  public Reader getResourceReader(final IActionSequenceResource actionResource) throws FileNotFoundException,
-      IOException {
+  public Reader getResourceReader(final IActionSequenceResource actionResource) throws FileNotFoundException, IOException {
     return new InputStreamReader(getResourceInputStream(actionResource, true), LocaleHelper.getSystemEncoding());
   }
 
   public Reader getResourceReader(final String solutionPath) throws FileNotFoundException, IOException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceReader(resource);
   }
@@ -415,14 +401,12 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public String getResourceAsString(final String solutionPath) throws IOException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceAsString(resource);
   }
 
-  public byte[] getResourceAsBytes(final IActionSequenceResource actionResource, final boolean getLocalizedResource)
-      throws IOException {
+  public byte[] getResourceAsBytes(final IActionSequenceResource actionResource, final boolean getLocalizedResource) throws IOException {
     InputStream inputStream = getResourceInputStream(actionResource, getLocalizedResource);
     ByteArrayOutputStream bais = new ByteArrayOutputStream();
     int numRead = 0;
@@ -435,16 +419,13 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public byte[] getResourceAsBytes(final String solutionPath, final boolean getLocalizedResource) throws IOException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceAsBytes(resource, getLocalizedResource);
   }
 
-  public IPentahoStreamSource getResourceDataSource(final IActionSequenceResource actionResource)
-      throws FileNotFoundException {
-    return new SolutionRepositoryBase.ActionSequenceResourceWrapper(actionResource, getResourceInputStream(
-        actionResource, true));
+  public IPentahoStreamSource getResourceDataSource(final IActionSequenceResource actionResource) throws FileNotFoundException {
+    return new SolutionRepositoryBase.ActionSequenceResourceWrapper(actionResource, getResourceInputStream(actionResource, true));
   }
 
   public static final class ActionSequenceResourceWrapper implements IPentahoStreamSource {
@@ -478,15 +459,13 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public IPentahoStreamSource getResourceDataSource(final String solutionPath) throws FileNotFoundException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceDataSource(resource);
   }
 
   public Document getResourceAsDocument(final String solutionPath) throws IOException {
-    IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
+    IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
     return getResourceAsDocument(resource);
   }
@@ -517,8 +496,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return getSolutions(null, null, actionOperation, false);
   }
 
-  protected List getSolutionNames(final String solutionName, final String pathName, final int actionOperation,
-      final boolean visibleOnly) {
+  protected List getSolutionNames(final String solutionName, final String pathName, final int actionOperation, final boolean visibleOnly) {
     Document solns = getSolutions(solutionName, pathName, actionOperation, visibleOnly);
     String xPath = "/repository/file"; //$NON-NLS-1$
     return solns.selectNodes(xPath);
@@ -528,9 +506,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
    * Clears cached data for ALL users
    */
   public void resetRepository() {
-    
-    ICacheManager cacheManager = PentahoSystem.getCacheManager( getSession() );
-    
+
+    ICacheManager cacheManager = PentahoSystem.getCacheManager(getSession());
+
     if (cacheManager != null) {
       cacheManager.killSessionCaches();
     }
@@ -614,8 +592,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return status;
   }
 
-  public int addSolutionFile(final String baseUrl, String path, final String fileName, final byte[] data,
-      boolean overwrite) {
+  public int addSolutionFile(final String baseUrl, String path, final String fileName, final byte[] data, boolean overwrite) {
     // baseUrl = baseUrl + path;
     if (!path.endsWith("/") && !path.endsWith("\\")) { //$NON-NLS-1$//$NON-NLS-2$
       path += File.separator;
@@ -627,10 +604,10 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     } else {
       FileOutputStream fNewOut = null;
       try {
-    	  if( !fNew.exists() ) {
-    		  fNew.getParentFile().mkdirs();
-    		  fNew.createNewFile();
-    	  }
+        if (!fNew.exists()) {
+          fNew.getParentFile().mkdirs();
+          fNew.createNewFile();
+        }
         fNewOut = new FileOutputStream(fNew);
         fNewOut.write(data);
         resetRepository();
@@ -717,15 +694,15 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     Document document = DocumentHelper.createDocument();
     Element root = document.addElement(SolutionReposHelper.TREE_NODE_NAME);
 
-    SolutionReposHelper.processSolutionTree(root, new FileSolutionFile(rootFile, rootFile),
-        SolutionReposHelper.KEEP_ALL_FILTER, SolutionReposHelper.ADD_NOTHING_CONTRIBUTOR, null, null, actionOperation);
+    SolutionReposHelper.processSolutionTree(root, new FileSolutionFile(rootFile, rootFile), SolutionReposHelper.KEEP_ALL_FILTER,
+        SolutionReposHelper.ADD_NOTHING_CONTRIBUTOR, null, null, actionOperation);
 
     return document;
   }
 
   protected boolean isCachingAvailable() {
     IPentahoSession pentahoSession = getSession();
-    ICacheManager cacheManager = PentahoSystem.getCacheManager( pentahoSession );
+    ICacheManager cacheManager = PentahoSystem.getCacheManager(pentahoSession);
     return (cacheManager != null) && cacheManager.cacheEnabled();
   }
 
@@ -741,7 +718,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
    */
   protected Object putRepositoryObjectInCache(final String key, final Object value) {
     if (isCachingAvailable()) {
-      ICacheManager cacheManager = PentahoSystem.getCacheManager( getSession() );
+      ICacheManager cacheManager = PentahoSystem.getCacheManager(getSession());
       cacheManager.putInSessionCache(getSession(), key, value);
       return value;
     }
@@ -759,7 +736,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
    */
   protected Object getRepositoryObjectFromCache(final String key) {
     if (isCachingAvailable()) {
-      ICacheManager cacheManager = PentahoSystem.getCacheManager( getSession() );
+      ICacheManager cacheManager = PentahoSystem.getCacheManager(getSession());
       return cacheManager.getFromSessionCache(getSession(), key);
     }
 
@@ -844,9 +821,6 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
         try {
           document = XmlDom4JHelper.getDocFromString(xml, this.getResourceLoader());
           value = document.selectSingleNode("/action-sequence/" + key).getText(); //$NON-NLS-1$
-          if (value == null || "".equals(value)) {
-            value = document.selectSingleNode("/action-sequence/documentation/" + key).getText(); //$NON-NLS-1$
-          }
         } catch (Throwable t) {
           value = null;
         }
