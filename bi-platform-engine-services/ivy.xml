@@ -41,8 +41,7 @@
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
     
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.1" />
-    <dependency org="pentaho.kettle" name="kettle-core"   rev="3.1.1" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.0.4" />
     
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
     <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
