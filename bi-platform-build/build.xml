@@ -126,5 +126,33 @@
       </ant>
 		</sequential>
 	</target>
+	
+	<!--=======================================================================
+        dist-all-javadoc
+    
+        cleans, resolves, generates and copies all platform javadocs serially.
+        Note: the release process depends on this target working this way, please
+        talk to the release manager if you need to change this target.
+        ====================================================================-->	
+	
+	<target name="dist-all-javadoc" description="cleans, resolves, generates and copies all platform javadocs serially">
+			<sequential>
+				<property name="platform.javadoc.dir" value="${basedir}/platform-javadocs" />
+				<delete dir="${platform.javadoc.dir}" />
+				<mkdir dir="${platform.javadoc.dir}" />
+				<for list="${bi.javadoc.list}" param="module" trim="true">
+					<sequential>
+						<ant antfile="build.xml" dir="../@{module}">
+							<target name="clean-all" />
+							<target name="resolve" />
+							<target name="dist-javadoc" />
+						</ant>
+						<copy todir="${platform.javadoc.dir}">
+							<fileset dir="../@{module}/dist" includes="**/*javadoc.*" />
+						</copy>
+					</sequential>
+				</for>
+			</sequential>
+		</target>
 
 </project>
