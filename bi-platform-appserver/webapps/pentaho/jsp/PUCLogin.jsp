@@ -132,7 +132,7 @@ A:hover {
   color: #000000;
   text-align: left;
   vertical-align: top;
-  padding: 10px 12px 15px 18px;
+  padding: 10px 12px 14px 18px;
   width: 270px;
 }
 
@@ -375,7 +375,7 @@ A:hover {
                             </table>
                         <!-- End button -->
                         </td>
-        <td><img src="/pentaho-style/images/login/spacer.png" width="25" /></td>
+        <td><img src="/pentaho-style/images/login/spacer.png" width="20" /></td>
         <td class="sm_box_bottom" height="100%">
                 
                     <table cellspacing="0" cellpadding="0" height="100%" width="100%" border="0">
@@ -425,8 +425,8 @@ A:hover {
         no certification, no maintenance, no warranty and no indemnity by
         Pentaho or its Certified Partners. <a
           href="http://www.pentaho.com/products/enterprise">Consider the
-        Pentaho Enterprise Edition</a>: Save time, resources, and money &#38;
-        Mitigate risk. <br />
+        Pentaho Enterprise Edition</a>: Save time, resources, money and
+        mitigate risk. <br />
         &#169; 2005-2008 Pentaho Corporation. All rights reserved.</td>
       </tr>
     </table>
