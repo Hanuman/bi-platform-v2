@@ -64,7 +64,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    * 
    */
   private void createMenus() {
-    addSpacer(10);
+    addSpacer(5);
     add(new ToolbarGroup("Files"));
     add(GLUE);
     Image runImage = new Image();

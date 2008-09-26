@@ -37,11 +37,11 @@ import org.pentaho.mantle.client.objects.UserPermission;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel.CustomFrame;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.PermissionsPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
+import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.BrowserToolbar;
 import org.pentaho.mantle.client.perspective.workspace.IWorkspaceCallback;
 import org.pentaho.mantle.client.perspective.workspace.WorkspacePerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -209,7 +209,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         if (previousIndex != tabIndex) {
           Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
           frame.setVisible(true);
-          refreshIfPDF(frame.getElement());
+          //refreshIfPDF(frame.getElement());
         }
         for (int i = 0; i < tabIndex; i++) {
           hideFrame(i);
@@ -234,20 +234,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       solutionNavigatorPanel.setHeight("100%");
       // ----- Create the top panel ----
 
-      Label browseLabel = new Label(Messages.getInstance().browse());
-      browseLabel.setHeight("28px"); //$NON-NLS-1$
-      browseLabel.setWidth("100%");
-      browseLabel.addStyleName(BROWSE_LABEL_STYLE_NAME);
-
+      BrowserToolbar browserToolbar = new BrowserToolbar(this);
+      browserToolbar.setHeight("28px"); //$NON-NLS-1$
+      browserToolbar.setWidth("100%");
+      
       FlowPanel topPanel = new FlowPanel();
-      SimplePanel toolbarWrapper = new SimplePanel();
-      toolbarWrapper.add(browseLabel);
-      toolbarWrapper.setStyleName("files-toolbar");
-      topPanel.add(toolbarWrapper);
+      topPanel.add(browserToolbar);
 
       SimplePanel filesListWrapper = new SimplePanel();
       filesListWrapper.add(solutionTree);
-      solutionTree.getElement().getStyle().setProperty("marginTop", "29px");
       filesListWrapper.setStyleName("files-list-panel");
       topPanel.add(filesListWrapper);
 
