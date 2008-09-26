@@ -52,7 +52,7 @@ greenicon = icon;
 
 	function customerClick( ) {
 		
-		pentahoAction( "samples", "google", "dial.xaction", 
+		pentahoAction( "steel-wheels", "google", "dial.xaction", 
 				new Array( 
 					new Array( "customer", currentRecord[7] ),
 					new Array( "value", currentRecord[4] ),
@@ -67,7 +67,7 @@ greenicon = icon;
 
 	function updateInfoWindow( content ) {
 		currentMarker.openInfoWindowHtml("<table border='0' width='375' cellpadding='0' cellspacing='0'><tr><td rowspan='2' height='125' width='250' style='xborder-right:1px solid #bbbbbb'><table><tr><td nowrap>Customer:</td><td nowrap>" + currentRecord[7] + "</td></tr><tr><td nowrap>Name:</td><td nowrap>" + currentRecord[3] + "</td></tr><tr><td nowrap>Location:</td><td nowrap>"+currentRecord[2]+"</td></tr><tr><td nowrap>Current Sales:</td><td nowrap>"+currentRecord[4]+"</td></tr></table></td><td colspan='2' valign='top' width='125'>"+content+"</td></tr><tr><td>0</td><td style='text-align:right'>200,000</td></tr></table");
-		pentahoAction( "samples", "google", "chart.xaction", 
+		pentahoAction( "steel-wheels", "google", "chart.xaction", 
 				new Array( new Array( "customer", currentRecord[7] ) ), 
 				 'updateProductMix'
 		);
@@ -76,7 +76,7 @@ greenicon = icon;
 	function updateProductMix( content ) {
 		document.getElementById( 'details-div' ).style.display='block';
 		document.getElementById( 'details-cell1' ).innerHTML=content;
-		pentahoAction( "samples", "google", "customer_details.xaction", 
+		pentahoAction( "steel-wheels", "google", "customer_details.xaction", 
 				new Array( new Array( "customer", currentRecord[7] ) ), 
 				 'updateHistory'
 		);
@@ -169,7 +169,7 @@ function showAddress(address, name, custNum, value, selected) {
 		}
 		
 		if( currentRecord ) {
-			pentahoAction( "samples", "google", "dial.xaction", 
+			pentahoAction( "steel-wheels", "google", "dial.xaction", 
 				new Array( 
 					new Array( "customer", name ),
 					new Array( "value", currentRecord[4] ),
