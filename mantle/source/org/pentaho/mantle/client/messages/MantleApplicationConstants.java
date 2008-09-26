@@ -66,6 +66,7 @@ public interface MantleApplicationConstants extends Constants {
   String print();
   String browse();
   String documentation();
+  String documentationEEUrl();
   String documentationUrl();
   String tools();
   String save();
