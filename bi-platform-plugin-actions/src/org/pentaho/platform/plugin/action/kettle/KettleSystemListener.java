@@ -56,20 +56,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
           .getString("KettleSystemListener.ERROR_0002_JOB_ENTRY_LOAD_FAILED")); //$NON-NLS-1$
     }
     
-//    THIS IS GOING TO BE 2.0GA ONLY. --> Kettle 3.1 introduced new rhino jar which is not compatible with current codebase
-//    File pluginsFolder = new File (PentahoSystem.getApplicationContext().getSolutionRootPath(),"system/kettle/plugins");
-//  	  if (pluginsFolder!=null)
-//  	  {
-//  		  
-//  		  try {
-//  			  KettleConfig.getInstance().addConfig("platform-kettle-cfg",new PlatformConfigManager<PluginLocation>(pluginsFolder));
-//  			  PluginLoader.getInstance().load("platform-kettle-cfg");
-//  		  }
-//  		  catch(KettleConfigException e) {
-//  			 Logger.error(KettleSystemListener.class.getName(),Messages
-//  			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED",pluginsFolder.getAbsolutePath())); //$NON-NLS-1$
-//  		  }
-//  	  }
+
     
     return true;
   }
