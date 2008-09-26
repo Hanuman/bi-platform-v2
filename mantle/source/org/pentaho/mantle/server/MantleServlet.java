@@ -168,19 +168,19 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void executeGlobalActions() {
     PentahoSystem.systemEntryPoint();
-    PentahoSystem.publish(getPentahoSession(), "org.pentaho.core.system.GlobalListsPublisher");
+    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.GlobalListsPublisher.class.getName());
     PentahoSystem.systemExitPoint();
   }
 
   public void refreshMetadata() {
     PentahoSystem.systemEntryPoint();
-    PentahoSystem.publish(getPentahoSession(), "org.pentaho.plugin.mql.MetadataPublisher");
+    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
     PentahoSystem.systemExitPoint();
   }
 
   public void refreshSystemSettings() {
     PentahoSystem.systemEntryPoint();
-    PentahoSystem.publish(getPentahoSession(), "org.pentaho.core.system.SettingsPublisher");
+    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.SettingsPublisher.class.getName());
     PentahoSystem.systemExitPoint();
   }
 
