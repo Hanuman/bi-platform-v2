@@ -154,8 +154,14 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
   public void closeOtherTabs() {
     // remove from 0 -> me
-    tabPanel.clear();
-    tabPanel.add(tabContent, this);
+    while (tabContent != tabPanel.getWidget(0)) {
+      tabPanel.remove(tabPanel.getWidget(0));
+    }
+    // remove from END -> me
+    while (tabContent != tabPanel.getWidget(tabPanel.getTabBar().getTabCount() - 1)) {
+      tabPanel.remove(tabPanel.getWidget(tabPanel.getTabBar().getTabCount() - 1));
+    }
+    tabPanel.selectTab(0);
   }
 
   public void closeAllTabs() {
