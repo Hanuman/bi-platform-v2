@@ -37,6 +37,7 @@ import org.pentaho.mantle.client.objects.UserPermission;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel.CustomFrame;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.PermissionsPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
@@ -236,7 +237,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       BrowserToolbar browserToolbar = new BrowserToolbar(this);
       browserToolbar.setHeight("28px"); //$NON-NLS-1$
       browserToolbar.setWidth("100%");
-      
+
       FlowPanel topPanel = new FlowPanel();
       topPanel.add(browserToolbar);
 
@@ -373,7 +374,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     showLaunchOrContent();
     // wire up client-side javascript to handle mouse events
-    // ((CustomFrame) frame).attachEventListeners(frame.getElement());
+    ((CustomFrame) frame).attachEventListeners(frame.getElement());
 
     // update state to workspace state flag
     showWorkspaceMenuItem.setChecked(false);
@@ -501,9 +502,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           contentTabPanel.selectTab(i);
           return;
         }
-
       }
-
       showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
     }
   }
@@ -523,7 +522,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           path = path.substring(1);
         }
         if (GWT.isScript()) {
-          url = "/pentaho/ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName();
+          url = "ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName();
         } else {
           url = "http://localhost:8080/pentaho/ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action="
               + selectedFileItem.getName() + "&userid=joe&password=password";
@@ -774,6 +773,44 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
+  public void selectNextItem(FileItem currentItem) {
+    if (currentItem == null) {
+      return;
+    }
+    int myIndex = -1;
+    for (int i=0;i<filesListPanel.getFileCount();i++) {
+      FileItem fileItem = filesListPanel.getFileItem(i);
+      if (fileItem == currentItem) {
+        myIndex = i;
+      }
+    }
+    if (myIndex >= 0 && myIndex < filesListPanel.getFileCount()-1) {
+      currentItem.setStyleName("fileLabel");
+      FileItem nextItem = filesListPanel.getFileItem(myIndex+1);
+      nextItem.setStyleName("fileLabelSelected");
+      setSelectedFileItem(nextItem);
+    }
+  }
+
+  public void selectPreviousItem(FileItem currentItem) {
+    if (currentItem == null) {
+      return;
+    }
+    int myIndex = -1;
+    for (int i=0;i<filesListPanel.getFileCount();i++) {
+      FileItem fileItem = filesListPanel.getFileItem(i);
+      if (fileItem == currentItem) {
+        myIndex = i;
+      }
+    }
+    if (myIndex > 0 && myIndex < filesListPanel.getFileCount()) {
+      currentItem.setStyleName("fileLabel");
+      FileItem nextItem = filesListPanel.getFileItem(myIndex-1);
+      nextItem.setStyleName("fileLabelSelected");
+      setSelectedFileItem(nextItem);
+    }
+  }
+  
   public void createSchedule() {
     final AsyncCallback authenticatedCallback = new AsyncCallback() {
 

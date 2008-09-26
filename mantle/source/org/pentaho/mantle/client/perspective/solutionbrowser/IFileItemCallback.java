@@ -24,4 +24,6 @@ public interface IFileItemCallback {
   public void loadPropertiesDialog();
   public void shareFile();
   public void createSchedule();
+  public void selectNextItem(FileItem currentItem);
+  public void selectPreviousItem(FileItem currentItem);
 }

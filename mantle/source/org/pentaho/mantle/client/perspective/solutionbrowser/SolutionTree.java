@@ -373,6 +373,14 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // noop
   }
 
+  public void selectNextItem(FileItem currentItem) {
+    // noop
+  }
+
+  public void selectPreviousItem(FileItem currentItem) {
+    // noop
+  }
+
   public void createSchedule(String cronExpression) {
     // TODO Auto-generated method stub
     // noop

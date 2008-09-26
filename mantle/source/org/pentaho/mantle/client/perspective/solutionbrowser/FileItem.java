@@ -27,8 +27,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -52,11 +50,11 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
   public FileItem(String name, String localizedName, boolean useLocalizedName, String solution, String path, String lastModifiedDateStr, String url,
       IFileItemCallback fileItemCallback) {
-    sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP | Event.ONKEYDOWN);
+    sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
     fileLabel.setTitle(localizedName);
-    fileLabel.setStyleName("fileLabel");
+    setStyleName("fileLabel");
     ElementUtils.preventTextSelection(fileLabel.getElement());
 
     Image fileIcon = new Image() {
@@ -70,7 +68,6 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
         super.onBrowserEvent(event);
       }
     };
-    fileIcon.setStyleName("fileLabel");
     fileIcon.sinkEvents(Event.MOUSEEVENTS);
     if (name.endsWith(".waqr.xaction")) {
       MantleImages.images.file_report().applyTo(fileIcon);
@@ -101,17 +98,17 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   public void onBrowserEvent(Event event) {
     if ((DOM.eventGetType(event) & Event.ONDBLCLICK) == Event.ONDBLCLICK) {
       if (fileItemCallback.getSelectedFileItem() != null) {
-        fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabel");
+        fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
       }
       fileItemCallback.setSelectedFileItem(this);
-      fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabelSelected");
+      fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
       fileItemCallback.openFile(FileCommand.RUN);
     } else if (DOM.eventGetButton(event) == Event.BUTTON_LEFT) {
       if (fileItemCallback.getSelectedFileItem() != null) {
-        fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabel");
+        fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
       }
       fileItemCallback.setSelectedFileItem(this);
-      fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabelSelected");
+      fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
     } else if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
       final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
       final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
@@ -123,10 +120,10 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
   public void handleRightClick(final int left, final int top) {
     if (fileItemCallback.getSelectedFileItem() != null) {
-      fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabel");
+      fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
     }
     fileItemCallback.setSelectedFileItem(this);
-    fileItemCallback.getSelectedFileItem().fileLabel.setStyleName("fileLabelSelected");
+    fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
     fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
 
     popupMenu.setPopupPosition(left, top);

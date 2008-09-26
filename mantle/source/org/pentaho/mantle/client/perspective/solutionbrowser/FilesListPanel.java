@@ -14,7 +14,6 @@
  * @author wseyler
  */
 
-
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import java.util.List;
@@ -22,40 +21,60 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.xml.client.Element;
 
 /**
  * @author wseyler
- *
+ * 
  */
 public class FilesListPanel extends FlowPanel {
   protected String FILES_LABEL_STYLE_NAME = "filesPanelMenuLabel"; //$NON-NLS-1$
-  
+
   FlexTable filesList = new FlexTable();
   FilesToolbar toolbar;
-  
+  IFileItemCallback fileItemCallback;
+
   public FilesListPanel(IFileItemCallback fileItemCallback) {
     super();
+    this.fileItemCallback = fileItemCallback;
     // Create the toolbar
     toolbar = new FilesToolbar(fileItemCallback);
     SimplePanel toolbarWrapper = new SimplePanel();
     toolbarWrapper.add(toolbar);
     toolbarWrapper.setStyleName("files-toolbar");
     add(toolbarWrapper);
-    
+
     SimplePanel filesListWrapper = new SimplePanel();
     filesListWrapper.add(filesList);
     filesList.getElement().getStyle().setProperty("marginTop", "29px");
     filesListWrapper.setStyleName("files-list-panel");
     add(filesListWrapper);
-    
-    this.setStyleName("panelWithTitledToolbar");  //$NON-NLS-1$  
+
+    this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
+    sinkEvents(Event.KEYEVENTS);
   }
-  
+
+  public void onBrowserEvent(Event event) {
+    if ((DOM.eventGetType(event) & Event.ONKEYDOWN) == Event.ONKEYDOWN) {
+      if (event.getKeyCode() == KeyboardListener.KEY_UP) {
+        fileItemCallback.selectPreviousItem(fileItemCallback.getSelectedFileItem());
+      } else if (event.getKeyCode() == KeyboardListener.KEY_DOWN) {
+        fileItemCallback.selectNextItem(fileItemCallback.getSelectedFileItem());
+      } else if (event.getKeyCode() == KeyboardListener.KEY_ENTER) {
+        fileItemCallback.openFile(FileCommand.RUN);
+      }
+    }
+    super.onBrowserEvent(event);
+  }
+
   public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, FileItem selectedFileItem, TreeItem item) {
     filesList.clear();
     List<Element> files = (List<Element>) item.getUserObject();
@@ -84,6 +103,10 @@ public class FilesListPanel extends FlowPanel {
     }
   }
 
+  public FileItem getFileItem(int index) {
+    return (FileItem) filesList.getWidget(index, 0);
+  }
+
   /**
    * @return
    */
@@ -97,7 +120,5 @@ public class FilesListPanel extends FlowPanel {
   public Toolbar getToolbar() {
     return toolbar;
   }
-  
-  
 
 }
