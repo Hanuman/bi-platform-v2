@@ -10,7 +10,7 @@
     <AuthenticationMode>Unauthenticated</AuthenticationMode>
     <Catalogs>
         <Catalog name="SteelWheels">
-			<Definition>solution:samples/steel-wheels/analysis/steelwheels.mondrian.xml</Definition>
+			<Definition>solution:steel-wheels/analysis/steelwheels.mondrian.xml</Definition>
 		</Catalog>
     </Catalogs>
   </DataSource>
@@ -24,7 +24,7 @@
     <AuthenticationMode>Unauthenticated</AuthenticationMode>
     <Catalogs>
         <Catalog name="SampleData">
-			<Definition>solution:samples/analysis/SampleData.mondrian.xml</Definition>
+			<Definition>solution:steel-wheels/analysis/SampleData.mondrian.xml</Definition>
 		</Catalog>
     </Catalogs>
   </DataSource>
