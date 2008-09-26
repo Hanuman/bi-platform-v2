@@ -94,7 +94,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     public void onBrowserEvent(Event e){
       super.onBrowserEvent(e);
       
-      if ("mouseover".equals(e.getType())){
+      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())){
         this.getSelectedItem().addStyleDependentName("selected");
       }
     }
