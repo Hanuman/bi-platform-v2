@@ -1,5 +1,3 @@
-<%@ page import="com.pentaho.security.*"%>
-<%@ page import="org.pentaho.core.util.*"%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core'%>
 <%@
     page language="java"
@@ -296,8 +294,7 @@ A:hover {
             <p>The Pentaho User Console provides access to powerful
             Business Intelligence (BI) capabilities found in the Pentaho BI
             Suite. Login or use the links below to learn more about Pentaho's
-            reporting, analysis, dashboards, data mining and data integration
-            capabilities.</p>
+            reporting, analysis, dashboards, data mining and data integration.</p>
             </td>
             <td><!--Begin Login Button -->
             <table class="btn_login_box" border="0" cellspacing="0"
@@ -402,7 +399,7 @@ A:hover {
                               src="/pentaho-style/images/login/spacer.png" width="7" height="27" /><br />
                             </td>
                             <td>
-                            <td class="button_middle" width="100%">Read Now</td>
+                            <td class="button_middle" width="100%">Download PDF</td>
                             </td>
                             <td width="7" height="27" class="button_right"><img
                               src="/pentaho-style/images/login/spacer.png" width="7" height="27" /><br />
@@ -442,16 +439,17 @@ A:hover {
 </html>
 <%!// reads the exception stored by AbstractProcessingFilter
   private String getUserMessage(final AuthenticationException e) {
-    String userMessage = Messages.getString("UI.USER_LOGIN_FAILED_DEFAULT_REASON");
-    if (null != e) {
-      String errorClassName = e.getClass().getName();
-      errorClassName = errorClassName.replace('.', '_');
-      errorClassName = errorClassName.toUpperCase();
-      String key = "UI.USER_LOGIN_FAILED_REASON_" + errorClassName;
-      String tmp = Messages.getString(key);
-      if (null != tmp && 0 != tmp.length() && !tmp.startsWith("!")) {
-        userMessage = tmp;
-      }
-    }
-    return userMessage;
-  }%>
+   String userMessage = Messages.getString("UI.USER_LOGIN_FAILED_DEFAULT_REASON");
+   if (null != e) {
+     String errorClassName = e.getClass().getName();
+     errorClassName = errorClassName.replace('.', '_');
+     errorClassName = errorClassName.toUpperCase();
+     String key = "UI.USER_LOGIN_FAILED_REASON_" + errorClassName;
+     String tmp = Messages.getString(key);
+     if (null != tmp && 0 != tmp.length() && !tmp.startsWith("!")) {
+       userMessage = tmp;
+     }
+   }
+   return userMessage;
+ }
+%>
