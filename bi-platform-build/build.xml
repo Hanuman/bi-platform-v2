@@ -9,9 +9,8 @@
 	<property file="build.properties" />
 
 	<property name="publishTo" value="publish-local" />
-
+	
 	<import file="common.xml" />
-
 
 	<!--=======================================================================
         set-build.id
@@ -42,11 +41,11 @@
         ====================================================================-->
 	<target name="publish-all" depends="set-build.id" description="cleans, resolves, and publishes all platform projects serially">
 		<sequential>
-			<ant antfile="build.xml" dir="../bi-platform-api">
+			<ant antfile="build.xml" dir="../bi-platform-util">
 				<target name="clean-all" />
 				<target name="resolve" />
 				<target name="${publishTo}" />
-			</ant>
+			</ant>		
 			<ant antfile="build.xml" dir="../bi-platform-util">
 				<target name="clean-all" />
 				<target name="resolve" />
@@ -122,223 +121,10 @@
 				<target name="resolve" />
 				<target name="${publishTo}" />
 			</ant>
-            <ant antfile="build.xml" dir="../bi-platform-sample-data">
-              <target name="${publishTo}" />
-            </ant>
+      <ant antfile="build.xml" dir="../bi-platform-sample-data">
+        <target name="${publishTo}" />
+      </ant>
 		</sequential>
 	</target>
-
-
-	<!--=======================================================================
-        dist-all-javadoc
-    
-        cleans, resolves, generates and copies all platform javadocs serially.
-        Note the release process depends on this target working this way, please
-        talk to the release manager if you need to change this target.
-        ====================================================================-->
-
-	<target name="dist-all-javadoc" depends="set-build.id" description="cleans, resolves, generates and copies all platform javadocs serially">
-		<sequential>
-			<property name="platform.javadoc.dir" value="${basedir}/platform-javadocs" />
-			<delete dir="${platform.javadoc.dir}" />
-			<mkdir dir="${platform.javadoc.dir}" />
-			<ant antfile="build.xml" dir="../bi-platform-api">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-api/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-util">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-util/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-engine-core">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-engine-core/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-test-foundation">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-test-foundation/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-engine-security">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-engine-security/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-engine-services">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-engine-services/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-repository">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-repository/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-ui-foundation">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-ui-foundation/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-plugin-services">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-plugin-services/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-plugin-actions">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-plugin-actions/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-scheduler">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-scheduler/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-legacy">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-legacy/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-web">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-web/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-web-servlet">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-web-servlet/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../bi-platform-web-portlet">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-				<fileset dir="../bi-platform-web-portlet/dist" includes="**/*javadoc.*" />
-			</copy>
-			<ant antfile="build.xml" dir="../mantle">
-				<target name="clean-all" />
-				<target name="resolve" />
-				<target name="dist-javadoc" />
-			</ant>
-			<copy todir="${platform.javadoc.dir}">
-			  <fileset dir="../mantle/dist" includes="**/*javadoc.*" />
-			</copy>			
-		</sequential>
-	</target>
-	
-	<!--=======================================================================
-		    javadoc
-		    
-		    Generates javadoc source documentation for this project
-		    ====================================================================-->
-	  <target name="unified-platform-javadoc" depends="set-build.id"
-	          description="Generates javadoc source documentation for the open bi platform">
-	  	<property name="unified.javadoc.dir" value="${basedir}/bi_platform"/>
-	    <javadoc destdir="${unified.javadoc.dir}"
-	             access="public"
-	             source="1.5"
-	             use="true"
-	             notree="false"
-	             nonavbar="false"
-	             noindex="false"
-	             splitindex="true"
-	             author="true"
-	             version="true"
-	             maxmemory="256M"
-	             nodeprecatedlist="false"
-	             nodeprecated="false"
-	             doctitle="Pentaho BI Platform documentation">
-	    	<fileset dir="../bi-platform-api/src">
-	    	  <include name="**/**"/>
-	    	</fileset>
-	    	<fileset dir="../bi-platform-engine-core/src">
-	    		<include name="**/**"/>
-	    	</fileset>
-	    	<fileset dir="../bi-platform-engine-security/src">
-	    		<include name="**/**"/>
-	    	</fileset>
-		    <fileset dir="../bi-platform-engine-services/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-plugin-actions/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-repository/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-scheduler/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-test-foundation/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-ui-foundation/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-util/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-web-portlet/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../bi-platform-web-servlet/src">
-		      <include name="**/**"/>
-		    </fileset>
-		    <fileset dir="../mantle/source">
-		      <include name="**/**"/>
-		    </fileset>	    	
-	      <link href="http://java.sun.com/j2se/1.5.0/docs/bi_platform/" />
-	      <classpath refid="classpath" />
-	    </javadoc>
-	  </target>
-
-
 
 </project>
