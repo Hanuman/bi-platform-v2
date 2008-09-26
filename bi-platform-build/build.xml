@@ -272,6 +272,75 @@
 			</copy>			
 		</sequential>
 	</target>
+	
+	<!--=======================================================================
+		    javadoc
+		    
+		    Generates javadoc source documentation for this project
+		    ====================================================================-->
+	  <target name="unified-platform-javadoc" depends="set-build.id"
+	          description="Generates javadoc source documentation for the open bi platform">
+	  	<property name="unified.javadoc.dir" value="${basedir}/bi_platform"/>
+	    <javadoc destdir="${unified.javadoc.dir}"
+	             access="public"
+	             source="1.5"
+	             use="true"
+	             notree="false"
+	             nonavbar="false"
+	             noindex="false"
+	             splitindex="true"
+	             author="true"
+	             version="true"
+	             maxmemory="256M"
+	             nodeprecatedlist="false"
+	             nodeprecated="false"
+	             doctitle="Pentaho BI Platform documentation">
+	    	<fileset dir="../bi-platform-api/src">
+	    	  <include name="**/**"/>
+	    	</fileset>
+	    	<fileset dir="../bi-platform-engine-core/src">
+	    		<include name="**/**"/>
+	    	</fileset>
+	    	<fileset dir="../bi-platform-engine-security/src">
+	    		<include name="**/**"/>
+	    	</fileset>
+		    <fileset dir="../bi-platform-engine-services/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-plugin-actions/src">
+		      <include name="**/**"/>
+		    </fileset>
+			  <fileset dir="../bi-platform-plugin-services/src">
+			    <include name="**/**"/>
+			  </fileset>
+		    <fileset dir="../bi-platform-repository/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-scheduler/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-test-foundation/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-ui-foundation/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-util/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-web-portlet/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../bi-platform-web-servlet/src">
+		      <include name="**/**"/>
+		    </fileset>
+		    <fileset dir="../mantle/source">
+		      <include name="**/**"/>
+		    </fileset>	    	
+	      <link href="http://java.sun.com/j2se/1.5.0/docs/bi_platform/" />
+	      <classpath refid="classpath" />
+	    </javadoc>
+	  </target>
 
 
 
