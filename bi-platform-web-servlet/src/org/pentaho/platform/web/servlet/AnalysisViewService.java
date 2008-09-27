@@ -330,9 +330,9 @@ public class AnalysisViewService extends ServletBase {
     doc.setDescription(description);
     
     PivotViewAction action = (PivotViewAction)doc.getElement("/" + IActionSequenceDocument.ACTION_SEQUENCE + "/" + IActionSequenceDocument.ACTIONS_NAME + "/" + IActionSequenceDocument.ACTION_DEFINITION_NAME + "[component-name='PivotViewComponent']");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    action.setModel(new ActionInputConstant(model));
+    action.setModel(new ActionInputConstant(model, null));
     if (jndi != null) {
-      action.setJndi(new ActionInputConstant(jndi));
+      action.setJndi(new ActionInputConstant(jndi, null));
     } else {
       // note, pivot view action does not support jdbc based connections at this time
       throw new PentahoSystemException(Messages.getErrorString("AnalysisViewService.ERROR_0006_JNDI_NULL")); //$NON-NLS-1$
