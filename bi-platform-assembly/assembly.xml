@@ -380,7 +380,7 @@
 		        talk to the release manager if you need to change this target.
 		        ====================================================================-->
 
-	<property name="bi.javadoc.list" value="${bi.platform.api.dir},
+	<property name="bi.javadoc.list" value="../bi-platform-api,
 										 ${bi.platform.util.dir},
 										 ../bi-platform-engine-core,
 		                 ../bi-platform-test-foundation,
@@ -400,6 +400,9 @@
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
 		</fileset>
+		<fileset dir="../mantle/lib">
+			<include name="*.jar" />
+		</fileset>
 	</path>
 
 	<target name="unified-platform-javadoc" description="Generates unified javadoc source documentation for the open bi platform">
@@ -409,7 +412,8 @@
 			<mkdir dir="${unified.javadoc.dir}/src" />
 			<property name="unified.javadoc.src" value="${unified.javadoc.dir}/src" />
 			<property name="java.incl" value="**/*.java" />
-			<property name="test.excl" value="**/test/*.java" />
+			<property name="test.excl" value="**/test/**" />
+			<property name="com.excl" value="**/com/**" />
 
 			<!-- iterate through the module list and copy src -->
 
@@ -419,18 +423,20 @@
 						<fileset dir="@{module}/src">
 							<include name="${java.incl}" />
 							<exclude name="${test.excl}" />
+							<exclude name="${com.excl}" />
 						</fileset>
 						<fileset dir="../mantle/source">
 							<include name="${java.incl}" />
 							<exclude name="${test.excl}" />
+							<exclude name="${com.excl}" />
 						</fileset>
 					</copy>
 				</sequential>
 			</for>
 
 			<javadoc destdir="${unified.javadoc.dir}" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" sourcepath="${unified.javadoc.src}" packagenames="org.pentaho.*" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" doctitle="Pentaho BI Platform documentation">
-				<link href="http://java.sun.com/j2se/1.5.0/docs/bi_platform/" />
 				<classpath refid="jdoc.classpath" />
+				<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
 			</javadoc>
 		</sequential>
 	</target>
