@@ -296,25 +296,51 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public List<JobSchedule> getMySchedules() {
-    List<JobSchedule> jobSchedules = new ArrayList<JobSchedule>();
+    List<JobSchedule> jobSchedules = null;
     try {
       List<IJobSchedule> schedules = SchedulerHelper.getMySchedules(getPentahoSession());
+      jobSchedules = iJobSchedule2JobSchedule(schedules);
       // these are functionally the same exact objects (mantle JobSchedule/platform JobSchedule)
     } catch (Exception e) {
+      logger.error(e.getMessage());
+      jobSchedules = new ArrayList<JobSchedule>();
     }
     return jobSchedules;
   }
 
   public List<JobSchedule> getAllSchedules() {
-    List<JobSchedule> jobSchedules = new ArrayList<JobSchedule>();
+    List<JobSchedule> jobSchedules = null;
     try {
       List<IJobSchedule> schedules = SchedulerHelper.getAllSchedules(getPentahoSession());
+      jobSchedules = iJobSchedule2JobSchedule(schedules);
       // these are functionally the same exact objects (mantle JobSchedule/platform JobSchedule)
     } catch (Exception e) {
+      logger.error(e.getMessage());
+      jobSchedules = new ArrayList<JobSchedule>();
     }
     return jobSchedules;
   }
 
+  private List<JobSchedule> iJobSchedule2JobSchedule(List<IJobSchedule> iJobSchedules) {
+    List<JobSchedule> jobSchedules = new ArrayList<JobSchedule>();
+    for (IJobSchedule iJobSchedule : iJobSchedules) {
+      JobSchedule jobSchedule = new JobSchedule();
+      jobSchedule.fullname = iJobSchedule.getFullname();
+      jobSchedule.jobDescription = iJobSchedule.getJobDescription();
+      jobSchedule.jobGroup = iJobSchedule.getJobGroup();
+      jobSchedule.jobName = iJobSchedule.getJobName();
+      jobSchedule.name = iJobSchedule.getName();
+      jobSchedule.nextFireTime = iJobSchedule.getNextFireTime();
+      jobSchedule.previousFireTime = iJobSchedule.getPreviousFireTime();
+      jobSchedule.triggerGroup = iJobSchedule.getTriggerGroup();
+      jobSchedule.triggerName = iJobSchedule.getTriggerName();
+      jobSchedule.triggerState = iJobSchedule.getTriggerState();
+
+      jobSchedules.add(jobSchedule);
+    }
+    return jobSchedules;
+  }
+  
   public void deleteJob(String jobName, String jobGroup) {
     PentahoSystem.systemEntryPoint();
     SchedulerHelper.deleteJob(getPentahoSession(), jobName, jobGroup);
@@ -362,7 +388,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       parameterProvider.setParameter(StandardSettings.ACTION, actionName);
       parameterProvider.setParameter(StandardSettings.CRON_STRING, cronExpression);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_NAME, triggerName);
-      parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, triggerGroup);
+      parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, getPentahoSession().getName());
       parameterProvider.setParameter(StandardSettings.DESCRIPTION, description);
       backgroundExecutionHandler.backgroundExecuteAction(getPentahoSession(), parameterProvider);
     } catch (Exception e) {
@@ -374,22 +400,21 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
-      int strRepeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
+      int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
 
     PentahoSystem.systemEntryPoint();
     try {
-      DateFormat fmtr = SubscriptionHelper.getDateTimeFormatter();
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
       parameterProvider.setParameter(StandardSettings.SOLUTION, solutionName);
       parameterProvider.setParameter(StandardSettings.PATH, path);
       parameterProvider.setParameter(StandardSettings.ACTION, actionName);
       parameterProvider.setParameter(StandardSettings.REPEAT_COUNT, Integer.toString(repeatCount));
-      parameterProvider.setParameter(StandardSettings.REPEAT_TIME_MILLISECS, Integer.toString(strRepeatInterval*100));
+      parameterProvider.setParameter(StandardSettings.REPEAT_TIME_MILLISECS, Integer.toString(repeatInterval));
       parameterProvider.setParameter(StandardSettings.START_DATE_TIME, startDate);
       parameterProvider.setParameter(StandardSettings.END_DATE_TIME, endDate);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_NAME, triggerName);
-      parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, triggerGroup);
+      parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, getPentahoSession().getName());
       parameterProvider.setParameter(StandardSettings.DESCRIPTION, description);
       backgroundExecutionHandler.backgroundExecuteAction(getPentahoSession(), parameterProvider);
     } catch (Exception e) {

@@ -90,7 +90,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (isAdministrator && !fileInfo.isDirectory()) {
           propertyTabs.remove(subscriptionsTab);
-          propertyTabs.add(subscriptionsTab, new TabWidget("Subscribe", "Subscribe", null, propertyTabs, subscriptionsTab));
+          propertyTabs.add(subscriptionsTab, new TabWidget("Advanced", "Advanced", null, propertyTabs, subscriptionsTab));
         }
         if (fileInfo.supportsAccessControls) {
           propertyTabs.remove(permissionsTab);

@@ -92,10 +92,14 @@ public class NewScheduleDialog extends AbstractWizardDialog {
       String description = scheduleEditorWizardPanel.getDescription();
       Date startDate = scheduleEditorWizardPanel.getStartDate();
       Date endDate = scheduleEditorWizardPanel.getEndDate();
+      String startTime = scheduleEditorWizardPanel.getStartTime();
+      int startHour = getStartHour(startTime);
+      int startMin = getStartMin(startTime);
+      Date startDateTime = new Date(startDate.getYear(), startDate.getMonth(), startDate.getDay(), startHour, startMin );
       int repeatCount = scheduleEditorWizardPanel.getRepeatCount();
-      int repeatInterval = Integer.parseInt(scheduleEditorWizardPanel.getRepeatInterval());
+      int repeatInterval = Integer.parseInt(scheduleEditorWizardPanel.getRepeatInterval()) * 1000;
      
-      MantleServiceCache.getService().createSimpleTriggerJob(triggerName, triggerGroup, description, startDate, endDate, repeatCount, repeatInterval, solutionName, path, actionName, scheduleCallback);
+      MantleServiceCache.getService().createSimpleTriggerJob(triggerName, triggerGroup, description, startDateTime, endDate, repeatCount, repeatInterval, solutionName, path, actionName, scheduleCallback);
     } else if (scheduleType != ScheduleType.RUN_ONCE) { // CRON Trigger Types
       String cronExpression = scheduleEditorWizardPanel.getCronString();
       String triggerName = scheduleEditorWizardPanel.getTriggerName();
@@ -113,6 +117,34 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     }
 
     return getDone();
+  }
+
+  /**
+   * @param startTime
+   * @return
+   */
+  private int getStartMin(String startTime) {
+    if (startTime == null || startTime.length() < 1) {
+      return 0;
+    }
+    int firstSeparator = startTime.indexOf(':');
+    int secondSeperator = startTime.indexOf(':', firstSeparator+1);
+    int min = Integer.parseInt(startTime.substring(firstSeparator+1, secondSeperator));
+    return min;
+  }
+
+  /**
+   * @param startTime
+   * @return
+   */
+  private int getStartHour(String startTime) {
+    if (startTime == null || startTime.length() < 1) {
+      return 0;
+    }
+    int afternoonOffset = startTime.endsWith("PM") ? 12 : 0;
+    int hour = Integer.parseInt(startTime.substring(0, startTime.indexOf(':')));
+    hour += afternoonOffset;
+    return hour;
   }
 
   public Boolean getDone() {
