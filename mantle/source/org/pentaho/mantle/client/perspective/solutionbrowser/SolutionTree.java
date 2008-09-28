@@ -374,9 +374,12 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public String getPath() {
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction
     // the path part of the url
+
+    // if we've selected a root level node, we're at the root of a solution, so return "/" 
     for (int i = 0; i < getItemCount(); i++) {
       if (getSelectedItem() == getItem(i)) {
-        return ((FileTreeItem) getItem(i)).getFileName();
+        // return ((FileTreeItem) getItem(i)).getFileName();
+        return "/";
       }
     }
 
