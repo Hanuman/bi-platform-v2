@@ -8,8 +8,11 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
 
+import com.dumbster.smtp.SimpleSmtpServer;
+
 public class EmailTest extends BaseTestCase {
 
+  private SimpleSmtpServer smtpServer;
   public EmailTest() {
     super(SOLUTION_PATH);
   }
@@ -20,6 +23,16 @@ public class EmailTest extends BaseTestCase {
     return SOLUTION_PATH;
   }
 
+  public void setUp() throws Exception{
+    super.setUp();
+    smtpServer = SimpleSmtpServer.start();
+  }
+
+  public void tearDown() throws Exception {
+    smtpServer.stop();
+    super.tearDown();
+  }
+  
   public void testEmailLoop() {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "text_only_email-loop", ".html"); //$NON-NLS-1$ //$NON-NLS-2$

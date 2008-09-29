@@ -112,6 +112,7 @@
 
         <!--  testing dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+    <dependency org="com.dumbster" name="dumbster" rev="1.6.0" conf="test->default" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
     <!--
