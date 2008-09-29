@@ -592,7 +592,7 @@
 	    executed on the user's system.
 	    ====================================================================-->
   <target name="publish-local"
-          depends="dist, publish-local-nojar"
+          depends="dist, dist-source, publish-local-nojar"
           description="Builds and publishes the jar file to the local repository" />
 
 
@@ -622,7 +622,7 @@
       <param name="publish.version" value="${project.revision}" />
       <param name="publish.file" value="${ivy.artifact.ivypathname}" />
     </antcall>
-    
+
     <antcall target="maven-publish-sources">
       <param name="publish.groupId" value="${ivy.artifact.group}" />
       <param name="publish.artifactId" value="${ivy.artifact.id}" />
