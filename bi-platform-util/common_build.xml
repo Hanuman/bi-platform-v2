@@ -514,22 +514,22 @@
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="default" />
-    <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="test" />
-    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-codegen" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="codegen" />
-    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-runtime" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="runtime" />
-    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
 
