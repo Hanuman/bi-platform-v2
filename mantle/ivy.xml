@@ -40,7 +40,7 @@
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
         
-        <dependency org="${ivy.artifact.group}" name="pentaho-gwt-widgets" rev="${project.revision}" conf="default->default" changing="true">
+        <dependency org="${ivy.artifact.group}" name="pentaho-gwt-widgets" rev="${dependency.pentaho-gwt-widgets.revision}" conf="default->default" changing="true">
           <artifact name="pentaho-gwt-widgets"/>
           <artifact name="pentaho-gwt-widgets" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
