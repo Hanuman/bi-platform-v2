@@ -777,7 +777,7 @@
             <arg value="-DgroupId=${publish.groupId}" />
             <arg value="-DartifactId=${publish.artifactId}" />
             <arg value="-Dversion=${publish.version}" />
-            <arg value="-DgeneratePom=false" />
+            <arg value="-DgeneratePom=true" />
             <arg value="-Dpackaging=java-source" />
             <arg value="-Dfile=${publish.file}" />
           </exec>
