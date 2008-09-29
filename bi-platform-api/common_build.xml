@@ -622,17 +622,17 @@
       <param name="publish.version" value="${project.revision}" />
       <param name="publish.file" value="${ivy.artifact.ivypathname}" />
     </antcall>
-
-    <antcall target="maven-publish-artifact">
-      <param name="publish.pomFile" value="${ivy.artifact.pomfile}" />
-      <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
-    </antcall>
-
+    
     <antcall target="maven-publish-sources">
       <param name="publish.groupId" value="${ivy.artifact.group}" />
       <param name="publish.artifactId" value="${ivy.artifact.id}" />
       <param name="publish.version" value="${project.revision}" />
       <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.jar" />
+    </antcall>
+
+    <antcall target="maven-publish-artifact">
+      <param name="publish.pomFile" value="${ivy.artifact.pomfile}" />
+      <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
     </antcall>
   </target>
 
