@@ -16,7 +16,6 @@
 package org.pentaho.mantle.server;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -107,11 +106,19 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   protected static final Log logger = LogFactory.getLog(MantleServlet.class);
 
+  protected void onBeforeRequestDeserialized(String serializedRequest) {
+    PentahoSystem.systemEntryPoint();
+  }
+
+  protected void onAfterResponseSerialized(String serializedResponse) {
+    PentahoSystem.systemExitPoint();
+  }
+
   @Override
   protected void doUnexpectedFailure(Throwable e) {
-    e.printStackTrace();
     try {
-      getThreadLocalResponse().sendRedirect("/pentaho/Home");
+      getThreadLocalResponse().sendRedirect("Home");
+      PentahoSystem.systemExitPoint();
     } catch (IOException e1) {
     }
   }
@@ -119,7 +126,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     try {
-      resp.sendRedirect("/pentaho/Home");
+      resp.sendRedirect("Home");
     } catch (IOException e1) {
     }
   }
@@ -167,21 +174,15 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void executeGlobalActions() {
-    PentahoSystem.systemEntryPoint();
     PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.GlobalListsPublisher.class.getName());
-    PentahoSystem.systemExitPoint();
   }
 
   public void refreshMetadata() {
-    PentahoSystem.systemEntryPoint();
     PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
-    PentahoSystem.systemExitPoint();
   }
 
   public void refreshSystemSettings() {
-    PentahoSystem.systemEntryPoint();
     PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.SettingsPublisher.class.getName());
-    PentahoSystem.systemExitPoint();
   }
 
   public boolean getBackgroundExecutionAlert() {
@@ -250,30 +251,22 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public boolean cancelBackgroundJob(String jobName, String jobGroup) {
-    PentahoSystem.systemEntryPoint();
     UserFilesComponent userFiles = getUserFilesComponent();
     boolean status = userFiles.cancelJob(jobName, jobGroup);
-    PentahoSystem.systemExitPoint();
     return status;
   }
 
   public boolean deleteContentItem(String contentId) {
-    PentahoSystem.systemEntryPoint();
     UserFilesComponent userFiles = getUserFilesComponent();
-    PentahoSystem.systemExitPoint();
     boolean status = userFiles.deleteContent(contentId);
-    PentahoSystem.systemExitPoint();
     return status;
   }
 
   public void refreshRepository() {
-    PentahoSystem.systemEntryPoint();
     PentahoSystem.getSolutionRepository(getPentahoSession()).reloadSolutionRepository(getPentahoSession(), getPentahoSession().getLoggingLevel());
-    PentahoSystem.systemExitPoint();
   }
 
   public int cleanContentRepository(int daysBack) {
-    PentahoSystem.systemEntryPoint();
     // get daysback off the input
     daysBack = Math.abs(daysBack) * -1;
 
@@ -287,7 +280,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     // agedDate
     IContentRepository contentRepository = PentahoSystem.getContentRepository(getPentahoSession());
     int deleteCount = contentRepository.deleteContentOlderThanDate(agedDate);
-    PentahoSystem.systemExitPoint();
     return deleteCount;
   }
 
@@ -340,46 +332,35 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
     return jobSchedules;
   }
-  
+
   public void deleteJob(String jobName, String jobGroup) {
-    PentahoSystem.systemEntryPoint();
     SchedulerHelper.deleteJob(getPentahoSession(), jobName, jobGroup);
-    PentahoSystem.systemExitPoint();
   }
 
   public void runJob(String jobName, String jobGroup) {
-    PentahoSystem.systemEntryPoint();
     SchedulerHelper.runJob(getPentahoSession(), jobName, jobGroup);
-    PentahoSystem.systemExitPoint();
   }
 
   public void resumeJob(String jobName, String jobGroup) {
-    PentahoSystem.systemEntryPoint();
     SchedulerHelper.resumeJob(getPentahoSession(), jobName, jobGroup);
-    PentahoSystem.systemExitPoint();
   }
 
   public void suspendJob(String jobName, String jobGroup) {
-    PentahoSystem.systemEntryPoint();
     SchedulerHelper.suspendJob(getPentahoSession(), jobName, jobGroup);
-    PentahoSystem.systemExitPoint();
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
-//    PentahoSystem.systemEntryPoint();
-//    try {
-//      SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
-//    } catch (Exception e) {
-//      throw new SimpleMessageException(e.getMessage());
-//    } finally {
-//      PentahoSystem.systemExitPoint();
-//    }
+    // try {
+    // SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
+    // } catch (Exception e) {
+    // throw new SimpleMessageException(e.getMessage());
+    // } finally {
+    // }
     createCronJob(solutionName, path, actionName, null, null, null, cronExpression);
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
-    PentahoSystem.systemEntryPoint();
     try {
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -394,7 +375,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
     } finally {
-      PentahoSystem.systemExitPoint();
     }
     createCronJob(solutionName, path, actionName, cronExpression);
   }
@@ -402,7 +382,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
 
-    PentahoSystem.systemEntryPoint();
     try {
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -420,7 +399,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
     } finally {
-      PentahoSystem.systemExitPoint();
     }
   }
 
@@ -482,7 +460,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
-    PentahoSystem.systemEntryPoint();
     try {
       ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
       if (repository.supportsAccessControls()) {
@@ -515,7 +492,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       e.printStackTrace();
       throw new SimpleMessageException(e.getMessage());
     } finally {
-      PentahoSystem.systemExitPoint();
     }
   }
 
@@ -600,68 +576,66 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         String value = (String) props.getProperty(key);
         settings.put(key, value);
       }
-      
+
       // see if we have any plugin settings
-	  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getPentahoSession(), "IPluginSettings" );
-		if( pluginSettings != null ) {
-			// get the menu customizations for the plugins, if any
-			List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();
-      int fileIdx = 0;
-      int fileNewIdx = 0;
-      int fileManageIdx = 0;
-			int viewIdx = 0;
-      int toolsIdx = 0;
-      int toolsRefreshIdx = 0;
-			int aboutIdx = 0;
-			// process each customization
-			for( IMenuCustomization custom: customs ) {
-				// we only support appending children to the first level sub-menus
-				if( custom.getCustomizationType() == CustomizationType.LAST_CHILD ) {
-					String anchor = custom.getAnchorId();
-					// do we have any additions to the file menu?
-					// TODO: support file->new
-          if( "file-submenu".equals( anchor ) ) { //$NON-NLS-1$
-            settings.put( "fileMenuTitle"+fileIdx, custom.getLabel()); //$NON-NLS-1$
-            settings.put( "fileMenuCommand"+fileIdx, custom.getCommand()); //$NON-NLS-1$
-            fileIdx++;
+      IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(getPentahoSession(), "IPluginSettings");
+      if (pluginSettings != null) {
+        // get the menu customizations for the plugins, if any
+        List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();
+        int fileIdx = 0;
+        int fileNewIdx = 0;
+        int fileManageIdx = 0;
+        int viewIdx = 0;
+        int toolsIdx = 0;
+        int toolsRefreshIdx = 0;
+        int aboutIdx = 0;
+        // process each customization
+        for (IMenuCustomization custom : customs) {
+          // we only support appending children to the first level sub-menus
+          if (custom.getCustomizationType() == CustomizationType.LAST_CHILD) {
+            String anchor = custom.getAnchorId();
+            // do we have any additions to the file menu?
+            // TODO: support file->new
+            if ("file-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("fileMenuTitle" + fileIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("fileMenuCommand" + fileIdx, custom.getCommand()); //$NON-NLS-1$
+              fileIdx++;
+            } else if ("file-new-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("file-newMenuTitle" + fileNewIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("file-newMenuCommand" + fileNewIdx, custom.getCommand()); //$NON-NLS-1$
+              fileNewIdx++;
+            } else if ("file-manage-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("file-manageMenuTitle" + fileManageIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("file-manageMenuCommand" + fileManageIdx, custom.getCommand()); //$NON-NLS-1$
+              fileManageIdx++;
+            }
+            // do we have any additions to the view menu?
+            else if ("view-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("viewMenuTitle" + viewIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("viewMenuCommand" + viewIdx, custom.getCommand()); //$NON-NLS-1$
+              viewIdx++;
+            }
+            // do we have any additions to the tools menu?
+            else if ("tools-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("toolsMenuTitle" + toolsIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("toolsMenuCommand" + toolsIdx, custom.getCommand()); //$NON-NLS-1$
+              toolsIdx++;
+            }
+            // do we have any additions to the refresh menu?
+            else if ("tools-refresh-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("tools-refreshMenuTitle" + toolsRefreshIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("tools-refreshMenuCommand" + toolsRefreshIdx, custom.getCommand()); //$NON-NLS-1$
+              toolsRefreshIdx++;
+            }
+            // do we have any additions to the about menu?
+            else if ("about-submenu".equals(anchor)) { //$NON-NLS-1$
+              settings.put("helpMenuTitle" + aboutIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("helpMenuCommand" + aboutIdx, custom.getCommand()); //$NON-NLS-1$
+              aboutIdx++;
+            }
           }
-          else if( "file-new-submenu".equals( anchor ) ) { //$NON-NLS-1$
-            settings.put( "file-newMenuTitle"+fileNewIdx, custom.getLabel()); //$NON-NLS-1$
-            settings.put( "file-newMenuCommand"+fileNewIdx, custom.getCommand()); //$NON-NLS-1$
-            fileNewIdx++;
-          }
-          else if( "file-manage-submenu".equals( anchor ) ) { //$NON-NLS-1$
-            settings.put( "file-manageMenuTitle"+fileManageIdx, custom.getLabel()); //$NON-NLS-1$
-            settings.put( "file-manageMenuCommand"+fileManageIdx, custom.getCommand()); //$NON-NLS-1$
-            fileManageIdx++;
-          }
-					// do we have any additions to the view menu?
-					else if( "view-submenu".equals( anchor ) ) { //$NON-NLS-1$
-						settings.put( "viewMenuTitle"+viewIdx, custom.getLabel()); //$NON-NLS-1$
-						settings.put( "viewMenuCommand"+viewIdx, custom.getCommand()); //$NON-NLS-1$
-						viewIdx++;
-					}
-          // do we have any additions to the tools menu?
-          else if( "tools-submenu".equals( anchor ) ) { //$NON-NLS-1$
-            settings.put( "toolsMenuTitle"+toolsIdx, custom.getLabel()); //$NON-NLS-1$
-            settings.put( "toolsMenuCommand"+toolsIdx, custom.getCommand()); //$NON-NLS-1$
-            toolsIdx++;
-          }
-          // do we have any additions to the refresh menu?
-          else if( "tools-refresh-submenu".equals( anchor ) ) { //$NON-NLS-1$
-            settings.put( "tools-refreshMenuTitle"+toolsRefreshIdx, custom.getLabel()); //$NON-NLS-1$
-            settings.put( "tools-refreshMenuCommand"+toolsRefreshIdx, custom.getCommand()); //$NON-NLS-1$
-            toolsRefreshIdx++;
-          }
-					// do we have any additions to the about menu?
-					else if( "about-submenu".equals( anchor ) ) { //$NON-NLS-1$
-						settings.put( "helpMenuTitle"+aboutIdx, custom.getLabel()); //$NON-NLS-1$
-						settings.put( "helpMenuCommand"+aboutIdx, custom.getCommand()); //$NON-NLS-1$
-						aboutIdx++;
-					}
-				}
-			}
-		}
+        }
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -984,7 +958,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
     settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES, "" + showHiddenFiles);
   }
-  
+
   public boolean repositorySupportsACLS() {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
     return repository.supportsAccessControls();
