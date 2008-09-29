@@ -252,5 +252,10 @@
     	
         <!-- TODO: create version.properties -->
         
+        <propertyfile file="${stage.dir}/version.properties" comment="${impl.title} build information">
+          <entry key="version" value="${project.revision}" />
+          <entry key="builddate" type="date" value="now" />
+        </propertyfile>
+    	
     </target>
 </project>
