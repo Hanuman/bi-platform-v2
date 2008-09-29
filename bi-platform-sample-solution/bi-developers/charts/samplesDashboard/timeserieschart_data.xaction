@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>Time Series Chart Example</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author>Gretchen Moran</author>  
+    <description>Sample executing the TimeSeries chart type</description>  
+    <help/>  
+    <result-type>chart</result-type>  
+    <icon>folder.png</icon> 
+  </documentation>
+
+  <inputs/>
+
+  <outputs> 
+    <results type="result-set"/> 
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Execute the Query to Gen a Time-Series Dataset</action-type>
+      <action-inputs/>
+      <action-outputs> 
+        <query-result type="result-set" mapping="results"/> 
+      </action-outputs>
+      <component-definition> 
+        <live><![CDATA[true]]></live>  
+        <query><![CDATA[SELECT PRODUCTLINE, ORDERS.ORDERDATE, SUM(ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE 
+FROM ORDERS INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE INNER JOIN CUSTOMERS ON ORDERS.CUSTOMERNUMBER =CUSTOMERS.CUSTOMERNUMBER  
+INNER JOIN EMPLOYEES ON CUSTOMERS.SALESREPEMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER
+INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE
+WHERE (ORDERS.ORDERDATE >= '01-JAN-05' AND ORDERS.ORDERDATE <= '30-JUN-05') AND PRODUCTLINE IN ('Classic Cars', 'Motorcycles', 'Planes', 'Ships')
+GROUP BY  PRODUCTLINE, ORDERS.ORDERDATE
+ORDER BY PRODUCTLINE, ORDERS.ORDERDATE]]></query>  
+        <jndi><![CDATA[SampleData]]></jndi>
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>
