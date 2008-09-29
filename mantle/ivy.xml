@@ -27,7 +27,11 @@
 		    <!--  Pentaho dependencies -->
     	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul-core.revision}" changing="true" />
         
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" conf="default->default" changing="true" />
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" conf="default->default" changing="true">
+          <artifact name="pentaho-bi-platform-api"/>
+          <artifact name="pentaho-bi-platform-api" type="source" ext="jar" m:classifier="sources"/>
+        </dependency>
+        
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" conf="default->default" changing="true" />
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
