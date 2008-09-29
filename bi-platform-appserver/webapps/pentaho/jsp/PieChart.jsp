@@ -11,6 +11,7 @@
 	org.pentaho.platform.api.engine.IPentahoSession,
 	org.pentaho.platform.web.http.WebTemplateHelper,
 	org.pentaho.platform.api.engine.IUITemplater,
+	org.pentaho.platform.util.logging.SimpleLogger,
 	org.pentaho.platform.util.messages.LocaleHelper,
 	org.pentaho.commons.connection.IPentahoConnection,
 	org.pentaho.commons.connection.IPentahoResultSet,
@@ -46,7 +47,7 @@
 	String footer = ""; //$NON-NLS-1$
 	String content = ""; //$NON-NLS-1$
 	
-    IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, "SampleData", userSession, null); //$NON-NLS-1$ 
+    IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, "SampleData", userSession, userSession); //$NON-NLS-1$ 
     try {
 	    String query = "SELECT DEPARTMENT, ACTUAL FROM QUADRANT_ACTUALS ORDER BY DEPARTMENT"; //$NON-NLS-1$
 	    IPentahoResultSet results = connection.executeQuery(query);

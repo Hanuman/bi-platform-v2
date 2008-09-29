@@ -49,7 +49,7 @@
 	ArrayList messages = new ArrayList();
 	CategoryDatasetChartComponent barChart = new CategoryDatasetChartComponent( chartType, chartDefinitionPath, 600, 400, urlFactory, messages );
 
-    IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, "SampleData", userSession, new SimpleLogger(this)); //$NON-NLS-1$
+    IPentahoConnection connection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, "SampleData", userSession, userSession); //$NON-NLS-1$
     try {
 	    String query = "select department, actual, budget, variance from QUADRANT_ACTUALS"; //$NON-NLS-1$
 	
