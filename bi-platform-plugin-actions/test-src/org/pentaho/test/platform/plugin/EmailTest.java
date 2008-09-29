@@ -29,7 +29,11 @@ public class EmailTest extends BaseTestCase {
   }
 
   public void tearDown() throws Exception {
-    smtpServer.stop();
+    try {
+      smtpServer.stop();
+    } catch (NullPointerException ex) {
+      // ignored.
+    }
     super.tearDown();
   }
   
