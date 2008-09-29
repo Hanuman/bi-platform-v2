@@ -34,7 +34,7 @@
   <mail.pop3></mail.pop3>
 
   <!-- This is the default 'from' address that emails from the Pentaho BI Platform will appear to come from e.g. joe.pentaho@pentaho.org -->
-  <mail.from.default></mail.from.default>
+  <mail.from.default>me@localhost</mail.from.default>
 
   <!-- This is the user id used to connect to the email server for sending email
        It is only required if email-authenticate is set to true
