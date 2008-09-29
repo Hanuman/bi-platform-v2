@@ -629,6 +629,9 @@
     </antcall>
 
     <antcall target="maven-publish-sources">
+      <param name="publish.groupId" value="${ivy.artifact.group}" />
+      <param name="publish.artifactId" value="${ivy.artifact.id}" />
+      <param name="publish.version" value="${project.revision}" />
       <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.jar" />
     </antcall>
   </target>
@@ -649,7 +652,7 @@
 	    
 	    A function that deploys an ivy.xml file to a maven repository
 	    ====================================================================-->
-  <target name="maven-publish-dependencies" description="A function that deploys an ivy.xml file to a maven repository">
+  <target name="maven-publish-dependencies">
     <sequential>
       <fail message="No file found at: ${publish.file}">
         <condition>
@@ -758,6 +761,9 @@
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
             <arg value="-DgeneratePom=false" />
             <arg value="-Dpackaging=java-source" />
             <arg value="-Dfile=${publish.file}" />
@@ -768,6 +774,9 @@
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
             <arg value="-DgeneratePom=false" />
             <arg value="-Dpackaging=java-source" />
             <arg value="-Dfile=${publish.file}" />
@@ -776,8 +785,8 @@
       </if>
     </sequential>
   </target>
-  
-  
+
+
   <!--=======================================================================
 	    create-pom
 	    
