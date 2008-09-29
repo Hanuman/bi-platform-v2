@@ -252,10 +252,13 @@
     	
         <!-- create version.properties -->
         
-        <propertyfile file="${stage.dir}/version.properties" comment="${impl.title} build information">
+        <propertyfile file="${stage.dir}/version.properties" comment="Pentaho Manual Deployments build information">
+          <entry key="impl.vender" value="Pentaho" />
+          <entry key="impl.vender" value="Pentaho Manual Deployments" />
           <entry key="impl.version" value="${project.revision}" />
           <entry key="impl.builddate" type="date" value="now" />
         </propertyfile>
+		
     	
     </target>
 </project>
