@@ -159,8 +159,8 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     
     // verify JNDI
     try {
- 	  IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);    	
- 	  datasourceService.getDSBoundName(jndiName);
+      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);    	
+      datasourceService.getDataSource(jndiName);
     } catch (ObjectFactoryException objface) {
       	MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$      	
     } catch (DatasourceServiceException dse) {
