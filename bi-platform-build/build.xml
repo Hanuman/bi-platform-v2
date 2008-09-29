@@ -41,7 +41,7 @@
         ====================================================================-->
 	<target name="publish-all" depends="set-build.id" description="cleans, resolves, and publishes all platform projects serially">
 		<sequential>
-			<ant antfile="build.xml" dir="../bi-platform-util">
+			<ant antfile="build.xml" dir="../bi-platform-api">
 				<target name="clean-all" />
 				<target name="resolve" />
 				<target name="${publishTo}" />
