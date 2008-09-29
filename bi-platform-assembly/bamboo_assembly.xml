@@ -1,10 +1,14 @@
 <project name="bamboo global assembly">
-    <target name="continuous">
-        <ant antfile="assembly.xml" target="clean-all" />
-        <ant antfile="assembly.xml" target="resolve" />
-        <ant antfile="assembly.xml" target="package" />
-        <ant antfile="manual_assembly.xml" target="clean-stage" />
-        <ant antfile="manual_assembly.xml" target="assemble"/>
-        <ant antfile="manual_assembly.xml" target="package-zip"/>
-    </target>
+  <target name="continuous">
+    <ant antfile="assembly.xml">
+      <target name="clean-all" />
+      <target name="resolve" />
+      <target name="package" />
+    </ant>
+    <ant antfile="manual_assembly.xml">
+      <target name="clean-stage" />
+      <target name="assemble" />
+      <target name="package-zip" />
+    </ant>
+  </target>
 </project>
