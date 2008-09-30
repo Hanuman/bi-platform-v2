@@ -391,7 +391,6 @@ public class PentahoSystem {
 	      PentahoSystem.systemEntryPoint(); // make sure all startups occur in the context of a transaction
 	      try {
 	        if (!systemListener.startup(session)) {
-	          PentahoSystem.systemExitPoint(); // commit transaction before exiting method
 	          throw new PentahoSystemException(Messages.getErrorString(
 	              "PentahoSystem.ERROR_0014_STARTUP_FAILURE", systemListener.getClass().getName())); //$NON-NLS-1$
 	        }
