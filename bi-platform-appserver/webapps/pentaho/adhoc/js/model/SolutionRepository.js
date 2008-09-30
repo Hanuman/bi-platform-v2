@@ -352,10 +352,6 @@ SolutionRepository.prototype.save = function( solution, path, filename, strConte
         {
           // no errors add the node to our doc
           var fullFilename = filename + SolutionRepository.WAQR_ACTION_EXTENSION;
-          //if(this.solution == undefined){
-          //localThis.loadPathFromWebService( SolutionRepository.EMPTY_SOLUTION_NAME,
-          //  SolutionRepository.EMPTY_FOLDER, false, null );
-          //}
           if ( localThis.solutionDoc != undefined && !localThis.doesSolutionFileExist( solution, path, fullFilename ) )
           {
             localThis.addFile( solution, path, fullFilename, filename );
