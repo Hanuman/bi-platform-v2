@@ -15,9 +15,9 @@ public class WAQRCommand implements Command {
   }
 
   public void execute() {
-    String waqrURL = "adhoc/waqr.html";
+    String waqrURL = "adhoc/waqr.html"; //$NON-NLS-1$
     if (!GWT.isScript()) {
-      waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password";
+      waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$
     }
     navigatorPerspective.showNewURLTab(Messages.getInstance().untitled(), Messages.getInstance().newAdhocReport(), waqrURL);
   }
