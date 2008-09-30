@@ -114,8 +114,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(solutionBrowserPerspective, true));
 
-  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, null,
-      MantleApplication.this.solutionBrowserPerspective));
+  final Command propertiesCommand = new FileCommand(FileCommand.PROPERTIES, null, MantleApplication.this.solutionBrowserPerspective);
+  
+  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), propertiesCommand);
 
   MainToolbar mainToolbar = new MainToolbar(solutionBrowserPerspective);
 
@@ -564,10 +565,20 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
-    printMenuItem.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
-    saveMenuItem.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
-    saveAsMenuItem.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
-    propertiesMenuItem.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
+    final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL));
+    
+    printMenuItem.setEnabled(isEnabled);
+    saveMenuItem.setEnabled(isEnabled);
+    saveAsMenuItem.setEnabled(isEnabled);
+    propertiesMenuItem.setEnabled(isEnabled);
+    
+    // Properties menu item should have a command associated with it ONLY when it is enabled. 
+    if (isEnabled) {
+      propertiesMenuItem.setCommand(propertiesCommand);
+    } else {
+      propertiesMenuItem.setCommand(null);
+    }
+    
     if (selectedTabURL != null) {
       // Window.alert(selectedTabURL);
     }
