@@ -28,7 +28,7 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     table.setStyleName("launchButtonPanel");
 
     if (GWT.isScript()) {
-      launchWaqrImage.setUrl("/pentaho/mantle/btn_ql_newreport.png");
+      launchWaqrImage.setUrl("mantle/btn_ql_newreport.png");
     } else {
       launchWaqrImage.setUrl("btn_ql_newreport.png");
     }
@@ -37,7 +37,7 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     
     
     if (GWT.isScript()) {
-      launchAnalysisViewImage.setUrl("/pentaho/mantle/btn_ql_newanalysis.png");
+      launchAnalysisViewImage.setUrl("mantle/btn_ql_newanalysis.png");
     } else {
       launchAnalysisViewImage.setUrl("btn_ql_newanalysis.png");
     }
@@ -46,7 +46,7 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
 
     
     if (GWT.isScript()) {
-      manageContentImage.setUrl("/pentaho/mantle/btn_ql_manage.png");
+      manageContentImage.setUrl("mantle/btn_ql_manage.png");
     } else {
       manageContentImage.setUrl("btn_ql_manage.png");
     }

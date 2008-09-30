@@ -50,10 +50,9 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   Document solutionDocument;
   boolean isAdministrator = false;
   boolean createRootNode = false;
-  
+
   FocusPanel focusable = new FocusPanel();
-  
-  
+
   public SolutionTree() {
     super(MantleImages.images);
     setAnimationEnabled(true);
@@ -62,7 +61,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;");
     DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;");
     addItem(new TreeItem("Loading..."));
-    
+
     DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0");
     DOM.setStyleAttribute(focusable.getElement(), "position", "absolute");
     DOM.setStyleAttribute(focusable.getElement(), "outline", "0px");
@@ -78,19 +77,21 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
     switch (eventType) {
-      case Event.ONMOUSEDOWN:
-      case Event.ONMOUSEUP:
-      case Event.ONCLICK: {
-        com.google.gwt.user.client.Element e = DOM.eventGetTarget(event);
-
-
+    case Event.ONMOUSEDOWN:
+    case Event.ONMOUSEUP:
+    case Event.ONCLICK: {
+      com.google.gwt.user.client.Element e = DOM.eventGetTarget(event);
+      try {
         int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
         int[] offsets = ElementUtils.calculateOffsets(getElement());
-        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) +"px");
-        break;
+        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px");
+      } catch (Exception ex) {
+        // wtf! 
       }
+      break;
     }
-    
+    }
+
     super.onBrowserEvent(event);
     try {
       if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
@@ -134,7 +135,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       rootItem.setText(solutionRoot.getAttribute("path"));
       rootItem.setTitle(solutionRoot.getAttribute("path"));
       killAllTextSelection(rootItem.getElement());
-      
+
       // added so we can traverse the true names
       rootItem.setFileName("/");
       addItem(rootItem);
@@ -243,7 +244,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     NodeList children = parentElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Element childElement = (Element) children.item(i);
-      if(childElement == this.focusable){
+      if (childElement == this.focusable) {
         continue;
       }
       boolean isVisible = "true".equals(childElement.getAttribute("visible"));
@@ -266,7 +267,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           addItem(childTreeItem);
         } else {
 
-          try{
+          try {
             // find the spot in the parentTreeItem to insert the node (based on showLocalizedFileNames)
             if (parentTreeItem.getChildCount() == 0) {
               parentTreeItem.addItem(childTreeItem);
@@ -276,26 +277,26 @@ public class SolutionTree extends Tree implements IFileItemCallback {
               for (int j = 0; j < parentTreeItem.getChildCount(); j++) {
                 FileTreeItem kid = (FileTreeItem) parentTreeItem.getChild(j);
                 if (showLocalizedFileNames) {
-                    if (childTreeItem.getText().compareTo(kid.getText()) <= 0) {
-                      // leave all items ahead of the insert point
-                      // remove all items between the insert point and the end
-                      // add the new item
-                      // add back all removed items
-                      List<FileTreeItem> removedItems = new ArrayList<FileTreeItem>();
-                      for (int x = j; x < parentTreeItem.getChildCount(); x++) {
-                        FileTreeItem removedItem = (FileTreeItem) parentTreeItem.getChild(x);
-                        removedItems.add(removedItem);
-                      }
-                      for (FileTreeItem removedItem : removedItems) {
-                        parentTreeItem.removeItem(removedItem);
-                      }
-                      parentTreeItem.addItem(childTreeItem);
-                      inserted = true;
-                      for (FileTreeItem removedItem : removedItems) {
-                        parentTreeItem.addItem(removedItem);
-                      }
-                      break;
+                  if (childTreeItem.getText().compareTo(kid.getText()) <= 0) {
+                    // leave all items ahead of the insert point
+                    // remove all items between the insert point and the end
+                    // add the new item
+                    // add back all removed items
+                    List<FileTreeItem> removedItems = new ArrayList<FileTreeItem>();
+                    for (int x = j; x < parentTreeItem.getChildCount(); x++) {
+                      FileTreeItem removedItem = (FileTreeItem) parentTreeItem.getChild(x);
+                      removedItems.add(removedItem);
                     }
+                    for (FileTreeItem removedItem : removedItems) {
+                      parentTreeItem.removeItem(removedItem);
+                    }
+                    parentTreeItem.addItem(childTreeItem);
+                    inserted = true;
+                    for (FileTreeItem removedItem : removedItems) {
+                      parentTreeItem.addItem(removedItem);
+                    }
+                    break;
+                  }
                 } else {
                   parentTreeItem.addItem(childTreeItem);
                   inserted = true;
@@ -305,7 +306,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
                 parentTreeItem.addItem(childTreeItem);
               }
             }
-          } catch(Exception e){ /*Error with FF */}
+          } catch (Exception e) { /* Error with FF */
+          }
         }
         FileTreeItem tmpParent = childTreeItem;
         String pathToChild = tmpParent.getFileName();
@@ -375,7 +377,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction
     // the path part of the url
 
-    // if we've selected a root level node, we're at the root of a solution, so return "/" 
+    // if we've selected a root level node, we're at the root of a solution, so return "/"
     for (int i = 0; i < getItemCount(); i++) {
       if (getSelectedItem() == getItem(i)) {
         // return ((FileTreeItem) getItem(i)).getFileName();
@@ -482,19 +484,18 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public boolean isCreateRootNode() {
     return createRootNode;
   }
-  
-  HasFocus getFocusableWidget(){
+
+  HasFocus getFocusableWidget() {
     return this.focusable;
   }
 
-
-  private void killAllTextSelection(com.google.gwt.dom.client.Element item){
+  private void killAllTextSelection(com.google.gwt.dom.client.Element item) {
     ElementUtils.preventTextSelection(item);
     com.google.gwt.dom.client.NodeList<Node> children = item.getChildNodes();
-    for(int i=0; i<children.getLength(); i++){
+    for (int i = 0; i < children.getLength(); i++) {
       killAllTextSelection((com.google.gwt.dom.client.Element) children.getItem(i));
     }
-  
+
   }
-  
+
 }

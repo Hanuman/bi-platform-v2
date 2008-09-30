@@ -14,7 +14,7 @@ public class WAQRCommand implements Command {
   }
 
   public void execute() {
-    String waqrURL = "/pentaho/adhoc/waqr.html";
+    String waqrURL = "adhoc/waqr.html";
     if (!GWT.isScript()) {
       waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password";
     }

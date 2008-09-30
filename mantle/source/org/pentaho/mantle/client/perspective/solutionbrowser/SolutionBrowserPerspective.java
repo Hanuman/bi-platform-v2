@@ -493,7 +493,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void editFile() {
     if (selectedFileItem.getName().endsWith(".waqr.xaction")) {
       String filename = selectedFileItem.getName().substring(0, selectedFileItem.getName().indexOf(".waqr.xaction")) + ".waqr.xreportspec";
-      String url = "/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename=" + filename;
+      String url = "adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename=" + filename;
       if (!GWT.isScript()) {
         url = "http://localhost:8080/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename="
             + filename;
@@ -631,7 +631,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       public void onSuccess(Boolean result) {
         RequestBuilder builder = null;
         if (GWT.isScript()) {
-          builder = new RequestBuilder(RequestBuilder.GET, "/pentaho/SolutionRepositoryService?component=getSolutionRepositoryDoc");
+          String path = Window.Location.getPath();
+          if (!path.endsWith("/")) {
+            path = path.substring(0, path.lastIndexOf("/") + 1);
+          }
+          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc");
         } else {
           builder = new RequestBuilder(RequestBuilder.GET,
               "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password");
@@ -665,36 +669,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         } catch (RequestException e) {
           Window.alert(e.toString());
         }
-
-        // SafeAsyncCallback callback = new SafeAsyncCallback() {
-        //
-        // public void onFailure(Object caught) {
-        // MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, null, false, true);
-        // dialogBox.center();
-        // }
-        //
-        // public void onSuccess(Object result) {
-        // Utility.setDefaultCursor();
-        // solutionDocument = (Document) XMLParser.parse((String) result);
-        // // update tree
-        // solutionTree.buildSolutionTree(solutionDocument, true);
-        // // update classic view
-        // classicNavigatorView.setSolutionDocument(solutionDocument);
-        // classicNavigatorView.buildSolutionNavigator();
-        // if (showSuccess) {
-        // MessageDialogBox dialogBox = new MessageDialogBox("Info", "Solution Navigator Refreshed", false, null, false, true);
-        // dialogBox.center();
-        // }
-        // }
-        // };
-        // MantleServiceCache.getService().getSolutionRepositoryDoc(new String[] { ".xaction", ".url", ".prc" }, callback);
       }
 
       public void onFailure(Throwable caught) {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-
           }
 
           public void onSuccess(Boolean result) {

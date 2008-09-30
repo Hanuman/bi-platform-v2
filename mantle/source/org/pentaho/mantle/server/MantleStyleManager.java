@@ -91,7 +91,7 @@ public class MantleStyleManager extends HttpServlet {
   public static final String TAB_PANEL_BACKGROUND_COLOR_DISPLAY_NAME = "Tab Panel Background Color";
 
   public static final String TAB_PANEL_CONTENT_BACKGROUND_IMAGE = "MANTLE_STYLE_TAB_PANEL_CONTENT_BACKGROUND_IMAGE";
-  public static final String TAB_PANEL_CONTENT_BACKGROUND_IMAGE_DEFAULT = "/pentaho/mantle/logo-small.png";
+  public static final String TAB_PANEL_CONTENT_BACKGROUND_IMAGE_DEFAULT = "mantle/logo-small.png";
   public static final String TAB_PANEL_CONTENT_BACKGROUND_IMAGE_DISPLAY_NAME = "Content Tab Panel Background Image";
 
   public static final String TAB_PANEL_CONTENT_BACKGROUND_REPEAT = "MANTLE_STYLE_TAB_PANEL_CONTENT_BACKGROUND_REPEAT";

@@ -289,7 +289,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
               if (path.startsWith("/")) {
                 path = path.substring(1);
               }
-              url = "/pentaho/ViewAction?solution=" + solution + "&path=" + path + "&action=" + fileName;
+              url = "ViewAction?solution=" + solution + "&path=" + path + "&action=" + fileName;
             }
             Window.open(url, "_blank", "");
           }

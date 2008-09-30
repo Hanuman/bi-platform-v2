@@ -25,7 +25,7 @@ public class AnalysisViewCommand implements Command {
 
       public void okPressed() {
         String actionName = System.currentTimeMillis() + ".analysisview.xaction";
-        String newAnalysisViewURL = "/pentaho/AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName="
+        String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName="
             + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp";
         if (!GWT.isScript()) {
           newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password";

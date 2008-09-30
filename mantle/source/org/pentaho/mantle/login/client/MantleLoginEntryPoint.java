@@ -13,7 +13,6 @@ public class MantleLoginEntryPoint implements EntryPoint {
   private String returnLocation;
 
   public void onModuleLoad() {
-
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {

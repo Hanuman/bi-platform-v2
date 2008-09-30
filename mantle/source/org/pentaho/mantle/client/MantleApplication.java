@@ -57,6 +57,7 @@ import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowCloseListener;
@@ -72,7 +73,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.Event;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -85,17 +85,17 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   FlexTable menuAndLogoPanel = new FlexTable();
 
-  MenuBar menuBar = new MenuBar(){
-    @Override
+  MenuBar menuBar = new MenuBar() {
     public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
       super.onPopupClosed(sender, autoClosed);
       this.getSelectedItem().removeStyleDependentName("selected");
     }
+
     @Override
-    public void onBrowserEvent(Event e){
+    public void onBrowserEvent(Event e) {
       super.onBrowserEvent(e);
-      
-      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())){
+
+      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())) {
         this.getSelectedItem().addStyleDependentName("selected");
       }
     }
@@ -108,17 +108,14 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   // menu items (to be enabled/disabled)
   MenuBar viewMenu = new MenuBar(true);
 
-  PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(
-      solutionBrowserPerspective));
+  PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(solutionBrowserPerspective));
 
-  PentahoMenuItem saveMenuItem = new PentahoMenuItem(Messages.getInstance().save(), new SaveCommand(
-      solutionBrowserPerspective, false));
+  PentahoMenuItem saveMenuItem = new PentahoMenuItem(Messages.getInstance().save(), new SaveCommand(solutionBrowserPerspective, false));
 
-  PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(
-      solutionBrowserPerspective, true));
+  PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(solutionBrowserPerspective, true));
 
-  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), new FileCommand(
-      FileCommand.PROPERTIES, null, MantleApplication.this.solutionBrowserPerspective));
+  PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, null,
+      MantleApplication.this.solutionBrowserPerspective));
 
   MainToolbar mainToolbar = new MainToolbar(solutionBrowserPerspective);
 
@@ -240,7 +237,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
    * This is the entry point method.
    */
   public void onModuleLoad() {
-
     // first things first... make sure we've registered our native hooks
     setupNativeHooks(this, solutionBrowserPerspective);
 
@@ -295,8 +291,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     // load mantle settings
     loadAndApplyMantleSettings();
+
     // load user settings
     loadAndApplyUserSettings();
+
     // load user bookmarks
     solutionBrowserPerspective.loadBookmarks();
 
@@ -306,25 +304,26 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     ElementUtils.convertPNGs();
   }
 
-  public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator) /*-{
-            $wnd.mantle_openTab = function(name, title, url) {
-              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
-            }
-            $wnd.mantle_initialized = true;
-            $wnd.sendMouseEvent = function(event) {
-              return solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
-            }
-            $wnd.closeTab = function(url) {
-              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
-            }
-            $wnd.mantle_refreshRepository = function() {
-              var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
-              cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
-            }
-            $wnd.mantle_waqr_preview = function(url, xml) {
-              solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::handleWAQRPreview(Ljava/lang/String;Ljava/lang/String;)(url, xml);
-            }
-          }-*/;
+  public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
+  /*-{
+    $wnd.mantle_openTab = function(name, title, url) {
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
+    }
+    $wnd.mantle_initialized = true;
+    $wnd.sendMouseEvent = function(event) {
+      return solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
+    }
+    $wnd.closeTab = function(url) {
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
+    }
+    $wnd.mantle_refreshRepository = function() {
+      var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
+      cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
+    }
+    $wnd.mantle_waqr_preview = function(url, xml) {
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::handleWAQRPreview(Ljava/lang/String;Ljava/lang/String;)(url, xml);
+    }
+  }-*/;
 
   public void loadAndApplyUserSettings() {
     AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
@@ -392,7 +391,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         showAdvancedFeatures = "true".equals(settings.get("show-advanced-features"));
         buildMenuBar(settings);
         solutionBrowserPerspective.setExplorerViewShowing(showExplorerViewOnStartup);
-        
+
         int numStartupURLs = Integer.parseInt(settings.get("num-startup-urls"));
         for (int i = 0; i < numStartupURLs; i++) {
           String url = settings.get("startup-url-" + (i + 1));
@@ -411,7 +410,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           startupURL = URL.decodeComponent(startupURL);
           solutionBrowserPerspective.showNewURLTab(startupURL, startupURL, startupURL);
         }
-        
+
         mainToolbar.solutionBrowserEvent(null, null);
       }
 
@@ -530,12 +529,12 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           toolsMenu.addItem(Messages.getInstance().refresh(), adminMenu);
           toolsMenu.addSeparator();
           toolsMenu.addItem(Messages.getInstance().softwareUpdates(), new CheckForSoftwareUpdatesCommand());
-          menuBar.addItem(Messages.getInstance().tools(), toolsMenu);   
+          menuBar.addItem(Messages.getInstance().tools(), toolsMenu);
           // add additions to the admin menu
           customizeMenu(toolsMenu, "tools", settings); //$NON-NLS-1$
           customizeMenu(adminMenu, "tools-refresh", settings); //$NON-NLS-1$
         }
-       
+
         MenuBar helpMenu = new MenuBar(true);
         helpMenu.addItem("Documentation...", new OpenDocCommand(solutionBrowserPerspective));
         helpMenu.addSeparator();
@@ -617,5 +616,4 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     this.isAdministrator = isAdministrator;
   }
 
-  
 }

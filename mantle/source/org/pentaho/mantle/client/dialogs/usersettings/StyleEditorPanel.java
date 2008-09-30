@@ -43,7 +43,7 @@ public class StyleEditorPanel extends UserPreferencesPanel {
 
   private void fetchStyleDocument() {
     // go to server and get settings document
-    String styleURL = "/pentaho/mantle/MantleStyleManager?method=getAvailableStyles";
+    String styleURL = "mantle/MantleStyleManager?method=getAvailableStyles";
     if (!GWT.isScript()) {
       styleURL = "http://localhost:8080/pentaho/mantle/MantleStyleManager?method=getAvailableStyles";
     }
@@ -165,7 +165,7 @@ public class StyleEditorPanel extends UserPreferencesPanel {
         applyButton.addClickListener(new ClickListener() {
           public void onClick(Widget sender) {
             // go to server, make change
-            String setStyleURL = "/pentaho/mantle/MantleStyleManager?method=setStyle&style=" + name + "&value="
+            String setStyleURL = "mantle/MantleStyleManager?method=setStyle&style=" + name + "&value="
                 + URL.encodeComponent(effectiveValueTextBox.getText());
             if (!GWT.isScript()) {
               setStyleURL = "http://localhost:8080/pentaho/mantle/MantleStyleManager?method=setStyle&style=" + name + "&value="

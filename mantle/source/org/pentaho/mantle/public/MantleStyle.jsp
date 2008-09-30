@@ -16,7 +16,7 @@ body{
 }
 
 .launchButtonPanel {
-  background-image: url(/pentaho/mantle/quicklaunch_icon_panel.png);
+  background-image: url(quicklaunch_icon_panel.png);
   background-repeat: no-repeat;
   background-position: center;
   width: 562px;
@@ -24,7 +24,7 @@ body{
 
 .launchPanel {
   background-color: <%= MantleStyleManager.getTabPanelBackgroundColor(request) %>;
-  background-image: url(/pentaho/mantle/quicklaunch_bg.png);
+  background-image: url(quicklaunch_bg.png);
   background-repeat: no-repeat;
   background-position: center;
   height: 100%;
@@ -204,7 +204,7 @@ body{
 
 .mainToolbar {
 	height: 46px;
-	background-image: url(/pentaho/mantle/toolbar_bg.png)
+	background-image: url(toolbar_bg.png)
 }
 
 .gwt-DisclosurePanel-open .header {
@@ -229,7 +229,7 @@ body{
 .gwt-HorizontalSplitPanel .hsplitter {
   cursor: w-resize;
   width: <%= MantleStyleManager.getSplitPanelDividerWidth(request) %>;
-  background-image: url(/pentaho/mantle/splitter_horz_bg.png);
+  background-image: url(splitter_horz_bg.png);
   background-repeat: repeat-y;
   border-left: 1px solid #848484;
   border-right: 1px solid #848484;
@@ -244,7 +244,7 @@ body{
 
 .gwt-VerticalSplitPanel .vsplitter {
   cursor: n-resize;
-  background-image: url(/pentaho/mantle/splitter_vert_bg.png);
+  background-image: url(splitter_vert_bg.png);
   background-repeat: repeat-x;
   border-top: 1px solid #848484;
   border-bottom: 1px solid #848484;
@@ -403,8 +403,8 @@ a:active, a:hover {
 
 .gwt-Button {
    height:22px;
-   background-image: expression('url(/pentaho/mantle/buttonbg.gif)');
-   background-image:url(/pentaho/mantle/buttonbg.gif);
+   background-image: expression('url(buttonbg.gif)');
+   background-image:url(buttonbg.gif);
    font-weight: plain;
    border-style:solid;
    border-color:#000000;
@@ -415,8 +415,8 @@ a:active, a:hover {
 .gwt-Button:hover {
    margin: 0px 4px 2px 4px;
    height:22px;
-   background-image:url(/pentaho/mantle/buttonhoverbg.gif);
-   background-image: expression('url(/pentaho/mantle/buttonhoverbg.gif)');
+   background-image:url(buttonhoverbg.gif);
+   background-image: expression('url(buttonhoverbg.gif)');
    font-weight: plain;
    border-style:solid;
    border-color:#000000;
@@ -496,7 +496,7 @@ a:active, a:hover {
 
 .menuBarAndLogoPanel {
   background-color: #dbdbdb;
-  background-image:url(/pentaho/mantle/menubar_bg.png);
+  background-image:url(menubar_bg.png);
   background-position: top;
   background-repeat: repeat-x;
   border-bottom: 1px solid #848484;
@@ -504,13 +504,13 @@ a:active, a:hover {
 }
 
 .logoPanel-ContainerToolBar {
-  background-image:url(/pentaho/mantle/toolbar_bg.png);
+  background-image:url(toolbar_bg.png);
   background-position: bottom;
   background-repeat: repeat-x;
 }
 
 .logoPanel-Container {
-  background-image:url(/pentaho/mantle/logo_bg.png);
+  background-image:url(logo_bg.png);
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -522,13 +522,13 @@ gwt-TabPanelBottom {
 
 
 .gwt-TabBar {
-  background-image: url(/pentaho/mantle/tab_background.png);
+  background-image: url(tab_background.png);
   background-repeat: repeat-x;
   height: 37px;
 }
 
 .gwt-TabBar .tabWidget {
-  background-image: url(/pentaho/mantle/tabright.png);
+  background-image: url(tabright.png);
   background-position: 100% 0px;
   margin-right: 2px;
   cursor: pointer;
@@ -538,7 +538,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-TabBar .tabWidget-selected {
-  background-image: url(/pentaho/mantle/tabright.png);
+  background-image: url(tabright.png);
   background-position: 100% -42px;
   margin-right: 2px;
   cursor: pointer;
@@ -548,7 +548,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-TabBar .tabWidget-hover {
-  background-image: url(/pentaho/mantle/tabright.png);
+  background-image: url(tabright.png);
   background-position: 100% -84px;
   margin-right: 2px;
   cursor: pointer;
@@ -558,7 +558,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-TabBar .tabWidgetCap {
-  background-image: url(/pentaho/mantle/tableft.png);
+  background-image: url(tableft.png);
   background-position: 100% 0px;
   cursor: pointer;
   cursor: hand;
@@ -567,7 +567,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-TabBar .tabWidgetCap-selected {
-  background-image: url(/pentaho/mantle/tableft.png);
+  background-image: url(tableft.png);
   background-position: 100% -42px;
   cursor: pointer;
   cursor: hand;
@@ -576,7 +576,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-TabBar .tabWidgetCap-hover {
-  background-image: url(/pentaho/mantle/tableft.png);
+  background-image: url(tableft.png);
   background-position: 100% -84px;
   cursor: pointer;
   cursor: hand;
@@ -596,13 +596,13 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar {
-  background-image: url(/pentaho/mantle/dialog_tab_bg.png);
+  background-image: url(dialog_tab_bg.png);
   background-repeat: repeat-x;
   height: 29px;
 }
 
 .gwt-Dialog-TabBar .tabWidget {
-  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-image: url(dialog_tab_right.png);
   background-position: 100% 0px;
   margin-right: 2px;
   cursor: pointer;
@@ -612,7 +612,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar .tabWidget-selected {
-  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-image: url(dialog_tab_right.png);
   background-position: 100% -42px;
   margin-right: 2px;
   cursor: pointer;
@@ -622,7 +622,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar .tabWidget-hover {
-  background-image: url(/pentaho/mantle/dialog_tab_right.png);
+  background-image: url(dialog_tab_right.png);
   background-position: 100% -84px;
   margin-right: 2px;
   cursor: pointer;
@@ -632,7 +632,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap {
-  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-image: url(dialog_tab_left.png);
   background-position: 100% 0px;
   cursor: pointer;
   cursor: hand;
@@ -642,7 +642,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-selected {
-  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-image: url(dialog_tab_left.png);
   background-position: 100% -42px;
   cursor: pointer;
   cursor: hand;
@@ -652,7 +652,7 @@ gwt-TabPanelBottom {
 }
 
 .gwt-Dialog-TabBar .tabWidgetCap-hover {
-  background-image: url(/pentaho/mantle/dialog_tab_left.png);
+  background-image: url(dialog_tab_left.png);
   background-position: 100% -84px;
   cursor: pointer;
   cursor: hand;
@@ -660,20 +660,6 @@ gwt-TabPanelBottom {
   margin-top: 4px;
   width: 6px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

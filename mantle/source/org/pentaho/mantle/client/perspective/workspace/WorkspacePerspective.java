@@ -444,7 +444,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     
     final String url;
     if (GWT.isScript()) {
-      url = "/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
+      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
     } else {
       url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
     }

@@ -25,7 +25,7 @@ public class LogoPanel extends VerticalPanel {
 
     Image logoImage = new Image();
     if (GWT.isScript()) {
-      logoImage.setUrl("/pentaho/mantle/logo.png");
+      logoImage.setUrl("mantle/logo.png");
     } else {
       logoImage.setUrl("logo.png");
     }

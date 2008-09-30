@@ -1,6 +1,6 @@
 package org.pentaho.mantle.login.client;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -48,17 +49,17 @@ public class MantleLoginDialog {
   private static MantleLoginMessages MSGS = Messages.getInstance();
 
   private boolean showNewWindowOption;
-  
+
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
   static {
-    defaultUsers.put("Select a User", new String[]{"",""});
-    defaultUsers.put("Joe (admin)", new String[]{"joe","password"});
-    defaultUsers.put("Suzy", new String[]{"suzy","password"});
-    defaultUsers.put("Pat", new String[]{"pat","password"});
-    defaultUsers.put("Tiffany", new String[]{"tiffany","password"});
+    defaultUsers.put("Select a User", new String[] { "", "" });
+    defaultUsers.put("Joe (admin)", new String[] { "joe", "password" });
+    defaultUsers.put("Suzy", new String[] { "suzy", "password" });
+    defaultUsers.put("Pat", new String[] { "pat", "password" });
+    defaultUsers.put("Tiffany", new String[] { "tiffany", "password" });
   }
-  
+
   static {
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
@@ -72,8 +73,11 @@ public class MantleLoginDialog {
     }
 
     public void okPressed() {
-      // http://localhost:8080/pentaho/j_acegi_security_check?j_username=joe&j_password=password
-      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/pentaho/j_acegi_security_check");
+      String path = Window.Location.getPath();
+      if (!path.endsWith("/")) {
+        path = path.substring(0, path.lastIndexOf("/") + 1);
+      }
+      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, path + "j_acegi_security_check");
       builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
       RequestCallback callback = new RequestCallback() {
 
@@ -88,9 +92,10 @@ public class MantleLoginDialog {
             public void onSuccess(Boolean result) {
 
               if (result) {
-                Date dte = new Date(2010,1,1);
-                Cookies.setCookie("loginNewWindowChecked", ""+newWindowChk.isChecked(), dte);
-                
+                long year = 1000 * 60 * 60 * 24 * 365;
+                // one year into the future
+                Date expirationDate = new Date(System.currentTimeMillis()+year);
+                Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate);
                 outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
                 outterCallback.onFailure(new Throwable(MSGS.authFailed()));
@@ -149,28 +154,27 @@ public class MantleLoginDialog {
     userTextBox.setWidth("100%");
     passwordTextBox.setWidth("100%");
     usersListBox.setWidth("100%");
-    
+
     VerticalPanel loginPanel = new VerticalPanel();
 
     loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     SimplePanel spacer;
-    if(!this.subscription){
+    if (!this.subscription) {
       loginPanel.add(new Label(MSGS.sampleUser() + ":"));
       loginPanel.add(usersListBox);
-    
-    
+
       spacer = new SimplePanel();
       spacer.setHeight("8px");
       loginPanel.add(spacer);
     }
     loginPanel.add(new Label(MSGS.username() + ":"));
     loginPanel.add(userTextBox);
-    
+
     spacer = new SimplePanel();
     spacer.setHeight("8px");
     loginPanel.add(spacer);
-    
+
     loginPanel.setCellHeight(spacer, "8px");
     loginPanel.add(new Label(MSGS.password() + ":"));
     loginPanel.add(passwordTextBox);
@@ -181,12 +185,12 @@ public class MantleLoginDialog {
       spacer.setHeight("8px");
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px");
-      
+
       newWindowChk = new CheckBox();
       newWindowChk.setText(MSGS.launchInNewWindow());
 
       String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked");
-      if(cookieCheckedVal != null){
+      if (cookieCheckedVal != null) {
         newWindowChk.setChecked(Boolean.parseBoolean(cookieCheckedVal));
       } else {
         newWindowChk.setChecked(true);
@@ -214,13 +218,13 @@ public class MantleLoginDialog {
     // called to 'reshow' the dialog after failure
     dialog.center();
   }
-  
-  private void setServiceReturned(){
+
+  private void setServiceReturned() {
     serviceReturned = true;
   }
-  
+
   public void show() {
-    if(!serviceReturned){
+    if (!serviceReturned) {
       timer = new Timer() {
         public void run() {
         }
@@ -241,24 +245,23 @@ public class MantleLoginDialog {
   public void hide() {
     dialog.hide();
   }
-  
-  
+
   public void addDefaultUsers() {
-    for(Map.Entry<String, String[]> entry : defaultUsers.entrySet()){
+    for (Map.Entry<String, String[]> entry : defaultUsers.entrySet()) {
       usersListBox.addItem(entry.getKey());
     }
-    usersListBox.addChangeListener(new ChangeListener(){
+    usersListBox.addChangeListener(new ChangeListener() {
 
       public void onChange(Widget sender) {
         String key = usersListBox.getValue(usersListBox.getSelectedIndex());
-        userTextBox.setText(defaultUsers.get(key)[0]); 
+        userTextBox.setText(defaultUsers.get(key)[0]);
         passwordTextBox.setText(defaultUsers.get(key)[1]);
       }
-      
+
     });
-    
+
   }
-  
+
   private void getSubscriptionLevel() {
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
@@ -272,7 +275,7 @@ public class MantleLoginDialog {
         setServiceReturned();
       }
     };
-    
+
     SERVICE.isSubscription(callback);
   }
 
