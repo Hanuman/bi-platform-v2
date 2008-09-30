@@ -296,11 +296,9 @@ public class SolutionRepositoryService extends ServletBase {
 	        parentElement.appendChild(child);
         	IFileInfo fileInfo = null;
           try {
-            String visible = repository.getLocalizedFileProperty(children[i], "visible");
-            if (visible == null || !"false".equalsIgnoreCase(visible)) {
-              // if result-type is 'none' then visible is false
-              visible = "none".equals(repository.getLocalizedFileProperty(children[i], "documentation/result-type"))?"false":"true";
-            }
+            // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
+            // and we should no longer be looking at 'visible' because it was never actually used!
+            String visible = "none".equals(repository.getLocalizedFileProperty(children[i], "documentation/result-type")) ? "false" : "true";
             child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
           } catch (Exception e) {
             child.setAttribute("visible", "true"); //$NON-NLS-1$
