@@ -30,7 +30,7 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
 
     String pathPrefix = ""; //$NON-NLS-1$
     // if we are not running in hosted mode, the images will be pathed differently
-    if (!GWT.isScript()) {
+    if (GWT.isScript()) {
       pathPrefix = "mantle/"; //$NON-NLS-1$
     }
 
