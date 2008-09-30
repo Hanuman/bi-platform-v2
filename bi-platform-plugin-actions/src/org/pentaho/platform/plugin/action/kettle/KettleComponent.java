@@ -32,6 +32,7 @@ import org.pentaho.di.core.logging.Log4jStringAppender;
 import org.pentaho.di.core.logging.LogWriter;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.xml.XMLHandlerCache;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.RepositoriesMeta;
@@ -351,6 +352,8 @@ public class KettleComponent extends ComponentBase implements RowListener {
         repository.disconnect();
       }
     }
+    
+    XMLHandlerCache.getInstance().clear();
     return result;
 
   }
