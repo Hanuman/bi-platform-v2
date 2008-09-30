@@ -441,6 +441,20 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   private void performActionOnSubscription(final String action, final String subscrName) {
     final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getInstance().view(), Messages.getInstance().close(), null, false, false);
     viewDialog.setContent(new VerticalPanel());
+    viewDialog.setCallback(new IDialogCallback() {
+      public void okPressed() {
+        viewDialog.hide();
+        // Refresh the view
+        if (action.equals("archive") || action.equals(DELETE)) {
+          final Command cmd = new RefreshPerspectiveCommand(WorkspacePerspective.this);
+          cmd.execute();
+        }
+      }
+      public void cancelPressed() {
+      }
+    });
+    
+    
     
     final String url;
     if (GWT.isScript()) {
@@ -458,19 +472,6 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       iframe.setPixelSize(800, 600);
     }    
 
-    final Button btnOk = new Button(Messages.getInstance().close());
-    btnOk.setWidth("100");
-    btnOk.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
-        viewDialog.hide();
-        // Refresh the view only if user pressed Run and Archive
-        if (action.equals("archive")) {
-          final Command cmd = new RefreshPerspectiveCommand(WorkspacePerspective.this);
-          cmd.execute();
-          // fetchSubscriptions();
-        }
-      }
-    });
     ((VerticalPanel)viewDialog.getContent()).add(iframe);
     viewDialog.center();
   }
