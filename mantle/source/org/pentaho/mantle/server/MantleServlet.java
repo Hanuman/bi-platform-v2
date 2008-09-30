@@ -350,13 +350,14 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
-    // try {
-    // SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
-    // } catch (Exception e) {
-    // throw new SimpleMessageException(e.getMessage());
-    // } finally {
-    // }
-    createCronJob(solutionName, path, actionName, null, null, null, cronExpression);
+    PentahoSystem.systemEntryPoint();
+    try {
+      SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
+    } catch (Exception e) {
+      throw new SimpleMessageException(e.getMessage());
+    } finally {
+      PentahoSystem.systemExitPoint();
+    }
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
