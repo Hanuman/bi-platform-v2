@@ -528,9 +528,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
         if (GWT.isScript()) {
           url = "ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName();
+          String mypath = Window.Location.getPath();
+          if (!mypath.endsWith("/")) {
+            mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1);
+          }
+          mypath = mypath.replaceAll("/mantle/", "/");
+          if (!mypath.endsWith("/")) {
+            mypath = "/" + mypath;
+          }    
+          url = mypath + url;
         } else {
-          url = "http://localhost:8080/pentaho/ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action="
-              + selectedFileItem.getName() + "&userid=joe&password=password";
+          url = "/MantleService?passthru=ViewAction&solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName() + "&userid=joe&password=password";
         }
 
         if (mode == FileCommand.BACKGROUND) {
@@ -541,11 +549,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           dialogBox.center();
 
           url += "&background=true";
+          
           RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
           try {
             builder.sendRequest(null, new RequestCallback() {
 
               public void onError(Request request, Throwable exception) {
+                Window.alert(exception.getMessage());
               }
 
               public void onResponseReceived(Request request, Response response) {

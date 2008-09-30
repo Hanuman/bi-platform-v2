@@ -109,8 +109,8 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
 
       String passthru = req.getParameter("passthru");
 
-      if (passthru.equals("SolutionRepositoryService")) {
-        getMethod = new GetMethod("http://localhost:8080/pentaho/SolutionRepositoryService");
+      if (!"".equals(passthru)) {
+        getMethod = new GetMethod("http://localhost:8080/pentaho/" + passthru);
         getMethod.setQueryString(req.getQueryString());
       } else {
         // not known
