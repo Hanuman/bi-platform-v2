@@ -20,8 +20,8 @@
  */
 SolutionRepository = function()
 {
-	this.solutionDoc = null;
-	this.solutionRootPath = null;	// the name of the solution repository
+  this.solutionDoc = null;
+  this.solutionRootPath = null; // the name of the solution repository
 }
 
 /*static*/SolutionRepository.ROOT_FOLDER = "/";
@@ -48,10 +48,10 @@ SolutionRepository = function()
  */
 /*private*/SolutionRepository.prototype.loadPath = function( solution, path )
 {
-	if ( !this.isPathLoaded( solution, path ) )
-	{
+  if ( !this.isPathLoaded( solution, path ) )
+  {
     this.loadPathFromWebService( solution, path, false, null );
-	}
+  }
 };
 
 /**
@@ -59,11 +59,11 @@ SolutionRepository = function()
  */
 /*private*/SolutionRepository.prototype.loadSolutionFolder = function( solution, path, async, callback )
 {
-	this.loadPath( solution, path );
-	if ( callback )
-	{
-		callback();
-	}
+  this.loadPath( solution, path );
+  if ( callback )
+  {
+    callback();
+  }
 }
 
 /**
@@ -76,37 +76,37 @@ SolutionRepository = function()
  */
 /*private*/SolutionRepository.prototype.loadPathFromWebService = function( solution, path, async, callback )
 {
-	var localThis = this;
-	var queryStringParams = {
-	  path: path,
-	  solution: solution };
-	var component = "getSolutionRepositoryDoc";
-	// asynchronous call
-	if ( async )
-	{
-		WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, queryStringParams, 
-			function( incomingDoc )
-			{
-			  // TODO sbarkdull handle null incomingDoc			  
+  var localThis = this;
+  var queryStringParams = {
+    path: path,
+    solution: solution };
+  var component = "getSolutionRepositoryDoc";
+  // asynchronous call
+  if ( async )
+  {
+    WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, queryStringParams, 
+      function( incomingDoc )
+      {
+        // TODO sbarkdull handle null incomingDoc       
         if ( null === incomingDoc )
         {
           throw new Error( "server failed to return info" ); //internationalize, and better msg
         }
-				localThis.handleGetSolutionFolderResponse( incomingDoc, solution, path, callback );
-			}
-		);
-	}
-	else
-	{
-		var incomingDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, queryStringParams, null );
-			  // TODO sbarkdull handle null incomingDoc
-			  
+        localThis.handleGetSolutionFolderResponse( incomingDoc, solution, path, callback );
+      }
+    );
+  }
+  else
+  {
+    var incomingDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, queryStringParams, null );
+        // TODO sbarkdull handle null incomingDoc
+        
     if ( null === incomingDoc )
     {
       throw new Error( "server failed to return info" ); //internationalize, and better msg
     }
-		this.handleGetSolutionFolderResponse( incomingDoc, solution, path, callback );
-	}
+    this.handleGetSolutionFolderResponse( incomingDoc, solution, path, callback );
+  }
 }
 
 /**
@@ -117,72 +117,72 @@ SolutionRepository = function()
  */
 SolutionRepository.prototype.isPathLoaded = function( solution, path )
 {
-	if ( this.solutionDoc != null )
-	{
-	  var parentXPath = this.solutionFolderPathToXPath( solution, path );
-	  var childrenXPath =  parentXPath + "/file";
-		var nodes = XmlUtil.selectNodes( this.solutionDoc, childrenXPath );
-		if ( 0 == nodes.length )
-		{
-		  // check for the attribute
-		  var node = XmlUtil.selectSingleNode( this.solutionDoc, parentXPath );
+  if ( this.solutionDoc != null )
+  {
+    var parentXPath = this.solutionFolderPathToXPath( solution, path );
+    var childrenXPath =  parentXPath + "/file";
+    var nodes = XmlUtil.selectNodes( this.solutionDoc, childrenXPath );
+    if ( 0 == nodes.length )
+    {
+      // check for the attribute
+      var node = XmlUtil.selectSingleNode( this.solutionDoc, parentXPath );
       return node && node.getAttribute( SolutionRepository.IS_LOADED_ATTR ) == SolutionRepository.TRUE;
-		}
-		else
-		{
-		  return true;
-		}
-	}
-	return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 /*private*/SolutionRepository.prototype.handleGetSolutionFolderResponse = function( incomingDoc, solution, path, callback )
 {
-	if ( undefined != incomingDoc )
-	{
-		var errorMsg = XmlUtil.getErrorMsg( incomingDoc );
-		if ( null != errorMsg )
-		{
-				var postStatus = new Status();
-				postStatus.status = Status.FAIL;
-				postStatus.message = errorMsg;
-				throw postStatus;
-		}
-		var targetNd = null;
-		if ( this.solutionDoc == null )
-		{
-		  this.solutionDoc = incomingDoc;
-		}
-		else
-		{
-		  // add in the new node at the appropriate location in the doc
-		  var xpath = this.solutionFolderPathToXPath( solution, path );
-		  var oldNd = XmlUtil.selectSingleNode( this.solutionDoc, xpath );
-		  var newNd = XmlUtil.selectSingleNode( incomingDoc, "/files/file" );
-		  if ( newNd )
-		  {
-		    // must have children
-  		  XmlUtil.replaceNode( this.solutionDoc, newNd, oldNd );
-  		  targetNd = newNd;
-		  }
-		  else
-		  {
-		    // has no children
-		    targetNd = oldNd;
-		  }
-		}
-		
-		// mark the parent node as loaded
-		if ( targetNd )
-		{
-			targetNd.setAttribute( SolutionRepository.IS_LOADED_ATTR, SolutionRepository.TRUE );
-		}
-		
-		if ( callback )
-		{
-			callback();
-		}
-	}
+  if ( undefined != incomingDoc )
+  {
+    var errorMsg = XmlUtil.getErrorMsg( incomingDoc );
+    if ( null != errorMsg )
+    {
+        var postStatus = new Status();
+        postStatus.status = Status.FAIL;
+        postStatus.message = errorMsg;
+        throw postStatus;
+    }
+    var targetNd = null;
+    if ( this.solutionDoc == null )
+    {
+      this.solutionDoc = incomingDoc;
+    }
+    else
+    {
+      // add in the new node at the appropriate location in the doc
+      var xpath = this.solutionFolderPathToXPath( solution, path );
+      var oldNd = XmlUtil.selectSingleNode( this.solutionDoc, xpath );
+      var newNd = XmlUtil.selectSingleNode( incomingDoc, "/files/file" );
+      if ( newNd )
+      {
+        // must have children
+        XmlUtil.replaceNode( this.solutionDoc, newNd, oldNd );
+        targetNd = newNd;
+      }
+      else
+      {
+        // has no children
+        targetNd = oldNd;
+      }
+    }
+    
+    // mark the parent node as loaded
+    if ( targetNd )
+    {
+      targetNd.setAttribute( SolutionRepository.IS_LOADED_ATTR, SolutionRepository.TRUE );
+    }
+    
+    if ( callback )
+    {
+      callback();
+    }
+  }
 }
 
 /**
@@ -196,114 +196,114 @@ SolutionRepository.prototype.isPathLoaded = function( solution, path )
  * 
  * @return Array of pathData, where each element of the array is an Object
  * with properties:
- * 		path String specifying full path to object
- * 		isDir boolean true if the path is a directory, else false
- * 		name String the right-most component of path 
+ *    path String specifying full path to object
+ *    isDir boolean true if the path is a directory, else false
+ *    name String the right-most component of path 
  * and each array element represents one of the children of the input parameter
  * pathData
  */
 SolutionRepository.prototype.getSolutionFolderChildren = function( solution, path,
-	fileFilterRegexp, async, callback )
+  fileFilterRegexp, async, callback )
 {
-	if ( null == this.solutionDoc )
-	{
-		//this is the first time the method has been called, initialize the root folder
-		this.loadPathFromWebService( SolutionRepository.EMPTY_SOLUTION_NAME,
-		  SolutionRepository.EMPTY_FOLDER, false, null );
-	}
-	var localThis = this;
-	this.loadSolutionFolder( solution, path, async, 
-		function()
-		{
-			var children = localThis.getChildren( solution, path, fileFilterRegexp );
-			if ( callback )
-			{
-				callback( children );
-			}
-		} );
+  if ( null == this.solutionDoc )
+  {
+    //this is the first time the method has been called, initialize the root folder
+    this.loadPathFromWebService( SolutionRepository.EMPTY_SOLUTION_NAME,
+      SolutionRepository.EMPTY_FOLDER, false, null );
+  }
+  var localThis = this;
+  this.loadSolutionFolder( solution, path, async, 
+    function()
+    {
+      var children = localThis.getChildren( solution, path, fileFilterRegexp );
+      if ( callback )
+      {
+        callback( children );
+      }
+    } );
 };
 
 /*static*/SolutionRepository.isNodeVisible = function( nd )
 {
-	var visibleText = XmlUtil.getAttribute( nd, "visible" );
+  var visibleText = XmlUtil.getAttribute( nd, "visible" );
   return visibleText == "true";
 }
 /**
  *
 * @return Array of pathData, where each element of the array is an Object
  * with properties:
- * 		path String specifying full path to object
- * 		isDir boolean true if the path is a directory, else false
- * 		name String the right-most component of path 
+ *    path String specifying full path to object
+ *    isDir boolean true if the path is a directory, else false
+ *    name String the right-most component of path 
  * and each array element represents one of the children of the input parameter
  * parentPath
  */
 /*private*/SolutionRepository.prototype.getChildren = function( solutionNameParam, parentPathParam,
   fileFilterRegexp )
 {
-	var children = new Array();
-	
-	var xpath = this.solutionFolderPathToXPath( solutionNameParam, parentPathParam );
-	var foldersXPath = xpath + "/file[@type='FILE.FOLDER']";
-	var nds = XmlUtil.selectNodes( this.solutionDoc, foldersXPath );
-	for ( var idx in nds )
-	{
-		var nd = nds[ idx ];
-		if ( SolutionRepository.isNodeVisible( nd ) )
+  var children = new Array();
+  
+  var xpath = this.solutionFolderPathToXPath( solutionNameParam, parentPathParam );
+  var foldersXPath = xpath + "/file[@type='FILE.FOLDER']";
+  var nds = XmlUtil.selectNodes( this.solutionDoc, foldersXPath );
+  for ( var idx in nds )
+  {
+    var nd = nds[ idx ];
+    if ( SolutionRepository.isNodeVisible( nd ) )
     {
       var folderObj = this.getFolderObject( nd );    
-			children.push( folderObj );
+      children.push( folderObj );
     }
-	}
-	var filesXPath = xpath + "/file[@type='FILE.ACTIVITY']";
-	var nds = XmlUtil.selectNodes( this.solutionDoc, filesXPath );
-	for ( var idx in nds )
-	{
-		var nd = nds[ idx ];
-		if ( SolutionRepository.isNodeVisible( nd ) )
+  }
+  var filesXPath = xpath + "/file[@type='FILE.ACTIVITY']";
+  var nds = XmlUtil.selectNodes( this.solutionDoc, filesXPath );
+  for ( var idx in nds )
+  {
+    var nd = nds[ idx ];
+    if ( SolutionRepository.isNodeVisible( nd ) )
     {
-  		var fileObj = this.getFileObject( nd );
-  		// if the file satisifies the filter or there is not filter
-  		if ( !fileFilterRegexp || fileObj.name.match( fileFilterRegexp ) )
-  		{
-  			children.push( fileObj );
-  		}
+      var fileObj = this.getFileObject( nd );
+      // if the file satisifies the filter or there is not filter
+      if ( !fileFilterRegexp || fileObj.name.match( fileFilterRegexp ) )
+      {
+        children.push( fileObj );
+      }
     }
-	}
-	return children;
+  }
+  return children;
 };
 
 /*private*/SolutionRepository.prototype.getFolderObject = function( nd )
 {
-	var pathNd = XmlUtil.selectSingleNode( nd, "path" );
-	var path = ( pathNd )
-	  ? XmlUtil.getNodeText( pathNd ) // must be child of solution folder
-	  : "";                           // must be a solution folder, since they don't have a path node child
+  var pathNd = XmlUtil.selectSingleNode( nd, "path" );
+  var path = ( pathNd )
+    ? XmlUtil.getNodeText( pathNd ) // must be child of solution folder
+    : "";                           // must be a solution folder, since they don't have a path node child
   var solutionNd = XmlUtil.selectSingleNode( nd, "solution" );
   var solutionName = XmlUtil.getNodeText( solutionNd );
-	var descriptionNd = XmlUtil.selectSingleNode( nd, "description" );
-	var description = XmlUtil.getNodeTextOrEmptyString( descriptionNd );
-	var nameAttrNd = XmlUtil.selectSingleNode( nd, "@name" );
-	var name = XmlUtil.getNodeTextOrEmptyString( nameAttrNd );
-	var titleNd = XmlUtil.selectSingleNode( nd, "title" );
+  var descriptionNd = XmlUtil.selectSingleNode( nd, "description" );
+  var description = XmlUtil.getNodeTextOrEmptyString( descriptionNd );
+  var nameAttrNd = XmlUtil.selectSingleNode( nd, "@name" );
+  var name = XmlUtil.getNodeTextOrEmptyString( nameAttrNd );
+  var titleNd = XmlUtil.selectSingleNode( nd, "title" );
   var title = XmlUtil.getNodeTextOrEmptyString( titleNd );
 
-	return { solution: solutionName, path:path, isDir:true,
+  return { solution: solutionName, path:path, isDir:true,
     name:name, description: description, displayName: title };
 };
 
 /*private*/SolutionRepository.prototype.getFileObject = function( nd )
 {
-	var fileNd = XmlUtil.selectSingleNode( nd, "filename" );
+  var fileNd = XmlUtil.selectSingleNode( nd, "filename" );
   var fileName = XmlUtil.getNodeTextOrEmptyString( fileNd );
-	var titleNd = XmlUtil.selectSingleNode( nd, "title" );
+  var titleNd = XmlUtil.selectSingleNode( nd, "title" );
   var title = XmlUtil.getNodeTextOrEmptyString( titleNd );
-	var descriptionNd = XmlUtil.selectSingleNode( nd, "description" );
-	var description = XmlUtil.getNodeTextOrEmptyString( descriptionNd );
+  var descriptionNd = XmlUtil.selectSingleNode( nd, "description" );
+  var description = XmlUtil.getNodeTextOrEmptyString( descriptionNd );
   var solutionNd = XmlUtil.selectSingleNode( nd, "solution" );
   var solutionName = XmlUtil.getNodeText( solutionNd );
-	var pathNd = XmlUtil.selectSingleNode( nd, "path" );
-	var path = XmlUtil.getNodeText( pathNd );
+  var pathNd = XmlUtil.selectSingleNode( nd, "path" );
+  var path = XmlUtil.getNodeText( pathNd );
   
   return { solution: solutionName, path:path, isDir:false,
       name:fileName, description: description, displayName: title };
@@ -320,36 +320,43 @@ SolutionRepository.prototype.getSolutionFolderChildren = function( solution, pat
  * @param afterSaveCallback function 
  */
 SolutionRepository.prototype.save = function( solution, path, filename, strContents,
-	clientParams, overwrite, afterSaveCallback )
+  clientParams, overwrite, afterSaveCallback )
 {
-	var component = "saveFile";
+  var component = "saveFile";
 
-	var params = {
-		content:strContents,
-		solution:solution,
-		path:path,
-		name:filename + SolutionRepository.WAQR_REPORTSPEC_EXTENSION,
-		overwrite:overwrite ? "true" : "false",
-		ajax:'true'
-	};
-	// load the caller's parameters into the parameters the we are sending to the server
-	for ( var key in clientParams )
-	{
-		params[ key ] = clientParams[ key ];
-	}
+    if(filename.indexOf(SolutionRepository.WAQR_ACTION_EXTENSION) > -1){
+        filename = filename.replace(SolutionRepository.WAQR_ACTION_EXTENSION,'');
+    }
+    var params = {
+    content:strContents,
+    solution:solution,
+    path:path,
+    name:filename + SolutionRepository.WAQR_REPORTSPEC_EXTENSION,
+    overwrite:overwrite ? "true" : "false",
+    ajax:'true'
+  };
+  // load the caller's parameters into the parameters the we are sending to the server
+  for ( var key in clientParams )
+  {
+    params[ key ] = clientParams[ key ];
+  }
   var localThis = this;
-	WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, params,
+  WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, params,
     function( xmlDoc )
     {
       afterSaveCallback( xmlDoc );
-		  if ( undefined != xmlDoc )
-		  {
+      if ( undefined != xmlDoc )
+      {
         var msg = XmlUtil.getErrorMsg( xmlDoc );
         if ( !msg )
         {
           // no errors add the node to our doc
           var fullFilename = filename + SolutionRepository.WAQR_ACTION_EXTENSION;
-          if ( !localThis.doesSolutionFileExist( solution, path, fullFilename ) )
+          //if(this.solution == undefined){
+          //localThis.loadPathFromWebService( SolutionRepository.EMPTY_SOLUTION_NAME,
+          //  SolutionRepository.EMPTY_FOLDER, false, null );
+          //}
+          if ( solution != undefined && !localThis.doesSolutionFileExist( solution, path, fullFilename ) )
           {
             localThis.addFile( solution, path, fullFilename, filename );
           }     
@@ -453,15 +460,15 @@ SolutionRepository.prototype.solutionFilePathToXPath = function( solution, path,
  */
 /*private*/SolutionRepository.prototype.solutionFolderPathToXPath = function( solution, path )
 {
-	var xpath = "/repository";
-	if ( !StringUtils.isEmpty( solution ) )
-	{
+  var xpath = "/repository";
+  if ( !StringUtils.isEmpty( solution ) )
+  {
     xpath += '/file[@type="FILE.FOLDER" and @name="' + XmlUtil.escapeXmlAttr( solution ) + '"]';
-	}
-	if ( !StringUtils.isEmpty( path ) && "/" != path )
-	{
-		var pComponents = path.split( "/" );
-		// 0th element will be an empty string, so start iteration at 1
+  }
+  if ( !StringUtils.isEmpty( path ) && "/" != path )
+  {
+    var pComponents = path.split( "/" );
+    // 0th element will be an empty string, so start iteration at 1
     for ( var ii=0; ii<pComponents.length; ++ii )
     {
       var comp = XmlUtil.escapeXmlAttr( pComponents[ ii ] );
@@ -480,12 +487,12 @@ SolutionRepository.prototype.solutionFilePathToXPath = function( solution, path,
  */
 SolutionRepository.prototype.getWaqrReportSpecDoc = function( solution, path, filename )
 {
-	var component = "getWaqrReportSpecDoc";
-	var params = { 
+  var component = "getWaqrReportSpecDoc";
+  var params = { 
     solution: solution,
     path: path,
     filename: filename };
-	var reportDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, params, undefined, 'text/xml' );
+  var reportDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, component, params, undefined, 'text/xml' );
 
-	return reportDoc;
+  return reportDoc;
 };
