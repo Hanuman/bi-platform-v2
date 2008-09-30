@@ -109,9 +109,11 @@ public class HttpWebService extends ServletBase {
 
   public void doGetFixMe(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-    PentahoSystem.systemEntryPoint();
+    //
+    // System Entry/Exit point handled by the doGet method.
+    //
+    
     try {
-
       String solutionName = request.getParameter("solution"); //$NON-NLS-1$
       String actionPath = request.getParameter("path"); //$NON-NLS-1$
       String actionName = request.getParameter("action"); //$NON-NLS-1$
@@ -198,8 +200,6 @@ public class HttpWebService extends ServletBase {
 
     } catch (Throwable t) {
       error(Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), t); //$NON-NLS-1$
-    } finally {
-      PentahoSystem.systemExitPoint();
     }
     if (ServletBase.debug) {
       debug(Messages.getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
@@ -570,6 +570,9 @@ public class HttpWebService extends ServletBase {
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
+    PentahoSystem.systemEntryPoint();
+    try {
+     
     if (!isSecurityDetailsRequest(request)) {
       if (HttpWebService.logger.isDebugEnabled()) {
         HttpWebService.logger.debug(Messages.getString("HttpWebService.DEBUG_MISSING_ACTION_PARAMETER")); //$NON-NLS-1$
@@ -614,6 +617,9 @@ public class HttpWebService extends ServletBase {
       doAll(request, response, buf);
       writeStringAsSoapResponse(response.getOutputStream(), buf.toString());
 
+    }
+    } finally {
+      PentahoSystem.systemExitPoint();
     }
   }
 

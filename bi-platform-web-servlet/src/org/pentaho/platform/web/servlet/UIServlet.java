@@ -57,7 +57,8 @@ public class UIServlet extends ServletBase {
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
+    PentahoSystem.systemEntryPoint();
+    try {
     OutputStream outputStream = response.getOutputStream();
 
     String path = request.getContextPath();
@@ -122,6 +123,9 @@ public class UIServlet extends ServletBase {
         urlFactory);
 
     requestHandler.handleUIRequest(component, type);
+    } finally {
+      PentahoSystem.systemExitPoint();
+    }
   }
 
   private IUIComponent getComponent(final String componentName) {

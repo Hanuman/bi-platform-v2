@@ -35,7 +35,8 @@ public class SubscriptionAdminServlet extends ServletBase {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
       IOException {
-
+    PentahoSystem.systemEntryPoint();
+    try {
     response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
 
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
@@ -105,6 +106,7 @@ public class SubscriptionAdminServlet extends ServletBase {
       // TODO
       content = "<error msg='" + "Error" + "'></error>";
       response.getWriter().print(content);
+      }
     } finally {
       PentahoSystem.systemExitPoint();
     }

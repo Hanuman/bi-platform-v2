@@ -52,7 +52,8 @@ public class ShowTestResult extends ServletBase {
 
   @Override
   protected void doPost(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-
+    PentahoSystem.systemEntryPoint();
+    try {
     getPentahoSession(req);
     String fileName = req.getParameter("file"); //$NON-NLS-1$
     String extension = req.getParameter("ext"); //$NON-NLS-1$
@@ -97,7 +98,9 @@ public class ShowTestResult extends ServletBase {
       in.close();
       out.close();
     }
-
+    } finally {
+      PentahoSystem.systemExitPoint();
+    }
   }
 
 }

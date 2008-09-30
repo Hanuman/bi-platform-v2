@@ -71,6 +71,8 @@ public class RepositoryFilePublisher extends ServletBase {
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    PentahoSystem.systemEntryPoint();
+    try {
     response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
     IPentahoSession pentahoSession = PentahoHttpSessionHelper.getPentahoSession(request);
     String publishPath = request.getParameter("publishPath"); //$NON-NLS-1$
@@ -96,6 +98,9 @@ public class RepositoryFilePublisher extends ServletBase {
     int status = doPublish(fileItems, publishPath, publishKey, jndiName, jdbcDriver, jdbcUrl, jdbcUserId, jdbcPassword,
         overwrite, pentahoSession);
     response.getWriter().println(status);
+    } finally {
+      PentahoSystem.systemExitPoint();
+    }
   }
 
   protected List<FileItem> getFileItems(final HttpServletRequest request) throws FileUploadException {

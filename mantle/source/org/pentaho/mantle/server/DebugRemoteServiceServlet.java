@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
@@ -72,6 +74,7 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
   @Override
   public void doPost(HttpServletRequest request,
       HttpServletResponse response) {
+    PentahoSystem.systemEntryPoint();
     try {
       // Store the request & response objects in thread-local storage.
       //
@@ -108,6 +111,7 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
       //
       perThreadRequest.set(null);
       perThreadResponse.set(null);
+      PentahoSystem.systemExitPoint();
     }
   }
 

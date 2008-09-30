@@ -181,6 +181,9 @@ public class AnalysisViewService extends ServletBase {
   }
   
   private void newAnalysisView(final HttpServletRequest request, final HttpServletResponse response) throws IOException{
+	  
+    PentahoSystem.systemEntryPoint();
+    try {
     List<MondrianCatalog> catalogs = mondrianCatalogService.listCatalogs(getPentahoSession(request), true);
     request.setAttribute("catalog", catalogs);  //$NON-NLS-1$
     try{
@@ -190,6 +193,9 @@ public class AnalysisViewService extends ServletBase {
       }
     } catch(ServletException e){
       WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(e.getMessage()), false);
+    }
+    } finally {
+      PentahoSystem.systemExitPoint();
     }
   }
   

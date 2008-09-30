@@ -52,6 +52,8 @@ public class GetResource extends ServletBase {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     // TODO perform any authorization here...
     // TODO support caching
+    PentahoSystem.systemEntryPoint();
+    try {
     IPentahoSession session = getPentahoSession(request);
     String resource = request.getParameter("resource"); //$NON-NLS-1$
     //String expires = request.getParameter("expires"); //$NON-NLS-1$
@@ -125,6 +127,9 @@ public class GetResource extends ServletBase {
     } finally {
       in.close();
       out.close();
+    }
+    } finally {
+      PentahoSystem.systemExitPoint();
     }
   }
 }

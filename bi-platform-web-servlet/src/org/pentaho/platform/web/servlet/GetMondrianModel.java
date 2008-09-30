@@ -52,6 +52,8 @@ public class GetMondrianModel extends ServletBase {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
+    PentahoSystem.systemEntryPoint();
+    try {
     // TODO perform any authorization here...
     getPentahoSession(request);
 
@@ -96,6 +98,9 @@ public class GetMondrianModel extends ServletBase {
       }
     } else {
       error(Messages.getErrorString("MondrianModel.ERROR_0004_INVALID_REPOSITORY")); //$NON-NLS-1$
+    }
+    } finally {
+      PentahoSystem.systemExitPoint();
     }
   }
 

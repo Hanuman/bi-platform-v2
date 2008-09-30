@@ -76,6 +76,8 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
 
   @Override
   protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    PentahoSystem.systemEntryPoint();
+    try {
     resp.setCharacterEncoding(LocaleHelper.getSystemEncoding());
 
     IPentahoSession pentahoSession = PentahoHttpSessionHelper.getPentahoSession(req);
@@ -194,7 +196,9 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     mondrian.rolap.agg.AggregationManager.instance().getCacheControl(null).flushSchemaCache();
     
     resp.getWriter().println(ISolutionRepository.FILE_ADD_SUCCESSFUL);
-
+    } finally {
+      PentahoSystem.systemExitPoint();
+    }
   }
 
   @Override
