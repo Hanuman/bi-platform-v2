@@ -65,7 +65,7 @@
 		</javac>
 	</target>
 
-	<target name="compile-mantle-dev" depends="compile, compile-mantle-login-dev">
+	<target name="compile-mantle-dev" depends="compile">
 		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
 			<classpath>
 				<pathelement location="_source" />
@@ -100,7 +100,7 @@
 		</java>
 	</target>
   
-  <target name="compile-mantle-login-dev" depends="clean, compile">
+  <target name="compile-mantle-login-dev" depends="compile">
     <java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
       <classpath>
         <pathelement location="_source" />
@@ -175,7 +175,13 @@
   <antcall target="deploy-to-pentaho-pci">
   </antcall>
   </target>
-  
+
+  <target name="compile-all-deploy-dev" depends="clean">
+    <antcall target="compile-mantle-login-dev"/>
+    <antcall target="compile-mantle-dev"/>
+    <antcall target="deploy-to-pentaho-pci"/>
+  </target>	
+	
   <!--
   <target name="compile-login-deploy" depends="compile-mantle-login">
     <delete dir="login-compile" />
