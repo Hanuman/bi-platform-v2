@@ -566,7 +566,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           }
         } else if (mode == FileCommand.NEWWINDOW) {
           // popup blockers might attack this
-          Window.open(url, "_blank", "");
+          Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no");
         } else if (mode == FileCommand.SUBSCRIBE) {
           final String myurl = url + "&subscribepage=yes";
           AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
