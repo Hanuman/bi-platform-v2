@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Command;
 
 public class EditFileCommand implements Command {
 
-  private static String lastPath = "/";
+  private static String lastPath = "/"; //$NON-NLS-1$
 
   SolutionBrowserPerspective solutionBrowserPerspective;
 
@@ -27,11 +27,11 @@ public class EditFileCommand implements Command {
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
-        lastPath = "/" + solution + path;
-        if (name.contains("analysisview.xaction")) {
-          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN);
+        lastPath = "/" + solution + path; //$NON-NLS-1$
+        if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
+          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN); //$NON-NLS-1$
         } else {
-          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.EDIT);
+          solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.EDIT); //$NON-NLS-1$
         }
       }
 

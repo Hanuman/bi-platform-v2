@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Command;
 
 public class ManageContentScheduleCommand implements Command {
 
-  private static String lastPath = "/";
+  private static String lastPath = "/"; //$NON-NLS-1$
   SolutionBrowserPerspective solutionBrowserPerspective;
   
   public ManageContentScheduleCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
@@ -26,8 +26,8 @@ public class ManageContentScheduleCommand implements Command {
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
-        lastPath = "/" + solution + path;
-        solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.SCHEDULE);
+        lastPath = "/" + solution + path; //$NON-NLS-1$
+        solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.SCHEDULE); //$NON-NLS-1$
       }
 
       public void fileSelectionChanged(String solution, String path, String name) {

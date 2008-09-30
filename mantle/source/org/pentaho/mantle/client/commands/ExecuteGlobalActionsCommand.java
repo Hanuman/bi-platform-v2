@@ -1,6 +1,7 @@
 package org.pentaho.mantle.client.commands;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.Command;
@@ -20,7 +21,7 @@ public class ExecuteGlobalActionsCommand implements Command {
       }
 
       public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Info", "Global actions executed successfully.", false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().globalActionsExecutedSuccessfully(), false, false, true);
         dialogBox.center();
       }
     };

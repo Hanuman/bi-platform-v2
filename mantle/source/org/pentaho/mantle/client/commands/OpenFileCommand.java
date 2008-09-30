@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Command;
 
 public class OpenFileCommand implements Command {
 
-  private static String lastPath = "/";
+  private static String lastPath = "/"; //$NON-NLS-1$
   
   SolutionBrowserPerspective navigatorPerspective;
 
@@ -27,8 +27,8 @@ public class OpenFileCommand implements Command {
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
-        lastPath = "/" + solution + path;
-        navigatorPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN);
+        lastPath = "/" + solution + path; //$NON-NLS-1$
+        navigatorPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN); //$NON-NLS-1$
       }
 
       public void fileSelectionChanged(String solution, String path, String name) {

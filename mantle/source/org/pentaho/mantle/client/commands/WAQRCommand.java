@@ -1,5 +1,6 @@
 package org.pentaho.mantle.client.commands;
 
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
@@ -18,6 +19,6 @@ public class WAQRCommand implements Command {
     if (!GWT.isScript()) {
       waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password";
     }
-    navigatorPerspective.showNewURLTab("Untitled", "New Ad Hoc Report", waqrURL);
+    navigatorPerspective.showNewURLTab(Messages.getInstance().untitled(), Messages.getInstance().newAdhocReport(), waqrURL);
   }
 }

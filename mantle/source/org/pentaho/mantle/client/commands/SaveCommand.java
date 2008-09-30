@@ -6,11 +6,11 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 
 public class SaveCommand implements Command {
 
@@ -32,7 +32,7 @@ public class SaveCommand implements Command {
     retrieveCachedValues(navigatorPerspective.getCurrentFrameElementId());
     
     if (isSaveAs || name == null) {
-      final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true);
+      final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
       if (!MantleApplication.showAdvancedFeatures) {
         dialog.setShowSearch(false);
       }
@@ -42,12 +42,12 @@ public class SaveCommand implements Command {
           setSolution(solution);
           setPath(path);
           setName(name);
-          setType("html");
+          setType("html"); //$NON-NLS-1$
 
           if(false){//if (dialog.doesSelectedFileExist()) {
             dialog.hide();
-            PromptDialogBox overWriteDialog = new PromptDialogBox("Question", "Yes", "No", false, true);
-            overWriteDialog.setContent(new Label("File exists, overwrite?", false));
+            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getInstance().question(), Messages.getInstance().yes(), Messages.getInstance().no(), false, true);
+            overWriteDialog.setContent(new Label(Messages.getInstance().fileExistsOverwrite(), false));
             overWriteDialog.setCallback(new IDialogCallback() {
               public void okPressed() {
                 doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);

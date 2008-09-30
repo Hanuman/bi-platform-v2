@@ -3,6 +3,7 @@ package org.pentaho.mantle.client.commands;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
 import org.pentaho.mantle.client.dialogs.AnalysisViewDialog;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
@@ -24,15 +25,15 @@ public class AnalysisViewCommand implements Command {
       }
 
       public void okPressed() {
-        String actionName = System.currentTimeMillis() + ".analysisview.xaction";
-        String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName="
-            + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp";
+        String actionName = System.currentTimeMillis() + ".analysisview.xaction"; //$NON-NLS-1$
+        String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         if (!GWT.isScript()) {
-          newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password";
+          newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         
         navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);
-        navigatorPerspective.showNewURLTab("New Analysis View", "New Analysis View", newAnalysisViewURL);
+        navigatorPerspective.showNewURLTab(Messages.getInstance().newAnalysisView(), Messages.getInstance().newAnalysisView(), newAnalysisViewURL);
         navigatorPerspective.refreshPerspective(false);
       }
     };

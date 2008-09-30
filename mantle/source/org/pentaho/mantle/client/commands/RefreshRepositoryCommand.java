@@ -1,6 +1,7 @@
 package org.pentaho.mantle.client.commands;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
@@ -25,7 +26,7 @@ public class RefreshRepositoryCommand implements Command {
 
       public void onSuccess(Void nothing) {
         if (feedback) {
-          MessageDialogBox dialogBox = new MessageDialogBox("Info", "Repository refreshed successfully.", false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshRepositorySuccess(), false, false, true);
           dialogBox.center();
         }
         navigatorPerspective.refreshPerspective(false);

@@ -1,0 +1,1 @@
+@java -cp "%~dp0\source;%~dp0\bin;C:/gwt-windows-1.5.2/gwt-user.jar;C:/gwt-windows-1.5.2/gwt-dev-windows.jar" com.google.gwt.i18n.tools.I18NSync -out "%~dp0\source" org.pentaho.mantle.client.messages.MantleApplicationConstants -createMessages

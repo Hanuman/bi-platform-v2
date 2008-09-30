@@ -4,10 +4,10 @@ import com.google.gwt.core.client.GWT;
 
 public class Messages {
 
-  private static MantleApplicationConstants constants = (MantleApplicationConstants) GWT.create(MantleApplicationConstants.class);
+  private static MantleApplicationConstants messages = (MantleApplicationConstants) GWT.create(MantleApplicationConstants.class);
 
   public static MantleApplicationConstants getInstance() {
-    return constants;
+    return messages;
   }
 
 }
