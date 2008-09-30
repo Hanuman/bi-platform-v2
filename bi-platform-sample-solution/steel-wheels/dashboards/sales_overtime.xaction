@@ -8,7 +8,7 @@
     <description>Empty blank action sequence document</description>  
     <help/>  
     <icon/>  
-    <result-type>none</result-type>
+    <result-type>none</result-type> 
   </documentation>
 
   <inputs> 

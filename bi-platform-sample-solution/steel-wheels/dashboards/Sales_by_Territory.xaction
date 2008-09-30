@@ -9,7 +9,7 @@
     <description>List of Territories sorted by Sales. Select date range (Jan 2003 through May 2005). Includes chart.</description>  
     <icon>slsbyter.png</icon>  
     <help/>  
-    <result-type>none</result-type>
+    <result-type>none</result-type> 
   </documentation>
 
   <inputs/>
