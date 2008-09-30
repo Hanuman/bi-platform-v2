@@ -297,9 +297,9 @@ public class SolutionRepositoryService extends ServletBase {
         	IFileInfo fileInfo = null;
           try {
             String visible = repository.getLocalizedFileProperty(children[i], "visible");
-            if (visible == null || "false".equalsIgnoreCase(visible)) {
+            if (visible == null || !"false".equalsIgnoreCase(visible)) {
               // if result-type is 'none' then visible is false
-              visible = "none".equals(repository.getLocalizedFileProperty(children[i], "result-type"))?"false":"true";
+              visible = "none".equals(repository.getLocalizedFileProperty(children[i], "documentation/result-type"))?"false":"true";
             }
             child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
           } catch (Exception e) {
