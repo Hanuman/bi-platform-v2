@@ -356,7 +356,7 @@ SolutionRepository.prototype.save = function( solution, path, filename, strConte
           //localThis.loadPathFromWebService( SolutionRepository.EMPTY_SOLUTION_NAME,
           //  SolutionRepository.EMPTY_FOLDER, false, null );
           //}
-          if ( solution != undefined && !localThis.doesSolutionFileExist( solution, path, fullFilename ) )
+          if ( localThis.solutionDoc != undefined && !localThis.doesSolutionFileExist( solution, path, fullFilename ) )
           {
             localThis.addFile( solution, path, fullFilename, filename );
           }     
@@ -371,6 +371,9 @@ SolutionRepository.prototype.save = function( solution, path, filename, strConte
  */
 /*private*/SolutionRepository.prototype.addFile = function( solution, path, filename, title )
 {
+  if(this.solutionDoc == undefined || this.solutionDoc == null){
+    return;
+  }
   var parentXPath = this.solutionFolderPathToXPath( solution, path );
   var parentNd = XmlUtil.selectSingleNode( this.solutionDoc, parentXPath );
   var fileNd = this.createFileNode( solution, path, filename, title );
