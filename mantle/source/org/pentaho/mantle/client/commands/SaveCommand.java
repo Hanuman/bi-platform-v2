@@ -10,16 +10,17 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 
 public class SaveCommand implements Command {
 
   SolutionBrowserPerspective navigatorPerspective;
   boolean isSaveAs = false;
 
-  private static String name;
-  private static String solution;
-  private static String path;
-  private static String type;
+  private String name;
+  private String solution;
+  private String path;
+  private String type;
 
   public SaveCommand(SolutionBrowserPerspective navigatorPerspective, boolean isSaveAs) {
     this.navigatorPerspective = navigatorPerspective;
@@ -27,6 +28,9 @@ public class SaveCommand implements Command {
   }
 
   public void execute() {
+    
+    retrieveCachedValues(navigatorPerspective.getCurrentFrameElementId());
+    
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true);
       if (!MantleApplication.showAdvancedFeatures) {
@@ -35,10 +39,10 @@ public class SaveCommand implements Command {
       dialog.addFileChooserListener(new FileChooserListener() {
 
         public void fileSelected(final String solution, final String path, final String name, String localizedFileName) {
-          SaveCommand.solution = solution;
-          SaveCommand.path = path;
-          SaveCommand.name = name;
-          SaveCommand.type = "html";
+          setSolution(solution);
+          setPath(path);
+          setName(name);
+          setType("html");
 
           if(false){//if (dialog.doesSelectedFileExist()) {
             dialog.hide();
@@ -56,6 +60,7 @@ public class SaveCommand implements Command {
             overWriteDialog.center();
           } else {
             doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+            clearValues();
           }
         }
 
@@ -66,8 +71,32 @@ public class SaveCommand implements Command {
       dialog.center();
     } else {
       doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+      clearValues();
     }
   }
+  
+  private void clearValues(){
+    name = null;
+    solution = null;
+    path = null;
+    type = null;
+  }
+  
+  private native void retrieveCachedValues(String id)/*-{
+    var frame = $doc.getElementById(id);
+    frame = frame.contentWindow;
+    
+    
+    
+    if(frame.mySolution != undefined){
+      this.@org.pentaho.mantle.client.commands.SaveCommand::setSolution(Ljava/lang/String;)(frame.mySolution);
+      this.@org.pentaho.mantle.client.commands.SaveCommand::setPath(Ljava/lang/String;)(frame.myPath);
+      this.@org.pentaho.mantle.client.commands.SaveCommand::setName(Ljava/lang/String;)(frame.myFilename);
+      this.@org.pentaho.mantle.client.commands.SaveCommand::setType(Ljava/lang/String;)(frame.myType);
+    }
+     
+  }-*/;
+
 
   /**
    * This method will call saveReportSpecAs(string filename, string solution, string path, bool overwrite)
@@ -77,13 +106,56 @@ public class SaveCommand implements Command {
   public static native void doSaveAs(String elementId, String filename, String solution, String path, String type, boolean overwrite) /*-{
        var frame = $doc.getElementById(elementId);
        frame = frame.contentWindow;
-       frame.focus();                                      
-       var mySolution = solution;
-       var myPath = path;
-       var myFilename = filename;
-       var myType = type;
-       var myOverwrite = overwrite;
-       frame.gCtrlr.repositoryBrowserController.remoteSave(myFilename, mySolution, myPath, myType, myOverwrite);
+       frame.focus();                                
+       
+       //cache values for subsequent calls                   
+       frame.mySolution = solution;
+       frame.myPath = path;
+       frame.myFilename = filename;
+       frame.myType = type;
+       frame.myOverwrite = overwrite;
+       
+       frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, frame.myType, frame.myOverwrite);
      }-*/;
+
+  public String getName() {
+  
+    return name;
+  }
+
+  public void setName(String name) {
+  
+    this.name = name;
+  }
+
+  public String getSolution() {
+  
+    return solution;
+  }
+
+  public void setSolution(String solution) {
+  
+    this.solution = solution;
+  }
+
+  public String getPath() {
+  
+    return path;
+  }
+
+  public void setPath(String path) {
+  
+    this.path = path;
+  }
+
+  public String getType() {
+  
+    return type;
+  }
+
+  public void setType(String type) {
+  
+    this.type = type;
+  }
 
 }
