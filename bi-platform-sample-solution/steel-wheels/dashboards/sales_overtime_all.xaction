@@ -3,12 +3,12 @@
   <title/>
   <version>1</version>
   <logging-level>ERROR</logging-level>
-    <visible>false</visible>
   <documentation> 
     <author/>  
     <description>Empty blank action sequence document</description>  
     <help/>  
-    <icon/> 
+    <icon/>  
+    <result-type>none</result-type>
   </documentation>
 
   <inputs> 
@@ -26,6 +26,7 @@
 
   <resources/>
   
+  <visible>false</visible>  
   <actions> 
     <actions> 
       <condition><![CDATA[TERRITORY == "NULL"]]></condition>  

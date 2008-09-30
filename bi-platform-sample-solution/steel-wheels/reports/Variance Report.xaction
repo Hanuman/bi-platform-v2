@@ -7,7 +7,7 @@
     <author>Michael Tarallo</author>  
     <description>Compare Territory Variance Trends Year to Year.</description>  
     <help/>  
-    <result-type>none</result-type>  
+    <result-type>report</result-type>  
     <icon/> 
   </documentation>
 
