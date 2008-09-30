@@ -29,7 +29,7 @@ public class MimeHelper {
 
   static {
     
-    MimeHelper.mimes.put("application/rtf", ".doc"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.mimes.put("application/rtf", ".rtf"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("application/msword", ".doc"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("application/pdf", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("application/vnd.ms-excel", ".xls"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -52,7 +52,7 @@ public class MimeHelper {
     MimeHelper.mimes.put("text/xaction+xml", ".xaction"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("text/css", ".css"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    MimeHelper.extensions.put(".doc", "application/rtf"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.extensions.put(".rtf", "application/rtf"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".doc", "application/msword"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".pdf", "application/pdf"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".xls", "application/vnd.ms-excel"); //$NON-NLS-1$ //$NON-NLS-2$
