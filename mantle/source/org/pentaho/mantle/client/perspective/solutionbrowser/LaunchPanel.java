@@ -6,6 +6,7 @@ import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -25,46 +26,38 @@ public class LaunchPanel extends VerticalPanel implements ClickListener {
     this.perspective = perspective;
 
     FlexTable table = new FlexTable();
-    table.setStyleName("launchButtonPanel");
+    table.setStyleName("launchButtonPanel"); //$NON-NLS-1$
 
-    if (GWT.isScript()) {
-      launchWaqrImage.setUrl("mantle/btn_ql_newreport.png");
-    } else {
-      launchWaqrImage.setUrl("btn_ql_newreport.png");
+    String pathPrefix = ""; //$NON-NLS-1$
+    // if we are not running in hosted mode, the images will be pathed differently
+    if (!GWT.isScript()) {
+      pathPrefix = "mantle/"; //$NON-NLS-1$
     }
+
+    launchWaqrImage.setUrl(pathPrefix + "btn_ql_newreport.png"); //$NON-NLS-1$
     launchWaqrImage.setTitle(Messages.getInstance().newAdhocReport());
     launchWaqrImage.addClickListener(this);
-    
-    
-    if (GWT.isScript()) {
-      launchAnalysisViewImage.setUrl("mantle/btn_ql_newanalysis.png");
-    } else {
-      launchAnalysisViewImage.setUrl("btn_ql_newanalysis.png");
-    }
+
+    launchAnalysisViewImage.setUrl(pathPrefix + "btn_ql_newanalysis.png"); //$NON-NLS-1$
     launchAnalysisViewImage.setTitle(Messages.getInstance().newAnalysisView());
     launchAnalysisViewImage.addClickListener(this);
 
-    
-    if (GWT.isScript()) {
-      manageContentImage.setUrl("mantle/btn_ql_manage.png");
-    } else {
-      manageContentImage.setUrl("btn_ql_manage.png");
-    }
+    manageContentImage.setUrl(pathPrefix + "btn_ql_manage.png"); //$NON-NLS-1$
     manageContentImage.setTitle(Messages.getInstance().manageContent());
     manageContentImage.addClickListener(this);
 
-    launchWaqrImage.setStyleName("launchImage");
-    launchAnalysisViewImage.setStyleName("launchImage");
-    manageContentImage.setStyleName("launchImage");
+    launchWaqrImage.setStyleName("launchImage"); //$NON-NLS-1$
+    launchAnalysisViewImage.setStyleName("launchImage"); //$NON-NLS-1$
+    manageContentImage.setStyleName("launchImage"); //$NON-NLS-1$
 
     // set the style of contentTabPanel's "deck" (bottom)
-    setStyleName("launchPanel");
+    setStyleName("launchPanel"); //$NON-NLS-1$
 
     // set debug id's for selenium
-    launchWaqrImage.getElement().setAttribute("id", "launch_new_report");
-    launchAnalysisViewImage.getElement().setAttribute("id", "launch_new_analysis");
-    manageContentImage.getElement().setAttribute("id", "manage_content");
-    
+    launchWaqrImage.getElement().setAttribute("id", "launch_new_report"); //$NON-NLS-1$ //$NON-NLS-2$
+    launchAnalysisViewImage.getElement().setAttribute("id", "launch_new_analysis"); //$NON-NLS-1$ //$NON-NLS-2$
+    manageContentImage.getElement().setAttribute("id", "manage_content"); //$NON-NLS-1$ //$NON-NLS-2$
+
     table.setWidget(0, 0, launchWaqrImage);
     table.setWidget(0, 1, launchAnalysisViewImage);
     table.setWidget(0, 2, manageContentImage);
