@@ -137,7 +137,23 @@
 	
 	<target name="dist-all-javadoc" description="cleans, resolves, generates and copies all platform javadocs serially">
 			<sequential>
-				<property name="platform.javadoc.dir" value="${basedir}/platform-javadocs" />
+			  	<property name="bi.javadoc.list" value="bi-platform-api,
+			  											bi-platform-util,
+			  											bi-platform-engine-core,
+			  											bi-platform-test-foundation,
+			  											bi-platform-engine-security,
+			  											bi-platform-engine-services,
+			  											bi-platform-repository,
+			  											bi-platform-ui-foundation,
+			  											bi-platform-plugin-services,
+			  											bi-platform-plugin-actions,
+			  											bi-platform-scheduler,
+			  											bi-platform-legacy,
+			  											bi-platform-web,
+			  											bi-platform-web-servlet,
+			  											bi-platform-web-portlet,
+	  	  												mantle"/>
+				<property name="platform.javadoc.dir" value="${basedir}/javadoc-dist" />
 				<delete dir="${platform.javadoc.dir}" />
 				<mkdir dir="${platform.javadoc.dir}" />
 				<for list="${bi.javadoc.list}" param="module" trim="true">
