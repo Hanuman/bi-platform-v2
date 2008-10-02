@@ -18,7 +18,6 @@ package org.pentaho.mantle.client.perspective.workspace;
 import java.util.Iterator;
 import java.util.List;
 
-import org.pentaho.gwt.widgets.client.dialogs.DialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
@@ -37,7 +36,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -46,7 +44,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -339,37 +336,44 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       HorizontalPanel buttonsPanel = new HorizontalPanel();
       final String subscrName = currentSubscr.getId();
 
-      Button btnRunNow = new Button(Messages.getInstance().run());
-      btnRunNow.addClickListener(new ClickListener() {
+      Label lblRunNow = new Label(Messages.getInstance().run());
+      lblRunNow.setStyleName("backgroundContentAction");
+      lblRunNow.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           performActionOnSubscription("run", subscrName);
         }
       });
 
-      Button btnArchive = new Button(Messages.getInstance().archive());
-      btnArchive.addClickListener(new ClickListener() {
+      Label lblArchive = new Label(Messages.getInstance().archive());
+      lblArchive.setStyleName("backgroundContentAction");
+      lblArchive.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           performActionOnSubscription("archive", subscrName);
         }
       });
 
-      Button btnEdit = new Button(Messages.getInstance().edit());
-      btnEdit.addClickListener(new ClickListener() {
+      Label lblEdit = new Label(Messages.getInstance().edit());
+      lblEdit.setStyleName("backgroundContentAction");
+      lblEdit.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           performActionOnSubscription("edit", subscrName);
         }
       });
-      Button btnDelete = new Button(Messages.getInstance().delete());
-      btnDelete.addClickListener(new ClickListener() {
+      Label lblDelete = new Label(Messages.getInstance().delete());
+      lblDelete.setStyleName("backgroundContentAction");      
+      lblDelete.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           performActionOnSubscription(DELETE, subscrName);
         }
       });
 
-      buttonsPanel.add(btnRunNow);
-      buttonsPanel.add(btnArchive);
-      buttonsPanel.add(btnEdit);
-      buttonsPanel.add(btnDelete);
+      buttonsPanel.add(lblRunNow);
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));      
+      buttonsPanel.add(lblArchive);
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+      buttonsPanel.add(lblEdit);
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+      buttonsPanel.add(lblDelete);
 
       subscrTable.setWidget(row, 0, namePanel);
       subscrTable.setWidget(row, 1, scheduleDate);
@@ -390,8 +394,9 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
 
           HorizontalPanel actionButtonsPanel = new HorizontalPanel();
 
-          final Button btnViewContent = new Button(Messages.getInstance().view());
-          btnViewContent.addClickListener(new ClickListener() {
+          final Label lblViewContent = new Label(Messages.getInstance().view());
+          lblViewContent.setStyleName("backgroundContentAction");
+          lblViewContent.addClickListener(new ClickListener() {
 
             public void onClick(Widget sender) {
               final String fileId = currSchedule[3];
@@ -399,10 +404,11 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
               performActionOnSubscriptionContent("archived", name, fileId);
             }
           });
-          actionButtonsPanel.add(btnViewContent);
+          actionButtonsPanel.add(lblViewContent);
 
-          final Button btnDeleteContent = new Button(Messages.getInstance().delete());
-          btnDeleteContent.addClickListener(new ClickListener() {
+          final Label lblDeleteContent = new Label(Messages.getInstance().delete());
+          lblDeleteContent.setStyleName("backgroundContentAction");
+          lblDeleteContent.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
               VerticalPanel vp = new VerticalPanel();
               vp.add(new Label(Messages.getInstance().deleteContentConfirm()));
@@ -427,7 +433,8 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
             }
           });
 
-          actionButtonsPanel.add(btnDeleteContent);
+          actionButtonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+          actionButtonsPanel.add(lblDeleteContent);
           subscrTable.setWidget(row, 4, actionButtonsPanel);
         }
       }
