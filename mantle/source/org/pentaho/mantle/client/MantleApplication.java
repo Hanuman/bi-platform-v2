@@ -108,7 +108,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   SolutionBrowserPerspective solutionBrowserPerspective = new SolutionBrowserPerspective(this);
   FileCommand propertiesCommand = new FileCommand(FileCommand.PROPERTIES, null, solutionBrowserPerspective);
-
+  RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand(solutionBrowserPerspective);
+  
   // menu items (to be enabled/disabled)
   MenuBar viewMenu = new MenuBar(true);
   PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(solutionBrowserPerspective));
@@ -257,7 +258,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
     }
     $wnd.mantle_refreshRepository = function() {
-      var cmd = @org.pentaho.mantle.client.commands.RefreshRepositoryCommand::RefreshRepositoryCommand(Lorg/pentaho/mantle/client/perspective/solutionbrowser/SolutionBrowserPerspective;)(solutionNavigator);
+      var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
       cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
     }
     $wnd.mantle_waqr_preview = function(url, xml) {
@@ -443,7 +444,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         MenuBar toolsMenu = new MenuBar(true);
         if (isAdministrator) {
           MenuBar adminMenu = new MenuBar(true);
-          adminMenu.addItem(Messages.getInstance().refreshRepository(), new RefreshRepositoryCommand(solutionBrowserPerspective));
+          adminMenu.addItem(Messages.getInstance().refreshRepository(), refreshRepositoryCommand);
           adminMenu.addItem(Messages.getInstance().refreshSystemSettings(), new RefreshSystemSettingsCommand());
           adminMenu.addItem(Messages.getInstance().refreshReportingMetadata(), new RefreshMetaDataCommand());
           adminMenu.addItem(Messages.getInstance().executeGlobalActions(), new ExecuteGlobalActionsCommand());
