@@ -53,6 +53,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String manage();
 
   /**
+   * Translated "User Preferences".
+   * 
+   * @return translated "User Preferences"
+  
+   */
+  @DefaultMessage("User Preferences")
+  String userPreferences();
+
+  /**
    * Translated "Enter URL:".
    * 
    * @return translated "Enter URL:"
@@ -60,6 +69,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Enter URL:")
   String enterURL();
+
+  /**
+   * Translated "Open URL...".
+   * 
+   * @return translated "Open URL..."
+  
+   */
+  @DefaultMessage("Open URL...")
+  String openURLEllipsis();
 
   /**
    * Translated "Info".
@@ -71,13 +89,13 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String info();
 
   /**
-   * Translated "Open...".
+   * Translated "Schema".
    * 
-   * @return translated "Open..."
+   * @return translated "Schema"
   
    */
-  @DefaultMessage("Open...")
-  String open();
+  @DefaultMessage("Schema")
+  String schema();
 
   /**
    * Translated "Help".
@@ -143,6 +161,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String ok();
 
   /**
+   * Translated "Documentation...".
+   * 
+   * @return translated "Documentation..."
+  
+   */
+  @DefaultMessage("Documentation...")
+  String documentationEllipsis();
+
+  /**
+   * Translated "Global Value".
+   * 
+   * @return translated "Global Value"
+  
+   */
+  @DefaultMessage("Global Value")
+  String globalValue();
+
+  /**
    * Translated "Refresh".
    * 
    * @return translated "Refresh"
@@ -170,15 +206,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String os();
 
   /**
-   * Translated "Ad hoc Reporting".
-   * 
-   * @return translated "Ad hoc Reporting"
-  
-   */
-  @DefaultMessage("Ad hoc Reporting")
-  String waqr();
-
-  /**
    * Translated "Mondrian Schema Cache Flushed Successfully".
    * 
    * @return translated "Mondrian Schema Cache Flushed Successfully"
@@ -188,6 +215,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String mondrianSchemaCacheFlushedSuccessfully();
 
   /**
+   * Translated "Ad hoc Reporting".
+   * 
+   * @return translated "Ad hoc Reporting"
+  
+   */
+  @DefaultMessage("Ad hoc Reporting")
+  String waqr();
+
+  /**
    * Translated "URL not specified".
    * 
    * @return translated "URL not specified"
@@ -195,6 +231,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("URL not specified")
   String urlNotSpecified();
+
+  /**
+   * Translated "You must select a schema".
+   * 
+   * @return translated "You must select a schema"
+  
+   */
+  @DefaultMessage("You must select a schema")
+  String selectSchema();
+
+  /**
+   * Translated "Choose color...".
+   * 
+   * @return translated "Choose color..."
+  
+   */
+  @DefaultMessage("Choose color...")
+  String chooseColor();
 
   /**
    * Translated "Waiting".
@@ -213,6 +267,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Switch to Classic View")
   String showClassicView();
+
+  /**
+   * Translated "Styles".
+   * 
+   * @return translated "Styles"
+  
+   */
+  @DefaultMessage("Styles")
+  String styles();
+
+  /**
+   * Translated "Navigating away from this page may terminate your session.".
+   * 
+   * @return translated "Navigating away from this page may terminate your session."
+  
+   */
+  @DefaultMessage("Navigating away from this page may terminate your session.")
+  String windowCloseWarning();
 
   /**
    * Translated "Available:".
@@ -260,6 +332,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String scheduleDate();
 
   /**
+   * Translated "New".
+   * 
+   * @return translated "New"
+  
+   */
+  @DefaultMessage("New")
+  String _new();
+
+  /**
+   * Translated "Cube".
+   * 
+   * @return translated "Cube"
+  
+   */
+  @DefaultMessage("Cube")
+  String cube();
+
+  /**
    * Translated "View".
    * 
    * @return translated "View"
@@ -267,6 +357,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("View")
   String view();
+
+  /**
+   * Translated "Open...".
+   * 
+   * @return translated "Open..."
+  
+   */
+  @DefaultMessage("Open...")
+  String openEllipsis();
+
+  /**
+   * Translated "Revert to Default Setting".
+   * 
+   * @return translated "Revert to Default Setting"
+  
+   */
+  @DefaultMessage("Revert to Default Setting")
+  String revertToDefault();
 
   /**
    * Translated "Use Public Schedules".
@@ -285,6 +393,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Public Schedules")
   String publicSchedules();
+
+  /**
+   * Translated "You must select a cube".
+   * 
+   * @return translated "You must select a cube"
+  
+   */
+  @DefaultMessage("You must select a cube")
+  String selectCube();
 
   /**
    * Translated "Remove".
@@ -312,15 +429,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Purge Mondrian Data Cache")
   String purgeMondrianDataCache();
-
-  /**
-   * Translated "Mantle".
-   * 
-   * @return translated "Mantle"
-  
-   */
-  @DefaultMessage("Mantle")
-  String mantle();
 
   /**
    * Translated "Run Now".
@@ -377,6 +485,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String hideHiddenFiles();
 
   /**
+   * Translated "Revert".
+   * 
+   * @return translated "Revert"
+  
+   */
+  @DefaultMessage("Revert")
+  String revert();
+
+  /**
    * Translated "Current:".
    * 
    * @return translated "Current:"
@@ -404,6 +521,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String showHiddenFiles();
 
   /**
+   * Translated "Revert to Global Setting".
+   * 
+   * @return translated "Revert to Global Setting"
+  
+   */
+  @DefaultMessage("Revert to Global Setting")
+  String revertToGlobal();
+
+  /**
    * Translated "Updates...".
    * 
    * @return translated "Updates..."
@@ -413,13 +539,13 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String softwareUpdates();
 
   /**
-   * Translated "Remove All".
+   * Translated "Could not retrieve mondrian schema and cube info".
    * 
-   * @return translated "Remove All"
+   * @return translated "Could not retrieve mondrian schema and cube info"
   
    */
-  @DefaultMessage("Remove All")
-  String removeAll();
+  @DefaultMessage("Could not retrieve mondrian schema and cube info")
+  String noMondrianSchemas();
 
   /**
    * Translated "Options".
@@ -429,6 +555,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Options")
   String options();
+
+  /**
+   * Translated "Remove All".
+   * 
+   * @return translated "Remove All"
+  
+   */
+  @DefaultMessage("Remove All")
+  String removeAll();
 
   /**
    * Translated "Files".
@@ -447,6 +582,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Repository Cache")
   String refreshRepository();
+
+  /**
+   * Translated "User Preferences...".
+   * 
+   * @return translated "User Preferences..."
+  
+   */
+  @DefaultMessage("User Preferences...")
+  String userPreferencesEllipsis();
 
   /**
    * Translated "Yes".
@@ -548,6 +692,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String myDesktop();
 
   /**
+   * Translated "Apply".
+   * 
+   * @return translated "Apply"
+  
+   */
+  @DefaultMessage("Apply")
+  String apply();
+
+  /**
+   * Translated "Effective Value".
+   * 
+   * @return translated "Effective Value"
+  
+   */
+  @DefaultMessage("Effective Value")
+  String effectiveValue();
+
+  /**
    * Translated "Save".
    * 
    * @return translated "Save"
@@ -555,6 +717,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Save")
   String save();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+  
+   */
+  @DefaultMessage("Cancel")
+  String cancel();
 
   /**
    * Translated "New Analysis View".
@@ -573,15 +744,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Download")
   String download();
-
-  /**
-   * Translated "Cancel".
-   * 
-   * @return translated "Cancel"
-  
-   */
-  @DefaultMessage("Cancel")
-  String cancel();
 
   /**
    * Translated "Mondrian Schema Cache".
@@ -647,6 +809,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String browse();
 
   /**
+   * Translated "Default Value".
+   * 
+   * @return translated "Default Value"
+  
+   */
+  @DefaultMessage("Default Value")
+  String defaultValue();
+
+  /**
    * Translated "Content repository cleaned successfully.".
    * 
    * @return translated "Content repository cleaned successfully."
@@ -701,6 +872,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String addAll();
 
   /**
+   * Translated "Save As...".
+   * 
+   * @return translated "Save As..."
+  
+   */
+  @DefaultMessage("Save As...")
+  String saveAsEllipsis();
+
+  /**
+   * Translated "Favorites".
+   * 
+   * @return translated "Favorites"
+  
+   */
+  @DefaultMessage("Favorites")
+  String favorites();
+
+  /**
    * Translated "Properties".
    * 
    * @return translated "Properties"
@@ -717,6 +906,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Size")
   String size();
+
+  /**
+   * Translated "Preferences were not set successfully".
+   * 
+   * @return translated "Preferences were not set successfully"
+  
+   */
+  @DefaultMessage("Preferences were not set successfully")
+  String preferencesSetFailed();
 
   /**
    * Translated "All Schedules (Admin Only)".
@@ -773,23 +971,14 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String solutionBrowser();
 
   /**
-   * Translated "Save As...".
-   * 
-   * @return translated "Save As..."
-  
-   */
-  @DefaultMessage("Save As...")
-  String saveAs();
-
-  /**
-   * Translated "Save As". This Save As does not have "..." at the end.
+   * Translated "Save As".
    * 
    * @return translated "Save As"
   
    */
   @DefaultMessage("Save As")
-  String saveAsText();
-  
+  String saveAs();
+
   /**
    * Translated "Share".
    * 
@@ -798,6 +987,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Share")
   String share();
+
+  /**
+   * Translated "Preferences set successfully.<BR>You must restart the application for the settings to take effect.".
+   * 
+   * @return translated "Preferences set successfully.<BR>You must restart the application for the settings to take effect."
+  
+   */
+  @DefaultMessage("Preferences set successfully.<BR>You must restart the application for the settings to take effect.")
+  String preferencesSetSuccess();
+
+  /**
+   * Translated "Repository".
+   * 
+   * @return translated "Repository"
+  
+   */
+  @DefaultMessage("Repository")
+  String repository();
 
   /**
    * Translated "Do you want to delete this content item?".
@@ -818,6 +1025,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String complete();
 
   /**
+   * Translated "Select the Manage function to perform".
+   * 
+   * @return translated "Select the Manage function to perform"
+  
+   */
+  @DefaultMessage("Select the Manage function to perform")
+  String manageContentSelectFunction();
+
+  /**
    * Translated "Toggle Browser".
    * 
    * @return translated "Toggle Browser"
@@ -836,15 +1052,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String name();
 
   /**
-   * Translated "New Ad Hoc Report".
-   * 
-   * @return translated "New Ad Hoc Report"
-  
-   */
-  @DefaultMessage("New Ad Hoc Report")
-  String newAdhocReport();
-
-  /**
    * Translated "Quesion".
    * 
    * @return translated "Quesion"
@@ -852,6 +1059,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Quesion")
   String question();
+
+  /**
+   * Translated "New Ad Hoc Report".
+   * 
+   * @return translated "New Ad Hoc Report"
+  
+   */
+  @DefaultMessage("New Ad Hoc Report")
+  String newAdhocReport();
 
   /**
    * Translated "Error".
@@ -881,6 +1097,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String edit();
 
   /**
+   * Translated "Pentaho.com...".
+   * 
+   * @return translated "Pentaho.com..."
+  
+   */
+  @DefaultMessage("Pentaho.com...")
+  String pentahoHomePageName();
+
+  /**
    * Translated "Print...".
    * 
    * @return translated "Print..."
@@ -896,5 +1121,32 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   
    */
   @DefaultMessage("Schedule")
-  String schedule();  
+  String schedule();
+
+  /**
+   * Translated "New Schedule".
+   * 
+   * @return translated "New Schedule"
+  
+   */
+  @DefaultMessage("New Schedule")
+  String newSchedule();
+
+  /**
+   * Translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.".
+   * 
+   * @return translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary."
+  
+   */
+  @DefaultMessage("The action-sequence has been scheduled successfully.  If the output of the action-sequence is \"response\" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.")
+  String actionSequenceScheduledSuccess();
+
+  /**
+   * Translated "Pentaho User Console".
+   * 
+   * @return translated "Pentaho User Console"
+  
+   */
+  @DefaultMessage("Pentaho User Console")
+  String productName();
 }

@@ -13,6 +13,7 @@ public interface MantleLoginMessages extends Constants{
   String password();
   String error();
   String sampleUser();
+  String selectUser();
 }
 
   

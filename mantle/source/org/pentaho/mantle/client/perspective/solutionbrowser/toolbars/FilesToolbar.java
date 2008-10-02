@@ -65,7 +65,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void createMenus() {
     addSpacer(5);
-    add(new ToolbarGroup("Files"));
+    add(new ToolbarGroup(Messages.getInstance().files()));
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);
@@ -95,7 +95,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleServiceCache.getService().repositorySupportsACLS(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
         dialogBox.center();
         scheduleCmd = new FileCommand(FileCommand.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getInstance().schedule(), scheduleCmd); //$NON-NLS-1$
@@ -138,6 +138,6 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   private void updateMenus(FileItem selectedFileItem) {
     setEnabled(selectedFileItem != null);
     // only allow edit on waqr
-    editBtn.setEnabled(selectedFileItem != null && selectedFileItem.getName().endsWith(".waqr.xaction"));
+    editBtn.setEnabled(selectedFileItem != null && selectedFileItem.getName().endsWith(".waqr.xaction")); //$NON-NLS-1$
   }
 }

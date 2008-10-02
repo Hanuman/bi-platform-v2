@@ -4,17 +4,15 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class RepositoryPanel extends UserPreferencesPanel {
 
@@ -33,15 +31,15 @@ public class RepositoryPanel extends UserPreferencesPanel {
 
   public void init() {
     content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-    content.setWidth("100%");
+    content.setWidth("100%"); //$NON-NLS-1$
     ScrollPanel scroller = new ScrollPanel();
     scroller.add(content);
     add(scroller);
-    scroller.setHeight("400px");
-    scroller.setWidth("400px");
-    showNavigatorCB.setText("Show Solution Browser");
-    showLocalizedFileNamesCB.setText("Show Localized File Names");
-    showHiddenFilesCB.setText("Show Hidden Files");
+    scroller.setHeight("400px"); //$NON-NLS-1$
+    scroller.setWidth("400px"); //$NON-NLS-1$
+    showNavigatorCB.setText(Messages.getInstance().showSolutionBrowser());
+    showLocalizedFileNamesCB.setText(Messages.getInstance().showLocalizedFileNames());
+    showHiddenFilesCB.setText(Messages.getInstance().showHiddenFiles());
     loadAndApplyUserSettings();
   }
 
@@ -50,7 +48,7 @@ public class RepositoryPanel extends UserPreferencesPanel {
 
       public void onFailure(Throwable caught) {
         caught.printStackTrace();
-        //Window.alert(caught.toString());
+        // Window.alert(caught.toString());
       }
 
       public void onSuccess(List<IUserSetting> settings) {
@@ -62,11 +60,11 @@ public class RepositoryPanel extends UserPreferencesPanel {
 
         for (IUserSetting setting : settings) {
           if (IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR.equals(setting.getSettingName())) {
-            showNavigator = "true".equals(setting.getSettingValue());
+            showNavigator = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
           } else if (IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES.equals(setting.getSettingName())) {
-            showLocalizedFileNames = "true".equals(setting.getSettingValue());
+            showLocalizedFileNames = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
           } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
-            showHiddenFiles = "true".equals(setting.getSettingValue());
+            showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
           }
           showLocalizedFileNamesCB.setChecked(showLocalizedFileNames);
           showHiddenFilesCB.setChecked(showHiddenFiles);
@@ -134,8 +132,7 @@ public class RepositoryPanel extends UserPreferencesPanel {
       anythingSet = true;
     }
     if (anythingSet) {
-      MessageDialogBox dialogBox = new MessageDialogBox("Info",
-          "Repository preferences set successfully.<BR>You must restart the application for the settings to take effect.", true, false, true);
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().preferencesSetSuccess(), true, false, true);
       dialogBox.center();
     }
     return true;

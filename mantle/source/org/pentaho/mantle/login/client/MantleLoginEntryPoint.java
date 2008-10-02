@@ -2,6 +2,7 @@ package org.pentaho.mantle.login.client;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.mantle.login.client.messages.Messages;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
@@ -16,7 +17,7 @@ public class MantleLoginEntryPoint implements EntryPoint {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {
-        MessageDialogBox dialog = new MessageDialogBox("Error", "Error logging in : " + err.getMessage(), false, true, true);
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), err.getMessage(), false, true, true);
         dialog.setCallback(new IDialogCallback() {
           public void cancelPressed() {
           }
@@ -30,15 +31,15 @@ public class MantleLoginEntryPoint implements EntryPoint {
 
       public void onSuccess(Boolean newWindow) {
         if (newWindow) {
-          String URL = (!returnLocation.equals("")) ? returnLocation : Window.Location.getPath().replace("Login", "Home");
+          String URL = (!returnLocation.equals("")) ? returnLocation : Window.Location.getPath().replace("Login", "Home"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-          Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
+          Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
           // calling reload here will make the login button say logout
           Window.Location.reload();
-        } else if (!returnLocation.equals("")) {
+        } else if (!returnLocation.equals("")) { //$NON-NLS-1$
           Window.Location.assign(returnLocation);
         } else {
-          Window.Location.replace(Window.Location.getPath().replace("Login", "Home"));
+          Window.Location.replace(Window.Location.getPath().replace("Login", "Home")); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
 

@@ -22,24 +22,27 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.mantle.client.commands.AboutCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
 import org.pentaho.mantle.client.commands.ExecuteGlobalActionsCommand;
+import org.pentaho.mantle.client.commands.LogoutCommand;
 import org.pentaho.mantle.client.commands.ManageContentEditCommand;
 import org.pentaho.mantle.client.commands.ManageContentScheduleCommand;
 import org.pentaho.mantle.client.commands.ManageContentShareCommand;
 import org.pentaho.mantle.client.commands.OpenDocCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.OpenURLCommand;
+import org.pentaho.mantle.client.commands.PentahoHomeCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.PurgeMondrianSchemaCacheCommand;
 import org.pentaho.mantle.client.commands.RefreshMetaDataCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.RefreshSystemSettingsCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
+import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
-import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
@@ -79,9 +82,9 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class MantleApplication implements EntryPoint, IPerspectiveCallback, SolutionBrowserListener {
 
-  public static final String PRODUCT_NAME = "Pentaho User Console";
+  public static final String PRODUCT_NAME = Messages.getInstance().productName();
 
-  VerticalPanel applicationPanel = new VerticalPanel();
+  private VerticalPanel mainApplicationPanel = new VerticalPanel();
 
   FlexTable menuAndLogoPanel = new FlexTable();
 
@@ -104,22 +107,18 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   DeckPanel perspectivesPanel = new DeckPanel();
 
   SolutionBrowserPerspective solutionBrowserPerspective = new SolutionBrowserPerspective(this);
+  FileCommand propertiesCommand = new FileCommand(FileCommand.PROPERTIES, null, solutionBrowserPerspective);
 
   // menu items (to be enabled/disabled)
   MenuBar viewMenu = new MenuBar(true);
-
   PentahoMenuItem printMenuItem = new PentahoMenuItem(Messages.getInstance().print(), new PrintCommand(solutionBrowserPerspective));
-
   PentahoMenuItem saveMenuItem = new PentahoMenuItem(Messages.getInstance().save(), new SaveCommand(solutionBrowserPerspective, false));
-
   PentahoMenuItem saveAsMenuItem = new PentahoMenuItem(Messages.getInstance().saveAs(), new SaveCommand(solutionBrowserPerspective, true));
-
-  final Command propertiesCommand = new FileCommand(FileCommand.PROPERTIES, null, MantleApplication.this.solutionBrowserPerspective);
-  
   PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), propertiesCommand);
 
   MainToolbar mainToolbar = new MainToolbar(solutionBrowserPerspective);
-
+  LogoPanel logoPanel = new LogoPanel("http://www.pentaho.com");
+  
   public boolean isAdministrator = false;
 
   public static boolean showAdvancedFeatures;
@@ -159,81 +158,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }
   };
 
-  Command jiraCommand = new Command() {
-    public void execute() {
-      Window.open("http://jira.pentaho.org", "_blank", "");
-    }
-  };
-
-  Command pentahoCommand = new Command() {
-    public void execute() {
-      Window.open("http://www.pentaho.com", "_blank", "");
-    }
-  };
-
-  Command aboutCommand = new Command() {
-    public void execute() {
-      AsyncCallback<String> callback = new AsyncCallback<String>() {
-        public void onFailure(Throwable caught) {
-        }
-
-        public void onSuccess(String version) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().about(), version, false, false, true);
-          dialogBox.center();
-        }
-      };
-      MantleServiceCache.getService().getVersion(callback);
-    }
-  };
-
-  Command demosCommand = new Command() {
-    public void execute() {
-      Window.open("http://www.pentaho.com/products/demos/", "_blank", "");
-    }
-  };
-
-  Command downloadsCommand = new Command() {
-    public void execute() {
-      Window.open("http://www.pentaho.com/download/", "_blank", "");
-    }
-  };
-
-  Command nightlyBuildsCommand = new Command() {
-    public void execute() {
-      Window.open("ftp://download.pentaho.org", "_blank", "");
-    }
-  };
-
-  Command forumsCommand = new Command() {
-    public void execute() {
-      Window.open("http://forums.pentaho.org/", "_blank", "");
-    }
-  };
-
-  Command logoutCommand = new Command() {
-    public void execute() {
-      String location = Window.Location.getPath().substring(0, Window.Location.getPath().lastIndexOf('/')) + "/Logout";
-      Window.open(location, "_top", "");
-    }
-  };
-
-  Command cmd = new Command() {
-    public void execute() {
-      MessageDialogBox dialogBox = new MessageDialogBox("Title", "Message", false, false, true);
-      dialogBox.center();
-    }
-  };
-
-  Command preferencesCommand = new Command() {
-    public void execute() {
-      // read solution engine interactivity service
-      UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.STYLES);
-      dialog.center();
-    }
-  };
-
-  Command refreshRepositoryCommand = new RefreshRepositoryCommand(solutionBrowserPerspective);
-
   /**
    * This is the entry point method.
    */
@@ -256,8 +180,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     };
     timer.schedule(3000);
 
-    applicationPanel.setStyleName("applicationShell");
-    applicationPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+    mainApplicationPanel.setStyleName("applicationShell");
+    mainApplicationPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     menuBar.setAutoOpen(false);
     menuBar.setHeight("26px");
     menuBar.setWidth("100%");
@@ -269,15 +193,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     menuAndLogoPanel.setWidget(0, 0, menuBar);
     menuAndLogoPanel.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
     menuAndLogoPanel.setWidget(1, 0, mainToolbar);
-    menuAndLogoPanel.setWidget(0, 1, new LogoPanel("http://www.pentaho.com"));
+    menuAndLogoPanel.setWidget(0, 1, logoPanel);
     menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
     menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px");
     menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "71px");
 
     mainToolbar.setHeight("46px");
     mainToolbar.setWidth("100%");
-    applicationPanel.add(menuAndLogoPanel);
-    applicationPanel.setCellHeight(menuAndLogoPanel, "70px");
+    mainApplicationPanel.add(menuAndLogoPanel);
+    mainApplicationPanel.setCellHeight(menuAndLogoPanel, "70px");
 
     perspectivesPanel.setAnimationEnabled(true);
     perspectivesPanel.setHeight("100%");
@@ -300,8 +224,23 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     solutionBrowserPerspective.loadBookmarks();
 
     // show stuff we've created/configured
-    applicationPanel.add(perspectivesPanel);
+    mainApplicationPanel.add(perspectivesPanel);
 
+    // add window close listener
+    Window.addWindowCloseListener(new WindowCloseListener() {
+
+      public void onWindowClosed() {
+      }
+
+      public String onWindowClosing() {
+        // close only if we have stuff open
+        if (solutionBrowserPerspective.getContentTabPanel().getTabBar().getTabCount() > 0) {
+          return Messages.getInstance().windowCloseWarning();
+        }
+        return null;
+      }
+    });
+    
     ElementUtils.convertPNGs();
   }
 
@@ -350,10 +289,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
               solutionBrowserPerspective.setShowHiddenFiles(showHiddenFiles);
             } else if (IMantleUserSettingsConstants.MANTLE_LOGO_LAUNCH_URL.equals(setting.getSettingName())) {
               String url = setting.getSettingValue();
-              menuAndLogoPanel.setWidget(0, 1, new LogoPanel(url));
-              menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
-              menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px");
-              menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "71px");
+              logoPanel.setLaunchURL(url);
             }
           } catch (Exception e) {
             MessageDialogBox dialogBox = new MessageDialogBox("Error", e.getMessage(), false, false, true);
@@ -373,20 +309,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         HashMap<String, String> settings = (HashMap<String, String>) result;
 
         // menubar=no,location=no,resizable=yes,scrollbars=no,status=no,width=1200,height=800
-        RootPanel.get().add(applicationPanel);
-
-        Window.addWindowCloseListener(new WindowCloseListener() {
-
-          public void onWindowClosed() {
-          }
-
-          public String onWindowClosing() {
-            if (solutionBrowserPerspective.getContentTabPanel().getTabBar().getTabCount() > 0) {
-              return "Navigating away from this page may terminate your session.";
-            }
-            return null;
-          }
-        });
+        RootPanel.get().add(mainApplicationPanel);
 
         boolean showExplorerViewOnStartup = "true".equals(settings.get("show-explorer-view-on-startup"));
         showAdvancedFeatures = "true".equals(settings.get("show-advanced-features"));
@@ -465,15 +388,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         MenuBar fileMenu = new MenuBar(true);
         MenuBar newMenu = new MenuBar(true);
-        newMenu.addItem("Report", new WAQRCommand(solutionBrowserPerspective));
-        newMenu.addItem("Analysis View", new AnalysisViewCommand(solutionBrowserPerspective));
+        newMenu.addItem(Messages.getInstance().newAdhocReport(), new WAQRCommand(solutionBrowserPerspective));
+        newMenu.addItem(Messages.getInstance().newAnalysisView(), new AnalysisViewCommand(solutionBrowserPerspective));
         // add additions to the file menu
         customizeMenu(newMenu, "file-new", settings); //$NON-NLS-1$
 
-        fileMenu.addItem("New", newMenu);
-        fileMenu.addItem("Open...", new OpenFileCommand(solutionBrowserPerspective));
+        fileMenu.addItem(Messages.getInstance()._new(), newMenu);
+        fileMenu.addItem(Messages.getInstance().openEllipsis(), new OpenFileCommand(solutionBrowserPerspective));
         if (showAdvancedFeatures) {
-          fileMenu.addItem("Open URL..", new OpenURLCommand(solutionBrowserPerspective));
+          fileMenu.addItem(Messages.getInstance().openURLEllipsis(), new OpenURLCommand(solutionBrowserPerspective));
         }
         fileMenu.addSeparator();
 
@@ -484,7 +407,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         fileMenu.addItem(printMenuItem);
         fileMenu.addSeparator();
         if (showAdvancedFeatures) {
-          fileMenu.addItem("Preferences...", preferencesCommand);
+          fileMenu.addItem(Messages.getInstance().userPreferencesEllipsis(), new ShowPreferencesCommand());
           fileMenu.addSeparator();
         }
         MenuBar manageContentMenu = new MenuBar(true);
@@ -496,7 +419,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         fileMenu.addSeparator();
         fileMenu.addItem(propertiesMenuItem);
         fileMenu.addSeparator();
-        fileMenu.addItem(Messages.getInstance().logout(), true, logoutCommand);
+        fileMenu.addItem(Messages.getInstance().logout(), true, new LogoutCommand());
 
         // add additions to the file menu
         customizeMenu(fileMenu, "file", settings); //$NON-NLS-1$
@@ -520,7 +443,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         MenuBar toolsMenu = new MenuBar(true);
         if (isAdministrator) {
           MenuBar adminMenu = new MenuBar(true);
-          adminMenu.addItem(Messages.getInstance().refreshRepository(), refreshRepositoryCommand);
+          adminMenu.addItem(Messages.getInstance().refreshRepository(), new RefreshRepositoryCommand(solutionBrowserPerspective));
           adminMenu.addItem(Messages.getInstance().refreshSystemSettings(), new RefreshSystemSettingsCommand());
           adminMenu.addItem(Messages.getInstance().refreshReportingMetadata(), new RefreshMetaDataCommand());
           adminMenu.addItem(Messages.getInstance().executeGlobalActions(), new ExecuteGlobalActionsCommand());
@@ -537,11 +460,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         }
 
         MenuBar helpMenu = new MenuBar(true);
-        helpMenu.addItem("Documentation...", new OpenDocCommand(solutionBrowserPerspective));
+        helpMenu.addItem(Messages.getInstance().documentationEllipsis(), new OpenDocCommand(solutionBrowserPerspective));
         helpMenu.addSeparator();
-        helpMenu.addItem("Pentaho.com...", pentahoCommand);
+        helpMenu.addItem(Messages.getInstance().pentahoHomePageName(), new PentahoHomeCommand());
         helpMenu.addSeparator();
-        helpMenu.addItem(Messages.getInstance().about(), aboutCommand);
+        helpMenu.addItem(Messages.getInstance().about(), new AboutCommand());
         // add additions to the help menu
         customizeMenu(helpMenu, "help", settings); //$NON-NLS-1$
         menuBar.addItem(Messages.getInstance().help(), helpMenu);
@@ -566,19 +489,19 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
     final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL));
-    
+
     printMenuItem.setEnabled(isEnabled);
     saveMenuItem.setEnabled(isEnabled);
     saveAsMenuItem.setEnabled(isEnabled);
     propertiesMenuItem.setEnabled(isEnabled);
-    
-    // Properties menu item should have a command associated with it ONLY when it is enabled. 
+
+    // Properties menu item should have a command associated with it ONLY when it is enabled.
     if (isEnabled) {
       propertiesMenuItem.setCommand(propertiesCommand);
     } else {
       propertiesMenuItem.setCommand(null);
     }
-    
+
     if (selectedTabURL != null) {
       // Window.alert(selectedTabURL);
     }

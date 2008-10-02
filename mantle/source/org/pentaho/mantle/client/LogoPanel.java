@@ -11,29 +11,32 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class LogoPanel extends VerticalPanel {
 
-  public LogoPanel(final String launchURL) {
-    setStyleName("logoPanel-ContainerToolBar");
+  private String launchURL;
+
+  public LogoPanel(String launchURL) {
+    this.launchURL = launchURL;
+    setStyleName("logoPanel-ContainerToolBar"); //$NON-NLS-1$
     setSpacing(0);
-    setHeight("100%");
-    setWidth("100%");
+    setHeight("100%"); //$NON-NLS-1$
+    setWidth("100%"); //$NON-NLS-1$
 
     VerticalPanel toolBarBackgroundPanel = new VerticalPanel();
     toolBarBackgroundPanel.setSpacing(0);
-    toolBarBackgroundPanel.setStyleName("logoPanel-Container");
-    toolBarBackgroundPanel.setWidth("100%");
-    toolBarBackgroundPanel.setHeight("100%");
+    toolBarBackgroundPanel.setStyleName("logoPanel-Container"); //$NON-NLS-1$
+    toolBarBackgroundPanel.setWidth("100%"); //$NON-NLS-1$
+    toolBarBackgroundPanel.setHeight("100%"); //$NON-NLS-1$
 
     Image logoImage = new Image();
     if (GWT.isScript()) {
-      logoImage.setUrl("mantle/logo.png");
+      logoImage.setUrl("mantle/logo.png"); //$NON-NLS-1$
     } else {
-      logoImage.setUrl("logo.png");
+      logoImage.setUrl("logo.png"); //$NON-NLS-1$
     }
-    if (launchURL != null && !"".equals(launchURL)) {
-      logoImage.setStyleName("launchImage");
+    if (launchURL != null && !"".equals(launchURL)) { //$NON-NLS-1$
+      logoImage.setStyleName("launchImage"); //$NON-NLS-1$
       logoImage.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          Window.open(launchURL, "_blank", "");
+          Window.open(getLaunchURL(), "_blank", ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
       });
     }
@@ -42,6 +45,14 @@ public class LogoPanel extends VerticalPanel {
     toolBarBackgroundPanel.add(logoImage);
 
     add(toolBarBackgroundPanel);
+  }
+
+  public String getLaunchURL() {
+    return launchURL;
+  }
+
+  public void setLaunchURL(String launchURL) {
+    this.launchURL = launchURL;
   }
 
 }

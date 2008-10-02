@@ -57,7 +57,7 @@ public class BrowserToolbar extends Toolbar {
    */
   private void createMenus() {
     addSpacer(5);
-    add(new ToolbarGroup("Browse"));
+    add(new ToolbarGroup(Messages.getInstance().browse()));
     add(GLUE);
     Image refreshImage = new Image();
     MantleImages.images.refresh().applyTo(refreshImage);

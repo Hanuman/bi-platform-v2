@@ -1,6 +1,7 @@
 package org.pentaho.mantle.client.dialogs;
 
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -13,20 +14,20 @@ public class ManageContentDialog extends PromptDialogBox {
     EDIT, SHARE, SCHEDULE
   }
 
-  private RadioButton editRadioButton = new RadioButton("manage");
-  private RadioButton shareRadioButton = new RadioButton("manage");
-  private RadioButton scheduleRadioButton = new RadioButton("manage");
+  private RadioButton editRadioButton = new RadioButton("manage"); //$NON-NLS-1$
+  private RadioButton shareRadioButton = new RadioButton("manage"); //$NON-NLS-1$
+  private RadioButton scheduleRadioButton = new RadioButton("manage"); //$NON-NLS-1$
 
   public ManageContentDialog() {
-    super("Manage Content", "OK", "Cancel", false, true);
+    super(Messages.getInstance().manageContent(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
 
-    editRadioButton.setText("Edit");
-    shareRadioButton.setText("Share");
-    scheduleRadioButton.setText("Schedule");
+    editRadioButton.setText(Messages.getInstance().edit());
+    shareRadioButton.setText(Messages.getInstance().share());
+    scheduleRadioButton.setText(Messages.getInstance().schedule());
 
     VerticalPanel contentPanel = new VerticalPanel();
-    contentPanel.add(new Label("Select the Manage function to perform"));
-    contentPanel.add(new HTML("<BR>"));
+    contentPanel.add(new Label(Messages.getInstance().manageContentSelectFunction()));
+    contentPanel.add(new HTML("<BR>")); //$NON-NLS-1$
     contentPanel.add(editRadioButton);
     contentPanel.add(shareRadioButton);
     contentPanel.add(scheduleRadioButton);

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.service.Utility;
 
@@ -23,12 +24,12 @@ public class AnalysisViewDialog extends PromptDialogBox {
 
   private ListBox lboxCube = new ListBox();
 
-  public static final String FOCUS_ON_TITLE = "title";
+  public static final String FOCUS_ON_TITLE = "title"; //$NON-NLS-1$
 
   private HashMap<String, List<String>> schemaCubeHashMap;
 
   public AnalysisViewDialog(Document solutionRepositoryDoc) {
-    super("New Analysis View", "OK", "Cancel", false, true, new VerticalPanel());
+    super(Messages.getInstance().newAnalysisView(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, new VerticalPanel());
     buildAnalysisView(solutionRepositoryDoc);
     Utility.enableMouseSelection();
     lboxSchema.setTabIndex(1);
@@ -44,8 +45,8 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public Widget buildAnalysisView(Document solutionRepositoryDoc) {
     VerticalPanel mainPanel = (VerticalPanel) getContent();
     mainPanel.setSpacing(5);
-    Label schemaLabel = new Label("Schema:");
-    Label cubeLabel = new Label("Cube:");
+    Label schemaLabel = new Label(Messages.getInstance().schema());
+    Label cubeLabel = new Label(Messages.getInstance().cube());
 
     lboxSchema.addChangeListener(new ChangeListener() {
       public void onChange(Widget sender) {
@@ -57,8 +58,8 @@ public class AnalysisViewDialog extends PromptDialogBox {
     // Get the pertinent information for the cube and the schema.
     getSchemaAndCubeInfo();
 
-    lboxSchema.setWidth("15em");
-    lboxCube.setWidth("15em");
+    lboxSchema.setWidth("15em"); //$NON-NLS-1$
+    lboxCube.setWidth("15em"); //$NON-NLS-1$
     mainPanel.add(schemaLabel);
     mainPanel.add(lboxSchema);
     mainPanel.add(cubeLabel);
@@ -85,11 +86,11 @@ public class AnalysisViewDialog extends PromptDialogBox {
   private void getSchemaAndCubeInfo() {
     AsyncCallback callback = new AsyncCallback() {
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
         dialogBox.center();
       }
 
-      @SuppressWarnings("unchecked")
+      @SuppressWarnings("unchecked") //$NON-NLS-1$
       public void onSuccess(Object result) {
         if (result != null) {
           schemaCubeHashMap = (HashMap<String, List<String>>) result;
@@ -103,8 +104,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
             updateCubeListBox(lboxSchema.getItemText(lboxSchema.getSelectedIndex()));
           }
         } else {
-          MessageDialogBox dialogBox = new MessageDialogBox("Error - Could not retrieve schema and cube info!",
-              "Mondrian catalogs came out empty! Please check the config files.", false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().noMondrianSchemas(), false, false, true);
           dialogBox.center();
         }
       }
@@ -138,16 +138,16 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public boolean validate() {
     final String schema = getSchema();
     if (schema == null || schema.length() == 0) {
-      MessageDialogBox dialogBox = new MessageDialogBox("Error", "Please select a schema name!", false, false, true);
-      dialogBox.setWidth("15em");
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().selectSchema(), false, false, true);
+      dialogBox.setWidth("15em"); //$NON-NLS-1$
       dialogBox.center();
       return false;
     }
 
     final String cube = getSchema();
     if (cube == null || cube.length() == 0) {
-      MessageDialogBox dialogBox = new MessageDialogBox("Error", "Please select a cube name!", false, false, true);
-      dialogBox.setWidth("15em");
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().selectCube(), false, false, true);
+      dialogBox.setWidth("15em"); //$NON-NLS-1$
       dialogBox.center();
       return false;
     }

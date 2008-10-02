@@ -889,7 +889,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     favoritesGroupMenuBar.addItem(new MenuItem("Manage Groups", new Command() {
       public void execute() {
         // bring up dialog to edit groups
-        UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.FAVORITES);
+        UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.PREFERENCE.FAVORITES);
         dialog.center();
       }
     }));

@@ -53,17 +53,17 @@ public class MantleLoginDialog {
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
   static {
-    defaultUsers.put("Select a User", new String[] { "", "" });
-    defaultUsers.put("Joe (admin)", new String[] { "joe", "password" });
-    defaultUsers.put("Suzy", new String[] { "suzy", "password" });
-    defaultUsers.put("Pat", new String[] { "pat", "password" });
-    defaultUsers.put("Tiffany", new String[] { "tiffany", "password" });
+    defaultUsers.put(MSGS.selectUser(), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
+    defaultUsers.put("Joe (admin)", new String[] { "joe", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    defaultUsers.put("Suzy", new String[] { "suzy", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    defaultUsers.put("Pat", new String[] { "pat", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    defaultUsers.put("Tiffany", new String[] { "tiffany", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
   static {
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
-    String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService";
+    String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService"; //$NON-NLS-1$
     endpoint.setServiceEntryPoint(moduleRelativeURL);
   }
 
@@ -74,11 +74,11 @@ public class MantleLoginDialog {
 
     public void okPressed() {
       String path = Window.Location.getPath();
-      if (!path.endsWith("/")) {
-        path = path.substring(0, path.lastIndexOf("/") + 1);
+      if (!path.endsWith("/")) { //$NON-NLS-1$
+        path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
       }
-      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, path + "j_acegi_security_check");
-      builder.setHeader("Content-Type", "application/x-www-form-urlencoded");
+      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, path + "j_acegi_security_check"); //$NON-NLS-1$
+      builder.setHeader("Content-Type", "application/x-www-form-urlencoded"); //$NON-NLS-1$ //$NON-NLS-2$
       RequestCallback callback = new RequestCallback() {
 
         public void onError(Request request, Throwable exception) {
@@ -95,7 +95,7 @@ public class MantleLoginDialog {
                 long year = 1000 * 60 * 60 * 24 * 365;
                 // one year into the future
                 Date expirationDate = new Date(System.currentTimeMillis()+year);
-                Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate);
+                Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate); //$NON-NLS-1$ //$NON-NLS-2$
                 outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
                 outterCallback.onFailure(new Throwable(MSGS.authFailed()));
@@ -120,7 +120,7 @@ public class MantleLoginDialog {
       };
       try {
         String username = userTextBox.getText();
-        builder.sendRequest("j_username=" + username + "&j_password=" + passwordTextBox.getText(), callback);
+        builder.sendRequest("j_username=" + username + "&j_password=" + passwordTextBox.getText(), callback); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (RequestException e) {
         e.printStackTrace();
       }
@@ -151,9 +151,9 @@ public class MantleLoginDialog {
   }
 
   private Widget buildLoginPanel() {
-    userTextBox.setWidth("100%");
-    passwordTextBox.setWidth("100%");
-    usersListBox.setWidth("100%");
+    userTextBox.setWidth("100%"); //$NON-NLS-1$
+    passwordTextBox.setWidth("100%"); //$NON-NLS-1$
+    usersListBox.setWidth("100%"); //$NON-NLS-1$
 
     VerticalPanel loginPanel = new VerticalPanel();
 
@@ -161,35 +161,35 @@ public class MantleLoginDialog {
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     SimplePanel spacer;
     if (!this.subscription) {
-      loginPanel.add(new Label(MSGS.sampleUser() + ":"));
+      loginPanel.add(new Label(MSGS.sampleUser() + ":")); //$NON-NLS-1$
       loginPanel.add(usersListBox);
 
       spacer = new SimplePanel();
-      spacer.setHeight("8px");
+      spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
     }
-    loginPanel.add(new Label(MSGS.username() + ":"));
+    loginPanel.add(new Label(MSGS.username() + ":")); //$NON-NLS-1$
     loginPanel.add(userTextBox);
 
     spacer = new SimplePanel();
-    spacer.setHeight("8px");
+    spacer.setHeight("8px"); //$NON-NLS-1$
     loginPanel.add(spacer);
 
-    loginPanel.setCellHeight(spacer, "8px");
-    loginPanel.add(new Label(MSGS.password() + ":"));
+    loginPanel.setCellHeight(spacer, "8px"); //$NON-NLS-1$
+    loginPanel.add(new Label(MSGS.password() + ":")); //$NON-NLS-1$
     loginPanel.add(passwordTextBox);
 
     // New Window checkbox
     if (this.showNewWindowOption) {
       spacer = new SimplePanel();
-      spacer.setHeight("8px");
+      spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
-      loginPanel.setCellHeight(spacer, "8px");
+      loginPanel.setCellHeight(spacer, "8px"); //$NON-NLS-1$
 
       newWindowChk = new CheckBox();
       newWindowChk.setText(MSGS.launchInNewWindow());
 
-      String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked");
+      String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked"); //$NON-NLS-1$
       if (cookieCheckedVal != null) {
         newWindowChk.setChecked(Boolean.parseBoolean(cookieCheckedVal));
       } else {
@@ -236,7 +236,7 @@ public class MantleLoginDialog {
     userTextBox.setTabIndex(1);
     passwordTextBox.setTabIndex(2);
     newWindowChk.setTabIndex(3);
-    passwordTextBox.setText("");
+    passwordTextBox.setText(""); //$NON-NLS-1$
     dialog.setFocusWidget(userTextBox);
 
     dialog.center();

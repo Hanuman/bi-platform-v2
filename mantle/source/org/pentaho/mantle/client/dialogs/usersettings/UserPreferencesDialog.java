@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,17 +15,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class UserPreferencesDialog extends PromptDialogBox implements ChangeListener, IDialogValidatorCallback, IDialogCallback {
 
-  public static final int STYLES = 0;
-  public static final int REPOSITORY = 1;
-  public static final int FAVORITES = 2;
-
+  public static enum PREFERENCE { STYLES, REPOSITORY, FAVORITES };
+  
   VerticalPanel preferencesContent = new VerticalPanel();
   ListBox preferencesList = new ListBox();
   HashMap<String, UserPreferencesPanel> preferencesPanelMap = new HashMap<String, UserPreferencesPanel>();
-  int initialSelectedPreference = STYLES;
+  PREFERENCE initialSelectedPreference = PREFERENCE.STYLES;
 
-  public UserPreferencesDialog(int initialSelectedPreference) {
-    super("User Preferences", "OK", "Cancel", false, true, new HorizontalPanel());
+  public UserPreferencesDialog(PREFERENCE initialSelectedPreference) {
+    super(Messages.getInstance().userPreferences(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, new HorizontalPanel());
     setCallback(this);
     setValidatorCallback(this);
     this.initialSelectedPreference = initialSelectedPreference;
@@ -32,9 +31,9 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
   }
 
   public void init() {
-    preferencesPanelMap.put("Styles", new StyleEditorPanel());
-    preferencesPanelMap.put("Repository", new RepositoryPanel());
-    preferencesPanelMap.put("Favorites", new FavoritesPanel());
+    preferencesPanelMap.put(Messages.getInstance().styles(), new StyleEditorPanel());
+    preferencesPanelMap.put(Messages.getInstance().repository(), new RepositoryPanel());
+    preferencesPanelMap.put(Messages.getInstance().favorites(), new FavoritesPanel());
 
     HorizontalPanel content = (HorizontalPanel) getContent();
     content.setSpacing(10);
@@ -42,7 +41,7 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
     content.add(preferencesContent);
 
     preferencesList.setVisibleItemCount(10);
-    preferencesList.setWidth("120px");
+    preferencesList.setWidth("120px"); //$NON-NLS-1$
 
     for (String key : preferencesPanelMap.keySet()) {
       preferencesList.addItem(key);
@@ -52,11 +51,11 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
     preferencesList.addChangeListener(this);
     for (int i = 0; i < preferencesList.getItemCount(); i++) {
       String item = preferencesList.getItemText(i);
-      if (initialSelectedPreference == STYLES && item.equalsIgnoreCase("Styles")) {
+      if (initialSelectedPreference.equals(PREFERENCE.STYLES) && item.equalsIgnoreCase(Messages.getInstance().styles())) {
         preferencesList.setSelectedIndex(i);
-      } else if (initialSelectedPreference == REPOSITORY && item.equalsIgnoreCase("Repository")) {
+      } else if (initialSelectedPreference.equals(PREFERENCE.REPOSITORY) && item.equalsIgnoreCase(Messages.getInstance().repository())) {
         preferencesList.setSelectedIndex(i);
-      } else if (initialSelectedPreference == FAVORITES && item.equalsIgnoreCase("Favorites")) {
+      } else if (initialSelectedPreference.equals(PREFERENCE.FAVORITES) && item.equalsIgnoreCase(Messages.getInstance().favorites())) {
         preferencesList.setSelectedIndex(i);
       }
     }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
@@ -40,11 +41,11 @@ public class FavoritesPanel extends UserPreferencesPanel {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem("Edit", new Command() {
+        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new Command() {
           public void execute() {
           }
         }));
-        menuBar.addItem(new MenuItem("Delete", new Command() {
+        menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new Command() {
           public void execute() {
           }
         }));

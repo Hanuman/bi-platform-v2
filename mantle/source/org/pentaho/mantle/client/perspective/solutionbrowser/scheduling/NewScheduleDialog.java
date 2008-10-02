@@ -24,6 +24,7 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.wizards.AbstractWizardDialog;
 import org.pentaho.gwt.widgets.client.wizards.IWizardPanel;
 import org.pentaho.gwt.widgets.client.wizards.panels.ScheduleEditorWizardPanel;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
@@ -49,7 +50,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
    * @param actionName
    */
   public NewScheduleDialog(String solutionName, String path, String actionName) {
-    super("New Schedule", null, false, false);
+    super(Messages.getInstance().newSchedule(), null, false, false);
     this.solutionName = solutionName;
     this.path = path;
     this.actionName = actionName;
@@ -67,15 +68,14 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     AsyncCallback scheduleCallback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
         dialogBox.center();
         setDone(false);
       }
 
       public void onSuccess(Object result) {
         MessageDialogBox dialogBox = new MessageDialogBox(
-            "Info",
-            "The action-sequence has been scheduled successfully.  If the output of the action-sequence is \"response\" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.",
+            Messages.getInstance().info(), Messages.getInstance().actionSequenceScheduledSuccess(), 
             true, false, true);
         dialogBox.center();
         setDone(true);
