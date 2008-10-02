@@ -748,6 +748,12 @@
 				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionName;
 			});
 			cursor_clear();
+			if (window.parent != null && window.parent.mantle_initialized) {
+			  var tmpSaveButton = document.getElementById('folder-down');
+			  var tmpSaveAsButton = document.getElementById('folder-up');
+			  tmpSaveButton.parentNode.parentNode.removeChild(tmpSaveButton.parentNode);
+			  tmpSaveAsButton.parentNode.parentNode.removeChild(tmpSaveAsButton.parentNode);
+			}
 		}
 		
 		function save()
@@ -1336,8 +1342,8 @@
 				</table>
 				
 				
-				
 </body>
+
 </html>
 <% 
    } catch (Throwable t ) {
