@@ -333,10 +333,10 @@ A:hover {
     <table width="564" border="0" cellspacing="0" cellpadding="0"
       style="margin-bottom: 22px;" align="center">
       <tr>
-        <td class="sm_box_top" onClick="document.location='foo'">Achieve
+        <td class="sm_box_top">Achieve
         BI Success</td>
         <td><img src="/pentaho-style/images/login/spacer.png" width="20" /></td>
-        <td class="sm_box_top" onClick="document.location='foo'">Getting
+        <td class="sm_box_top">Getting
         Started</td>
       </tr>
       <tr>
