@@ -257,7 +257,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::closeTab(Ljava/lang/String;)(url);
     }
     $wnd.mantle_refreshRepository = function() {
-      var cmd = mantle.@org.pentaho.mantle.client.MantleApplication::refreshRepositoryCommand;
+      var cmd = @org.pentaho.mantle.client.commands.RefreshRepositoryCommand::RefreshRepositoryCommand();
       cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
     }
     $wnd.mantle_waqr_preview = function(url, xml) {
