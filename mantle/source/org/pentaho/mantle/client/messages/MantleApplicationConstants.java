@@ -782,6 +782,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String saveAs();
 
   /**
+   * Translated "Save As". This Save As does not have "..." at the end.
+   * 
+   * @return translated "Save As"
+  
+   */
+  @DefaultMessage("Save As")
+  String saveAsText();
+  
+  /**
    * Translated "Share".
    * 
    * @return translated "Share"
@@ -887,5 +896,5 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   
    */
   @DefaultMessage("Schedule")
-  String schedule();
+  String schedule();  
 }

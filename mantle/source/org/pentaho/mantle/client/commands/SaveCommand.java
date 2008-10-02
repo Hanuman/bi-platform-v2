@@ -33,6 +33,13 @@ public class SaveCommand implements Command {
     
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
+      if (isSaveAs) {
+        dialog.setTitle(Messages.getInstance().saveAsText());
+        dialog.setText(Messages.getInstance().saveAsText());
+      } else {
+        dialog.setTitle(Messages.getInstance().save());
+      }
+      
       if (!MantleApplication.showAdvancedFeatures) {
         dialog.setShowSearch(false);
       }
