@@ -8,9 +8,10 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
-
+import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 
 public class SaveCommand implements Command {
 
@@ -29,7 +30,7 @@ public class SaveCommand implements Command {
 
   public void execute() {
     
-    retrieveCachedValues(navigatorPerspective.getCurrentFrameElementId());
+    retrieveCachedValues(navigatorPerspective.getCurrentFrame());
     
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
@@ -67,6 +68,7 @@ public class SaveCommand implements Command {
             overWriteDialog.center();
           } else {
             doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+            persistFileInfoInFrame();
             clearValues();
           }
         }
@@ -82,6 +84,15 @@ public class SaveCommand implements Command {
     }
   }
   
+  private void persistFileInfoInFrame(){
+    SolutionFileInfo fileInfo = new SolutionFileInfo();
+    fileInfo.setName(this.name);
+    fileInfo.setPath(this.path);
+    fileInfo.setSolution(this.solution);
+    fileInfo.setType(this.type);
+    navigatorPerspective.getCurrentFrame().setFileInfo(fileInfo);
+  }
+  
   private void clearValues(){
     name = null;
     solution = null;
@@ -89,20 +100,15 @@ public class SaveCommand implements Command {
     type = null;
   }
   
-  private native void retrieveCachedValues(String id)/*-{
-    var frame = $doc.getElementById(id);
-    frame = frame.contentWindow;
-    
-    
-    
-    if(frame.mySolution != undefined){
-      this.@org.pentaho.mantle.client.commands.SaveCommand::setSolution(Ljava/lang/String;)(frame.mySolution);
-      this.@org.pentaho.mantle.client.commands.SaveCommand::setPath(Ljava/lang/String;)(frame.myPath);
-      this.@org.pentaho.mantle.client.commands.SaveCommand::setName(Ljava/lang/String;)(frame.myFilename);
-      this.@org.pentaho.mantle.client.commands.SaveCommand::setType(Ljava/lang/String;)(frame.myType);
+  private void retrieveCachedValues(ReloadableIFrameTabPanel tabPanel){
+    SolutionFileInfo info = tabPanel.getFileInfo();
+    if(info != null){
+      this.name = info.getName();
+      this.path = info.getPath();
+      this.solution = info.getSolution();
+      this.type = info.getType();
     }
-     
-  }-*/;
+  }
 
 
   /**

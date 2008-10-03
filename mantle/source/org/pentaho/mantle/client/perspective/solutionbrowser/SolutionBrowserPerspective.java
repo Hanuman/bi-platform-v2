@@ -49,6 +49,7 @@ import org.pentaho.mantle.client.perspective.workspace.WorkspacePerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.service.Utility;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
+import org.pentaho.mantle.client.objects.SolutionFileInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NodeList;
@@ -339,6 +340,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     final int elementId = contentTabPanel.getWidgetCount();
     String frameName = "frameID: " + elementId;
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
+        
     Frame frame = panel.getFrame();
     frame.getElement().setAttribute("id", frameName);
     frame.setStyleName("gwt-Frame");
@@ -460,7 +462,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     for (FileTreeItem item : allNodes) {
       item.setSelected(false);
     }
-
     solutionTree.setSelectedItem(fileTreeItem, true);
 
     TreeItem tmpTreeItem = fileTreeItem;
@@ -509,6 +510,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
       showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
+
+      //Store representation of file in the frame for reference later when save is called
+      SolutionFileInfo fileInfo = new SolutionFileInfo();
+      fileInfo.setName(selectedFileItem.getName());
+      fileInfo.setSolution(selectedFileItem.getSolution());
+      fileInfo.setPath(selectedFileItem.getPath());
+      this.getCurrentFrame().setFileInfo(fileInfo);
+      
     }
   }
 
@@ -601,6 +610,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                 }
                 if (subscribe) {
                   showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl);
+
+                  //Store representation of file in the frame for reference later when save is called
+                  getCurrentFrame().setFileInfo(fileInfo);
+                  
                 } else {
                   MessageDialogBox dialogBox = new MessageDialogBox("Info", "You do not have permission to subscribe to this action sequence.", false, false,
                       true);
@@ -1131,6 +1144,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
     final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
     return curPanel.getFrame().getElement().getAttribute("id");
+  }
+  
+
+  public ReloadableIFrameTabPanel getCurrentFrame() {
+    int curpos = contentTabPanel.getTabBar().getSelectedTab();
+    final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
+    return curPanel;
   }
 
   private native boolean isPDF(com.google.gwt.dom.client.Element frame)

@@ -106,6 +106,10 @@ public class FilePropertiesDialog extends PromptDialogBox {
         showTab(defaultTab);
       }
     };
+    if(fileItem.getName() == null || fileItem.getParent() == null || fileItem.getSolution() == null){
+      //No propertes to show
+      return;
+    }
     MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
   }
 

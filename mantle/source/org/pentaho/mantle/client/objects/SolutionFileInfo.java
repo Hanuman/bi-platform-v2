@@ -26,6 +26,7 @@ public class SolutionFileInfo implements Serializable {
   public Date lastModifiedDate;
   public long size;
   public byte[] data;
+  public String type = "html";  //$NON-NLS-1$
   public boolean isDirectory = false;
   public boolean isSubscribable = false;
   public boolean supportsAccessControls = true;
@@ -123,5 +124,15 @@ public class SolutionFileInfo implements Serializable {
   public void setRolePermissions(List<RolePermission> rolePermissions) {
     this.rolePermissions = rolePermissions;
   }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+  
+  
 
 }

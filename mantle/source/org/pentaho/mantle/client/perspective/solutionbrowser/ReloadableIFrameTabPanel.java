@@ -20,12 +20,14 @@ import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.pentaho.mantle.client.objects.SolutionFileInfo;
 
 public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
 
   String url;
   NamedFrame frame;
-
+  protected SolutionFileInfo fileInfo;
+  
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
     frame = new CustomFrame(""+System.currentTimeMillis(), url);
@@ -42,6 +44,14 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
     this.frame.setUrl(
         getCurrentUrl()
     );
+  }
+  
+  public void setFileInfo(SolutionFileInfo info){
+    fileInfo = info;
+  }
+  
+  public SolutionFileInfo getFileInfo(){
+    return fileInfo;
   }
   
   /*
