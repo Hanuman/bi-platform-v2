@@ -39,4 +39,8 @@ public class SimpleUser implements IPermissionRecipient {
     return userName.hashCode();
   }
 
+  @Override
+  public String toString() {
+    return String.format("SimpleUser[userName=%s]", userName); //$NON-NLS-1$
+  }
 }

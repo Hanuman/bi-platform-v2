@@ -63,4 +63,9 @@ public class SimplePermissionMask implements IPermissionMask {
   public int hashCode() {
     return permissionMask;
   }
+  
+  @Override
+  public String toString() {
+    return String.format("SimplePermissionMask[permissionMask=%d]", permissionMask); //$NON-NLS-1$
+  }
 }

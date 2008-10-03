@@ -38,4 +38,9 @@ public class SimpleRole implements IPermissionRecipient {
     // TODO Auto-generated method stub
     return roleName.hashCode();
   }
+  
+  @Override
+  public String toString() {
+    return String.format("SimpleRole[roleName=%s]", roleName); //$NON-NLS-1$
+  }
 }
