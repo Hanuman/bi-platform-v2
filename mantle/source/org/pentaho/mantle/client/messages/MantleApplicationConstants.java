@@ -143,6 +143,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String file();
 
   /**
+   * Translated "Advanced".
+   * 
+   * @return translated "Advanced"
+  
+   */
+  @DefaultMessage("Advanced")
+  String advanced();
+
+  /**
    * Translated "Repository cache refreshed successfully".
    * 
    * @return translated "Repository cache refreshed successfully"
@@ -917,6 +926,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String preferencesSetFailed();
 
   /**
+   * Translated "Could not get file properties".
+   * 
+   * @return translated "Could not get file properties"
+  
+   */
+  @DefaultMessage("Could not get file properties")
+  String couldNotGetFileProperties();
+
+  /**
    * Translated "All Schedules (Admin Only)".
    * 
    * @return translated "All Schedules (Admin Only)"
@@ -1104,6 +1122,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho.com...")
   String pentahoHomePageName();
+
+  /**
+   * Translated "General".
+   * 
+   * @return translated "General"
+  
+   */
+  @DefaultMessage("General")
+  String general();
 
   /**
    * Translated "Print...".
