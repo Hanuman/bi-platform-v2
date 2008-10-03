@@ -636,7 +636,7 @@ gwt-TabPanelBottom {
   background-position: 100% 0px;
   cursor: pointer;
   cursor: hand;
-  height: 24px;
+  height: 25px;
   margin-top: 4px;
   width: 6px;
 }
@@ -646,7 +646,7 @@ gwt-TabPanelBottom {
   background-position: 100% -42px;
   cursor: pointer;
   cursor: hand;
-  height: 24px;
+  height: 25px;
   margin-top: 4px;
   width: 6px;
 }
@@ -656,7 +656,7 @@ gwt-TabPanelBottom {
   background-position: 100% -84px;
   cursor: pointer;
   cursor: hand;
-  height: 24px;
+  height: 25px;
   margin-top: 4px;
   width: 6px;
 }
