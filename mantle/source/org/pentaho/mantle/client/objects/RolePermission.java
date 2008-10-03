@@ -44,4 +44,8 @@ public class RolePermission implements Serializable {
   public void setMask(int mask) {
     this.mask = mask;
   }
+  
+  public String toString() {
+    return "RolePermission[name=" + name + ", mask=" + mask + "]";
+  }
 }

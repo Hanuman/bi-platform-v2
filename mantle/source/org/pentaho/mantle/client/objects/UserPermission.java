@@ -44,4 +44,8 @@ public class UserPermission implements Serializable {
   public void setMask(int mask) {
     this.mask = mask;
   }
+  
+  public String toString() {
+    return "UserPermission[name=" + name + ", mask=" + mask + "]";
+  }
 }
