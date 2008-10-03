@@ -19,19 +19,14 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class TabCommand implements Command {
-  public static final int RELOAD = 0;
-  public static final int RELOAD_ALL = 1;
-  public static final int CLOSE = 2;
-  public static final int CLOSE_OTHERS = 3;
-  public static final int CLOSE_ALL = 4;
-  public static final int NEW_WINDOW = 5;
-  public static final int BOOKMARK = 6;
 
-  int mode = RELOAD;
+  public static enum TABCOMMAND { RELOAD, RELOAD_ALL, CLOSE, CLOSE_ALL, CLOSE_OTHERS, NEW_WINDOW, BOOKMARK, CREATE_DEEP_LINK };
+  
+  TABCOMMAND mode = TABCOMMAND.RELOAD;
   PopupPanel popupMenu;
   TabWidget tab;
   
-  public TabCommand(int inMode, PopupPanel popupMenu, TabWidget tab) {
+  public TabCommand(TABCOMMAND inMode, PopupPanel popupMenu, TabWidget tab) {
     this.mode = inMode;
     this.popupMenu = popupMenu;
     this.tab = tab;
@@ -39,20 +34,22 @@ public class TabCommand implements Command {
 
   public void execute() {
     popupMenu.hide();
-    if (mode == RELOAD) {
+    if (mode == TABCOMMAND.RELOAD) {
       tab.reloadTab();
-    } else if (mode == RELOAD_ALL) {
+    } else if (mode == TABCOMMAND.RELOAD_ALL) {
       tab.reloadAllTabs();
-    } else if (mode == CLOSE) {
+    } else if (mode == TABCOMMAND.CLOSE) {
       tab.closeTab();
-    } else if (mode == CLOSE_OTHERS) {
+    } else if (mode == TABCOMMAND.CLOSE_OTHERS) {
       tab.closeOtherTabs();
-    } else if (mode == CLOSE_ALL) {
+    } else if (mode == TABCOMMAND.CLOSE_ALL) {
       tab.closeAllTabs();
-    } else if (mode == NEW_WINDOW) {
+    } else if (mode == TABCOMMAND.NEW_WINDOW) {
       tab.openTabInNewWindow();
-    } else if (mode == BOOKMARK) {
+    } else if (mode == TABCOMMAND.BOOKMARK) {
       tab.bookmark();
+    } else if (mode == TABCOMMAND.CREATE_DEEP_LINK) {
+      tab.createDeepLink();
     }
   }
 }

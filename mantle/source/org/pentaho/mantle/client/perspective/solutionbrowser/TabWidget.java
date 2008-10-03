@@ -20,15 +20,16 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -130,11 +131,11 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     }
     textLabel.setText(trimmedText);
   }
-  
+
   public void setLabelTooltip(String tooltip) {
     textLabel.setTitle(tooltip);
   }
-  
+
   public void closeTab() {
     if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
       if (tabPanel.getTabBar().getSelectedTab() > 0) {
@@ -215,7 +216,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       final TextBox groupNameTextBox = new TextBox();
       SuggestBox suggestTextBox = new SuggestBox(oracle, groupNameTextBox);
 
-      PromptDialogBox dialogBox = new PromptDialogBox("Group Name", "OK", "Cancel", false, true, suggestTextBox);
+      PromptDialogBox dialogBox = new PromptDialogBox("Group Name", Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, suggestTextBox);
       if (perspective != null) {
         perspective.getBookmarks();
       }
@@ -247,22 +248,23 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         menuBar.setAutoOpen(true);
         if (tabContent instanceof ReloadableIFrameTabPanel) {
           if (MantleApplication.showAdvancedFeatures) {
-            menuBar.addItem(new MenuItem("Bookmark Tab", new TabCommand(TabCommand.BOOKMARK, popupMenu, this)));
+            menuBar.addItem(new MenuItem("Bookmark Tab", new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this)));
             menuBar.addSeparator();
           }
         }
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem("Reload Tab", new TabCommand(TabCommand.RELOAD, popupMenu, this)));
+          menuBar.addItem(new MenuItem("Reload Tab", new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
         }
-        menuBar.addItem(new MenuItem("Reload All Tabs", new TabCommand(TabCommand.RELOAD_ALL, popupMenu, this)));
+        menuBar.addItem(new MenuItem("Reload All Tabs", new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, this)));
         menuBar.addSeparator();
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem("Open Tab in New Window", new TabCommand(TabCommand.NEW_WINDOW, popupMenu, this)));
+          menuBar.addItem(new MenuItem("Open Tab in New Window", new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)));
+          menuBar.addItem(new MenuItem("Create Deep Link", new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)));
           menuBar.addSeparator();
         }
-        menuBar.addItem(new MenuItem("Close Tab", new TabCommand(TabCommand.CLOSE, popupMenu, this)));
-        menuBar.addItem(new MenuItem("Close Other Tabs", new TabCommand(TabCommand.CLOSE_OTHERS, popupMenu, this)));
-        menuBar.addItem(new MenuItem("Close All Tabs", new TabCommand(TabCommand.CLOSE_ALL, popupMenu, this)));
+        menuBar.addItem(new MenuItem("Close Tab", new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
+        menuBar.addItem(new MenuItem("Close Other Tabs", new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)));
+        menuBar.addItem(new MenuItem("Close All Tabs", new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)));
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
         popupMenu.show();
@@ -318,6 +320,20 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void onMouseUp(Widget sender, int x, int y) {
+  }
+
+  public void createDeepLink() {
+    if (tabContent instanceof ReloadableIFrameTabPanel) {
+      PromptDialogBox dialogBox = new PromptDialogBox("Deep Link", Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
+      String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath() + "?startup-url=";
+      String startup = ((ReloadableIFrameTabPanel) tabContent).getUrl();
+      startup += "&title=" + textLabel.getText();
+      TextBox urlbox = new TextBox();
+      urlbox.setText(url + URL.encodeComponent(startup));
+      urlbox.setVisibleLength(80);
+      dialogBox.setContent(urlbox);
+      dialogBox.center();
+    }
   }
 
 }
