@@ -29,9 +29,9 @@ public class SaveCommand implements Command {
   }
 
   public void execute() {
-    
+
     retrieveCachedValues(navigatorPerspective.getCurrentFrame());
-    
+
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
       if (isSaveAs) {
@@ -40,7 +40,7 @@ public class SaveCommand implements Command {
       } else {
         dialog.setTitle(Messages.getInstance().save());
       }
-      
+
       if (!MantleApplication.showAdvancedFeatures) {
         dialog.setShowSearch(false);
       }
@@ -52,9 +52,10 @@ public class SaveCommand implements Command {
           setName(name);
           setType("html"); //$NON-NLS-1$
 
-          if(false){//if (dialog.doesSelectedFileExist()) {
+          if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
-            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getInstance().question(), Messages.getInstance().yes(), Messages.getInstance().no(), false, true);
+            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getInstance().question(), Messages.getInstance().yes(), Messages.getInstance().no(),
+                false, true);
             overWriteDialog.setContent(new Label(Messages.getInstance().fileExistsOverwrite(), false));
             overWriteDialog.setCallback(new IDialogCallback() {
               public void okPressed() {
@@ -83,7 +84,7 @@ public class SaveCommand implements Command {
       clearValues();
     }
   }
-  
+
   private void persistFileInfoInFrame(){
     SolutionFileInfo fileInfo = new SolutionFileInfo();
     fileInfo.setName(this.name);
@@ -92,14 +93,14 @@ public class SaveCommand implements Command {
     fileInfo.setType(this.type);
     navigatorPerspective.getCurrentFrame().setFileInfo(fileInfo);
   }
-  
-  private void clearValues(){
+
+  private void clearValues() {
     name = null;
     solution = null;
     path = null;
     type = null;
   }
-  
+
   private void retrieveCachedValues(ReloadableIFrameTabPanel tabPanel){
     SolutionFileInfo info = tabPanel.getFileInfo();
     if(info != null){
@@ -110,64 +111,69 @@ public class SaveCommand implements Command {
     }
   }
 
-
   /**
    * This method will call saveReportSpecAs(string filename, string solution, string path, bool overwrite)
    * 
    * @param elementId
    */
-  public static native void doSaveAs(String elementId, String filename, String solution, String path, String type, boolean overwrite) /*-{
-       var frame = $doc.getElementById(elementId);
-       frame = frame.contentWindow;
-       frame.focus();                                
-       
-       //cache values for subsequent calls                   
-       frame.mySolution = solution;
-       frame.myPath = path;
-       frame.myFilename = filename;
-       frame.myType = type;
-       frame.myOverwrite = overwrite;
-       
-       frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, frame.myType, frame.myOverwrite);
-     }-*/;
+  public static native void doSaveAs(String elementId, String filename, String solution, String path, String type, boolean overwrite) 
+  /*-{
+    var frame = $doc.getElementById(elementId);
+    frame = frame.contentWindow;
+    frame.focus();                                
+                
+    //cache values for subsequent calls                   
+    frame.mySolution = solution;
+    frame.myPath = path;
+    frame.myFilename = filename;
+    frame.myType = type;
+    frame.myOverwrite = overwrite;
+
+    if(frame.pivot_initialized) {
+      // do jpivot save
+      frame.controller.saveAs(filename+'.analysisview', solution, path, overwrite);
+    } else {
+      frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, frame.myType, frame.myOverwrite);
+    }
+  }-*/;
 
   public String getName() {
-  
+
     return name;
   }
 
   public void setName(String name) {
-  
+
     this.name = name;
   }
 
   public String getSolution() {
-  
+
     return solution;
   }
 
   public void setSolution(String solution) {
-  
+
     this.solution = solution;
   }
 
   public String getPath() {
-  
+
     return path;
   }
 
   public void setPath(String path) {
-  
+
     this.path = path;
   }
 
   public String getType() {
-  
+
     return type;
   }
 
   public void setType(String type) {
-  
+
     this.type = type;
   }
 

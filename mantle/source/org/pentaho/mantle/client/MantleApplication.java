@@ -245,6 +245,19 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     ElementUtils.convertPNGs();
   }
 
+  
+  /**
+   * This method is used by things like jpivot in order to show a 'mantle' looking alert dialog
+   * instead of a standard alert dialog.
+   * 
+   * @param title
+   * @param message
+   */
+  private void showMessage(String title, String message) {
+    MessageDialogBox dialog = new MessageDialogBox(title, message, true, false, true);
+    dialog.center();
+  }
+  
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.mantle_openTab = function(name, title, url) {
@@ -263,6 +276,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }
     $wnd.mantle_waqr_preview = function(url, xml) {
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::handleWAQRPreview(Ljava/lang/String;Ljava/lang/String;)(url, xml);
+    }
+    $wnd.mantle_showMessage = function(title, message) {
+      mantle.@org.pentaho.mantle.client.MantleApplication::showMessage(Ljava/lang/String;Ljava/lang/String;)(title, message);
     }
   }-*/;
 
