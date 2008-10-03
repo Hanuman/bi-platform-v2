@@ -18,6 +18,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
@@ -39,7 +40,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
   private Tabs defaultTab = Tabs.GENERAL;
   
   public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
-    super("Properties" + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), "OK", "Cancel", false, true);
+    super(Messages.getInstance().properties() + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
     
     generalTab = new GeneralPanel();
@@ -69,13 +70,13 @@ public class FilePropertiesDialog extends PromptDialogBox {
     });
     this.fileItem = fileItem;
     this.propertyTabs = propertyTabs;
-    this.propertyTabs.setStyleName("gwt-Dialog-TabPanel");
-    this.propertyTabs.getTabBar().setStyleName("gwt-Dialog-TabBar");
+    this.propertyTabs.setStyleName("gwt-Dialog-TabPanel"); //$NON-NLS-1$
+    this.propertyTabs.getTabBar().setStyleName("gwt-Dialog-TabBar"); //$NON-NLS-1$
     this.isAdministrator = isAdministrator;
-    propertyTabs.add(generalTab, new TabWidget("General", "General", null, propertyTabs, generalTab));
+    propertyTabs.add(generalTab, new TabWidget(Messages.getInstance().general(), Messages.getInstance().general(), null, propertyTabs, generalTab));
     fetchFileInfoAndInitTabs();
-    getWidget().setHeight("100%");
-    getWidget().setWidth("100%");
+    getWidget().setHeight("100%"); //$NON-NLS-1$
+    getWidget().setWidth("100%"); //$NON-NLS-1$
     setPixelSize(360, 420);
   }
 
@@ -83,18 +84,18 @@ public class FilePropertiesDialog extends PromptDialogBox {
     AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false, true);
         dialogBox.center();
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (isAdministrator && !fileInfo.isDirectory()) {
           propertyTabs.remove(subscriptionsTab);
-          propertyTabs.add(subscriptionsTab, new TabWidget("Advanced", "Advanced", null, propertyTabs, subscriptionsTab));
+          propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getInstance().advanced(), Messages.getInstance().advanced(), null, propertyTabs, subscriptionsTab));
         }
         if (fileInfo.supportsAccessControls) {
           propertyTabs.remove(permissionsTab);
-          propertyTabs.add(permissionsTab, new TabWidget("Share", "Share", null, propertyTabs, permissionsTab));
+          propertyTabs.add(permissionsTab, new TabWidget(Messages.getInstance().share(), Messages.getInstance().share(), null, propertyTabs, permissionsTab));
         }
         // init all tabs
         for (int i = 0; i < propertyTabs.getTabBar().getTabCount(); i++) {
