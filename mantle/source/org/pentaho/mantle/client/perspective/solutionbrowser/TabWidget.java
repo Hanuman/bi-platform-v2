@@ -47,44 +47,34 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TabWidget extends HorizontalPanel implements MouseListener {
 
-  public static final int TAB_TEXT_LENGTH = 12;
+  private static final int TAB_TEXT_LENGTH = 12;
 
-  PopupPanel popupMenu = new PopupPanel(true);
-  TabPanel tabPanel;
-  Widget tabContent;
-  SolutionBrowserPerspective perspective;
-  String text;
-  String tooltip;
-  HorizontalPanel panel = new HorizontalPanel();
-  HorizontalPanel leftCap = new HorizontalPanel();
-  Image closeTabImage = new Image();
+  private PopupPanel popupMenu = new PopupPanel(true);
+  private TabPanel tabPanel;
+  private Widget tabContent;
+  private SolutionBrowserPerspective perspective;
+  private Label textLabel = new Label();
+  private HorizontalPanel panel = new HorizontalPanel();
+  private HorizontalPanel leftCap = new HorizontalPanel();
+  private Image closeTabImage = new Image();
 
   public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;
     this.perspective = perspective;
-    this.text = text;
-    this.tooltip = tooltip;
     setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-    String trimmedText = text.substring(0, Math.min(18, text.length()));
-    if (!trimmedText.equals(text)) {
-      trimmedText += "..";
-    }
-
     panel.setStyleName("tabWidget");
-
     leftCap.setStyleName("tabWidgetCap");
     Image leftCapImage = new Image();
     MantleImages.images.space1x20().applyTo(leftCapImage);
-    //DOM.setStyleAttribute(leftCapImage.getElement(), "padding", "2px");
     leftCap.setSpacing(0);
+    leftCapImage.setWidth("5px");
     leftCap.add(leftCapImage);
-    HTML spaceLabel = new HTML("&nbsp;");
-    leftCap.add(spaceLabel);
 
-    final Label textLabel = new Label(trimmedText, false);
-    textLabel.setTitle(tooltip);
+    setLabelText(text);
+    setLabelTooltip(tooltip);
+    textLabel.setWordWrap(false);
     textLabel.addMouseListener(this);
 
     tabPanel.addTabListener(new TabListener() {
@@ -123,11 +113,9 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       panel.add(closeTabImage);
       DOM.setStyleAttribute(closeTabImage.getElement(), "margin", "5px");
       DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 0px 5px 0px");
-      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "5px 0px 5px 0px");
     } else {
       DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 5px 5px");
       DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px");
-      DOM.setStyleAttribute(spaceLabel.getElement(), "margin", "4px 0px 5px 0px");
     }
 
     add(leftCap);
@@ -135,6 +123,18 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
   }
 
+  public void setLabelText(String text) {
+    String trimmedText = text.substring(0, Math.min(18, text.length()));
+    if (!trimmedText.equals(text)) {
+      trimmedText += "..";
+    }
+    textLabel.setText(trimmedText);
+  }
+  
+  public void setLabelTooltip(String tooltip) {
+    textLabel.setTitle(tooltip);
+  }
+  
   public void closeTab() {
     if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
       if (tabPanel.getTabBar().getSelectedTab() > 0) {
@@ -225,7 +225,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
         public void okPressed() {
           Bookmark bookmark = new Bookmark();
-          bookmark.setTitle(text);
+          bookmark.setTitle(textLabel.getText());
           bookmark.setUrl(url);
           bookmark.setGroup(groupNameTextBox.getText());
           MantleServiceCache.getService().addBookmark(bookmark, callback);

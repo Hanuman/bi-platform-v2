@@ -7,11 +7,13 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 
 public class SaveCommand implements Command {
 
@@ -31,7 +33,7 @@ public class SaveCommand implements Command {
   public void execute() {
 
     retrieveCachedValues(navigatorPerspective.getCurrentFrame());
-
+    
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
       if (isSaveAs) {
@@ -51,6 +53,10 @@ public class SaveCommand implements Command {
           setPath(path);
           setName(name);
           setType("html"); //$NON-NLS-1$
+
+          TabWidget tab = navigatorPerspective.getCurrentTab();
+          tab.setLabelText(name);
+          tab.setLabelTooltip(name);
 
           if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
