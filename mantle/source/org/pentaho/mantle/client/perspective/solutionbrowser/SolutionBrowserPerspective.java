@@ -402,7 +402,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     AsyncCallback<ReportContainer> callback = new AsyncCallback<ReportContainer>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not get logical report page.", false, false, true);
         dialogBox.center();
       }
 
@@ -557,7 +557,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
         if (mode == FileCommand.BACKGROUND) {
           MessageDialogBox dialogBox = new MessageDialogBox(
-              "Info",
+              Messages.getInstance().info(),
               "Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready.",
               true, false, true);
           dialogBox.center();
@@ -586,7 +586,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
             public void onFailure(Throwable caught) {
-              MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not get file properties.", false, false, true);
               dialogBox.center();
             }
 
@@ -620,12 +620,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                   getCurrentFrame().setFileInfo(fileInfo);
 
                 } else {
-                  MessageDialogBox dialogBox = new MessageDialogBox("Info", "You do not have permission to subscribe to this action sequence.", false, false,
+                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "You do not have permission to subscribe to this action sequence.", false, false,
                       true);
                   dialogBox.center();
                 }
               } else {
-                MessageDialogBox dialogBox = new MessageDialogBox("Info", "This action sequence is not subscribable.", false, false, true);
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "This action sequence is not subscribable.", false, false, true);
                 dialogBox.center();
               }
             }
@@ -686,7 +686,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
             if (showSuccess) {
-              MessageDialogBox dialogBox = new MessageDialogBox("Info", "Solution Navigator Refreshed", false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "Solution Navigator Refreshed", false, false, true);
               dialogBox.center();
             }
           }
@@ -753,13 +753,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         AsyncCallback callback = new AsyncCallback() {
 
           public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not create schedule.", false, false, true);
             dialogBox.center();
           }
 
           public void onSuccess(Object result) {
             MessageDialogBox dialogBox = new MessageDialogBox(
-                "Info",
+                Messages.getInstance().info(),
                 "The action-sequence has been scheduled successfully.  If the output of the action-sequence is \"response\" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.",
                 true, false, true);
             dialogBox.center();
@@ -1103,8 +1103,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           listener.solutionBrowserEvent(selectedTabURL, selectedFileItem);
         }
       } catch (Exception e) {
-        e.printStackTrace();
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", e.toString(), false, false, true);
+        // don't let this fail, it will disturb normal processing
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), e.toString(), false, false, true);
         dialogBox.center();
       }
     }

@@ -309,7 +309,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
               logoPanel.setLaunchURL(url);
             }
           } catch (Exception e) {
-            MessageDialogBox dialogBox = new MessageDialogBox("Error", e.getMessage(), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not fetch user settings.", false, false, true);
             dialogBox.center();
           }
         }
