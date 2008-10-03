@@ -748,12 +748,22 @@
 				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionName;
 			});
 			cursor_clear();
-			if (window.parent != null && window.parent.mantle_initialized) {
+			if (saveMessage != null && "" != saveMessage) {
+			  if (window.top != null && window.top.mantle_initialized) {
+				window.top.mantle_refreshRepository();
+			    window.top.mantle_showMessage("Info", saveMessage);
+			  } else {
+			    alert(saveMessage);
+			  }
+			}
+			
+			if (window.top != null && window.top.mantle_initialized) {
 			  var tmpSaveButton = document.getElementById('folder-down');
 			  var tmpSaveAsButton = document.getElementById('folder-up');
 			  tmpSaveButton.parentNode.parentNode.removeChild(tmpSaveButton.parentNode);
 			  tmpSaveAsButton.parentNode.parentNode.removeChild(tmpSaveAsButton.parentNode);
 			}
+			window.pivot_initialized = true;
 		}
 		
 		function save()
@@ -1207,8 +1217,11 @@
  </div>
  <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
-	<%= saveMessage %>
-			
+
+    <script type="text/javascript">
+      var saveMessage = '<%= saveMessage %>';
+    </script>
+    
 	<% 
 	
 	switch (saveResult) {
