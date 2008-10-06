@@ -494,6 +494,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String mondrianDataCacheFlushedSuccessfully();
 
   /**
+   * Translated "Loading...".
+   * 
+   * @return translated "Loading..."
+  
+   */
+  @DefaultMessage("Loading...")
+  String loadingEllipsis();
+
+  /**
    * Translated "Hide Hidden Files".
    * 
    * @return translated "Hide Hidden Files"

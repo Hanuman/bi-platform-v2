@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
 
@@ -38,7 +39,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.impl.FocusImpl;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
@@ -58,17 +58,17 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     setAnimationEnabled(true);
     sinkEvents(Event.ONDBLCLICK);
     // popupMenu.setAnimationEnabled(false);
-    DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;");
-    DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;");
-    addItem(new TreeItem("Loading..."));
+    DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
+    addItem(new TreeItem(Messages.getInstance().loadingEllipsis()));
 
-    DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0");
-    DOM.setStyleAttribute(focusable.getElement(), "position", "absolute");
-    DOM.setStyleAttribute(focusable.getElement(), "outline", "0px");
-    DOM.setStyleAttribute(focusable.getElement(), "width", "1px");
-    DOM.setStyleAttribute(focusable.getElement(), "height", "1px");
-    DOM.setElementAttribute(focusable.getElement(), "hideFocus", "true");
-    DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1);
+    DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setStyleAttribute(focusable.getElement(), "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setStyleAttribute(focusable.getElement(), "outline", "0px"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setStyleAttribute(focusable.getElement(), "width", "1px"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setStyleAttribute(focusable.getElement(), "height", "1px"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setElementAttribute(focusable.getElement(), "hideFocus", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1); //$NON-NLS-1$
     DOM.appendChild(getElement(), focusable.getElement());
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
 
@@ -84,7 +84,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       try {
         int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
         int[] offsets = ElementUtils.calculateOffsets(getElement());
-        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px");
+        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (Exception ex) {
         // wtf! 
       }
@@ -101,9 +101,9 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem("Delete", new FileCommand(FileCommand.DELETE, popupMenu, this)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
         menuBar.addSeparator();
-        menuBar.addItem(new MenuItem("Properties", new FileCommand(FileCommand.PROPERTIES, popupMenu, this)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, popupMenu, this)));
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
         Timer t = new Timer() {
@@ -134,12 +134,12 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     Element solutionRoot = solutionDocument.getDocumentElement();
     if (createRootNode) {
       FileTreeItem rootItem = new FileTreeItem();
-      rootItem.setText(solutionRoot.getAttribute("path"));
-      rootItem.setTitle(solutionRoot.getAttribute("path"));
+      rootItem.setText(solutionRoot.getAttribute("path")); //$NON-NLS-1$
+      rootItem.setTitle(solutionRoot.getAttribute("path")); //$NON-NLS-1$
       killAllTextSelection(rootItem.getElement());
 
       // added so we can traverse the true names
-      rootItem.setFileName("/");
+      rootItem.setFileName("/"); //$NON-NLS-1$
       addItem(rootItem);
       buildSolutionTree(rootItem, solutionRoot);
     } else {
@@ -241,7 +241,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   private void buildSolutionTree(FileTreeItem parentTreeItem, Element parentElement) {
     NodeList children = parentElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -249,14 +249,14 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       if (childElement == this.focusable) {
         continue;
       }
-      boolean isVisible = "true".equals(childElement.getAttribute("visible"));
-      boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory"));
+      boolean isVisible = "true".equals(childElement.getAttribute("visible")); //$NON-NLS-1$ //$NON-NLS-2$
+      boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
       if (isVisible || showHiddenFiles) {
-        String fileName = childElement.getAttribute("name");
-        String localizedName = childElement.getAttribute("localized-name");
+        String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
+        String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
         FileTreeItem childTreeItem = new FileTreeItem();
         killAllTextSelection(childTreeItem.getElement());
-        childTreeItem.setURL(childElement.getAttribute("url"));
+        childTreeItem.setURL(childElement.getAttribute("url")); //$NON-NLS-1$
         if (showLocalizedFileNames) {
           childTreeItem.setText(localizedName);
           childTreeItem.setTitle(fileName);
@@ -315,7 +315,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         String pathToChild = tmpParent.getFileName();
         while (tmpParent.getParentItem() != null) {
           tmpParent = (FileTreeItem) tmpParent.getParentItem();
-          pathToChild = tmpParent.getFileName() + "/" + pathToChild;
+          pathToChild = tmpParent.getFileName() + "/" + pathToChild; //$NON-NLS-1$
         }
 
         if (parentTreeItem != null) {
@@ -383,7 +383,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     for (int i = 0; i < getItemCount(); i++) {
       if (getSelectedItem() == getItem(i)) {
         // return ((FileTreeItem) getItem(i)).getFileName();
-        return "/";
+        return "/"; //$NON-NLS-1$
       }
     }
 
@@ -396,10 +396,10 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // if each solution is a root, then 1st item is solution
     // else solution is 2nd item
     // so we start from either of these positions
-    String path = "";
+    String path = ""; //$NON-NLS-1$
     for (int i = parents.size() - (isCreateRootNode() ? 3 : 2); i >= 0; i--) {
       FileTreeItem parent = parents.get(i);
-      path += "/" + parent.getFileName();
+      path += "/" + parent.getFileName(); //$NON-NLS-1$
     }
     return path;
   }
@@ -412,7 +412,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public void loadPropertiesDialog() {
     // brings up permission dialog
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
-    String path = getPath().substring(0, getPath().lastIndexOf("/"));
+    String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
     FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null, null,
         null);
     FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
