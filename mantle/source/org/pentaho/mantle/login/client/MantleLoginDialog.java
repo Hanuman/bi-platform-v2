@@ -160,7 +160,7 @@ public class MantleLoginDialog {
           dialog.show();
         }
       }
-    });    
+    });
   }
 
   private Widget buildLoginPanel() {
@@ -285,7 +285,7 @@ public class MantleLoginDialog {
       public void onFailure(Throwable caught) {
         // technically, even a failure means the service has returned
         setServiceReturned();
-        MessageDialogBox dialogBox = new MessageDialogBox(MSGS.error(), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(MSGS.error(), MSGS.serverError(), false, false, true);
         dialogBox.center();
       }
 
