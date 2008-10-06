@@ -46,7 +46,7 @@
  <pagefooter fontname="SanSerif">
 	<message-field alignment="center" fontname="Arial" fontsize="8" height="10" width="20%" x="40%">$(PageofPages)</message-field>
     <message-field height="10" width="40%" alignment="left" fontname="Arial" fontsize="8">Confidential Material</message-field>
-    <label alignment="right" height="10" href="http://www.pentaho.org" width="50%" x="50%" y="15">Pentaho Sample Report</label>   
+    <label alignment="right" height="10" width="50%" x="50%" y="15">Pentaho Sample Report</label>   
     <message-field height="10" width="50%" y="15">Report Run: $(report.date)</message-field>
     
  </pagefooter>
