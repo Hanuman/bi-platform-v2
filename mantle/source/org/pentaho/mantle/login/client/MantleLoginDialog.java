@@ -40,7 +40,7 @@ public class MantleLoginDialog {
   private final ListBox usersListBox = new ListBox();
   private final PasswordTextBox passwordTextBox = new PasswordTextBox();
   private PromptDialogBox dialog;
-  private CheckBox newWindowChk;
+  private CheckBox newWindowChk = new CheckBox();
   private boolean serviceReturned;
   private boolean subscription;
   private Timer timer;
@@ -94,7 +94,7 @@ public class MantleLoginDialog {
               if (result) {
                 long year = 1000 * 60 * 60 * 24 * 365;
                 // one year into the future
-                Date expirationDate = new Date(System.currentTimeMillis()+year);
+                Date expirationDate = new Date(System.currentTimeMillis() + year);
                 Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate); //$NON-NLS-1$ //$NON-NLS-2$
                 outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
@@ -145,9 +145,22 @@ public class MantleLoginDialog {
     showNewWindowOption = show;
   }
 
-  public static void performLogin(AsyncCallback callback) {
-    MantleLoginDialog dialog = new MantleLoginDialog(callback, false);
-    dialog.show();
+  public static void performLogin(final AsyncCallback callback) {
+    // let's only login if we are not actually logged in
+    SERVICE.isAuthenticated(new AsyncCallback<Boolean>() {
+
+      public void onFailure(Throwable caught) {
+        MantleLoginDialog dialog = new MantleLoginDialog(callback, false);
+        dialog.show();
+      }
+
+      public void onSuccess(Boolean result) {
+        if (!result) {
+          MantleLoginDialog dialog = new MantleLoginDialog(callback, false);
+          dialog.show();
+        }
+      }
+    });    
   }
 
   private Widget buildLoginPanel() {
@@ -186,7 +199,6 @@ public class MantleLoginDialog {
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px"); //$NON-NLS-1$
 
-      newWindowChk = new CheckBox();
       newWindowChk.setText(MSGS.launchInNewWindow());
 
       String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked"); //$NON-NLS-1$
@@ -227,6 +239,10 @@ public class MantleLoginDialog {
     if (!serviceReturned) {
       timer = new Timer() {
         public void run() {
+          if (serviceReturned) {
+            show();
+            timer.cancel();
+          }
         }
       };
       timer.scheduleRepeating(200);
@@ -235,10 +251,11 @@ public class MantleLoginDialog {
     dialog.setContent(buildLoginPanel());
     userTextBox.setTabIndex(1);
     passwordTextBox.setTabIndex(2);
-    newWindowChk.setTabIndex(3);
+    if (showNewWindowOption) {
+      newWindowChk.setTabIndex(3);
+    }
     passwordTextBox.setText(""); //$NON-NLS-1$
     dialog.setFocusWidget(userTextBox);
-
     dialog.center();
   }
 
@@ -266,6 +283,8 @@ public class MantleLoginDialog {
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
+        // technically, even a failure means the service has returned
+        setServiceReturned();
         MessageDialogBox dialogBox = new MessageDialogBox(MSGS.error(), caught.toString(), false, false, true);
         dialogBox.center();
       }

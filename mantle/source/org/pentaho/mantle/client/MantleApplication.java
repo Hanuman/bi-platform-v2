@@ -348,8 +348,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         // startup-url on the URL for the app, wins over user-settings
         String startupURL = Utility.getRequestParameter("startup-url");
         if (startupURL != null && !"".equals(startupURL)) {
+          String title = Window.Location.getParameter("name");
           startupURL = URL.decodeComponent(startupURL);
-          solutionBrowserPerspective.showNewURLTab(startupURL, startupURL, startupURL);
+          solutionBrowserPerspective.showNewURLTab(title, title, startupURL);
         }
 
         mainToolbar.solutionBrowserEvent(null, null);

@@ -100,7 +100,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private WorkspacePerspective workspacePanel = null;
 
   private TabPanel contentTabPanel = new TabPanel();
-  private HashMap<Widget,TabWidget>contentTabMap = new HashMap<Widget,TabWidget>();
+  private HashMap<Widget, TabWidget> contentTabMap = new HashMap<Widget, TabWidget>();
   private boolean hasBeenLoaded = false;
   private IPerspectiveCallback perspectiveCallback;
   private Document solutionDocument;
@@ -620,12 +620,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                   getCurrentFrame().setFileInfo(fileInfo);
 
                 } else {
-                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "You do not have permission to subscribe to this action sequence.", false, false,
-                      true);
+                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(),
+                      "You do not have permission to subscribe to this action sequence.", false, false, true);
                   dialogBox.center();
                 }
               } else {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "This action sequence is not subscribable.", false, false, true);
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "This action sequence is not subscribable.", false, false,
+                    true);
                 dialogBox.center();
               }
             }
@@ -823,7 +824,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void createSchedule() {
-    final AsyncCallback authenticatedCallback = new AsyncCallback() {
+    AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
       public void onFailure(Throwable caught) {
         MantleLoginDialog.performLogin(new AsyncCallback() {
@@ -834,30 +835,20 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onSuccess(Object result) {
             createSchedule();
           }
-        });
+        });    
       }
 
-      public void onSuccess(Object result) {
-        MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(),
-            new AsyncCallback<SolutionFileInfo>() {
-
-              public void onFailure(Throwable caught) {
-              }
-
-              public void onSuccess(SolutionFileInfo fileInfo) {
-                if (fileInfo.isSubscribable) {
-                  executeActionSequence(FileCommand.SUBSCRIBE);
-                } else {
-                  NewScheduleDialog dialog = new NewScheduleDialog(fileInfo.getSolution(), fileInfo.getPath(), fileInfo.getName());
-                  dialog.center();
-                }
-              }
-            });
+      public void onSuccess(SolutionFileInfo fileInfo) {
+        if (fileInfo.isSubscribable) {
+          executeActionSequence(FileCommand.SUBSCRIBE);
+        } else {
+          NewScheduleDialog dialog = new NewScheduleDialog(fileInfo.getSolution(), fileInfo.getPath(), fileInfo.getName());
+          dialog.center();
+        }
       }
-
     };
+    MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), callback);
 
-    MantleServiceCache.getService().isAuthenticated(authenticatedCallback);
   }
 
   public void loadPropertiesDialog() {

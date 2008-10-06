@@ -9,6 +9,7 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.service.Utility;
+import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -86,11 +87,22 @@ public class AnalysisViewDialog extends PromptDialogBox {
   private void getSchemaAndCubeInfo() {
     AsyncCallback callback = new AsyncCallback() {
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
-        dialogBox.center();
+        MantleLoginDialog.performLogin(new AsyncCallback() {
+
+          public void onFailure(Throwable caughtLogin) {
+            // we are already logged in, or something horrible happened
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false,
+                true);
+            dialogBox.center();
+          }
+
+          public void onSuccess(Object result) {
+            getSchemaAndCubeInfo();
+          }
+        });
       }
 
-      @SuppressWarnings("unchecked") //$NON-NLS-1$
+      @SuppressWarnings("unchecked")//$NON-NLS-1$
       public void onSuccess(Object result) {
         if (result != null) {
           schemaCubeHashMap = (HashMap<String, List<String>>) result;

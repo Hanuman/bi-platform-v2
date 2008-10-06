@@ -325,9 +325,9 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   public void createDeepLink() {
     if (tabContent instanceof ReloadableIFrameTabPanel) {
       PromptDialogBox dialogBox = new PromptDialogBox("Deep Link", Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
-      String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath() + "?startup-url=";
+      String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath()
+          + "?name=" + textLabel.getText() + "&startup-url=";
       String startup = ((ReloadableIFrameTabPanel) tabContent).getUrl();
-      startup += "&title=" + textLabel.getText();
       TextBox urlbox = new TextBox();
       urlbox.setText(url + URL.encodeComponent(startup));
       urlbox.setVisibleLength(80);

@@ -23,13 +23,17 @@ import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
 import org.pentaho.mantle.client.service.MantleServiceCache;
+import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FilePropertiesDialog extends PromptDialogBox {
-  public enum Tabs { GENERAL, PERMISSION, SUBSCRIBE };
+  public enum Tabs {
+    GENERAL, PERMISSION, SUBSCRIBE
+  };
+
   private TabPanel propertyTabs;
   private GeneralPanel generalTab;
   private PermissionsPanel permissionsTab;
@@ -38,16 +42,17 @@ public class FilePropertiesDialog extends PromptDialogBox {
   private FileItem fileItem;
   private boolean isAdministrator = false;
   private Tabs defaultTab = Tabs.GENERAL;
-  
+
   public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
-    super(Messages.getInstance().properties() + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    super(
+        Messages.getInstance().properties() + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
-    
+
     generalTab = new GeneralPanel();
     permissionsTab = new PermissionsPanel();
     subscriptionsTab = new SubscriptionsPanel();
     this.defaultTab = defaultTab;
-    
+
     super.setCallback(new IDialogCallback() {
 
       public void cancelPressed() {
@@ -84,14 +89,26 @@ public class FilePropertiesDialog extends PromptDialogBox {
     AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false, true);
-        dialogBox.center();
+        MantleLoginDialog.performLogin(new AsyncCallback() {
+
+          public void onFailure(Throwable caughtLogin) {
+            // we are already logged in, or something horrible happened
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false,
+                true);
+            dialogBox.center();
+          }
+
+          public void onSuccess(Object result) {
+            fetchFileInfoAndInitTabs();
+          }
+        });
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (isAdministrator && !fileInfo.isDirectory()) {
           propertyTabs.remove(subscriptionsTab);
-          propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getInstance().advanced(), Messages.getInstance().advanced(), null, propertyTabs, subscriptionsTab));
+          propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getInstance().advanced(), Messages.getInstance().advanced(), null, propertyTabs,
+              subscriptionsTab));
         }
         if (fileInfo.supportsAccessControls) {
           propertyTabs.remove(permissionsTab);
@@ -107,8 +124,8 @@ public class FilePropertiesDialog extends PromptDialogBox {
         showTab(defaultTab);
       }
     };
-    if(fileItem.getName() == null || fileItem.getParent() == null || fileItem.getSolution() == null){
-      //No propertes to show
+    if (fileItem.getName() == null || fileItem.getParent() == null || fileItem.getSolution() == null) {
+      // No propertes to show
       return;
     }
     MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
@@ -116,7 +133,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
 
   public void showTab(Tabs tab) {
     this.defaultTab = tab;
-    if (tab == Tabs.GENERAL  && propertyTabs.getWidgetIndex(generalTab) > -1) {
+    if (tab == Tabs.GENERAL && propertyTabs.getWidgetIndex(generalTab) > -1) {
       propertyTabs.selectTab(propertyTabs.getWidgetIndex(generalTab));
     } else if (tab == Tabs.PERMISSION && propertyTabs.getWidgetIndex(permissionsTab) > -1) {
       propertyTabs.selectTab(propertyTabs.getWidgetIndex(permissionsTab));
