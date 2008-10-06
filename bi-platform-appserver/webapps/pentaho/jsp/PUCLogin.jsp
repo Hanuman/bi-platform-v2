@@ -424,7 +424,7 @@ A:hover {
         <td class="footer_txt">Supplied free of charge with no support,
         no certification, no maintenance, no warranty and no indemnity by
         Pentaho or its Certified Partners. <a
-          href="http://www.pentaho.com/products/enterprise">Consider the
+          href="http://www.pentaho.com/products/enterprise" target="_blank">Consider the
         Pentaho Enterprise Edition</a>: Save time, resources, money and
         mitigate risk. <br />
         &#169; 2005-2008 Pentaho Corporation. All rights reserved.</td>
