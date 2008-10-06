@@ -267,6 +267,35 @@ A:hover {
 <link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
 <link href="/pentaho-style/styles-new.css" rel="stylesheet"
   type="text/css" />
+  
+  <script type="text/javascript">
+		function logout(){
+			var req = null;
+			if (window.XMLHttpRequest){
+			  req = new XMLHttpRequest();
+			} else if(windw.ActiveXObject){
+			  req = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			var responseHandler = function(){
+			 if(req.readyState == 4){
+			   if(req.status == 200){
+			     openLoginDialog('<%=requestedURL%>');
+			    } else {
+			      window.location.href = window.location.href; 
+			    }
+			  }
+			}
+			
+			if(req == null){
+			  document.location="<c:url value='Logout'/>";
+			} else {
+		    req.onreadystatechange = responseHandler;
+		    req.open("GET","<c:url value='Logout'/>",true);
+		    req.send("");
+			}
+		}
+  </script>
+  
 </head>
 
 <body>
@@ -302,20 +331,24 @@ A:hover {
               onMouseOver="this.className='btn_login_box-hover'"
               onMouseOut="this.className='btn_login_box'"
               onBlur="this.className='btn_login_box'"
-              onClick="this.className='btn_login_box';<%  if (null != remoteUser && remoteUser.length() > 0) {%>document.location='<c:url value='Logout'/>'<% } else { %>openLoginDialog('<%=requestedURL%>')<% } %>">
-              <tr>
-                <td class="btn_login_title">Pentaho User Console</td>
-              </tr>
+              onClick="this.className='btn_login_box';<%  if (null != remoteUser && remoteUser.length() > 0) {%>logout()<% } else { %>openLoginDialog('<%=requestedURL%>')<% } %>">
+              
 
               <%
                 if (null != remoteUser && remoteUser.length() > 0) {
               %>
               <tr>
-                <td class="btn_login_text">Logout</td>
+                <td class="btn_login_title">Logged In</td>
+              </tr>
+              <tr>
+                <td class="btn_login_text">Restart Session</td>
               </tr>
               <%
                 } else {
               %>
+              <tr>
+                <td class="btn_login_title">Pentaho User Console</td>
+              </tr>
               <tr>
                 <td class="btn_login_text"><%=Messages.getString("UI.USER_LOGIN")%></td>
               </tr>
