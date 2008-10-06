@@ -98,6 +98,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String schema();
 
   /**
+   * Translated "Could not get user settings".
+   * 
+   * @return translated "Could not get user settings"
+  
+   */
+  @DefaultMessage("Could not get user settings")
+  String couldNotGetUserSettings();
+
+  /**
    * Translated "Help".
    * 
    * @return translated "Help"

@@ -52,7 +52,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.service.Utility;
 import org.pentaho.mantle.client.toolbars.MainToolbar;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
@@ -91,15 +90,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   MenuBar menuBar = new MenuBar() {
     public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
       super.onPopupClosed(sender, autoClosed);
-      this.getSelectedItem().removeStyleDependentName("selected");
+      this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
     }
 
     @Override
     public void onBrowserEvent(Event e) {
       super.onBrowserEvent(e);
 
-      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())) {
-        this.getSelectedItem().addStyleDependentName("selected");
+      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())) { //$NON-NLS-1$ //$NON-NLS-2$
+        this.getSelectedItem().addStyleDependentName("selected"); //$NON-NLS-1$
       }
     }
   };
@@ -118,7 +117,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   PentahoMenuItem propertiesMenuItem = new PentahoMenuItem(Messages.getInstance().properties(), propertiesCommand);
 
   MainToolbar mainToolbar = new MainToolbar(solutionBrowserPerspective);
-  LogoPanel logoPanel = new LogoPanel("http://www.pentaho.com");
+  LogoPanel logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
   
   public boolean isAdministrator = false;
 
@@ -171,42 +170,42 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     Timer timer = new Timer() {
 
       public void run() {
-        RootPanel loadingPanel = RootPanel.get("loading");
+        RootPanel loadingPanel = RootPanel.get("loading"); //$NON-NLS-1$
         if (loadingPanel != null) {
           loadingPanel.removeFromParent();
           loadingPanel.setVisible(false);
-          loadingPanel.setHeight("0px");
+          loadingPanel.setHeight("0px"); //$NON-NLS-1$
         }
       }
     };
     timer.schedule(3000);
 
-    mainApplicationPanel.setStyleName("applicationShell");
+    mainApplicationPanel.setStyleName("applicationShell"); //$NON-NLS-1$
     mainApplicationPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     menuBar.setAutoOpen(false);
-    menuBar.setHeight("26px");
-    menuBar.setWidth("100%");
+    menuBar.setHeight("26px"); //$NON-NLS-1$
+    menuBar.setWidth("100%"); //$NON-NLS-1$
 
     menuAndLogoPanel.setCellPadding(0);
     menuAndLogoPanel.setCellSpacing(0);
-    menuAndLogoPanel.setStyleName("menuBarAndLogoPanel");
-    menuAndLogoPanel.setWidth("100%");
+    menuAndLogoPanel.setStyleName("menuBarAndLogoPanel"); //$NON-NLS-1$
+    menuAndLogoPanel.setWidth("100%"); //$NON-NLS-1$
     menuAndLogoPanel.setWidget(0, 0, menuBar);
     menuAndLogoPanel.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
     menuAndLogoPanel.setWidget(1, 0, mainToolbar);
     menuAndLogoPanel.setWidget(0, 1, logoPanel);
     menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
-    menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px");
-    menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "71px");
+    menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px"); //$NON-NLS-1$
+    menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "71px"); //$NON-NLS-1$
 
-    mainToolbar.setHeight("46px");
-    mainToolbar.setWidth("100%");
+    mainToolbar.setHeight("46px"); //$NON-NLS-1$
+    mainToolbar.setWidth("100%"); //$NON-NLS-1$
     mainApplicationPanel.add(menuAndLogoPanel);
-    mainApplicationPanel.setCellHeight(menuAndLogoPanel, "70px");
+    mainApplicationPanel.setCellHeight(menuAndLogoPanel, "70px"); //$NON-NLS-1$
 
     perspectivesPanel.setAnimationEnabled(true);
-    perspectivesPanel.setHeight("100%");
-    perspectivesPanel.setWidth("100%");
+    perspectivesPanel.setHeight("100%"); //$NON-NLS-1$
+    perspectivesPanel.setWidth("100%"); //$NON-NLS-1$
 
     solutionBrowserPerspective.addSolutionBrowserListener(mainToolbar);
     solutionBrowserPerspective.addSolutionBrowserListener(this);
@@ -296,20 +295,20 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         for (IUserSetting setting : settings) {
           try {
             if (IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR.equals(setting.getSettingName())) {
-              boolean showNavigator = "true".equals(setting.getSettingValue());
+              boolean showNavigator = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
               solutionBrowserPerspective.setNavigatorShowing(showNavigator);
             } else if (IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES.equals(setting.getSettingName())) {
-              boolean showLocalizedFileNames = "true".equals(setting.getSettingValue());
+              boolean showLocalizedFileNames = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
               solutionBrowserPerspective.setUseLocalizedFileNames(showLocalizedFileNames);
             } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
-              boolean showHiddenFiles = "true".equals(setting.getSettingValue());
+              boolean showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
               solutionBrowserPerspective.setShowHiddenFiles(showHiddenFiles);
             } else if (IMantleUserSettingsConstants.MANTLE_LOGO_LAUNCH_URL.equals(setting.getSettingName())) {
               String url = setting.getSettingValue();
               logoPanel.setLaunchURL(url);
             }
           } catch (Exception e) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not fetch user settings.", false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetUserSettings(), false, false, true);
             dialogBox.center();
           }
         }
@@ -328,16 +327,16 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         // menubar=no,location=no,resizable=yes,scrollbars=no,status=no,width=1200,height=800
         RootPanel.get().add(mainApplicationPanel);
 
-        boolean showExplorerViewOnStartup = "true".equals(settings.get("show-explorer-view-on-startup"));
-        showAdvancedFeatures = "true".equals(settings.get("show-advanced-features"));
+        boolean showExplorerViewOnStartup = "true".equals(settings.get("show-explorer-view-on-startup")); //$NON-NLS-1$ //$NON-NLS-2$
+        showAdvancedFeatures = "true".equals(settings.get("show-advanced-features")); //$NON-NLS-1$ //$NON-NLS-2$
         buildMenuBar(settings);
         solutionBrowserPerspective.setExplorerViewShowing(showExplorerViewOnStartup);
 
-        int numStartupURLs = Integer.parseInt(settings.get("num-startup-urls"));
+        int numStartupURLs = Integer.parseInt(settings.get("num-startup-urls")); //$NON-NLS-1$
         for (int i = 0; i < numStartupURLs; i++) {
-          String url = settings.get("startup-url-" + (i + 1));
-          String name = settings.get("startup-name-" + (i + 1));
-          if (url != null && !"".equals(url)) {
+          String url = settings.get("startup-url-" + (i + 1)); //$NON-NLS-1$
+          String name = settings.get("startup-name-" + (i + 1)); //$NON-NLS-1$
+          if (url != null && !"".equals(url)) { //$NON-NLS-1$
             solutionBrowserPerspective.showNewURLTab(name != null ? name : url, url, url);
           }
         }
@@ -346,9 +345,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         }
 
         // startup-url on the URL for the app, wins over user-settings
-        String startupURL = Utility.getRequestParameter("startup-url");
-        if (startupURL != null && !"".equals(startupURL)) {
-          String title = Window.Location.getParameter("name");
+        String startupURL = Window.Location.getParameter("startup-url"); //$NON-NLS-1$
+        if (startupURL != null && !"".equals(startupURL)) { //$NON-NLS-1$
+          String title = Window.Location.getParameter("name"); //$NON-NLS-1$
           startupURL = URL.decodeComponent(startupURL);
           solutionBrowserPerspective.showNewURLTab(title, title, startupURL);
         }
@@ -445,13 +444,13 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         menuBar.addItem(Messages.getInstance().file(), fileMenu);
 
         // add plugin perspectives (urls)
-        int numPluginPerspectives = Integer.parseInt(settings.get("num-plugin-perspectives"));
+        int numPluginPerspectives = Integer.parseInt(settings.get("num-plugin-perspectives")); //$NON-NLS-1$
         for (int i = 0; i < numPluginPerspectives; i++) {
-          String url = settings.get("plugin-perspective-url-" + (i + 1));
+          String url = settings.get("plugin-perspective-url-" + (i + 1)); //$NON-NLS-1$
           PluginPerspective plugin = new PluginPerspective(MantleApplication.this, url);
           perspectivesPanel.add(plugin);
           // add menu item
-          viewMenu.addItem(settings.get("plugin-perspective-name-" + (i + 1)), plugin);
+          viewMenu.addItem(settings.get("plugin-perspective-name-" + (i + 1)), plugin); //$NON-NLS-1$
         }
 
         // add additions to the view menu
@@ -506,7 +505,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
-    final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL));
+    final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
 
     printMenuItem.setEnabled(isEnabled);
     saveMenuItem.setEnabled(isEnabled);
