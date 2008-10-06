@@ -47,7 +47,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.BrowserToo
 import org.pentaho.mantle.client.perspective.workspace.IWorkspaceCallback;
 import org.pentaho.mantle.client.perspective.workspace.WorkspacePerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.service.Utility;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
@@ -683,7 +682,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onResponseReceived(Request request, Response response) {
             // ok, we have a repository document, we can build the GUI
             // consider caching the document
-            Utility.setDefaultCursor();
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);

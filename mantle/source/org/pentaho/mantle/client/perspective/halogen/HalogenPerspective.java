@@ -22,7 +22,6 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
-import org.pentaho.mantle.client.service.Utility;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -54,7 +53,6 @@ public class HalogenPerspective extends DockPanel implements IPerspective {
   }
   
   public void loadPerspective(boolean force, boolean showStatus) {
-    Utility.enableMouseSelection();
     // do this once
     if (!loaded || force) {
       // load
@@ -68,6 +66,5 @@ public class HalogenPerspective extends DockPanel implements IPerspective {
   }
 
   public void unloadPerspective() {
-    Utility.disableMouseSelection();
   }
 }

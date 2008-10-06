@@ -8,7 +8,6 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.service.Utility;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -32,7 +31,6 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public AnalysisViewDialog(Document solutionRepositoryDoc) {
     super(Messages.getInstance().newAnalysisView(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, new VerticalPanel());
     buildAnalysisView(solutionRepositoryDoc);
-    Utility.enableMouseSelection();
     lboxSchema.setTabIndex(1);
     lboxCube.setTabIndex(2);
     setFocusWidget(lboxSchema);
