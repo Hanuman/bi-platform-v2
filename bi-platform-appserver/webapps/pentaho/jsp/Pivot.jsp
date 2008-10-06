@@ -669,6 +669,7 @@
 
 	<link href="adhoc/styles/repositoryBrowserStyles.css" rel="stylesheet" type="text/css" />
  
+    <script src="wcf/scroller.js" type="text/javascript"></script> 
 	<script src="js/ajaxslt0.7/xmltoken.js" type="text/javascript"></script>
 	<script src="js/ajaxslt0.7/util.js" type="text/javascript"></script>	
 	<script src="js/ajaxslt0.7/misc.js" type="text/javascript"></script>
@@ -737,6 +738,7 @@
 		}
 		
 		function load(){
+			xScrollerScroll(); 
 			cursor_wait();
 			controller = new PivotRepositoryBrowserController();
 			controller.setOnAfterSaveCallback( function()
@@ -902,6 +904,7 @@
 		</c:if> <c:if test="${query01 != null}">
 
 			<%-- define table, navigator and forms --%>
+			<wcf:scroller/> 
 			<jp:table id="table01" query="#{query01}" />
 			<jp:navigator id="navi01" query="#{query01}" visible="false" />
 			<wcf:form id="mdxedit01" xmlUri="/WEB-INF/jpivot/table/mdxedit.xml"
@@ -1217,7 +1220,7 @@
  </div>
  <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
-
+			
     <script type="text/javascript">
       var saveMessage = '<%= saveMessage %>';
     </script>
