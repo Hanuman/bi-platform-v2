@@ -210,6 +210,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
+
+          Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME);
+
           frame.setVisible(true);
           refreshIfPDF(frame.getElement());
         }
@@ -311,6 +314,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     int showIndex = -1;
     if (contentTabPanel.getWidgetCount() == 0) {
       showIndex = contentPanel.getWidgetIndex(launchPanel);
+      Window.setTitle(MantleApplication.PRODUCT_NAME);
     } else {
       showIndex = contentPanel.getWidgetIndex(contentTabPanel);
     }

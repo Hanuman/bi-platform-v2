@@ -58,11 +58,13 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private HorizontalPanel panel = new HorizontalPanel();
   private HorizontalPanel leftCap = new HorizontalPanel();
   private Image closeTabImage = new Image();
-
+  private String fullText;
+  
   public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;
     this.perspective = perspective;
+    this.fullText = text;
     setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
     panel.setStyleName("tabWidget");
@@ -124,6 +126,10 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
   }
 
+  public String getText() {
+    return fullText;
+  }
+  
   public void setLabelText(String text) {
     String trimmedText = text.substring(0, Math.min(18, text.length()));
     if (!trimmedText.equals(text)) {
