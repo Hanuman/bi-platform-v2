@@ -95,20 +95,22 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     this.url = url;
   }
 
+  private void select(){
+    if(fileItemCallback.getSelectedFileItem() != null){
+      fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
+    }
+    
+    fileItemCallback.setSelectedFileItem(this);
+    fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+    
+  }
+  
   public void onBrowserEvent(Event event) {
     if ((DOM.eventGetType(event) & Event.ONDBLCLICK) == Event.ONDBLCLICK) {
-      if (fileItemCallback.getSelectedFileItem() != null) {
-        fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
-      }
-      fileItemCallback.setSelectedFileItem(this);
-      fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+      select();
       fileItemCallback.openFile(FileCommand.RUN);
     } else if (DOM.eventGetButton(event) == Event.BUTTON_LEFT) {
-      if (fileItemCallback.getSelectedFileItem() != null) {
-        fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
-      }
-      fileItemCallback.setSelectedFileItem(this);
-      fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+      select();
       fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
     } else if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
       final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
@@ -120,11 +122,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   }
 
   public void handleRightClick(final int left, final int top) {
-    if (fileItemCallback.getSelectedFileItem() != null) {
-      fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
-    }
-    fileItemCallback.setSelectedFileItem(this);
-    fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+    select();
     fileSelectionListenerCollection.fireFileSelectionChanged(fileItemCallback);
 
     popupMenu.setPopupPosition(left, top);

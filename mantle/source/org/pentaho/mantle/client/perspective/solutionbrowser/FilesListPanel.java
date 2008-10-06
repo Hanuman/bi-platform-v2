@@ -99,9 +99,17 @@ public class FilesListPanel extends FlowPanel {
           if (selectedFileItem != null && selectedFileItem.getFullPath().equals(fileLabel.getFullPath())) {
             fileLabel.setStyleName("fileLabelSelected"); //$NON-NLS-1$
             selectedFileItem = fileLabel;
+            perspective.setSelectedFileItem(selectedFileItem);
           }
         }
       }
+    }
+  }
+  
+  public void deselect(){
+    for(int i=0; i< filesList.getRowCount(); i++){
+      FileItem item = (FileItem) filesList.getWidget(i, 0);
+      item.setStyleName("fileLabel"); //$NON-NLS-1$
     }
   }
 
