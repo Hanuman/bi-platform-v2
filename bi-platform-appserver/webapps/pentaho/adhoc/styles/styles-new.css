@@ -121,7 +121,7 @@ textarea.constraintsValid
 .popupDialog_header {
 	padding: 0px 0px 0px 5px;
 	height: 25px;
-	background-color: #a8d36f;
+	background-color: #cfcfcf;
 	border-bottom: 1px solid #808080;
 	color: #000000;
 }
@@ -148,7 +148,7 @@ textarea.constraintsValid
 }
 .searchDialog_resultsHeader {
 	overflow:auto; 
-	border: 1px solid #818f49; 
+	border: 1px solid #818181; 
 	background-color: #ffffff; 
 	height:25px;
 	overflow:hidden;
@@ -163,14 +163,13 @@ textarea.constraintsValid
 }
 .searchDialog_resultsHeaderCell_left {
 	overflow:auto; 
-	border: 1px solid #818f49; 
-	background-color: #ffffff; 
+	border: 1px solid #818181; 
 	margin: 5px 0px 10px 0px;
 	padding:0px 0px 2px 5px;
-	background-color:#daedc1;
+	background-color:#dadada;
 	border-top:0px;
 	border-right:0px;
-	border-left:1px solid #daedc1;
+	border-left:1px;
 	width:250px;
 }
 .searchDialog_resultsHeaderCell_right {
@@ -483,7 +482,7 @@ div.resultList
 {
 	overflow-x:hidden; 
 	overflow-y:auto; 
-	border: 1px solid #818f49; 
+	border: 1px solid #818181; 
 	background-color: #ffffff; 
 	padding: 5px; 
 	margin: 5px 0px 10px 0px;
