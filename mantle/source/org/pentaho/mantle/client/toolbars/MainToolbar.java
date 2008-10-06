@@ -33,7 +33,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserList
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -43,7 +42,7 @@ import com.google.gwt.user.client.ui.Image;
 public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   protected String MAIN_TOOBAR_STYLE_NAME = "mainToolbar"; //$NON-NLS-1$
 
-  private String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" };
+  private String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   SolutionBrowserPerspective solutionBrowser;
   
@@ -68,20 +67,20 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.open_32().applyTo(openImage);
     openFileButton = new ToolbarButton(openImage);
     openFileButton.setCommand(new OpenFileCommand(solutionBrowser));
-    openFileButton.setToolTip("Open...");
+    openFileButton.setToolTip(Messages.getInstance().openEllipsis());
 
     
     Image newAnalysisImage = new Image();
     MantleImages.images.new_analysis_32().applyTo(newAnalysisImage);
     newAnalysisButton = new ToolbarButton(newAnalysisImage);
     newAnalysisButton.setCommand(new AnalysisViewCommand(solutionBrowser));
-    newAnalysisButton.setToolTip("New Analysis View...");
+    newAnalysisButton.setToolTip(Messages.getInstance().newAnalysisViewEllipsis());
 
     Image newAdhocImage = new Image();
     MantleImages.images.new_report_32().applyTo(newAdhocImage);
     newAdhocButton = new ToolbarButton(newAdhocImage);
     newAdhocButton.setCommand(new WAQRCommand(solutionBrowser));
-    newAdhocButton.setToolTip("New Report...");
+    newAdhocButton.setToolTip(Messages.getInstance().newAdhocReportEllipsis());
 
     
     
@@ -91,7 +90,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.print_32_disabled().applyTo(printDisabledImage);
     printButton = new ToolbarButton(printImage, printDisabledImage);
     printButton.setCommand(new PrintCommand(solutionBrowser));
-    printButton.setToolTip("Print");
+    printButton.setToolTip(Messages.getInstance().print());
     printButton.setEnabled(false);
 
     Image saveButtonImage = new Image();
@@ -100,7 +99,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.save_32_disabled().applyTo(saveDisabledImage);
     saveButton = new ToolbarButton(saveButtonImage, saveDisabledImage);
     saveButton.setCommand(new SaveCommand(solutionBrowser, false));
-    saveButton.setToolTip("Save");
+    saveButton.setToolTip(Messages.getInstance().save());
     saveButton.setEnabled(false);
 
     Image saveAsButtonImage = new Image();
@@ -109,7 +108,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.saveAs_32_disabled().applyTo(saveAsDisabledImage);
     saveAsButton = new ToolbarButton(saveAsButtonImage, saveAsDisabledImage);
     saveAsButton.setCommand(new SaveCommand(solutionBrowser, true));
-    saveAsButton.setToolTip("Save As");
+    saveAsButton.setToolTip(Messages.getInstance().saveAs());
     saveAsButton.setEnabled(false);
 
     Image toggleWorkspaceImage = new Image();
@@ -171,7 +170,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
     toggleBrowserButton();
     toggleWorkspaceButton();
-    printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL));
+    printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
       for (String saveType : saveTypes) {

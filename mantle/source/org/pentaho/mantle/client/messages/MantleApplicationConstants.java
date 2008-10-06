@@ -890,6 +890,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String saveAsEllipsis();
 
   /**
+   * Translated "New Report...".
+   * 
+   * @return translated "New Report..."
+  
+   */
+  @DefaultMessage("New Report...")
+  String newAdhocReportEllipsis();
+
+  /**
    * Translated "Favorites".
    * 
    * @return translated "Favorites"
@@ -1079,12 +1088,12 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String question();
 
   /**
-   * Translated "New Ad Hoc Report".
+   * Translated "New Report".
    * 
-   * @return translated "New Ad Hoc Report"
+   * @return translated "New Report"
   
    */
-  @DefaultMessage("New Ad Hoc Report")
+  @DefaultMessage("New Report")
   String newAdhocReport();
 
   /**
@@ -1095,6 +1104,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Error")
   String error();
+
+  /**
+   * Translated "New Analysis View...".
+   * 
+   * @return translated "New Analysis View..."
+  
+   */
+  @DefaultMessage("New Analysis View...")
+  String newAnalysisViewEllipsis();
 
   /**
    * Translated "Open".
