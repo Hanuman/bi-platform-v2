@@ -95,7 +95,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     super.onBrowserEvent(event);
     try {
       if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
-        // load menu
+        // load menu (Note: disabled as Delete and Properties have no meaning for Folders now
         int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
         int top = Window.getScrollTop() + DOM.eventGetClientY(event);
         popupMenu.setPopupPosition(left, top);
@@ -111,7 +111,9 @@ public class SolutionTree extends Tree implements IFileItemCallback {
             popupMenu.show();
           }
         };
-        t.schedule(250);
+        //Uncomment once these popup menu items actually mean something
+        //t.schedule(250);
+        
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
       }
