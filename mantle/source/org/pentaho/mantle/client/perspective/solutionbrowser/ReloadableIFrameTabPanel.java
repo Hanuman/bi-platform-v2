@@ -18,6 +18,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -27,6 +28,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   String url;
   NamedFrame frame;
   protected SolutionFileInfo fileInfo;
+  protected FormPanel form;
   
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
@@ -41,9 +43,14 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   }
 
   public void reload() {
-    this.frame.setUrl(
-        getCurrentUrl()
-    );
+
+    if(form != null){
+      form.submit();
+    } else {
+      frame.setUrl(
+          getCurrentUrl()
+      );
+    }
   }
   
   public void setFileInfo(SolutionFileInfo info){
@@ -80,6 +87,14 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
 
   public void setFrame(NamedFrame frame) {
     this.frame = frame;
+  }
+  
+  public FormPanel getForm() {
+    return form;
+  }
+
+  public void setForm(FormPanel form) {
+    this.form = form;
   }
   
   public class CustomFrame extends NamedFrame{

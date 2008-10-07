@@ -210,12 +210,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
-          Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
+          ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
+          
+          NamedFrame frame = tabPanel.getFrame();
 
           Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME);
 
           frame.setVisible(true);
-          refreshIfPDF(frame.getElement());
+          refreshIfPDF(tabPanel);
         }
         for (int i = 0; i < tabIndex; i++) {
           hideFrame(i);
@@ -1176,12 +1178,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
   }-*/;
 
-  private native void refreshIfPDF(com.google.gwt.dom.client.Element frame)
-  /*-{
-    if(frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0){
-      frame.contentWindow.location.href = frame.contentWindow.location.href;
+  private void refreshIfPDF(ReloadableIFrameTabPanel frame)
+  {
+    if(isPDF(frame.getElement())){
+      frame.reload();
     }
-  }-*/;
+  }
 
   public void backgroundExecutionCompleted() {
     showWorkspace();
@@ -1196,6 +1198,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     form.setAction(url);
     form.add(new Hidden("reportXml", xml));
     form.submit();
+    ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
   }
 
 }
