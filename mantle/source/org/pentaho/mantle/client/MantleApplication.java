@@ -285,7 +285,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetUserSettings(), true, false, true);
+        dialog.center();
       }
 
       public void onSuccess(List<IUserSetting> settings) {
