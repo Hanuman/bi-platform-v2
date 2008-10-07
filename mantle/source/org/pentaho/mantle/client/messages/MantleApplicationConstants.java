@@ -1212,4 +1212,20 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
+
+  /**
+   * Translated "Open".
+   * For Open dialog box
+   * @return translated "Open"  
+   */
+  @DefaultMessage("Open")
+  String open();
+  
+  /**
+   * Error string when the file to be opened does not exist.
+   * 
+   * @param fileName File name the user tried to open
+   * @return Actual error string with the file name appended
+   */
+  String fileDoesNotExist(String fileName);  
 }

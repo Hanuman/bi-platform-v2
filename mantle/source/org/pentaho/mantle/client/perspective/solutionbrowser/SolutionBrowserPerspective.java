@@ -21,11 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -459,12 +461,30 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     for (int i = 1; i < pathSegments.size(); i++) {
       repoPath += "/" + pathSegments.get(i);
     }
+    
+    final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
+    if (!fileExists) {
+      final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().open(), Messages.getInstance().fileDoesNotExist(name), false, false, true);
 
+      dialogBox.setCallback(new IDialogCallback() {
+        public void cancelPressed() {
+        }
+
+        public void okPressed() {
+          dialogBox.hide();
+          (new OpenFileCommand(SolutionBrowserPerspective.this)).execute();
+        }
+      });
+      
+      dialogBox.center();
+      return;
+    }
+    
     selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null);
 
-    pathSegments.add(name);
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
-
+    pathSegments.add(name);
+    
     List<FileTreeItem> allNodes = solutionTree.getAllNodes();
     for (FileTreeItem item : allNodes) {
       item.setSelected(false);

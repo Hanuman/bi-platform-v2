@@ -189,22 +189,77 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
   }
 
+  /**
+   * Checks if the given file name exists in the directory specified by pathSegments
+   * @param pathSegments List consisting of hierarchial names of directory {a/b/c/example.txt => [a,b,c]}  
+   * @param pFileName File name to be looked for in the given directory {a/b/c/example.txt => example.txt}
+   * @return True if file exists, false otherwise
+   */
+  public boolean doesFileExist(final List<String> pathSegments, final String pFileName) {
+    // The IF part is to check if we are looking only at the top most level
+    // If so then we need to iterate through itemCount
+    if (pathSegments.size() == 0) {
+      final int itemCount = getItemCount();
+      for (int x = 0; x < itemCount; x++) {
+        final FileTreeItem selectedItem = (FileTreeItem) getItem(x);
+        if (selectedItem.fileName.equalsIgnoreCase(pFileName)) {
+          return true;
+        }        
+      }
+    } else {
+      // If we are here then we are looking for a file inside a sub directory in the solution tree
+      // getTreeItem method returns us the directory node we are looking for based on the pathSegments variable
+      final FileTreeItem directoryItem = getTreeItem(pathSegments);
+      
+      if (directoryItem != null) {
+        // Iterate through the directory and check if the name we are searching for exists in 
+        // the file list of current dir
+        final List<Element> filesInCurrDirectory = (List<Element>) directoryItem.getUserObject();
+        if (filesInCurrDirectory != null) {
+          final int fileListSize  = filesInCurrDirectory.size();
+          for (int i = 0; i < fileListSize; i++) {
+            final Element fileElement = filesInCurrDirectory.get(i);
+            final String currentFileName = fileElement.getAttribute("name"); //$NON-NLS-1$
+            if ((currentFileName != null) && (currentFileName.equalsIgnoreCase(pFileName))) {
+              return true;
+            } 
+          }
+        }
+      }
+    }
+    return false;
+  }
+  
   public FileTreeItem getTreeItem(List<String> pathSegments) {
+    boolean foundMatch = false;
+    FileTreeItem selectedItem = null;
+    
     // find the tree node whose location matches the pathSegment paths
     for (int x = 0; x < getItemCount(); x++) {
       FileTreeItem rootItem = (FileTreeItem) getItem(x);
-      FileTreeItem selectedItem = rootItem;
+      selectedItem = rootItem;
       for (String segment : pathSegments) {
+        foundMatch = false;
+        // Check first if the current selected item already matches the directory at the root level
+        // If so then go to the next segment
+        if (segment.equalsIgnoreCase(selectedItem.getFileName())) {
+          foundMatch = true;
+          continue;
+        }
+        // Here we are checking into the contents of the directory 
+        // i.e. directories and files existing under the top level directory
         for (int i = 0; i < selectedItem.getChildCount(); i++) {
           FileTreeItem item = (FileTreeItem) selectedItem.getChild(i);
           if (segment.equals(item.getFileName())) {
+            foundMatch = true;
             selectedItem = item;
             break;
           }
         }
       }
-      // if we actually found something meaningful
-      if (selectedItem != rootItem) {
+      // if we actually found something meaningful, 
+      // then we do not need to look through the rest of the directories
+      if (foundMatch) {
         return selectedItem;
       }
     }
