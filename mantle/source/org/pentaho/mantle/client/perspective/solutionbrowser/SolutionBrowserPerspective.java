@@ -770,7 +770,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         RequestCallback callback = new RequestCallback() {
 
           public void onError(Request request, Throwable exception) {
-            Window.alert(exception.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetRepositoryDocument(), false, false, true);
+            dialogBox.center();
           }
 
           public void onResponseReceived(Request request, Response response) {
@@ -783,7 +784,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
             if (showSuccess) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "Solution Navigator Refreshed", false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().solutionBrowserRefreshed(), false, false, true);
               dialogBox.center();
             }
           }
@@ -850,7 +851,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         AsyncCallback callback = new AsyncCallback() {
 
           public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not create schedule.", false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotCreateSchedule(), false, false, true);
             dialogBox.center();
           }
 
@@ -992,7 +993,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (!groupMap.keySet().isEmpty()) {
       favoritesGroupMenuBar.addSeparator();
     }
-    favoritesGroupMenuBar.addItem(new MenuItem("Manage Groups", new Command() {
+    favoritesGroupMenuBar.addItem(new MenuItem(Messages.getInstance().manageGroups(), new Command() {
       public void execute() {
         // bring up dialog to edit groups
         UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.PREFERENCE.FAVORITES);
@@ -1005,7 +1006,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     AsyncCallback<List<Bookmark>> callback = new AsyncCallback<List<Bookmark>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotLoadBookmarks(), true, false, true);
+        dialog.center();
       }
 
       public void onSuccess(List<Bookmark> bookmarks) {
@@ -1052,7 +1054,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       viewMenuItems.add(showWorkspaceMenuItem);
       // viewMenuItems.add(showHiddenFilesMenuItem);
       if (MantleApplication.showAdvancedFeatures) {
-        favoritesGroupMenuBar.setTitle("Favorite Groups");
+        favoritesGroupMenuBar.setTitle(Messages.getInstance().favoriteGroups());
         viewMenuItems.add(favoritesGroupMenuBar);
       }
     }
@@ -1262,7 +1264,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void handleWAQRPreview(String url, String xml) {
-    showNewURLTab("Preview", "Ad Hoc Report Preview", "about:blank");
+    showNewURLTab(Messages.getInstance().preview(), "Ad Hoc Report Preview", "about:blank");
     NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
     final FormPanel form = new FormPanel(namedFrame);
     RootPanel.get().add(form);

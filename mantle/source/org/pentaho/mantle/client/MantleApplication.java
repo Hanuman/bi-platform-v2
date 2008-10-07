@@ -478,7 +478,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         }
 
         MenuBar helpMenu = new MenuBar(true);
-        helpMenu.addItem(Messages.getInstance().documentationEllipsis(), new OpenDocCommand(solutionBrowserPerspective));
+        helpMenu.addItem(Messages.getInstance().documentationEllipsis(), new OpenDocCommand(settings.get("documentation-url"), solutionBrowserPerspective));
         helpMenu.addSeparator();
         helpMenu.addItem(Messages.getInstance().pentahoHomePageName(), new PentahoHomeCommand());
         helpMenu.addSeparator();

@@ -3,7 +3,7 @@ package org.pentaho.mantle.client.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	C:/development-2.0/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
+ * 	E:/development-pentaho/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
  */
 public interface MantleApplicationConstants extends com.google.gwt.i18n.client.Messages {
   
@@ -98,6 +98,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String schema();
 
   /**
+   * Translated "Open".
+   * 
+   * @return translated "Open"
+  
+   */
+  @DefaultMessage("Open")
+  String open();
+
+  /**
    * Translated "Could not get user settings".
    * 
    * @return translated "Could not get user settings"
@@ -114,6 +123,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Help")
   String help();
+
+  /**
+   * Translated "Solution Browser refreshed".
+   * 
+   * @return translated "Solution Browser refreshed"
+  
+   */
+  @DefaultMessage("Solution Browser refreshed")
+  String solutionBrowserRefreshed();
 
   /**
    * Translated "Reset Repository".
@@ -168,6 +186,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Repository cache refreshed successfully")
   String refreshRepositorySuccess();
+
+  /**
+   * Translated "Favorite Groups".
+   * 
+   * @return translated "Favorite Groups"
+  
+   */
+  @DefaultMessage("Favorite Groups")
+  String favoriteGroups();
 
   /**
    * Translated "OK".
@@ -332,6 +359,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String cleanContentRepository();
 
   /**
+   * Translated "Preview".
+   * 
+   * @return translated "Preview"
+  
+   */
+  @DefaultMessage("Preview")
+  String preview();
+
+  /**
    * Translated "Below lists collections of logically grouped Pentaho folders and documents called Solutions. By default, the "Sample" Solution is installed and contains working examples demonstrating the functionality of the platform. Once a Solution is chosen, use the file browser to locate and launch a document. To learn more about how to modify the examples or build a Solution, read the <A target="_blank" HREF="http://wiki.pentaho.org/display/PentahoDoc/Creating+Pentaho+Solutions">'Creating Pentaho Solutions'</A> document available at wiki.pentaho.org.<BR><BR>The 'Classic View' is provided for nostalgic purposes only and is not supported by Pentaho.".
    * 
    * @return translated "Below lists collections of logically grouped Pentaho folders and documents called Solutions. By default, the "Sample" Solution is installed and contains working examples demonstrating the functionality of the platform. Once a Solution is chosen, use the file browser to locate and launch a document. To learn more about how to modify the examples or build a Solution, read the <A target="_blank" HREF="http://wiki.pentaho.org/display/PentahoDoc/Creating+Pentaho+Solutions">'Creating Pentaho Solutions'</A> document available at wiki.pentaho.org.<BR><BR>The 'Classic View' is provided for nostalgic purposes only and is not supported by Pentaho."
@@ -429,6 +465,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Remove")
   String remove();
+
+  /**
+   * Translated "Could not get repository document".
+   * 
+   * @return translated "Could not get repository document"
+  
+   */
+  @DefaultMessage("Could not get repository document")
+  String couldNotGetRepositoryDocument();
 
   /**
    * Translated "Link".
@@ -593,6 +638,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String removeAll();
 
   /**
+   * Translated "Could not load bookmarks".
+   * 
+   * @return translated "Could not load bookmarks"
+  
+   */
+  @DefaultMessage("Could not load bookmarks")
+  String couldNotLoadBookmarks();
+
+  /**
    * Translated "Files".
    * 
    * @return translated "Files"
@@ -681,15 +735,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Run and Archive")
   String archive();
-
-  /**
-   * Translated "docs/pentaho_ee_user_guide_v20.pdf".
-   * 
-   * @return translated "docs/pentaho_ee_user_guide_v20.pdf"
-  
-   */
-  @DefaultMessage("docs/pentaho_ee_user_guide_v20.pdf")
-  String documentationEEUrl();
 
   /**
    * Translated "No updates are available.".
@@ -818,15 +863,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String tools();
 
   /**
-   * Translated "docs/pentaho_ce_user_guide_v20.pdf".
-   * 
-   * @return translated "docs/pentaho_ce_user_guide_v20.pdf"
-  
-   */
-  @DefaultMessage("docs/pentaho_ce_user_guide_v20.pdf")
-  String documentationUrl();
-
-  /**
    * Translated "Browse".
    * 
    * @return translated "Browse"
@@ -888,6 +924,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Browser")
   String showSolutionBrowser();
+
+  /**
+   * Translated "Could not create schedule".
+   * 
+   * @return translated "Could not create schedule"
+  
+   */
+  @DefaultMessage("Could not create schedule")
+  String couldNotCreateSchedule();
 
   /**
    * Translated "Add All".
@@ -1196,6 +1241,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String newSchedule();
 
   /**
+   * Translated "Manage Groups".
+   * 
+   * @return translated "Manage Groups"
+  
+   */
+  @DefaultMessage("Manage Groups")
+  String manageGroups();
+
+  /**
    * Translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.".
    * 
    * @return translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary."
@@ -1212,6 +1266,7 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
+
   
   /**
    * Translated "An analysis view, {0}, is already open.  Select OK to close this view and continue?"
@@ -1222,14 +1277,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   @DefaultMessage("An analysis view, {0}, is already open.  Select OK to close this view and continue?")
   String analysisViewIsOpen(String fileName);
 
-  /**
-   * Translated "Open".
-   * For Open dialog box
-   * @return translated "Open"  
-   */
-  @DefaultMessage("Open")
-  String open();
-  
   /**
    * Error string when the file to be opened does not exist.
    * 

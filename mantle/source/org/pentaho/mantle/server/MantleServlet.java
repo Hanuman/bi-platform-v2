@@ -580,6 +580,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         settings.put(key, value);
       }
 
+      settings.put("login-show-users-list", PentahoSystem.getSystemSetting("login-show-users-list", ""));
+      settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", ""));
+      
       // see if we have any plugin settings
       IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(getPentahoSession(), "IPluginSettings");
       if (pluginSettings != null) {
