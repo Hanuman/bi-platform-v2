@@ -2,12 +2,15 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
+import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.dialogs.AnalysisViewDialog;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AnalysisViewCommand implements Command {
 
@@ -46,6 +49,30 @@ public class AnalysisViewCommand implements Command {
 
     analysisDialog.setValidatorCallback(validatorCallback);
     analysisDialog.setCallback(callback);
-    analysisDialog.center();
+
+    final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
+    if (openAnalysisView != null) {
+      String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
+      Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
+      PromptDialogBox dialog = new PromptDialogBox("Open", "OK", "Cancel", false, true, content);
+      dialog.setCallback(new IDialogCallback() {
+
+        public void cancelPressed() {
+          // TODO Auto-generated method stub
+          
+        }
+
+        public void okPressed() {
+          navigatorPerspective.getContentTabPanel().remove(openAnalysisView);
+          analysisDialog.center();
+        }
+        
+      });
+      dialog.center();
+      dialog.show();
+
+    } else {
+      analysisDialog.center();
+    }
   }
 }

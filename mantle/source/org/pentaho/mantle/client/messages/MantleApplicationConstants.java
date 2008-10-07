@@ -1212,6 +1212,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
+  
+  /**
+   * Translated "An analysis view, {0}, is already open.  Select OK to close this view and continue?"
+   * 
+   * @return translated "An analysis view, {0}, is already open.  Select OK to close this view and continue?"
+   
+   */
+  @DefaultMessage("An analysis view, {0}, is already open.  Select OK to close this view and continue?")
+  String analysisViewIsOpen(String fileName);
 
   /**
    * Translated "Open".
