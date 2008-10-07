@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
@@ -66,6 +67,7 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
@@ -100,7 +102,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private LaunchPanel launchPanel = new LaunchPanel(this);
   private WorkspacePerspective workspacePanel = null;
 
-  private TabPanel contentTabPanel = new TabPanel();
+  protected TabPanel contentTabPanel = new TabPanel();
   private HashMap<Widget, TabWidget> contentTabMap = new HashMap<Widget, TabWidget>();
   private boolean hasBeenLoaded = false;
   private IPerspectiveCallback perspectiveCallback;
@@ -403,6 +405,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public TabWidget getCurrentTab() {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab()));
   }
+  
+  public TabWidget getTabForWidget(Widget tabWidget) {
+    return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getWidgetIndex(tabWidget)));
+  }
 
   public void openNewHTMLReport(int mode) {
     final String reportKey = "/" + selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
@@ -424,12 +430,37 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     showLaunchOrContent();
   }
 
-  public void openFile(int mode) {
+  public void openFile(final int mode) {
     String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) {
-      executeActionSequence(mode);
+      if (mode == FileCommand.RUN ) {
+        final Widget openAnalysisView = getOpenAnalysisView();
+        if (openAnalysisView != null) {
+          String actionName = getTabForWidget(openAnalysisView).getText();
+          Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
+          PromptDialogBox dialog = new PromptDialogBox("Open", "OK", "Cancel", false, true, content);
+          dialog.setCallback(new IDialogCallback() {
+  
+            public void cancelPressed() {
+              // TODO Auto-generated method stub
+              
+            }
+  
+            public void okPressed() {
+              contentTabPanel.remove(openAnalysisView);
+              executeActionSequence(mode);
+            }
+            
+          });
+          dialog.center();
+          dialog.show();
+          return;
+        } else {
+          executeActionSequence(mode);
+        }
+      }
     } else if (name.endsWith(".url")) {
-      showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) {
       // open jfreereport!!
       openNewHTMLReport(mode);
@@ -442,6 +473,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
   }
+  
 
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
@@ -463,7 +495,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     for (int i = 1; i < pathSegments.size(); i++) {
       repoPath += "/" + pathSegments.get(i);
     }
-    
+
     final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
     if (!fileExists) {
       final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().open(), Messages.getInstance().fileDoesNotExist(name), false, false, true);
@@ -486,7 +518,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
     pathSegments.add(name);
-    
+
     List<FileTreeItem> allNodes = solutionTree.getAllNodes();
     for (FileTreeItem item : allNodes) {
       item.setSelected(false);
@@ -1201,4 +1233,24 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
   }
 
+  /*
+   * getOpenAnalysisView
+   * 
+   * Polls the current open tabs to see if any (and there should be no more than one) is displaying an
+   * analysis view.
+   * 
+   * return null if there is no open analysis view and returns the Widget the view is in if there is
+   * an open analysis view.
+   */
+  public Widget getOpenAnalysisView() {
+    for (int i=0; i<contentTabPanel.getWidgetCount(); i++) {
+      Widget currentWidget = contentTabPanel.getWidget(i);
+      Frame frame = ((ReloadableIFrameTabPanel) currentWidget).getFrame();
+      String url = frame.getUrl();
+      if (url.contains(".analysis.xaction")) {
+        return currentWidget;
+      }
+    }
+    return null;
+  }
 }
