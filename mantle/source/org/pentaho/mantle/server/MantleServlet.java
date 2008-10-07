@@ -468,9 +468,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         ISolutionFile solutionFile = repository.getFileByPath(fullPath);
         Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
         for (UserPermission userPermission : fileInfo.userPermissions) {
+          System.out.println("userPermission.mask = " + userPermission.mask);
           acl.put(new SimpleUser(userPermission.name), new SimplePermissionMask(userPermission.mask));
         }
         for (RolePermission rolePermission : fileInfo.rolePermissions) {
+          System.out.println("rolePermission.mask = " + rolePermission.mask);
           acl.put(new SimpleRole(rolePermission.name), new SimplePermissionMask(rolePermission.mask));
         }
         repository.setPermissions(solutionFile, acl);
@@ -490,7 +492,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       throw new SimpleMessageException(e.getMessage());
     } finally {
     }

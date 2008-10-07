@@ -31,13 +31,13 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PermissionsPanel extends FlexTable implements IFileModifier {
 
+  public static final int PERM_ALL = -1;
   public static final int PERM_NOTHING = 0;
   public static final int PERM_EXECUTE = 0x01;
   public static final int PERM_SUBSCRIBE = 0x02;
@@ -163,6 +163,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
       }
     }
     // create checkboxes, with listeners who update the fileInfo lists
+    final CheckBox allPermissionCheckBox = new CheckBox("All Permissions");
     final CheckBox createPermissionCheckBox = new CheckBox("Create");
     final CheckBox updatePermissionCheckBox = new CheckBox("Update");
     final CheckBox executePermissionCheckBox = new CheckBox("Execute");
@@ -171,6 +172,17 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     final CheckBox subscribePermissionCheckBox = new CheckBox("Subscribe");
 
     if ("".equals(userOrRoleString)) {
+      allPermissionCheckBox.setEnabled(false);
+      createPermissionCheckBox.setEnabled(false);
+      updatePermissionCheckBox.setEnabled(false);
+      executePermissionCheckBox.setEnabled(false);
+      deletePermissionCheckBox.setEnabled(false);
+      grantPermissionCheckBox.setEnabled(false);
+      subscribePermissionCheckBox.setEnabled(false);
+    }
+
+    if ((mask & PERM_ALL) == PERM_ALL) {
+      allPermissionCheckBox.setChecked(true);
       createPermissionCheckBox.setEnabled(false);
       updatePermissionCheckBox.setEnabled(false);
       executePermissionCheckBox.setEnabled(false);
@@ -185,7 +197,25 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     deletePermissionCheckBox.setChecked((mask & PERM_DELETE) == PERM_DELETE);
     grantPermissionCheckBox.setChecked((mask & PERM_UPDATE_PERMS) == PERM_UPDATE_PERMS);
     subscribePermissionCheckBox.setChecked((mask & PERM_SUBSCRIBE) == PERM_SUBSCRIBE);
+    
+    allPermissionCheckBox.addClickListener(new ClickListener() {
+      public void onClick(Widget sender) {
+        updatePermissionMask(allPermissionCheckBox.isChecked(), PERM_ALL);
+        createPermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
+        updatePermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
+        executePermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
+        deletePermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
+        grantPermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
+        subscribePermissionCheckBox.setChecked(allPermissionCheckBox.isChecked());
 
+        createPermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+        updatePermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+        executePermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+        deletePermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+        grantPermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+        subscribePermissionCheckBox.setEnabled(!allPermissionCheckBox.isChecked());
+      }
+    });
     createPermissionCheckBox.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
         updatePermissionMask(createPermissionCheckBox.isChecked(), PERM_CREATE);
@@ -216,12 +246,13 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
         updatePermissionMask(subscribePermissionCheckBox.isChecked(), PERM_SUBSCRIBE);
       }
     });
-    permissionsTable.setWidget(0, 0, createPermissionCheckBox);
-    permissionsTable.setWidget(1, 0, updatePermissionCheckBox);
-    permissionsTable.setWidget(2, 0, executePermissionCheckBox);
-    permissionsTable.setWidget(3, 0, deletePermissionCheckBox);
-    permissionsTable.setWidget(4, 0, grantPermissionCheckBox);
-    permissionsTable.setWidget(5, 0, subscribePermissionCheckBox);
+    permissionsTable.setWidget(0, 0, allPermissionCheckBox);
+    permissionsTable.setWidget(1, 0, createPermissionCheckBox);
+    permissionsTable.setWidget(2, 0, updatePermissionCheckBox);
+    permissionsTable.setWidget(3, 0, executePermissionCheckBox);
+    permissionsTable.setWidget(4, 0, deletePermissionCheckBox);
+    permissionsTable.setWidget(5, 0, grantPermissionCheckBox);
+    permissionsTable.setWidget(6, 0, subscribePermissionCheckBox);
   }
 
   public void updatePermissionMask(boolean grant, int mask) {

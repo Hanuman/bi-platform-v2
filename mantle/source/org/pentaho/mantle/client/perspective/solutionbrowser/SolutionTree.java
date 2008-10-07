@@ -101,8 +101,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
-        menuBar.addSeparator();
+        //menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
+        //menuBar.addSeparator();
         menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, popupMenu, this)));
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
@@ -112,7 +112,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           }
         };
         //Uncomment once these popup menu items actually mean something
-        //t.schedule(250);
+        t.schedule(250);
         
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);

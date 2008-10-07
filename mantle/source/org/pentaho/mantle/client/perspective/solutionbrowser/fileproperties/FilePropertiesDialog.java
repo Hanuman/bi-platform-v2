@@ -124,7 +124,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
         showTab(defaultTab);
       }
     };
-    if (fileItem.getName() == null || fileItem.getParent() == null || fileItem.getSolution() == null) {
+    if (fileItem.getName() == null || fileItem.getSolution() == null) {
       // No propertes to show
       return;
     }
