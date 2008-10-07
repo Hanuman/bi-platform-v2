@@ -88,6 +88,13 @@ import org.pentaho.platform.util.xml.w3c.XmlW3CHelper;
  * 
  *  KETTLELOGLEVEL
  *    Sets the logging level to be used in the EXECUTION_LOG_OUTPUT
+ *    Valid settings:
+ *      basic
+ *      detail
+ *      error
+ *      debug
+ *      minimal
+ *      rowlevel
  * 
  */
 public class KettleComponent extends ComponentBase implements RowListener {
