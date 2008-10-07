@@ -16,6 +16,7 @@
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.FileSelectionListenerCollection;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
@@ -178,10 +179,22 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
      */
     if (name.contains("waqr.xaction")) {
       menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
+      
+      // WG: Experimental Action Sequence Editor
+      if (MantleApplication.showAdvancedFeatures) {
+        menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+      }
+      
       menuBar.addItem(new MenuItem("Delete", new FileCommand(FileCommand.DELETE, popupMenu, fileItemCallback)));
       menuBar.addSeparator();
     } else if (name.contains("analysisview.xaction")) {
       menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
+      
+      // WG: Experimental Action Sequence Editor
+      if (MantleApplication.showAdvancedFeatures) {
+        menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+      }
+      
       final FileCommand nullFileCommand = null;
       menuBar.addItem(new MenuItem("Delete", nullFileCommand));
       menuBar.addSeparator();
@@ -190,6 +203,14 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
       editMenuItem.setStyleName("disabledMenuItem");
       menuBar.addItem(editMenuItem);
+      
+      // WG: Experimental Action Sequence Editor
+      if (MantleApplication.showAdvancedFeatures) {
+        if (name.endsWith(".xaction")) { 
+          menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+        }
+      }
+      
       final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
       deleteMenuItem.setStyleName("disabledMenuItem");
       menuBar.addItem(deleteMenuItem);

@@ -581,7 +581,47 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     }
   }
-
+  
+  /**
+   * this method launches the experimental action editor from Mantle.
+   * 
+   * Pentaho's action editor is located today at 
+   * http://code.google.com/p/pentaho-actioneditor
+   * 
+   */
+  public void editActionFile() {
+    if (MantleApplication.showAdvancedFeatures) {
+      String fullPath = null;
+      if (selectedFileItem.getSolution().endsWith("/") || selectedFileItem.getPath().startsWith("/")) {
+        fullPath = selectedFileItem.getSolution() + selectedFileItem.getPath() +"/" + selectedFileItem.getName();
+      } else {
+        fullPath = selectedFileItem.getSolution() + "/" + selectedFileItem.getPath() +"/" + selectedFileItem.getName();
+      }
+      String url = "actioneditor/actioneditor.html?actionSequence=" + fullPath;
+      if (!GWT.isScript()) {
+        url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath;
+      }
+  
+      // See if it's already loaded
+      for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
+        Widget w = contentTabPanel.getWidget(i);
+        if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)) {
+          // Already up, select and exit
+          contentTabPanel.selectTab(i);
+          return;
+        }
+      }
+      showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
+  
+      // Store representation of file in the frame for reference later when save is called
+      SolutionFileInfo fileInfo = new SolutionFileInfo();
+      fileInfo.setName(selectedFileItem.getName());
+      fileInfo.setSolution(selectedFileItem.getSolution());
+      fileInfo.setPath(selectedFileItem.getPath());
+        this.getCurrentFrame().setFileInfo(fileInfo);
+    }
+  }
+  
   void executeActionSequence(final int mode) {
     // open in content panel
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction

@@ -484,6 +484,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // noop
   }
 
+  public void editActionFile() {
+    // TODO Auto-generated method stub
+    // noop
+  }
+  
   public void selectNextItem(FileItem currentItem) {
     // noop
   }

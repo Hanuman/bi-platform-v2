@@ -20,6 +20,7 @@ public interface IFileItemCallback {
   public void setSelectedFileItem(FileItem fileItem);
   public void openFile(int mode);
   public void editFile();
+  public void editActionFile();
   public void createSchedule(String cronExpression);
   public void loadPropertiesDialog();
   public void shareFile();

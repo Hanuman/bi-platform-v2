@@ -58,6 +58,9 @@ public class FileCommand implements Command {
   
   public static final int SUBSCRIBE = 28;
   public static final int SHARE = 29;
+  
+  
+  public static final int EDIT_ACTION = 30;
 
   int mode = RUN;
   PopupPanel popupMenu;
@@ -79,6 +82,8 @@ public class FileCommand implements Command {
       fileItemCallback.loadPropertiesDialog();
     } else if (mode == EDIT) {
       fileItemCallback.editFile();
+    } else if (mode == EDIT_ACTION) {
+      fileItemCallback.editActionFile();
     } else if (mode == SCHEDULE_NEW) {
       fileItemCallback.createSchedule();
     } else if (mode == SCHEDULE_CUSTOM) {
