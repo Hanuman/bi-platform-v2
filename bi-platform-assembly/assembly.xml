@@ -294,7 +294,7 @@
 			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
 				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
 				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
-				<fileset dir="${bi.platform.util.dir}/res/log4j" />
+				<fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />
 				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
 			</copy>
 
