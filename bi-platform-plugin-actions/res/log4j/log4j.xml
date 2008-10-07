@@ -105,5 +105,74 @@
       <appender-ref ref="PENTAHOCONSOLE"/>
       <appender-ref ref="PENTAHOFILE"/>
    </root>
+   
+   
+   <!--  optional logging info for the Mondrian OLAP Engine       -->
+   
+   
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian                -->
+   <!-- ========================================================= -->
 
+   <!-- 
+   <appender name="MONDRIAN" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+   
+   <category name="mondrian">
+      <priority value="DEBUG"/>
+      <appender-ref ref="MONDRIAN"/>
+   </category> 
+   
+   -->
+
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian MDX Statements -->
+   <!-- ========================================================= -->
+
+   <!-- 
+   <appender name="MDXLOG" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian_mdx.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+
+   <category name="mondrian.mdx">
+      <priority value="DEBUG"/>
+      <appender-ref ref="MDXLOG"/>
+   </category>
+   -->
+
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian SQL Statements -->
+   <!-- ========================================================= -->
+
+   <!-- 
+   <appender name="SQLLOG" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian_sql.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+
+   <category name="mondrian.sql">
+      <priority value="DEBUG"/>
+      <appender-ref ref="SQLLOG"/>
+   </category>
+   -->
+   
 </log4j:configuration>
