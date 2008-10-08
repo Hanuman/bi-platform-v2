@@ -56,7 +56,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public SolutionTree() {
     super(MantleImages.images);
     setAnimationEnabled(true);
-    sinkEvents(Event.ONDBLCLICK);
+    sinkEvents(Event.ONDBLCLICK | Event.MOUSEEVENTS);
     // popupMenu.setAnimationEnabled(false);
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
     DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -71,26 +71,24 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1); //$NON-NLS-1$
     DOM.appendChild(getElement(), focusable.getElement());
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
-
   }
 
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
-    switch (eventType) {
+    if (DOM.eventGetButton(event) != Event.BUTTON_RIGHT) {
+      switch (eventType) {
       case Event.ONCLICK:
         return;
       case Event.ONMOUSEDOWN:
       case Event.ONMOUSEUP: {
-        com.google.gwt.user.client.Element e = DOM.eventGetTarget(event);
         int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
         int[] offsets = ElementUtils.calculateOffsets(getElement());
         DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
-      
+
         break;
       }
+      }
     }
-
-    super.onBrowserEvent(event);
     try {
       if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
         // load menu (Note: disabled as Delete and Properties have no meaning for Folders now
@@ -99,8 +97,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        //menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
-        //menuBar.addSeparator();
+        // menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
+        // menuBar.addSeparator();
         menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, popupMenu, this)));
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
@@ -109,15 +107,16 @@ public class SolutionTree extends Tree implements IFileItemCallback {
             popupMenu.show();
           }
         };
-        //Uncomment once these popup menu items actually mean something
+        // Uncomment once these popup menu items actually mean something
         t.schedule(250);
-        
+
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
       }
     } catch (Throwable t) {
       // death to this browser event
     }
+    super.onBrowserEvent(event);
   }
 
   public void buildSolutionTree(Document solutionDocument) {
@@ -189,8 +188,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
   /**
    * Checks if the given file name exists in the directory specified by pathSegments
-   * @param pathSegments List consisting of hierarchial names of directory {a/b/c/example.txt => [a,b,c]}  
-   * @param pFileName File name to be looked for in the given directory {a/b/c/example.txt => example.txt}
+   * 
+   * @param pathSegments
+   *          List consisting of hierarchial names of directory {a/b/c/example.txt => [a,b,c]}
+   * @param pFileName
+   *          File name to be looked for in the given directory {a/b/c/example.txt => example.txt}
    * @return True if file exists, false otherwise
    */
   public boolean doesFileExist(final List<String> pathSegments, final String pFileName) {
@@ -202,36 +204,36 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         final FileTreeItem selectedItem = (FileTreeItem) getItem(x);
         if (selectedItem.fileName.equalsIgnoreCase(pFileName)) {
           return true;
-        }        
+        }
       }
     } else {
       // If we are here then we are looking for a file inside a sub directory in the solution tree
       // getTreeItem method returns us the directory node we are looking for based on the pathSegments variable
       final FileTreeItem directoryItem = getTreeItem(pathSegments);
-      
+
       if (directoryItem != null) {
-        // Iterate through the directory and check if the name we are searching for exists in 
+        // Iterate through the directory and check if the name we are searching for exists in
         // the file list of current dir
         final List<Element> filesInCurrDirectory = (List<Element>) directoryItem.getUserObject();
         if (filesInCurrDirectory != null) {
-          final int fileListSize  = filesInCurrDirectory.size();
+          final int fileListSize = filesInCurrDirectory.size();
           for (int i = 0; i < fileListSize; i++) {
             final Element fileElement = filesInCurrDirectory.get(i);
             final String currentFileName = fileElement.getAttribute("name"); //$NON-NLS-1$
             if ((currentFileName != null) && (currentFileName.equalsIgnoreCase(pFileName))) {
               return true;
-            } 
+            }
           }
         }
       }
     }
     return false;
   }
-  
+
   public FileTreeItem getTreeItem(List<String> pathSegments) {
     boolean foundMatch = false;
     FileTreeItem selectedItem = null;
-    
+
     // find the tree node whose location matches the pathSegment paths
     for (int x = 0; x < getItemCount(); x++) {
       FileTreeItem rootItem = (FileTreeItem) getItem(x);
@@ -244,7 +246,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           foundMatch = true;
           continue;
         }
-        // Here we are checking into the contents of the directory 
+        // Here we are checking into the contents of the directory
         // i.e. directories and files existing under the top level directory
         for (int i = 0; i < selectedItem.getChildCount(); i++) {
           FileTreeItem item = (FileTreeItem) selectedItem.getChild(i);
@@ -255,7 +257,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           }
         }
       }
-      // if we actually found something meaningful, 
+      // if we actually found something meaningful,
       // then we do not need to look through the rest of the directories
       if (foundMatch) {
         return selectedItem;
@@ -294,7 +296,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
   }
 
-  @SuppressWarnings("unchecked") //$NON-NLS-1$
+  @SuppressWarnings("unchecked")//$NON-NLS-1$
   private void buildSolutionTree(FileTreeItem parentTreeItem, Element parentElement) {
     NodeList children = parentElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -486,7 +488,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // TODO Auto-generated method stub
     // noop
   }
-  
+
   public void selectNextItem(FileItem currentItem) {
     // noop
   }
