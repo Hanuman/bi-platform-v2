@@ -164,11 +164,24 @@
     function selectInitModel() {
       var model = gCtrlr.mdModels.models[ paramModelName ];
       if(model != null){
-        for (var i in model.bViews)
-        {
-          viewName = model.bViews[i].viewId;
-                  gCtrlr.handleSelectBusinessView( paramModelName, viewName );
+        var viewName = findUrlParam( 'view', document.location.href );
+        if( viewName ) {
+            if( model.bViews[viewName] ) {
+                gCtrlr.handleSelectBusinessView( paramModelName, viewName );
+                gCtrlr.showStep1();
+                return;
+            } else {
+                // TODO need a nice message in here
+                gCtrlr.showStep0();
+            }
+            return;
         }
+            for (var i in model.bViews)
+            {
+                viewName = model.bViews[i].viewId;
+                gCtrlr.handleSelectBusinessView( paramModelName, viewName );
+                break;
+            }
       }
       
       gCtrlr.showStep1();
@@ -180,8 +193,14 @@
 
     }
     function findUrlParam( name, url ) {
-      if( url.indexOf( name+'=' ) ) {
-        var tmp = url.substr( url.indexOf( name+'=' ) + name.length+1 );
+      var pos = url.indexOf( '?' );
+      var params = url.substr( pos );
+      pos = params.indexOf( '?'+name+'=' );
+      if( pos == -1 ) {
+        pos = params.indexOf( '&'+name+'=' );
+      }
+      if( pos != -1 ) {
+        var tmp = params.substr( pos + name.length + 2 );
         if( tmp.indexOf( '&' ) != -1 ) {
           tmp = tmp.substr( 0, tmp.indexOf( '&' ) );
         }
