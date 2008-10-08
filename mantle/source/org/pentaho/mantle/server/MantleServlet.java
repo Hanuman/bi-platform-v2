@@ -79,6 +79,7 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
+import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
@@ -455,6 +456,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       }
     }
     solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
+    solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
     solutionFileInfo.userPermissions = userPermissions;
     solutionFileInfo.rolePermissions = rolePermissions;
     return solutionFileInfo;

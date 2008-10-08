@@ -16,6 +16,8 @@
 
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
@@ -80,6 +82,14 @@ public class FilesListPanel extends FlowPanel {
   public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, FileItem selectedFileItem, TreeItem item) {
     filesList.clear();
     List<Element> files = (List<Element>) item.getUserObject();
+    // let's sort this list based on localized name
+    Collections.sort(files, new Comparator<Element>() {
+      public int compare(Element o1, Element o2) {
+        String name1 = o1.getAttribute("localized-name");
+        String name2 = o2.getAttribute("localized-name");
+        return name1.compareTo(name2);
+      }
+    });
     if (files != null) {
       int rowCounter = 0;
       for (int i = 0; i < files.size(); i++) {

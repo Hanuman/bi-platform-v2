@@ -110,7 +110,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
           propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getInstance().advanced(), Messages.getInstance().advanced(), null, propertyTabs,
               subscriptionsTab));
         }
-        if (fileInfo.supportsAccessControls) {
+        if (fileInfo.supportsAccessControls && fileInfo.canEffectiveUserManage) {
           propertyTabs.remove(permissionsTab);
           propertyTabs.add(permissionsTab, new TabWidget(Messages.getInstance().share(), Messages.getInstance().share(), null, propertyTabs, permissionsTab));
         }

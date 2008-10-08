@@ -30,6 +30,7 @@ public class SolutionFileInfo implements Serializable {
   public boolean isDirectory = false;
   public boolean isSubscribable = false;
   public boolean supportsAccessControls = true;
+  public boolean canEffectiveUserManage = false;
 
   public List<UserPermission> userPermissions;
   public List<RolePermission> rolePermissions;
@@ -132,7 +133,13 @@ public class SolutionFileInfo implements Serializable {
   public void setType(String type) {
     this.type = type;
   }
-  
-  
+
+  public boolean isCanEffectiveUserManage() {
+    return canEffectiveUserManage;
+  }
+
+  public void setCanEffectiveUserManage(boolean canEffectiveUserManage) {
+    this.canEffectiveUserManage = canEffectiveUserManage;
+  }
 
 }
