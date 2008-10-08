@@ -42,7 +42,7 @@ public class MantleLoginDialog {
   private PromptDialogBox dialog;
   private CheckBox newWindowChk = new CheckBox();
   private boolean serviceReturned;
-  private boolean subscription;
+  private boolean showUsersList;
   private Timer timer;
 
   private static MantleLoginServiceAsync SERVICE;
@@ -131,7 +131,7 @@ public class MantleLoginDialog {
   public MantleLoginDialog() {
     dialog = new PromptDialogBox(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
     dialog.setCallback(myCallback);
-    getSubscriptionLevel();
+    getShowUsersList();
     addDefaultUsers();
   }
 
@@ -173,10 +173,9 @@ public class MantleLoginDialog {
     loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     SimplePanel spacer;
-    if (!this.subscription) {
+    if (showUsersList) {
       loginPanel.add(new Label(MSGS.sampleUser() + ":")); //$NON-NLS-1$
       loginPanel.add(usersListBox);
-
       spacer = new SimplePanel();
       spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
@@ -279,7 +278,7 @@ public class MantleLoginDialog {
 
   }
 
-  private void getSubscriptionLevel() {
+  private void getShowUsersList() {
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
@@ -290,12 +289,12 @@ public class MantleLoginDialog {
       }
 
       public void onSuccess(Boolean result) {
-        subscription = result;
+        showUsersList = result;
         setServiceReturned();
       }
     };
 
-    SERVICE.isSubscription(callback);
+    SERVICE.isShowUsersList(callback);
   }
 
 }
