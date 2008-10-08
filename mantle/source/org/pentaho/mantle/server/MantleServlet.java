@@ -440,25 +440,27 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       solutionFileInfo.isSubscribable = false;
     }
 
-    List<RolePermission> rolePermissions = new ArrayList<RolePermission>();
-    List<UserPermission> userPermissions = new ArrayList<UserPermission>();
-    if (solutionFile instanceof IAclSolutionFile) {
-      Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
-      for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
-        IPermissionRecipient permRecipient = filePerm.getKey();
-        if (permRecipient instanceof SimpleRole) {
-          // entry belongs to a role
-          rolePermissions.add(new RolePermission(permRecipient.getName(), filePerm.getValue().getMask()));
-        } else {
-          // entry belongs to a user
-          userPermissions.add(new UserPermission(permRecipient.getName(), filePerm.getValue().getMask()));
+    solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
+    solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
+    if (solutionFileInfo.canEffectiveUserManage && solutionFileInfo.supportsAccessControls) {
+      List<RolePermission> rolePermissions = new ArrayList<RolePermission>();
+      List<UserPermission> userPermissions = new ArrayList<UserPermission>();
+      if (solutionFile instanceof IAclSolutionFile) {
+        Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
+        for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
+          IPermissionRecipient permRecipient = filePerm.getKey();
+          if (permRecipient instanceof SimpleRole) {
+            // entry belongs to a role
+            rolePermissions.add(new RolePermission(permRecipient.getName(), filePerm.getValue().getMask()));
+          } else {
+            // entry belongs to a user
+            userPermissions.add(new UserPermission(permRecipient.getName(), filePerm.getValue().getMask()));
+          }
         }
       }
+      solutionFileInfo.userPermissions = userPermissions;
+      solutionFileInfo.rolePermissions = rolePermissions;
     }
-    solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
-    solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
-    solutionFileInfo.userPermissions = userPermissions;
-    solutionFileInfo.rolePermissions = rolePermissions;
     return solutionFileInfo;
   }
 
@@ -494,7 +496,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         }
       }
     } catch (Exception e) {
-      //e.printStackTrace();
+      // e.printStackTrace();
       throw new SimpleMessageException(e.getMessage());
     } finally {
     }
@@ -584,7 +586,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
       settings.put("login-show-users-list", PentahoSystem.getSystemSetting("login-show-users-list", ""));
       settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", ""));
-      
+
       // see if we have any plugin settings
       IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(getPentahoSession(), "IPluginSettings");
       if (pluginSettings != null) {
