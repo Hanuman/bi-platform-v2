@@ -77,19 +77,17 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
     switch (eventType) {
-    case Event.ONMOUSEDOWN:
-    case Event.ONMOUSEUP:
-    case Event.ONCLICK: {
-      com.google.gwt.user.client.Element e = DOM.eventGetTarget(event);
-      try {
+      case Event.ONCLICK:
+        return;
+      case Event.ONMOUSEDOWN:
+      case Event.ONMOUSEUP: {
+        com.google.gwt.user.client.Element e = DOM.eventGetTarget(event);
         int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
         int[] offsets = ElementUtils.calculateOffsets(getElement());
         DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
-      } catch (Exception ex) {
-        // wtf! 
+      
+        break;
       }
-      break;
-    }
     }
 
     super.onBrowserEvent(event);
