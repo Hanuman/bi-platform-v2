@@ -180,11 +180,11 @@
             {
                 viewName = model.bViews[i].viewId;
                 gCtrlr.handleSelectBusinessView( paramModelName, viewName );
-                break;
+                gCtrlr.showStep1();
+                return;
             }
       }
-      
-      gCtrlr.showStep1();
+      gCtrlr.showStep0();
     } 
     
     function parseUrlParams( url ) {
@@ -1635,7 +1635,7 @@ in stepsLayout.js (code that controls resizing) -->
             <tr>
               <td id='searchDialog.busyContainer' style='width:100%;'></td>
               <td width="75" id="searchDialog.okBtnContainer"></td>
-              <td><div style='width:10px'></div></td>
+              <td><div style='width:30px'></div></td>
               <td width="85" id="searchDialog.cancelBtnContainer"></td>
             </tr>
           </table>
