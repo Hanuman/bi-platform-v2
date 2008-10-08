@@ -24,7 +24,7 @@
           <exclude org="commons-collections" />
           <exclude org="dom4j" name="dom4j" />
         </dependency>
-        <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-080927">
+        <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-081008">
           <artifact name="jpivot" type="jar" />
         </dependency>
 		<dependency org="quartz"			name="quartz"              rev="1.5.2">

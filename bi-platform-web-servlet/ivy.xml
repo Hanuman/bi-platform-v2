@@ -38,7 +38,7 @@
     <dependency org="com.sun" name="jai_core" rev="1.1.2" />
     <dependency org="javax.faces" name="jsf-api" rev="1.1" />
     <dependency org="jakarta-taglibs" name="standard" rev="1.0.6" />
-    <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-080927">
+    <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-081008">
       <artifact name="jpivot" type="jar" />
     </dependency>
     <dependency org="com.tonbeller" name="tbutils-wcf" rev="1.8.0-070305" />
