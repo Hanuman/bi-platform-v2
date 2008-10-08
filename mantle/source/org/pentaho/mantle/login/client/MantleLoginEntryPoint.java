@@ -59,7 +59,7 @@ public class MantleLoginEntryPoint implements EntryPoint {
   public native void setupNativeHooks(MantleLoginDialog dialog, MantleLoginEntryPoint entry) /*-{
       $wnd.openLoginDialog = function(location) {
         entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::setReturnLocation(Ljava/lang/String;)(location);
-        dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::show()();
+        dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::center()();
       }
     }-*/;
 

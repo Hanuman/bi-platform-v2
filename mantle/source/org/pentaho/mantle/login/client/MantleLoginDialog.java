@@ -17,7 +17,6 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -33,22 +32,18 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MantleLoginDialog {
+public class MantleLoginDialog extends PromptDialogBox {
 
-  private AsyncCallback<Boolean> outterCallback; // from outside context
+  private AsyncCallback<Boolean> outerCallback; // from outside context
   private final TextBox userTextBox = new TextBox();
   private final ListBox usersListBox = new ListBox();
   private final PasswordTextBox passwordTextBox = new PasswordTextBox();
-  private PromptDialogBox dialog;
   private CheckBox newWindowChk = new CheckBox();
-  private boolean serviceReturned;
-  private boolean showUsersList;
-  private Timer timer;
 
+  private static boolean showUsersList = false;
+  private static boolean showNewWindowOption = true;
   private static MantleLoginServiceAsync SERVICE;
   private static MantleLoginMessages MSGS = Messages.getInstance();
-
-  private boolean showNewWindowOption;
 
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
@@ -58,13 +53,21 @@ public class MantleLoginDialog {
     defaultUsers.put("Suzy", new String[] { "suzy", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     defaultUsers.put("Pat", new String[] { "pat", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     defaultUsers.put("Tiffany", new String[] { "tiffany", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-  }
 
-  static {
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService"; //$NON-NLS-1$
     endpoint.setServiceEntryPoint(moduleRelativeURL);
+
+    SERVICE.isShowUsersList(new AsyncCallback<Boolean>() {
+
+      public void onFailure(Throwable caught) {
+      }
+
+      public void onSuccess(Boolean result) {
+        showUsersList = result;
+      }
+    });
   }
 
   private final IDialogCallback myCallback = new IDialogCallback() {
@@ -82,11 +85,10 @@ public class MantleLoginDialog {
       RequestCallback callback = new RequestCallback() {
 
         public void onError(Request request, Throwable exception) {
-          outterCallback.onFailure(exception);
+          outerCallback.onFailure(exception);
         }
 
         public void onResponseReceived(Request request, Response response) {
-
           final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onSuccess(Boolean result) {
@@ -96,9 +98,9 @@ public class MantleLoginDialog {
                 // one year into the future
                 Date expirationDate = new Date(System.currentTimeMillis() + year);
                 Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate); //$NON-NLS-1$ //$NON-NLS-2$
-                outterCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
+                outerCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
-                outterCallback.onFailure(new Throwable(MSGS.authFailed()));
+                outerCallback.onFailure(new Throwable(MSGS.authFailed()));
               }
             }
 
@@ -109,7 +111,7 @@ public class MantleLoginDialog {
                 }
 
                 public void okPressed() {
-                  outterCallback.onFailure(caught);
+                  outerCallback.onFailure(caught);
                 }
               });
               errBox.show();
@@ -129,16 +131,22 @@ public class MantleLoginDialog {
   };
 
   public MantleLoginDialog() {
-    dialog = new PromptDialogBox(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
-    dialog.setCallback(myCallback);
-    getShowUsersList();
+    super(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
+    setCallback(myCallback);
+    userTextBox.setTabIndex(1);
+    passwordTextBox.setTabIndex(2);
+    if (showNewWindowOption) {
+      newWindowChk.setTabIndex(3);
+    }
+    passwordTextBox.setText(""); //$NON-NLS-1$
+    setFocusWidget(userTextBox);
     addDefaultUsers();
   }
 
   public MantleLoginDialog(AsyncCallback callback, boolean showNewWindowOption) {
     this();
     setCallback(callback);
-    this.setShowNewWindowOption(showNewWindowOption);
+    setShowNewWindowOption(showNewWindowOption);
   }
 
   public void setShowNewWindowOption(boolean show) {
@@ -192,7 +200,7 @@ public class MantleLoginDialog {
     loginPanel.add(passwordTextBox);
 
     // New Window checkbox
-    if (this.showNewWindowOption) {
+    if (showNewWindowOption) {
       spacer = new SimplePanel();
       spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
@@ -214,52 +222,12 @@ public class MantleLoginDialog {
   }
 
   public void setCallback(AsyncCallback<Boolean> callback) {
-    outterCallback = callback;
-  }
-
-  private String getUser() {
-    return userTextBox.getText();
-  }
-
-  private String getPassword() {
-    return passwordTextBox.getText();
+    outerCallback = callback;
   }
 
   public void center() {
-    // called to 'reshow' the dialog after failure
-    dialog.center();
-  }
-
-  private void setServiceReturned() {
-    serviceReturned = true;
-  }
-
-  public void show() {
-    if (!serviceReturned) {
-      timer = new Timer() {
-        public void run() {
-          if (serviceReturned) {
-            show();
-            timer.cancel();
-          }
-        }
-      };
-      timer.scheduleRepeating(200);
-      return;
-    }
-    dialog.setContent(buildLoginPanel());
-    userTextBox.setTabIndex(1);
-    passwordTextBox.setTabIndex(2);
-    if (showNewWindowOption) {
-      newWindowChk.setTabIndex(3);
-    }
-    passwordTextBox.setText(""); //$NON-NLS-1$
-    dialog.setFocusWidget(userTextBox);
-    dialog.center();
-  }
-
-  public void hide() {
-    dialog.hide();
+    setContent(buildLoginPanel());
+    super.center();
   }
 
   public void addDefaultUsers() {
@@ -273,28 +241,7 @@ public class MantleLoginDialog {
         userTextBox.setText(defaultUsers.get(key)[0]);
         passwordTextBox.setText(defaultUsers.get(key)[1]);
       }
-
     });
-
-  }
-
-  private void getShowUsersList() {
-    final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable caught) {
-        // technically, even a failure means the service has returned
-        setServiceReturned();
-        MessageDialogBox dialogBox = new MessageDialogBox(MSGS.error(), MSGS.serverError(), false, false, true);
-        dialogBox.center();
-      }
-
-      public void onSuccess(Boolean result) {
-        showUsersList = result;
-        setServiceReturned();
-      }
-    };
-
-    SERVICE.isShowUsersList(callback);
   }
 
 }
