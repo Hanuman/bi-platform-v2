@@ -107,15 +107,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String schema();
 
   /**
-   * Translated "Open".
-   * 
-   * @return translated "Open"
-  
-   */
-  @DefaultMessage("Open")
-  String open();
-
-  /**
    * Translated "Could not get user settings".
    * 
    * @return translated "Could not get user settings"
@@ -125,13 +116,13 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String couldNotGetUserSettings();
 
   /**
-   * Translated "Help".
+   * Translated "Open".
    * 
-   * @return translated "Help"
+   * @return translated "Open"
   
    */
-  @DefaultMessage("Help")
-  String help();
+  @DefaultMessage("Open")
+  String open();
 
   /**
    * Translated "Solution Browser refreshed".
@@ -141,6 +132,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Solution Browser refreshed")
   String solutionBrowserRefreshed();
+
+  /**
+   * Translated "Help".
+   * 
+   * @return translated "Help"
+  
+   */
+  @DefaultMessage("Help")
+  String help();
 
   /**
    * Translated "Reset Repository".
@@ -269,15 +269,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String os();
 
   /**
-   * Translated "Mondrian Schema Cache Flushed Successfully".
-   * 
-   * @return translated "Mondrian Schema Cache Flushed Successfully"
-  
-   */
-  @DefaultMessage("Mondrian Schema Cache Flushed Successfully")
-  String mondrianSchemaCacheFlushedSuccessfully();
-
-  /**
    * Translated "Ad hoc Reporting".
    * 
    * @return translated "Ad hoc Reporting"
@@ -285,6 +276,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Ad hoc Reporting")
   String waqr();
+
+  /**
+   * Translated "Mondrian Schema Cache Flushed Successfully".
+   * 
+   * @return translated "Mondrian Schema Cache Flushed Successfully"
+  
+   */
+  @DefaultMessage("Mondrian Schema Cache Flushed Successfully")
+  String mondrianSchemaCacheFlushedSuccessfully();
 
   /**
    * Translated "URL not specified".
@@ -384,6 +384,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Show Localized File Names")
   String showLocalizedFileNames();
+
+  /**
+   * Translated "Open In New Window".
+   * 
+   * @return translated "Open In New Window"
+  
+   */
+  @DefaultMessage("Open In New Window")
+  String openInNewWindow();
 
   /**
    * Translated "Clean Content Repository".
@@ -881,15 +890,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String cancel();
 
   /**
-   * Translated "New Analysis View".
-   * 
-   * @return translated "New Analysis View"
-  
-   */
-  @DefaultMessage("New Analysis View")
-  String newAnalysisView();
-
-  /**
    * Translated "Download".
    * 
    * @return translated "Download"
@@ -897,6 +897,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Download")
   String download();
+
+  /**
+   * Translated "New Analysis View".
+   * 
+   * @return translated "New Analysis View"
+  
+   */
+  @DefaultMessage("New Analysis View")
+  String newAnalysisView();
 
   /**
    * Translated "Mondrian Schema Cache".
@@ -980,6 +989,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String welcome();
 
   /**
+   * Translated "Global actions executed successfully.".
+   * 
+   * @return translated "Global actions executed successfully."
+  
+   */
+  @DefaultMessage("Global actions executed successfully.")
+  String globalActionsExecutedSuccessfully();
+
+  /**
    * Translated "System settings refreshed successfully".
    * 
    * @return translated "System settings refreshed successfully"
@@ -989,13 +1007,13 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String refreshSystemSettingsSuccess();
 
   /**
-   * Translated "Global actions executed successfully.".
+   * Translated "Run In Background".
    * 
-   * @return translated "Global actions executed successfully."
+   * @return translated "Run In Background"
   
    */
-  @DefaultMessage("Global actions executed successfully.")
-  String globalActionsExecutedSuccessfully();
+  @DefaultMessage("Run In Background")
+  String runInBackground();
 
   /**
    * Translated "Browser".
@@ -1032,6 +1050,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Deep Link")
   String deepLink();
+
+  /**
+   * Translated "Edit Action".
+   * 
+   * @return translated "Edit Action"
+  
+   */
+  @DefaultMessage("Edit Action")
+  String editAction();
 
   /**
    * Translated "Save As...".
@@ -1286,13 +1313,13 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String newAnalysisViewEllipsis();
 
   /**
-   * Translated "Open".
+   * Translated "Schedule...".
    * 
-   * @return translated "Open"
+   * @return translated "Schedule..."
   
    */
-  @DefaultMessage("Open")
-  String openToolTip();
+  @DefaultMessage("Schedule...")
+  String scheduleEllipsis();
 
   /**
    * Translated "Edit".

@@ -65,7 +65,7 @@ public class BrowserToolbar extends Toolbar {
     MantleImages.images.runDisabled().applyTo(refreshDisabledImage);
     refreshBtn = new ToolbarButton(refreshImage, refreshDisabledImage);
     refreshBtn.setCommand(new RefreshRepositoryCommand(solutionBrowserPerspective));
-    refreshBtn.setToolTip(Messages.getInstance().openToolTip());
+    refreshBtn.setToolTip(Messages.getInstance().open());
     add(refreshBtn);
   }
 

@@ -18,6 +18,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.FileSelectionListenerCollection;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.SourcesFileSelectionChanged;
@@ -55,7 +56,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
     fileLabel.setTitle(localizedName);
-    setStyleName("fileLabel");
+    setStyleName("fileLabel"); //$NON-NLS-1$
     ElementUtils.preventTextSelection(fileLabel.getElement());
 
     Image fileIcon = new Image() {
@@ -70,23 +71,23 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       }
     };
     fileIcon.sinkEvents(Event.MOUSEEVENTS);
-    if (name.endsWith(".waqr.xaction")) {
+    if (name.endsWith(".waqr.xaction")) { //$NON-NLS-1$
       MantleImages.images.file_report().applyTo(fileIcon);
-    } else if (name.endsWith(".analysisview.xaction")) {
+    } else if (name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
       MantleImages.images.file_analysis().applyTo(fileIcon);
-    } else if (name.endsWith(".xaction")) {
+    } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
       MantleImages.images.file_action().applyTo(fileIcon);
-    } else if (name.endsWith(".url")) {
+    } else if (name.endsWith(".url")) { //$NON-NLS-1$
       MantleImages.images.file_url().applyTo(fileIcon);
     } else {
       MantleImages.images.fileIcon().applyTo(fileIcon);
     }
-    fileIcon.setWidth("16px");
-    fileLabel.setWidth("100%");
+    fileIcon.setWidth("16px"); //$NON-NLS-1$
+    fileLabel.setWidth("100%"); //$NON-NLS-1$
     setWidget(0, 0, fileIcon);
-    getCellFormatter().setWidth(0, 0, "16px");
+    getCellFormatter().setWidth(0, 0, "16px"); //$NON-NLS-1$
     setWidget(0, 1, fileLabel);
-    getCellFormatter().setWidth(0, 1, "100%");
+    getCellFormatter().setWidth(0, 1, "100%"); //$NON-NLS-1$
     this.fileItemCallback = fileItemCallback;
     this.name = name;
     this.localizedName = localizedName;
@@ -98,11 +99,11 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
   private void select(){
     if(fileItemCallback.getSelectedFileItem() != null){
-      fileItemCallback.getSelectedFileItem().setStyleName("fileLabel");
+      fileItemCallback.getSelectedFileItem().setStyleName("fileLabel"); //$NON-NLS-1$
     }
     
     fileItemCallback.setSelectedFileItem(this);
-    fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected");
+    fileItemCallback.getSelectedFileItem().setStyleName("fileLabelSelected"); //$NON-NLS-1$
     
   }
   
@@ -130,7 +131,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     MenuBar menuBar = new MenuBar(true);
     menuBar.setAutoOpen(true);
 
-    if (name.endsWith(".xaction")) {
+    if (name.endsWith(".xaction")) { //$NON-NLS-1$
       // runMenu.addSeparator();
       // runMenu.addItem(new MenuItem("Subscribe", new FileCommand(FileCommand.SUBSCRIBE, popupMenu, fileItemCallback)));
 
@@ -164,12 +165,12 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       // scheduleMenu.addItem("Custom...", new FileCommand(FileCommand.SCHEDULE_CUSTOM, popupMenu, fileItemCallback));
       // scheduleMenu.addItem("New...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
 
-      menuBar.addItem(new MenuItem("Open", new FileCommand(FileCommand.RUN, popupMenu, fileItemCallback)));
-      menuBar.addItem(new MenuItem("Open in New Window", new FileCommand(FileCommand.NEWWINDOW, popupMenu, fileItemCallback)));
-      menuBar.addItem(new MenuItem("Run in Background", new FileCommand(FileCommand.BACKGROUND, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getInstance().open(), new FileCommand(FileCommand.RUN, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getInstance().openInNewWindow(), new FileCommand(FileCommand.NEWWINDOW, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getInstance().runInBackground(), new FileCommand(FileCommand.BACKGROUND, popupMenu, fileItemCallback)));
 
       menuBar.addSeparator();
-      menuBar.addItem("Schedule...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
+      menuBar.addItem(Messages.getInstance().scheduleEllipsis(), new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
     }
 
     /*
@@ -177,47 +178,47 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
      * clicked on WAQR report. Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
      * nullifying the command attached to MenutItem click.
      */
-    if (name.contains("waqr.xaction")) {
-      menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
+    if (name.contains("waqr.xaction")) { //$NON-NLS-1$
+      menuBar.addItem(new MenuItem(Messages.getInstance().schedule(), new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
       
       // WG: Experimental Action Sequence Editor
       if (MantleApplication.showAdvancedFeatures) {
-        menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
       }
       
-      menuBar.addItem(new MenuItem("Delete", new FileCommand(FileCommand.DELETE, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, fileItemCallback)));
       menuBar.addSeparator();
-    } else if (name.contains("analysisview.xaction")) {
-      menuBar.addItem(new MenuItem("Edit", new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
+    } else if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
+      menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.EDIT, popupMenu, fileItemCallback)));
       
       // WG: Experimental Action Sequence Editor
       if (MantleApplication.showAdvancedFeatures) {
-        menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
       }
       
       final FileCommand nullFileCommand = null;
-      menuBar.addItem(new MenuItem("Delete", nullFileCommand));
+      menuBar.addItem(new MenuItem(Messages.getInstance().delete(), nullFileCommand));
       menuBar.addSeparator();
     } else {
       final FileCommand nullFileCommand = null;
-      final MenuItem editMenuItem = new MenuItem("Edit", nullFileCommand);
-      editMenuItem.setStyleName("disabledMenuItem");
+      final MenuItem editMenuItem = new MenuItem(Messages.getInstance().edit(), nullFileCommand);
+      editMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
       menuBar.addItem(editMenuItem);
       
       // WG: Experimental Action Sequence Editor
       if (MantleApplication.showAdvancedFeatures) {
-        if (name.endsWith(".xaction")) { 
-          menuBar.addItem(new MenuItem("Edit Action", new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
+        if (name.endsWith(".xaction")) {  //$NON-NLS-1$
+          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.EDIT_ACTION, popupMenu, fileItemCallback)));
         }
       }
       
-      final MenuItem deleteMenuItem = new MenuItem("Delete", nullFileCommand);
-      deleteMenuItem.setStyleName("disabledMenuItem");
+      final MenuItem deleteMenuItem = new MenuItem(Messages.getInstance().delete(), nullFileCommand);
+      deleteMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
       menuBar.addItem(deleteMenuItem);
       menuBar.addSeparator();
     }
 
-    menuBar.addItem(new MenuItem("Properties", new FileCommand(FileCommand.PROPERTIES, popupMenu, fileItemCallback)));
+    menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, popupMenu, fileItemCallback)));
     popupMenu.setWidget(menuBar);
 
     Timer t = new Timer() {

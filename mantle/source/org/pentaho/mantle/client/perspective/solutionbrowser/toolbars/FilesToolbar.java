@@ -74,7 +74,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     runBtn = new ToolbarButton(runImage, runDisabledImage);
     runCmd = new FileCommand(FileCommand.RUN, null, callback);
     runBtn.setCommand(runCmd);
-    runBtn.setToolTip(Messages.getInstance().openToolTip());
+    runBtn.setToolTip(Messages.getInstance().open());
     add(runBtn);
 
     Image editImage = new Image();

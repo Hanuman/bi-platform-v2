@@ -32,7 +32,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
-    frame = new CustomFrame(""+System.currentTimeMillis(), url);
+    frame = new CustomFrame(""+System.currentTimeMillis(), url); //$NON-NLS-1$
     add(frame);
   }  
   
@@ -78,7 +78,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   }
 
   public void openTabInNewWindow() {
-    Window.open(getCurrentUrl(), "_blank", "");
+    Window.open(getCurrentUrl(), "_blank", ""); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public NamedFrame getFrame() {
