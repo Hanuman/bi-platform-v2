@@ -81,10 +81,13 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         return;
       case Event.ONMOUSEDOWN:
       case Event.ONMOUSEUP: {
-        int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
-        int[] offsets = ElementUtils.calculateOffsets(getElement());
-        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
-
+        try {
+          int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
+          int[] offsets = ElementUtils.calculateOffsets(getElement());
+          DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (Exception ignore) {
+         //Please ignore the error
+        }
         break;
       }
       }
