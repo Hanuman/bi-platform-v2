@@ -17,6 +17,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String refreshReportingMetadataSuccess();
 
   /**
+   * Translated "Reload All Tabs".
+   * 
+   * @return translated "Reload All Tabs"
+  
+   */
+  @DefaultMessage("Reload All Tabs")
+  String reloadAllTabs();
+
+  /**
    * Translated "No".
    * 
    * @return translated "No"
@@ -233,6 +242,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String refresh();
 
   /**
+   * Translated "Close All Tabs".
+   * 
+   * @return translated "Close All Tabs"
+  
+   */
+  @DefaultMessage("Close All Tabs")
+  String closeAllTabs();
+
+  /**
    * Translated "System Settings".
    * 
    * @return translated "System Settings"
@@ -278,6 +296,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String urlNotSpecified();
 
   /**
+   * Translated "Open Tab in New Window".
+   * 
+   * @return translated "Open Tab in New Window"
+  
+   */
+  @DefaultMessage("Open Tab in New Window")
+  String openTabInNewWindow();
+
+  /**
    * Translated "You must select a schema".
    * 
    * @return translated "You must select a schema"
@@ -303,6 +330,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Waiting")
   String waiting();
+
+  /**
+   * Translated "Create Deep Link".
+   * 
+   * @return translated "Create Deep Link"
+  
+   */
+  @DefaultMessage("Create Deep Link")
+  String createDeepLink();
 
   /**
    * Translated "Switch to Classic View".
@@ -440,6 +476,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String enableSubscription();
 
   /**
+   * Translated "Group Name".
+   * 
+   * @return translated "Group Name"
+  
+   */
+  @DefaultMessage("Group Name")
+  String groupName();
+
+  /**
    * Translated "Public Schedules".
    * 
    * @return translated "Public Schedules"
@@ -510,6 +555,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Global Variables")
   String executeGlobalActions();
+
+  /**
+   * Translated "An analysis view, {0}, is already open.<BR>Select OK to close this view and continue?".
+   * 
+   * @return translated "An analysis view, {0}, is already open.<BR>Select OK to close this view and continue?"
+  
+   */
+  @DefaultMessage("An analysis view, {0}, is already open.<BR>Select OK to close this view and continue?")
+  String analysisViewIsOpen(String arg0);
 
   /**
    * Translated "Reporting Metadata".
@@ -602,6 +656,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String revertToGlobal();
 
   /**
+   * Translated "Bookmark Tab".
+   * 
+   * @return translated "Bookmark Tab"
+  
+   */
+  @DefaultMessage("Bookmark Tab")
+  String bookmarkTab();
+
+  /**
    * Translated "Updates...".
    * 
    * @return translated "Updates..."
@@ -654,6 +717,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Files")
   String files();
+
+  /**
+   * Translated "Close Other Tabs".
+   * 
+   * @return translated "Close Other Tabs"
+  
+   */
+  @DefaultMessage("Close Other Tabs")
+  String closeOtherTabs();
 
   /**
    * Translated "Repository Cache".
@@ -726,6 +798,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Switch to Explorer View")
   String showExplorerView();
+
+  /**
+   * Translated "Close Tab".
+   * 
+   * @return translated "Close Tab"
+  
+   */
+  @DefaultMessage("Close Tab")
+  String closeTab();
 
   /**
    * Translated "Run and Archive".
@@ -944,6 +1025,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String addAll();
 
   /**
+   * Translated "Deep Link".
+   * 
+   * @return translated "Deep Link"
+  
+   */
+  @DefaultMessage("Deep Link")
+  String deepLink();
+
+  /**
    * Translated "Save As...".
    * 
    * @return translated "Save As..."
@@ -1014,6 +1104,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("All Schedules (Admin Only)")
   String allSchedulesAdminOnly();
+
+  /**
+   * Translated "Reload Tab".
+   * 
+   * @return translated "Reload Tab"
+  
+   */
+  @DefaultMessage("Reload Tab")
+  String reloadTab();
 
   /**
    * Translated "Confirm Delete".
@@ -1169,6 +1268,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String error();
 
   /**
+   * Translated "Error: The file {0} does not exist. Check the spelling and try again or browse to the file and select it directly.".
+   * 
+   * @return translated "Error: The file {0} does not exist. Check the spelling and try again or browse to the file and select it directly."
+  
+   */
+  @DefaultMessage("Error: The file {0} does not exist. Check the spelling and try again or browse to the file and select it directly.")
+  String fileDoesNotExist(String arg0);
+
+  /**
    * Translated "New Analysis View...".
    * 
    * @return translated "New Analysis View..."
@@ -1266,22 +1374,4 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
-
-  
-  /**
-   * Translated "An analysis view, {0}, is already open.  Select OK to close this view and continue?"
-   * 
-   * @return translated "An analysis view, {0}, is already open.  Select OK to close this view and continue?"
-   
-   */
-  @DefaultMessage("An analysis view, {0}, is already open.  Select OK to close this view and continue?")
-  String analysisViewIsOpen(String fileName);
-
-  /**
-   * Error string when the file to be opened does not exist.
-   * 
-   * @param fileName File name the user tried to open
-   * @return Actual error string with the file name appended
-   */
-  String fileDoesNotExist(String fileName);  
 }

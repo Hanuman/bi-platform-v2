@@ -25,6 +25,7 @@ import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -59,7 +60,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private HorizontalPanel leftCap = new HorizontalPanel();
   private Image closeTabImage = new Image();
   private String fullText;
-  
+
   public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;
@@ -67,12 +68,12 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     this.fullText = text;
     setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-    panel.setStyleName("tabWidget");
-    leftCap.setStyleName("tabWidgetCap");
+    panel.setStyleName("tabWidget"); //$NON-NLS-1$
+    leftCap.setStyleName("tabWidgetCap"); //$NON-NLS-1$
     Image leftCapImage = new Image();
     MantleImages.images.space1x20().applyTo(leftCapImage);
     leftCap.setSpacing(0);
-    leftCapImage.setWidth("5px");
+    leftCapImage.setWidth("5px"); //$NON-NLS-1$
     leftCap.add(leftCapImage);
 
     setLabelText(text);
@@ -89,18 +90,18 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
         ElementUtils.blur(getElement().getParentElement());
         if (tabIndex == tabPanel.getWidgetIndex(tabContent)) {
-          panel.setStyleName("tabWidget-selected");
-          leftCap.setStyleName("tabWidgetCap-selected");
+          panel.setStyleName("tabWidget-selected"); //$NON-NLS-1$
+          leftCap.setStyleName("tabWidgetCap-selected"); //$NON-NLS-1$
         } else {
-          panel.setStyleName("tabWidget");
-          leftCap.setStyleName("tabWidgetCap");
+          panel.setStyleName("tabWidget"); //$NON-NLS-1$
+          leftCap.setStyleName("tabWidgetCap"); //$NON-NLS-1$
         }
       }
 
     });
 
     MantleImages.images.closeTab().applyTo(closeTabImage);
-    closeTabImage.setTitle("Close Tab");
+    closeTabImage.setTitle(Messages.getInstance().closeTab());
     closeTabImage.addMouseListener(this);
     closeTabImage.addClickListener(new ClickListener() {
 
@@ -114,11 +115,11 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     panel.add(textLabel);
     if (perspective != null) {
       panel.add(closeTabImage);
-      DOM.setStyleAttribute(closeTabImage.getElement(), "margin", "5px");
-      DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 0px 5px 0px");
+      DOM.setStyleAttribute(closeTabImage.getElement(), "margin", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
+      DOM.setStyleAttribute(textLabel.getElement(), "margin", "5px 0px 5px 0px"); //$NON-NLS-1$ //$NON-NLS-2$
     } else {
-      DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 5px 5px");
-      DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px");
+      DOM.setStyleAttribute(textLabel.getElement(), "margin", "4px 5px 5px 5px"); //$NON-NLS-1$ //$NON-NLS-2$
+      DOM.setStyleAttribute(textLabel.getElement(), "paddingRight", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     add(leftCap);
@@ -129,11 +130,11 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   public String getText() {
     return fullText;
   }
-  
+
   public void setLabelText(String text) {
     String trimmedText = text.substring(0, Math.min(18, text.length()));
     if (!trimmedText.equals(text)) {
-      trimmedText += "..";
+      trimmedText += ".."; //$NON-NLS-1$
     }
     textLabel.setText(trimmedText);
   }
@@ -222,7 +223,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       final TextBox groupNameTextBox = new TextBox();
       SuggestBox suggestTextBox = new SuggestBox(oracle, groupNameTextBox);
 
-      PromptDialogBox dialogBox = new PromptDialogBox("Group Name", Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, suggestTextBox);
+      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().groupName(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, suggestTextBox);
       if (perspective != null) {
         perspective.getBookmarks();
       }
@@ -254,23 +255,32 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         menuBar.setAutoOpen(true);
         if (tabContent instanceof ReloadableIFrameTabPanel) {
           if (MantleApplication.showAdvancedFeatures) {
-            menuBar.addItem(new MenuItem("Bookmark Tab", new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this)));
+            menuBar.addItem(new MenuItem(Messages.getInstance().bookmarkTab(), new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this)));
             menuBar.addSeparator();
           }
         }
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem("Reload Tab", new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
+          menuBar.addItem(new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
         }
-        menuBar.addItem(new MenuItem("Reload All Tabs", new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, this)));
+        if (tabPanel.getTabBar().getTabCount() > 0) {
+          menuBar.addItem(new MenuItem(Messages.getInstance().reloadAllTabs(), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, this)));
+        } else {
+          menuBar.addItem(new MenuItem(Messages.getInstance().reloadAllTabs(), (Command)null));
+        }
         menuBar.addSeparator();
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem("Open Tab in New Window", new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)));
-          menuBar.addItem(new MenuItem("Create Deep Link", new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)));
+          menuBar.addItem(new MenuItem(Messages.getInstance().openTabInNewWindow(), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)));
+          menuBar.addItem(new MenuItem(Messages.getInstance().createDeepLink(), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)));
           menuBar.addSeparator();
         }
-        menuBar.addItem(new MenuItem("Close Tab", new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
-        menuBar.addItem(new MenuItem("Close Other Tabs", new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)));
-        menuBar.addItem(new MenuItem("Close All Tabs", new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().closeTab(), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
+        if (tabPanel.getTabBar().getTabCount() > 0) {
+          menuBar.addItem(new MenuItem(Messages.getInstance().closeOtherTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)));
+          menuBar.addItem(new MenuItem(Messages.getInstance().closeAllTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)));
+        } else {
+          menuBar.addItem(new MenuItem(Messages.getInstance().closeOtherTabs(), (Command) null));
+          menuBar.addItem(new MenuItem(Messages.getInstance().closeAllTabs(), (Command) null));
+        }
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
         popupMenu.show();
@@ -286,18 +296,18 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     if (sender == closeTabImage) {
       MantleImages.images.closeTabHover().applyTo(closeTabImage);
       if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
-        panel.setStyleName("tabWidget-selected");
-        leftCap.setStyleName("tabWidgetCap-selected");
+        panel.setStyleName("tabWidget-selected"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap-selected"); //$NON-NLS-1$
       } else {
-        panel.setStyleName("tabWidget-hover");
-        leftCap.setStyleName("tabWidgetCap-hover");
+        panel.setStyleName("tabWidget-hover"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap-hover"); //$NON-NLS-1$
       }
     } else {
       if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
         // don't do anything
       } else {
-        panel.setStyleName("tabWidget-hover");
-        leftCap.setStyleName("tabWidgetCap-hover");
+        panel.setStyleName("tabWidget-hover"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap-hover"); //$NON-NLS-1$
       }
     }
   }
@@ -306,18 +316,18 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     if (sender == closeTabImage) {
       MantleImages.images.closeTab().applyTo(closeTabImage);
       if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
-        panel.setStyleName("tabWidget-selected");
-        leftCap.setStyleName("tabWidgetCap-selected");
+        panel.setStyleName("tabWidget-selected"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap-selected"); //$NON-NLS-1$
       } else {
-        panel.setStyleName("tabWidget");
-        leftCap.setStyleName("tabWidgetCap");
+        panel.setStyleName("tabWidget"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap"); //$NON-NLS-1$
       }
     } else {
       if (tabPanel.getTabBar().getSelectedTab() == tabPanel.getWidgetIndex(tabContent)) {
         // don't do anything
       } else {
-        panel.setStyleName("tabWidget");
-        leftCap.setStyleName("tabWidgetCap");
+        panel.setStyleName("tabWidget"); //$NON-NLS-1$
+        leftCap.setStyleName("tabWidgetCap"); //$NON-NLS-1$
       }
     }
   }
@@ -330,9 +340,9 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
   public void createDeepLink() {
     if (tabContent instanceof ReloadableIFrameTabPanel) {
-      PromptDialogBox dialogBox = new PromptDialogBox("Deep Link", Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
-      String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath()
-          + "?name=" + textLabel.getText() + "&startup-url=";
+      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().deepLink(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
+      String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath() //$NON-NLS-1$ //$NON-NLS-2$
+          + "?name=" + textLabel.getText() + "&startup-url="; //$NON-NLS-1$ //$NON-NLS-2$
       String startup = ((ReloadableIFrameTabPanel) tabContent).getUrl();
       TextBox urlbox = new TextBox();
       urlbox.setText(url + URL.encodeComponent(startup));
