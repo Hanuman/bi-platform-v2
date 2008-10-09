@@ -59,18 +59,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     setStyleName("fileLabel"); //$NON-NLS-1$
     ElementUtils.preventTextSelection(fileLabel.getElement());
 
-    Image fileIcon = new Image() {
-      public void onBrowserEvent(Event event) {
-        if ((DOM.eventGetType(event) & Event.BUTTON_LEFT) == Event.BUTTON_LEFT
-            && (DOM.eventGetButton(event) == Event.BUTTON_LEFT || DOM.eventGetButton(event) == Event.BUTTON_RIGHT)) {
-          final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
-          final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
-          handleRightClick(left, top);
-        }
-        super.onBrowserEvent(event);
-      }
-    };
-    fileIcon.sinkEvents(Event.MOUSEEVENTS);
+    Image fileIcon = new Image();
     if (name.endsWith(".waqr.xaction")) { //$NON-NLS-1$
       MantleImages.images.file_report().applyTo(fileIcon);
     } else if (name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
