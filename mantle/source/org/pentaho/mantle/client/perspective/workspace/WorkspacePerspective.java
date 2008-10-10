@@ -469,6 +469,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     } else {
       url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
     }
+    viewDialog.center();
     final Frame iframe = new Frame(url);
     
     // BISERVER-1931: Reducing the size of the dialog box when 
@@ -480,7 +481,6 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     }    
 
     ((VerticalPanel)viewDialog.getContent()).add(iframe);
-    viewDialog.center();
   }
 
   public void buildScheduleTable(List<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
