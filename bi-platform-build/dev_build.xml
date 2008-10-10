@@ -1,5 +1,5 @@
 <project name="bi-platform-dev" basedir="." default="help">
-
+ 
   <description>
 -------------------------------------------------------------------------------
 Development build script for Pentaho BI Server CE.
