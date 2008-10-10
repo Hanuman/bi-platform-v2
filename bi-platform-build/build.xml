@@ -170,5 +170,65 @@
 				</for>
 			</sequential>
 		</target>
+  
+  
+  
+    <!-- ================================================================================= 
+          target: ONE CLICK CE BUILD.
+          note: This build is to be used by the Atlassian Bamboo BMS as implemented by
+                the buildguy.  This target will build, assemble, distribute and promote
+                Pentaho CE.  This target also assumes the availability of IVY and the artifact
+                repository. This target is NOT for development use therefore no description
+                attribute exists for this target. -ejh             
+         ============================================================================== -->
+    <target name="build-ce" depends="install-svnant,publish-all">
+      <sequential>
+        <property name="console" value="pentaho-open-admin-console"/>
+
+        <!-- pull necessary projects into this file structure -->
+        <svn username="${scp.user}" password="${scp.pwd}">
+         <checkout url="svn://source.pentaho.org/svnroot/${console}/${branch}" revision="HEAD" destPath="pentaho-open-admin-console" />
+        </svn>
+                
+        <!-- Build PAC after publish-all -->
+        <ant antfile="${pac.build.dir}/build.xml">
+          <target name="continuous-testless" />
+          <target name="publish-pentaho" />
+        </ant>
+        <!-- Build CE assembly -->
+        <ant antfile="assembly.xml">
+          <target name="clean-all" />
+          <target name="resolve" />
+          <target name="package" />
+        </ant>
+        <!-- Build CE manual assembly -->
+        <ant antfile="manual_assembly.xml">
+          <target name="clean-stage" />
+          <target name="assemble" />
+          <target name="package-zip" />
+        </ant>
+        <!-- Collect all the source jars -->
+        <mkdir dir="temp-src-jars"/>
+        <exec executable="/bin/find">
+          <arg line=". -name *source*jar -exec cp {} temp-src-jars \;"/>
+        </exec>
+        
+        <!-- SCP all CE binaries to PentahoNightly-->
+        <!-- server -->
+        <scp todir="${scp.user}:${scp.pwd}@${scp.host}:${scp.dest}/${project.revision}">
+	      <fileset dir="${scp.ce.source}">
+	        <include name="**/*.zip"/>
+	        <exclude name="**/*manual*.zip"/>	        
+	      </fileset>
+        </scp>
+        <!-- source jars -->
+        <scp todir="${scp.user}:${scp.pwd}@${scp.host}:${scp.dest}/${project.revision}">        
+          <fileset dir="${scp.source}">
+            <include name="**/*.*"/>
+          </fileset>
+	    </scp>        
+     </sequential>  
+    </target>
+
 
 </project>
