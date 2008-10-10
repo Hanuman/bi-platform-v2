@@ -191,7 +191,7 @@
         </svn>
                 
         <!-- Build PAC after publish-all -->
-        <ant antfile="${pac.build.dir}/build.xml">
+        <ant antfile="${console}/build.xml">
           <target name="continuous-testless" />
           <target name="publish-pentaho" />
         </ant>
