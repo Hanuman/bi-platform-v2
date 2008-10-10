@@ -106,7 +106,7 @@ public class KettleComponent extends ComponentBase implements RowListener {
   private static final String TRANSFORMATION = "transformation"; //$NON-NLS-1$
 
   private static final String JOB = "job"; //$NON-NLS-1$
-
+  
   private static final String TRANSFORMFILE = "transformation-file"; //$NON-NLS-1$
 
   private static final String JOBFILE = "job-file"; //$NON-NLS-1$
@@ -584,14 +584,12 @@ public class KettleComponent extends ComponentBase implements RowListener {
               }
             }
             if (!foundStep) {
-              error(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED")); //$NON-NLS-1$
+             throw new KettleException(Messages.getString("Kettle.ERROR_0012_ERROR_INIT_STEP",stepName));//$NON-NLS-1$
             }
           } catch (Exception e) {
-            error(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED"), e); //$NON-NLS-1$
-            
+        	error(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED"), e); //$NON-NLS-1$
             extractKettleStatus(trans);
             extractKettleLog();
-
             return false;
           }
         } else {
@@ -643,7 +641,7 @@ public class KettleComponent extends ComponentBase implements RowListener {
                 }
               }
               if (!foundStep) {
-                error(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED")); //$NON-NLS-1$
+            	  throw new KettleException(Messages.getString("Kettle.ERROR_0012_ERROR_INIT_STEP",stepName)); //$NON-NLS-1$
               }
             } catch (Exception e) {
               error(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED"), e); //$NON-NLS-1$
@@ -1173,5 +1171,7 @@ public class KettleComponent extends ComponentBase implements RowListener {
       }
     }
   }
+  
+ 
   
 }
