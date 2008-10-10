@@ -8,8 +8,6 @@ public interface BookmarkImages extends TreeImages {
 
   AbstractImagePrototype treeClosed();
 
-  /**
-   * @gwt.resource org/pentaho/mantle/client/images/fileIcon.gif
-   */
+  @Resource ("fileIcon.gif")
   AbstractImagePrototype treeLeaf();
 }
