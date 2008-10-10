@@ -4,8 +4,14 @@
   <configurations>
     <conf name="default" />
     <conf name="test" visibility="private" />
+    <conf name="source" />    
   </configurations>
   <dependencies defaultconf="default->default">
+  
+  <publications>
+    <artifact name="${ivy.artifact.id}" type="jar" conf="default"/>
+    <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
+   </publications>  
         
         <!--  external apache dependencies -->
     <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
