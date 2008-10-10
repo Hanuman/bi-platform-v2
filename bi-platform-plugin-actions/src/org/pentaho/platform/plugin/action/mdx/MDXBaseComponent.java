@@ -306,7 +306,11 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
         error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
-
+      if (rawQuery == null) {
+        error(Messages.getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        return false;
+      }
+      
       if (ComponentBase.debug) {
         debug(Messages.getString("MDXBaseComponent.DEBUG_RUNNING_QUERY", rawQuery)); //$NON-NLS-1$
       }
