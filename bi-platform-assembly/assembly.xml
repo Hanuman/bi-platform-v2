@@ -193,7 +193,7 @@
 			<copy todir="${stage.dir.server}/tomcat/common/lib">
 				<fileset dir="${lib.dir}">
 					<include name="hsqldb-*.jar" />
-					<include name="mysql5-connector-*.jar" />
+					<include name="mysql-connector-*.jar" />
 					<include name="postgresql*.jar" />
 					<include name="jasper*.jar" />
 					<include name="naming*.jar" />
@@ -223,6 +223,9 @@
 					<include name="*.jar" />
 					<exclude name="servlet-api-*.jar" />
 					<exclude name="gwt-user-*.jar" />
+					<exclude name="hsqldb-*.jar" />
+					<exclude name="mysql-connector-*.jar" />
+					<exclude name="postgresql*.jar" />
 				</fileset>
 			</copy>
 
