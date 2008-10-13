@@ -23,7 +23,7 @@ package org.pentaho.test.platform.engine.services;
 
 import java.math.BigDecimal;
 
-import org.pentaho.platform.engine.core.audit.AuditFileEntry;
+import org.pentaho.platform.engine.services.audit.AuditFileEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class AuditFileEntryTest extends BaseTest {

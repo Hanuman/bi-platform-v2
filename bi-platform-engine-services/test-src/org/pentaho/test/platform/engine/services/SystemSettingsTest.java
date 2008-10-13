@@ -20,7 +20,7 @@
  * 
  */
 
-package org.pentaho.test.platform.engine.core;
+package org.pentaho.test.platform.engine.services;
 
 import java.io.File;
 import java.util.Iterator;
@@ -123,8 +123,8 @@ public class SystemSettingsTest extends TestCase {
 
     public void testSettings() {
     	Assert.assertTrue( "Initialization of the platform failed", init() );
-        String setting = PentahoSystem.getSystemSetting("objects/ISolutionEngine", null); //$NON-NLS-1$
-        Assert.assertNotNull("Solution Engine implementor is not specified", setting); //$NON-NLS-1$
+        // String setting = PentahoSystem.getSystemSetting("objects/ISolutionEngine", null); //$NON-NLS-1$
+        // Assert.assertNotNull("Solution Engine implementor is not specified", setting); //$NON-NLS-1$
         PentahoSystem.retrySystemInit();
         PentahoSystem.refreshSettings();
     }

@@ -25,7 +25,7 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
-import org.pentaho.platform.engine.core.audit.AuditConnection;
+import org.pentaho.platform.engine.services.audit.AuditConnection;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class AuditConnectionTest extends BaseTest {
