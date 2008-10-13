@@ -24,6 +24,7 @@ import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
+import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
@@ -79,6 +80,7 @@ public interface MantleServiceAsync {
   public void getAllUsers(AsyncCallback<List<String>> callback);
   public void getAllRoles(AsyncCallback<List<String>> callback);
   public void doesSolutionRepositorySupportPermissions(AsyncCallback<Boolean> callback);
+  public void hasAccess(String solutionName, String path, String fileName, int actionOperation, AsyncCallback<Boolean> callback);
   
   // mantle settings
   public void getMantleSettings(AsyncCallback<HashMap<String,String>> callback);

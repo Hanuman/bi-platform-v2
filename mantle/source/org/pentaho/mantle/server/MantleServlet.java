@@ -463,6 +463,14 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
     return solutionFileInfo;
   }
+  
+  public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation) {
+    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+    String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
+    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+    
+    return repository.hasAccess(solutionFile, actionOperation);
+  }
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
     try {

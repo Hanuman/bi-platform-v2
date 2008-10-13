@@ -680,55 +680,29 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no");
         } else if (mode == FileCommand.SUBSCRIBE) {
           final String myurl = url + "&subscribepage=yes";
-          AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
+          AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onFailure(Throwable caught) {
               MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not get file properties.", false, false, true);
               dialogBox.center();
             }
 
-            public void onSuccess(SolutionFileInfo fileInfo) {
-              if (fileInfo.isSubscribable) {
-                boolean subscribe = false;
-                if (fileInfo.supportsAccessControls) {
-                  // check perms
-                  for (RolePermission role : fileInfo.rolePermissions) {
-                    int mask = role.getMask();
-                    if ((mask & PermissionsPanel.PERM_SUBSCRIBE) == PermissionsPanel.PERM_SUBSCRIBE) {
-                      subscribe = true;
-                      break;
-                    }
-                  }
-                  for (UserPermission user : fileInfo.userPermissions) {
-                    int mask = user.getMask();
-                    if ((mask & PermissionsPanel.PERM_SUBSCRIBE) == PermissionsPanel.PERM_SUBSCRIBE) {
-                      subscribe = true;
-                      break;
-                    }
-                  }
-                } else {
-                  // no perm support, we're ok
-                  subscribe = true;
-                }
-                if (subscribe) {
+            public void onSuccess(Boolean subscribable) {
+                 
+                if (subscribable) {
                   showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl);
 
                   // Store representation of file in the frame for reference later when save is called
-                  getCurrentFrame().setFileInfo(fileInfo);
+//                  getCurrentFrame().setFileInfo(fileInfo);
 
                 } else {
                   MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(),
-                      Messages.getInstance().noSchedulePermission(), false, false, true);
+                      "You do not have permission to subscribe to this action sequence.", false, false, true);
                   dialogBox.center();
                 }
-              } else {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), "This action sequence is not subscribable.", false, false,
-                    true);
-                dialogBox.center();
-              }
-            }
+              } 
           };
-          MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), callback);
+          MantleServiceCache.getService().hasAccess(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), 3, callback);
         } else {
           showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), url);
         }

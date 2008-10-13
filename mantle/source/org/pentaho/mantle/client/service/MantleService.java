@@ -80,6 +80,7 @@ public interface MantleService extends RemoteService {
   public List<String> getAllUsers();
   public List<String> getAllRoles();
   public boolean doesSolutionRepositorySupportPermissions();
+  public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation);
   
   // mantle settings
   public HashMap<String,String> getMantleSettings();
