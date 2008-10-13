@@ -322,7 +322,7 @@ public class PentahoSystem {
 
     // Check the audit log class to make sure it's there.
     String auditClass = PentahoSystem.systemSettings.getSystemSetting(
-        "objects/IAuditEntry", "org.pentaho.platform.engine.core.audit.AuditFileEntry"); //$NON-NLS-1$ //$NON-NLS-2$
+        "objects/IAuditEntry", "org.pentaho.platform.engine.services.audit.AuditFileEntry"); //$NON-NLS-1$ //$NON-NLS-2$
     if (!PentahoSystem.checkClassExists(auditClass)) {
       PentahoSystem.initializedStatus |= PentahoSystem.SYSTEM_OBJECTS_FAILED | PentahoSystem.SYSTEM_AUDIT_FAILED;
       String msg = Messages.getErrorString("PentahoSystem.ERROR_0020_SPECIFIED_CLASS_NOT_FOUND", //$NON-NLS-1$
