@@ -378,7 +378,8 @@
 	<!--=======================================================================
 		        unified-platform-javadoc
 		    
-		        cleans, resolves, generates and copies all platform javadocs serially.
+		        cleans, resolves, generates and copies all platform javadocs serially.  This
+		        target also creates the unified zip/tar of the sources as well.
 		        Note the release process depends on this target working this way, please
 		        talk to the release manager if you need to change this target.
 		        ====================================================================-->
@@ -436,11 +437,16 @@
 					</copy>
 				</sequential>
 			</for>
-
 			<javadoc destdir="${unified.javadoc.dir}" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" sourcepath="${unified.javadoc.src}" packagenames="org.pentaho.*" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" doctitle="Pentaho BI Platform documentation">
 				<classpath refid="jdoc.classpath" />
 				<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
 			</javadoc>
+			<move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">			  
+			  	<fileset dir="${unified.javadoc.src}"/>
+		  	</move>
+		  	<zip destfile="bi-server-ce-${project.revision}-all-sources.zip"
+       			 basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
+       	    <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
 		</sequential>
 	</target>
 
