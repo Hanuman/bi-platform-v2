@@ -137,7 +137,10 @@ public class SaveCommand implements Command {
 
     if(frame.pivot_initialized) {
       // do jpivot save
-      frame.controller.saveAs(filename+'.analysisview', solution, path, overwrite);
+      if (filename.indexOf("analysisview.xaction") == -1) {
+        frame.myFilename = filename + ".analysisview.xaction";
+      }
+      frame.controller.saveAs(frame.myFilename, filename, frame.mySolution, frame.myPath, frame.myOverwrite);
     } else {
       frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, frame.myType, frame.myOverwrite);
     }
