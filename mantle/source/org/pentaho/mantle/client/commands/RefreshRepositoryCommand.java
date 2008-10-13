@@ -6,7 +6,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RefreshRepositoryCommand implements Command {
@@ -21,7 +20,8 @@ public class RefreshRepositoryCommand implements Command {
     AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshRepositoryFailed(), false, false, true);
+        dialogBox.center();
       }
 
       public void onSuccess(Void nothing) {
