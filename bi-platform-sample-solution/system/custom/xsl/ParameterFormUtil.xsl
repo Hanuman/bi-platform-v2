@@ -47,17 +47,6 @@
 					</xsl:for-each>
                     pentaho_optionalParams.push('form_<xsl:value-of select="id"/>.run_as_background');
 			    </script>
-          
-          <script type="text/javascript">
-            function closeMantleTab(){
-              try{
-                window.parent.closeTab(window.location.href);
-              } catch(e){
-                alert("error closing tab: "+e);
-              }
-            }
-          </script>
-			    
 	    </head>
 		<body>
         
