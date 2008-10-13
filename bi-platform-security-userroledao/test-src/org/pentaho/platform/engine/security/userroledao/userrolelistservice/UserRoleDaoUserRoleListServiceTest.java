@@ -1,13 +1,15 @@
 package org.pentaho.platform.engine.security.userroledao.userrolelistservice;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.userdetails.User;
+import org.acegisecurity.userdetails.UserDetails;
+import org.acegisecurity.userdetails.UserDetailsService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -29,6 +31,8 @@ import org.pentaho.platform.engine.security.userroledao.PentahoUser;
  */
 @RunWith(JMock.class)
 public class UserRoleDaoUserRoleListServiceTest {
+  private static final String PASSWORD = "password"; //$NON-NLS-1$
+
   private static final String USERNAME = "joe"; //$NON-NLS-1$
   
   private static final String USERNAME2 = "suzy"; //$NON-NLS-1$
@@ -54,6 +58,7 @@ public class UserRoleDaoUserRoleListServiceTest {
     roles.add(new PentahoRole(ROLE2));
     
     final IUserRoleDao dao = context.mock(IUserRoleDao.class);
+    final UserDetailsService userDetailsService = context.mock(UserDetailsService.class);
     context.checking(new Expectations() {
       {
         one(dao).getRoles();
@@ -62,6 +67,7 @@ public class UserRoleDaoUserRoleListServiceTest {
     });
     UserRoleDaoUserRoleListService service = new UserRoleDaoUserRoleListService();
     service.setUserRoleDao(dao);
+    service.setUserDetailsService(userDetailsService);
     GrantedAuthority[] auths = service.getAllAuthorities();
     
     assertTrue(auths.length == 2);
@@ -76,6 +82,7 @@ public class UserRoleDaoUserRoleListServiceTest {
     users.add(new PentahoUser(USERNAME));
     
     final IUserRoleDao dao = context.mock(IUserRoleDao.class);
+    final UserDetailsService userDetailsService = context.mock(UserDetailsService.class);
     context.checking(new Expectations() {
       {
         one(dao).getUsers();
@@ -85,6 +92,7 @@ public class UserRoleDaoUserRoleListServiceTest {
     
     UserRoleDaoUserRoleListService service = new UserRoleDaoUserRoleListService();
     service.setUserRoleDao(dao);
+    service.setUserDetailsService(userDetailsService);
     String[] usernames = service.getAllUsernames();
     
     assertTrue(usernames.length == 2);
@@ -94,20 +102,24 @@ public class UserRoleDaoUserRoleListServiceTest {
 
   @Test
   public void testGetAuthoritiesForUser() {
-    final IPentahoUser user = new PentahoUser(USERNAME);
-    user.addRole(new PentahoRole(ROLE));
-    user.addRole(new PentahoRole(ROLE2));
+    GrantedAuthority[] authorities = new GrantedAuthority[2];
+    authorities[0] = new GrantedAuthorityImpl(ROLE);
+    authorities[1] = new GrantedAuthorityImpl(ROLE2);
+
+    final UserDetails userDetails = new User(USERNAME, PASSWORD, true, true, true, true, authorities); 
     
     final IUserRoleDao dao = context.mock(IUserRoleDao.class);
+    final UserDetailsService userDetailsService = context.mock(UserDetailsService.class);
     context.checking(new Expectations() {
       {
-        one(dao).getUser(with(equal(USERNAME)));
-        will(returnValue(user));
+        one(userDetailsService).loadUserByUsername(USERNAME);
+        will(returnValue(userDetails));
       }
     });
 
     UserRoleDaoUserRoleListService service = new UserRoleDaoUserRoleListService();
     service.setUserRoleDao(dao);
+    service.setUserDetailsService(userDetailsService);
     GrantedAuthority[] auths = service.getAuthoritiesForUser(USERNAME);
     
     assertTrue(auths.length == 2);
@@ -122,6 +134,7 @@ public class UserRoleDaoUserRoleListServiceTest {
     role.addUser(new PentahoUser(USERNAME2));
     
     final IUserRoleDao dao = context.mock(IUserRoleDao.class);
+    final UserDetailsService userDetailsService = context.mock(UserDetailsService.class);
     context.checking(new Expectations() {
       {
         one(dao).getRole(with(equal(ROLE)));
@@ -131,6 +144,7 @@ public class UserRoleDaoUserRoleListServiceTest {
 
     UserRoleDaoUserRoleListService service = new UserRoleDaoUserRoleListService();
     service.setUserRoleDao(dao);
+    service.setUserDetailsService(userDetailsService);
     String[] usernames = service.getUsernamesInRole(new GrantedAuthorityImpl(ROLE));
     
     assertTrue(usernames.length == 2);

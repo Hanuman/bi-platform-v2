@@ -5,10 +5,14 @@ import java.util.List;
 
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.userdetails.UserDetails;
+import org.acegisecurity.userdetails.UserDetailsService;
+import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.pentaho.platform.api.engine.IUserRoleListService;
 import org.pentaho.platform.engine.security.userroledao.IPentahoRole;
 import org.pentaho.platform.engine.security.userroledao.IPentahoUser;
 import org.pentaho.platform.engine.security.userroledao.IUserRoleDao;
+import org.springframework.dao.DataAccessException;
 
 /**
  * An {@link IUserRoleListService} that delegates to an {@link IUserRoleDao}.
@@ -22,6 +26,8 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
   // ~ Instance fields =================================================================================================
 
   private IUserRoleDao userRoleDao;
+  
+  private UserDetailsService userDetailsService;
 
   // ~ Constructors ====================================================================================================
 
@@ -55,20 +61,10 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
     return usernames.toArray(new String[0]);
   }
 
-  public GrantedAuthority[] getAuthoritiesForUser(String username) {
-    IPentahoUser user = userRoleDao.getUser(username);
-    if (user == null) {
-      GrantedAuthority[] rtn = {};
-      return rtn;
-    }
-
-    List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
-
-    for (IPentahoRole role : user.getRoles()) {
-      roles.add(new GrantedAuthorityImpl(role.getName()));
-    }
-
-    return roles.toArray(new GrantedAuthority[0]);
+  public GrantedAuthority[] getAuthoritiesForUser(String username) throws UsernameNotFoundException,
+  DataAccessException {
+  UserDetails user = userDetailsService.loadUserByUsername(username);
+  return user.getAuthorities();
   }
 
   public String[] getUsernamesInRole(GrantedAuthority authority) {
@@ -89,6 +85,10 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
 
   public void setUserRoleDao(IUserRoleDao userRoleDao) {
     this.userRoleDao = userRoleDao;
+  }
+
+  public void setUserDetailsService(UserDetailsService userDetailsService) {
+    this.userDetailsService = userDetailsService;
   }
 
 }
