@@ -746,8 +746,9 @@
 				var newActionName = encodeURI( controller.getActionName() );
 				var newSolution = encodeURI( controller.getSolution() );
 				var newActionPath = encodeURI( controller.getActionPath() );
+				var newActionTitle = encodeURI( controller.getActionTitle()!=null?controller.getActionTitle():controller.getActionName() );
 				document.location.href='<%= pageName %>?save-action=saveAs&save-path='+newSolution
-				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionName;
+				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionTitle;
 			});
 			cursor_clear();
 			if (saveMessage != null && "" != saveMessage) {

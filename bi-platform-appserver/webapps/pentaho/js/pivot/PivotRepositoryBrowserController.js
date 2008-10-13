@@ -49,7 +49,7 @@ PivotRepositoryBrowserController = function()
 	this.solution = null;
 	this.path = null;
 	this.saveAsName = null;
-
+	this.title = null;
 	this.onAfterSaveCallback = null;
 
 }
@@ -74,6 +74,10 @@ PivotRepositoryBrowserController.prototype.getActionName = function( )
 {
 	return this.saveAsName;
 }
+PivotRepositoryBrowserController.prototype.getActionTitle = function( )
+{
+	return this.title;
+}
 
 PivotRepositoryBrowserController.isValidFilename = function( filename )	
 {
@@ -90,10 +94,11 @@ PivotRepositoryBrowserController.prototype.handleSave = function()
 		{
 			saveAsName = matchRes[ 1 ];	// trim off the extension
 		}
+		var title = saveAsName;
 		var solution = this.repositoryBrowser.getSolutionName();
 		var path = this.repositoryBrowser.getPath();
 		
-		var bSaveOk = this.saveAs( saveAsName, solution, path, false );
+		var bSaveOk = this.saveAs( saveAsName, title, solution, path, false );
 		
 		return bSaveOk;
 	}
@@ -117,7 +122,7 @@ PivotRepositoryBrowserController.prototype.handleFolderChange = function( soluti
 	);
 };
 PivotRepositoryBrowserController.prototype.saveAs = function( saveAsName,
-	solution, path, bOverwrite )
+	title, solution, path, bOverwrite )
 {
 	/*
 	 * if bOverwrite is false, check to see if the file exists in the repository. If
@@ -150,6 +155,7 @@ PivotRepositoryBrowserController.prototype.saveAs = function( saveAsName,
 		this.solution = solution;
 		this.path = path;
 		this.saveAsName = saveAsName;
+		this.title = title;
 
 		if ( this.onAfterSaveCallback )
 		{
@@ -184,7 +190,7 @@ PivotRepositoryBrowserController.prototype.save = function()
 	else
 	{
 		// this.path better be non-empty too!
-		this.saveAs( this.saveAsName , this.solution, this.path, true );
+		this.saveAs( this.saveAsName, this.title , this.solution, this.path, true );
 	}
 }
 
@@ -193,6 +199,7 @@ PivotRepositoryBrowserController.prototype.reset = function()
 	this.solution = null;
 	this.path = null;
 	this.saveAsName = null;
+	this.title = null;
 }
 
 PivotRepositoryBrowserController.prototype.setOnAfterSaveCallback = function( callback )
