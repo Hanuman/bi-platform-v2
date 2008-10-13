@@ -1473,4 +1473,101 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
+  
+  /**
+   * Translated "You do not have permission to schedule to this action sequence."
+   * 
+   * @return translated "You do not have permission to schedule to this action sequence."
+  
+   */
+  @DefaultMessage("You do not have permission to schedule to this action sequence.")
+  String noSchedulePermission();
+ 
+  /**
+   * Translated "All Permissions".
+   * 
+   * @return translated "All Permissions"
+   */
+  @DefaultMessage("All Permissions")
+  String allPermissions();
+
+  /**
+   * Translated "Create".
+   * 
+   * @return translated "Create"
+   */
+  @DefaultMessage("Create")
+  String create();
+  
+  /**
+   * Translated "Update".
+   * 
+   * @return translated "Update"
+   */
+  @DefaultMessage("Update")
+  String update();
+  
+  /**
+   * Translated "Execute".
+   * 
+   * @return translated "Execute"
+   */
+  @DefaultMessage("Execute")
+  String execute();
+
+  /**
+   * Translated "Grant Permissions".
+   * 
+   * @return translated "Grant Permissions"
+   */
+  @DefaultMessage("Grant Permissions")
+  String grantPermissions();
+  
+  /**
+   * Translated "Permissions:".
+   * 
+   * @return translated "Permissions:"
+   */
+  @DefaultMessage("Permissions:")
+  String permissionsColon();
+  
+  /**
+   * Translated "Add...".
+   * 
+   * @return translated "Add..."
+   */
+  @DefaultMessage("Add...")
+  String addPeriods();
+
+  /**
+   * Translated "Users and Roles:"
+   * 
+   * @return translated "Users and Roles:"
+   */
+  @DefaultMessage("Users and Roles:")
+  String usersAndRoles();
+
+  /**
+   * Translated "Permissions for {0}:"
+   * 
+   * @return translated "Permissions for {0}:"
+   */
+  @DefaultMessage("Permissions for {0}:")
+  String permissionsFor(String userOrRole); 
+  
+  /**
+   * Translated "{0} (User)"
+   * 
+   * @return translated "{0} (User)"
+   */
+  @DefaultMessage("{0} (User)")
+  String user(String user); 
+  
+  /**
+   * Translated "{0} (Role)"
+   * 
+   * @return translated "{0} (Role)"
+   */
+  @DefaultMessage("{0} (Role)")
+  String role(String role);
 }

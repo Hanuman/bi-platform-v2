@@ -718,7 +718,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
                 } else {
                   MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(),
-                      "You do not have permission to subscribe to this action sequence.", false, false, true);
+                      Messages.getInstance().noSchedulePermission(), false, false, true);
                   dialogBox.center();
                 }
               } else {
