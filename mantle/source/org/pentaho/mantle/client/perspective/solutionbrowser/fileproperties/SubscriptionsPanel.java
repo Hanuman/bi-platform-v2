@@ -225,14 +225,14 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     if (dirty) {
       if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm("All applied schedules will be lost.  Continue?")) || (!wasEnabled)) { // We're turning off this subscription... alert the user
 
-        AsyncCallback<Object> callback = new AsyncCallback<Object>() {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
             dialogBox.center();
           }
 
-          public void onSuccess(Object result) {
+          public void onSuccess(Void nothing) {
             dirty = false; // I don't know if this even gets back here    
           }
 
