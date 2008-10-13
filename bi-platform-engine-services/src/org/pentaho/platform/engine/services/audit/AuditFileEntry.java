@@ -19,7 +19,7 @@
  * @author Marc Batchelor
  */
 
-package org.pentaho.platform.engine.core.audit;
+package org.pentaho.platform.engine.services.audit;
 
 import java.io.BufferedWriter;
 import java.io.File;

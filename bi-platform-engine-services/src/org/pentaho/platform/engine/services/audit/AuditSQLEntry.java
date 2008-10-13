@@ -18,7 +18,7 @@
  * @author Marc Batchelor
  */
 
-package org.pentaho.platform.engine.core.audit;
+package org.pentaho.platform.engine.services.audit;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -29,6 +29,7 @@ import java.sql.Types;
 
 import org.pentaho.platform.api.engine.AuditException;
 import org.pentaho.platform.api.engine.IAuditEntry;
+import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;

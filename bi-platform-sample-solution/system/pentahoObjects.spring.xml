@@ -37,7 +37,7 @@
           <bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator">
 						<!-- does not support session creator (aka scope) -->
             <constructor-arg>
-              <value>org.pentaho.platform.engine.core.audit.AuditFileEntry</value>
+              <value>org.pentaho.platform.engine.services.audit.AuditFileEntry</value>
             </constructor-arg>
           </bean>
         </entry>
