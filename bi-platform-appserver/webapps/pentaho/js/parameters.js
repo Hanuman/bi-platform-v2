@@ -204,3 +204,12 @@ function getParameters( id ) {
 	}
 	return params;
 }
+
+
+function closeMantleTab(){
+  try{
+    window.parent.closeTab(window.location.href);
+  } catch(e){
+    alert("error closing tab: "+e);
+  }
+}
