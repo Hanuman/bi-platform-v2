@@ -42,7 +42,7 @@ public class TestAll {
 //    suite.addTestSuite(SettingsParameterProviderTest.class);
 //    suite.addTestSuite(SimpleParameterProviderTest.class);
     suite.addTestSuite(SimpleUrlTest.class);
-    suite.addTestSuite(SystemSettingsTest.class);
+
     return suite;
   }
 
