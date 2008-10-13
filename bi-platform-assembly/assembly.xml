@@ -195,7 +195,6 @@
 					<include name="hsqldb-*.jar" />
 					<include name="mysql-connector-*.jar" />
 					<include name="postgresql*.jar" />
-					<include name="jasper*.jar" />
 					<include name="naming*.jar" />
 					<include name="commons-el.jar" />
 					<include name="jsp-api.jar" />
