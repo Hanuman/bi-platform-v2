@@ -181,7 +181,7 @@
                 repository. This target is NOT for development use therefore no description
                 attribute exists for this target. -ejh             
          ============================================================================== -->
-    <target name="build-ce" depends="install-svnant,publish-all">
+    <target name="build-ce" depends="publish-all,install-svnant">
       <sequential>
         <property name="console" value="pentaho-open-admin-console"/>
 
