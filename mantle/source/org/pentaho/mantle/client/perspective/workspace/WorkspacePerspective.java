@@ -33,7 +33,6 @@ import org.pentaho.mantle.login.client.MantleLoginDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -50,8 +49,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class WorkspacePerspective extends ScrollPanel implements IPerspective {
 
-  private static final int MINUTE = 60000;
-  private static final int BACKGROUND_CHECKER_INTERVAL = 1 * MINUTE;
   private static final int WAITING = 0;
   private static final int COMPLETE = 1;
   private static final int MYSCHEDULES = 2;
@@ -75,47 +72,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   
   public WorkspacePerspective(final IWorkspaceCallback workspaceCallback, final IPerspectiveCallback perspectiveCallback) {
     this.perspectiveCallback = perspectiveCallback;
-
     DOM.setStyleAttribute(getElement(), "backgroundColor", "white");
-    
-    Timer backgroundContentAlerter = new Timer() {
-
-      public void run() {
-        AsyncCallback callback = new AsyncCallback() {
-
-          public void onFailure(Throwable caught) {
-          }
-
-          public void onSuccess(Object result) {
-            Boolean backgroundAlert = (Boolean) result;
-            if (!backgroundAlertRaised && backgroundAlert) {
-              // raise alert
-              IDialogCallback callback = new IDialogCallback() {
-
-                public void cancelPressed() {
-                  resetBackgroundExecutionAlert();
-                }
-
-                public void okPressed() {
-                  workspaceCallback.backgroundExecutionCompleted();
-                }
-
-              };
-              PromptDialogBox dialogBox = new PromptDialogBox("Info", "Yes", "No", false, true);
-              dialogBox.setContent(new Label("New content is ready!  Refresh your workspace now?"));
-              dialogBox.setCallback(callback);
-              dialogBox.center();
-
-              // we will clear this alert when the user views their content
-              backgroundAlertRaised = true;
-            }
-          }
-        };
-        MantleServiceCache.getService().getBackgroundExecutionAlert(callback);
-      }
-    };
-    backgroundContentAlerter.scheduleRepeating(BACKGROUND_CHECKER_INTERVAL);
-
     buildScheduledAndCompletedContentPanel();
   }
 
