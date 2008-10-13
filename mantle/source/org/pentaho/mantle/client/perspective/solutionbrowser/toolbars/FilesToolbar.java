@@ -39,6 +39,7 @@ import com.google.gwt.user.client.ui.MenuBar;
  */
 public class FilesToolbar extends Toolbar implements IFileSelectionChangedListener {
   protected String FILES_TOOLBAR_STYLE_NAME = "filesPanelToolbar"; //$NON-NLS-1$
+  protected String FILE_GROUP_STYLE_NAME = "filesToolbarGroup"; //$NON-NLS-1$
 
   ToolbarComboButton miscComboBtn;
   ToolbarButton runBtn, editBtn;
@@ -65,7 +66,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void createMenus() {
     addSpacer(5);
-    add(new ToolbarGroup(Messages.getInstance().files()));
+    add(new FilesToolbarGroup(Messages.getInstance().files()));
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);
@@ -139,5 +140,30 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     setEnabled(selectedFileItem != null);
     // only allow edit on waqr
     editBtn.setEnabled(selectedFileItem != null && selectedFileItem.getName().endsWith(".waqr.xaction")); //$NON-NLS-1$
+  }
+  
+  /**
+   * @author wseyler
+   *
+   */
+public class FilesToolbarGroup extends ToolbarGroup {
+    public FilesToolbarGroup(String groupName) {
+      super(groupName);
+    }
+
+    /**
+     * Changes the enabled status of the group. If enabled is false, the buttons will be disabled.
+     * If enabled is true, it will consult the buttons for their current enabled state.
+     * 
+     * @param enabled boolena flag
+     */
+    public void setEnabled(boolean enabled){
+      super.setEnabled(true);
+    }
+    
+
+    public void setTempDisabled(boolean disable) {
+      super.setTempDisabled(false);
+    }
   }
 }
