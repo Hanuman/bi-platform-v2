@@ -3,10 +3,19 @@ package org.pentaho.mantle.client.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	E:/development-pentaho/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
+ * 	C:/development-2.0/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
  */
 public interface MantleApplicationConstants extends com.google.gwt.i18n.client.Messages {
   
+  /**
+   * Translated "Could not delete {0}, check permissions.".
+   * 
+   * @return translated "Could not delete {0}, check permissions."
+  
+   */
+  @DefaultMessage("Could not delete {0}, check permissions.")
+  String couldNotDelete(String arg0);
+
   /**
    * Translated "Reporting metadata refreshed successfully".
    * 
@@ -78,6 +87,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Enter URL:")
   String enterURL();
+
+  /**
+   * Translated "Could not create folder {0}, check permissions.".
+   * 
+   * @return translated "Could not create folder {0}, check permissions."
+  
+   */
+  @DefaultMessage("Could not create folder {0}, check permissions.")
+  String couldNotCreateFolder(String arg0);
 
   /**
    * Translated "Open URL...".
@@ -575,15 +593,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String analysisViewIsOpen(String arg0);
 
   /**
-   * Translated "Reporting Metadata".
-   * 
-   * @return translated "Reporting Metadata"
-  
-   */
-  @DefaultMessage("Reporting Metadata")
-  String refreshReportingMetadata();
-
-  /**
    * Translated "Version".
    * 
    * @return translated "Version"
@@ -591,6 +600,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Version")
   String version();
+
+  /**
+   * Translated "Reporting Metadata".
+   * 
+   * @return translated "Reporting Metadata"
+  
+   */
+  @DefaultMessage("Reporting Metadata")
+  String refreshReportingMetadata();
 
   /**
    * Translated "Mondrian Data Cache Flushed Successfully".
@@ -663,6 +681,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Revert to Global Setting")
   String revertToGlobal();
+
+  /**
+   * Translated "New Folder".
+   * 
+   * @return translated "New Folder"
+  
+   */
+  @DefaultMessage("New Folder")
+  String newFolder();
 
   /**
    * Translated "Bookmark Tab".
@@ -944,6 +971,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String close();
 
   /**
+   * Translated "Create New Folder...".
+   * 
+   * @return translated "Create New Folder..."
+  
+   */
+  @DefaultMessage("Create New Folder...")
+  String createNewFolderEllipsis();
+
+  /**
    * Translated "Tools".
    * 
    * @return translated "Tools"
@@ -1032,6 +1068,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Could not create schedule")
   String couldNotCreateSchedule();
+
+  /**
+   * Translated "Do you want to delete {0}?".
+   * 
+   * @return translated "Do you want to delete {0}?"
+  
+   */
+  @DefaultMessage("Do you want to delete {0}?")
+  String deleteQuestion(String arg0);
 
   /**
    * Translated "Add All".
@@ -1149,6 +1194,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Confirm Delete")
   String deleteConfirm();
+
+  /**
+   * Translated "New Folder Description".
+   * 
+   * @return translated "New Folder Description"
+  
+   */
+  @DefaultMessage("New Folder Description")
+  String newFolderDesc();
 
   /**
    * Translated "Workspace".
@@ -1340,6 +1394,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String pentahoHomePageName();
 
   /**
+   * Translated "Repository cache refresh failed".
+   * 
+   * @return translated "Repository cache refresh failed"
+  
+   */
+  @DefaultMessage("Repository cache refresh failed")
+  String refreshRepositoryFailed();
+
+  /**
    * Translated "General".
    * 
    * @return translated "General"
@@ -1365,6 +1428,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Schedule")
   String schedule();
+
+  /**
+   * Translated "New Folder Name".
+   * 
+   * @return translated "New Folder Name"
+  
+   */
+  @DefaultMessage("New Folder Name")
+  String newFolderName();
 
   /**
    * Translated "New Schedule".
