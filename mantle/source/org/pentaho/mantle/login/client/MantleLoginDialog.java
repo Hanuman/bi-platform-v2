@@ -58,16 +58,6 @@ public class MantleLoginDialog extends PromptDialogBox {
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService"; //$NON-NLS-1$
     endpoint.setServiceEntryPoint(moduleRelativeURL);
-
-    SERVICE.isShowUsersList(new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable caught) {
-      }
-
-      public void onSuccess(Boolean result) {
-        showUsersList = result;
-      }
-    });
   }
 
   private final IDialogCallback myCallback = new IDialogCallback() {
@@ -141,6 +131,23 @@ public class MantleLoginDialog extends PromptDialogBox {
     passwordTextBox.setText(""); //$NON-NLS-1$
     setFocusWidget(userTextBox);
     addDefaultUsers();
+    SERVICE.isShowUsersList(new AsyncCallback<Boolean>() {
+
+      public void onFailure(Throwable caught) {
+        setContent(buildLoginPanel());
+        if (isAttached() && isVisible()) {
+          center();
+        }
+      }
+
+      public void onSuccess(Boolean result) {
+        showUsersList = result;
+        setContent(buildLoginPanel());
+        if (isAttached() && isVisible()) {
+          center();
+        }
+      }
+    });
   }
 
   public MantleLoginDialog(AsyncCallback callback, boolean showNewWindowOption) {
@@ -223,11 +230,6 @@ public class MantleLoginDialog extends PromptDialogBox {
 
   public void setCallback(AsyncCallback<Boolean> callback) {
     outerCallback = callback;
-  }
-
-  public void center() {
-    setContent(buildLoginPanel());
-    super.center();
   }
 
   public void addDefaultUsers() {
