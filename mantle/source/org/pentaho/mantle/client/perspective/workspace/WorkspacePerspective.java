@@ -27,6 +27,7 @@ import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
@@ -67,10 +68,11 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   private FlexTable workspaceTable = new FlexTable();
 
   IPerspectiveCallback perspectiveCallback;
-
+  SolutionBrowserPerspective solutionBrowserPerspective;
   private static final String DELETE="delete";
   
-  public WorkspacePerspective(final IWorkspaceCallback workspaceCallback, final IPerspectiveCallback perspectiveCallback) {
+  public WorkspacePerspective(final SolutionBrowserPerspective solutionBrowserPerspective, final IPerspectiveCallback perspectiveCallback) {
+    this.solutionBrowserPerspective = solutionBrowserPerspective;
     this.perspectiveCallback = perspectiveCallback;
     DOM.setStyleAttribute(getElement(), "backgroundColor", "white");
     buildScheduledAndCompletedContentPanel();
@@ -195,15 +197,16 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         viewLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
-            PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
-            viewDialog.setPixelSize(1024, 600);
-            viewDialog.center();
-            // if this iframe is placed above the show/center of the dialog, the browser will
-            // end up making 2 requests for the url in the iframe (one of which will be terminated and
-            // we'll see an error on the server about a broken pipe).
-            Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
-            viewDialog.setContent(iframe);
-            iframe.setPixelSize(1024, 600);
+//            PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
+//            viewDialog.setPixelSize(1024, 600);
+//            viewDialog.center();
+//            // if this iframe is placed above the show/center of the dialog, the browser will
+//            // end up making 2 requests for the url in the iframe (one of which will be terminated and
+//            // we'll see an error on the server about a broken pipe).
+//            Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
+//            viewDialog.setContent(iframe);
+//            iframe.setPixelSize(1024, 600);
+            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id);
           }
 
         });
@@ -416,9 +419,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       }
       public void cancelPressed() {
       }
-    });
-    
-    
+    });    
     
     final String url;
     if (GWT.isScript()) {
@@ -426,18 +427,23 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     } else {
       url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
     }
-    viewDialog.center();
-    final Frame iframe = new Frame(url);
-    
-    // BISERVER-1931: Reducing the size of the dialog box when 
-    // subscription is to be deleted    
-    if (action.equals(DELETE)) {
-      iframe.setSize("100%", "100%");
-    } else {
-      iframe.setPixelSize(800, 600);
-    }    
 
-    ((VerticalPanel)viewDialog.getContent()).add(iframe);
+    if (action.equals("archived") || action.equals("run")) {
+      solutionBrowserPerspective.showNewURLTab(subscrName, subscrName, url);
+    } else {
+      viewDialog.center();
+      final Frame iframe = new Frame(url);
+      
+      // BISERVER-1931: Reducing the size of the dialog box when 
+      // subscription is to be deleted    
+      if (action.equals(DELETE)) {
+        iframe.setSize("100%", "100%");
+      } else {
+        iframe.setPixelSize(800, 600);
+      }    
+  
+      ((VerticalPanel)viewDialog.getContent()).add(iframe);
+    }
   }
 
   public void buildScheduleTable(List<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
