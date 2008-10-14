@@ -1457,12 +1457,12 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String manageGroups();
 
   /**
-   * Translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.".
+   * Translated "Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.".
    * 
-   * @return translated "The action-sequence has been scheduled successfully.  If the output of the action-sequence is "response" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary."
+   * @return translated "Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.."
   
    */
-  @DefaultMessage("The action-sequence has been scheduled successfully.  If the output of the action-sequence is \"response\" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.")
+  @DefaultMessage("Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.")
   String actionSequenceScheduledSuccess();
 
   /**

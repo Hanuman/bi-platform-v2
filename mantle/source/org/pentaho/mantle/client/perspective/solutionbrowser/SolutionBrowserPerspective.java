@@ -830,7 +830,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onSuccess(Object result) {
             MessageDialogBox dialogBox = new MessageDialogBox(
                 Messages.getInstance().info(),
-                "The action-sequence has been scheduled successfully.  If the output of the action-sequence is \"response\" the content will be lost.<BR><BR>You can modify your action-sequence to deliver the content via e-mail if necessary.",
+                Messages.getInstance().actionSequenceScheduledSuccess(),
                 true, false, true);
             dialogBox.center();
           }
