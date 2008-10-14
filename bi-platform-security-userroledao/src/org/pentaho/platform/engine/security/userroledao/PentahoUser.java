@@ -53,7 +53,14 @@ public class PentahoUser implements IPentahoUser {
   }
 
   public PentahoUser(String username) {
+    this(username, null, null, true);
+  }
+
+  public PentahoUser(String username, String password, String description, boolean enabled) {
     this.username = username;
+    this.password = password;
+    this.description = description;
+    this.enabled = enabled;
   }
 
   /**

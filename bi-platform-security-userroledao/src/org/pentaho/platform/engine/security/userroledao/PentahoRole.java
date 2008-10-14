@@ -42,7 +42,12 @@ public class PentahoRole implements IPentahoRole {
   }
 
   public PentahoRole(String name) {
+    this(name, null);
+  }
+
+  public PentahoRole(String name, String description) {
     this.name = name;
+    this.description = description;
   }
 
   /**
