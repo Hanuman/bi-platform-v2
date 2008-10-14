@@ -10,9 +10,14 @@
 		<!--[if lt IE 7.]>
 			<script defer type="text/javascript" src="pngfix.js"></script>
 		<![endif]-->
+		<script type="text/javascript">
+			if(window.opener){
+			  window.opener.reportWindowOpened();
+			}
+		</script>
 	</head>
 
-	<body oncontextmenu="return false;">
+	<body oncontextmenu="return false;" onload="reportHome()">
 
 	<div id="loading">
     		<div class="loading-indicator">
