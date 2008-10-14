@@ -1,0 +1,96 @@
+package org.pentaho.platform.engine.security.userroledao.hibernate.sample;
+
+import org.pentaho.platform.engine.security.userroledao.IUserRoleDao;
+import org.pentaho.platform.engine.security.userroledao.PentahoRole;
+import org.pentaho.platform.engine.security.userroledao.PentahoUser;
+import org.pentaho.platform.engine.security.userroledao.UncategorizedUserRoleDaoException;
+import org.pentaho.platform.engine.security.userroledao.hibernate.HibernateUserRoleDao.InitHandler;
+import org.pentaho.platform.engine.security.userroledao.messages.Messages;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ * Inserts sample users and roles into tables if those tables are empty.
+ * 
+ * <p>This handler checks to see if the users table is empty. If it is empty, then it inserts sample users and roles.
+ * </p>
+ * 
+ * @see InitHandler
+ * @author mlowery
+ */
+public class SampleUsersAndRolesInitHandler extends HibernateDaoSupport implements InitHandler {
+
+  // ~ Static fields/initializers ====================================================================================== 
+
+  // ~ Instance fields =================================================================================================
+
+  private IUserRoleDao userRoleDao;
+
+  // ~ Constructors ====================================================================================================
+
+  public SampleUsersAndRolesInitHandler() {
+    super();
+  }
+
+  // ~ Methods =========================================================================================================
+
+  public void handleInit() {
+
+    try {
+      boolean noUsers = userRoleDao.getUsers().isEmpty();
+
+      if (noUsers) {
+        PentahoRole adminRole = new PentahoRole("Admin", "Super User"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole anonymous = new PentahoRole("Anonymous", "User has not logged in"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole authenticated = new PentahoRole("Authenticated", "User has logged in"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole ceo = new PentahoRole("ceo", "Chief Executive Officer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole cto = new PentahoRole("cto", "Chief Technology Officer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole dev = new PentahoRole("dev", "Developer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole devMgr = new PentahoRole("devmgr", "Development Manager"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole is = new PentahoRole("is", "Information Services"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        userRoleDao.createRole(adminRole);
+        userRoleDao.createRole(anonymous);
+        userRoleDao.createRole(authenticated);
+        userRoleDao.createRole(ceo);
+        userRoleDao.createRole(cto);
+        userRoleDao.createRole(dev);
+        userRoleDao.createRole(devMgr);
+        userRoleDao.createRole(is);
+
+        PentahoUser admin = new PentahoUser("admin", "c2VjcmV0", null, true); //$NON-NLS-1$ //$NON-NLS-2$
+        admin.addRole(adminRole);
+        admin.addRole(authenticated);
+        PentahoUser joe = new PentahoUser("joe", "cGFzc3dvcmQ=", null, true); //$NON-NLS-1$ //$NON-NLS-2$
+        joe.addRole(adminRole);
+        joe.addRole(ceo);
+        joe.addRole(authenticated);
+        PentahoUser pat = new PentahoUser("pat", "cGFzc3dvcmQ=", null, true); //$NON-NLS-1$ //$NON-NLS-2$
+        pat.addRole(dev);
+        pat.addRole(authenticated);
+        PentahoUser suzy = new PentahoUser("suzy", "cGFzc3dvcmQ=", null, true); //$NON-NLS-1$ //$NON-NLS-2$
+        suzy.addRole(cto);
+        suzy.addRole(is);
+        suzy.addRole(authenticated);
+        PentahoUser tiffany = new PentahoUser("tiffany", "cGFzc3dvcmQ=", null, true); //$NON-NLS-1$ //$NON-NLS-2$
+        tiffany.addRole(dev);
+        tiffany.addRole(devMgr);
+        tiffany.addRole(authenticated);
+
+        userRoleDao.createUser(admin);
+        userRoleDao.createUser(joe);
+        userRoleDao.createUser(pat);
+        userRoleDao.createUser(suzy);
+        userRoleDao.createUser(tiffany);
+      }
+    } catch (UncategorizedUserRoleDaoException e) {
+      // log error and simply return
+      logger.error(Messages.getString("SampleUsersAndRolesInitHandler.ERROR_0001_COULD_NOT_INSERT_SAMPLES"), e); //$NON-NLS-1$
+    }
+
+  }
+
+  public void setUserRoleDao(final IUserRoleDao userRoleDao) {
+    this.userRoleDao = userRoleDao;
+  }
+
+}

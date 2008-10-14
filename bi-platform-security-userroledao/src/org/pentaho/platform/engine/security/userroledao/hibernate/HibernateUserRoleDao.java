@@ -20,7 +20,11 @@ import org.springframework.util.Assert;
 
 /**
  * An {@link IUserRoleDao} that uses Hibernate. Furthermore, it uses Spring's <code>HibernateDaoSupport</code>. This 
- * allows instances to be dependency injected. At a minimum, instances require a Hibernate <code>SessionFactory</code>. 
+ * allows instances to be dependency injected. At a minimum, instances require a Hibernate <code>SessionFactory</code>.
+ * 
+ * <p>The <code>init</code> method must be called after all properties have been set and before calling any of the CRUD 
+ * methods. Can be called automatically if using Spring via the <code>init-method</code> attribute. Otherwise, call it 
+ * manually after setting all properties.</p>
  * 
  * @author mlowery
  */
@@ -38,6 +42,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
 
   private String allRolesQuery = DEFAULT_ALL_ROLES_QUERY;
 
+  private InitHandler initHandler;
+
   // ~ Constructors ====================================================================================================
 
   public HibernateUserRoleDao() {
@@ -46,16 +52,28 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
 
   // ~ Methods =========================================================================================================
 
+  /**
+   * A generic initialization method. Can be used to load initial data into user- and role-related tables.
+   */
+  public void init() {
+    if (initHandler != null) {
+      initHandler.handleInit();
+    }
+  }
+
   public void createUser(IPentahoUser userToCreate) throws AlreadyExistsException, UncategorizedUserRoleDaoException {
     Assert.notNull(userToCreate, Messages.getString("HibernateUserRoleDao.ERROR_0001_USER_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(userToCreate.getUsername(), Messages.getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
-    Assert.notNull(userToCreate.getPassword(), Messages.getString("HibernateUserRoleDao.ERROR_0003_PASSWORD_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Assert.hasLength(userToCreate.getUsername(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.notNull(userToCreate.getPassword(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0003_PASSWORD_CANNOT_BE_NULL")); //$NON-NLS-1$
 
     if (getUser(userToCreate.getUsername()) == null) {
       try {
         getHibernateTemplate().save(userToCreate);
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new AlreadyExistsException(userToCreate.getUsername());
@@ -64,14 +82,16 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
 
   public void deleteUser(IPentahoUser userToDelete) throws NotFoundException, UncategorizedUserRoleDaoException {
     Assert.notNull(userToDelete, Messages.getString("HibernateUserRoleDao.ERROR_0001_USER_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(userToDelete.getUsername(), Messages.getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(userToDelete.getUsername(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     IPentahoUser user = getUser(userToDelete.getUsername());
     if (user != null) {
       try {
         getHibernateTemplate().delete(user);
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new NotFoundException(userToDelete.getUsername());
@@ -84,7 +104,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
     try {
       return (PentahoUser) getHibernateTemplate().get(PentahoUser.class, username);
     } catch (DataAccessException e) {
-      throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+      throw new UncategorizedUserRoleDaoException(Messages
+          .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
     }
   }
 
@@ -93,20 +114,24 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
     try {
       return getHibernateTemplate().find(getAllUsersQuery());
     } catch (DataAccessException e) {
-      throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+      throw new UncategorizedUserRoleDaoException(Messages
+          .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
     }
   }
 
   public void updateUser(IPentahoUser userToUpdate) throws NotFoundException, UncategorizedUserRoleDaoException {
     Assert.notNull(userToUpdate, Messages.getString("HibernateUserRoleDao.ERROR_0001_USER_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(userToUpdate.getUsername(), Messages.getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
-    Assert.notNull(userToUpdate.getPassword(), Messages.getString("HibernateUserRoleDao.ERROR_0003_PASSWORD_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Assert.hasLength(userToUpdate.getUsername(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.notNull(userToUpdate.getPassword(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0003_PASSWORD_CANNOT_BE_NULL")); //$NON-NLS-1$
 
     if (getUser(userToUpdate.getUsername()) != null) {
       try {
         getHibernateTemplate().update(getHibernateTemplate().merge(userToUpdate));
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new NotFoundException(userToUpdate.getUsername());
@@ -120,13 +145,15 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
    */
   public void createRole(IPentahoRole roleToCreate) throws AlreadyExistsException, UncategorizedUserRoleDaoException {
     Assert.notNull(roleToCreate, Messages.getString("HibernateUserRoleDao.ERROR_0005_ROLE_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(roleToCreate.getName(), Messages.getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(roleToCreate.getName(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     if (getRole(roleToCreate.getName()) == null) {
       try {
         getHibernateTemplate().save(roleToCreate);
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new AlreadyExistsException(roleToCreate.getName());
@@ -146,7 +173,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
    */
   public void deleteRole(IPentahoRole roleToDelete) throws NotFoundException, UncategorizedUserRoleDaoException {
     Assert.notNull(roleToDelete, Messages.getString("HibernateUserRoleDao.ERROR_0005_ROLE_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(roleToDelete.getName(), Messages.getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(roleToDelete.getName(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     IPentahoRole role = getRole(roleToDelete.getName());
     if (role != null) {
@@ -159,7 +187,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
         // delete the role itself now that it is no longer referenced anywhere 
         getHibernateTemplate().delete(role);
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new NotFoundException(roleToDelete.getName());
@@ -172,7 +201,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
     try {
       return (PentahoRole) getHibernateTemplate().get(PentahoRole.class, name);
     } catch (DataAccessException e) {
-      throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+      throw new UncategorizedUserRoleDaoException(Messages
+          .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
     }
   }
 
@@ -181,7 +211,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
     try {
       return getHibernateTemplate().find(getAllRolesQuery());
     } catch (DataAccessException e) {
-      throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+      throw new UncategorizedUserRoleDaoException(Messages
+          .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
     }
   }
 
@@ -193,7 +224,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
   @SuppressWarnings("unchecked")
   public void updateRole(IPentahoRole roleToUpdate) throws NotFoundException, UncategorizedUserRoleDaoException {
     Assert.notNull(roleToUpdate, Messages.getString("HibernateUserRoleDao.ERROR_0005_ROLE_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(roleToUpdate.getName(), Messages.getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(roleToUpdate.getName(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     IPentahoRole originalRole = getRole(roleToUpdate.getName());
 
@@ -204,7 +236,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
       try {
         getHibernateTemplate().update(getHibernateTemplate().merge(roleToUpdate));
       } catch (DataAccessException e) {
-        throw new UncategorizedUserRoleDaoException(Messages.getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
+        throw new UncategorizedUserRoleDaoException(Messages
+            .getString("HibernateUserRoleDao.ERROR_0004_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
       }
     } else {
       throw new NotFoundException(roleToUpdate.getName());
@@ -236,7 +269,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
   protected void addUser(IPentahoRole roleToUpdate, String username) throws NotFoundException,
       UncategorizedUserRoleDaoException {
     Assert.notNull(roleToUpdate, Messages.getString("HibernateUserRoleDao.ERROR_0005_ROLE_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(roleToUpdate.getName(), Messages.getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(roleToUpdate.getName(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
     Assert.hasLength(username, Messages.getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     IPentahoUser user = getUser(username);
@@ -255,7 +289,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
   protected void removeUser(IPentahoRole roleToUpdate, String username) throws NotFoundException,
       UncategorizedUserRoleDaoException {
     Assert.notNull(roleToUpdate, Messages.getString("HibernateUserRoleDao.ERROR_0005_ROLE_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Assert.hasLength(roleToUpdate.getName(), Messages.getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(roleToUpdate.getName(), Messages
+        .getString("HibernateUserRoleDao.ERROR_0006_ROLE_NAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
     Assert.hasLength(username, Messages.getString("HibernateUserRoleDao.ERROR_0002_USERNAME_CANNOT_BE_BLANK")); //$NON-NLS-1$
 
     IPentahoUser user = getUser(username);
@@ -268,7 +303,8 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
   }
 
   public void setAllUsersQuery(String allUsersQuery) {
-    Assert.hasLength(allUsersQuery, Messages.getString("HibernateUserRoleDao.ERROR_0007_ALL_USERS_QUERY_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(allUsersQuery, Messages
+        .getString("HibernateUserRoleDao.ERROR_0007_ALL_USERS_QUERY_CANNOT_BE_BLANK")); //$NON-NLS-1$
     this.allUsersQuery = allUsersQuery;
   }
 
@@ -277,12 +313,29 @@ public class HibernateUserRoleDao extends HibernateDaoSupport implements IUserRo
   }
 
   public void setAllRolesQuery(String allRolesQuery) {
-    Assert.hasLength(allUsersQuery, Messages.getString("HibernateUserRoleDao.ERROR_0008_ALL_ROLES_QUERY_CANNOT_BE_BLANK")); //$NON-NLS-1$
+    Assert.hasLength(allUsersQuery, Messages
+        .getString("HibernateUserRoleDao.ERROR_0008_ALL_ROLES_QUERY_CANNOT_BE_BLANK")); //$NON-NLS-1$
     this.allRolesQuery = allRolesQuery;
   }
 
   public String getAllRolesQuery() {
     return allRolesQuery;
+  }
+
+  public void setInitHandler(InitHandler initHandler) {
+    this.initHandler = initHandler;
+  }
+
+  
+  
+  /**
+   * Generic interface to allow extensibility without tight coupling. Example use: insert sample users and roles into
+   * empty tables.
+   * 
+   * @author mlowery
+   */
+  public static interface InitHandler {
+    void handleInit();
   }
 
 }

@@ -34,13 +34,13 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   /**
    * The wrapped DAO to which to delegate.
    */
-  private IUserRoleDao dao;
+  private IUserRoleDao userRoleDao;
 
   public void createRole(final IPentahoRole roleToCreate) throws AlreadyExistsException,
       UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.createRole(roleToCreate);
+        userRoleDao.createRole(roleToCreate);
       }
     });
   }
@@ -49,7 +49,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
       UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.createUser(userToCreate);
+        userRoleDao.createUser(userToCreate);
       }
     });
   }
@@ -57,7 +57,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public void deleteRole(final IPentahoRole roleToDelete) throws NotFoundException, UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.deleteRole(roleToDelete);
+        userRoleDao.deleteRole(roleToDelete);
       }
     });
   }
@@ -65,7 +65,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public void deleteUser(final IPentahoUser userToDelete) throws NotFoundException, UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.deleteUser(userToDelete);
+        userRoleDao.deleteUser(userToDelete);
       }
     });
   }
@@ -73,7 +73,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public IPentahoRole getRole(final String name) throws UncategorizedUserRoleDaoException {
     return (IPentahoRole) transactionTemplate.execute(new TransactionCallback() {
       public Object doInTransaction(TransactionStatus status) {
-        return dao.getRole(name);
+        return userRoleDao.getRole(name);
       }
     });
   }
@@ -82,7 +82,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public List<IPentahoRole> getRoles() throws UncategorizedUserRoleDaoException {
     return (List<IPentahoRole>) transactionTemplate.execute(new TransactionCallback() {
       public Object doInTransaction(TransactionStatus status) {
-        return dao.getRoles();
+        return userRoleDao.getRoles();
       }
     });
   }
@@ -90,7 +90,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public IPentahoUser getUser(final String username) throws UncategorizedUserRoleDaoException {
     return (IPentahoUser) transactionTemplate.execute(new TransactionCallback() {
       public Object doInTransaction(TransactionStatus status) {
-        return dao.getUser(username);
+        return userRoleDao.getUser(username);
       }
     });
   }
@@ -99,7 +99,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public List<IPentahoUser> getUsers() throws UncategorizedUserRoleDaoException {
     return (List<IPentahoUser>) transactionTemplate.execute(new TransactionCallback() {
       public Object doInTransaction(TransactionStatus status) {
-        return dao.getUsers();
+        return userRoleDao.getUsers();
       }
     });
   }
@@ -107,7 +107,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public void updateRole(final IPentahoRole roleToUpdate) throws NotFoundException, UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.updateRole(roleToUpdate);
+        userRoleDao.updateRole(roleToUpdate);
       }
     });
   }
@@ -115,7 +115,7 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
   public void updateUser(final IPentahoUser userToUpdate) throws NotFoundException, UncategorizedUserRoleDaoException {
     transactionTemplate.execute(new TransactionCallbackWithoutResult() {
       protected void doInTransactionWithoutResult(TransactionStatus status) {
-        dao.updateUser(userToUpdate);
+        userRoleDao.updateUser(userToUpdate);
       }
     });
   }
@@ -124,8 +124,8 @@ public class UserRoleDaoTransactionDecorator implements IUserRoleDao {
     this.transactionTemplate = transactionTemplate;
   }
 
-  public void setDao(final IUserRoleDao dao) {
-    this.dao = dao;
+  public void setUserRoleDao(final IUserRoleDao userRoleDao) {
+    this.userRoleDao = userRoleDao;
   }
 
 }
