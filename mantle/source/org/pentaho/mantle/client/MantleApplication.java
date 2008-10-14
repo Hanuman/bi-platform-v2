@@ -509,8 +509,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
 
     printMenuItem.setEnabled(isEnabled);
-    saveMenuItem.setEnabled(isEnabled);
-    saveAsMenuItem.setEnabled(isEnabled);
     propertiesMenuItem.setEnabled(isEnabled);
 
     // Properties menu item should have a command associated with it ONLY when it is enabled.
@@ -518,7 +516,21 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       propertiesMenuItem.setCommand(propertiesCommand);
     } else {
       propertiesMenuItem.setCommand(null);
+    }    
+    
+    // Enable/Disable Save menu items based on content
+    String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
+    boolean saveEnabled = false;
+    if (selectedTabURL != null) {
+      for (String saveType : saveTypes) {
+        if (selectedTabURL.toLowerCase().indexOf(saveType) != -1) {
+          saveEnabled = true;
+        }
+      }
     }
+    saveMenuItem.setEnabled(saveEnabled && isEnabled);
+    saveAsMenuItem.setEnabled(saveEnabled && isEnabled);
 
     if (selectedTabURL != null) {
       // Window.alert(selectedTabURL);
