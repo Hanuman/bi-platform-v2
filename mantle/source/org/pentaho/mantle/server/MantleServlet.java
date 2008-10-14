@@ -417,6 +417,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName) {
+    if(fileName == null || path == null || solutionName == null){
+      throw new IllegalArgumentException("getSolutionFileInfo called with null parameters");
+    }
+    
     SolutionFileInfo solutionFileInfo = new SolutionFileInfo();
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
     String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
