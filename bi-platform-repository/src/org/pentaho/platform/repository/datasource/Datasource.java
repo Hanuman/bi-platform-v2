@@ -132,4 +132,11 @@ public class Datasource implements IDatasource {
   public void setDriverClass(String driverClass) {
     this.driverClass = driverClass;
   }
+  
+  public String toString() {
+    if(name == null) {
+      return String.valueOf(super.hashCode());
+    }
+    return String.valueOf(hashCode());
+  }
 }
