@@ -6,6 +6,7 @@ import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -52,56 +53,15 @@ public class LaunchPanel extends Frame {
       url = "http://localhost:8080/pentaho/mantle/launch/launch.jsp?userid=joe&password=password";
     }
     this.setUrl(url);
-    
-//    FlexTable table = new FlexTable();
-//    table.setStyleName("launchButtonPanel"); //$NON-NLS-1$
-//
-//    String pathPrefix = ""; //$NON-NLS-1$
-//    // if we are not running in hosted mode, the images will be pathed differently
-//    if (GWT.isScript()) {
-//      pathPrefix = "mantle/"; //$NON-NLS-1$
-//    }
-//    
-//    launchWaqrImage.setUrl(pathPrefix + "btn_ql_newreport.png"); //$NON-NLS-1$
-//    launchWaqrImage.setTitle(Messages.getInstance().newAdhocReport());
-//    launchWaqrImage.addClickListener(this);
-//
-//    launchAnalysisViewImage.setUrl(pathPrefix + "btn_ql_newanalysis.png"); //$NON-NLS-1$
-//    launchAnalysisViewImage.setTitle(Messages.getInstance().newAnalysisView());
-//    launchAnalysisViewImage.addClickListener(this);
-//
-//    manageContentImage.setUrl(pathPrefix + "btn_ql_manage.png"); //$NON-NLS-1$
-//    manageContentImage.setTitle(Messages.getInstance().manageContent());
-//    manageContentImage.addClickListener(this);
-//
-//    launchWaqrImage.setStyleName("launchImage"); //$NON-NLS-1$
-//    launchAnalysisViewImage.setStyleName("launchImage"); //$NON-NLS-1$
-//    manageContentImage.setStyleName("launchImage"); //$NON-NLS-1$
-//
-//    // set the style of contentTabPanel's "deck" (bottom)
-//    setStyleName("launchPanel"); //$NON-NLS-1$
-//
-//    // set debug id's for selenium
-//    launchWaqrImage.getElement().setAttribute("id", "launch_new_report"); //$NON-NLS-1$ //$NON-NLS-2$
-//    launchAnalysisViewImage.getElement().setAttribute("id", "launch_new_analysis"); //$NON-NLS-1$ //$NON-NLS-2$
-//    manageContentImage.getElement().setAttribute("id", "manage_content"); //$NON-NLS-1$ //$NON-NLS-2$
-//
-//    table.setWidget(0, 0, launchWaqrImage);
-//    table.setWidget(0, 1, launchAnalysisViewImage);
-//    table.setWidget(0, 2, manageContentImage);
-//    table.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
-//    table.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
-//    table.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_CENTER);
-//
-//    add(table);
+
   }
   
   @Override
   protected void onLoad() {
-    hookNativeEvents(this);
+    hookNativeEvents(this, this.getElement());
   }
   
-  private native void hookNativeEvents(LaunchPanel panel)/*-{
+  private native void hookNativeEvents(LaunchPanel panel, Element ele)/*-{
     $wnd.openWAQR = function(){
       panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openWAQR()();
     }
@@ -110,6 +70,23 @@ public class LaunchPanel extends Frame {
     }
     $wnd.openManage = function(){
       panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openManage()();
+    }
+    var iwind = ele.contentWindow;
+    
+  
+    var funct = function(event){
+      event = iwind.parent.translateInnerMouseEvent(ele, event);
+      iwind.parent.sendMouseEvent(event);
+    }  
+    
+    // Hooks up mouse and unload events
+    try{
+      iwind.onmouseup = funct;
+      iwind.onmousedown = funct;
+      iwind.onmousemove = funct;
+      
+    } catch(e){
+      //You're most likely here because of Cross-site scripting permissions... consuming
     }
   }-*/;
   
