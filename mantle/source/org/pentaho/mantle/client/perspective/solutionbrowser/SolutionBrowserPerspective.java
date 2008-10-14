@@ -391,8 +391,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       parentList.get(i).getStyle().setProperty("height", "100%");
     }
     showLaunchOrContent();
-    // wire up client-side javascript to handle mouse events
-    ((CustomFrame) frame).attachEventListeners(frame.getElement());
 
     // update state to workspace state flag
     showWorkspaceMenuItem.setChecked(false);

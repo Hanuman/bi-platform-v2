@@ -17,5 +17,6 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 public interface IReloadableTabPanel {
   public void reload();
+  public void back();
   public void openTabInNewWindow();
 }

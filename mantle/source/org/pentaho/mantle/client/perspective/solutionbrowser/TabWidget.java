@@ -172,6 +172,10 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     tabPanel.selectTab(0);
   }
 
+  public void back(){
+    ((IReloadableTabPanel) tabContent).back();
+  }
+  
   public void closeAllTabs() {
     tabPanel.clear();
     if (tabPanel.getWidgetCount() == 0) {
@@ -260,6 +264,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
           }
         }
         if (tabContent instanceof IReloadableTabPanel) {
+          menuBar.addItem(new MenuItem(Messages.getInstance().back(), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this)));
+          menuBar.addSeparator();
           menuBar.addItem(new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
         }
         if (tabPanel.getTabBar().getTabCount() > 0) {

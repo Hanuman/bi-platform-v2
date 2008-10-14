@@ -15,6 +15,10 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.user.client.Window;
@@ -26,7 +30,7 @@ import org.pentaho.mantle.client.objects.SolutionFileInfo;
 public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
 
   String url;
-  NamedFrame frame;
+  CustomFrame frame;
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
   
@@ -51,6 +55,10 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
           getCurrentUrl()
       );
     }
+  }
+
+  public void back(){
+    frame.back();
   }
   
   public void setFileInfo(SolutionFileInfo info){
@@ -85,7 +93,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
     return frame;
   }
 
-  public void setFrame(NamedFrame frame) {
+  public void setFrame(CustomFrame frame) {
     this.frame = frame;
   }
   
@@ -98,6 +106,9 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   }
   
   public class CustomFrame extends NamedFrame{
+    private boolean ignoreNextHistoryAdd = false;
+    private Stack<String> history = new Stack<String>();
+    
     private CustomFrame(String name){
       super(name);
     }
@@ -107,7 +118,32 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
       setUrl(url);
     }
     
-    public native void attachEventListeners(Element ele)/*-{
+    public void back(){
+      if(!history.empty()){
+        ignoreNextHistoryAdd = true;
+        frame.setUrl(history.pop());
+      }
+    }
+    
+    
+    
+    public void addHistory(String url){
+      if(ignoreNextHistoryAdd || url.equals("about:blank")){  //$NON-NLS-1$
+        ignoreNextHistoryAdd = false;
+        return;
+      }
+      history.add(url);
+    }
+    
+    
+    
+    @Override
+    protected void onAttach() {
+      super.onAttach();
+      attachEventListeners(frame.getElement(), this);
+    }
+
+    public native void attachEventListeners(Element ele, CustomFrame frame)/*-{
       var iwind = ele.contentWindow; //IFrame's window instance
       
       var funct = function(event){
@@ -137,6 +173,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
       
       // Called on iFrame unload, calls containing Window to start monitoring it for Url change
       var unloader = function(event){
+        frame.@org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel$CustomFrame::addHistory(Ljava/lang/String;)(iwind.location.href);
         $wnd.startIFrameWatcher(iwind);
       }
       

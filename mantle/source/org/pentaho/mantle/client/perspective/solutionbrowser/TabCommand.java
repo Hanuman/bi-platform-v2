@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 
 public class TabCommand implements Command {
 
-  public static enum TABCOMMAND { RELOAD, RELOAD_ALL, CLOSE, CLOSE_ALL, CLOSE_OTHERS, NEW_WINDOW, BOOKMARK, CREATE_DEEP_LINK };
+  public static enum TABCOMMAND { BACK, RELOAD, RELOAD_ALL, CLOSE, CLOSE_ALL, CLOSE_OTHERS, NEW_WINDOW, BOOKMARK, CREATE_DEEP_LINK };
   
   TABCOMMAND mode = TABCOMMAND.RELOAD;
   PopupPanel popupMenu;
@@ -50,6 +50,8 @@ public class TabCommand implements Command {
       tab.bookmark();
     } else if (mode == TABCOMMAND.CREATE_DEEP_LINK) {
       tab.createDeepLink();
+    } else if (mode == TABCOMMAND.BACK) {
+      tab.back();
     }
   }
 }

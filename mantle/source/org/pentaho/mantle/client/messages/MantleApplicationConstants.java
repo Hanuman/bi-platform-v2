@@ -1570,4 +1570,12 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("{0} (Role)")
   String role(String role);
+  
+  /**
+   * Translated "Back".
+   * 
+   * @return translated "Back"
+   */
+  @DefaultMessage("Back")
+  String back();
 }
