@@ -46,7 +46,9 @@ public class NonPooledDatasourceSystemListener implements IPentahoSystemListener
       IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService)
         PentahoSystem.getObjectFactory().getObject(IDatasourceMgmtService.IDATASOURCEMGMTSERVICE,session);
       if(cachingAvailable) {
-        cacheManager.addCacheRegion(IDatasourceService.JDBC_DATASOURCE);
+        if(!cacheManager.cacheEnabled(IDatasourceService.JDBC_DATASOURCE)) {
+          cacheManager.addCacheRegion(IDatasourceService.JDBC_DATASOURCE);
+        }
       }
       List<IDatasource> datasources = datasourceMgmtSvc.getDatasources();
       for (IDatasource datasource : datasources) {

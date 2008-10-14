@@ -107,6 +107,9 @@ public class PooledOrJndiDatasourceService extends BaseDatasourceService {
 			throws DatasourceServiceException {
 		DataSource dataSource = null;
 		if (cacheManager != null) {
+      if(!cacheManager.cacheEnabled(IDatasourceService.JDBC_DATASOURCE)) {
+        cacheManager.addCacheRegion(IDatasourceService.JDBC_DATASOURCE);
+      } 
 			Object foundDs = cacheManager.getFromRegionCache(
 					IDatasourceService.JDBC_DATASOURCE, dsName);
 			if (foundDs != null) {

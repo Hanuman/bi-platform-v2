@@ -30,8 +30,10 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.data.IDatasourceService;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 
 /**
  * @author mbatchel
@@ -57,11 +59,13 @@ public class AuditConnection {
 
   private static final Log logger = LogFactory.getLog(AuditConnection.class);
 
+  private boolean useNewDatasourceService = false;
+  
   public void initialize() {
 
     if (!initialized) {
       try {
-    	IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+        IDatasourceService datasourceService = getDatasourceService(); 
         auditDs = datasourceService.getDataSource(AuditConnection.AUDIT_JNDI);
         if (auditDs != null) {
           AuditConnection.logger.debug(Messages.getString(
@@ -89,6 +93,36 @@ public class AuditConnection {
     }
   }
 
+  public void setUseNewDatasourceService(boolean useNewService) {
+    //
+    // The platform should not be calling this method. But, in case someone really 
+    // really wants to use the new datasource service features to hook up
+    // a core service like Hibernate, this is now toggle-able.
+    //
+    useNewDatasourceService = useNewService;
+  }
+
+  
+  private IDatasourceService getDatasourceService() throws ObjectFactoryException {
+    //
+    // Our new datasource stuff is provided for running queries and acquiring data. It is
+    // NOT there for the inner workings of the platform. So, the Hibernate datasource should ALWAYS
+    // be provided by JNDI. However, the class could be twiddled so that it will use the factory. 
+    //
+    // And, since the default shipping condition should be to NOT use the factory (and force JNDI), 
+    // I've reversed the logic in the class to have the negative condition first (the default execution
+    // path).
+    //
+    // Marc - BISERVER-2004
+    //
+    if (!useNewDatasourceService) {
+      return new JndiDatasourceService();
+    } else {
+      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
+      return datasourceService;
+    }
+  }
+  
   public DataSource getAuditDatasource() {
     initialize();
     return auditDs;
