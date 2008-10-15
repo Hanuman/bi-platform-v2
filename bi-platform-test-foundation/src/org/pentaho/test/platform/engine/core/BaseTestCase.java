@@ -49,7 +49,7 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 public abstract class BaseTestCase extends TestCase {
@@ -64,36 +64,14 @@ public abstract class BaseTestCase extends TestCase {
 
   IPentahoSession session;
   public BaseTestCase() {
-    super();
-    InputStream s = null;
-    applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
-//    System.setProperty(PathBasedSystemSettings.SYSTEM_CFG_PATH_KEY, getSolutionPath()+"/system/pentaho.xml"); //$NON-NLS-1$
-    applicationContext.setBaseUrl(getBaseUrl());
-    String inContainer = System.getProperty("incontainer", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-    if (inContainer.equalsIgnoreCase("false")) { //$NON-NLS-1$
-      // Setup simple-jndi for datasources
-      System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-      System.setProperty("org.osjava.sj.root", getSolutionPath() + "/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
-      System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    IObjectFactoryCreator facCreator;
-    String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-    try {
-  	  facCreator = new SpringObjectFactoryCreator();  
-  	  facCreator.configure( objectFactoryCreatorCfgFile );
-    } catch (Exception e) {
-      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-      throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-    }
-    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
-    PentahoSystem.setObjectFactory( pentahoObjectFactory );
-    
-    PentahoSystem.init(applicationContext);
-    session = new StandaloneSession("system");
+    init(getSolutionPath());
   }
-
   
   public BaseTestCase(String solutionPath) {
+    init(solutionPath);
+  }
+  
+  protected void init(String solutionPath) {
     applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
     applicationContext.setBaseUrl(getBaseUrl());
     String inContainer = System.getProperty("incontainer", "false"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -103,16 +81,10 @@ public abstract class BaseTestCase extends TestCase {
       System.setProperty("org.osjava.sj.root", getSolutionPath() + "/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
       System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    IObjectFactoryCreator facCreator;
     String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-    try {
-  	  facCreator = new SpringObjectFactoryCreator();  
-  	  facCreator.configure( objectFactoryCreatorCfgFile );
-    } catch (Exception e) {
-      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-      throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-    }
-    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
+    
+    IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
+    pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
     PentahoSystem.setObjectFactory( pentahoObjectFactory );
     PentahoSystem.init(applicationContext);
     session = new StandaloneSession("system");

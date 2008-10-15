@@ -31,12 +31,10 @@ import java.util.Map;
 
 import org.pentaho.platform.api.engine.IActionCompleteListener;
 import org.pentaho.platform.api.engine.ILogger;
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
@@ -47,7 +45,7 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
@@ -64,7 +62,6 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
 
   private List<String> messages;
   final String SYSTEM_FOLDER = "/system"; //$NON-NLS-1$
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml"; //$NON-NLS-1$
   private IRuntimeContext context = null;
 
   public BaseTest(String arg0) {
@@ -104,31 +101,23 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
         System.setProperty("org.osjava.sj.root", getSolutionPath() + "/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
         System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      IObjectFactoryCreator facCreator;
-      String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-      try {
-    	  facCreator = new SpringObjectFactoryCreator();  
-    	  facCreator.configure( objectFactoryCreatorCfgFile );
-      } catch (Exception e) {
-        //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-        throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-      }
-      IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
-      PentahoSystem.setObjectFactory( pentahoObjectFactory );
-      
       ApplicationContext springApplicationContext = getSpringApplicationContext();
-      IPentahoSystem pentahoSystem = (IPentahoSystem)springApplicationContext.getBean("pentahoSystem", IPentahoSystem.class);
-      initOk = pentahoSystem.init(applicationContext);
+      
+      IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
+      pentahoObjectFactory.init(null, springApplicationContext);
+      PentahoSystem.setObjectFactory( pentahoObjectFactory );
+
+      initOk = PentahoSystem.init(applicationContext);
     } else {
       initOk = true;
     }
+    
     assertTrue(Messages.getString("BaseTest.ERROR_0001_FAILED_INITIALIZATION"), initOk); //$NON-NLS-1$
-
   }
 
   private ApplicationContext getSpringApplicationContext() {
 
-    String[] fns = {"adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" };
+    String[] fns = {"pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" };
     
     GenericApplicationContext appCtx = new GenericApplicationContext();
     XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(appCtx);
