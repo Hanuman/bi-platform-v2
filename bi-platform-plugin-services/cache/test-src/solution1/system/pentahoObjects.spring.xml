@@ -1,65 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.solutionEngine">
-		<constructor-arg><value>org.pentaho.platform.engine.services.solution.SolutionEngine</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator" id="pentahoObjects.solutionRepository">
-		<constructor-arg><value>org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.auditEntry">
-		<!-- does not support session creator (aka scope) -->
-		<constructor-arg><value>org.pentaho.platform.engine.core.audit.AuditFileEntry</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.versionHelper">
-		<constructor-arg><value>org.pentaho.platform.util.VersionHelper</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.cacheManager">
-		<constructor-arg><value>org.pentaho.platform.plugin.services.cache.CacheManager</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.datasourceMgmtService">
-		<constructor-arg><value>org.pentaho.platform.repository.datasource.DatasourceMgmtService</value></constructor-arg>
-	</bean>			
-	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.datasourceService">
-		<constructor-arg><value>org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator" id="pentahoObjects.passwordService">
-		<constructor-arg><value>org.pentaho.platform.util.Base64PasswordService</value></constructor-arg>
-	</bean>
-	<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator" id="pentahoObjects.datasource">
-		<constructor-arg><value>org.pentaho.platform.repository.datasource.Datasource</value></constructor-arg>
-	</bean>
-	<bean id="pentahoObjectFactory" class="org.pentaho.platform.engine.core.system.objfac.PentahoObjectFactory" singleton="true">
-		<property name="objectCreators">
-			<map>
-				<entry key="ISolutionEngine">
-					<ref bean="pentahoObjects.solutionEngine" />
-				</entry>
-				<entry key="ISolutionRepository">
-					<ref bean="pentahoObjects.solutionRepository" />
-				</entry>
-				<entry key="IAuditEntry">
-					<ref bean="pentahoObjects.auditEntry" />
-				</entry>
-				<entry key="IVersionHelper">
-					<ref bean="pentahoObjects.versionHelper" />
-				</entry>
-				<entry key="ICacheManager">
-					<ref bean="pentahoObjects.cacheManager" />
-				</entry>
-				<entry key="IDatasourceMgmtService">
-					<ref bean="pentahoObjects.datasourceMgmtService" />
-				</entry>				
-				<entry key="IDatasourceService">
-					<ref bean="pentahoObjects.datasourceService" />
-				</entry>				
-				<entry key="IPasswordService">
-					<ref bean="pentahoObjects.passwordService" />
-				</entry>	
-				<entry key="IDatasource">
-					<ref bean="pentahoObjects.datasource" />
-				</entry>
-			</map>
-		</property>
-	</bean>
+<!-- 
+This is a Spring file that defines how Pentaho system objects are created and managed.  
+An implementation of IPentahoObjectFactory, such as SpringWebPentahoObjectFactory, is 
+responsible for serving objects to callers based on this file.
+
+default-lazy-init is set to true since some of these object make calls into 
+PentahoSystem which is initialized after Spring
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+  default-lazy-init="true">
+  
+  <bean id="ISolutionEngine" class="org.pentaho.platform.engine.services.solution.SolutionEngine" scope="prototype" />
+  <bean id="ISolutionRepository" class="org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository" scope="session" />
+  <bean id="IAuditEntry" class="org.pentaho.platform.engine.services.audit.AuditFileEntry" scope="singleton" />
+  <bean id="IVersionHelper" class="org.pentaho.platform.util.VersionHelper" scope="singleton" />
+  <bean id="ICacheManager" class="org.pentaho.platform.plugin.services.cache.CacheManager" scope="singleton" />
+  <bean id="IDatasourceMgmtService" class="org.pentaho.platform.repository.datasource.DatasourceMgmtService" scope="prototype" />
+  <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService" scope="prototype" />
+  <bean id="IPasswordService" class="org.pentaho.platform.util.Base64PasswordService" scope="singleton" />
+  <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="singleton" />
 </beans>

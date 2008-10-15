@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>	
-	<bean id="pentahoObjectFactory" class="org.pentaho.platform.engine.core.system.objfac.PentahoObjectFactory" singleton="true">
-		<property name="objectCreators">
-			<map> 
-				<entry key="ISolutionEngine">
-					<bean class="org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator">
-						<constructor-arg><value>org.pentaho.platform.engine.services.solution.SolutionEngine</value></constructor-arg>
-					</bean>	
-				</entry>
-				<entry key="ISolutionRepository">
-					<bean class="org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator">
-						<constructor-arg><value>org.pentaho.platform.repository.solution.filebased.ExtensionFileBasedSolutionRepository</value></constructor-arg>
-					</bean>
-				</entry>
-				<entry key="IPluginSettings">
-					<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator">
-                        <constructor-arg><value>org.pentaho.platform.plugin.services.pluginmgr.PluginSettings</value></constructor-arg>
-					</bean>		
-				</entry>				
-				<entry key="IMenuProvider">
-					<bean class="org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator">
-                        <constructor-arg><value>org.pentaho.test.platform.plugin.pluginmgr.MenuProvider</value></constructor-arg>
-					</bean>		
-				</entry>	
-			</map>
-		</property>
-	</bean>
+<!-- 
+This is a Spring file that defines how Pentaho system objects are created and managed.  
+An implementation of IPentahoObjectFactory, such as SpringWebPentahoObjectFactory, is 
+responsible for serving objects to callers based on this file.
+
+default-lazy-init is set to true since some of these object make calls into 
+PentahoSystem which is initialized after Spring
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+  default-lazy-init="true">
+  
+  <bean id="ISolutionEngine" class="org.pentaho.platform.engine.services.solution.SolutionEngine" scope="prototype" />
+  <bean id="ISolutionRepository" class="org.pentaho.platform.repository.solution.filebased.ExtensionFileBasedSolutionRepository" scope="session" />
+  <bean id="IPluginSettings" class="org.pentaho.platform.plugin.services.pluginmgr.PluginSettings" scope="singleton" />
+  <bean id="IMenuProvider" class="org.pentaho.test.platform.plugin.pluginmgr.MenuProvider" scope="singleton" />
 </beans>
