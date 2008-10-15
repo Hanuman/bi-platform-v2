@@ -703,22 +703,55 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return unusedScheduleList;
   }
 
-  public String deleteSubscriptionArchive(String subscriptionName, String fileId) {
+  /**
+   * Delete the contents under the public schedule and then delete the public schedule
+   * 
+   * @param publicScheduleName The public schedule name for the given content id
+   * @param contentItemList The list of content items belonging to the given public schedule to be deleted
+   * @return Error message if error occurred else success message
+   */
+  public String deletePublicScheduleAndContents(String publicScheduleName, List<String> contentItemList) {
+    /*
+     * Iterate through all the content items and delete them
+     */
+    if (contentItemList != null) {
+      Iterator<String> iter = contentItemList.iterator();
+      if (iter != null) {
+        while (iter.hasNext()) {
+          deleteSubscriptionArchive(publicScheduleName, iter.next());
+        }
+      }
+    }
+    /*
+     * Once all the content items are deleted, go ahead and delete the actual public schedule
+     */
+    final String result = SubscriptionHelper.deleteSubscription(publicScheduleName, getPentahoSession());
+    return result;
+  }
+  
+  /**
+   * Delete the given content item for the given public schedule.
+   *  
+   * @param publicScheduleName The public schedule name for the given content id
+   * @param contentId The content item id to be deleted
+   * @return Error message if error occurred else success message
+   */
+  public String deleteSubscriptionArchive(String publicScheduleName, String contentId) {
     HibernateUtil.beginTransaction();
     final IPentahoSession session = getPentahoSession();
     ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
-    ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
+    ISubscription subscription = subscriptionRepository.getSubscription(publicScheduleName, session);
     if (subscription == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
-    IContentItem contentItem = subscriptionRepository.getContentItem(subscriptionName, session);
+    IContentItem contentItem = subscriptionRepository.getContentItem(publicScheduleName, session);
     if (contentItem == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
 
-    contentItem.removeVersion(fileId);
+    contentItem.removeVersion(contentId);
 
     HibernateUtil.commitTransaction();
 

@@ -1277,13 +1277,22 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String repository();
 
   /**
-   * Translated "Do you want to delete this content item?".
+   * Translated "Do you want to delete this content item?"
    * 
    * @return translated "Do you want to delete this content item?"
   
    */
   @DefaultMessage("Do you want to delete this content item?")
-  String deleteContentConfirm();
+  String deleteContentItem();
+
+  /**
+   * Translated "Do you want to delete this public schedule?"
+   * 
+   * @return translated "Do you want to delete this public schedule?"
+  
+   */
+  @DefaultMessage("Do you want to delete this public schedule?")
+  String deletePublicSchedule();
 
   /**
    * Translated "Complete".

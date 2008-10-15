@@ -73,6 +73,7 @@ public interface MantleService extends RemoteService {
   public SubscriptionState getSubscriptionState(String actionRef);
   public List<SubscriptionBean> getSubscriptionsForMyWorkspace();
   public String deleteSubscriptionArchive(String subscriptionName, String fileId);
+  public String deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList);    
   
   // file api
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName);

@@ -24,7 +24,6 @@ import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
-import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
@@ -73,6 +72,7 @@ public interface MantleServiceAsync {
   public void getSubscriptionState(String actionRef, AsyncCallback<SubscriptionState> callback);
   public void getSubscriptionsForMyWorkspace(AsyncCallback<List<SubscriptionBean>> callback);
   public void deleteSubscriptionArchive(String subscriptionName, String fileId, AsyncCallback<String> callback);
+  public void deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList, AsyncCallback<String> callback);
   
   // file api
   public void getSolutionFileInfo(String solutionName, String path, String fileName, AsyncCallback<SolutionFileInfo> callback);

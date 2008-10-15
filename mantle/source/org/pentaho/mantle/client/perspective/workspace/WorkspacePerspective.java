@@ -15,6 +15,7 @@
  */
 package org.pentaho.mantle.client.perspective.workspace;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   private FlexTable waitingContentTable;
   private FlexTable completedContentTable;
   private FlexTable workspaceTable = new FlexTable();
-
+    
   IPerspectiveCallback perspectiveCallback;
   SolutionBrowserPerspective solutionBrowserPerspective;
   private static final String DELETE="delete";
@@ -321,9 +322,10 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       });
       Label lblDelete = new Label(Messages.getInstance().delete());
       lblDelete.setStyleName("backgroundContentAction");      
+     
       lblDelete.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription(DELETE, subscrName);
+          doDelete(true, currentSubscr, "");
         }
       });
 
@@ -370,26 +372,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
           lblDeleteContent.setStyleName("backgroundContentAction");
           lblDeleteContent.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
-              VerticalPanel vp = new VerticalPanel();
-              vp.add(new Label(Messages.getInstance().deleteContentConfirm()));
-              final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(),
-                  Messages.getInstance().no(), false, true, vp);
-
-              final IDialogCallback callback = new IDialogCallback() {
-
-                public void cancelPressed() {
-                  deleteConfirmDialog.hide();
-                }
-
-                public void okPressed() {
-                  final String fileId = currSchedule[3];
-                  final String name = subscrName;
-                  // performActionOnSubscriptionContent("delete-archived", name, fileId);
-                  deleteContentItem(name, fileId);
-                }
-              };
-              deleteConfirmDialog.setCallback(callback);
-              deleteConfirmDialog.center();
+              doDelete(false, currentSubscr, currSchedule[3]);
             }
           });
 
@@ -400,7 +383,70 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       }
     }
   }
+  
+  /*
+   * Helper method to delete the content items or the public schedule based on what's passed in.
+   */
+  private void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
+    VerticalPanel vp = new VerticalPanel();
+    if (isPublicSchedule) {
+      vp.add(new Label(Messages.getInstance().deletePublicSchedule()));
+    } else {
+      vp.add(new Label(Messages.getInstance().deleteContentItem()));
+    }
+    
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(),
+        Messages.getInstance().no(), false, true, vp);
 
+    final IDialogCallback callback = new IDialogCallback() {
+      public void cancelPressed() {
+        deleteConfirmDialog.hide();
+      }
+
+      public void okPressed() {
+        if (isPublicSchedule) {
+          deletePublicScheduleAndContents(currentSubscr);
+        } else {
+          deleteContentItem(currentSubscr.getId(), fileId);
+        }        
+        new RefreshPerspectiveCommand(WorkspacePerspective.this).execute();
+      }
+    };
+    deleteConfirmDialog.setCallback(callback);
+    deleteConfirmDialog.center();         
+  }
+
+  /*
+   * Deletes the given public schedule and all the contents belonging to it.
+   *  
+   * @param currSubscr Current public schedule to be deleted
+   */
+  private void deletePublicScheduleAndContents(final SubscriptionBean currPublicSchedule) {
+    final String subscrName = currPublicSchedule.getId();
+    final List<String[]> scheduleList = currPublicSchedule.getContent();
+    final List<String> fileList = new ArrayList<String>();
+
+    if (scheduleList != null) {
+      AsyncCallback callback = new AsyncCallback() {
+        boolean executeSuccess = false;
+        public void onFailure(Throwable caught) {
+          Window.alert(caught.getMessage());
+        }
+        public void onSuccess(Object result) {
+          // Don't do anything on success.
+        }
+      };
+
+      final int scheduleSize = scheduleList.size();
+      for (int j = 0; j < scheduleSize; j++) {
+        final String[] currSchedule = scheduleList.get(j);
+        final String fileId = currSchedule[3]; 
+        fileList.add( fileId );        
+      }
+      MantleServiceCache.getService().deletePublicScheduleAndContents(subscrName, fileList, callback);
+    }
+  }
+  
   private void performActionOnSubscriptionContent(final String action, final String subscrName, final String contentID) {
     performActionOnSubscription(action, subscrName + ":" + contentID);
   }
@@ -419,8 +465,8 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       }
       public void cancelPressed() {
       }
-    });    
-    
+    });
+   
     final String url;
     if (GWT.isScript()) {
       url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
@@ -431,18 +477,18 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     if (action.equals("archived") || action.equals("run")) {
       solutionBrowserPerspective.showNewURLTab(subscrName, subscrName, url);
     } else {
-      viewDialog.center();
-      final Frame iframe = new Frame(url);
-      
-      // BISERVER-1931: Reducing the size of the dialog box when 
-      // subscription is to be deleted    
-      if (action.equals(DELETE)) {
-        iframe.setSize("100%", "100%");
-      } else {
-        iframe.setPixelSize(800, 600);
-      }    
-  
-      ((VerticalPanel)viewDialog.getContent()).add(iframe);
+    viewDialog.center();
+    final Frame iframe = new Frame(url);
+    
+    // BISERVER-1931: Reducing the size of the dialog box when 
+    // subscription is to be deleted    
+    if (action.equals(DELETE)) {
+      iframe.setSize("100%", "100%");
+    } else {
+      iframe.setPixelSize(800, 600);
+    }    
+
+    ((VerticalPanel)viewDialog.getContent()).add(iframe);
     }
   }
 
