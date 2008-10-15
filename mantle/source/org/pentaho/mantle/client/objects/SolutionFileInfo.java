@@ -23,14 +23,18 @@ public class SolutionFileInfo implements Serializable {
   public String solution;
   public String path;
   public String name;
+  public String localizedName;
   public Date lastModifiedDate;
   public long size;
   public byte[] data;
-  public String type = "html";  //$NON-NLS-1$
+  public Type type;
+  public String pluginTypeName;
   public boolean isDirectory = false;
   public boolean isSubscribable = false;
   public boolean supportsAccessControls = true;
   public boolean canEffectiveUserManage = false;
+  
+  public enum Type{REPORT, XACTION, URL, ANALYSIS_VIEW, PLUGIN, FOLDER};
 
   public List<UserPermission> userPermissions;
   public List<RolePermission> rolePermissions;
@@ -126,11 +130,11 @@ public class SolutionFileInfo implements Serializable {
     this.rolePermissions = rolePermissions;
   }
 
-  public String getType() {
+  public Type getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(Type type) {
     this.type = type;
   }
 
@@ -140,6 +144,16 @@ public class SolutionFileInfo implements Serializable {
 
   public void setCanEffectiveUserManage(boolean canEffectiveUserManage) {
     this.canEffectiveUserManage = canEffectiveUserManage;
+  }
+
+  public String getLocalizedName() {
+  
+    return localizedName;
+  }
+
+  public void setLocalizedName(String localizedName) {
+  
+    this.localizedName = localizedName;
   }
 
 }

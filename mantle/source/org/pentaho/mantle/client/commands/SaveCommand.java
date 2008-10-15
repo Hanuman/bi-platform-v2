@@ -23,7 +23,7 @@ public class SaveCommand implements Command {
   private String name;
   private String solution;
   private String path;
-  private String type;
+  private SolutionFileInfo.Type type;
 
   public SaveCommand(SolutionBrowserPerspective navigatorPerspective, boolean isSaveAs) {
     this.navigatorPerspective = navigatorPerspective;
@@ -52,7 +52,7 @@ public class SaveCommand implements Command {
           setSolution(solution);
           setPath(path);
           setName(name);
-          setType("html"); //$NON-NLS-1$
+          setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
 
           TabWidget tab = navigatorPerspective.getCurrentTab();
           tab.setLabelText(name);
@@ -122,19 +122,12 @@ public class SaveCommand implements Command {
    * 
    * @param elementId
    */
-  public static native void doSaveAs(String elementId, String filename, String solution, String path, String type, boolean overwrite) 
+  public static native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite) 
   /*-{
     var frame = $doc.getElementById(elementId);
     frame = frame.contentWindow;
     frame.focus();                                
                 
-    //cache values for subsequent calls                   
-    frame.mySolution = solution;
-    frame.myPath = path;
-    frame.myFilename = filename;
-    frame.myType = type;
-    frame.myOverwrite = overwrite;
-
     if(frame.pivot_initialized) {
       // do jpivot save
       if (filename.indexOf("analysisview.xaction") == -1) {
@@ -142,7 +135,7 @@ public class SaveCommand implements Command {
       }
       frame.controller.saveAs(frame.myFilename, filename, frame.mySolution, frame.myPath, frame.myOverwrite);
     } else {
-      frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, frame.myType, frame.myOverwrite);
+      frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, "html", frame.myOverwrite);
     }
   }-*/;
 
@@ -176,12 +169,12 @@ public class SaveCommand implements Command {
     this.path = path;
   }
 
-  public String getType() {
+  public SolutionFileInfo.Type getType() {
 
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(SolutionFileInfo.Type type) {
 
     this.type = type;
   }

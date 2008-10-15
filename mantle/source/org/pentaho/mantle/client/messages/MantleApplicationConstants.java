@@ -1587,4 +1587,62 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Back")
   String back();
+  
+  /**
+   * Translated "Last Modified".
+   * 
+   * @return translated "Last Modified"
+   */
+  @DefaultMessage("Last Modified")
+  String lastModified();
+  
+  /**
+   * Translated "Source".
+   * 
+   * @return translated "Source"
+   */
+  @DefaultMessage("Source")
+  String source();
+  
+  /**
+   * Translated "Location".
+   * 
+   * @return translated "Location"
+   */
+  @DefaultMessage("Location")
+  String location();
+
+  /**
+   * Translated "Folder".
+   * 
+   * @return translated "Folder"
+   */
+  @DefaultMessage("Folder")
+  String folder();
+
+  /**
+   * Translated "Analysis View".
+   * 
+   * @return translated "Analysis View"
+   */
+  @DefaultMessage("Analysis View")
+  String analysisView();
+
+  /**
+   * Translated "XAction".
+   * 
+   * @return translated "XAction"
+   */
+  @DefaultMessage("XAction")
+  String xaction();
+
+  /**
+   * Translated "Folder".
+   * 
+   * @return translated "Folder"
+   */
+  @DefaultMessage("Report")
+  String report();
+  
+  
 }
