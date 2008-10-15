@@ -165,10 +165,10 @@
         
         <!-- portal-layout.war -->
         
-        <mkdir dir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war"/>
+        <!-- mkdir dir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war"/>
         <copy todir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war">
             <fileset dir="${bi.platform.appserver.dir}/jboss/webapps/pentaho-portal-layout" />
-        </copy>
+        </copy -->
 
         <!-- jfreereport files -->
         
