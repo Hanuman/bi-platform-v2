@@ -10,7 +10,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.pentaho.platform.api.engine.ILogger;
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
@@ -19,7 +18,7 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 public class ServiceLayerTest extends TestCase {
@@ -36,22 +35,18 @@ public class ServiceLayerTest extends TestCase {
 
   public void testEmptyActionSequence() {
     StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
-    IObjectFactoryCreator facCreator;
     String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-    try {
-      facCreator = new SpringObjectFactoryCreator();
-      facCreator.configure(objectFactoryCreatorCfgFile);
-    } catch (Exception e) {
-      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-      throw new RuntimeException("Failed to configure the Pentaho Object Factory.", e);
-    }
-    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
-    PentahoSystem.setObjectFactory(pentahoObjectFactory);
+    
+    IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
+    pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
+    PentahoSystem.setObjectFactory( pentahoObjectFactory );
+    
     PentahoSystem.init(applicationContext);
+    
     List messages = new ArrayList();
     String instanceId = null;
     IPentahoSession session = new StandaloneSession("system");
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(ILogger.ERROR);
     solutionEngine.init(session);
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();

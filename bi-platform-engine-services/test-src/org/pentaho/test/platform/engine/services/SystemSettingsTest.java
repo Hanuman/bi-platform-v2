@@ -38,7 +38,7 @@ import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class SystemSettingsTest extends TestCase {
@@ -73,16 +73,9 @@ public class SystemSettingsTest extends TestCase {
 	      System.setProperty("org.osjava.sj.root", getSolutionPath() + "/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
 	      System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	    }
-	    IObjectFactoryCreator facCreator;
 	    String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-	    try {
-	  	  facCreator = new SpringObjectFactoryCreator();  
-	  	  facCreator.configure( objectFactoryCreatorCfgFile );
-	    } catch (Exception e) {
-	      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-	      throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-	    }
-	    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
+	    IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
+	    pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
 	    PentahoSystem.setObjectFactory( pentahoObjectFactory );
 	    return PentahoSystem.init(applicationContext );
     }
@@ -158,7 +151,7 @@ public class SystemSettingsTest extends TestCase {
     public void testVersion() {
     	
     	Assert.assertTrue( "Initialization of the platform failed", init() );
-      IVersionHelper versionHelper = PentahoSystem.getVersionHelper(null);
+      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
     		String version = versionHelper.getVersionInformation(PentahoSystem.class);
     		// String build = VersionHelper.getBuild();
     		Assert.assertNotNull( version );
