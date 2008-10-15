@@ -1,12 +1,81 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU General Public License, version 2 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ *
+ * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
+ * 
+ * @created Oct 11, 2008
+ * @author Aaron Phillips
+ * 
+ */
 package org.pentaho.platform.api.engine;
 
-import java.util.Map;
-
-import org.pentaho.platform.api.engine.IPentahoSession;
-
 public interface IPentahoObjectFactory {
+  /**
+   * Retrieves an instance of a Pentaho BI Server API interface using the simple interface name
+   * (interfaceClass name without the package) as the object key.  If an appropriate 
+   * implementation does not exist the factory implementation should create it. 
+   * 
+   * @param interfaceClass  the type of object to retrieve (retrieved object will be 
+   *        returned as this type)
+   * @param session  the Pentaho session object.  Can be used to associate an object 
+   *        instance to a Pentaho session.  Value will be null if request to getObject 
+   *        does not originate in a session context.
+   * @return the implementation object typed to interfaceClass
+   * @throws ObjectFactoryException if the object cannot be retrieved
+   */
+  public <T> T get(Class<T> interfaceClass, final IPentahoSession session) throws ObjectFactoryException;
+  
+  /**
+   * Retrieves an instance of a Pentaho BI Server API interface by the given object key.  
+   * If an appropriate implementation does not exist the factory implementation should create it. 
+   * 
+   * @param interfaceClass  the type of object to retrieve (retrieved object will be 
+   *        returned as this type)
+   * @param key  the object identifier, typically the interface name
+   * @param session  the Pentaho session object.  Can be used to associate an object 
+   *        instance to a Pentaho session.  Value will be null if request to getObject 
+   *        does not originate in a session context.
+   * @return the implementation object typed to interfaceClass
+   * @throws ObjectFactoryException if the object cannot be retrieved
+   */
+  public <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) throws ObjectFactoryException;
 
-  public Object getObject( String key, final IPentahoSession session ) throws ObjectFactoryException;
-  public boolean hasObject( String key );
-  public void setObjectCreators( Map objectMap );
+  @Deprecated
+  public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException;
+
+  /**
+   * Checks if the implementation for the given interface is defined.
+   * @param key  the object identifier, typically the interface name
+   * @return true if the object is defined
+   */
+  public boolean objectDefined(String key);
+  
+  /**
+   * Provides the concrete Class defined for the given object key.
+   * @param key  the object identifier, typically the interface name
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public Class getImplementingClass(String key);
+
+  /**
+   * Initialize the factory with a configuration file and a runtime context.
+   * @param configFile  an object configuration definition file understandable by the 
+   *        factory implementation
+   * @param context  a context object whereby the factory implementation can access 
+   *        runtime information, possible types are ServletContext and PortletContext
+   */
+  public void init(String configFile, Object context);
 }

@@ -23,6 +23,7 @@ package org.pentaho.platform.api.engine;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 
+@Deprecated  //use IPentahoObjectFactory
 public interface IObjectCreator {
 
   public Object getInstance( String key, IPentahoSession session ) throws ObjectFactoryException;

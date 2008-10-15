@@ -20,7 +20,12 @@
  */
 package org.pentaho.platform.api.engine;
 
-
+/**
+ * Since we have moved to a service locator pattern with PentahoSystem being the static root reference,
+ * we do not support other implementations of PentahoSystem.
+ * TODO a better approach to injecting collections is to inject locators into PentahoSystem that can
+ * be easily substituted.
+ */
 public interface IPentahoSystem {
   public boolean init(IApplicationContext applicationContext);
 }
