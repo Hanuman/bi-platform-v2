@@ -28,6 +28,7 @@ import org.pentaho.platform.engine.core.messages.Messages;
  * @author Steven Barkdull
  * 
  */
+@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
 public abstract class ObjectCreator implements IObjectCreator {
 
   private String className = null;  

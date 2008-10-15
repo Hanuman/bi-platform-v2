@@ -25,6 +25,7 @@ import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 
+@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
 public class LocalObjectCreator extends ObjectCreator {
 
   public LocalObjectCreator( String className ) {

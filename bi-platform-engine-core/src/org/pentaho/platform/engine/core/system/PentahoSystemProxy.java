@@ -30,6 +30,12 @@ import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
 
+/**
+ * TODO: 
+ * Since we have moved to a service locator pattern with PentahoSystem being the static root reference,
+ * we do not support other implementations of PentahoSystem.  A better approach is to inject plugins
+ * lisetners and actions locators into PentahoSystem.
+ */
 public class PentahoSystemProxy implements IPentahoSystem {
   
   public boolean init(IApplicationContext applicationContext) {

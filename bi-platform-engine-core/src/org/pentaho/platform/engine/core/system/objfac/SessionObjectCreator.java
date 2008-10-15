@@ -26,6 +26,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.messages.Messages;
 
+@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
 public class SessionObjectCreator extends ObjectCreator {
 
   public SessionObjectCreator( String className ) {

@@ -34,13 +34,12 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
  * 
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
+ * TODO merge this into AuditHelper
  */
 public class AuditEntry {
 
   private static final Log logger = LogFactory.getLog(AuditEntry.class);
   
-  private static IAuditEntry auditEntry = (IAuditEntry)PentahoSystem.getObject( null, "IAuditEntry" ); //$NON-NLS-1$
-
   public static void auditJobDuration(final String jobId, final String instId, final String objId,
       final String objType, final String actor, final String messageType, final String messageName,
       final String messageTxtValue, final float duration) throws AuditException {
@@ -53,8 +52,10 @@ public class AuditEntry {
   public static void auditAll(final String jobId, final String instId, final String objId, final String objType,
       final String actor, final String messageType, final String messageName, final String messageTxtValue,
       final BigDecimal messageNumValue, final float duration) throws AuditException {
-    if (AuditEntry.auditEntry != null) {
-      AuditEntry.auditEntry.auditAll(jobId, instId, objId, objType, actor, messageType, messageName, messageTxtValue,
+    IAuditEntry auditEntry = null;
+    if(PentahoSystem.getObjectFactory().objectDefined(IAuditEntry.class.getSimpleName())) {
+      auditEntry = PentahoSystem.get(IAuditEntry.class, null);
+      auditEntry.auditAll(jobId, instId, objId, objType, actor, messageType, messageName, messageTxtValue,
           messageNumValue, duration);
     }
   }

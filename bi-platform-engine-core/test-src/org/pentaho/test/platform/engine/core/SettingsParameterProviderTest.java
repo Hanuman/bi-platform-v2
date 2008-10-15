@@ -4,13 +4,12 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.engine.core.solution.CustomSettingsParameterProvider;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.core.system.objfac.SpringObjectFactoryCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 
 public class SettingsParameterProviderTest extends TestCase {
 
@@ -35,16 +34,9 @@ public class SettingsParameterProviderTest extends TestCase {
 	  private void init() {
 		  if( !PentahoSystem.getInitializedOK() ) {
 		        StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
-		        IObjectFactoryCreator facCreator;
 		        String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-		        try {
-		      	  facCreator = new SpringObjectFactoryCreator();  
-		      	  facCreator.configure( objectFactoryCreatorCfgFile );
-		        } catch (Exception e) {
-		          //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-		          throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
-		        }
-		        IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
+		        IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
+		        pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
 		        PentahoSystem.setObjectFactory( pentahoObjectFactory );
 		        PentahoSystem.init(applicationContext );
 		  }

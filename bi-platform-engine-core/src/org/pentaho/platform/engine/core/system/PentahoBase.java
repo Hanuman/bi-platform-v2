@@ -158,7 +158,7 @@ public abstract class PentahoBase implements ILogger, Serializable {
 
   public void error(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.ERROR) {
-      IVersionHelper helper = PentahoSystem.getVersionHelper(null);
+      IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error Start: Pentaho " + helper.getVersionInformation(PentahoSystem.class)); //$NON-NLS-1$
       getLogger().error(getLogId() + message, error);
       getLogger().error("Error end:"); //$NON-NLS-1$ 
@@ -168,7 +168,7 @@ public abstract class PentahoBase implements ILogger, Serializable {
 
   public void fatal(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.FATAL) {
-      IVersionHelper helper = PentahoSystem.getVersionHelper(null);
+      IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error: Pentaho " + helper.getVersionInformation(PentahoSystem.class)); //$NON-NLS-1$
       getLogger().fatal(getLogId() + message, error);
       getLogger().error("Error end:"); //$NON-NLS-1$ 

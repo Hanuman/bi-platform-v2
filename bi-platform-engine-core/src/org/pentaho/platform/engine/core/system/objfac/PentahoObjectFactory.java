@@ -31,6 +31,8 @@ import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.util.VersionHelper;
 
+@Deprecated  //FIXME: This class is not stable and should be removed ASAP.  
+//The correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
 public class PentahoObjectFactory implements IPentahoObjectFactory {
 
   private Map<String, IObjectCreator> objectCreators = null;
@@ -65,6 +67,31 @@ public class PentahoObjectFactory implements IPentahoObjectFactory {
       IObjectCreator c = new GlobalObjectCreator( VersionHelper.class.getName() );
       objectCreators.put( versionHelperKey, c );
     }
+  }
+
+  public <T> T get(Class<T> interfaceClass, IPentahoSession session) throws ObjectFactoryException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public <T> T get(Class<T> interfaceClass, String key, IPentahoSession session) throws ObjectFactoryException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public void init(String configFile, Object context) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public boolean objectDefined(String key) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public Class getImplementingClass(String key) {
+    // TODO Auto-generated method stub
+    return null;
   }
  
 }
