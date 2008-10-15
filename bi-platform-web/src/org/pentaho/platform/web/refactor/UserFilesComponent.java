@@ -136,7 +136,7 @@ public class UserFilesComponent extends XmlComponent {
   protected void addScheduledAndExecuting(final Element root) {
     Element jobs = root.addElement("scheduled"); //$NON-NLS-1$
     IPentahoSession session = getSession();
-    IBackgroundExecution backgroundExecution = PentahoSystem.getBackgroundExecutionHandler(session);
+    IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, session);
     List<IJobDetail> jobsList = null;
     if (backgroundExecution != null) {
       jobsList = backgroundExecution.getScheduledAndExecutingBackgroundJobs(session);
@@ -170,7 +170,7 @@ public class UserFilesComponent extends XmlComponent {
   protected void addExecutedlist(final Element root) {
     Element jobs = root.addElement("executed"); //$NON-NLS-1$
     IPentahoSession session = getSession();
-    IBackgroundExecution backgroundExecution = PentahoSystem.getBackgroundExecutionHandler(session);
+    IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, session);
 
     List<IContentItem> pastExecutionList = null;
     if (backgroundExecution != null) {
@@ -233,7 +233,7 @@ public class UserFilesComponent extends XmlComponent {
   public boolean deleteContent(final String contentId) {
     try {
       IPentahoSession session = getSession();
-      IBackgroundExecution backgroundExecution = PentahoSystem.getBackgroundExecutionHandler(session);
+      IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, session);
       if (backgroundExecution != null) {
         backgroundExecution.removeBackgroundExecutedContentForID(contentId, session);
         return true;

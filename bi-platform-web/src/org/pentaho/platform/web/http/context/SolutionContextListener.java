@@ -27,32 +27,27 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IApplicationContext;
-import org.pentaho.platform.api.engine.IPentahoSystem;
+import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
-import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.platform.web.http.messages.Messages;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class SolutionContextListener implements ServletContextListener {
-
 
   protected static String solutionPath;
 
   protected static String contextPath;
-  
+
   private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
   public void contextInitialized(final ServletContextEvent event) {
 
     ServletContext context = event.getServletContext();
-    
+
     String encoding = context.getInitParameter("encoding"); //$NON-NLS-1$
     if (encoding != null) {
       LocaleHelper.setSystemEncoding(encoding);
@@ -93,18 +88,19 @@ public class SolutionContextListener implements ServletContextListener {
         .getString("SolutionContextListener.INFO_CONTEXT_PATH") + SolutionContextListener.contextPath); //$NON-NLS-1$
 
     SolutionContextListener.solutionPath = PentahoHttpSessionHelper.getSolutionPath(context);
-    if ( StringUtils.isEmpty( SolutionContextListener.solutionPath ) ) {
+    if (StringUtils.isEmpty(SolutionContextListener.solutionPath)) {
       String errorMsg = Messages.getErrorString("SolutionContextListener.ERROR_0001_NO_ROOT_PATH"); //$NON-NLS-1$
       Logger.error(getClass().getName(), errorMsg);
       /*
        * Since we couldn't find solution repository path there is no point in going 
        * forward and the user should know that a major config setting was not found.
        * So we are throwing in a RunTimeException with the requisite message.
-       */  
-      throw new RuntimeException(errorMsg);        
+       */
+      throw new RuntimeException(errorMsg);
     }
 
-    Logger.info(getClass().getName(), Messages.getString("SolutionContextListener.INFO_ROOT_PATH") + SolutionContextListener.solutionPath); //$NON-NLS-1$
+    Logger.info(getClass().getName(),
+        Messages.getString("SolutionContextListener.INFO_ROOT_PATH") + SolutionContextListener.solutionPath); //$NON-NLS-1$
 
     // TODO: derive the base URL from somewhere
     String baseUrl = context.getInitParameter("base-url"); //$NON-NLS-1$
@@ -130,41 +126,37 @@ public class SolutionContextListener implements ServletContextListener {
     ((WebApplicationContext) applicationContext).setProperties(props);
 
     setSystemCfgFile(context);
-    setObjectFactory( context );
-    
-    ApplicationContext springApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);    
-    IPentahoSystem pentahoSystem = (IPentahoSystem)springApplicationContext.getBean("pentahoSystem", IPentahoSystem.class);
-    boolean initOk = pentahoSystem.init(applicationContext);
+    setObjectFactory(context);
+
+    boolean initOk = PentahoSystem.init(applicationContext);
+
     this.showInitializationMessage(initOk, baseUrl);
   }
 
-  private void setObjectFactory( final ServletContext context ) {
+  private void setObjectFactory(final ServletContext context) {
 
     final String SYSTEM_FOLDER = "/system"; //$NON-NLS-1$
-    String objectFactoryCreatorClassName = context.getInitParameter("objectFactoryCreatorClassName"); //$NON-NLS-1$
-    String objectFactoryCreatorCfgFile = context.getInitParameter("objectFactoryCreatorCfgFile"); //$NON-NLS-1$
-    
+    String pentahoObjectFactoryClassName = context.getInitParameter("pentahoObjectFactory"); //$NON-NLS-1$
+    String pentahoObjectFactoryConfigFile = context.getInitParameter("pentahoObjectFactoryCfgFile"); //$NON-NLS-1$
+
     // if web.xml doesnt specify a config file, use the default path.
-    if ( StringUtils.isEmpty( objectFactoryCreatorCfgFile ) ) {
-      objectFactoryCreatorCfgFile = solutionPath + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-    } else if ( -1 == objectFactoryCreatorCfgFile.indexOf( "/" )) {
-      objectFactoryCreatorCfgFile = solutionPath + SYSTEM_FOLDER + "/" + objectFactoryCreatorCfgFile; //$NON-NLS-1$
+    if (StringUtils.isEmpty(pentahoObjectFactoryConfigFile)) {
+      pentahoObjectFactoryConfigFile = solutionPath + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
+    } else if (-1 == pentahoObjectFactoryConfigFile.indexOf("/")) {
+      pentahoObjectFactoryConfigFile = solutionPath + SYSTEM_FOLDER + "/" + pentahoObjectFactoryConfigFile; //$NON-NLS-1$
     }
     // else objectFactoryCreatorCfgFile contains the full path.
-    IObjectFactoryCreator facCreator;
+    IPentahoObjectFactory pentahoObjectFactory;
     try {
-      Class<?> classObject = Class.forName( objectFactoryCreatorClassName );
-      facCreator = (IObjectFactoryCreator)classObject.newInstance();
-      facCreator.configure( objectFactoryCreatorCfgFile );
+      Class<?> classObject = Class.forName(pentahoObjectFactoryClassName);
+      pentahoObjectFactory = (IPentahoObjectFactory) classObject.newInstance();
+      pentahoObjectFactory.init(pentahoObjectFactoryConfigFile, context);
+      PentahoSystem.setObjectFactory(pentahoObjectFactory);
     } catch (Exception e) {
-      //Logger.fatal( SolutionContextListener.class.getName(), e.getMessage() );
-      throw new RuntimeException( "Failed to configure the Pentaho Object Factory.", e );
+      throw new RuntimeException("Failed to configure the Pentaho Object Factory.", e);
     }
-    IPentahoObjectFactory pentahoObjectFactory = facCreator.getFactory();
-
-    PentahoSystem.setObjectFactory( pentahoObjectFactory );
   }
-  
+
   /**
    * Look for a parameter called "pentaho-system-cfg". If found, use its value to set the
    * the value of the System property "SYSTEM_CFG_PATH_KEY". This value is used by a
@@ -185,7 +177,7 @@ public class SolutionContextListener implements ServletContextListener {
   }
 
   public void showInitializationMessage(final boolean initOk, final String baseUrl) {
-    IVersionHelper helper = PentahoSystem.getVersionHelper(null); // No session yet
+    IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null); // No session yet
     if (initOk) {
       System.out
           .println(Messages
