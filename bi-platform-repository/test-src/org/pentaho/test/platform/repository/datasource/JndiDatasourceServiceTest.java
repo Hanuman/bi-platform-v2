@@ -14,9 +14,11 @@ package org.pentaho.test.platform.repository.datasource;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
@@ -39,7 +41,7 @@ public class JndiDatasourceServiceTest extends BaseTest {
 		      }
 		  }
 		  
-  public void testGetDatasource() {
+  public void testGetDatasource() throws DatasourceServiceException, SQLException {
     Connection connection = null;
     try {
       JndiDatasourceService service = new JndiDatasourceService();
@@ -49,22 +51,14 @@ public class JndiDatasourceServiceTest extends BaseTest {
       assertNotNull( "Bound name is null", dsBoundName );
       String dsUnBoundName = service.getDSUnboundName("SampleData");
       assertNotNull( "Unbound name is null", dsUnBoundName );
-    } catch (Exception e) {
-      fail("Not expected to throw exception");
-      e.printStackTrace();
     } finally {
-      try {
     	if(connection != null) {
     		connection.close();	
     	}
-      } catch (Exception ee) {
-        ee.printStackTrace();
-      }
     }
-
   }
   
-  public static void main(String[] args) {
+  public static void main(String[] args) throws DatasourceServiceException, SQLException {
 	  JndiDatasourceServiceTest test = new JndiDatasourceServiceTest();
     try {
       test.testGetDatasource();
