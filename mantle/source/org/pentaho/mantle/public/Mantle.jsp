@@ -11,13 +11,13 @@
 			<script defer type="text/javascript" src="pngfix.js"></script>
 		<![endif]-->
 		<script type="text/javascript">
-			if(window.opener){
+			if(window.opener && window.opener.reportWindowOpened != undefined){
 			  window.opener.reportWindowOpened();
 			}
 		</script>
 	</head>
 
-	<body oncontextmenu="return false;" onload="reportHome()">
+	<body oncontextmenu="return false;">
 
 	<div id="loading">
     		<div class="loading-indicator">
