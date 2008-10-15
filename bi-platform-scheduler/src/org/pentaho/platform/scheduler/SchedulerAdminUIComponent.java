@@ -242,7 +242,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
 
   private Document doCreateJob() {
 
-    IBackgroundExecution helper = PentahoSystem.getBackgroundExecutionHandler(getSession());
+    IBackgroundExecution helper = PentahoSystem.get(IBackgroundExecution.class, getSession());
     String strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
 
@@ -272,7 +272,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     sched.scheduleJob(jd, t);
     */
 
-    IBackgroundExecution helper = PentahoSystem.getBackgroundExecutionHandler(getSession());
+    IBackgroundExecution helper = PentahoSystem.get(IBackgroundExecution.class, getSession());
     String strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
 

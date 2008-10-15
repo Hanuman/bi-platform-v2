@@ -132,7 +132,7 @@ public class QuartzExecute extends PentahoBase implements Job {
       boolean backgroundExecution = "true".equals(dataMap.getString(QuartzBackgroundExecutionHelper.BACKGROUND_EXECUTION_FLAG)); //$NON-NLS-1$
       IOutputHandler outputHandler = null;
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parameters);
-      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(executeSession);
+      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, executeSession);
       if (backgroundExecution) {
         String location = dataMap.getString(QuartzBackgroundExecutionHelper.BACKGROUND_CONTENT_LOCATION_STR);
         String fileName = dataMap.getString(QuartzBackgroundExecutionHelper.BACKGROUND_CONTENT_GUID_STR);
