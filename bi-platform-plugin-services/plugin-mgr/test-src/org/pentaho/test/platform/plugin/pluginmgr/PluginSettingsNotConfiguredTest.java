@@ -31,8 +31,6 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
 
   private static final String PENTAHO_XML_PATH = "/system/pentahoObjects.spring.xml"; //$NON-NLS-1$
 
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml"; //$NON-NLS-1$
-
   final String SYSTEM_FOLDER = "/system"; //$NON-NLS-1$
 
   @Override
@@ -68,12 +66,10 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
         System.setProperty("org.osjava.sj.root", getSolutionPath() + "/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
         System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-
       ApplicationContext springApplicationContext = getSpringApplicationContext();
 
       IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
-      pentahoObjectFactory.init(objectFactoryCreatorCfgFile, springApplicationContext);
+      pentahoObjectFactory.init(null, springApplicationContext);
       PentahoSystem.setObjectFactory(pentahoObjectFactory);
 
       initOk = PentahoSystem.init(applicationContext);
@@ -87,7 +83,7 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
 
   private ApplicationContext getSpringApplicationContext() {
 
-    String[] fns = { "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    String[] fns = { "pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     GenericApplicationContext appCtx = new GenericApplicationContext();
     XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(appCtx);
