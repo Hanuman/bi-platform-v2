@@ -82,7 +82,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
     fetchFileInfoAndInitTabs();
     getWidget().setHeight("100%"); //$NON-NLS-1$
     getWidget().setWidth("100%"); //$NON-NLS-1$
-    setPixelSize(360, 420);
+    setPixelSize(390, 420);
   }
 
   public void fetchFileInfoAndInitTabs() {

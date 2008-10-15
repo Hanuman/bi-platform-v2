@@ -15,11 +15,16 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 
+import java.io.File;
+
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.mantle.client.messages.MantleApplicationConstants;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -28,24 +33,27 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
 
   Label nameLabel = new Label();
   Label locationLabel = new Label();
-  Label solutionLabel = new Label();
+  Label sourceLabel = new Label();
   Label typeLabel = new Label();
   Label sizeLabel = new Label();
   Label lastModifiedDateLabel = new Label();
   FileItem fileItem;
+  private static MantleApplicationConstants MSG = Messages.getInstance();
 
   public GeneralPanel() {
-    setWidget(0, 0, new Label("Name:"));
+    setWidget(0, 0, new Label(MSG.name()+":"));
     setWidget(0, 1, nameLabel);
-    setWidget(1, 0, new Label("Solution:"));
-    setWidget(1, 1, solutionLabel);
-    setWidget(2, 0, new Label("Location:"));
-    setWidget(2, 1, locationLabel);
-    setWidget(3, 0, new Label("Type:"));
+    setWidget(1, 0, new Label(MSG.location()+":"));
+    setWidget(1, 1, locationLabel);
+    setWidget(2, 0, new Label(MSG.source()+":"));
+    setWidget(2, 1, sourceLabel);
+    setWidget(3, 0, new Label(MSG.type()+":"));
     setWidget(3, 1, typeLabel);
-    setWidget(4, 0, new Label("Size:"));
+    setWidget(4, 0, new Label(MSG.size()+":"));
     setWidget(4, 1, sizeLabel);
-    setWidget(5, 0, new Label("Last Modified:"));
+    Label lbl = new Label(MSG.lastModified()+":");
+    lbl.addStyleName("nowrap");
+    setWidget(5, 0, lbl);
     setWidget(5, 1, lastModifiedDateLabel);
   }
 
@@ -59,11 +67,32 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     if (fileInfo == null) {
       populateUIFromServer();
     } else {
-      nameLabel.setText(fileInfo.name);
-      locationLabel.setText(fileInfo.path);
+      nameLabel.setText(fileInfo.localizedName);
+      locationLabel.setText(fileInfo.solution+fileInfo.path);
+      sourceLabel.setText(fileInfo.solution+fileInfo.path+"/"+fileInfo.name);
+      this.typeLabel.setText(getFileTypeDescription(fileInfo.type, fileInfo.pluginTypeName));
+      NumberFormat numberFormat = NumberFormat.getDecimalFormat();
+      sizeLabel.setText(numberFormat.format(fileInfo.size/1000.00)+" KB");
       lastModifiedDateLabel.setText(fileInfo.lastModifiedDate.toString());
-      solutionLabel.setText(fileInfo.solution);
-      sizeLabel.setText("" + fileInfo.size);
+    }
+  }
+  
+  private String getFileTypeDescription(SolutionFileInfo.Type type, String pluginTypeName){
+    switch(type){
+      case FOLDER:
+        return MSG.folder();
+      case ANALYSIS_VIEW:
+        return MSG.analysisView();
+      case XACTION:
+        return MSG.xaction();
+      case URL:
+        return "URL";   //$NON-NLS-1$
+      case REPORT:
+        return MSG.report();
+      case PLUGIN:
+        return pluginTypeName;
+      default:
+        return "";
     }
   }
 

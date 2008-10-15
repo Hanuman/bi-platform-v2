@@ -26,12 +26,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.report.JFreeReport;
@@ -55,6 +58,7 @@ import org.pentaho.mantle.server.reporting.ReportCreator;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
+import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
@@ -428,6 +432,51 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     solutionFileInfo.solution = solutionName;
     solutionFileInfo.path = path;
     solutionFileInfo.name = fileName;
+    
+    //Find file Type
+    int lastDot = -1;
+    if(solutionFile.isDirectory()){
+      solutionFileInfo.type = SolutionFileInfo.Type.FOLDER;
+    } else if((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")){
+      String extension = fileName.substring(lastDot);
+      
+      // Check to see if its a plug-in
+      boolean isPlugin = false;
+      IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getPentahoSession(), "IPluginSettings" ); //$NON-NLS-1$
+
+      if( pluginSettings != null ) {
+          Set<String> types = pluginSettings.getContentTypes();
+          for(String type : types){
+            System.out.println(type);
+          }
+          isPlugin = types != null && types.contains( extension );
+      }
+      
+      if(isPlugin){
+        //Get the reported type from the plug-in manager
+        IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, getPentahoSession());
+        solutionFileInfo.type = SolutionFileInfo.Type.PLUGIN;
+        solutionFileInfo.pluginTypeName = info.getDescription();
+      
+      } else if (fileName.endsWith("waqr.xaction")) {
+        solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
+      } else if (fileName.endsWith("analysisview.xaction")) {
+        solutionFileInfo.type = SolutionFileInfo.Type.ANALYSIS_VIEW;
+      } else if (fileName.endsWith(".url")) {
+        solutionFileInfo.type = SolutionFileInfo.Type.URL;
+      } else {
+        solutionFileInfo.type = SolutionFileInfo.Type.XACTION;
+      }
+    }
+    
+    // Get Localized name
+    if (!solutionFile.isDirectory()) {
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title");
+    }
+    if(StringUtils.isEmpty(solutionFileInfo.localizedName)){
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name");
+    }
+    
     if (solutionFile.getData() == null) {
       solutionFileInfo.size = 0;
     } else {
@@ -467,6 +516,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
     return solutionFileInfo;
   }
+  
   
   public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation) {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
