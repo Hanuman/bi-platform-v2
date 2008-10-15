@@ -184,7 +184,7 @@ public class ActionPortlet extends ViewPortlet {
 
     }
     if ("true".equals(backgroundExecution)) { //$NON-NLS-1$
-      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(userSession);
+      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, userSession);
       if (backgroundExecutionHandler != null) {
         PortletRequestParameterProvider parameterProvider = new PortletRequestParameterProvider(request);
         parameterProvider.setParameter("solution", solutionName); //$NON-NLS-1$
@@ -193,7 +193,7 @@ public class ActionPortlet extends ViewPortlet {
         String backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);
         String intro = ""; //$NON-NLS-1$
         String footer = ""; //$NON-NLS-1$
-        IUITemplater templater = PentahoSystem.getUITemplater(userSession);
+        IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession);
         if (templater != null) {
           String sections[] = templater.breakTemplate("template-dialog.html", "", userSession); //$NON-NLS-1$ //$NON-NLS-2$ 
           if ((sections != null) && (sections.length > 0)) {
