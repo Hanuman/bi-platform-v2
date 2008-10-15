@@ -66,7 +66,12 @@ public class StandaloneSpringPentahoObjectFactory implements IPentahoObjectFacto
       }
     } else {
       //there is no session. Let Spring create the object
-      object = beanFactory.getBean(key);
+      try {
+        object = beanFactory.getBean(key);
+      } catch (Throwable t) {
+        throw new ObjectFactoryException(t);
+      }
+      
     }
 
     //FIXME: what is this doing here??
