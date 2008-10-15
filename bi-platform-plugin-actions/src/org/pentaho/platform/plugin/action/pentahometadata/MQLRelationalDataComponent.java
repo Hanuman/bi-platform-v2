@@ -105,8 +105,7 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
       // boolean displayNames = this.getInputBooleanValue("display-names", true); //$NON-NLS-1$
 
       MetadataPublisher.loadMetadata(getSolutionName(), getSession(), false);
-      CwmSchemaFactoryInterface cwmSchemaFactory = (CwmSchemaFactoryInterface) PentahoSystem.getObject(getSession(),
-          "ICwmSchemaFactory"); //$NON-NLS-1$
+      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, getSession());
       try {
         if (mqlQueryClassName != null) {
           mqlQuery = MQLQueryFactory.getMQLQuery(mqlQueryClassName, mql, null, LocaleHelper.getLocale().toString(),

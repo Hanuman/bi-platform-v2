@@ -251,7 +251,7 @@ public class ComponentImplementationExample extends Object implements IComponent
       if (messages != null) {
         messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
-      IVersionHelper versionHelper = PentahoSystem.getVersionHelper(null);
+      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error Start: Pentaho " + versionHelper.getVersionInformation(this.getClass())); //$NON-NLS-1$
       getLogger().error(getLogId() + message, error);
       getLogger().error("Error end:"); //$NON-NLS-1$ 
@@ -263,7 +263,7 @@ public class ComponentImplementationExample extends Object implements IComponent
       if (messages != null) {
         messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
-      IVersionHelper versionHelper = PentahoSystem.getVersionHelper(null);
+      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error: Pentaho " + versionHelper.getVersionInformation(this.getClass())); //$NON-NLS-1$
       getLogger().fatal(getLogId() + message, error);
       getLogger().error("Error end:"); //$NON-NLS-1$ 
