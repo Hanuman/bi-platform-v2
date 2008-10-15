@@ -157,7 +157,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   @SuppressWarnings("unchecked")
   private UserFilesComponent getUserFilesComponent() {
-    UserFilesComponent userFiles = (UserFilesComponent) PentahoSystem.getUserFilesComponent(getPentahoSession());
+    UserFilesComponent userFiles = PentahoSystem.get(UserFilesComponent.class, "IUserFilesComponent", getPentahoSession()); //$NON-NLS-1$
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
     String thisUrl = baseUrl + "UserContent?"; //$NON-NLS-1$
     SimpleUrlFactory urlFactory = new SimpleUrlFactory(thisUrl);
@@ -205,7 +205,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @SuppressWarnings("unchecked")
   public List<JobDetail> getScheduledBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
-    IBackgroundExecution backgroundExecution = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
+    IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
     if (backgroundExecution != null) {
       List<IJobDetail> jobsList = (List<IJobDetail>) backgroundExecution.getScheduledAndExecutingBackgroundJobs(getPentahoSession());
       List<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
@@ -228,7 +228,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @SuppressWarnings("unchecked")
   public List<JobDetail> getCompletedBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
-    IBackgroundExecution backgroundExecution = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
+    IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
     if (backgroundExecution != null) {
       List<IContentItem> jobsList = (List<IContentItem>) backgroundExecution.getBackgroundExecutedContentList(getPentahoSession());
       List<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
@@ -368,7 +368,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
     try {
-      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
+      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
       parameterProvider.setParameter(StandardSettings.SOLUTION, solutionName);
       parameterProvider.setParameter(StandardSettings.PATH, path);
@@ -389,7 +389,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
 
     try {
-      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(getPentahoSession());
+      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
       parameterProvider.setParameter(StandardSettings.SOLUTION, solutionName);
       parameterProvider.setParameter(StandardSettings.PATH, path);
