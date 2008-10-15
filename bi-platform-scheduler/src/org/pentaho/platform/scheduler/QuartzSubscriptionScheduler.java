@@ -49,7 +49,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
 
   protected static final Log logger = LogFactory.getLog(QuartzSubscriptionScheduler.class);
 
-  public static final String GROUP_NAME = "Pro Subscription"; //$NON-NLS-1$
+  public static final String GROUP_NAME = Messages.getString("QuartzSubscriptionScheduler.GROUP_NAME");
 
   private static final int PAUSE = 0;
 
