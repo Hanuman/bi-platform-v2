@@ -87,13 +87,13 @@ public class ViewAction extends ServletBase {
   protected boolean doBackgroundExecution(final HttpServletRequest request, final HttpServletResponse response,
       final IPentahoSession userSession) throws ServletException, IOException {
     if ("true".equals(request.getParameter("background"))) { //$NON-NLS-1$ //$NON-NLS-2$
-      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.getBackgroundExecutionHandler(userSession);
+      IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, userSession);
       if (backgroundExecutionHandler != null) {
         HttpRequestParameterProvider parameterProvider = new HttpRequestParameterProvider(request);
         String backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);
         String intro = ""; //$NON-NLS-1$
         String footer = ""; //$NON-NLS-1$
-        IUITemplater templater = PentahoSystem.getUITemplater(userSession);
+        IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession);
         if (templater != null) {
           String sections[] = templater.breakTemplate("template-dialog.html", "", userSession); //$NON-NLS-1$ //$NON-NLS-2$ 
           if ((sections != null) && (sections.length > 0)) {
