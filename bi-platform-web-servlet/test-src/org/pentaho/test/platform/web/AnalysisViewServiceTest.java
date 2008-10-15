@@ -1,8 +1,6 @@
 package org.pentaho.test.platform.web;
 
 
-import java.io.File;
-
 import org.pentaho.actionsequence.dom.ActionSequenceDocument;
 import org.pentaho.actionsequence.dom.actions.PivotViewAction;
 import org.pentaho.platform.api.engine.IPentahoSession;
