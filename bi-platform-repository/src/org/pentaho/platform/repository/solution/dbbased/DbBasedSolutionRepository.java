@@ -881,7 +881,13 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     String nameQuery = "org.pentaho.platform.repository.solution.dbbased.RepositoryFile.findNamedRootSolutionFolders"; //$NON-NLS-1$
     Query qry = hibSession.getNamedQuery(nameQuery).setCacheable(true);
     qry.setString("fileName", rootRepositoryName); //$NON-NLS-1$
-    RepositoryFile rtn = (RepositoryFile) qry.uniqueResult();
+    RepositoryFile rtn = null;
+    try {
+      rtn = (RepositoryFile) qry.uniqueResult();
+    } catch (HibernateException ex) {
+      logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootRepositoryName), ex);
+      throw ex;
+    }
     return rtn;
   }
 
@@ -897,7 +903,13 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         Session hibSession = HibernateUtil.getSession();
         String nameQuery = "org.pentaho.platform.repository.solution.dbbased.RepositoryFile.findAllRootSolutionFolders"; //$NON-NLS-1$
         Query qry = hibSession.getNamedQuery(nameQuery).setCacheable(true);
-        RepositoryFile rtn = (RepositoryFile) qry.uniqueResult();
+        RepositoryFile rtn = null;
+        try {
+          rtn = (RepositoryFile) qry.uniqueResult();
+        } catch (HibernateException ex) {
+          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory.getFullPath()), ex);
+          throw ex;
+        }
         if (rtn == null) {
           return null;
         }
@@ -969,7 +981,14 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       String nameQuery = "org.pentaho.platform.repository.solution.dbbased.RepositoryFile.findFileByPath"; //$NON-NLS-1$
       Query qry = hibernateSession.getNamedQuery(nameQuery).setCacheable(true).setString("fullPath", fullPath); //$NON-NLS-1$
       if (qry.list().size() > 0) {
-        return (RepositoryFile) qry.uniqueResult();
+        RepositoryFile rtn = null;
+        try {
+          rtn = (RepositoryFile) qry.uniqueResult();
+        } catch (HibernateException ex) {
+          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", path), ex);
+          throw ex;
+        }
+        return rtn;
       } else {
         return super.getFileByPath(path);
       }
