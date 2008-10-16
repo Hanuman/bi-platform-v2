@@ -48,7 +48,7 @@
 
 	<context-param>
 		<param-name>pentahoObjectFactory</param-name>
-		<param-value>org.pentaho.platform.engine.core.system.objfac.SpringPentahoObjectFactory</param-value>
+		<param-value>org.pentaho.platform.web.http.context.WebSpringPentahoObjectFactory</param-value>
 	</context-param>
 
 	<!--
