@@ -22,7 +22,7 @@ PentahoSystem which is initialized after Spring
   <bean id="BackgroundSubscriptionExecution" class="org.pentaho.platform.scheduler.SecurityAwareBackgroundSubscriptionHelper" scope="singleton" />
   <bean id="ISubscriptionRepository" class="org.pentaho.platform.repository.subscription.SubscriptionRepository" scope="singleton" />
   <bean id="ISubscriptionScheduler" class="org.pentaho.platform.scheduler.QuartzSubscriptionScheduler" scope="singleton" />
-  <bean id="CwmSchemaFactoryInterface" class="org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory" scope="session"/>
+  <bean id="ICwmSchemaFactory" class="org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory" scope="session"/>
   <bean id="IUserSettingService" class="org.pentaho.platform.repository.usersettings.UserSettingService" scope="session" />
   <bean id="file" class="org.pentaho.platform.plugin.outputs.FileOutputHandler" scope="session" />
   <bean id="contentrepo" class="org.pentaho.platform.repository.content.ContentRepositoryOutputHandler" scope="session" />
