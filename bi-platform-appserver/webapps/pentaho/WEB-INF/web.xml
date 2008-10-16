@@ -62,10 +62,7 @@
 		<param-value>pentahoObjects.spring.xml</param-value>
 	</context-param>
   
-<!--   enables session and request scoped object creation in Spring -->
-    <listener>
-    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-  </listener>
+
   
 	<!--
 		This defaults to UTF-8. Uncomment this section and change the value for other encodings. Also change the URIEncoding
@@ -196,6 +193,11 @@
 
 	<!-- insert additional filter-mappings -->
 
+    <!--   enables session and request scoped object creation in Spring -->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+  
 	<!-- JPivot resources initializer -->
 	<listener>
 		<listener-class>com.tonbeller.tbutils.res.ResourcesFactoryContextListener</listener-class>
