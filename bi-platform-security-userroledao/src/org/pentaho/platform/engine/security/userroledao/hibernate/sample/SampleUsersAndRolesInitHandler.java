@@ -14,7 +14,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  * <p>This handler checks to see if the users table is empty. If it is empty, then it inserts sample users and roles.
  * </p>
  * 
- * TODO mlowery use password encoder that the rest of the platform uses
+ * TODO mlowery Use DefaultPentahoPasswordEncoder to encode the hard-coded passwords.
  * 
  * @see InitHandler
  * @author mlowery
