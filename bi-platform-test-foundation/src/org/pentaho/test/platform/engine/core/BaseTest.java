@@ -35,6 +35,7 @@ import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
@@ -107,6 +108,8 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       pentahoObjectFactory.init(null, springApplicationContext);
       PentahoSystem.setObjectFactory( pentahoObjectFactory );
 
+      //force Spring to inject PentahoSystem, there has got to be a better way than this, perhaps an alternate way of initting spring's app context
+      springApplicationContext.getBean("pentahoSystem", IPentahoSystem.class);
       initOk = PentahoSystem.init(applicationContext);
     } else {
       initOk = true;
