@@ -42,7 +42,7 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     try {
       object = beanFactory.getBean(beanId);
     } catch (Throwable t) {
-      throw new ObjectFactoryException(t);
+      throw new ObjectFactoryException("Could not retrieve object with key ["+beanId+"]",t);
     }
     return object;
   }
@@ -58,7 +58,7 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
       //since Spring doesn't know about StandaloneSessions
       try {
         object = beanFactory.getBean(key);
-      } catch (BeanCreationException bce) {
+      } catch (Throwable t) {
         //Spring could not create the object, perhaps due to session scoping, let's try
         //retrieving it from our internal session map
         Logger.debug(this, "Retrieving object from Pentaho session map (not Spring).");   //$NON-NLS-1$
