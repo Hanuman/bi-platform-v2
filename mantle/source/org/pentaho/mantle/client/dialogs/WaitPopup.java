@@ -18,7 +18,6 @@ public class WaitPopup extends SimplePanel{
   
   public WaitPopup(){
     setStyleName("waitPopup");
-    this.setVisible(false);
     VerticalPanel vp = new VerticalPanel();
     Label lbl = new Label(Messages.getInstance().pleaseWait());
     lbl.setStyleName("waitPopup_title");
@@ -31,6 +30,8 @@ public class WaitPopup extends SimplePanel{
     
     if (pageBackground == null) {
       pageBackground = new FocusPanel();
+      pageBackground.setHeight("100%"); //$NON-NLS-1$
+      pageBackground.setWidth("100%"); //$NON-NLS-1$
       pageBackground.setStyleName("modalDialogPageBackground"); //$NON-NLS-1$
       pageBackground.addClickListener(new ClickListener() {
 
@@ -43,6 +44,7 @@ public class WaitPopup extends SimplePanel{
         }
       });
       RootPanel.get().add(pageBackground, 0, 0);
+      this.setVisible(false);
     }
   }
   
@@ -53,7 +55,7 @@ public class WaitPopup extends SimplePanel{
   @Override
   public void setVisible(boolean visible) {
     super.setVisible(visible);
-    
+    pageBackground.setVisible(visible);
   }
   
   

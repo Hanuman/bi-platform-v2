@@ -939,8 +939,8 @@ gwt-TabPanelBottom {
 
 .waitPopup{
   position: absolute;
-  left: 48%;
-  top: 45%;
+  left: 44%;
+  top: 44%;
   padding: 15px 8px;
   z-index: 20001;
   height: auto;
