@@ -23,7 +23,7 @@ PentahoSystem which is initialized after Spring
   <bean id="ISubscriptionRepository" class="org.pentaho.platform.repository.subscription.SubscriptionRepository" scope="singleton" />
   <bean id="ISubscriptionScheduler" class="org.pentaho.platform.scheduler.QuartzSubscriptionScheduler" scope="singleton" />
   <!--  Use this schema factory to enable PMD security -->
-  <bean id="CwmSchemaFactoryInterface" class="org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCwmSchemaFactory" scope="session" />
+  <bean id="ICwmSchemaFactory" class="org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCwmSchemaFactory" scope="session" />
   <!--  Use this schema factory to disable PMD security -->
   <!--  <bean id="ICwmSchemaFactory" class="org.pentaho.platform.engine.services.metadata.cwm.PlatformCWMSchemaFactory" scope="session"/> -->
   <bean id="IUserSettingService" class="org.pentaho.platform.repository.usersettings.UserSettingService" scope="session" />
