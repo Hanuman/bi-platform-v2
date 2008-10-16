@@ -77,7 +77,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 public class SolutionRepositoryService extends ServletBase {
 
   /**
@@ -86,14 +85,14 @@ public class SolutionRepositoryService extends ServletBase {
   private static final long serialVersionUID = -5870073658756939643L;
 
   private static final Log logger = LogFactory.getLog(SolutionRepositoryService.class);
-  
+
   /**
    * contains instance of a sax parser factory. Use getSAXParserFactory() method to get a copy of the factory.
    */
   private static final ThreadLocal<SAXParserFactory> SAX_FACTORY = new ThreadLocal<SAXParserFactory>();
   private static final String RESPONSE_DOCUMENT_ENCODING = "UTF-8";
   private static final String RESPONSE_DOCUMENT_VERSION_NUM = "1.0";
-  
+
   @Override
   public Log getLogger() {
     return SolutionRepositoryService.logger;
@@ -118,21 +117,21 @@ public class SolutionRepositoryService extends ServletBase {
       response.setHeader("expires", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 
       dispatch(request, response, component, outputStream, userSession, wrapWithSoap);
-    
-    /**
+
+      /**
        * NOTE: PLEASE DO NOT CATCH Exception, since this is the super class of RuntimeException. We do NOT want to catch RuntimeException, only CHECKED
        * exceptions!
-     */
+       */
     } catch (IOException ex) {
-      commonErrorHandler( outputStream, ex );
+      commonErrorHandler(outputStream, ex);
     } catch (SolutionRepositoryServiceException ex) {
-      commonErrorHandler( outputStream, ex );
+      commonErrorHandler(outputStream, ex);
     } catch (PentahoAccessControlException ex) {
       commonErrorHandler(outputStream, ex);
     } catch (TransformerConfigurationException ex) {
       commonErrorHandler(outputStream, ex);
     } catch (ParserConfigurationException ex) {
-      commonErrorHandler( outputStream, ex );
+      commonErrorHandler(outputStream, ex);
     } catch (TransformerException ex) {
       commonErrorHandler(outputStream, ex);
     } catch (TransformerFactoryConfigurationError ex) {
@@ -150,7 +149,7 @@ public class SolutionRepositoryService extends ServletBase {
     error(msg, ex);
     WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
   }
-  
+
   private static String[] getFilters(final HttpServletRequest request) {
     String filter = request.getParameter("filter"); //$NON-NLS-1$
     List<String> filters = new ArrayList<String>();
@@ -160,30 +159,24 @@ public class SolutionRepositoryService extends ServletBase {
         filters.add(st.nextToken());
       }
     }
-    
+
     return filters.toArray(new String[] {});
   }
+
   protected void dispatch(final HttpServletRequest request, final HttpServletResponse response, final String component, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSOAP) throws IOException, SolutionRepositoryServiceException, PentahoAccessControlException,
       ParserConfigurationException, TransformerConfigurationException, TransformerException, TransformerFactoryConfigurationError {
-    
+
     IParameterProvider parameterProvider = new HttpRequestParameterProvider(request);
     if ("getSolutionRepositoryDoc".equals(component)) { //$NON-NLS-1$
-      String[] filters = SolutionRepositoryService.getFilters( request );
+      String[] filters = SolutionRepositoryService.getFilters(request);
       Document doc = getSolutionRepositoryDoc(userSession, filters);
       WebServiceUtil.writeDocument(outputStream, doc, wrapWithSOAP);
-    } else if ("createNewFolder".equals(component)) { //$NON-NLS-1$
-      String path = request.getParameter("path"); //$NON-NLS-1$
-      String name = request.getParameter("name"); //$NON-NLS-1$
-      String desc = request.getParameter("desc"); //$NON-NLS-1$
-      createFolder(userSession, path, name, desc);
-      WebServiceUtil.writeString(outputStream, "", wrapWithSOAP); //$NON-NLS-1$
-      
     } else if ("setAcl".equals(component)) { //$NON-NLS-1$
       setAcl(parameterProvider, outputStream, userSession, wrapWithSOAP);
     } else if ("getAcl".equals(component)) { //$NON-NLS-1$
       getAcl(parameterProvider, outputStream, userSession, wrapWithSOAP);
-      
+
     } else {
       throw new RuntimeException(Messages.getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
     }
@@ -192,24 +185,6 @@ public class SolutionRepositoryService extends ServletBase {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     doGet(request, response);
-  }
-
-  private void createFolder(final IPentahoSession userSession, final String path, final String name, final String desc) throws IOException {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
-    File parent = new File(PentahoSystem.getApplicationContext().getSolutionPath(path));
-    File newFolder = new File(parent, name);
-    repository.createFolder(newFolder);
-
-    String defaultIndex = "<index><name>" + name + "</name><description>" + desc //$NON-NLS-1$
-        + "</description><icon>reporting.png</icon><visible>true</visible><display-type>list</display-type></index>"; //$NON-NLS-1$
-
-    repository.addSolutionFile(PentahoSystem.getApplicationContext().getSolutionPath(""), path + ISolutionRepository.SEPARATOR + name,
-        ISolutionRepository.INDEX_FILENAME, defaultIndex.getBytes(), true);
-    repository.reloadSolutionRepository(userSession, repository.getLoggingLevel());
-    ICacheManager cacheManager = PentahoSystem.getCacheManager(userSession);
-    if (null != cacheManager) {
-      cacheManager.removeFromSessionCache(userSession, repository.getRootFolder().getFileName());
-    }
   }
 
   private boolean acceptFilter(String name, String[] filters) {
@@ -231,140 +206,147 @@ public class SolutionRepositoryService extends ServletBase {
   private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository, Element parentElement,
       ISolutionFile parentFile, String[] filters) {
     ISolutionFile children[] = parentFile.listFiles();
-    for (int i = 0; children != null && i < children.length; i++) {
-      if (!accept(isAdministrator, repository, children[i])) {
-    	  // we don't want this file, skip to the next one
+    for (ISolutionFile childSolutionFile : children) {
+      if (!accept(isAdministrator, repository, childSolutionFile)) {
+        // we don't want this file, skip to the next one
         continue;
       }
-      String name = children[i].getFileName();
-      if( name.startsWith( "." ) ) {
-    	  // these are hidden files of some type that are never shown
-    	  // we don't want this file, skip to the next one
-    	  continue;
+      
+      String name = childSolutionFile.getFileName();
+      if (name.startsWith(".")) {
+        // these are hidden files of some type that are never shown
+        // we don't want this file, skip to the next one
+        continue;
       }
-      if (children[i].isDirectory()) {
-    	  // we always process directories
-          Element child = parentElement.getOwnerDocument().createElement("file");
-	        parentElement.appendChild(child);
-          try {
-              String localizedName = repository.getLocalizedFileProperty(children[i], "name");
-              child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
-            } catch (Exception e) {
-              child.setAttribute("localized-name", name); //$NON-NLS-1$
-            }
-          try {
-              String visible = repository.getLocalizedFileProperty(children[i], "visible");
-              child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
-            } catch (Exception e) {
-              e.printStackTrace();
-              child.setAttribute("visible", "false"); //$NON-NLS-1$
-          }
-            String description = repository.getLocalizedFileProperty(children[i], "description");
-            child.setAttribute("description", description == null || "".equals(description) ? name : description);
-            child.setAttribute("name", name); //$NON-NLS-1$
-            child.setAttribute("isDirectory", "true"); //$NON-NLS-1$
-            child.setAttribute("lastModifiedDate", "" + children[i].getLastModified()); //$NON-NLS-1$
-          processRepositoryFile(session, isAdministrator, repository, child, children[i], filters);
-    	  // we have finished processing this so skip to the next one
+      if (childSolutionFile.isDirectory()) {
+        // we always process directories
+        
+        // MDD 10/16/2008 Not always.. what about 'system'
+        if (childSolutionFile.getFileName().startsWith("system")) {
+          // skip the system dir, we DO NOT ever want this to hit the client
+          continue;
+        }        
+        
+        Element child = parentElement.getOwnerDocument().createElement("file");
+        parentElement.appendChild(child);
+        try {
+          String localizedName = repository.getLocalizedFileProperty(childSolutionFile, "name");
+          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+        } catch (Exception e) {
+          child.setAttribute("localized-name", name); //$NON-NLS-1$
+        }
+        try {
+          String visible = repository.getLocalizedFileProperty(childSolutionFile, "visible");
+          child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
+        } catch (Exception e) {
+          e.printStackTrace();
+          child.setAttribute("visible", "false"); //$NON-NLS-1$
+        }
+        String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
+        child.setAttribute("description", description == null || "".equals(description) ? name : description);
+        child.setAttribute("name", name); //$NON-NLS-1$
+        child.setAttribute("isDirectory", "true"); //$NON-NLS-1$
+        child.setAttribute("lastModifiedDate", "" + childSolutionFile.getLastModified()); //$NON-NLS-1$
+        processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
+        // we have finished processing this so skip to the next one
+        continue;
+      }
+
+      if (acceptFilter(name, filters)) { //$NON-NLS-1$
+        int lastPoint = name.lastIndexOf('.');
+        String extension = ""; //$NON-NLS-1$
+        if (lastPoint != -1) {
+          // ignore anything with no extension
+          extension = name.substring(lastPoint + 1).toLowerCase();
+        }
+
+        // xaction and URL support are built in
+        boolean addFile = "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
+        boolean isPlugin = false;
+        // see if there is a plugin for this file type
+        IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(session, "IPluginSettings"); //$NON-NLS-1$
+        if (pluginSettings != null) {
+          Set<String> types = pluginSettings.getContentTypes();
+          isPlugin = types != null && types.contains(extension);
+          addFile |= isPlugin;
+        }
+
+        if (!addFile) {
           continue;
         }
 
-      if ( acceptFilter(name, filters) ) { //$NON-NLS-1$
-	      int lastPoint = name.lastIndexOf('.');
-	      String extension = ""; //$NON-NLS-1$
-	      if( lastPoint != -1 ) {
-	      	// ignore anything with no extension
-	    	  extension = name.substring( lastPoint+1 ).toLowerCase();
-	      }
+        Element child = parentElement.getOwnerDocument().createElement("file");
+        parentElement.appendChild(child);
+        IFileInfo fileInfo = null;
+        try {
+          // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
+          // and we should no longer be looking at 'visible' because it was never actually used!
+          String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile, "documentation/result-type")) ? "false" : "true";
+          child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
+        } catch (Exception e) {
+          child.setAttribute("visible", "true"); //$NON-NLS-1$
+        }
+        if (name.endsWith(".xaction")) {
+          // add special props?
+          // localization..
+        } else if (name.endsWith(".url")) {
 
-	      // xaction and URL support are built in
-	      boolean addFile = "xaction".equals( extension ) || "url".equals( extension ); //$NON-NLS-1$ //$NON-NLS-2$
-	      boolean isPlugin = false;
-	      // see if there is a plugin for this file type
-		  	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( session, "IPluginSettings" ); //$NON-NLS-1$
-			if( pluginSettings != null ) {
-		    	Set<String> types = pluginSettings.getContentTypes();
-		    	isPlugin = types != null && types.contains( extension );
-		    	addFile |= isPlugin;
-			}
-
-			if( !addFile ) {
-				continue;
-			}
-			
-	        Element child = parentElement.getOwnerDocument().createElement("file");
-	        parentElement.appendChild(child);
-        	IFileInfo fileInfo = null;
-          try {
-            // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
-            // and we should no longer be looking at 'visible' because it was never actually used!
-            String visible = "none".equals(repository.getLocalizedFileProperty(children[i], "documentation/result-type")) ? "false" : "true";
-            child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
-          } catch (Exception e) {
-            child.setAttribute("visible", "true"); //$NON-NLS-1$
-          }
-          if (name.endsWith(".xaction")) {
-            // add special props?
-            // localization..
-          } else if (name.endsWith(".url")) {
-
-            // add special props
-            String props = new String(children[i].getData());
-            StringTokenizer tokenizer = new StringTokenizer(props, "\n");
-            while (tokenizer.hasMoreTokens()) {
-              String line = tokenizer.nextToken();
-              int pos = line.indexOf('=');
-              if (pos > 0) {
-                String propname = line.substring(0, pos);
-                String value = line.substring(pos + 1);
-                if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
-                  value = value.substring(0, value.length() - 1);
-                }
-                if ("URL".equalsIgnoreCase(propname)) {
-                  child.setAttribute("url", value);
-                }
+          // add special props
+          String props = new String(childSolutionFile.getData());
+          StringTokenizer tokenizer = new StringTokenizer(props, "\n");
+          while (tokenizer.hasMoreTokens()) {
+            String line = tokenizer.nextToken();
+            int pos = line.indexOf('=');
+            if (pos > 0) {
+              String propname = line.substring(0, pos);
+              String value = line.substring(pos + 1);
+              if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
+                value = value.substring(0, value.length() - 1);
+              }
+              if ("URL".equalsIgnoreCase(propname)) {
+                child.setAttribute("url", value);
               }
             }
-          } else if (isPlugin) {
-        	  // must be a plugin - make it look like a URL
-  	    	IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, session);
-  	    	if( info != null ) {
-  		        IFileInfoGenerator fig = info.getFileInfoGenerator();
-  		        if( fig != null ) {
-  		        	fig.setLogger( this );
-  		        	// get the file info object for this file
-  		        	fileInfo = fig.getFileInfo(children[i].getSolution(), children[i].getSolutionPath(), name, children[i].getData() ); 
-  		        	String handlerId = pluginSettings.getContentGeneratorIdForType(extension, session );
-  		        	String fileUrl = pluginSettings.getContentGeneratorUrlForType(extension, session);
-  		        	String solution = children[i].getSolutionPath();
-  		        	String path = ""; //$NON-NLS-1$
-  		        	int pos = solution.indexOf( ISolutionRepository.SEPARATOR );
-  		        	if( pos != -1 ) {
-  		        		path = solution.substring( pos + 1 );
-  		        		solution = solution.substring( 0, pos );
-  		        	}
-  		        	String url;
-  		        	if( !fileUrl.equals("") ) { //$NON-NLS-1$
-  	  		        	url = PentahoSystem.getApplicationContext().getBaseUrl() + 
-  	  		        		fileUrl+"?solution="+solution+"&path="+path+"&action="+name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-  		        	} else {
-  	  		        	url = PentahoSystem.getApplicationContext().getBaseUrl() + 
-  	  		        		"content/"+handlerId+"?solution="+solution+"&path="+path+"&action="+name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-  		        	}
-                    child.setAttribute("url", url); //$NON-NLS-1$
-  		        }
-  	    	}
           }
+        } else if (isPlugin) {
+          // must be a plugin - make it look like a URL
+          IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType(extension, session);
+          if (info != null) {
+            IFileInfoGenerator fig = info.getFileInfoGenerator();
+            if (fig != null) {
+              fig.setLogger(this);
+              // get the file info object for this file
+              fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name, childSolutionFile.getData());
+              String handlerId = pluginSettings.getContentGeneratorIdForType(extension, session);
+              String fileUrl = pluginSettings.getContentGeneratorUrlForType(extension, session);
+              String solution = childSolutionFile.getSolutionPath();
+              String path = ""; //$NON-NLS-1$
+              int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+              if (pos != -1) {
+                path = solution.substring(pos + 1);
+                solution = solution.substring(0, pos);
+              }
+              String url;
+              if (!fileUrl.equals("")) { //$NON-NLS-1$
+                url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              } else {
+                url = PentahoSystem.getApplicationContext().getBaseUrl()
+                    + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+              }
+              child.setAttribute("url", url); //$NON-NLS-1$
+            }
+          }
+        }
 
         // localization
         try {
           String localizedName = null;
           if (name.endsWith(".url")) {
-            localizedName = repository.getLocalizedFileProperty(children[i], "url_name");
-          } else if( fileInfo != null ) {
-        	  localizedName = fileInfo.getTitle();
+            localizedName = repository.getLocalizedFileProperty(childSolutionFile, "url_name");
+          } else if (fileInfo != null) {
+            localizedName = fileInfo.getTitle();
           } else {
-            localizedName = repository.getLocalizedFileProperty(children[i], "title");
+            localizedName = repository.getLocalizedFileProperty(childSolutionFile, "title");
           }
           child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
         } catch (Exception e) {
@@ -373,32 +355,32 @@ public class SolutionRepositoryService extends ServletBase {
         try {
           // only folders, urls and xactions have descriptions
           if (name.endsWith(".url")) {
-            String url_description = repository.getLocalizedFileProperty(children[i], "url_description");
-            String description = repository.getLocalizedFileProperty(children[i], "description");
+            String url_description = repository.getLocalizedFileProperty(childSolutionFile, "url_description");
+            String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
             if (url_description == null && description == null) {
               child.setAttribute("description", name);
             } else {
               child.setAttribute("description", url_description == null || "".equals(url_description) ? description : url_description);
             }
-          } else if (name.endsWith(".xaction") ) {
-            String description = repository.getLocalizedFileProperty(children[i], "description");
+          } else if (name.endsWith(".xaction")) {
+            String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
             child.setAttribute("description", description == null || "".equals(description) ? name : description);
-          } else if( fileInfo != null ) {
-        	  child.setAttribute("description", fileInfo.getDescription() ); //$NON-NLS-1$
+          } else if (fileInfo != null) {
+            child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
           } else {
             child.setAttribute("description", name);
-    }
+          }
         } catch (Exception e) {
           child.setAttribute("description", "xxxxxxx"); //$NON-NLS-1$
-  }
+        }
 
         // add permissions for each file/folder
         child.setAttribute("name", name); //$NON-NLS-1$
-        child.setAttribute("isDirectory", "" + children[i].isDirectory()); //$NON-NLS-1$
-        child.setAttribute("lastModifiedDate", "" + children[i].getLastModified()); //$NON-NLS-1$
-      }
+        child.setAttribute("isDirectory", "" + childSolutionFile.isDirectory()); //$NON-NLS-1$
+        child.setAttribute("lastModifiedDate", "" + childSolutionFile.getLastModified()); //$NON-NLS-1$
       }
     }
+  }
 
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
@@ -411,7 +393,7 @@ public class SolutionRepositoryService extends ServletBase {
     processRepositoryFile(session, isAdministrator, repository, root, rootFile, filters);
     return document;
   }
-  
+
   private void getAcl(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSOAP)
       throws SolutionRepositoryServiceException, IOException {
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
@@ -419,28 +401,28 @@ public class SolutionRepositoryService extends ServletBase {
     String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$
 
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
-      throw new SolutionRepositoryServiceException( msg );
+      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      throw new SolutionRepositoryServiceException(msg);
     }
 
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
 
-    String fullPath = ActionInfo.buildSolutionPath( solution, path, filename );
-    ISolutionFile solutionFile = repository.getFileByPath( fullPath );
+    String fullPath = ActionInfo.buildSolutionPath(solution, path, filename);
+    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
 
     String strXml = null;
-    //ouch, i hate instanceof
-    if ( solutionFile instanceof IAclSolutionFile ) {
-      Map <IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
+    // ouch, i hate instanceof
+    if (solutionFile instanceof IAclSolutionFile) {
+      Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
       String processingInstruction = XmlHelper.createXmlProcessingInstruction(SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM,
           SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING);
-      strXml = processingInstruction + getAclAsXml( filePermissions );
+      strXml = processingInstruction + getAclAsXml(filePermissions);
     } else {
       strXml = "<acl notsupported='true'/>"; //$NON-NLS-1$
     }
-    WebServiceUtil.writeString( outputStream, strXml, false );
+    WebServiceUtil.writeString(outputStream, strXml, false);
   }
-  
+
   // TODO sbarkdull, this method belongs in an AclUtils class?
   // turn acl into an XML representation, and return the document.
   // probably belongs in the SecurityHelper class, but does this class still exist?
@@ -448,7 +430,7 @@ public class SolutionRepositoryService extends ServletBase {
     StringBuffer sb = new StringBuffer(XmlHelper.createXmlProcessingInstruction(SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM,
         SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING));
 
-    sb.append( "<acl>" );
+    sb.append("<acl>");
     for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
       IPermissionRecipient permRecipient = filePerm.getKey();
       if (permRecipient instanceof SimpleRole) {
@@ -458,20 +440,20 @@ public class SolutionRepositoryService extends ServletBase {
         sb.append("<entry user='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask() + "'/>");
       }
     }
-    sb.append( "</acl>" );
+    sb.append("</acl>");
     return sb.toString();
   }
-  
+
   Map<IPermissionRecipient, IPermissionMask> createAclFromXml(final String strXml) throws ParserConfigurationException, SAXException, IOException {
     SAXParser parser = SolutionRepositoryService.getSAXParserFactory().newSAXParser();
     Map<IPermissionRecipient, IPermissionMask> m = new HashMap<IPermissionRecipient, IPermissionMask>();
-    
-    DefaultHandler h = new AclParserHandler( m );
-    String encoding = XmlHelper.getEncoding( strXml );
-    InputStream is = new ByteArrayInputStream( strXml.getBytes( encoding ) );
-   
-    parser.parse(is, h );
-    
+
+    DefaultHandler h = new AclParserHandler(m);
+    String encoding = XmlHelper.getEncoding(strXml);
+    InputStream is = new ByteArrayInputStream(strXml.getBytes(encoding));
+
+    parser.parse(is, h);
+
     return m;
   }
 
@@ -485,58 +467,58 @@ public class SolutionRepositoryService extends ServletBase {
 
     @Override
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-      if ( qName.equalsIgnoreCase( "entry" ) ) {
-        String permissions = attributes.getValue("", "permissions" );
+      if (qName.equalsIgnoreCase("entry")) {
+        String permissions = attributes.getValue("", "permissions");
         IPermissionRecipient permRecipient = null;
-        String user = attributes.getValue("", "user" );
+        String user = attributes.getValue("", "user");
         if (null != user) {
           permRecipient = new SimpleUser(user);
         } else {
-          permRecipient = new SimpleRole(attributes.getValue("", "role" ));
+          permRecipient = new SimpleRole(attributes.getValue("", "role"));
         }
-        this.acl.put(permRecipient, new SimplePermissionMask(Integer.parseInt( permissions )));
+        this.acl.put(permRecipient, new SimplePermissionMask(Integer.parseInt(permissions)));
       }
     }
   }
-  
+
   private void setAcl(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSOAP)
       throws SolutionRepositoryServiceException, IOException, PentahoAccessControlException {
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ 
     String path = parameterProvider.getStringParameter("path", null); //$NON-NLS-1$ 
     String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$
     String strAclXml = parameterProvider.getStringParameter("aclXml", null); //$NON-NLS-1$
-    
+
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
-      throw new SolutionRepositoryServiceException( msg );
+      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      throw new SolutionRepositoryServiceException(msg);
     }
 
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
-    String fullPath = ActionInfo.buildSolutionPath( solution, path, filename );
-    ISolutionFile solutionFile = repository.getFileByPath( fullPath );
-    
-    //ouch, i hate instanceof
-    if ( solutionFile instanceof IAclSolutionFile ) {
+    String fullPath = ActionInfo.buildSolutionPath(solution, path, filename);
+    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+
+    // ouch, i hate instanceof
+    if (solutionFile instanceof IAclSolutionFile) {
       Map<IPermissionRecipient, IPermissionMask> acl;
       try {
-        acl = createAclFromXml( strAclXml );
-        
+        acl = createAclFromXml(strAclXml);
+
         // TODO sbarkdull, fix these really really lame exception msgs
       } catch (ParserConfigurationException e) {
-        throw new SolutionRepositoryServiceException( "ParserConfigurationException", e );
+        throw new SolutionRepositoryServiceException("ParserConfigurationException", e);
       } catch (SAXException e) {
-        throw new SolutionRepositoryServiceException( "SAXException", e );
+        throw new SolutionRepositoryServiceException("SAXException", e);
       } catch (IOException e) {
-        throw new SolutionRepositoryServiceException( "IOException", e );
+        throw new SolutionRepositoryServiceException("IOException", e);
       }
       repository.setPermissions(solutionFile, acl);
     }
     // TODO sbarkdull, what if its not instanceof
-    
-    String msg = WebServiceUtil.getStatusXml( Messages.getString("AdhocWebService.ACL_UPDATE_SUCCESSFUL") ); //$NON-NLS-1$
-    WebServiceUtil.writeString( outputStream, msg, false );
+
+    String msg = WebServiceUtil.getStatusXml(Messages.getString("AdhocWebService.ACL_UPDATE_SUCCESSFUL")); //$NON-NLS-1$
+    WebServiceUtil.writeString(outputStream, msg, false);
   }
-  
+
   /**
    * Get a SAX Parser Factory
    * 
@@ -548,7 +530,7 @@ public class SolutionRepositoryService extends ServletBase {
     SAXParserFactory threadLocalSAXParserFactory = SolutionRepositoryService.SAX_FACTORY.get();
     if (null == threadLocalSAXParserFactory) {
       threadLocalSAXParserFactory = SAXParserFactory.newInstance();
-      SolutionRepositoryService.SAX_FACTORY.set( threadLocalSAXParserFactory );
+      SolutionRepositoryService.SAX_FACTORY.set(threadLocalSAXParserFactory);
     }
     return threadLocalSAXParserFactory;
   }
