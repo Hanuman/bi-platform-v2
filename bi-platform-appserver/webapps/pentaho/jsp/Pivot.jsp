@@ -668,7 +668,12 @@
 <!-- ****************************************************************************************** -->
 
 	<link href="adhoc/styles/repositoryBrowserStyles.css" rel="stylesheet" type="text/css" />
+    <link href="adhoc/styles/jpivot.css" rel="stylesheet" type="text/css" />
+	<!--[if IE]>
+      <link href="adhoc/styles/jpivotIE6.css" rel="stylesheet" type="text/css"/>	
+    <![endif]-->
  
+  
     <script src="wcf/scroller.js" type="text/javascript"></script> 
 	<script src="js/ajaxslt0.7/xmltoken.js" type="text/javascript"></script>
 	<script src="js/ajaxslt0.7/util.js" type="text/javascript"></script>	
@@ -1268,7 +1273,7 @@
     %>
 
 	    
-			<div><%-- if there was an overflow, show error message --%> 
+			<div id="internal_content"><%-- if there was an overflow, show error message --%> 
 			<%-- note, if internal error is caused by query01.getResult(),
 			     no usable log messages make it to the user or the log system
 			     
@@ -1291,8 +1296,15 @@
 			    %><p><strong style="color:red">Error Occurred While getting Resultset</strong></p><%
 			  }
 			}	
-			%><%-- render navigator --%> <wcf:render ref="navi01"
-				xslUri="/WEB-INF/jpivot/navi/navigator.xsl" xslCache="true" /> <%-- edit mdx --%>
+			%><%-- render navigator --%> 
+			
+			<div id="navi01div">
+			<wcf:render ref="navi01"
+				xslUri="/WEB-INF/jpivot/navi/navigator.xsl" xslCache="true" /> 
+			</div>
+			
+			
+				<%-- edit mdx --%>
 			<c:if test="${mdxedit01.visible}">
 				<h3>MDX Query Editor</h3>
 				<wcf:render ref="mdxedit01" xslUri="/WEB-INF/wcf/wcf.xsl"
