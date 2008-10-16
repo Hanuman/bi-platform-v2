@@ -15,5 +15,9 @@
     <property name="hibernate.generate_statistics">true</property>
     <property name="session_factory_name">hibernate/HibernateFactory</property>
     <property name="hibernate.jdbc.use_streams_for_binary">true</property>
+    <!-- replaces DefinitionVersionManager -->
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <!-- load resource from classpath -->
+    <mapping resource="hibernate/hsql.hbm.xml" />
   </session-factory>
 </hibernate-configuration>

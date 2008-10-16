@@ -13,7 +13,7 @@
     <!--  MySQL Configuration -->
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="connection.url">jdbc:mysql://localhost:3306/hibernate</property>
-    <property name="dialect">org.pentaho.platform.repository.hibernate.MySQL5InnoDBDialect</property>
+    <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
     <property name="connection.username">hibuser</property>
     <property name="connection.password">password</property>
     <property name="connection.pool_size">10</property>

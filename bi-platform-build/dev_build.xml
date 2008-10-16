@@ -147,6 +147,9 @@ INSTRUCTIONS
       <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile">
         <reference refid="classpath" />
       </ant>
+      <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="compile">
+        <reference refid="classpath" />
+      </ant>
     </sequential>
     <antcall target="copy-solution" />
   </target>
@@ -176,6 +179,7 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web" target="resolve" />
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="resolve" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="resolve" />
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="resolve" />
     <ant antfile="build.xml" dir="../mantle" target="resolve" />
   </target>
 
@@ -194,6 +198,7 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web" target="clean-all" />
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-all" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-all" />
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="clean-all" />
     <ant antfile="build.xml" dir="../mantle" target="clean-all" />
   </target>
 
@@ -212,6 +217,7 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web" target="clean-dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-dist" />
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="clean-dist" />
     <ant antfile="build.xml" dir="../mantle" target="clean-dist" />
   </target>
 
@@ -230,6 +236,7 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web" target="compile" />
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile" />
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="compile" />
     <ant antfile="build.xml" dir="../mantle" target="compile" />
   </target>
 
@@ -248,7 +255,92 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web" target="dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="dist" />
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="dist" />
     <ant antfile="build.xml" dir="../mantle" target="dist" />
   </target>
 
+  <target name="resolve-publish-local-all" description="">
+    <delete dir="${user.home}/.ivy2/local/pentaho" />
+    <ant antfile="build.xml" dir="../bi-platform-api">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-util">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-engine-core">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-engine-security">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-engine-services">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-repository">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-ui-foundation">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-services">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-plugin-actions">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-scheduler">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-legacy">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-web">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-web-servlet">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-web-portlet">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../bi-platform-security-userroledao">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+    <ant antfile="build.xml" dir="../pentaho-open-admin-console">
+      <target name="clean-all" />
+        <target name="resolve" />
+        <target name="publish-local" />
+    </ant>
+  </target>
+  
 </project>

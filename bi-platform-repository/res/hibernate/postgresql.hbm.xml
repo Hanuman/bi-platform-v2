@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+  <!--
+    Depends on Hibernate configuration with hibernate.hbm2ddl.auto=update.
+  -->
 	<class name="org.pentaho.platform.repository.runtime.RuntimeElement"
 		table="RTELEMENT">
 		<cache usage="read-write" />
@@ -254,24 +257,6 @@
 			org.pentaho.platform.repository.content.BackgroundExecutedContentId
 			bgId where cItem.id = bgId.id and bgId.userName = :user
 		</query>
-	</class>
-
-	<class
-		name="org.pentaho.platform.repository.hibernate.DefinitionVersionManager"
-		table="VERSMGR">
-		<cache usage="read-write" />
-		<id column="VERSIONKEY" name="key" type="string"
-			unsaved-value="null" length="50">
-			<generator class="assigned" />
-		</id>
-		<version column="REVISION" name="revision"
-			unsaved-value="negative" />
-		<map name="versionMap" table="VERSIONMAP" lazy="false"
-			cascade="all,delete-orphan">
-			<key column="ITEMID" />
-			<map-key column="VERSIONKEY" type="string" length="50" />
-			<element type="long" column="VERSIONVALUE" />
-		</map>
 	</class>
 
 	<class name="org.pentaho.platform.repository.subscription.Schedule"

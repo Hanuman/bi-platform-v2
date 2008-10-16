@@ -116,6 +116,11 @@
 				<target name="resolve" />
 				<target name="${publishTo}" />
 			</ant>
+      <ant antfile="build.xml" dir="../bi-platform-security-userroledao">
+        <target name="clean-all" />
+        <target name="resolve" />
+        <target name="${publishTo}" />
+      </ant>
 			<ant antfile="build.xml" dir="../mantle">
 				<target name="clean-all" />
 				<target name="resolve" />
@@ -152,6 +157,7 @@
 			  											bi-platform-web,
 			  											bi-platform-web-servlet,
 			  											bi-platform-web-portlet,
+			  	                                        bi-platform-security-userroledao,
 	  	  												mantle"/>
 				<property name="platform.javadoc.dir" value="${basedir}/javadoc-dist" />
 				<delete dir="${platform.javadoc.dir}" />

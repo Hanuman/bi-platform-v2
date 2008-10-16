@@ -33,7 +33,6 @@ import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Node;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Query;
@@ -47,10 +46,8 @@ import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoSystemEntryPoint;
 import org.pentaho.platform.api.engine.IPentahoSystemExitPoint;
-import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ContentException;
-import org.pentaho.platform.api.repository.IHibernatedObjectExtensionList;
 import org.pentaho.platform.api.repository.ISearchable;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -86,11 +83,9 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
   private static String factoryJndiName;
 
   private static String dialect;
-  private static String dialectFolder;
 
   private static Context iniCtx;
 
-  private static final List<IHibernatedObjectExtensionList> objectHandlers = new ArrayList<IHibernatedObjectExtensionList>();
 
   private static final String QUERYWILDCARD = "%{0}%"; //$NON-NLS-1$
 
@@ -113,10 +108,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
   
   //
   private HibernateUtil() {
-  }
-
-  public static String getDialectFolder() {
-    return dialectFolder;
   }
   
   protected static boolean initialize() {
@@ -172,21 +163,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
 
       HibernateUtil.dialect = HibernateUtil.configuration.getProperty("dialect"); //$NON-NLS-1$
 
-      // This converts something like "org.hibernate.dialect.MySQL5Dialect" into "mysql5"
-      if (dialect != null) {
-        int dotIdx = dialect.lastIndexOf('.')+1;
-        String dialectTmp = dialect.substring(dotIdx).toLowerCase();
-        int dialectIdx = dialectTmp.lastIndexOf("dialect"); //$NON-NLS-1$
-        if (dialectIdx > 0) {
-          dialectFolder = dialectTmp.substring(0, dialectIdx);
-        } else {
-          dialectFolder = dialectTmp;
-        }
-      }
-      
-      HibernateUtil.setupConfigurationHandlers();
-      // Add in the classes we know about.
-      HibernateUtil.addConfigurations(HibernateUtil.configuration);
 
       /*
        * configuration.addResource("org/pentaho/platform/repository/runtime/RuntimeElement.hbm.xml");
@@ -210,7 +186,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         // to JNDI...
       }
       Dialect.getDialect(HibernateUtil.configuration.getProperties());
-      DefinitionVersionManager.performAutoUpdateIfRequired();
       return true;
     } catch (Throwable ex) {
       HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0006_BUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
@@ -269,38 +244,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     return null;
   }
   
-  @SuppressWarnings("unchecked")
-  private static void setupConfigurationHandlers() {
-    ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
-    List<Node> objectHandlerDefs = systemSettings.getSystemSettings("HibernatedObjectHandlers/*"); //$NON-NLS-1$
-    if ((objectHandlerDefs != null) && (objectHandlerDefs.size() > 0)) {
-      String handlerClass;
-      for (int i = 0; i < objectHandlerDefs.size(); i++) {
-        handlerClass = ((Node) objectHandlerDefs.get(i)).getText();
-        IHibernatedObjectExtensionList extension = (IHibernatedObjectExtensionList) PentahoSystem
-            .createObject(handlerClass);
-        if (extension != null) {
-          HibernateUtil.objectHandlers.add(extension);
-        }
-      }
-    } else {
-      // Handle old condition where it didn't exist in pentaho.xml
-      HibernateUtil.objectHandlers.add(new StdHibernateClassHandler());
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static void addConfigurations(final Configuration theConfiguration) {
-    IHibernatedObjectExtensionList extension;
-    for (int i = 0; i < HibernateUtil.objectHandlers.size(); i++) {
-      extension = (IHibernatedObjectExtensionList) HibernateUtil.objectHandlers.get(i);
-      List<String> resourceList = extension.getHibernatedObjectResourceList();
-      for (int j = 0; j < resourceList.size(); j++) {
-        theConfiguration.addResource((String) resourceList.get(j));
-      }
-    }
-  }
-
   /**
    * Returns the SessionFactory used for this static class.
    * 
@@ -339,11 +282,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
    */
   public static Configuration getConfiguration() {
     return HibernateUtil.configuration;
-  }
-
-  public static void updateSchema() throws RepositoryException {
-    PentahoSchemaUpdate upd = new PentahoSchemaUpdate(HibernateUtil.getConfiguration());
-    upd.execute(true, true);
   }
 
   /**
@@ -738,10 +676,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
       HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0014_EVICTING_OBJECT"), ex); //$NON-NLS-1$
     }
 
-  }
-
-  public static List<IHibernatedObjectExtensionList> getHibernatedObjectHandlerList() {
-    return HibernateUtil.objectHandlers;
   }
 
   public void systemEntryPoint() {

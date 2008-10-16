@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
 
-  <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-hibernate-security" revision="${project.revision}" />
+  <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-security-userroledao" revision="${project.revision}" />
 
   <configurations>
     <conf name="default" />
@@ -9,7 +9,7 @@
   </configurations>
 
   <publications>
-    <artifact name="pentaho-bi-platform-hibernate-security" type="jar" conf="default" ext="jar" />
+    <artifact name="pentaho-bi-platform-security-userroledao" type="jar" conf="default" ext="jar" />
   </publications>
 
   <dependencies defaultconf="default->default">

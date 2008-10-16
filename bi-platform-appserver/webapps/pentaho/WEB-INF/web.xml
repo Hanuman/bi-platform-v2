@@ -42,8 +42,7 @@
 		<!-- These file locations are relative to the "system" folder within your pentaho solutions folder -->
 		<param-value>pentahoSystemConfig.xml adminPlugins.xml systemListeners.xml
 			sessionStartupActions.xml applicationContext-acegi-security.xml applicationContext-common-authorization.xml
-			applicationContext-acegi-security-jdbc.xml applicationContext-pentaho-security-jdbc.xml
-            pentahoObjects.spring.xml </param-value>
+			applicationContext-acegi-security-hibernate.xml applicationContext-pentaho-security-hibernate.xml pentahoObjects.spring.xml</param-value>
 	</context-param>
 
 	<context-param>
@@ -61,8 +60,6 @@
 		<param-name>pentahoObjectFactoryCfgFile</param-name>
 		<param-value>pentahoObjects.spring.xml</param-value>
 	</context-param>
-  
-
   
 	<!--
 		This defaults to UTF-8. Uncomment this section and change the value for other encodings. Also change the URIEncoding
@@ -197,7 +194,7 @@
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
-  
+    
 	<!-- JPivot resources initializer -->
 	<listener>
 		<listener-class>com.tonbeller.tbutils.res.ResourcesFactoryContextListener</listener-class>
