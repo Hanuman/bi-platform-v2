@@ -27,10 +27,10 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
   }
 
   @SuppressWarnings("unchecked")
-  protected Object instanceClass(Class clazz) throws ObjectFactoryException {
+  protected Object instanceClass(String key) throws ObjectFactoryException {
     Object object = null;
     try {
-      object = clazz.newInstance();
+      object = beanFactory.getType(key).newInstance();
     } catch (Exception e) {
       throw new ObjectFactoryException(e);
     }
@@ -67,7 +67,7 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
 
         if ((object == null)) {
           //our internal session map doesn't have it, let's create it
-          object = instanceClass(beanFactory.getType(key));
+          object = instanceClass(key);
           session.setAttribute(key, object);
         }
       }
