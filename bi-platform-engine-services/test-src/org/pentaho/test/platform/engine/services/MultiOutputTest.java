@@ -25,7 +25,7 @@ public class MultiOutputTest extends BaseTest {
   public void testMultiOutput() {
 
     startTest();
-    ISolutionEngine solutionEngine = ServiceTestHelper.getSolutionEngine(); //HERE we are trying to get a SolutionEngine which is not available to this project
+    ISolutionEngine solutionEngine = ServiceTestHelper.getSolutionEngine();
     String xactionStr = ServiceTestHelper.getXAction(SOLUTION_PATH, "services/MultiOutputTest.xaction");
     PojoComponentTest.doneCalled = false;
     IRuntimeContext runtimeContext = solutionEngine
