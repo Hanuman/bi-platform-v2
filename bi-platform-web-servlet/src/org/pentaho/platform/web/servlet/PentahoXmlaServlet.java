@@ -85,7 +85,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
           .debug(Messages.getString("PentahoXmlaServlet.DEBUG_ORIG_DOC", originalDocument.asXML())); //$NON-NLS-1$
     }
     Document modifiedDocument = (Document) originalDocument.clone();
-    List<Node> nodesToRemove = modifiedDocument.selectNodes("/DataSources/DataSource[ProviderType='None']"); //$NON-NLS-1$
+    List<Node> nodesToRemove = modifiedDocument.selectNodes("/DataSources/DataSource/Catalogs/Catalog[contains(DataSourceInfo, 'EnableXmla=False')]"); //$NON-NLS-1$
     if (PentahoXmlaServlet.logger.isDebugEnabled()) {
       PentahoXmlaServlet.logger.debug(Messages.getString(
           "PentahoXmlaServlet.DEBUG_NODES_TO_REMOVE", String.valueOf(nodesToRemove.size()))); //$NON-NLS-1$

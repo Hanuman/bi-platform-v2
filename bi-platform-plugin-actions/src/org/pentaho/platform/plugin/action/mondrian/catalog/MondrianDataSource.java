@@ -70,8 +70,9 @@ public class MondrianDataSource {
     this.providerType = providerType;
     this.authenticationMode = authenticationMode;
     this.catalogNames = catalogNames;
-
-    propertyList = Util.parseConnectString(dataSourceInfo);
+    if (dataSourceInfo != null) {
+      propertyList = Util.parseConnectString(dataSourceInfo);
+    }
   }
 
   public String getName() {
@@ -119,7 +120,7 @@ public class MondrianDataSource {
   }
 
   protected boolean isXmla() {
-    return !"None".equals(providerType); //$NON-NLS-1$
+    return !"False".equals(propertyList.get("EnableXmla")); //$NON-NLS-1$
   }
 
   @Override

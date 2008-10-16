@@ -28,6 +28,7 @@ import java.util.Map;
 
 import mondrian.olap.MondrianDef;
 import mondrian.olap.Util;
+import mondrian.olap.Util.PropertyList;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.xmla.DataSourcesConfig;
 import mondrian.xmla.DataSourcesConfig.Catalog;
@@ -212,8 +213,21 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     return map;
   }
 
+  protected String cleanseDataSourceInfo(String dataSourceInfo) {
+    if (dataSourceInfo == null) {
+      return null;
+    }
+    // remove EnableXmla if necessary before building the key  
+    PropertyList propertyList = Util.parseConnectString(dataSourceInfo);
+    if (propertyList.get("EnableXmla") != null) {
+      propertyList.remove("EnableXmla");
+    }
+    return propertyList.toString();
+  }
+  
   protected String makeKey(final MondrianCatalog catalog) {
-    return catalog.getEffectiveDataSource().getDataSourceInfo() + "+" + catalog.getDefinition(); //$NON-NLS-1$
+    String dataSourceInfo = cleanseDataSourceInfo(catalog.getEffectiveDataSource().getDataSourceInfo());
+    return dataSourceInfo + "+" + catalog.getDefinition(); //$NON-NLS-1$
   }
 
   public String getDataSourcesConfig() {
@@ -235,65 +249,6 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     return Collections.unmodifiableList(filter(catalogs, pentahoSession, jndiOnly));
   }
 
-  public synchronized void deleteCatalog( String catalogName, final IPentahoSession pentahoSession ) {
-	  
-	    if (!initialized) {
-	        init(pentahoSession);
-	      }
-
-	      MondrianCatalog catalog = catalogMap.get( catalogName );
-
-	      if( catalog == null ) {
-	    	  // nothing to do
-	    	  return;
-	      }
-
-	      // do an access check first
-	      if (!hasAccess(catalog, CatalogPermission.WRITE, pentahoSession)) {
-	        if (MondrianCatalogHelper.logger.isDebugEnabled()) {
-	          MondrianCatalogHelper.logger.debug("user does not have access; throwing exception"); //$NON-NLS-1$
-	        }
-	        throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0003_INSUFFICIENT_PERMISSION"), Reason.ACCESS_DENIED); //$NON-NLS-1$
-	      }
-
-	      // get the existing data sources
-	      DataSources dataSources = makeDataSources();
-	      List<DataSource> sourcesList = new ArrayList<DataSource>();
-	      
-	      // find the datasources to keep and add them to the list
-	      for (int i = 0; i < dataSources.dataSources.length; i++) {
-	          DataSource currentDs = dataSources.dataSources[i];
-	          for (Catalog currentCat : currentDs.catalogs.catalogs) {
-	            if ((catalog.getEffectiveDataSource().getDataSourceInfo().equals(currentCat.dataSourceInfo) || catalog
-	                .getEffectiveDataSource().getDataSourceInfo().equals(currentDs.dataSourceInfo))
-	                && catalog.getDefinition().equals(currentCat.definition)) {
-
-	            	// flag this for removal
-	            	currentDs = null;
-	            }
-	          }
-	          if( currentDs != null ) {
-	        	  sourcesList.add( currentDs );
-	          }
-	        }
-	      
-	      // store the new list
-	      DataSource sourcesArray[] = new DataSource[sourcesList.size()];
-	      sourcesList.toArray(sourcesArray);
-	      dataSources.dataSources = sourcesArray;
-
-	      // write the new list out
-	      writeDataSources( dataSources );    
-	      // if we got here then assume file write was successful; refresh from file
-
-	      if (MondrianCatalogHelper.logger.isDebugEnabled()) {
-	        MondrianCatalogHelper.logger.debug("refreshing from dataSourcesConfig (" + dataSourcesConfig + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-	      }
-	      this.initialized = false;
-	      init(pentahoSession);
-	      
-  }
-  
   public synchronized void addCatalog(final MondrianCatalog catalog, final boolean overwrite,
       final IPentahoSession pentahoSession) throws MondrianCatalogServiceException {
     if (MondrianCatalogHelper.logger.isDebugEnabled()) {
@@ -325,57 +280,59 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     	      // this scenario occurs if the file is in a different location but has the same schema name
     	      throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0004_ALREADY_EXISTS"), Reason.ALREADY_EXISTS); //$NON-NLS-1$
     	}
-	}
+    }
     
     DataSources dataSources = makeDataSources();
 
     MondrianDataSource mDataSource = catalog.getDataSource();
-    DataSource ds = new DataSource();
+    DataSource ds = null;
 
+  // see if the ds already exists
+    for(int i = 0; i < dataSources.dataSources.length && ds == null; i++) {
+      DataSource currentDs = dataSources.dataSources[i];
+      if (mDataSource.getName().equals(currentDs.name)) {
+        ds = currentDs;
+      }
+    }
+    
+    if (ds == null) {
+      ds = new DataSource();
+      ds.authenticationMode = mDataSource.getAuthenticationMode();
+      ds.dataSourceInfo = mDataSource.getDataSourceInfo();
+      ds.description = mDataSource.getDescription();
+      ds.name = mDataSource.getName();
+      ds.providerName = mDataSource.getProviderName();
+      ds.providerType = mDataSource.getProviderType();
+      ds.url = mDataSource.getUrl();
+      dataSources.dataSources = (DataSource[])ArrayUtils.add(dataSources.dataSources, ds);
+    }
+  
+    Catalog cat = null;
+    
     if (alreadyExists) {
-      // ds/cat already exists; find it
-      for (int i = 0; i < dataSources.dataSources.length; i++) {
-        DataSource currentDs = dataSources.dataSources[i];
-        for (Catalog currentCat : currentDs.catalogs.catalogs) {
-          if ((catalog.getEffectiveDataSource().getDataSourceInfo().equals(currentCat.dataSourceInfo) || catalog
-              .getEffectiveDataSource().getDataSourceInfo().equals(currentDs.dataSourceInfo))
-              && catalog.getDefinition().equals(currentCat.definition)) {
-            // found it; also, make a simplifying assumption that only one catalog is associated with this datasource
-            dataSources.dataSources[i] = ds;
-          }
+      // find the catalog and overwrite
+      for (Catalog currentCat : ds.catalogs.catalogs) {
+        if (cleanseDataSourceInfo(catalog.getEffectiveDataSource().getDataSourceInfo()).equals(
+            cleanseDataSourceInfo(currentCat.dataSourceInfo)) 
+            && catalog.getDefinition().equals(currentCat.definition)) {
+          cat = currentCat;
         }
       }
     } else {
-      ArrayUtils.add(dataSources.dataSources, ds);
+      cat = new Catalog();
+      if (ds.catalogs == null) {
+        ds.catalogs = new Catalogs();
+      }
+      if (ds.catalogs.catalogs == null) {
+        ds.catalogs.catalogs = new Catalog[0];
+      }
+      ds.catalogs.catalogs = (Catalog[])ArrayUtils.add(ds.catalogs.catalogs, cat);
+      cat.setDataSource(ds);
     }
-
-    ds.authenticationMode = mDataSource.getAuthenticationMode();
-    ds.dataSourceInfo = mDataSource.getDataSourceInfo();
-    ds.description = mDataSource.getDescription();
-    ds.name = mDataSource.getName();
-    ds.providerName = mDataSource.getProviderName();
-    ds.providerType = mDataSource.getProviderType();
-    ds.url = mDataSource.getUrl();
-
-    Catalogs cats = new Catalogs();
-    cats.catalogs = new Catalog[1];
-    Catalog cat = new Catalog();
+    
     cat.dataSourceInfo = catalog.getDataSourceInfo();
     cat.definition = catalog.getDefinition();
     cat.name = catalog.getName();
-    cat.setDataSource(ds);
-
-    cats.catalogs[0] = cat;
-
-    try {
-      if (!alreadyExists) {
-        dataSources.addChild(ds);
-      }
-      ds.catalogs = cats;
-      //      cats.addChild(cat);
-    } catch (XOMException e) {
-      throw new MondrianCatalogServiceException(e, Reason.GENERAL);
-    }
 
     writeDataSources( dataSources );    
     // if we got here then assume file write was successful; refresh from file
@@ -564,7 +521,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     List<MondrianCatalog> filtered = new ArrayList<MondrianCatalog>();
     for (MondrianCatalog orig : origList) {
       if (hasAccess(orig, CatalogPermission.READ, pentahoSession)
-          && (!jndiOnly || orig.getDataSource().isJndi())) {
+          && (!jndiOnly || orig.getEffectiveDataSource().isJndi())) {
         filtered.add(orig);
       }
     }

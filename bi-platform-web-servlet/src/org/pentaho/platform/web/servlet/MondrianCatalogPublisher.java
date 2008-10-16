@@ -84,10 +84,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     String publishPath = req.getParameter("publishPath"); //$NON-NLS-1$
     String publishKey = req.getParameter("publishKey");//$NON-NLS-1$
     String jndiName = req.getParameter("jndiName");//$NON-NLS-1$
-    String jdbcDriver = req.getParameter("jdbcDriver");//$NON-NLS-1$
-    String jdbcUrl = req.getParameter("jdbcUrl");//$NON-NLS-1$
-    String jdbcUserId = req.getParameter("jdbcUserId");//$NON-NLS-1$
-    String jdbcPassword = req.getParameter("jdbcPassword");//$NON-NLS-1$
+
     boolean overwrite = Boolean.valueOf(req.getParameter("overwrite")).booleanValue(); //$NON-NLS-1$
     boolean enableXmla = Boolean.valueOf(req.getParameter("enableXmla")).booleanValue(); //$NON-NLS-1$
 
@@ -140,26 +137,15 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
 
     FileItem fi = fileItems.iterator().next();
 
-    String dsUrl = baseUrl;
-    if (!dsUrl.endsWith("/")) { //$NON-NLS-1$
-      dsUrl += "/"; //$NON-NLS-1$
-    }
-    dsUrl += "Xmla"; //$NON-NLS-1$
-    String dsAuthMode = DataSource.AUTH_MODE_UNAUTHENTICATED;
-    String dsProviderName = "Pentaho"; //$NON-NLS-1$
-
-    // DataSources where ProviderType=None are filtered by PentahoXmlaServlet
-    String dsProviderType = enableXmla ? DataSource.PROVIDER_TYPE_MDP : "None"; //$NON-NLS-1$
-
     String catDef = "solution:" + publishPath + "/" + fi.getName(); //$NON-NLS-1$//$NON-NLS-2$
 
     MondrianSchema mondrianSchema = mondrianCatalogService.loadMondrianSchema(catDef, pentahoSession);
     
     String catName = mondrianSchema.getName();
-    String dsName = "Provider=Mondrian;DataSource=" + mondrianSchema.getName(); //$NON-NLS-1$
-    String dsDesc = "Published Mondrian Schema " + mondrianSchema.getName() + " using jndi datasource " + jndiName; //$NON-NLS-1$ //$NON-NLS-2$
     
     // verify JNDI
+    // Note: we use the unbound JNDI name here, the PentahoXmlaServlet and PivotViewComponent resolve the JNDI name
+
     try {
       IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);    	
       datasourceService.getDataSource(jndiName);
@@ -171,16 +157,40 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       return;
     }
 
-    // used in both the catalog and the catalog datasource
-    // Note: we use the unbound JNDI name here, the PentahoXmlaServlet and PivotViewComponent resolve the JNDI name
-
     String catConnectStr = "Provider=mondrian;DataSource=" + jndiName; //$NON-NLS-1$
 
-    MondrianDataSource ds = new MondrianDataSource(dsName, dsDesc, dsUrl, catConnectStr, dsProviderName,
-        dsProviderType, dsAuthMode, null);
+    // If XMLA is disabled, set an additional connection parameter
+    if (!enableXmla) {
+      catConnectStr += ";EnableXmla=False"; //$NON-NLS-1$
+        
+    }
 
-    MondrianCatalog cat = new MondrianCatalog(catName, catConnectStr, catDef, ds, new MondrianSchema(catName,
-        new ArrayList<MondrianCube>()));
+    // write this catalog to the default Pentaho DataSource
+    
+    String dsUrl = baseUrl;
+    if (!dsUrl.endsWith("/")) { //$NON-NLS-1$
+      dsUrl += "/"; //$NON-NLS-1$
+    }
+    dsUrl += "Xmla"; //$NON-NLS-1$
+    
+    MondrianDataSource ds = new MondrianDataSource(
+        "Provider=Mondrian;DataSource=Pentaho",
+        "Pentaho BI Platform Datasources",
+        dsUrl, 
+        "Provider=Mondrian", // no default jndi datasource should be specified
+        "PentahoXMLA", 
+        DataSource.PROVIDER_TYPE_MDP, 
+        DataSource.AUTH_MODE_UNAUTHENTICATED, 
+        null
+      );
+
+    MondrianCatalog cat = new MondrianCatalog(
+        catName, 
+        catConnectStr, 
+        catDef, 
+        ds, 
+        new MondrianSchema(catName, new ArrayList<MondrianCube>())
+      );
 
     try {
       mondrianCatalogService.addCatalog(cat, overwrite, pentahoSession);
