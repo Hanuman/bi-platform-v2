@@ -69,7 +69,7 @@
 				content = buffer.toString();
 			}
 		
-			IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+			IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 			if( templater != null ) {
 				String sections[] = templater.breakTemplate( "template-document.html", Messages.getString( "CHART.USER_SAMPLES" ), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 				if( sections != null && sections.length > 0 ) {

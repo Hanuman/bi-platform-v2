@@ -43,7 +43,7 @@
 	
 	String intro = "";
 	String footer = "";
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
 		String sections[] = templater.breakTemplate( templateName, Messages.getString("UI.RESET_REPOSITORY_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {

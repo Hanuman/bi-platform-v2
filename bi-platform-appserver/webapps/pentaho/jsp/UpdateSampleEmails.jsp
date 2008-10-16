@@ -223,7 +223,7 @@
 	String footer = "";
   	String[][] existingUsers = getExistingEmailUsers();
 	
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
 		String sections[] = templater.breakTemplate( "template-document.html", Messages.getString("UI.USER_BURST_EDIT_DATA_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {

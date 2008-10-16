@@ -38,12 +38,12 @@
 	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
 
 	StringBuffer sb = new StringBuffer();
-  IVersionHelper versionHelper = PentahoSystem.getVersionHelper(null);
+  IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
 	String header = Messages.getString( "UI.USER_ABOUT_TITLE", versionHelper.getVersionInformation(PentahoSystem.class) );
 
 	String intro = "";
 	String footer = "";
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
 
 		// Load a template for this web page

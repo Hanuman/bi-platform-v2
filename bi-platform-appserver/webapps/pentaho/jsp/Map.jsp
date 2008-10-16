@@ -65,7 +65,7 @@
 	// Get a templater object
 	String intro = "";
 	String footer = "";
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
 
 		// Load a template for this web page

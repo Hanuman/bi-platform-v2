@@ -48,7 +48,7 @@
 	SimpleUrlFactory urlFactory = new SimpleUrlFactory( thisUrl );
 
 	ArrayList messages = new ArrayList();
-	UserFilesComponent userFiles = (UserFilesComponent) PentahoSystem.getUserFilesComponent( userSession );
+	UserFilesComponent userFiles = PentahoSystem.get(UserFilesComponent.class, "IUserFilesComponent", userSession );
 	userFiles.setUrlFactory( urlFactory );
 	userFiles.setRequest( request );
 	userFiles.setResponse( response );
@@ -77,7 +77,7 @@
 	String footer = ""; //$NON-NLS-1$
 	String content = ""; //$NON-NLS-1$
 	content = userFiles.getContent( "text/html" ); //$NON-NLS-1$
-	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
+	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
 		String sections[] = templater.breakTemplate( "template.html", "Background Execution Status", userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {
