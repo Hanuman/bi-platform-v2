@@ -1643,6 +1643,21 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Report")
   String report();
+  /**
+   * Translated "Operation in progress...".
+   * 
+   * @return translated "Operation in progress..."
+   */
+  @DefaultMessage("Operation in progress...")
+  String waitMessage();
+
+  /**
+   * Translated "Please Wait.".
+   * 
+   * @return translated "Please Wait."
+   */
+  @DefaultMessage("Please Wait.")
+  String pleaseWait();
   
   
 }

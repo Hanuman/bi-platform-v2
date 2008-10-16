@@ -936,3 +936,35 @@ gwt-TabPanelBottom {
 .gwt-PopupPanel{
   z-index:100;
 }
+
+.waitPopup{
+  position: absolute;
+  left: 48%;
+  top: 45%;
+  padding: 15px 8px;
+  z-index: 20001;
+  height: auto;
+  border: 1px solid #ccc;
+  background: white;
+}
+.waitPopup_table{
+  color: #444;
+  background-image: url(large-loading.gif);
+  background-position: left center;
+  background-repeat: no-repeat;
+  font: bold 13px tahoma, arial, helvetica;
+}
+
+.waitPopup_title{
+
+  color: #444;
+  font: bold 16px tahoma, arial, helvetica;
+  margin-left: 40px;
+  padding-bottom: 3px;
+}
+
+.waitPopup_msg{
+  font: normal 13px arial, tahoma, sans-serif;
+  margin-left: 40px;
+
+}

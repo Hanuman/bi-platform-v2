@@ -43,6 +43,7 @@ import org.pentaho.mantle.client.commands.SaveCommand;
 import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
+import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
@@ -327,6 +328,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         // menubar=no,location=no,resizable=yes,scrollbars=no,status=no,width=1200,height=800
         RootPanel.get().add(mainApplicationPanel);
+        RootPanel.get().add(WaitPopup.getInstance());
 
         boolean showExplorerViewOnStartup = "true".equals(settings.get("show-explorer-view-on-startup")); //$NON-NLS-1$ //$NON-NLS-2$
         showAdvancedFeatures = "true".equals(settings.get("show-advanced-features")); //$NON-NLS-1$ //$NON-NLS-2$
