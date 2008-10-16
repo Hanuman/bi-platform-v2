@@ -18,6 +18,7 @@ import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IObjectCreator;
+import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
@@ -39,6 +40,12 @@ import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 import org.pentaho.ui.xul.IMenuCustomization.ItemType;
 import org.pentaho.ui.xul.util.MenuCustomization;
 
+/**
+ * TODO migrate this to use an implementation of IPentahoObjectFactory to create and manage scope of objects.
+ * @see IPentahoObjectFactory
+ * @see WebSpringPentahoObjectFactory
+ * @see StandaloneSpringPentahoObjectFactory
+ */
 public class PluginSettings implements IPluginSettings {
 
 	protected static List<IMenuCustomization> menuCustomizations = new ArrayList<IMenuCustomization>();
