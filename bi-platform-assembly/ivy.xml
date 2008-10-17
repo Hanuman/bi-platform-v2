@@ -9,7 +9,8 @@
 	
 		<dependency org="pentaho" name="pentaho-bi-platform-web-portlet" rev="${project.revision}" changing="true" />
 		<dependency org="pentaho" name="pentaho-bi-platform-web-servlet" rev="${project.revision}" changing="true" />
-		<dependency org="pentaho" name="pentaho-bi-platform-legacy" rev="${project.revision}" changing="true" />
+        <dependency org="pentaho" name="pentaho-bi-platform-security-userroledao" rev="${project.revision}" changing="true" />
+        <dependency org="pentaho" name="pentaho-bi-platform-legacy" rev="${project.revision}" changing="true" />
 		<dependency org="pentaho" name="mantle" rev="${project.revision}" changing="true" />
 		<dependency org="org.apache.axis" name="axis" rev="1.4" />
 		<dependency org="batik" name="batik-bridge" rev="1.6" />
