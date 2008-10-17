@@ -80,7 +80,7 @@ INSTRUCTIONS
   <target name="dev-rebuild" description="Creates a Pentaho-ready Tomcat instance.">
     <mkdir dir="${jre.dir}" />
 
-    <ant antfile="assembly.xml" dir="../bi-platform-assembly-open">
+    <ant antfile="assembly.xml" dir="../bi-platform-assembly">
       <target name="clean-all" />
       <target name="resolve" />
       <target name="assemble" />
