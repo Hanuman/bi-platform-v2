@@ -17,18 +17,21 @@
     </property>
   </bean>
 
+  <!-- UserDetailsService that delegates to an IUserRoleDao -->
   <bean id="userDetailsService" class="org.pentaho.platform.engine.security.userroledao.userdetailsservice.UserRoleDaoUserDetailsService">
     <property name="userRoleDao">
       <ref local="userRoleDao" />
     </property>
   </bean>
 
+  <!-- IUserRoleDao implementation -->
   <bean id="userRoleDao" class="org.pentaho.platform.engine.security.userroledao.hibernate.HibernateUserRoleDao"
     init-method="init">
     <property name="sessionFactory">
       <ref local="sessionFactory" />
     </property>
     <property name="initHandler">
+      <!-- detects if USERS table is empty and if so, inserts sample users and roles -->
       <bean class="org.pentaho.platform.engine.security.userroledao.hibernate.sample.SampleUsersAndRolesInitHandler">
         <property name="sessionFactory">
           <ref local="sessionFactory" />
@@ -40,6 +43,7 @@
     </property>
   </bean>
 
+  <!-- an IUserRoleDao that decorates another IUserRoleDao with transactions -->
   <bean id="txnUserRoleDao" class="org.pentaho.platform.engine.security.userroledao.hibernate.UserRoleDaoTransactionDecorator">
     <property name="userRoleDao">
       <ref local="userRoleDao" />
@@ -58,6 +62,7 @@
     </property>
   </bean>
 
+  <!-- session factory containing mapping files and config properties -->
   <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
     <property name="dataSource">
       <ref local="dataSource" />
@@ -76,6 +81,7 @@
     </property>
   </bean>
 
+  <!-- ${}-style property values are pulled in by PropertyPlaceholderConfigurer -->
   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName" value="${jdbc.driver}" />
     <property name="url" value="${jdbc.url}" />
@@ -83,6 +89,7 @@
     <property name="password" value="${jdbc.password}" />
   </bean>
 
+  <!-- not a plaintext password encoder -->
   <bean id="passwordEncoder" class="org.pentaho.platform.engine.security.DefaultPentahoPasswordEncoder" />
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
