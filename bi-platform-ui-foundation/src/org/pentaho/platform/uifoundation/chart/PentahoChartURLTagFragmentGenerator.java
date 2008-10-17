@@ -88,7 +88,8 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
         }
       }
 
-      urlTemplate += urlFragment + "\""; //$NON-NLS-1$
+      // Handle " in the urlFragment
+      urlTemplate += urlFragment.replaceAll("\"", "%22") + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 
       int startIdx;
       if (urlText.indexOf(PentahoChartURLTagFragmentGenerator.CATEGORY_TAG) != -1) {
@@ -134,7 +135,6 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
       }
 
       return urlTemplate;
-
     } else {
       return super.generateURLFragment(urlText);
     }
