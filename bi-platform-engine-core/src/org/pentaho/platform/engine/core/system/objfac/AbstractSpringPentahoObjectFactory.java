@@ -36,7 +36,6 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     return retreiveObject(key, session);
   }
 
-  @SuppressWarnings("unchecked")
   protected Object instanceClass(String key) throws ObjectFactoryException {
     Object object = null;
     try {
