@@ -60,8 +60,8 @@ public class WebSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFa
    *
    */
   public void init(String configFile, Object context) {
-    assert context instanceof ServletContext : getClass().getSimpleName() + "currently supports only "
-        + ServletContext.class.getName()+".  You have tried to initialize with "+context.getClass().getName();
+    assert context instanceof ServletContext : getClass().getSimpleName() + "currently supports only " //$NON-NLS-1$
+        + ServletContext.class.getName()+".  You have tried to initialize with "+context.getClass().getName(); //$NON-NLS-1$
     ServletContext servletContext = (ServletContext) context;
     beanFactory = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
   }
