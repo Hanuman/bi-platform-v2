@@ -45,7 +45,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
 
   public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
     super(
-        Messages.getInstance().properties() + (fileItem == null ? "" : " (" + fileItem.getLocalizedName() + ")"), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        Messages.getInstance().properties(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
 
     generalTab = new GeneralPanel();
