@@ -8,9 +8,23 @@ public class LogoutCommand implements Command {
   public LogoutCommand() {
   }
 
-  public void execute() {
-    String location = Window.Location.getPath().substring(0, Window.Location.getPath().lastIndexOf('/')) + "/Logout"; //$NON-NLS-1$
-    Window.open(location, "_top", ""); //$NON-NLS-1$ //$NON-NLS-2$
-  }
+  public native void execute() /*-{
+    
+    var loc = $wnd.location.href.substring(0, $wnd.location.href.lastIndexOf('/')) + "/Logout";
+    if($wnd.opener != null){
+      try{
+        if($wnd.opener.location.href.indexOf($wnd.location.host) > -1){
+          $wnd.opener.location.href = loc;
+          $wnd.close();
+          return;
+        }
+      } catch(e){
+        //XSS exception when original window changes domain
+      }
+    }
+    $wnd.open(loc, "_top","");
+  
+    
+  }-*/;
 
 }
