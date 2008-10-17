@@ -881,6 +881,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String refreshRepository();
 
   /**
+   * Translated "Back".
+   * 
+   * @return translated "Back"
+  
+   */
+  @DefaultMessage("Back")
+  String back();
+
+  /**
    * Translated "User Preferences...".
    * 
    * @return translated "User Preferences..."
