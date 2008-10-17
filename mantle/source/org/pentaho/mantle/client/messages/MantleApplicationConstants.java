@@ -197,6 +197,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String file();
 
   /**
+   * Translated "Report".
+   * 
+   * @return translated "Report"
+  
+   */
+  @DefaultMessage("Report")
+  String report();
+
+  /**
    * Translated "Advanced".
    * 
    * @return translated "Advanced"
@@ -204,6 +213,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Advanced")
   String advanced();
+
+  /**
+   * Translated "{0} (Role)back=Back".
+   * 
+   * @return translated "{0} (Role)back=Back"
+  
+   */
+  @DefaultMessage("{0} (Role)back=Back")
+  String role(String arg0);
 
   /**
    * Translated "Repository cache refreshed successfully".
@@ -231,6 +249,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("OK")
   String ok();
+
+  /**
+   * Translated "You do not have permission to schedule to this action sequence.".
+   * 
+   * @return translated "You do not have permission to schedule to this action sequence."
+  
+   */
+  @DefaultMessage("You do not have permission to schedule to this action sequence.")
+  String noSchedulePermission();
 
   /**
    * Translated "Documentation...".
@@ -276,6 +303,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("System Settings")
   String refreshSystemSettings();
+
+  /**
+   * Translated "Do you want to delete this content item?".
+   * 
+   * @return translated "Do you want to delete this content item?"
+  
+   */
+  @DefaultMessage("Do you want to delete this content item?")
+  String deleteContentItem();
 
   /**
    * Translated "Os".
@@ -341,6 +377,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String chooseColor();
 
   /**
+   * Translated "Reporting metadata refresh failed".
+   * 
+   * @return translated "Reporting metadata refresh failed"
+  
+   */
+  @DefaultMessage("Reporting metadata refresh failed")
+  String refreshReportingMetadataFailed();
+
+  /**
    * Translated "Waiting".
    * 
    * @return translated "Waiting"
@@ -366,6 +411,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Switch to Classic View")
   String showClassicView();
+
+  /**
+   * Translated "XAction".
+   * 
+   * @return translated "XAction"
+  
+   */
+  @DefaultMessage("XAction")
+  String xaction();
 
   /**
    * Translated "Styles".
@@ -413,6 +467,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String openInNewWindow();
 
   /**
+   * Translated "Create".
+   * 
+   * @return translated "Create"
+  
+   */
+  @DefaultMessage("Create")
+  String create();
+
+  /**
    * Translated "Clean Content Repository".
    * 
    * @return translated "Clean Content Repository"
@@ -438,6 +501,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Below lists collections of logically grouped Pentaho folders and documents called Solutions. By default, the \"Sample\" Solution is installed and contains working examples demonstrating the functionality of the platform. Once a Solution is chosen, use the file browser to locate and launch a document. To learn more about how to modify the examples or build a Solution, read the <A target=\"_blank\" HREF=\"http://wiki.pentaho.org/display/PentahoDoc/Creating+Pentaho+Solutions\">'Creating Pentaho Solutions'</A> document available at wiki.pentaho.org.<BR><BR>The 'Classic View' is provided for nostalgic purposes only and is not supported by Pentaho.")
   String classicSolutionBrowserDescription();
+
+  /**
+   * Translated "Grant Permissions".
+   * 
+   * @return translated "Grant Permissions"
+  
+   */
+  @DefaultMessage("Grant Permissions")
+  String grantPermissions();
 
   /**
    * Translated "Schedule/Date".
@@ -503,6 +575,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String enableSubscription();
 
   /**
+   * Translated "All Permissions".
+   * 
+   * @return translated "All Permissions"
+  
+   */
+  @DefaultMessage("All Permissions")
+  String allPermissions();
+
+  /**
    * Translated "Group Name".
    * 
    * @return translated "Group Name"
@@ -564,6 +645,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Purge Mondrian Data Cache")
   String purgeMondrianDataCache();
+
+  /**
+   * Translated "Users and Roles:".
+   * 
+   * @return translated "Users and Roles:"
+  
+   */
+  @DefaultMessage("Users and Roles:")
+  String usersAndRoles();
 
   /**
    * Translated "Run Now".
@@ -645,6 +735,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Revert")
   String revert();
+
+  /**
+   * Translated "Add...".
+   * 
+   * @return translated "Add..."
+  
+   */
+  @DefaultMessage("Add...")
+  String addPeriods();
 
   /**
    * Translated "Current:".
@@ -755,6 +854,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String files();
 
   /**
+   * Translated "Last Modified".
+   * 
+   * @return translated "Last Modified"
+  
+   */
+  @DefaultMessage("Last Modified")
+  String lastModified();
+
+  /**
    * Translated "Close Other Tabs".
    * 
    * @return translated "Close Other Tabs"
@@ -782,6 +890,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String userPreferencesEllipsis();
 
   /**
+   * Translated "Operation in progress...".
+   * 
+   * @return translated "Operation in progress..."
+  
+   */
+  @DefaultMessage("Operation in progress...")
+  String waitMessage();
+
+  /**
+   * Translated "Folder".
+   * 
+   * @return translated "Folder"
+  
+   */
+  @DefaultMessage("Folder")
+  String folder();
+
+  /**
    * Translated "Yes".
    * 
    * @return translated "Yes"
@@ -807,6 +933,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Admin")
   String admin();
+
+  /**
+   * Translated "Permissions:".
+   * 
+   * @return translated "Permissions:"
+  
+   */
+  @DefaultMessage("Permissions:")
+  String permissionsColon();
 
   /**
    * Translated "Show Actual File Names".
@@ -908,6 +1043,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String save();
 
   /**
+   * Translated "Location".
+   * 
+   * @return translated "Location"
+  
+   */
+  @DefaultMessage("Location")
+  String location();
+
+  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"
@@ -969,6 +1113,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Close")
   String close();
+
+  /**
+   * Translated "Please wait.".
+   * 
+   * @return translated "Please wait."
+  
+   */
+  @DefaultMessage("Please wait.")
+  String pleaseWait();
 
   /**
    * Translated "Create New Folder...".
@@ -1079,6 +1232,24 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String deleteQuestion(String arg0);
 
   /**
+   * Translated "Execute".
+   * 
+   * @return translated "Execute"
+  
+   */
+  @DefaultMessage("Execute")
+  String execute();
+
+  /**
+   * Translated "Permissions for {0}:".
+   * 
+   * @return translated "Permissions for {0}:"
+  
+   */
+  @DefaultMessage("Permissions for {0}:")
+  String permissionsFor(String arg0);
+
+  /**
    * Translated "Add All".
    * 
    * @return translated "Add All"
@@ -1151,6 +1322,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String size();
 
   /**
+   * Translated "Analysis View".
+   * 
+   * @return translated "Analysis View"
+  
+   */
+  @DefaultMessage("Analysis View")
+  String analysisView();
+
+  /**
    * Translated "Preferences were not set successfully".
    * 
    * @return translated "Preferences were not set successfully"
@@ -1187,6 +1367,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String reloadTab();
 
   /**
+   * Translated "Update".
+   * 
+   * @return translated "Update"
+  
+   */
+  @DefaultMessage("Update")
+  String update();
+
+  /**
    * Translated "Confirm Delete".
    * 
    * @return translated "Confirm Delete"
@@ -1221,6 +1410,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("About")
   String about();
+
+  /**
+   * Translated "Do you want to delete this public schedule?".
+   * 
+   * @return translated "Do you want to delete this public schedule?"
+  
+   */
+  @DefaultMessage("Do you want to delete this public schedule?")
+  String deletePublicSchedule();
 
   /**
    * Translated "Add".
@@ -1275,24 +1473,6 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Repository")
   String repository();
-
-  /**
-   * Translated "Do you want to delete this content item?"
-   * 
-   * @return translated "Do you want to delete this content item?"
-  
-   */
-  @DefaultMessage("Do you want to delete this content item?")
-  String deleteContentItem();
-
-  /**
-   * Translated "Do you want to delete this public schedule?"
-   * 
-   * @return translated "Do you want to delete this public schedule?"
-  
-   */
-  @DefaultMessage("Do you want to delete this public schedule?")
-  String deletePublicSchedule();
 
   /**
    * Translated "Complete".
@@ -1439,6 +1619,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String schedule();
 
   /**
+   * Translated "Source".
+   * 
+   * @return translated "Source"
+  
+   */
+  @DefaultMessage("Source")
+  String source();
+
+  /**
    * Translated "New Folder Name".
    * 
    * @return translated "New Folder Name"
@@ -1468,11 +1657,20 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   /**
    * Translated "Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.".
    * 
-   * @return translated "Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.."
+   * @return translated "Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules."
   
    */
   @DefaultMessage("Report scheduled. Note: Only last scheduled report run will be displayed from the Workspace.<BR><BR> To see subsequent scheduled report runs, please use public schedules.")
   String actionSequenceScheduledSuccess();
+
+  /**
+   * Translated "{0} (User)".
+   * 
+   * @return translated "{0} (User)"
+  
+   */
+  @DefaultMessage("{0} (User)")
+  String user(String arg0);
 
   /**
    * Translated "Pentaho User Console".
@@ -1482,182 +1680,4 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Pentaho User Console")
   String productName();
-  
-  /**
-   * Translated "You do not have permission to schedule to this action sequence."
-   * 
-   * @return translated "You do not have permission to schedule to this action sequence."
-  
-   */
-  @DefaultMessage("You do not have permission to schedule to this action sequence.")
-  String noSchedulePermission();
- 
-  /**
-   * Translated "All Permissions".
-   * 
-   * @return translated "All Permissions"
-   */
-  @DefaultMessage("All Permissions")
-  String allPermissions();
-
-  /**
-   * Translated "Create".
-   * 
-   * @return translated "Create"
-   */
-  @DefaultMessage("Create")
-  String create();
-  
-  /**
-   * Translated "Update".
-   * 
-   * @return translated "Update"
-   */
-  @DefaultMessage("Update")
-  String update();
-  
-  /**
-   * Translated "Execute".
-   * 
-   * @return translated "Execute"
-   */
-  @DefaultMessage("Execute")
-  String execute();
-
-  /**
-   * Translated "Grant Permissions".
-   * 
-   * @return translated "Grant Permissions"
-   */
-  @DefaultMessage("Grant Permissions")
-  String grantPermissions();
-  
-  /**
-   * Translated "Permissions:".
-   * 
-   * @return translated "Permissions:"
-   */
-  @DefaultMessage("Permissions:")
-  String permissionsColon();
-  
-  /**
-   * Translated "Add...".
-   * 
-   * @return translated "Add..."
-   */
-  @DefaultMessage("Add...")
-  String addPeriods();
-
-  /**
-   * Translated "Users and Roles:"
-   * 
-   * @return translated "Users and Roles:"
-   */
-  @DefaultMessage("Users and Roles:")
-  String usersAndRoles();
-
-  /**
-   * Translated "Permissions for {0}:"
-   * 
-   * @return translated "Permissions for {0}:"
-   */
-  @DefaultMessage("Permissions for {0}:")
-  String permissionsFor(String userOrRole); 
-  
-  /**
-   * Translated "{0} (User)"
-   * 
-   * @return translated "{0} (User)"
-   */
-  @DefaultMessage("{0} (User)")
-  String user(String user); 
-  
-  /**
-   * Translated "{0} (Role)"
-   * 
-   * @return translated "{0} (Role)"
-   */
-  @DefaultMessage("{0} (Role)")
-  String role(String role);
-  
-  /**
-   * Translated "Back".
-   * 
-   * @return translated "Back"
-   */
-  @DefaultMessage("Back")
-  String back();
-  
-  /**
-   * Translated "Last Modified".
-   * 
-   * @return translated "Last Modified"
-   */
-  @DefaultMessage("Last Modified")
-  String lastModified();
-  
-  /**
-   * Translated "Source".
-   * 
-   * @return translated "Source"
-   */
-  @DefaultMessage("Source")
-  String source();
-  
-  /**
-   * Translated "Location".
-   * 
-   * @return translated "Location"
-   */
-  @DefaultMessage("Location")
-  String location();
-
-  /**
-   * Translated "Folder".
-   * 
-   * @return translated "Folder"
-   */
-  @DefaultMessage("Folder")
-  String folder();
-
-  /**
-   * Translated "Analysis View".
-   * 
-   * @return translated "Analysis View"
-   */
-  @DefaultMessage("Analysis View")
-  String analysisView();
-
-  /**
-   * Translated "XAction".
-   * 
-   * @return translated "XAction"
-   */
-  @DefaultMessage("XAction")
-  String xaction();
-
-  /**
-   * Translated "Folder".
-   * 
-   * @return translated "Folder"
-   */
-  @DefaultMessage("Report")
-  String report();
-  /**
-   * Translated "Operation in progress...".
-   * 
-   * @return translated "Operation in progress..."
-   */
-  @DefaultMessage("Operation in progress...")
-  String waitMessage();
-
-  /**
-   * Translated "Please Wait.".
-   * 
-   * @return translated "Please Wait."
-   */
-  @DefaultMessage("Please Wait.")
-  String pleaseWait();
-  
-  
 }

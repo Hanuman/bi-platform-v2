@@ -5,7 +5,6 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RefreshMetaDataCommand implements Command {
@@ -17,7 +16,8 @@ public class RefreshMetaDataCommand implements Command {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().refreshReportingMetadataFailed(), false, false, true);
+        dialogBox.center();
       }
 
       public void onSuccess(Object result) {
