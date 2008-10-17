@@ -153,18 +153,21 @@ A:hover {
   width: 120px;
   height: 130px;
   padding-bottom: 13px;
+  cursor: pointer;
 }
 
 .ql_new_analysis {
   width: 120px;
   height: 130px;
   padding-bottom: 13px;
+  cursor: pointer;
 }
 
 .ql_manage {
   width: 120px;
   height: 130px;
   padding-bottom: 13px;
+  cursor: pointer;
 }
 
 .ql_logo {
@@ -338,32 +341,32 @@ function loader(){
         <td class="ql_icon_bar_middle">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%">
           <tr>
-            <td align="center" valign="top"><img
+            <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
               src="/pentaho/mantle/launch/images/btn_ql_newreport.png"
               class="ql_new_report" /></td>
             <td align="center" valign="top">&nbsp;</td>
-            <td align="center" valign="top"><img
+            <td align="center" valign="top" onClick="window.parent.openAnalysis()"><img
               src="/pentaho/mantle/launch/images/btn_ql_newanalysis.png"
               class="ql_new_analysis" /></td>
             <td align="center" valign="top">&nbsp;</td>
-            <td align="center" valign="top"><img
+            <td align="center" valign="top" onClick="window.parent.openManage()"><img
               src="/pentaho/mantle/launch/images/btn_ql_manage.png"
               class="ql_manage" /></td>
           </tr>
           <tr>
             <td id="launch_new_report" height="100%">
-                            innerhtml
-                        </td>
+            <!--  container for New Report Button -->
+            </td>
             <td><img src="/pentaho/mantle/launch/images/ql_spacer.png"
               class="ql_spacer" /></td>
             <td id="launch_new_analysis">
-                            innerhtml
-                        </td>
+            <!--  container for New Analysis Button -->
+            </td>
             <td><img src="/pentaho/mantle/launch/images/ql_spacer.png"
               class="ql_spacer" /></td>
             <td id="manage_content">
-                            innerhtml
-                         </td>
+            <!--  container for manage content Button -->
+            </td>
           </tr>
         </table>
         </td>
