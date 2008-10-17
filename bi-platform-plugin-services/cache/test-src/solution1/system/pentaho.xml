@@ -124,12 +124,6 @@
 		<cache-size>0</cache-size>
 	</solution-repository>
 
-	<HibernatedObjectHandlers>
-		<StandardHandler>org.pentaho.platform.repository.hibernate.StdHibernateClassHandler</StandardHandler>
-        <SubscriptionHandler>org.pentaho.platform.repository.subscription.SubscriptionHibernateHandler</SubscriptionHandler>
-		<!-- Insert additional HibernatedObjectHandlers -->
-	</HibernatedObjectHandlers>
-
     <default-parameter-xsl>DefaultParameterForm.xsl</default-parameter-xsl>
 
     <!-- The following tag turns on/off solution file caching for the filebased

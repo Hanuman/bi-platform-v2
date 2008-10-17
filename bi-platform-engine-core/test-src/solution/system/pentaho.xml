@@ -120,9 +120,6 @@
 		<cache-size>0</cache-size>
 	</solution-repository>
 
-	<HibernatedObjectHandlers>
-	</HibernatedObjectHandlers>
-
 	<system-actions>
 	</system-actions>
 
