@@ -32,6 +32,7 @@
     <property name="bi.platform.web.dir" value="../bi-platform-web" />
     <property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
 	<property name="bi.platform.web.portlet.dir" value="../bi-platform-web-portlet" />
+  <property name="bi.platform.security.userroledao.dir" value="../bi-platform-security-userroledao" />
 	<property name="productId" value="biserver-manual" />
 	<property name="releaseType" value="ce" />
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
@@ -107,7 +108,7 @@
             <fileset dir="${bi.platform.web.portlet.dir}/src">
                 <include name="**/messages*properties" />
             </fileset>
-            <fileset dir="${bi.platform.web.dir}/src">
+            <fileset dir="${bi.platform.security.userroledao.dir}/src">
                 <include name="**/messages*properties" />
             </fileset>
         </copy>
