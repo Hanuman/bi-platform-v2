@@ -4,6 +4,7 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 
 /**
  * Executes the Open Document command.
@@ -24,6 +25,6 @@ public class OpenDocCommand implements Command {
    * the EE version of the document.
    */
   public void execute() {
-    navigatorPerspective.showNewURLTab(Messages.getInstance().documentation(), documentationURL, documentationURL);
+    Window.open(documentationURL, "documentation","");
   }
 }
