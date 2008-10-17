@@ -26,14 +26,6 @@ import java.util.Date;
 import org.pentaho.platform.api.repository.ISchedule;
 
 public class Schedule implements ISchedule {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  protected static final int ClassVersionNumber = 8;
-
   private String id;
 
   private String title;

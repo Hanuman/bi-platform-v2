@@ -170,7 +170,6 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
        * configuration.addResource("org/pentaho/platform/repository/content/ContentLocation.hbm.xml");//$NON-NLS-1$
        * configuration.addResource("org/pentaho/platform/repository/content/ContentItem.hbm.xml");//$NON-NLS-1$
        * configuration.addResource("org/pentaho/platform/repository/content/ContentItemFile.hbm.xml");//$NON-NLS-1$
-       * configuration.addResource("org/pentaho/platform/repository/hibernate/DefinitionVersionManager.hbm.xml");//$NON-NLS-1$
        */
       if (!HibernateUtil.hibernateManaged) {
         HibernateUtil.log.info(Messages.getString("HIBUTIL.USER_HIBERNATEUNMANAGED")); //$NON-NLS-1$

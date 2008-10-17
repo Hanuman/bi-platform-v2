@@ -42,7 +42,6 @@ public class Datasource implements IDatasource {
   private String url;
   private String query;
   private long wait;
-  public static final int ClassVersionNumber = 1;
   
   public Datasource() {
 

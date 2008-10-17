@@ -45,14 +45,6 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.messages.MessageUtil;
 
 public class ContentItemFile extends PentahoBase implements IContentItemFile {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  public static final int ClassVersionNumber = 2;
-
   private static final long serialVersionUID = 946969559555268447L;
 
   private static final Log logger = LogFactory.getLog(ContentItemFile.class);

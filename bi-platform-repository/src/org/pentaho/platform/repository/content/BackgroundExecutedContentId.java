@@ -23,8 +23,6 @@ public class BackgroundExecutedContentId implements IBackgroundExecutedContentId
 
   private static final long serialVersionUID = -6839129181355560217L;
 
-  public static final int ClassVersionNumber = 1;
-
   private String id;
 
   private String userName;

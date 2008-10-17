@@ -29,12 +29,6 @@ import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 public class UserSetting implements Serializable, IUserSetting {
   
-  /**
-   * The version number of this class. When the class changes substantially enough to change it's persistence, this version number needs incremented so that
-   * persistence will fix the tables.
-   */
-  public static final int ClassVersionNumber = 1;
-
   private static final long serialVersionUID = 823604019645900631L;
 
   private long id; // Required

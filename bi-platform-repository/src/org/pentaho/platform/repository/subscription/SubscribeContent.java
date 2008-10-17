@@ -39,14 +39,6 @@ import org.pentaho.platform.api.repository.ISubscribeContent;
  * 
  */
 public class SubscribeContent implements ISubscribeContent {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  protected static final int ClassVersionNumber = 2;
-
   public static final String TYPE_REPORT = "report"; //$NON-NLS-1$
 
   public static final String TYPE_VIEW = "view"; //$NON-NLS-1$

@@ -40,8 +40,6 @@ import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.xml.XmlHelper;
 
 public class SimpleRuntimeElement extends PentahoBase implements IRuntimeElement {
-  public static final int ClassVersionNumber = 2;
-
   private static final long serialVersionUID = 5024690844237335928L;
 
   private static final Log logger = LogFactory.getLog(SimpleRuntimeElement.class);

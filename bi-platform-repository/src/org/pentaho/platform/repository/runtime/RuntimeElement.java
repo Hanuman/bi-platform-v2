@@ -41,14 +41,6 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.xml.XmlHelper;
 
 public class RuntimeElement extends PentahoBase implements IRuntimeElement {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  public static final int ClassVersionNumber = 3;
-
   private static final long serialVersionUID = 5024690844237335928L;
 
   private static final Log logger = LogFactory.getLog(RuntimeElement.class);

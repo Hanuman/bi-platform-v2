@@ -51,14 +51,6 @@ import org.pentaho.platform.util.messages.MessageUtil;
 import org.pentaho.platform.util.web.MimeHelper;
 
 public class ContentItem extends PentahoBase implements IContentItem, ISearchable {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  public static final int ClassVersionNumber = 2;
-
   private static final long serialVersionUID = 823604019645900631L;
 
   private static final Log logger = LogFactory.getLog(ContentItem.class);

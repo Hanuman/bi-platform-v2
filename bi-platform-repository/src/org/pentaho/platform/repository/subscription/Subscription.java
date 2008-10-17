@@ -35,14 +35,6 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 
 public class Subscription implements ISubscription {
 
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  protected static final int ClassVersionNumber = 6;
-
   public static final int TYPE_PERSONAL = 1;
 
   public static final int TYPE_ROLE = 2;

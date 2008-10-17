@@ -43,14 +43,6 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
 
 public class ContentLocation extends PentahoBase implements IContentLocation, ISearchable {
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  public static final int ClassVersionNumber = 1;
-
   private static final long serialVersionUID = -86133203446335770L;
 
   private static final Log logger = LogFactory.getLog(ContentLocation.class);

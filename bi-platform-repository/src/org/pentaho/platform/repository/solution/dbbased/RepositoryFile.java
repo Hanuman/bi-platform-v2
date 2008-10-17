@@ -42,14 +42,6 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
 
   private static final long serialVersionUID = -4129429077568560627L;
 
-  /**
-   * The version number of this class. When the class changes
-   * substantially enough to change it's persistence, this
-   * version number needs incremented so that persistence will
-   * fix the tables.
-   */
-  public static final int ClassVersionNumber = 2;
-
   private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
   private static final String[] SearchableColumns = { Messages.getString("SolutionRepository.QUERY_COLUMN_NAME"), //$NON-NLS-1$
