@@ -28,6 +28,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -42,7 +43,7 @@ public class SolutionContextListener implements ServletContextListener {
 
   protected static String contextPath;
 
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml"; //$NON-NLS-1$
 
   public void contextInitialized(final ServletContextEvent event) {
 
@@ -142,7 +143,7 @@ public class SolutionContextListener implements ServletContextListener {
     // if web.xml doesnt specify a config file, use the default path.
     if (StringUtils.isEmpty(pentahoObjectFactoryConfigFile)) {
       pentahoObjectFactoryConfigFile = solutionPath + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
-    } else if (-1 == pentahoObjectFactoryConfigFile.indexOf("/")) {
+    } else if (-1 == pentahoObjectFactoryConfigFile.indexOf("/")) { //$NON-NLS-1$
       pentahoObjectFactoryConfigFile = solutionPath + SYSTEM_FOLDER + "/" + pentahoObjectFactoryConfigFile; //$NON-NLS-1$
     }
     // else objectFactoryCreatorCfgFile contains the full path.
@@ -153,7 +154,9 @@ public class SolutionContextListener implements ServletContextListener {
       pentahoObjectFactory.init(pentahoObjectFactoryConfigFile, context);
       PentahoSystem.setObjectFactory(pentahoObjectFactory);
     } catch (Exception e) {
-      throw new RuntimeException("Failed to configure the Pentaho Object Factory.", e);
+      Logger.fatal(this, Messages.getString("SolutionContextListener.ERROR_BAD_OBJECT_FACTORY", pentahoObjectFactoryClassName), e); //$NON-NLS-1$
+      // Cannot proceed without an object factory, so we'll throw a runtime exception
+      throw new RuntimeException(e);
     }
   }
 
