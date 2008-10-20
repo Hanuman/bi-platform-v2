@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -268,7 +267,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void refreshRepository() {
-    PentahoSystem.getSolutionRepository(getPentahoSession()).reloadSolutionRepository(getPentahoSession(), getPentahoSession().getLoggingLevel());
+    PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
   }
 
   public int cleanContentRepository(int daysBack) {
@@ -283,7 +282,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     Date agedDate = new Date(calendar.getTimeInMillis());
     // get the content repository and tell it to remove the items older than
     // agedDate
-    IContentRepository contentRepository = PentahoSystem.getContentRepository(getPentahoSession());
+    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getPentahoSession());
     int deleteCount = contentRepository.deleteContentOlderThanDate(agedDate);
     return deleteCount;
   }
@@ -421,43 +420,44 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName) {
-    if(fileName == null || path == null || solutionName == null){
+    if (fileName == null || path == null || solutionName == null) {
       throw new IllegalArgumentException("getSolutionFileInfo called with null parameters");
     }
-    
+
     SolutionFileInfo solutionFileInfo = new SolutionFileInfo();
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
+
     String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
     ISolutionFile solutionFile = repository.getFileByPath(fullPath);
     solutionFileInfo.solution = solutionName;
     solutionFileInfo.path = path;
     solutionFileInfo.name = fileName;
-    
-    //Find file Type
+
+    // Find file Type
     int lastDot = -1;
-    if(solutionFile.isDirectory()){
+    if (solutionFile.isDirectory()) {
       solutionFileInfo.type = SolutionFileInfo.Type.FOLDER;
-    } else if((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")){
+    } else if ((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")) {
       String extension = fileName.substring(lastDot);
-      
+
       // Check to see if its a plug-in
       boolean isPlugin = false;
-      IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( getPentahoSession(), "IPluginSettings" ); //$NON-NLS-1$
+      IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, getPentahoSession()); //$NON-NLS-1$
 
-      if( pluginSettings != null ) {
-          Set<String> types = pluginSettings.getContentTypes();
-          for(String type : types){
-            System.out.println(type);
-          }
-          isPlugin = types != null && types.contains( extension );
+      if (pluginSettings != null) {
+        Set<String> types = pluginSettings.getContentTypes();
+        for (String type : types) {
+          System.out.println(type);
+        }
+        isPlugin = types != null && types.contains(extension);
       }
-      
-      if(isPlugin){
-        //Get the reported type from the plug-in manager
-        IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, getPentahoSession());
+
+      if (isPlugin) {
+        // Get the reported type from the plug-in manager
+        IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType(extension, getPentahoSession());
         solutionFileInfo.type = SolutionFileInfo.Type.PLUGIN;
         solutionFileInfo.pluginTypeName = info.getDescription();
-      
+
       } else if (fileName.endsWith("waqr.xaction")) {
         solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
       } else if (fileName.endsWith("analysisview.xaction")) {
@@ -468,15 +468,15 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         solutionFileInfo.type = SolutionFileInfo.Type.XACTION;
       }
     }
-    
+
     // Get Localized name
     if (!solutionFile.isDirectory()) {
       solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title");
     }
-    if(StringUtils.isEmpty(solutionFileInfo.localizedName)){
+    if (StringUtils.isEmpty(solutionFileInfo.localizedName)) {
       solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name");
     }
-    
+
     if (solutionFile.getData() == null) {
       solutionFileInfo.size = 0;
     } else {
@@ -486,7 +486,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
     solutionFileInfo.isDirectory = solutionFile.isDirectory();
     if (!solutionFile.isDirectory()) {
-      ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+      ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
       ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(solutionName + path + "/" + fileName);
       solutionFileInfo.isSubscribable = (subscribeContent != null) && (subscribeContent.getSchedules() != null && subscribeContent.getSchedules().size() > 0);
     } else {
@@ -516,19 +516,18 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
     return solutionFileInfo;
   }
-  
-  
+
   public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation) {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
     String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
     ISolutionFile solutionFile = repository.getFileByPath(fullPath);
-    
+
     return repository.hasAccess(solutionFile, actionOperation);
   }
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
     try {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
       if (repository.supportsAccessControls()) {
         String fullPath = ActionInfo.buildSolutionPath(fileInfo.solution, fileInfo.path, fileInfo.name);
         ISolutionFile solutionFile = repository.getFileByPath(fullPath);
@@ -543,7 +542,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         repository.resetRepository();
 
         if (!solutionFile.isDirectory()) {
-          ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+          ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
           String actionRef = fileInfo.solution + fileInfo.path + "/" + fileInfo.name;
           ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
           if (fileInfo.isSubscribable && subscribeContent == null) {
@@ -563,7 +562,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public boolean doesSolutionRepositorySupportPermissions() {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
     return repository.supportsAccessControls();
   }
 
@@ -636,7 +635,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", ""));
 
       // see if we have any plugin settings
-      IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(getPentahoSession(), "IPluginSettings");
+      IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginSettings != null) {
         // get the menu customizations for the plugins, if any
         List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();
@@ -707,7 +706,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @see org.pentaho.mantle.client.service.MantleService#isSubscriptionContent(java.lang.String)
    */
   public Boolean isSubscriptionContent(String actionRef) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     return new Boolean(subscriptionRepository.getContentByActionReference(actionRef) != null);
   }
 
@@ -717,7 +716,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @see org.pentaho.mantle.client.service.MantleService#getAvailableSubscriptionSchedules()
    */
   public List<SubscriptionSchedule> getAvailableSubscriptionSchedules(String actionRef) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     List<ISchedule> appliedList = subscribeContent == null ? new ArrayList<ISchedule>() : subscribeContent.getSchedules();
     List<ISchedule> availableList = subscriptionRepository.getSchedules();
@@ -742,8 +741,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   /**
    * Delete the contents under the public schedule and then delete the public schedule
    * 
-   * @param publicScheduleName The public schedule name for the given content id
-   * @param contentItemList The list of content items belonging to the given public schedule to be deleted
+   * @param publicScheduleName
+   *          The public schedule name for the given content id
+   * @param contentItemList
+   *          The list of content items belonging to the given public schedule to be deleted
    * @return Error message if error occurred else success message
    */
   public String deletePublicScheduleAndContents(String publicScheduleName, List<String> contentItemList) {
@@ -764,18 +765,20 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     final String result = SubscriptionHelper.deleteSubscription(publicScheduleName, getPentahoSession());
     return result;
   }
-  
+
   /**
    * Delete the given content item for the given public schedule.
-   *  
-   * @param publicScheduleName The public schedule name for the given content id
-   * @param contentId The content item id to be deleted
+   * 
+   * @param publicScheduleName
+   *          The public schedule name for the given content id
+   * @param contentId
+   *          The content item id to be deleted
    * @return Error message if error occurred else success message
    */
   public String deleteSubscriptionArchive(String publicScheduleName, String contentId) {
     HibernateUtil.beginTransaction();
     final IPentahoSession session = getPentahoSession();
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscription subscription = subscriptionRepository.getSubscription(publicScheduleName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -800,7 +803,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @return List<SubscriptionBean> List of subscriptions and their related information contained within the object.
    */
   public List<SubscriptionBean> getSubscriptionsForMyWorkspace() {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     final String currentUser = getPentahoSession().getName();
     final List<ISubscription> userSubscriptionList = subscriptionRepository.getUserSubscriptions(currentUser);
     final List<SubscriptionBean> opSubscrList = new ArrayList<SubscriptionBean>();
@@ -847,8 +850,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   private String getActionSequenceTitle(final Subscription currentSubscr) {
     final String actionSeqPath = currentSubscr.getContent().getActionReference();
     final ActionInfo actionInfo = ActionInfo.parseActionString(actionSeqPath);
-    final ISolutionRepository repo = PentahoSystem.getSolutionRepository(getPentahoSession());
-    final IActionSequence action = repo.getActionSequence(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName(), repo
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
+    final IActionSequence action = repository.getActionSequence(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName(), repository
         .getLoggingLevel(), ISolutionRepository.ACTION_EXECUTE);
     return action.getTitle();
   }
@@ -901,7 +904,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   // }
 
   public List<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     List<ISchedule> appliedList = subscribeContent == null ? new ArrayList<ISchedule>() : subscribeContent.getSchedules();
     List<SubscriptionSchedule> appliedScheduleList = new ArrayList<SubscriptionSchedule>();
@@ -926,7 +929,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @see org.pentaho.mantle.client.service.MantleService#setSubscriptions(java.lang.String, boolean, java.util.List)
    */
   public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getPentahoSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     HibernateUtil.beginTransaction();
     if (enabled) {
@@ -1036,22 +1039,22 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void setShowNavigator(boolean showNavigator) {
-    IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+    IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
     settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR, "" + showNavigator);
   }
 
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames) {
-    IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+    IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
     settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES, "" + showLocalizedFileNames);
   }
 
   public void setShowHiddenFiles(boolean showHiddenFiles) {
-    IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+    IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
     settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES, "" + showHiddenFiles);
   }
 
   public boolean repositorySupportsACLS() {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
     return repository.supportsAccessControls();
   }
 
