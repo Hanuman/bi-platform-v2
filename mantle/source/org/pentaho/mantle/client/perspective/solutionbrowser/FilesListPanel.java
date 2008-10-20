@@ -63,7 +63,7 @@ public class FilesListPanel extends FlowPanel {
           } else if (event.getKeyCode() == KeyboardListener.KEY_DOWN) {
             fileItemCallback.selectNextItem(fileItemCallback.getSelectedFileItem());
           } else if (event.getKeyCode() == KeyboardListener.KEY_ENTER) {
-            fileItemCallback.openFile(FileCommand.RUN);
+            fileItemCallback.openFile(FileCommand.COMMAND.RUN);
           }
         }
         super.onBrowserEvent(event);

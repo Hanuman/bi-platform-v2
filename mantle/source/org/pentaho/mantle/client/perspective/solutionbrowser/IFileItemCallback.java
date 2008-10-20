@@ -15,10 +15,12 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
+
 public interface IFileItemCallback {
   public FileItem getSelectedFileItem();
   public void setSelectedFileItem(FileItem fileItem);
-  public void openFile(int mode);
+  public void openFile(COMMAND mode);
   public void editFile();
   public void editActionFile();
   public void createSchedule(String cronExpression);

@@ -26,6 +26,7 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
@@ -43,7 +44,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
   ToolbarComboButton miscComboBtn;
   ToolbarButton runBtn, editBtn;
-  FileCommand runCmd, editCmd, shareCmd, scheduleCmd, propertiesCmd;
+  FileCommand runCmd, editCmd, shareCmd, scheduleCmd, deleteCmd, propertiesCmd;
 
   IFileItemCallback callback;
 
@@ -73,7 +74,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     Image runDisabledImage = new Image();
     MantleImages.images.runDisabled().applyTo(runDisabledImage);
     runBtn = new ToolbarButton(runImage, runDisabledImage);
-    runCmd = new FileCommand(FileCommand.RUN, null, callback);
+    runCmd = new FileCommand(FileCommand.COMMAND.RUN, null, callback);
     runBtn.setCommand(runCmd);
     runBtn.setToolTip(Messages.getInstance().open());
     add(runBtn);
@@ -83,7 +84,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     Image editDisabledImage = new Image();
     MantleImages.images.updateDisabled().applyTo(editDisabledImage);
     editBtn = new ToolbarButton(editImage, editDisabledImage);
-    editCmd = new FileCommand(FileCommand.EDIT, null, callback);
+    editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null, callback);
     editBtn.setCommand(editCmd);
     editBtn.setToolTip(Messages.getInstance().edit());
     add(editBtn);
@@ -98,21 +99,21 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
         dialogBox.center();
-        scheduleCmd = new FileCommand(FileCommand.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
+        scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getInstance().schedule(), scheduleCmd); //$NON-NLS-1$
-        propertiesCmd = new FileCommand(FileCommand.PROPERTIES, miscComboBtn.getPopup(), callback);
+        propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getInstance().properties(), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
       }
 
       public void onSuccess(Boolean result) {
         if (result) {
-          shareCmd = new FileCommand(FileCommand.SHARE, miscComboBtn.getPopup(), callback);
+          shareCmd = new FileCommand(FileCommand.COMMAND.SHARE, miscComboBtn.getPopup(), callback);
           miscMenus.addItem(Messages.getInstance().share(), shareCmd); //$NON-NLS-1$
         }
-        scheduleCmd = new FileCommand(FileCommand.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
+        scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getInstance().schedule(), scheduleCmd); //$NON-NLS-1$
-        propertiesCmd = new FileCommand(FileCommand.PROPERTIES, miscComboBtn.getPopup(), callback);
+        propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getInstance().properties(), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
       }

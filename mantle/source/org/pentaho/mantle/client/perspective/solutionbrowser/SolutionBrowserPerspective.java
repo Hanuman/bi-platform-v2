@@ -29,21 +29,19 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
+import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.ReportContainer;
-import org.pentaho.mantle.client.objects.RolePermission;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.objects.UserPermission;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel.CustomFrame;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
-import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.PermissionsPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.BrowserToolbar;
@@ -71,6 +69,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -83,19 +82,19 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionBrowserPerspective extends HorizontalPanel implements IPerspective, IFileItemCallback, IWorkspaceCallback {
-  private static final String BROWSE_LABEL_STYLE_NAME = "browsePanelMenuLabel"; //$NON-NLS-1$
   private static final String defaultSplitPosition = "220px";
 
   private ClassicNavigatorView classicNavigatorView = new ClassicNavigatorView();
   private HorizontalSplitPanel solutionNavigatorAndContentPanel = new HorizontalSplitPanel(MantleImages.images);
   private VerticalSplitPanel solutionNavigatorPanel = new VerticalSplitPanel(MantleImages.images);
-  private SolutionTree solutionTree = new SolutionTree();
+  private SolutionTree solutionTree = new SolutionTree(this);
   private FilesListPanel filesListPanel = new FilesListPanel(this);
   private FileItem selectedFileItem;
   private DeckPanel contentPanel = new DeckPanel();
@@ -213,7 +212,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
-          
+
           NamedFrame frame = tabPanel.getFrame();
 
           Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME);
@@ -310,7 +309,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void showWorkspace() {
-    workspacePanel.refreshPerspective(false);
+    workspacePanel.refreshWorkspace();
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
     fireSolutionBrowserListenerEvent();
   }
@@ -403,12 +402,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public TabWidget getCurrentTab() {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab()));
   }
-  
+
   public TabWidget getTabForWidget(Widget tabWidget) {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getWidgetIndex(tabWidget)));
   }
 
-  public void openNewHTMLReport(int mode) {
+  public void openNewHTMLReport(COMMAND mode) {
     final String reportKey = "/" + selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
     AsyncCallback<ReportContainer> callback = new AsyncCallback<ReportContainer>() {
 
@@ -428,27 +427,27 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     showLaunchOrContent();
   }
 
-  public void openFile(final int mode) {
+  public void openFile(final FileCommand.COMMAND mode) {
     String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) {
-      if (mode == FileCommand.RUN ) {
+      if (mode == FileCommand.COMMAND.RUN) {
         final Widget openAnalysisView = getOpenAnalysisView();
         if (openAnalysisView != null) {
           String actionName = getTabForWidget(openAnalysisView).getText();
           Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
           PromptDialogBox dialog = new PromptDialogBox("Open", "OK", "Cancel", false, true, content);
           dialog.setCallback(new IDialogCallback() {
-  
+
             public void cancelPressed() {
               // TODO Auto-generated method stub
-              
+
             }
-  
+
             public void okPressed() {
               contentTabPanel.remove(openAnalysisView);
               executeActionSequence(mode);
             }
-            
+
           });
           dialog.center();
           dialog.show();
@@ -458,7 +457,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
     } else if (name.endsWith(".url")) {
-        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+      showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) {
       // open jfreereport!!
       openNewHTMLReport(mode);
@@ -471,7 +470,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
   }
-  
 
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
@@ -507,11 +505,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           (new OpenFileCommand(SolutionBrowserPerspective.this)).execute();
         }
       });
-      
+
       dialogBox.center();
       return;
     }
-    
+
     selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null);
 
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
@@ -542,7 +540,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (openMethod == OPEN_METHOD.EDIT) {
       editFile();
     } else if (openMethod == OPEN_METHOD.OPEN) {
-      openFile(FileCommand.RUN);
+      openFile(FileCommand.COMMAND.RUN);
     } else if (openMethod == OPEN_METHOD.SCHEDULE) {
       createSchedule();
     } else if (openMethod == OPEN_METHOD.SHARE) {
@@ -579,27 +577,26 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     }
   }
-  
+
   /**
    * this method launches the experimental action editor from Mantle.
    * 
-   * Pentaho's action editor is located today at 
-   * http://code.google.com/p/pentaho-actioneditor
+   * Pentaho's action editor is located today at http://code.google.com/p/pentaho-actioneditor
    * 
    */
   public void editActionFile() {
     if (MantleApplication.showAdvancedFeatures) {
       String fullPath = null;
       if (selectedFileItem.getSolution().endsWith("/") || selectedFileItem.getPath().startsWith("/")) {
-        fullPath = selectedFileItem.getSolution() + selectedFileItem.getPath() +"/" + selectedFileItem.getName();
+        fullPath = selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
       } else {
-        fullPath = selectedFileItem.getSolution() + "/" + selectedFileItem.getPath() +"/" + selectedFileItem.getName();
+        fullPath = selectedFileItem.getSolution() + "/" + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
       }
       String url = "actioneditor/actioneditor.html?actionSequence=" + fullPath;
       if (!GWT.isScript()) {
         url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath;
       }
-  
+
       // See if it's already loaded
       for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
@@ -610,17 +607,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
       showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
-  
+
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
       fileInfo.setPath(selectedFileItem.getPath());
-        this.getCurrentFrame().setFileInfo(fileInfo);
+      this.getCurrentFrame().setFileInfo(fileInfo);
     }
   }
-  
-  void executeActionSequence(final int mode) {
+
+  void executeActionSequence(final FileCommand.COMMAND mode) {
     // open in content panel
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction
 
@@ -650,7 +647,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
               + "&userid=joe&password=password";
         }
 
-        if (mode == FileCommand.BACKGROUND) {
+        if (mode == FileCommand.COMMAND.BACKGROUND) {
           MessageDialogBox dialogBox = new MessageDialogBox(
               Messages.getInstance().info(),
               "Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready.",
@@ -673,10 +670,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             });
           } catch (RequestException e) {
           }
-        } else if (mode == FileCommand.NEWWINDOW) {
+        } else if (mode == FileCommand.COMMAND.NEWWINDOW) {
           // popup blockers might attack this
           Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no");
-        } else if (mode == FileCommand.SUBSCRIBE) {
+        } else if (mode == FileCommand.COMMAND.SUBSCRIBE) {
           final String myurl = url + "&subscribepage=yes";
           AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
@@ -742,7 +739,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         RequestCallback callback = new RequestCallback() {
 
           public void onError(Request request, Throwable exception) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetRepositoryDocument(), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetRepositoryDocument(), false,
+                false, true);
             dialogBox.center();
           }
 
@@ -756,7 +754,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
             if (showSuccess) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().solutionBrowserRefreshed(), false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().solutionBrowserRefreshed(), false, false,
+                  true);
               dialogBox.center();
             }
           }
@@ -790,7 +789,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       fetchSolutionDocument(showStatus);
       hasBeenLoaded = true;
     }
-    workspacePanel.refreshPerspective(showStatus);
+    workspacePanel.refreshWorkspace();
     installViewMenu(perspectiveCallback);
   }
 
@@ -823,7 +822,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         AsyncCallback callback = new AsyncCallback() {
 
           public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotCreateSchedule(), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotCreateSchedule(), false, false,
+                true);
             dialogBox.center();
           }
 
@@ -904,12 +904,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onSuccess(Object result) {
             createSchedule();
           }
-        });    
+        });
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (fileInfo.isSubscribable) {
-          executeActionSequence(FileCommand.SUBSCRIBE);
+          executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
         } else {
           NewScheduleDialog dialog = new NewScheduleDialog(fileInfo.getSolution(), fileInfo.getPath(), fileInfo.getName());
           dialog.center();
@@ -1224,9 +1224,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
   }-*/;
 
-  private void refreshIfPDF(ReloadableIFrameTabPanel frame)
-  {
-    if(isPDF(frame.getElement())){
+  private void refreshIfPDF(ReloadableIFrameTabPanel frame) {
+    if (isPDF(frame.getElement())) {
       frame.reload();
     }
   }
@@ -1250,14 +1249,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   /*
    * getOpenAnalysisView
    * 
-   * Polls the current open tabs to see if any (and there should be no more than one) is displaying an
-   * analysis view.
+   * Polls the current open tabs to see if any (and there should be no more than one) is displaying an analysis view.
    * 
-   * return null if there is no open analysis view and returns the Widget the view is in if there is
-   * an open analysis view.
+   * return null if there is no open analysis view and returns the Widget the view is in if there is an open analysis view.
    */
   public Widget getOpenAnalysisView() {
-    for (int i=0; i<contentTabPanel.getWidgetCount(); i++) {
+    for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
       Widget currentWidget = contentTabPanel.getWidget(i);
       Frame frame = ((ReloadableIFrameTabPanel) currentWidget).getFrame();
       String url = frame.getUrl();

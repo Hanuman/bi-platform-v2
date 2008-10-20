@@ -52,7 +52,7 @@ public class StyleEditorPanel extends UserPreferencesPanel {
     RequestCallback callback = new RequestCallback() {
 
       public void onError(Request request, Throwable exception) {
-        Window.alert(exception.toString());
+        Window.alert(Messages.getInstance().couldNotGetUserSettings());
       }
 
       public void onResponseReceived(Request request, Response response) {
@@ -67,7 +67,7 @@ public class StyleEditorPanel extends UserPreferencesPanel {
     try {
       builder.sendRequest(null, callback);
     } catch (RequestException e) {
-      MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), e.getMessage(), true, false, true);
+      MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetUserSettings(), true, false, true);
       dialog.center();
     }
   }

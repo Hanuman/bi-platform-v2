@@ -49,32 +49,31 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WorkspacePerspective extends ScrollPanel implements IPerspective {
+public class WorkspacePerspective extends ScrollPanel {
 
   private static final int WAITING = 0;
   private static final int COMPLETE = 1;
   private static final int MYSCHEDULES = 2;
   private static final int ALLSCHEDULES = 3;
+  private static final String DELETE = "delete";
+
   private boolean backgroundAlertRaised = false;
-  DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().allSchedulesAdminOnly(), false);
-  DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getInstance().publicSchedules(), false);
-  DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().mySchedules(), false);
-  DisclosurePanel waitingContentDisclosure = new DisclosurePanel(Messages.getInstance().waiting(), false);
-  DisclosurePanel completedContentDisclosure = new DisclosurePanel(Messages.getInstance().complete(), false);
+  private DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().allSchedulesAdminOnly(), false);
+  private DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getInstance().publicSchedules(), false);
+  private DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().mySchedules(), false);
+  private DisclosurePanel waitingContentDisclosure = new DisclosurePanel(Messages.getInstance().waiting(), false);
+  private DisclosurePanel completedContentDisclosure = new DisclosurePanel(Messages.getInstance().complete(), false);
   private FlexTable allScheduledContentTable;
   private FlexTable subscriptionsContentTable;
   private FlexTable myScheduledContentTable;
   private FlexTable waitingContentTable;
   private FlexTable completedContentTable;
   private FlexTable workspaceTable = new FlexTable();
-    
-  IPerspectiveCallback perspectiveCallback;
-  SolutionBrowserPerspective solutionBrowserPerspective;
-  private static final String DELETE="delete";
-  
+
+  private SolutionBrowserPerspective solutionBrowserPerspective;
+
   public WorkspacePerspective(final SolutionBrowserPerspective solutionBrowserPerspective, final IPerspectiveCallback perspectiveCallback) {
     this.solutionBrowserPerspective = solutionBrowserPerspective;
-    this.perspectiveCallback = perspectiveCallback;
     DOM.setStyleAttribute(getElement(), "backgroundColor", "white");
     buildScheduledAndCompletedContentPanel();
   }
@@ -147,10 +146,9 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void buildScheduledAndCompletedContentPanel() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        boolean isAdministrator = (Boolean) result;
+      public void onSuccess(Boolean isAdministrator) {
         workspaceTable = new FlexTable();
         workspaceTable
             .setWidget(
@@ -174,7 +172,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -198,15 +196,15 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         viewLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
-//            PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
-//            viewDialog.setPixelSize(1024, 600);
-//            viewDialog.center();
-//            // if this iframe is placed above the show/center of the dialog, the browser will
-//            // end up making 2 requests for the url in the iframe (one of which will be terminated and
-//            // we'll see an error on the server about a broken pipe).
-//            Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
-//            viewDialog.setContent(iframe);
-//            iframe.setPixelSize(1024, 600);
+            // PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
+            // viewDialog.setPixelSize(1024, 600);
+            // viewDialog.center();
+            // // if this iframe is placed above the show/center of the dialog, the browser will
+            // // end up making 2 requests for the url in the iframe (one of which will be terminated and
+            // // we'll see an error on the server about a broken pipe).
+            // Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
+            // viewDialog.setContent(iframe);
+            // iframe.setPixelSize(1024, 600);
             solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id);
           }
 
@@ -321,8 +319,8 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         }
       });
       Label lblDelete = new Label(Messages.getInstance().delete());
-      lblDelete.setStyleName("backgroundContentAction");      
-     
+      lblDelete.setStyleName("backgroundContentAction");
+
       lblDelete.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           doDelete(true, currentSubscr, "");
@@ -330,7 +328,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       });
 
       buttonsPanel.add(lblRunNow);
-      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));      
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
       buttonsPanel.add(lblArchive);
       buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
       buttonsPanel.add(lblEdit);
@@ -383,7 +381,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       }
     }
   }
-  
+
   /*
    * Helper method to delete the content items or the public schedule based on what's passed in.
    */
@@ -394,9 +392,9 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     } else {
       vp.add(new Label(Messages.getInstance().deleteContentItem()));
     }
-    
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(),
-        Messages.getInstance().no(), false, true, vp);
+
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(), Messages
+        .getInstance().no(), false, true, vp);
 
     final IDialogCallback callback = new IDialogCallback() {
       public void cancelPressed() {
@@ -408,17 +406,17 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
           deletePublicScheduleAndContents(currentSubscr);
         } else {
           deleteContentItem(currentSubscr.getId(), fileId);
-        }        
-        new RefreshPerspectiveCommand(WorkspacePerspective.this).execute();
+        }
+        refreshWorkspace();
       }
     };
     deleteConfirmDialog.setCallback(callback);
-    deleteConfirmDialog.center();         
+    deleteConfirmDialog.center();
   }
 
   /*
    * Deletes the given public schedule and all the contents belonging to it.
-   *  
+   * 
    * @param currSubscr Current public schedule to be deleted
    */
   private void deletePublicScheduleAndContents(final SubscriptionBean currPublicSchedule) {
@@ -427,12 +425,12 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     final List<String> fileList = new ArrayList<String>();
 
     if (scheduleList != null) {
-      AsyncCallback callback = new AsyncCallback() {
-        boolean executeSuccess = false;
+      AsyncCallback<String> callback = new AsyncCallback<String>() {
         public void onFailure(Throwable caught) {
           Window.alert(caught.getMessage());
         }
-        public void onSuccess(Object result) {
+
+        public void onSuccess(String result) {
           // Don't do anything on success.
         }
       };
@@ -440,13 +438,13 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
       final int scheduleSize = scheduleList.size();
       for (int j = 0; j < scheduleSize; j++) {
         final String[] currSchedule = scheduleList.get(j);
-        final String fileId = currSchedule[3]; 
-        fileList.add( fileId );        
+        final String fileId = currSchedule[3];
+        fileList.add(fileId);
       }
       MantleServiceCache.getService().deletePublicScheduleAndContents(subscrName, fileList, callback);
     }
   }
-  
+
   private void performActionOnSubscriptionContent(final String action, final String subscrName, final String contentID) {
     performActionOnSubscription(action, subscrName + ":" + contentID);
   }
@@ -459,14 +457,14 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         viewDialog.hide();
         // Refresh the view
         if (action.equals("archive") || action.equals(DELETE)) {
-          final Command cmd = new RefreshPerspectiveCommand(WorkspacePerspective.this);
-          cmd.execute();
+          refreshWorkspace();
         }
       }
+
       public void cancelPressed() {
       }
     });
-   
+
     final String url;
     if (GWT.isScript()) {
       url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
@@ -477,18 +475,18 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     if (action.equals("archived") || action.equals("run")) {
       solutionBrowserPerspective.showNewURLTab(subscrName, subscrName, url);
     } else {
-    viewDialog.center();
-    final Frame iframe = new Frame(url);
-    
-    // BISERVER-1931: Reducing the size of the dialog box when 
-    // subscription is to be deleted    
-    if (action.equals(DELETE)) {
-      iframe.setSize("100%", "100%");
-    } else {
-      iframe.setPixelSize(800, 600);
-    }    
+      viewDialog.center();
+      final Frame iframe = new Frame(url);
 
-    ((VerticalPanel)viewDialog.getContent()).add(iframe);
+      // BISERVER-1931: Reducing the size of the dialog box when
+      // subscription is to be deleted
+      if (action.equals(DELETE)) {
+        iframe.setSize("100%", "100%");
+      } else {
+        iframe.setPixelSize(800, 600);
+      }
+
+      ((VerticalPanel) viewDialog.getContent()).add(iframe);
     }
   }
 
@@ -592,33 +590,30 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void deleteContentItem(final String subscriptionName, final String fileId) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<String> callback = new AsyncCallback<String>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
-        String message = (String) result;
+      public void onSuccess(String message) {
         Window.alert(message);
-        final Command cmd = new RefreshPerspectiveCommand(WorkspacePerspective.this);
-        cmd.execute();
+        refreshWorkspace();
       }
     };
     MantleServiceCache.getService().deleteSubscriptionArchive(subscriptionName, fileId, callback);
   }
 
   public void fetchWaitingBackgroundItems() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(List<JobDetail> scheduledJobs) {
         backgroundAlertRaised = false;
         // result is List<JobDetail>
-        List<JobDetail> scheduledJobs = (List<JobDetail>) result;
         waitingContentTable = buildEmptyBackgroundItemTable(WAITING);
         buildJobTable(scheduledJobs, waitingContentTable, waitingContentDisclosure, WAITING);
         waitingContentDisclosure.setContent(waitingContentTable);
@@ -629,13 +624,13 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void fetchCompletedBackgroundItems() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(List<JobDetail> result) {
         backgroundAlertRaised = false;
         // result is List<JobDetail>
         List<JobDetail> completedJobs = (List<JobDetail>) result;
@@ -647,36 +642,26 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     MantleServiceCache.getService().getCompletedBackgroundContent(callback);
   }
 
-  public void fetchBackgroundItems() {
-    AsyncCallback callback = new AsyncCallback() {
+  public void refreshWorkspace() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
-
-          public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
-          }
-
-          public void onSuccess(Object result) {
-            fetchWaitingBackgroundItems();
-            fetchCompletedBackgroundItems();
-            fetchMySchedules();
-            fetchAllSchedules();
-            fetchSubscriptions();
-          }
-        };
-        MantleServiceCache.getService().getCompletedBackgroundContent(callback);
+      public void onSuccess(Boolean result) {
+        fetchWaitingBackgroundItems();
+        fetchCompletedBackgroundItems();
+        fetchMySchedules();
+        fetchAllSchedules();
+        fetchSubscriptions();
       }
 
       public void onFailure(Throwable caught) {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
-            fetchBackgroundItems();
+            refreshWorkspace();
           }
 
         });
@@ -686,16 +671,16 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void cancelBackgroundJob(final String jobName, final String jobGroup) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
+          public void onSuccess(Boolean result) {
             fetchWaitingBackgroundItems();
           }
         };
@@ -706,7 +691,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -720,16 +705,16 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void deleteContentItem(final String contentId) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
+          public void onSuccess(Boolean result) {
             fetchCompletedBackgroundItems();
           }
         };
@@ -740,7 +725,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -754,17 +739,17 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void suspendJob(final String jobName, final String jobGroup, final int jobSource) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
-            refreshPerspective(false);
+          public void onSuccess(Void result) {
+            refreshWorkspace();
           }
         };
         MantleServiceCache.getService().suspendJob(jobName, jobGroup, callback);
@@ -774,7 +759,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -788,17 +773,17 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void resumeJob(final String jobName, final String jobGroup, final int jobSource) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
-            refreshPerspective(false);
+          public void onSuccess(Void nothing) {
+            refreshWorkspace();
           }
         };
         MantleServiceCache.getService().resumeJob(jobName, jobGroup, callback);
@@ -808,7 +793,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -821,17 +806,17 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void deleteJob(final String jobName, final String jobGroup, final int jobSource) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
-            refreshPerspective(false);
+          public void onSuccess(Void nothing) {
+            refreshWorkspace();
           }
         };
         MantleServiceCache.getService().deleteJob(jobName, jobGroup, callback);
@@ -841,7 +826,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -855,17 +840,17 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void runJob(final String jobName, final String jobGroup, final int jobSource) {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-      public void onSuccess(Object result) {
-        AsyncCallback callback = new AsyncCallback() {
+      public void onSuccess(Boolean result) {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             Window.alert(caught.toString());
           }
 
-          public void onSuccess(Object result) {
-            refreshPerspective(false);
+          public void onSuccess(Void nothing) {
+            refreshWorkspace();
           }
         };
         MantleServiceCache.getService().runJob(jobName, jobGroup, callback);
@@ -875,7 +860,7 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-              
+
           }
 
           public void onSuccess(Boolean result) {
@@ -889,13 +874,13 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void resetBackgroundExecutionAlert() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(Void nothing) {
         backgroundAlertRaised = false;
       }
     };
@@ -903,15 +888,14 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void fetchMySchedules() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(List<JobSchedule> scheduledJobs) {
         // result is List<JobSchedule>
-        List<JobSchedule> scheduledJobs = (List<JobSchedule>) result;
         myScheduledContentTable = buildEmptyScheduleTable();
         buildScheduleTable(scheduledJobs, myScheduledContentTable, myScheduledContentDisclosure, MYSCHEDULES);
         myScheduledContentDisclosure.setContent(myScheduledContentTable);
@@ -921,15 +905,13 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void fetchSubscriptions() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<List<SubscriptionBean>> callback = new AsyncCallback<List<SubscriptionBean>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
-        // result is List<>
-        List<SubscriptionBean> subscriptionsInfo = (List<SubscriptionBean>) result;
+      public void onSuccess(List<SubscriptionBean> subscriptionsInfo) {
         subscriptionsContentTable = buildEmptySubscriptionsTable();
         buildSubscriptionsTable(subscriptionsInfo, subscriptionsContentTable, subscriptionsContentDisclosure);
         subscriptionsContentDisclosure.setContent(subscriptionsContentTable);
@@ -939,15 +921,14 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
   }
 
   public void fetchAllSchedules() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(List<JobSchedule> scheduledJobs) {
         // result is List<JobSchedule>
-        List<JobSchedule> scheduledJobs = (List<JobSchedule>) result;
         allScheduledContentTable = buildEmptyScheduleTable();
         buildScheduleTable(scheduledJobs, allScheduledContentTable, allScheduledContentDisclosure, ALLSCHEDULES);
         allScheduledContentDisclosure.setContent(allScheduledContentTable);
@@ -964,22 +945,4 @@ public class WorkspacePerspective extends ScrollPanel implements IPerspective {
     this.backgroundAlertRaised = backgroundAlertRaised;
   }
 
-  public void loadPerspective(boolean force, boolean showStatus) {
-	// BISERVER-1838: when switching to Workspace, force refresh (always)
-    fetchBackgroundItems();
-    installViewMenu(perspectiveCallback);
-  }
-
-  public void unloadPerspective() {
-  }
-
-  public void refreshPerspective(boolean showStatus) {
-    loadPerspective(true, showStatus);
-  }
-
-  public void installViewMenu(IPerspectiveCallback perspectiveCallback) {
-//    List<UIObject> viewMenuItems = new ArrayList<UIObject>();
-//    viewMenuItems.add(new MenuItem(Messages.getInstance().refresh(), new RefreshPerspectiveCommand(this)));
-//    perspectiveCallback.installViewMenu(viewMenuItems);
-  }
 }

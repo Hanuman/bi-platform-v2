@@ -25,48 +25,16 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class FileCommand implements Command {
-  public static final int RUN = 0;
-  public static final int EDIT = 1;
-  public static final int DELETE = 2;
-  public static final int PROPERTIES = 4;
-  public static final int BACKGROUND = 5;
-  public static final int NEWWINDOW = 6;
 
-  public static final int SCHEDULE_DAILY = 7;
-  public static final int SCHEDULE_WEEKDAYS = 8;
-  public static final int SCHEDULE_MWF = 9;
-  public static final int SCHEDULE_TUTH = 10;
+  public static enum COMMAND {
+    RUN, EDIT, PROPERTIES, BACKGROUND, NEWWINDOW, SCHEDULE_DAILY, SCHEDULE_WEEKDAYS, SCHEDULE_MWF, SCHEDULE_TUTH, SCHEDULE_WEEKLY_MON, SCHEDULE_WEEKLY_TUE, SCHEDULE_WEEKLY_WED, SCHEDULE_WEEKLY_THU, SCHEDULE_WEEKLY_FRI, SCHEDULE_WEEKLY_SAT, SCHEDULE_WEEKLY_SUN, SCHEDULE_MONTHLY_1ST, SCHEDULE_MONTHLY_15TH, SCHEDULE_MONTHLY_FIRST_SUN, SCHEDULE_MONTHLY_FIRST_MON, SCHEDULE_MONTHLY_LAST_FRI, SCHEDULE_MONTHLY_LAST_SUN, SCHEDULE_MONTHLY_LAST_DAY, SCHEDULE_ANNUALLY, SCHEDULE_CUSTOM, SCHEDULE_NEW, SUBSCRIBE, SHARE, EDIT_ACTION
+  };
 
-  public static final int SCHEDULE_WEEKLY_MON = 11;
-  public static final int SCHEDULE_WEEKLY_TUE = 12;
-  public static final int SCHEDULE_WEEKLY_WED = 13;
-  public static final int SCHEDULE_WEEKLY_THU = 14;
-  public static final int SCHEDULE_WEEKLY_FRI = 15;
-  public static final int SCHEDULE_WEEKLY_SAT = 16;
-  public static final int SCHEDULE_WEEKLY_SUN = 17;
-
-  public static final int SCHEDULE_MONTHLY_1ST = 18;
-  public static final int SCHEDULE_MONTHLY_15TH = 19;
-  public static final int SCHEDULE_MONTHLY_FIRST_SUN = 20;
-  public static final int SCHEDULE_MONTHLY_FIRST_MON = 21;
-  public static final int SCHEDULE_MONTHLY_LAST_FRI = 22;
-  public static final int SCHEDULE_MONTHLY_LAST_SUN = 23;
-  public static final int SCHEDULE_MONTHLY_LAST_DAY = 24;
-  public static final int SCHEDULE_ANUALLY = 25;
-  public static final int SCHEDULE_CUSTOM = 26;
-  public static final int SCHEDULE_NEW = 27;
-  
-  public static final int SUBSCRIBE = 28;
-  public static final int SHARE = 29;
-  
-  
-  public static final int EDIT_ACTION = 30;
-
-  int mode = RUN;
+  COMMAND mode = COMMAND.RUN;
   PopupPanel popupMenu;
   IFileItemCallback fileItemCallback;
 
-  public FileCommand(int inMode, PopupPanel popupMenu, IFileItemCallback fileItemCallback) {
+  public FileCommand(COMMAND inMode, PopupPanel popupMenu, IFileItemCallback fileItemCallback) {
     this.mode = inMode;
     this.popupMenu = popupMenu;
     this.fileItemCallback = fileItemCallback;
@@ -76,17 +44,17 @@ public class FileCommand implements Command {
     if (popupMenu != null) {
       popupMenu.hide();
     }
-    if (mode == RUN || mode == BACKGROUND || mode == NEWWINDOW) {
+    if (mode == COMMAND.RUN || mode == COMMAND.BACKGROUND || mode == COMMAND.NEWWINDOW) {
       fileItemCallback.openFile(mode);
-    } else if (mode == PROPERTIES) {
+    } else if (mode == COMMAND.PROPERTIES) {
       fileItemCallback.loadPropertiesDialog();
-    } else if (mode == EDIT) {
+    } else if (mode == COMMAND.EDIT) {
       fileItemCallback.editFile();
-    } else if (mode == EDIT_ACTION) {
+    } else if (mode == COMMAND.EDIT_ACTION) {
       fileItemCallback.editActionFile();
-    } else if (mode == SCHEDULE_NEW) {
+    } else if (mode == COMMAND.SCHEDULE_NEW) {
       fileItemCallback.createSchedule();
-    } else if (mode == SCHEDULE_CUSTOM) {
+    } else if (mode == COMMAND.SCHEDULE_CUSTOM) {
       Date now = new Date();
       int second = now.getSeconds();
       int minute = now.getMinutes();
@@ -102,7 +70,7 @@ public class FileCommand implements Command {
           TextBox cronTextBox = new TextBox();
           fileItemCallback.createSchedule(cronTextBox.getText());
         }
-        
+
       };
       PromptDialogBox inputDialog = new PromptDialogBox("Custom CRON Schedule", "Schedule", "Cancel", false, true);
       inputDialog.setContent(cronTextBox);
@@ -123,47 +91,47 @@ public class FileCommand implements Command {
       int hour = now.getHours();
       int day = now.getDate();
       int month = now.getMonth() + 1;
-      if (mode == SCHEDULE_DAILY) {
+      if (mode == COMMAND.SCHEDULE_DAILY) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " * * ?");
-      } else if (mode == SCHEDULE_WEEKDAYS) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKDAYS) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON-FRI");
-      } else if (mode == SCHEDULE_MWF) {
+      } else if (mode == COMMAND.SCHEDULE_MWF) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON,WED,FRI");
-      } else if (mode == SCHEDULE_TUTH) {
+      } else if (mode == COMMAND.SCHEDULE_TUTH) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE,THU");
-      } else if (mode == SCHEDULE_WEEKLY_MON) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_MON) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON");
-      } else if (mode == SCHEDULE_WEEKLY_TUE) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_TUE) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE");
-      } else if (mode == SCHEDULE_WEEKLY_WED) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_WED) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * WED");
-      } else if (mode == SCHEDULE_WEEKLY_THU) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_THU) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * THU");
-      } else if (mode == SCHEDULE_WEEKLY_FRI) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_FRI) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * FRI");
-      } else if (mode == SCHEDULE_WEEKLY_SAT) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_SAT) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SAT");
-      } else if (mode == SCHEDULE_WEEKLY_SUN) {
+      } else if (mode == COMMAND.SCHEDULE_WEEKLY_SUN) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SUN");
-      } else if (mode == SCHEDULE_MONTHLY_1ST) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_1ST) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 1 * ?");
-      } else if (mode == SCHEDULE_MONTHLY_15TH) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_15TH) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 15 * ?");
-      } else if (mode == SCHEDULE_MONTHLY_FIRST_SUN) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_SUN) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1#1");
-      } else if (mode == SCHEDULE_MONTHLY_FIRST_MON) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_MON) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 2#1");
-      } else if (mode == SCHEDULE_MONTHLY_LAST_FRI) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_FRI) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 6L");
-      } else if (mode == SCHEDULE_MONTHLY_LAST_SUN) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_SUN) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1L");
-      } else if (mode == SCHEDULE_MONTHLY_LAST_DAY) {
+      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_DAY) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " L * ?");
-      } else if (mode == SCHEDULE_ANUALLY) {
+      } else if (mode == COMMAND.SCHEDULE_ANNUALLY) {
         fileItemCallback.createSchedule(second + " " + minute + " " + hour + " " + day + " " + month + " ?");
-      } else if (mode == SUBSCRIBE) {
+      } else if (mode == COMMAND.SUBSCRIBE) {
         fileItemCallback.openFile(mode);
-      } else if (mode == SHARE) {
+      } else if (mode == COMMAND.SHARE) {
         fileItemCallback.shareFile();
       }
     }

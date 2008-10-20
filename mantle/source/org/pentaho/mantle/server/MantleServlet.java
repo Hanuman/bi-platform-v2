@@ -1007,7 +1007,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public List<IUserSetting> getUserSettings() {
     try {
-      IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+      IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
       List<IUserSetting> settings = settingsService.getUserSettings();
       return settings;
     } catch (Exception e) {
@@ -1018,7 +1018,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void addBookmark(Bookmark bookmark) throws SimpleMessageException {
     try {
-      IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+      IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
       List<Bookmark> bookmarks = getBookmarks();
       // just be sure (yeah, this would be better as a Set, but I care about the user's order)
       bookmarks.remove(bookmark);
@@ -1031,7 +1031,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void deleteBookmark(Bookmark bookmark) throws SimpleMessageException {
     try {
-      IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+      IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
       List<Bookmark> bookmarks = getBookmarks();
       // just be sure (yeah, this would be better as a Set, but I care about the user's order)
       bookmarks.remove(bookmark);
@@ -1042,7 +1042,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public List<Bookmark> getBookmarks() throws SimpleMessageException {
-    IUserSettingService settingsService = PentahoSystem.getUserSettingService(getPentahoSession());
+    IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
     IUserSetting setting = settingsService.getUserSetting(IMantleUserSettingsConstants.MANTLE_BOOKMARKS, null);
     if (setting == null) {
       return new ArrayList<Bookmark>();

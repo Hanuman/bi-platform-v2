@@ -107,7 +107,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   DeckPanel perspectivesPanel = new DeckPanel();
 
   SolutionBrowserPerspective solutionBrowserPerspective = new SolutionBrowserPerspective(this);
-  FileCommand propertiesCommand = new FileCommand(FileCommand.PROPERTIES, null, solutionBrowserPerspective);
+  FileCommand propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null, solutionBrowserPerspective);
   RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand(solutionBrowserPerspective);
   
   // menu items (to be enabled/disabled)

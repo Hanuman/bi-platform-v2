@@ -20,28 +20,42 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
+import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionTree extends Tree implements IFileItemCallback {
   PopupPanel popupMenu = new PopupPanel(true);
@@ -51,12 +65,14 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   boolean isAdministrator = false;
   boolean createRootNode = false;
 
+  SolutionBrowserPerspective solutionBrowserPerspective;
   FocusPanel focusable = new FocusPanel();
 
-  public SolutionTree() {
+  public SolutionTree(SolutionBrowserPerspective solutionBrowserPerspective) {
     super(MantleImages.images);
+    this.solutionBrowserPerspective = solutionBrowserPerspective;
     setAnimationEnabled(true);
-    sinkEvents(Event.ONDBLCLICK | Event.MOUSEEVENTS);
+    sinkEvents(Event.ONDBLCLICK);
     // popupMenu.setAnimationEnabled(false);
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
     DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -71,27 +87,27 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1); //$NON-NLS-1$
     DOM.appendChild(getElement(), focusable.getElement());
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
+
   }
 
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
-    if (DOM.eventGetButton(event) != Event.BUTTON_RIGHT) {
-      switch (eventType) {
-      case Event.ONCLICK:
-        return;
-      case Event.ONMOUSEDOWN:
-      case Event.ONMOUSEUP: {
-        try {
-          int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
-          int[] offsets = ElementUtils.calculateOffsets(getElement());
-          DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
-        } catch (Exception ignore) {
-         //Please ignore the error
-        }
-        break;
+    switch (eventType) {
+    case Event.ONMOUSEDOWN:
+    case Event.ONMOUSEUP:
+    case Event.ONCLICK: {
+      try {
+        int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
+        int[] offsets = ElementUtils.calculateOffsets(getElement());
+        DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
+      } catch (Exception ex) {
+        // wtf!
       }
-      }
+      break;
     }
+    }
+
+    super.onBrowserEvent(event);
     try {
       if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
         // load menu (Note: disabled as Delete and Properties have no meaning for Folders now
@@ -100,26 +116,21 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        // menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new FileCommand(FileCommand.DELETE, popupMenu, this)));
-        // menuBar.addSeparator();
-        menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.PROPERTIES, popupMenu, this)));
+        menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this)));
         popupMenu.setWidget(menuBar);
-        popupMenu.hide();
+        popupMenu.hide(); 
         Timer t = new Timer() {
           public void run() {
             popupMenu.show();
           }
         };
-        // Uncomment once these popup menu items actually mean something
         t.schedule(250);
-
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
       }
     } catch (Throwable t) {
       // death to this browser event
     }
-    super.onBrowserEvent(event);
   }
 
   public void buildSolutionTree(Document solutionDocument) {
@@ -477,7 +488,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     dialog.center();
   }
 
-  public void openFile(int mode) {
+  public void openFile(FileCommand.COMMAND mode) {
     // TODO Auto-generated method stub
     // noop
   }
@@ -513,6 +524,155 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   public void setSelectedFileItem(FileItem fileItem) {
     // TODO Auto-generated method stub
     // noop
+  }
+
+  public void createNewFolder() {
+    FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
+    String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
+    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null,
+        null, null);
+    final TextBox folderNameTextBox = new TextBox();
+    folderNameTextBox.setTabIndex(1);
+    folderNameTextBox.setVisibleLength(80);
+    final TextBox folderDescTextBox = new TextBox();
+    folderDescTextBox.setTabIndex(2);
+    folderDescTextBox.setVisibleLength(80);
+
+    VerticalPanel vp = new VerticalPanel();
+    vp.add(new Label(Messages.getInstance().newFolderName()));
+    vp.add(folderNameTextBox);
+    vp.add(new Label(Messages.getInstance().newFolderDesc()));
+    vp.add(folderDescTextBox);
+    final PromptDialogBox newFolderDialog = new PromptDialogBox(Messages.getInstance().newFolder(), Messages.getInstance().ok(), Messages.getInstance()
+        .cancel(), false, true, vp);
+    newFolderDialog.setFocusWidget(folderNameTextBox);
+    folderNameTextBox.setFocus(true);
+
+    final IDialogCallback callback = new IDialogCallback() {
+
+      public void cancelPressed() {
+        newFolderDialog.hide();
+      }
+
+      public void okPressed() {
+        String repoPath = selectedItem.getPath() + "/" + selectedItem.getName();
+        // if a solution folder is selected then the solution-name/path are the same, we can't allow that
+        // but we need them to be in the tree like this for building the tree paths correctly (other code)
+        if (repoPath.equals("/" + selectedItem.getSolution())) {
+          repoPath = "";
+        }
+        String url = "";
+        if (GWT.isScript()) {
+          String windowpath = Window.Location.getPath();
+          if (!windowpath.endsWith("/")) {
+            windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1);
+          }
+          url = windowpath + "SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name="
+              + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText();
+        } else if (!GWT.isScript()) {
+          url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path="
+              + repoPath + "&name=" + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText();
+        }
+        final String myurl = url;
+        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, myurl);
+        try {
+          builder.sendRequest(null, new RequestCallback() {
+
+            public void onError(Request request, Throwable exception) {
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotCreateFolder(folderNameTextBox.getText()),
+                  false, false, true);
+              dialogBox.center();
+            }
+
+            public void onResponseReceived(Request request, Response response) {
+              Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
+              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue());
+              if (result) {
+                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
+                cmd.execute(false);
+              } else {
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(),
+                    Messages.getInstance().couldNotCreateFolder(selectedItem.getName()), false, false, true);
+                dialogBox.center();
+              }
+            }
+
+          });
+        } catch (RequestException e) {
+        }
+      }
+    };
+    newFolderDialog.setCallback(callback);
+    newFolderDialog.center();
+  }
+
+  public void deleteFile() {
+    // delete folder
+    FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
+    String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
+    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null,
+        null, null);
+    String repoPath = selectedItem.getPath();
+    // if a solution folder is selected then the solution-name/path are the same, we can't allow that
+    // but we need them to be in the tree like this for building the tree paths correctly (other code)
+    if (repoPath.equals(selectedItem.getSolution())) {
+      repoPath = "";
+    }
+    String url = "";
+    if (GWT.isScript()) {
+      String windowpath = Window.Location.getPath();
+      if (!windowpath.endsWith("/")) {
+        windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1);
+      }
+      url = windowpath + "SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name="
+          + selectedItem.getName();
+    } else if (!GWT.isScript()) {
+      url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path="
+          + repoPath + "&name=" + selectedItem.getName();
+    }
+    final String myurl = url;
+    VerticalPanel vp = new VerticalPanel();
+    vp.add(new Label(Messages.getInstance().deleteQuestion(selectedItem.getLocalizedName())));
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(), Messages
+        .getInstance().no(), false, true, vp);
+
+    final IDialogCallback callback = new IDialogCallback() {
+
+      public void cancelPressed() {
+        deleteConfirmDialog.hide();
+      }
+
+      public void okPressed() {
+        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, myurl);
+        try {
+          builder.sendRequest(null, new RequestCallback() {
+
+            public void onError(Request request, Throwable exception) {
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotDelete(selectedItem.getName()),
+                  false, false, true);
+              dialogBox.center();
+            }
+
+            public void onResponseReceived(Request request, Response response) {
+              Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
+              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue());
+              if (result) {
+                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
+                cmd.execute(false);
+              } else {
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(),
+                    Messages.getInstance().couldNotDelete(selectedItem.getName()), false, false, true);
+                dialogBox.center();
+              }
+            }
+
+          });
+        } catch (RequestException e) {
+        }
+      }
+    };
+    deleteConfirmDialog.setCallback(callback);
+    deleteConfirmDialog.center();
   }
 
   public boolean isShowHiddenFiles() {
