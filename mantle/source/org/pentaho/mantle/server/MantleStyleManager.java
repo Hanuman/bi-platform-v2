@@ -232,7 +232,7 @@ public class MantleStyleManager extends HttpServlet {
 
   public static void setStyle(final HttpServletRequest request, String styleName, String styleValue, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(getStyleFieldName(styleName), styleValue);
     } else {
@@ -258,13 +258,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getGlobalStyle(final HttpServletRequest request, String styleName) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getGlobalUserSetting(getStyleFieldName(styleName), getStyleDefaultValue(styleName)).getSettingValue();
   }
 
   public static String getEffectiveStyle(final HttpServletRequest request, String styleName) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(getStyleFieldName(styleName), getStyleDefaultValue(styleName)).getSettingValue();
   }
 
@@ -285,7 +285,7 @@ public class MantleStyleManager extends HttpServlet {
 
   public static void setMenuBarBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(MENUBAR_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -295,13 +295,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getMenuBarBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(MENUBAR_BACKGROUND_COLOR, MENUBAR_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setBodyBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(BODY_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -311,13 +311,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getBodyBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(BODY_BACKGROUND_COLOR, BODY_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setSplitPanelDividerColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(SPLITPANEL_DIVIDER_COLOR, backgroundColor);
     } else {
@@ -327,13 +327,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getSplitPanelDividerColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(SPLITPANEL_DIVIDER_COLOR, SPLITPANEL_DIVIDER_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setSplitPanelDividerWidth(final HttpServletRequest request, String width, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(SPLITPANEL_DIVIDER_WIDTH, width);
     } else {
@@ -343,13 +343,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getSplitPanelDividerWidth(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(SPLITPANEL_DIVIDER_WIDTH, SPLITPANEL_DIVIDER_WIDTH_DEFAULT).getSettingValue();
   }
 
   public static void setHorizontalSelectedMenuItemColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(HORIZONTAL_SELECTED_MENUITEM_COLOR, backgroundColor);
     } else {
@@ -359,13 +359,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getHorizontalSelectedMenuItemColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(HORIZONTAL_SELECTED_MENUITEM_COLOR, HORIZONTAL_SELECTED_MENUITEM_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setHorizontalMenuItemColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(HORIZONTAL_MENUITEM_COLOR, backgroundColor);
     } else {
@@ -375,13 +375,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getHorizontalMenuItemColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(HORIZONTAL_MENUITEM_COLOR, HORIZONTAL_MENUITEM_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setHorizontalMenuItemBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(HORIZONTAL_MENUITEM_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -391,13 +391,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getHorizontalMenuItemBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(HORIZONTAL_MENUITEM_BACKGROUND_COLOR, HORIZONTAL_MENUITEM_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setHorizontalSelectedMenuItemBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(HORIZONTAL_SELECTED_MENUITEM_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -407,13 +407,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getHorizontalSelectedMenuItemBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(HORIZONTAL_SELECTED_MENUITEM_BACKGROUND_COLOR, HORIZONTAL_SELECTED_MENUITEM_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setVerticalSelectedMenuItemColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(VERTICAL_SELECTED_MENUITEM_COLOR, backgroundColor);
     } else {
@@ -423,13 +423,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getVerticalSelectedMenuItemColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(VERTICAL_SELECTED_MENUITEM_COLOR, VERTICAL_SELECTED_MENUITEM_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setVerticalMenuItemColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(VERTICAL_MENUITEM_COLOR, backgroundColor);
     } else {
@@ -439,13 +439,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getVerticalMenuItemColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(VERTICAL_MENUITEM_COLOR, VERTICAL_MENUITEM_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setVerticalMenuItemBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(VERTICAL_MENUITEM_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -455,13 +455,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getVerticalMenuItemBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(VERTICAL_MENUITEM_BACKGROUND_COLOR, VERTICAL_MENUITEM_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setVerticalSelectedMenuItemBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(VERTICAL_SELECTED_MENUITEM_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -471,13 +471,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getVerticalSelectedMenuItemBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(VERTICAL_SELECTED_MENUITEM_BACKGROUND_COLOR, VERTICAL_SELECTED_MENUITEM_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setTabPanelDecoratorColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_DECORATOR_COLOR, backgroundColor);
     } else {
@@ -487,13 +487,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getTabPanelDecoratorColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_DECORATOR_COLOR, TAB_PANEL_DECORATOR_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setTabPanelColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_COLOR, backgroundColor);
     } else {
@@ -503,13 +503,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getTabPanelColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_COLOR, TAB_PANEL_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setTabPanelSelectedColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_SELECTED_COLOR, backgroundColor);
     } else {
@@ -519,13 +519,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getTabPanelSelectedColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_SELECTED_COLOR, TAB_PANEL_SELECTED_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setContentTabPanelBackgroundImage(final HttpServletRequest request, String backgroundImage, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_CONTENT_BACKGROUND_IMAGE, backgroundImage);
     } else {
@@ -535,13 +535,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getContentTabPanelBackgroundImage(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_CONTENT_BACKGROUND_IMAGE, TAB_PANEL_CONTENT_BACKGROUND_IMAGE_DEFAULT).getSettingValue();
   }
 
   public static void setContentTabPanelBackgroundRepeat(final HttpServletRequest request, String repeat, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_CONTENT_BACKGROUND_REPEAT, repeat);
     } else {
@@ -551,13 +551,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getContentTabPanelBackgroundRepeat(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_CONTENT_BACKGROUND_REPEAT, TAB_PANEL_CONTENT_BACKGROUND_REPEAT_DEFAULT).getSettingValue();
   }
 
   public static void setTabPanelBackgroundColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(TAB_PANEL_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -567,13 +567,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getTabPanelBackgroundColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(TAB_PANEL_BACKGROUND_COLOR, TAB_PANEL_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setDialogBoxCaptionBackground(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(DIALOGBOX_CAPTION_BACKGROUND_COLOR, backgroundColor);
     } else {
@@ -583,13 +583,13 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getDialogBoxCaptionBackground(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(DIALOGBOX_CAPTION_BACKGROUND_COLOR, DIALOGBOX_CAPTION_BACKGROUND_COLOR_DEFAULT).getSettingValue();
   }
 
   public static void setDialogBoxCaptionColor(final HttpServletRequest request, String backgroundColor, boolean isGlobal) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     if (isGlobal) {
       service.setGlobalUserSetting(DIALOGBOX_CAPTION_COLOR, backgroundColor);
     } else {
@@ -599,7 +599,7 @@ public class MantleStyleManager extends HttpServlet {
 
   public static String getDialogBoxCaptionColor(final HttpServletRequest request) {
     IPentahoSession userSession = getPentahoSession(request);
-    IUserSettingService service = PentahoSystem.getUserSettingService(userSession);
+    IUserSettingService service = PentahoSystem.get(IUserSettingService.class, userSession);
     return service.getUserSetting(DIALOGBOX_CAPTION_COLOR, DIALOGBOX_CAPTION_COLOR_DEFAULT).getSettingValue();
   }
 
