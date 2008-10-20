@@ -74,6 +74,7 @@
 	   		ActionResource resource = new ActionResource( "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", "system/custom/template-document.html" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     			template = PentahoSystem.getSolutionRepository(userSession).getResourceAsString( resource );
     		} catch (Throwable t) {
+                  t.printStackTrace();
     		}
 
 		// Check to see if we are using the default Google Maps API key but not for localhost:8080
@@ -171,7 +172,9 @@ Once you have the new key you need to add it to the Google settings file in the 
 				%>
 				try {
 					showAddress( "<%= city %>,<%= state %>", "<%= customer %>", "<%= customerNum %>", <%= value %>, false );
-				} catch (e) {}
+				} catch (e) {
+					e.printStackTrace();
+				}
 				<%
 			}
 		%>
@@ -191,19 +194,19 @@ Once you have the new key you need to add it to the Google settings file in the 
     				<td valign="top">
       				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0px; padding:0px">
           				<tr>
-            					<td style="height: 25px; width: 25px;">
-            						<img border="0" src="/pentaho-style/images/fly-top-left1.png" /> <br /> 
+            					<td style="background-image: url(/pentaho-style/images/fly-top-left1.png); height: 25px; width: 25px;">
+            						&nbsp;
             					</td>
-            					<td style="background-image: url(/pentaho-style/images/fly-top1.png); background-repeat: repeat-x; height: 25px; margin:0px; padding:0px ">
-								<span class="a" style="">Select Sales Thresholds</span>
-							</td>
+            					<td style="background-image: url(/pentaho-style/images/fly-top1.png); width: 100%; ">
+								<span style="font: normal 1.1em Tahoma, 'Trebuchet MS', Arial;">Select Sales Thresholds</span>
+            					</td>
           				</tr>
           				<tr>
             					<td colspan="2" style="background-color: #e5e5e5;">
             						<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 									<tr>
                   						<td style="background-image: url(/pentaho-style/images/fly-left1.png); background-repeat: repeat-y; height: 10px; padding: 0px 5px 0px 0px;">
-											&nbsp;
+											<img border="0" src="/pentaho-style/images/fly-left1.png" />
 										</td>
 										<td colspan="2">
 											View: <a href="javascript:void" onclick="map.setCenter( new GLatLng(35.55, -119.268 ), 6); return false;">West Coast</a> | 
@@ -214,16 +217,15 @@ Once you have the new key you need to add it to the Google settings file in the 
 			
                 						<tr style="background-color: #e5e5e5;">
                   						<td style="background-image: url(/pentaho-style/images/fly-left1.png); background-repeat: repeat-y; height: 10px; padding: 0px 5px 0px 0px;">
-											&nbsp;</td>
+								<img border="0" src="/pentaho-style/images/fly-left1.png" /></td>
 										<td valign="top" style="padding: 0px 0px 0px 0px;">
 
 											<table>
 												<tr>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_red.png"/> <br /> 
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_red.png"/>
 													</td>
 													<td>
-														< 
 														<select id="bottomthreshold" onchange="update(false)">
 															<option value="0">0</option>
 															<option value="10000">10000</option>
@@ -246,13 +248,13 @@ Once you have the new key you need to add it to the Google settings file in the 
 															<option value="180000">180000</option>
 															<option value="190000">190000</option>
 															<option value="200000">200000</option>
-														</select> <
+														</select>
 													</td>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_yellow.png"/><br /> 
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_yellow.png"/>
 													</td>
 													<td>
-														<
+														
 														<select id="topthreshold" onchange="update(true)">
 															<option value="0">0</option>
 															<option value="10000">10000</option>
@@ -275,10 +277,10 @@ Once you have the new key you need to add it to the Google settings file in the 
 															<option value="180000">180000</option>
 															<option value="190000">190000</option>
 															<option value="200000">200000</option>
-														</select> <
+														</select> 
 													</td>
 													<td>
-														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_green.png"/><br /> 
+														<img border="0" src="http://labs.google.com/ridefinder/images/mm_20_green.png"/>
 													</td>
 												</tr>
 											</table>
@@ -292,9 +294,8 @@ Once you have the new key you need to add it to the Google settings file in the 
             					<td style="height: 25px; width: 25px;">
             						<img border="0" src="/pentaho-style/images/fly-bot-left1.png" /><br /> 
             					</td>
-            					<td style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x">
-            						&nbsp;
-            					</td>
+
+            					<td               style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x"><img border="0" src="/pentaho-style/images/fly-bot1.png" /><br /></td>
           				</tr>
       				</table>
       			</td>
@@ -336,7 +337,7 @@ Once you have the new key you need to add it to the Google settings file in the 
 											<center>
 												Sales History
 											</center>
-											<div id="details-cell2" style="padding: 0px 0px 0px 0px;height: 113px; overflow: auto; ">
+											<div id="details-cell2" style="padding: 0px 0px 0px 0px;height: 113px; width: 85%">
 											</div>
 										</td>
                 						</tr>
@@ -344,11 +345,11 @@ Once you have the new key you need to add it to the Google settings file in the 
             					</td>
           				</tr>
           				<tr>
-            					<td style="height: 25px; width: 25px;">
+            					<td width="25" style="height: 25px; width: 25px;">
 								<img border="0" src="/pentaho-style/images/fly-bot-left1.png" /><br /> 
 							</td>
-            					<td style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x">
-            						&nbsp;
+            					<td width="100%" style="background-image: url(/pentaho-style/images/fly-bot1.png); background-repeat: repeat-x">
+            						<img border="0" src="/pentaho-style/images/fly-bot1.png" /><br />
             					</td>
           				</tr>
       				</table>
@@ -366,4 +367,3 @@ Once you have the new key you need to add it to the Google settings file in the 
     <div id="map" style="position:absolute;width: 640px; height: 580px;top:40px;left:350px;border:1px solid #808080"></div>
 
 <% } %>
-

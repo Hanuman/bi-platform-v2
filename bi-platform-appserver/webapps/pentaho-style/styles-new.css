@@ -231,7 +231,7 @@ A:active {
 
 /* buttons */
 .btn_arrow_dd A {
-	padding: 0px 0px -2px 0px;
+    padding: 0px 0px 0px 0px;
 	DISPLAY: block;
 	BACKGROUND: url(/pentaho-style/images/btn_arrow_dd.png) no-repeat 0px 0px;
 	WIDTH: 15px;
@@ -241,7 +241,7 @@ A:active {
 }
 
 .btn_trashcan A {
-	padding: 0px 0px -2px 0px;
+    padding: 0px 0px 0px 0px;
 	DISPLAY: block;
 	BACKGROUND: url(/pentaho-style/images/btn_trashcan.png) no-repeat 0px 0px;
 	WIDTH: 20px;
@@ -431,7 +431,7 @@ A:active {
 /* used in Pivot.jsp and template-dialog.html */
 div#dialog01_footer {
 	border-top: 1px solid black;
-	background-color: f2f2f2;
+  background-color: #f2f2f2;
 	position:absolute;
 	bottom:0;
 	left:0;
@@ -744,7 +744,7 @@ p {
 }
 
 a.button {
-    background: url('images/button_right.png') scroll top right no-repeat;
+    background: url('images/button_right.gif') scroll top right no-repeat;
     color: #444;
     display: block;
     float: right;
@@ -758,7 +758,7 @@ a.button {
 }
             
 a.button span {
-    background: url('images/button_left.png') no-repeat;
+    background: url('images/button_left.gif') no-repeat;
     display: block;
     line-height: 14px;
     padding: 8px 10px 8px 14px;
@@ -766,7 +766,7 @@ a.button span {
     text-align: center;
 }
 a:hover.button span {
-    background: url('images/button_left.png') no-repeat;
+    background: url('images/button_left.gif') no-repeat;
     display: block;
     line-height: 14px;
     /*padding: 8px 10px 8px 14px;*/
