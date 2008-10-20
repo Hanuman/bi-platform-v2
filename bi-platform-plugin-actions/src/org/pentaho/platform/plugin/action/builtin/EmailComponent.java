@@ -298,18 +298,18 @@ public class EmailComponent extends ComponentBase {
       }
 
       if (subject != null) {
-        msg.setSubject(subject);
+        msg.setSubject(subject, LocaleHelper.getSystemEncoding());
       }
 
       EmailAttachment[] emailAttachments = emailAction.getAttachments();
       if ((messagePlain != null) && (messageHtml == null) && (emailAttachments.length == 0)) {
-        msg.setText(messagePlain);
+        msg.setText(messagePlain, LocaleHelper.getSystemEncoding());
       } else if (emailAttachments.length == 0) {
         if (messagePlain != null) {
-          msg.setContent(messagePlain, "text/plain"); //$NON-NLS-1$
+          msg.setContent(messagePlain, "text/plain; charset=" + LocaleHelper.getSystemEncoding()); //$NON-NLS-1$          
         }
         if (messageHtml != null) {
-          msg.setContent(messageHtml, "text/html"); //$NON-NLS-1$
+          msg.setContent(messageHtml, "text/html; charset=" + LocaleHelper.getSystemEncoding()); //$NON-NLS-1$
         }
       } else {
         // need to create a multi-part message...
@@ -319,13 +319,13 @@ public class EmailComponent extends ComponentBase {
         if (messageHtml != null) {
           // create and fill the first message part
           MimeBodyPart htmlBodyPart = new MimeBodyPart();
-          htmlBodyPart.setContent(messageHtml, "text/html"); //$NON-NLS-1$
+          htmlBodyPart.setContent(messageHtml, "text/html; charset="+LocaleHelper.getSystemEncoding()); //$NON-NLS-1$
           multipart.addBodyPart(htmlBodyPart);
         }
 
         if (messagePlain != null) {
           MimeBodyPart textBodyPart = new MimeBodyPart();
-          textBodyPart.setContent(messagePlain, "text/plain"); //$NON-NLS-1$
+          textBodyPart.setContent(messagePlain, "text/plain; charset="+LocaleHelper.getSystemEncoding()); //$NON-NLS-1$
           multipart.addBodyPart(textBodyPart);
         }
 
