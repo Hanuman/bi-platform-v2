@@ -361,18 +361,23 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
-    PentahoSystem.systemEntryPoint();
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    }
     try {
       SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
-    } finally {
-      PentahoSystem.systemExitPoint();
     }
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
+    
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    }
+    
     try {
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -394,6 +399,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
 
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    }
+    
     try {
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();

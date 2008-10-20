@@ -1538,6 +1538,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String newAdhocReport();
 
   /**
+   * Translated "This feature is disabled".
+   * 
+   * @return translated "This feature is disabled"
+  
+   */
+  @DefaultMessage("This feature is disabled")
+  String featureDisabled();
+
+  /**
    * Translated "Error".
    * 
    * @return translated "Error"
