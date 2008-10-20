@@ -43,7 +43,6 @@ import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IApplicationContext;
-import org.pentaho.platform.api.engine.IAuditEntry;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IConditionalExecution;
 import org.pentaho.platform.api.engine.IContentOutputHandler;
@@ -343,7 +342,6 @@ public class PentahoSystem {
     } catch (PentahoSystemException e1) {
       throw new RuntimeException( e1 ); // this is fatal
     }
-    PentahoSystem.loadGlobalObjects();
     PentahoSystem.sessionStartup( session, false, null );
     
     // store a list of the system listeners
@@ -1161,9 +1159,6 @@ public class PentahoSystem {
     }
   }
   
-  private static void loadGlobalObjects() {
-    
-  }
   public static IPentahoObjectFactory getObjectFactory() {
 	    return pentahoObjectFactory;
   }
