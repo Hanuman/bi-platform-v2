@@ -1,7 +1,6 @@
 package org.pentaho.mantle.server;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -119,7 +118,6 @@ public class MantleStyleManager extends HttpServlet {
 
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     PentahoSystem.systemEntryPoint();
-    OutputStream outputStream = response.getOutputStream();
     try {
       response.setContentType("text/xml"); //$NON-NLS-1$
       response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
