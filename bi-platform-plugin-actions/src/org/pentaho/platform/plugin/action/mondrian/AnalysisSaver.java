@@ -63,7 +63,7 @@ public class AnalysisSaver extends PentahoMessenger {
   public static int saveAnalysis(final IPentahoSession session, final HashMap props, final String path,
       String fileName, final boolean overwrite) {
 	  
-    if ("true".equals(PentahoSystem.getSystemSetting("hosted-demo-mode", "false"))) {
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
 	  throw new RuntimeException("Save is disabled.");
 	}
 	  

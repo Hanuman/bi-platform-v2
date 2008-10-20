@@ -1404,7 +1404,7 @@ public class AdhocWebService extends ServletBase {
   private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
-	if ("true".equals(PentahoSystem.getSystemSetting("hosted-demo-mode", "false"))) {
+	if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
 	  throw new AdhocWebServiceException("Save is disabled.");
 	}
 	  

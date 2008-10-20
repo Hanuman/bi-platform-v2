@@ -2,9 +2,10 @@
 <pentaho-system>
 
 	<!--
- 		The hosted-demo-mode setting when set to true, will disable saving in WAQR and JPivot (analysis view)
+ 		The kiosk-mode setting when set to true, will cause the platform to ignore some aspects of security 
+ 		to allow/enable behavior.  For example,	disable saving in WAQR and JPivot (analysis view).
 	-->
-	<hosted-demo-mode>false</hosted-demo-mode> 
+	<kiosk-mode>false</kiosk-mode>
 
     <!--
     The login-show-users-list setting when set to true, will show a drop-down list of the default 
