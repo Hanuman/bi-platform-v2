@@ -34,6 +34,7 @@ import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IUITemplater;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.subscription.SubscriptionHelper;
@@ -76,7 +77,13 @@ public class ActionPortlet extends ViewPortlet {
       } else if ("archive".equals(subscribeAction)) { //$NON-NLS-1$
         String name = requestParameters.getStringParameter("subscribe-name", null); //$NON-NLS-1$
         PortletSessionParameterProvider sessionParameters = new PortletSessionParameterProvider(userSession);
-        String result = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);
+        String result = null;
+        try {
+          result = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);  
+        } catch(BackgroundExecutionException bex) {
+          result = bex.getLocalizedMessage();
+          userSession.setAttribute(key, result, PortletSession.PORTLET_SCOPE);
+        }
         userSession.setAttribute(key, result, PortletSession.PORTLET_SCOPE);
       } else if ("delete-archived".equals(subscribeAction)) { //$NON-NLS-1$
         String name = requestParameters.getStringParameter("subscribe-name", null); //$NON-NLS-1$
@@ -190,7 +197,6 @@ public class ActionPortlet extends ViewPortlet {
         parameterProvider.setParameter("solution", solutionName); //$NON-NLS-1$
         parameterProvider.setParameter("path", actionPath); //$NON-NLS-1$
         parameterProvider.setParameter("action", actionName); //$NON-NLS-1$
-        String backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);
         String intro = ""; //$NON-NLS-1$
         String footer = ""; //$NON-NLS-1$
         IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession);
@@ -205,8 +211,20 @@ public class ActionPortlet extends ViewPortlet {
         } else {
           intro = Messages.getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT"); //$NON-NLS-1$
         }
+        
         PrintWriter writer = response.getWriter();
         writer.print(intro);
+        
+        String backgroundResponse = null;
+        try  {
+          backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);  
+        } catch(BackgroundExecutionException bex) {
+          backgroundResponse = bex.getLocalizedMessage();
+          writer.print(backgroundResponse);
+          writer.print(footer);
+          return;       
+        }
+        
         writer.print(backgroundResponse);
         writer.print(footer);
         return;

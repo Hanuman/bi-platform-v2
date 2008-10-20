@@ -56,7 +56,6 @@ import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
-import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -65,7 +64,6 @@ import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.services.WebServiceUtil;
-import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -122,8 +120,6 @@ public class SolutionRepositoryService extends ServletBase {
        * NOTE: PLEASE DO NOT CATCH Exception, since this is the super class of RuntimeException. We do NOT want to catch RuntimeException, only CHECKED
        * exceptions!
        */
-    } catch (IOException ex) {
-      commonErrorHandler(outputStream, ex);
     } catch (SolutionRepositoryServiceException ex) {
       commonErrorHandler(outputStream, ex);
     } catch (PentahoAccessControlException ex) {
@@ -136,6 +132,9 @@ public class SolutionRepositoryService extends ServletBase {
       commonErrorHandler(outputStream, ex);
     } catch (TransformerFactoryConfigurationError ex) {
       commonErrorHandler(outputStream, ex.getException());
+    } catch (IOException ex) {
+      // Use debugErrorHandler for ioException
+      debugErrorHandler( outputStream, ex );
     } finally {
       PentahoSystem.systemExitPoint();
     }
@@ -144,6 +143,22 @@ public class SolutionRepositoryService extends ServletBase {
     }
   }
 
+  /**
+   * Used for logging exceptions that happen that aren't necessarily exceptional. It's common
+   * that IOExceptions will happen as people begin their transactions and then
+   * abandon their web page by closing their browser or current tab. Logging each one fills
+   * up the server log needlessly. Setting to debug level allows us visibility without compromising
+   * a production deployment.
+   * @param outputStream
+   * @param ex
+   * @throws IOException
+   */
+  private void debugErrorHandler(final OutputStream outputStream, final Exception ex) throws IOException {
+    String msg = Messages.getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
+    debug(msg, ex);
+    WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
+  }
+  
   private void commonErrorHandler(final OutputStream outputStream, final Exception ex) throws IOException {
     String msg = Messages.getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
     error(msg, ex);

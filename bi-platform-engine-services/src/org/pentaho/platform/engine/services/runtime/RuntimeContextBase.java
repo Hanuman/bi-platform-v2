@@ -33,8 +33,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -54,14 +52,12 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.pentaho.actionsequence.dom.actions.ActionFactory;
-import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionCompleteListener;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IComponent;
-import org.pentaho.platform.api.engine.IConditionalExecution;
 import org.pentaho.platform.api.engine.IContentOutputHandler;
 import org.pentaho.platform.api.engine.ICreateFeedbackParameterCallback;
 import org.pentaho.platform.api.engine.IExecutionListener;
@@ -84,18 +80,16 @@ import org.pentaho.platform.api.repository.IRuntimeElement;
 import org.pentaho.platform.api.repository.IRuntimeRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.PentahoMessenger;
 import org.pentaho.platform.engine.services.SolutionURIResolver;
-import org.pentaho.platform.engine.services.actionsequence.ActionParameter;
 import org.pentaho.platform.engine.services.actionsequence.ActionParameterSource;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceParameterMgr;
 import org.pentaho.platform.engine.services.messages.Messages;
-import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
-import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XForm;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -1485,7 +1479,12 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
 
   public Document getResourceAsDocument(final IActionSequenceResource actionResource) throws IOException {
     if (isEmbeddedResource(actionResource)) {
-      return (XmlDom4JHelper.getDocFromString(getEmbeddedResource(actionResource), null));
+      try {
+        return XmlDom4JHelper.getDocFromString(getEmbeddedResource(actionResource), null);  
+      } catch(XmlParseException e) {
+        error(Messages.getString("RuntimeContext.ERROR_UNABLE_TO_GET_RESOURCE_AS_DOCUMENT"), e); //$NON-NLS-1$
+        return null;
+      }
     }
     return PentahoSystem.getSolutionRepository(session).getResourceAsDocument(actionResource);
   }

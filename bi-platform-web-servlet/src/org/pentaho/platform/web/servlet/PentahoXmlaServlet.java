@@ -33,6 +33,7 @@ import org.dom4j.Node;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
@@ -79,7 +80,13 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
   protected String readDataSourcesContent(final URL dataSourcesConfigUrl) throws IOException {
     String original = Util.readURL(dataSourcesConfigUrl, Util.toMap(System.getProperties()));
     EntityResolver loader = new PentahoEntityResolver();
-    Document originalDocument = XmlDom4JHelper.getDocFromString(original, loader);
+    Document originalDocument = null;
+    try {
+      originalDocument = XmlDom4JHelper.getDocFromString(original, loader);
+    } catch(XmlParseException e) {
+      PentahoXmlaServlet.logger.error(Messages.getString("PentahoXmlaServlet.ERROR_0004_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      return null;
+    }
     if (PentahoXmlaServlet.logger.isDebugEnabled()) {
       PentahoXmlaServlet.logger
           .debug(Messages.getString("PentahoXmlaServlet.DEBUG_ORIG_DOC", originalDocument.asXML())); //$NON-NLS-1$

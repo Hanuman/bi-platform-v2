@@ -73,6 +73,7 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
@@ -98,7 +99,6 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
@@ -201,7 +201,14 @@ public class AdhocWebService extends ServletBase {
       HashMap parameters = new HashMap();
 
       if (!StringUtils.isEmpty(content)) {
-        Document doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );
+        Document doc = null;
+        try {
+          doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
+        } catch (XmlParseException e) {
+          String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+          error(msg, e);
+          WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+        }
         List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$
         for (int i = 0; i < parameterNodes.size(); i++) {
           Node parameterNode = (Node) parameterNodes.get(i);
@@ -420,7 +427,15 @@ public class AdhocWebService extends ServletBase {
       throw new AdhocWebServiceException( msg );
     }
     
-    Document reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver() );
+    Document reportSpecDoc = null;
+    try {
+      reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver() );  
+    } catch (XmlParseException e) {
+      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      error(msg, e);
+      throw new AdhocWebServiceException(msg, e);
+    }
+    
     Element mqlNode = (Element) reportSpecDoc.selectSingleNode("/report-spec/query/mql"); //$NON-NLS-1$
     mqlNode.detach();
     
@@ -720,7 +735,15 @@ public class AdhocWebService extends ServletBase {
     ByteArrayOutputStream jfreeOutputStream = new ByteArrayOutputStream();
     ReportGenerationUtility.createJFreeReportXMLAsStream( reportSpec, reportXMLEncoding, (OutputStream)jfreeOutputStream );
     String jfreeXml = jfreeOutputStream.toString( reportXMLEncoding );
-    Document generatedJFreeDoc = XmlDom4JHelper.getDocFromString(jfreeXml, new PentahoEntityResolver());
+    Document generatedJFreeDoc = null;
+    try {
+      generatedJFreeDoc = XmlDom4JHelper.getDocFromString(jfreeXml, new PentahoEntityResolver());  
+    } catch (XmlParseException e) {
+      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      error(msg, e);
+      throw new AdhocWebServiceException(msg, e);
+    }
+
 
     /*
      * Merge template's /report/items element's attributes into the
@@ -1107,7 +1130,7 @@ public class AdhocWebService extends ServletBase {
   // be refactored in a similar way
   public ByteArrayOutputStream createMQLReportActionSequenceAsStream( final String reportName, final String reportDescription, final Element mqlNode,
       final String[] outputTypeList, final String xactionName, final String jfreeReportXML, final String jfreeReportFilename,
-      final String loggingLevel, final IPentahoSession userSession) throws IOException {
+      final String loggingLevel, final IPentahoSession userSession) throws IOException , AdhocWebServiceException{
     
     boolean bIsMultipleOutputType = outputTypeList.length > 1;
     ByteArrayOutputStream xactionOutputStream = new ByteArrayOutputStream();    
@@ -1188,8 +1211,16 @@ public class AdhocWebService extends ServletBase {
     if ( null == jfreeReportFilename ) {
       // likely they are running a preview
       solutionFileElement = reportDefinitionElement.addElement("xml"); //$NON-NLS-1$
-      Element locationElement = solutionFileElement.addElement("location"); //$NON-NLS-1$
-      Document jfreeReportDoc = XmlDom4JHelper.getDocFromString(jfreeReportXML, new PentahoEntityResolver());
+      Element locationElement = solutionFileElement.addElement("location"); //$NON-NLS-1$ 
+      Document jfreeReportDoc = null;
+      try {
+        jfreeReportDoc = XmlDom4JHelper.getDocFromString(jfreeReportXML, new PentahoEntityResolver());  
+      } catch (XmlParseException e) {
+        String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+        error(msg, e);
+        throw new AdhocWebServiceException(msg, e);
+      }
+
       Node reportNode = jfreeReportDoc.selectSingleNode("/report"); //$NON-NLS-1$
       locationElement.add(reportNode);
     } else {
@@ -1417,7 +1448,15 @@ public class AdhocWebService extends ServletBase {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
     String baseUrl = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
 
-    Document reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver());
+    Document reportSpecDoc = null;
+    try {
+      reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver());  
+    } catch (XmlParseException e) {
+      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      error(msg, e);
+      throw new AdhocWebServiceException(msg, e);
+    }
+
     if ( null == reportSpecDoc )
     {
       String msg = Messages.getString("AdhocWebService.ERROR_0009_SAVE_FAILED") //$NON-NLS-1$

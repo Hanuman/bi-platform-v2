@@ -1,8 +1,8 @@
 package org.pentaho.platform.plugin.action.builtin;
 
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.lang.reflect.GenericSignatureFormatError;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +18,6 @@ import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 
 public class PojoComponent extends ComponentBase {

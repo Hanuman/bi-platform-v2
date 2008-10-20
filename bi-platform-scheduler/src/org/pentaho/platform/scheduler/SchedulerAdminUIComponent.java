@@ -24,13 +24,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.ComponentException;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.WebServiceUtil;
@@ -214,7 +215,13 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       logger.error( e.getMessage() );
       String strXml = WebServiceUtil.getErrorXml( e.getMessage() );
       Document document;
-      document = XmlDom4JHelper.getDocFromString( strXml, null );
+      try {
+        document = XmlDom4JHelper.getDocFromString( strXml, null );        
+      } catch(XmlParseException ee) {
+        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), ee); //$NON-NLS-1$
+        return null;
+      }
+
       return document;
     }
   }
@@ -243,11 +250,29 @@ public class SchedulerAdminUIComponent extends XmlComponent {
   private Document doCreateJob() {
 
     IBackgroundExecution helper = PentahoSystem.get(IBackgroundExecution.class, getSession());
-    String strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
+    String strReturn = null;
+    try {
+    strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
-
+    } catch(BackgroundExecutionException bex) {
+      String errorXml = WebServiceUtil.getErrorXml(bex.getLocalizedMessage());
+      Document d = null;
+      try {
+        d = XmlDom4JHelper.getDocFromString(errorXml, null);  
+      } catch(XmlParseException e) {
+        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+        return null;        
+      }
+      return d;
+    }
     String strXml = WebServiceUtil.getStatusXml("ok");
-    Document d = XmlDom4JHelper.getDocFromString(strXml, null);
+    Document d = null;
+    try {
+      d = XmlDom4JHelper.getDocFromString(strXml, null);  
+    } catch(XmlParseException e) {
+      error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      return null;        
+    }
     return d;
   }
 
@@ -271,13 +296,34 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     sched.unscheduleJob( jobName, groupName );
     sched.scheduleJob(jd, t);
     */
-
     IBackgroundExecution helper = PentahoSystem.get(IBackgroundExecution.class, getSession());
-    String strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
+    String strReturn = null;
+    try {
+    	strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
+    } catch(BackgroundExecutionException bex) {
+      String errorXml = WebServiceUtil.getErrorXml(bex.getLocalizedMessage());
+      Document d = null;
+      try {
+        d = XmlDom4JHelper.getDocFromString(errorXml, null);  
+      } catch(Exception e) {
+        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+        return null;        
+      }
+
+      
+      return d;
+    }
 
     String strXml = WebServiceUtil.getStatusXml("ok");
-    Document d = XmlDom4JHelper.getDocFromString(strXml, null);
+    Document d = null;
+    try {
+      d = XmlDom4JHelper.getDocFromString(strXml, null);  
+    } catch(XmlParseException e) {
+      error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      return null;        
+    }
+
     return d;
   }
 

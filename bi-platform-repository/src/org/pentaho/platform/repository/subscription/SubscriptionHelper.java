@@ -49,6 +49,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscribeContent;
 import org.pentaho.platform.api.repository.ISubscription;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
@@ -456,7 +457,7 @@ public class SubscriptionHelper {
   }
 
   public static String createSubscriptionArchive(final String subscriptionName, final IPentahoSession session,
-      final SimpleUrlFactory urlFactory, final IParameterProvider sessionParameters) {
+      final SimpleUrlFactory urlFactory, final IParameterProvider sessionParameters) throws BackgroundExecutionException {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {

@@ -8,6 +8,7 @@ import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.IUserRoleListService;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
@@ -137,7 +138,13 @@ public class AdhocWebServiceTest extends BaseTestCase {
   private Node getNodeFromResponseDoc( MockHttpServletResponse response, String xpath )
   {
     String responseContent = response.getOutputStreamContent();
-    Document doc = XmlDom4JHelper.getDocFromString( responseContent, null ); 
+    Document doc = null;
+    try {
+      doc = XmlDom4JHelper.getDocFromString( responseContent, null );
+    } catch(XmlParseException e) {
+      assertFalse( e.getMessage(), true );
+      return null;
+    }
     Node nd = doc.selectSingleNode( xpath );
     return nd;
   }

@@ -7,7 +7,6 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceParameterMgr;
-import org.pentaho.platform.plugin.action.sql.SQLLookupRule;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 
 public class SQLDdlComponent extends SQLLookupRule {

@@ -42,6 +42,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.ui.INavigationComponent;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
@@ -701,8 +702,14 @@ public class HttpWebService extends ServletBase {
   }
 
   protected Map getParameterMapFromPayload(final String xml) {
-    Document doc = XmlDom4JHelper.getDocFromString(xml, new PentahoEntityResolver() );
     Map parameters = new HashMap();
+    Document doc = null;
+    try {
+      doc = XmlDom4JHelper.getDocFromString(xml, new PentahoEntityResolver() );
+    } catch(XmlParseException e) {
+      error(Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), e); //$NON-NLS-1$
+      return parameters;
+    }
     List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$
     for (int i = 0; i < parameterNodes.size(); i++) {
       Node parameterNode = (Node) parameterNodes.get(i);

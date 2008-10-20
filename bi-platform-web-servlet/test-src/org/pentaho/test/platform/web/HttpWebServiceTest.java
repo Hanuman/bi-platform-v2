@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.dom4j.Document;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
@@ -85,7 +86,13 @@ public class HttpWebServiceTest extends BaseTestCase {
 	}
 
 	protected boolean isSoapValid(final String outputStreamContent) {
-		Document doc = XmlDom4JHelper.getDocFromString(outputStreamContent, null);
+    Document doc = null;
+    try {
+      doc = XmlDom4JHelper.getDocFromString(outputStreamContent, null);
+    } catch(XmlParseException e) {
+      assertFalse( e.getMessage(), true );
+      return false;
+    }		
 		if (null != doc) {
 			return null != doc.selectSingleNode("/SOAP-ENV:Envelope") //$NON-NLS-1$
 					&& null != doc
@@ -96,7 +103,14 @@ public class HttpWebServiceTest extends BaseTestCase {
 	}
 
 	protected boolean isBodyValid(final String outputStreamContent) {
-		Document doc = XmlDom4JHelper.getDocFromString(outputStreamContent, null);
+    Document doc = null;
+    try {
+      doc = XmlDom4JHelper.getDocFromString(outputStreamContent, null);
+    } catch(Exception e) {
+      assertFalse( e.getMessage(), true );
+      return false;
+    }   
+
 		if (null != doc) {
 			return null != doc.selectSingleNode("//content/users") //$NON-NLS-1$
 					&& null != doc.selectSingleNode("//content/roles") //$NON-NLS-1$

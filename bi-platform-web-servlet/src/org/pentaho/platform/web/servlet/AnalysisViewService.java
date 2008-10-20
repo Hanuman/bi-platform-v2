@@ -46,6 +46,7 @@ import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.engine.PentahoSystemException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -110,7 +111,15 @@ public class AnalysisViewService extends ServletBase {
       HashMap parameters = new HashMap();
 
       if (!StringUtils.isEmpty(content)) {
-        Document doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );
+        Document doc = null;
+        try {
+          doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
+        } catch (XmlParseException e) {
+          String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+          error(msg, e);
+          WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+        } 
+        
         List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$
         for (int i = 0; i < parameterNodes.size(); i++) {
           Node parameterNode = (Node) parameterNodes.get(i);

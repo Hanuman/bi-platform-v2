@@ -40,6 +40,7 @@ import org.jfree.data.general.Dataset;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -156,7 +157,7 @@ public class ChartComponent extends ComponentBase {
     int height = -1;
     int width = -1;
     String title = "";//$NON-NLS-1$ 
-
+    Node chartDocument = null;
     IPentahoResultSet data = (IPentahoResultSet) getInputValue(ChartComponent.CHART_DATA_PROP);
     String urlTemplate = (String) getInputValue(ChartComponent.URL_TEMPLATE);
 
@@ -176,8 +177,13 @@ public class ChartComponent extends ComponentBase {
 
     // Realize chart attributes as an XML document
     if (chartAttributeString != null) {
-
-      Node chartDocument = XmlDom4JHelper.getDocFromString(chartAttributeString, new PentahoEntityResolver());
+      try {
+        chartDocument = XmlDom4JHelper.getDocFromString(chartAttributeString, new PentahoEntityResolver());  
+      } catch(XmlParseException e) {
+        getLogger().error(Messages.getString("ChartComponent.ERROR_0005_CANT_DOCUMENT_FROM_STRING"), e);//$NON-NLS-1$
+        return false;
+      }
+      
       chartAttributes = chartDocument.selectSingleNode(ChartComponent.CHART_ATTRIBUTES_PROP);
 
       // This line of code handles a discrepancy between the schema of a chart definition

@@ -21,10 +21,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import org.pentaho.di.core.config.KettleConfig;
-import org.pentaho.di.core.exception.KettleConfigException;
-import org.pentaho.di.core.plugins.PluginLoader;
-import org.pentaho.di.core.plugins.PluginLocation;
 import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.job.JobEntryLoader;
 import org.pentaho.di.trans.StepLoader;

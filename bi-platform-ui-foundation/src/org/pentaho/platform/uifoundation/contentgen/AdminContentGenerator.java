@@ -14,9 +14,9 @@ import org.pentaho.platform.api.ui.INavigationComponent;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.SolutionURIResolver;
+import org.pentaho.platform.uifoundation.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.util.xml.XmlHelper;
-import org.pentaho.platform.uifoundation.messages.Messages;
 
 public class AdminContentGenerator extends BaseXmlContentGenerator {
 

@@ -39,6 +39,7 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscription;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.scheduler.IJobDetail;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
@@ -139,7 +140,13 @@ public class UserFilesComponent extends XmlComponent {
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, session);
     List<IJobDetail> jobsList = null;
     if (backgroundExecution != null) {
-      jobsList = backgroundExecution.getScheduledAndExecutingBackgroundJobs(session);
+      try {
+        jobsList = backgroundExecution.getScheduledAndExecutingBackgroundJobs(session);  
+      } catch(BackgroundExecutionException bex) {
+        jobsList = new ArrayList<IJobDetail>();
+        Element errorRoot = root.addElement("error"); //$NON-NLS-1$
+        errorRoot.addElement("error-message").setText(Messages.getErrorString("UI.USER_ERROR_0003_NO_BACKGROUND_EXECUTION")); //$NON-NLS-1$//$NON-NLS-2$ 
+      }
     } else {
       jobsList = new ArrayList<IJobDetail>();
       Element errorRoot = root.addElement("error"); //$NON-NLS-1$

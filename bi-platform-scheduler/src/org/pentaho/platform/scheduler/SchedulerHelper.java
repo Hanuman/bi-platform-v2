@@ -1,6 +1,5 @@
 package org.pentaho.platform.scheduler;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +8,6 @@ import java.util.List;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.scheduler.IJobSchedule;
 import org.pentaho.platform.engine.security.SecurityHelper;
-import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;

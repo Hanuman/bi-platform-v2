@@ -82,6 +82,7 @@ import org.pentaho.platform.api.repository.IRuntimeElement;
 import org.pentaho.platform.api.repository.IRuntimeRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.output.MultiContentItem;
@@ -1741,7 +1742,12 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
   public Document getResourceAsDocument(final IActionSequenceResource actionResource) throws IOException {
     if (isEmbeddedResource(actionResource)) {
-      return (XmlDom4JHelper.getDocFromString(getEmbeddedResource(actionResource), null));
+      try {
+        return XmlDom4JHelper.getDocFromString(getEmbeddedResource(actionResource), null);  
+      } catch(XmlParseException e) {
+        error(Messages.getString("RuntimeContext.ERROR_UNABLE_TO_GET_RESOURCE_AS_DOCUMENT"), e); //$NON-NLS-1$
+        return null;
+      }
     }
     return PentahoSystem.getSolutionRepository(session).getResourceAsDocument(actionResource);
   }

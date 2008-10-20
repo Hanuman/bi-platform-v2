@@ -49,6 +49,9 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
+import org.pentaho.platform.api.util.XmlParseException;
+import org.pentaho.platform.util.messages.Messages;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.xml.sax.EntityResolver;
 
@@ -87,8 +90,9 @@ public class XmlDom4JHelper {
    * @return <code>Document</code> initialized with the xml in
    *         <code>strXml</code>.
    * @throws DocumentException
+   * @throws UnsupportedEncodingException
    */
-  public static Document getDocFromString(final String strXml, final String encoding, final EntityResolver resolver) {
+  public static Document getDocFromString(final String strXml, final String encoding, final EntityResolver resolver) throws XmlParseException{
     byte[] bytes = null;
     Document document = null;
     InputStream inStrm = null;
@@ -102,11 +106,9 @@ public class XmlDom4JHelper {
       inStrm = new ByteArrayInputStream(bytes);
       document = XmlDom4JHelper.getDocFromStream(inStrm, encoding, resolver);
     } catch (DocumentException e) {
-      // TODO throw these
-      e.printStackTrace();
+      throw  new XmlParseException(Messages.getString("XmlDom4JHelper.UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e);
     } catch (UnsupportedEncodingException e) {
-      // TODO throw these
-      e.printStackTrace();
+      throw  new XmlParseException(Messages.getString("XmlDom4JHelper.UNSUPPORTED_ENCODING"), e);
     } finally {
       XmlDom4JHelper.closeInputStream(inStrm);
     }
@@ -126,7 +128,7 @@ public class XmlDom4JHelper {
    *         <code>strXml</code>.
    * @throws DocumentException
    */
-  public static Document getDocFromString(final String strXml, final EntityResolver resolver) {
+  public static Document getDocFromString(final String strXml, final EntityResolver resolver) throws XmlParseException{
     String encoding = XmlHelper.getEncoding(strXml);
     return XmlDom4JHelper.getDocFromString(strXml, encoding, resolver);
   }

@@ -58,6 +58,7 @@ import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SimpleSession;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -363,8 +364,13 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    XMLOutput pxml = new XMLOutput(sw);
 	    pxml.print("<?xml version=\"1.0\"?>\n"); //$NON-NLS-1$
 	    dataSources.displayXML(pxml, 0);
+	    Document doc = null;
+	    try {
+	      doc = XmlDom4JHelper.getDocFromString(sw.toString(), new PentahoEntityResolver() );  
+	    } catch(XmlParseException e) {
+	      throw new MondrianCatalogServiceException(e);
+	    }
 	    
-	    Document doc = XmlDom4JHelper.getDocFromString(sw.toString(), new PentahoEntityResolver() );
 	    
 	    // pretty print
 	    try {

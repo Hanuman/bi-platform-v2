@@ -29,6 +29,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.scheduler.IJobDetail;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -93,7 +94,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
    *  end-date
    * 
    */
-  public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) {
+  public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) throws  BackgroundExecutionException{
     try {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
       String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
@@ -165,15 +166,10 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
-      // maybe would have been better to wrap in a BackgroundExecutionException and rethrow?
-      return ex.getLocalizedMessage();
+      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.UNABLE_TO_SUBMIT_USER_JOB"), ex);
     } catch (ParseException ex) {
-      // maybe would have been better to wrap in a BackgroundExecutionException and rethrow?
-      return "Invalid date format. " + ex.getLocalizedMessage();
+      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.INVALID_DATE_FORMAT"), ex);
     }
-    // TODO sbarkdull, would be better if the previous 2 exceptions 
-    // where caught and wrapped in a org.pentaho.platform.scheduler.SchedulerException
-    // and thrown. currently client of code has NO WAY of knowing if the method failed/succeeded
   }
   
   public void trackBackgroundExecution(IPentahoSession userSession, String GUID) {
@@ -192,7 +188,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     return null;
   }
 
-  public List<IJobDetail> getScheduledAndExecutingBackgroundJobs(IPentahoSession userSession) {
+  public List<IJobDetail> getScheduledAndExecutingBackgroundJobs(IPentahoSession userSession) throws BackgroundExecutionException{
     try {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
       String userName = getUserName( userSession );
@@ -206,12 +202,9 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       }
       return rtn;
     } catch (SchedulerException ex) {
-      // TODO sbarkdull, in order not to change the semantics of the method, i simply log this
-      // instead of doing a lame printStackTrace(). However the caller has no way of knowing if the list
-      // was actually empty, or if this method failed.
       logger.error( Messages.getString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER"), ex ); //$NON-NLS-1$
+      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.UNABLE_TO_SUBMIT_USER_JOB"), ex);
     }
-    return new ArrayList<IJobDetail>();
   }
 
   public void removeBackgroundExecutedContentForID(String contentGUID, IPentahoSession userSession) {

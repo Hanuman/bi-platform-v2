@@ -30,7 +30,6 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.HttpOutputHandler;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
-import org.pentaho.platform.web.servlet.ServletBase;
 
 public class GenericServlet extends ServletBase {
 

@@ -40,6 +40,7 @@ import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.engine.IUITemplater;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -90,7 +91,6 @@ public class ViewAction extends ServletBase {
       IBackgroundExecution backgroundExecutionHandler = PentahoSystem.get(IBackgroundExecution.class, userSession);
       if (backgroundExecutionHandler != null) {
         HttpRequestParameterProvider parameterProvider = new HttpRequestParameterProvider(request);
-        String backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);
         String intro = ""; //$NON-NLS-1$
         String footer = ""; //$NON-NLS-1$
         IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession);
@@ -107,6 +107,16 @@ public class ViewAction extends ServletBase {
         }
 
         response.getWriter().print(intro);
+        String backgroundResponse = null;
+        try  {
+          backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);  
+        } catch(BackgroundExecutionException bex) {
+          backgroundResponse = bex.getLocalizedMessage();
+          response.getWriter().print(backgroundResponse);
+          response.getWriter().print(footer);
+          error(Messages.getErrorString("ViewAction.ERROR_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION"), bex); //$NON-NLS-1$
+          return false;          
+        }
         response.getWriter().print(backgroundResponse);
         response.getWriter().print(footer);
         return true;
@@ -310,11 +320,21 @@ public class ViewAction extends ServletBase {
     } else if ("archive".equals(subscribeAction)) { //$NON-NLS-1$
       String name = requestParameters.getStringParameter("subscribe-name", null); //$NON-NLS-1$
       HttpSessionParameterProvider sessionParameters = new HttpSessionParameterProvider(userSession);
-      String resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);
       HttpOutputHandler outputHandler = new HttpOutputHandler(response, outputStream, true);
       IContentItem contentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT,
           null, null, "text/html"); //$NON-NLS-1$
       outputStream = contentItem.getOutputStream(name);
+      String resp = null;
+      try {
+        resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);  
+      } catch(BackgroundExecutionException bex) {
+        resp = bex.getLocalizedMessage();
+        error(Messages.getErrorString("ViewAction.ViewAction.ERROR_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
+        outputStream.write(resp.getBytes());
+        contentItem.closeOutputStream();
+        return false; 
+      }
+      
       outputStream.write(resp.getBytes());
       contentItem.closeOutputStream();
       return true;

@@ -31,6 +31,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.uifoundation.component.FilterDefinition;
@@ -112,6 +113,7 @@ public class FilterPanel {
   public Document getXForm(final String actionUrl) {
 
     StringBuffer content = new StringBuffer();
+    Document document = null;
 
     // String strUuid = UUID.randomUUID().toString().replaceAll( "-", "_");
     String strUuid = UUIDUtil.getUUIDAsString().replaceAll("-", "_"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,7 +165,12 @@ public class FilterPanel {
     if (FilterPanel.debug) {
       logger.debug(content.toString());
     }
-    return XmlDom4JHelper.getDocFromString(content.toString(), new PentahoEntityResolver());
+    try {
+      document = XmlDom4JHelper.getDocFromString(content.toString(), new PentahoEntityResolver());
+    } catch(XmlParseException e) {
+      logger.error(Messages.getErrorString("FilterPanel.ERROR_0004_COULD_NOT_CREATE_CONTENT"), e); //$NON-NLS-1$
+    }
+    return document;
   }
 
 }
