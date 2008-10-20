@@ -248,8 +248,8 @@ A:hover {
 <script type="text/javascript">
 Button = function(label, container){
 
-var btn = document.createElement("input");
-btn.setAttribute("type","button");
+		var btn = document.createElement("input");
+		btn.setAttribute("type","button");
 
 
     table = document.createElement("table");
@@ -291,22 +291,30 @@ btn.setAttribute("type","button");
     table.appendChild(tbody);
 
     table.onmouseover=function(){
+      window.selectedButton = this;
 	    left_td.className="btn_left_hover";
 	    right_td.className="btn_right_hover";
 	    center_td.className="btn_center_hover";
     };
-    table.onmouseout=function(){
-	    left_td.className="btn_left";
-	    right_td.className="btn_right";
-	    center_td.className="btn_center";
+    this.reset = function(){
+      left_td.className="btn_left";
+      right_td.className="btn_right";
+      center_td.className="btn_center";
     }
+    
+    table.onmouseout = this.reset;
+    
     this.onClick=function(onClick){
       if(window.parent && window.parent.mantle_initialized){
         table.onclick = function(){window.parent[onClick]()};
       }
     };
-    
-    
+}
+
+window.onresize = function(){
+  if(window.selectedButton){
+     window.selectedButton.onmouseout();
+  }
 }
 
 function loader(){
