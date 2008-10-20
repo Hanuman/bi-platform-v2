@@ -268,10 +268,12 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
           menuBar.addSeparator();
           menuBar.addItem(new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
         }
-        if (tabPanel.getTabBar().getTabCount() > 0) {
+        if (tabPanel.getTabBar().getTabCount() > 1) {
           menuBar.addItem(new MenuItem(Messages.getInstance().reloadAllTabs(), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, this)));
         } else {
-          menuBar.addItem(new MenuItem(Messages.getInstance().reloadAllTabs(), (Command)null));
+          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), (Command)null);
+          menuBar.addItem(reloadAllTabsMenuItem);
+          reloadAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         }
         menuBar.addSeparator();
         if (tabContent instanceof IReloadableTabPanel) {
@@ -280,12 +282,16 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
           menuBar.addSeparator();
         }
         menuBar.addItem(new MenuItem(Messages.getInstance().closeTab(), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
-        if (tabPanel.getTabBar().getTabCount() > 0) {
+        if (tabPanel.getTabBar().getTabCount() > 1) {
           menuBar.addItem(new MenuItem(Messages.getInstance().closeOtherTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)));
           menuBar.addItem(new MenuItem(Messages.getInstance().closeAllTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)));
         } else {
-          menuBar.addItem(new MenuItem(Messages.getInstance().closeOtherTabs(), (Command) null));
-          menuBar.addItem(new MenuItem(Messages.getInstance().closeAllTabs(), (Command) null));
+          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), (Command)null);
+          closeOtherTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
+          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), (Command)null);
+          closeAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
+          menuBar.addItem(closeOtherTabsMenuItem);
+          menuBar.addItem(closeAllTabsMenuItem);
         }
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
