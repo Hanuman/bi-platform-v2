@@ -398,5 +398,21 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   public boolean exists() {
     return true;
   }
+  
+  /**
+   * Chains up to find the access controls that are in force on this object.
+   * Could end up chaining all the way to the root.
+   */
+  public List getEffectiveAccessControls() {
+    List acls = this.getAccessControls();
+    if (acls.size() == 0) {
+      RepositoryFile chain = this;
+      while (!chain.isRoot() && (acls.size() == 0)) {
+        chain = (RepositoryFile) chain.retrieveParent();
+        acls = chain.getAccessControls();
+      }
+    }
+    return acls;
+  }
 
 }

@@ -17,9 +17,12 @@
  */
 package org.pentaho.platform.engine.security.acls.voter;
 
+import java.util.List;
+
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.acl.AclEntry;
+import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
@@ -27,7 +30,7 @@ import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 
 public class PentahoAllowAllAclVoter extends AbstractPentahoAclVoter {
 
-  public boolean hasAccess(final IPentahoSession session, final Object domainInstance, final int mask) {
+  public boolean hasAccess(final IPentahoSession session, final IAclHolder holder, final int mask) {
     // Return true indicating that there are no access prohibitions.
     return true;
   }
@@ -37,13 +40,16 @@ public class PentahoAllowAllAclVoter extends AbstractPentahoAclVoter {
     return SecurityHelper.getAuthentication(session, true);
   }
 
-  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final Object domainInstance) {
+  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final IAclHolder holder) {
     // Returns all the ACLs on the object which indicates that the
     // user has all the necessary acls to access the object.
-    return getEffectiveAccessControls(domainInstance);
+    List allAcls = holder.getEffectiveAccessControls();
+    AclEntry[] acls = new AclEntry[allAcls.size()];
+    acls = (AclEntry[]) allAcls.toArray(acls);
+    return acls;
   }
 
-  public IPentahoAclEntry getEffectiveAcl(final IPentahoSession session, final Object domainInstance) {
+  public IPentahoAclEntry getEffectiveAcl(final IPentahoSession session, final IAclHolder holder) {
     IPentahoAclEntry rtn = new PentahoAclEntry();
     rtn.setMask(IPentahoAclEntry.PERM_FULL_CONTROL);
     return rtn;

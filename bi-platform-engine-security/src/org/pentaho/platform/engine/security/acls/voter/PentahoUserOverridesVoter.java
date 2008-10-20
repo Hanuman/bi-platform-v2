@@ -21,6 +21,7 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.acl.AclEntry;
 import org.acegisecurity.acl.basic.BasicAclEntry;
 import org.acegisecurity.userdetails.UserDetails;
+import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
@@ -71,13 +72,13 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 public class PentahoUserOverridesVoter extends PentahoBasicAclVoter {
 
   @Override
-  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final Object domainInstance) {
+  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final IAclHolder holder) {
     Authentication auth = getAuthentication(session);
     // User is un-authenticated. Return no access controls.
     if (auth == null) {
       return null;
     }
-    AclEntry[] objectAcls = super.getEffectiveAcls(session, domainInstance);
+    AclEntry[] objectAcls = super.getEffectiveAcls(session, holder);
     if (objectAcls == null) {
       return null;
     }

@@ -26,11 +26,11 @@ public interface IAclVoter {
    * based on the list of effective authorities from the holder.
    * 
    * @param auth
-   * @param domainInstance
+   * @param holder
    * @param mask
    * @return true if the user has the requested access.
    */
-  public boolean hasAccess(IPentahoSession session, Object domainInstance, int mask);
+  public boolean hasAccess(IPentahoSession session, IAclHolder holder, int mask);
 
   /**
    * Returns an array of the authorities from the IAclHolder that apply to the
@@ -39,11 +39,11 @@ public interface IAclVoter {
    * mlowery In practice this method does not do the same thing as EffectiveAclsResolver.
    * 
    * @param auth
-   * @param domainInstance
+   * @param holder
    * @return The array of authorities from the IAclHolder that apply to the
    *         person in question
    */
-  public AclEntry[] getEffectiveAcls(IPentahoSession session, Object domainInstance);
+  public AclEntry[] getEffectiveAcls(IPentahoSession session, IAclHolder holder);
 
   /**
    * Determines whether the user is a super-manager of Pentaho. Uses the
@@ -92,9 +92,9 @@ public interface IAclVoter {
    * nothing (mask of 0).
    * 
    * @param session
-   * @param domainInstance
+   * @param holder
    * @return PentahoAclEntry holding the access to the object.
    */
-  public IPentahoAclEntry getEffectiveAcl(IPentahoSession session, Object domainInstance);
+  public IPentahoAclEntry getEffectiveAcl(IPentahoSession session, IAclHolder holder);
 
 }

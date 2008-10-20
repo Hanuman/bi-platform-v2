@@ -77,22 +77,4 @@ public abstract class AbstractPentahoAclVoter implements IAclVoter, IPentahoInit
     }
   }
 
-  protected AclEntry[] getEffectiveAccessControls(final Object domainInstance) {
-    List acls = ((IAclHolder) domainInstance).getAccessControls();
-    if (domainInstance instanceof IAclHolder) {
-      if (acls.size() == 0) {
-        ISolutionFile chain = (ISolutionFile) domainInstance;
-        while (!chain.isRoot() && (acls.size() == 0)) {
-          chain = (ISolutionFile) chain.retrieveParent();
-          if (chain instanceof IAclSolutionFile) {
-            acls = ((IAclSolutionFile)chain).getAccessControls();
-          }
-        }
-      }
-    } else {
-      // bail
-      throw new RuntimeException("cannot get effective access controls for instances of type " + domainInstance.getClass());
-    }
-    return (AclEntry[]) acls.toArray(new AclEntry[0]);
-  }
 }

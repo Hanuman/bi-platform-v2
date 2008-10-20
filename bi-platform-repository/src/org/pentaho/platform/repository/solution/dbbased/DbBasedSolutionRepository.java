@@ -1111,7 +1111,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if (solutionFile instanceof IAclHolder) {
       IPentahoSession sess = getSession();
       IAclVoter voter = PentahoSystem.getAclVoter(sess);
-      IPentahoAclEntry access = voter.getEffectiveAcl(sess, solutionFile);
+      IPentahoAclEntry access = voter.getEffectiveAcl(sess, (IAclHolder) solutionFile);
       if (access != null) {
         setXMLPermissionAttributes(access, childNode);
       }

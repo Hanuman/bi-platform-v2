@@ -17,10 +17,13 @@
  */
 package org.pentaho.platform.engine.security.acls.voter;
 
+import java.util.List;
+
 import org.acegisecurity.Authentication;
 import org.acegisecurity.acl.AclEntry;
 import org.acegisecurity.acl.basic.BasicAclEntry;
 import org.acegisecurity.acl.basic.GrantedAuthorityEffectiveAclsResolver;
+import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -81,13 +84,13 @@ public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAc
     return SecurityHelper.getAuthentication(session, false);
   }
 
-  public boolean hasAccess(final IPentahoSession session, final Object domainInstance, final int mask) {
+  public boolean hasAccess(final IPentahoSession session, final IAclHolder holder, final int mask) {
     Authentication auth = getAuthentication(session);
     // If we're not authenticated, default to no access and return.
     if (auth == null) {
       return false;
     }
-    AclEntry[] effectiveAcls = getEffectiveAcls(session, domainInstance);
+    AclEntry[] effectiveAcls = getEffectiveAcls(session, holder);
     if ((effectiveAcls == null) || (effectiveAcls.length == 0)) {
       return false;
     }
@@ -100,20 +103,22 @@ public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAc
     return false;
   }
 
-  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final Object domainInstance) {
+  public AclEntry[] getEffectiveAcls(final IPentahoSession session, final IAclHolder holder) {
     Authentication auth = getAuthentication(session);
     if (auth == null) {
       return null; // No user, so no ACLs.
     }
-    AclEntry[] acls = getEffectiveAccessControls(domainInstance);
+    List allAcls = holder.getEffectiveAccessControls();
+    AclEntry[] acls = new AclEntry[allAcls.size()];
+    acls = (AclEntry[]) allAcls.toArray(acls);
     GrantedAuthorityEffectiveAclsResolver resolver = new GrantedAuthorityEffectiveAclsResolver();
     AclEntry[] resolvedAcls = resolver.resolveEffectiveAcls(acls, auth);
     return resolvedAcls;
   }
 
-  public PentahoAclEntry getEffectiveAcl(final IPentahoSession session, final Object domainInstance) {
+  public PentahoAclEntry getEffectiveAcl(final IPentahoSession session, final IAclHolder holder) {
     // First, get all the ACLs on the object that apply to the user.
-    AclEntry[] effectiveAcls = getEffectiveAcls(session, domainInstance);
+    AclEntry[] effectiveAcls = getEffectiveAcls(session, holder);
     PentahoAclEntry entry = new PentahoAclEntry();
     entry.setMask(IPentahoAclEntry.PERM_NOTHING);
     // By default, we'll OR together all the acls to create the whole mask

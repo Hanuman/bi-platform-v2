@@ -58,4 +58,6 @@ public interface IAclHolder {
    * @param acls
    */
   public void resetAccessControls(List acls);
+  
+  public List getEffectiveAccessControls();
 }
