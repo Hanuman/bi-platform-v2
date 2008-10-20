@@ -136,7 +136,7 @@ public class XmlHelperTest extends TestCase {
       Assert.assertTrue("Unexpected XML parsing success", doc == null);
     } catch (Exception e) {
       e.printStackTrace();
-      Assert.assertTrue("Exception thrown " + e.getMessage(), false); //$NON-NLS-1$
+      Assert.assertTrue("Exception thrown " + e.getMessage(), true); //$NON-NLS-1$
     }
   }
 
