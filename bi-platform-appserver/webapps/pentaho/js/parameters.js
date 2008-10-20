@@ -202,7 +202,12 @@ function getParameters( id ) {
 	} else if (ckRtn2 == 2) {
 		params += '&' + lastName + '=';
 	}
-	return params;
+	// Fix BISERVER-381
+    if (params != null) {
+      return params.substring(1);
+    } else {
+      return params;
+    }
 }
 
 
