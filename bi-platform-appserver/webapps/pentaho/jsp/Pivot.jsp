@@ -878,15 +878,6 @@
 <!-- ****************************************************************************************** -->
 <!-- ****************************************************************************************** -->
 <!-- ****************************************************************************************** -->
- 
-	<script type="text/javascript">
-	  var saveBtn = document.getElementById("folder-down");
-	  var saveAsBtn = document.getElementById("folder-up");
-	  saveBtn.style.display = "none";
-	  saveAsBtn.style.display = "none";
-	</script>
-				
-
 
 </head>
 <body class="body_dialog01" dir="<%= LocaleHelper.getTextDirection() %>" onload="javascript:load();">
