@@ -534,11 +534,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         ISolutionFile solutionFile = repository.getFileByPath(fullPath);
         Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
         for (UserPermission userPermission : fileInfo.userPermissions) {
-          System.out.println("userPermission.mask = " + userPermission.mask);
           acl.put(new SimpleUser(userPermission.name), new SimplePermissionMask(userPermission.mask));
         }
         for (RolePermission rolePermission : fileInfo.rolePermissions) {
-          System.out.println("rolePermission.mask = " + rolePermission.mask);
           acl.put(new SimpleRole(rolePermission.name), new SimplePermissionMask(rolePermission.mask));
         }
         repository.setPermissions(solutionFile, acl);
@@ -567,18 +565,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public boolean doesSolutionRepositorySupportPermissions() {
     ISolutionRepository repository = PentahoSystem.getSolutionRepository(getPentahoSession());
     return repository.supportsAccessControls();
-  }
-
-  private boolean acceptFilter(String name, String[] filters) {
-    if (filters == null || filters.length == 0) {
-      return true;
-    }
-    for (int i = 0; i < filters.length; i++) {
-      if (name.endsWith(filters[i])) {
-        return true;
-      }
-    }
-    return false;
   }
 
   public ReportContainer getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage)
