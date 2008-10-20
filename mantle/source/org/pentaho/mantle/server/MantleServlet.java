@@ -71,6 +71,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscribeContent;
 import org.pentaho.platform.api.repository.ISubscription;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
+import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.scheduler.IJobDetail;
 import org.pentaho.platform.api.scheduler.IJobSchedule;
 import org.pentaho.platform.api.usersettings.IUserSettingService;
@@ -206,6 +207,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     getPentahoSession().resetBackgroundExecutionAlert();
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
     if (backgroundExecution != null) {
+      try {
       List<IJobDetail> jobsList = (List<IJobDetail>) backgroundExecution.getScheduledAndExecutingBackgroundJobs(getPentahoSession());
       List<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
       for (IJobDetail jobDetail : jobsList) {
@@ -219,6 +221,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         myJobs.add(myJobDetail);
       }
       return myJobs;
+      } catch (BackgroundExecutionException bee) {
+        // since this is GWT-RPC we cannot serialize this particular exception
+        // so we will return an empty list, like the else condition below
+        return new ArrayList<JobDetail>();
+      }
     } else {
       return new ArrayList<JobDetail>();
     }
