@@ -105,7 +105,8 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
       // boolean displayNames = this.getInputBooleanValue("display-names", true); //$NON-NLS-1$
 
       MetadataPublisher.loadMetadata(getSolutionName(), getSession(), false);
-      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, getSession());
+      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class,
+          "ICwmSchemaFactory", getSession());
       try {
         if (mqlQueryClassName != null) {
           mqlQuery = MQLQueryFactory.getMQLQuery(mqlQueryClassName, mql, null, LocaleHelper.getLocale().toString(),
@@ -147,8 +148,8 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
               skipMetadataDatasource = true;
             }
           } finally {
-            if( tempConnection != null ) {
-            	tempConnection.close();
+            if (tempConnection != null) {
+              tempConnection.close();
             }
           }
         }
