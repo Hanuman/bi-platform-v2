@@ -175,7 +175,7 @@ public abstract class AbstractJFreeChartComponent extends AbstractChartComponent
     try {
       return XmlDom4JHelper.getDocFromString(new String(xmlBytes), new SolutionURIResolver(userSession));
     } catch(XmlParseException xpe) {
-      throw new IOException(xpe);
+      return null;
     } 
   }
 }
