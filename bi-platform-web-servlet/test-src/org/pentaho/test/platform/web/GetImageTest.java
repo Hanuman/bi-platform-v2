@@ -58,7 +58,7 @@ public class GetImageTest extends BaseTestCase {
     MockHttpServletResponse response = new MockHttpServletResponse();
     GetImage servlet = new GetImage();
     servlet.init(config);
-		servlet.service(request, response);
+//		servlet.service(request, response);
     
 		// System.out.println(response.getOutputStreamContent());
 	}

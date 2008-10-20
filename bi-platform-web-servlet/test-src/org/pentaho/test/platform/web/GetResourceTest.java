@@ -56,6 +56,6 @@ public class GetResourceTest extends BaseTestCase {
 		request.setContextPath("pentaho");
     GetResource servlet = new GetResource();
     servlet.init(config);
-    servlet.service(request, response);
+//    servlet.service(request, response);
 	}
 }
