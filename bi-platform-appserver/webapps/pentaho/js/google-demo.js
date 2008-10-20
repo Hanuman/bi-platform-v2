@@ -66,7 +66,7 @@ greenicon = icon;
 	}
 
 	function updateInfoWindow( content ) {
-		currentMarker.openInfoWindowHtml("<table border='0' width='375' cellpadding='0' cellspacing='0'><tr><td rowspan='2' height='125' width='250' style='xborder-right:1px solid #bbbbbb'><table><tr><td nowrap>Customer:</td><td nowrap>" + currentRecord[7] + "</td></tr><tr><td nowrap>Name:</td><td nowrap>" + currentRecord[3] + "</td></tr><tr><td nowrap>Location:</td><td nowrap>"+currentRecord[2]+"</td></tr><tr><td nowrap>Current Sales:</td><td nowrap>"+currentRecord[4]+"</td></tr></table></td><td colspan='2' valign='top' width='125'>"+content+"</td></tr><tr><td>0</td><td style='text-align:right'>200,000</td></tr></table");
+		currentMarker.openInfoWindowHtml("<table border='0' width='375' cellpadding='0' cellspacing='0'><tr><td rowspan='2' height='125' width='250' style='xborder-right:1px solid #bbbbbb'><table><tr><td nowrap>Customer:</td><td nowrap>" + currentRecord[7] + "</td></tr><tr><td nowrap>Name:</td><td nowrap>" + currentRecord[3] + "</td></tr><tr><td nowrap>Location:</td><td nowrap>"+currentRecord[2]+"</td></tr><tr><td nowrap>Current Sales:</td><td nowrap>"+currentRecord[4]+"</td></tr></table></td><td colspan='2' valign='top' width='125'>"+content+"</td></tr><tr><td>0</td><td style='text-align:right'>200,000</td></tr></table>");
 		pentahoAction( "steel-wheels", "google", "chart.xaction", 
 				new Array( new Array( "customer", currentRecord[7] ) ), 
 				 'updateProductMix'
