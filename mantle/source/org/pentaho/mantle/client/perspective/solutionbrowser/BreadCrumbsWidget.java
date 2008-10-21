@@ -42,16 +42,16 @@ public class BreadCrumbsWidget extends HorizontalPanel {
     clear();
     FlexTable breadCrumbs = new FlexTable();
     // build top level
-    breadCrumbs.setWidget(0, 0, buildBreadCrumb(Messages.getInstance().pentahoSolutionBrowser(), "/"));
+    breadCrumbs.setWidget(0, 0, buildBreadCrumb(Messages.getInstance().pentahoSolutionBrowser(), "/")); //$NON-NLS-1$
     List<String> pathParts = ClassicNavigatorView.getPathParts(currentSolutionPath);
-    String myPath = "";
+    String myPath = ""; //$NON-NLS-1$
     int i = 1;
     for (String path : pathParts) {
       myPath += path;
 
-      String localizedName = ClassicNavigatorView.getElementByPath(ClassicNavigatorView.getPathParts(myPath), solutionDocument.getDocumentElement()).getAttribute("localized-name");
+      String localizedName = ClassicNavigatorView.getElementByPath(ClassicNavigatorView.getPathParts(myPath), solutionDocument.getDocumentElement()).getAttribute("localized-name"); //$NON-NLS-1$
       
-      if (path.startsWith("/")) {
+      if (path.startsWith("/")) { //$NON-NLS-1$
         path = path.substring(1);
       }
       // no paths will end with a / (getPathParts trims them)
@@ -64,8 +64,8 @@ public class BreadCrumbsWidget extends HorizontalPanel {
     FlexTable breadCrumb = new FlexTable();
     final Image breadCrumbImage = new Image();
     final Label breadCrumbLabel = new Label(text);
-    breadCrumbImage.setStyleName("breadCrumbLabel");
-    breadCrumbLabel.setStyleName("breadCrumbLabel");
+    breadCrumbImage.setStyleName("breadCrumbLabel"); //$NON-NLS-1$
+    breadCrumbLabel.setStyleName("breadCrumbLabel"); //$NON-NLS-1$
     MantleImages.images.smallFolder().applyTo(breadCrumbImage);
     MouseListener imageHoverListener = new MouseListener() {
 
@@ -75,14 +75,14 @@ public class BreadCrumbsWidget extends HorizontalPanel {
 
       public void onMouseEnter(Widget sender) {
         MantleImages.images.smallFolderHover().applyTo(breadCrumbImage);
-        breadCrumbLabel.setStyleName("breadCrumbLabelHover");
-        breadCrumbImage.setStyleName("breadCrumbLabelHover");
+        breadCrumbLabel.setStyleName("breadCrumbLabelHover"); //$NON-NLS-1$
+        breadCrumbImage.setStyleName("breadCrumbLabelHover"); //$NON-NLS-1$
       }
 
       public void onMouseLeave(Widget sender) {
         MantleImages.images.smallFolder().applyTo(breadCrumbImage);
-        breadCrumbLabel.setStyleName("breadCrumbLabel");
-        breadCrumbImage.setStyleName("breadCrumbLabel");
+        breadCrumbLabel.setStyleName("breadCrumbLabel"); //$NON-NLS-1$
+        breadCrumbImage.setStyleName("breadCrumbLabel"); //$NON-NLS-1$
       }
 
       public void onMouseMove(Widget sender, int x, int y) {

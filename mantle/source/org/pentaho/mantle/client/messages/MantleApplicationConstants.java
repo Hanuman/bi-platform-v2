@@ -269,6 +269,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String preview();
 
   /**
+   * Translated "Roles".
+   * 
+   * @return translated "Roles"
+  
+   */
+  @DefaultMessage("Roles")
+  String roles();
+
+  /**
    * Translated "Schedule/Date".
    * 
    * @return translated "Schedule/Date"
@@ -683,6 +692,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String description();
 
   /**
+   * Translated "Could not get list of roles".
+   * 
+   * @return translated "Could not get list of roles"
+  
+   */
+  @DefaultMessage("Could not get list of roles")
+  String couldNotGetRoles();
+
+  /**
    * Translated "Welcome".
    * 
    * @return translated "Welcome"
@@ -780,6 +798,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Edit Action")
   String editAction();
+
+  /**
+   * Translated "Select User or Role".
+   * 
+   * @return translated "Select User or Role"
+  
+   */
+  @DefaultMessage("Select User or Role")
+  String selectUserOrRole();
 
   /**
    * Translated "Size".
@@ -1617,6 +1644,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Apply")
   String apply();
+
+  /**
+   * Translated "Users".
+   * 
+   * @return translated "Users"
+  
+   */
+  @DefaultMessage("Users")
+  String users();
 
   /**
    * Translated "Save".

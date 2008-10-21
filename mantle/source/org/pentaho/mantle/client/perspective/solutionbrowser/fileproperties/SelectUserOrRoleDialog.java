@@ -24,6 +24,7 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -53,7 +54,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
   }
 
   public SelectUserOrRoleDialog(List<String> existing, final IUserRoleSelectedCallback callback) {
-    super("Select User or Role", "OK", "Cancel", false, true, contentTable);
+    super(Messages.getInstance().selectUserOrRole(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, contentTable);
     setCallback(new IDialogCallback() {
 
       public void cancelPressed() {
@@ -73,9 +74,9 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     usersListBox.setWidth("100%");
     contentTable.clear();
     contentTable.setWidth("100%");
-    contentTable.setWidget(0, 0, new Label("Users:"));
+    contentTable.setWidget(0, 0, new Label(Messages.getInstance().users()));
     contentTable.setWidget(1, 0, usersListBox);
-    contentTable.setWidget(2, 0, new Label("Roles:"));
+    contentTable.setWidget(2, 0, new Label(Messages.getInstance().roles()));
     contentTable.setWidget(3, 0, rolesListBox);
     fetchAllUsers(existing);
     fetchAllRoles(existing);
@@ -86,7 +87,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetRoles(), false, false, true);
         dialogBox.center();
       }
 
