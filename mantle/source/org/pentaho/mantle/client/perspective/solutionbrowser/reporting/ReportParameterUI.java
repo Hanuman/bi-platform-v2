@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
 
@@ -41,12 +42,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ReportParameterUI extends HorizontalPanel {
 
-  DisclosurePanel parameterDisclosurePanel = new DisclosurePanel("Report Parameters");
-  CheckBox submitParametersOnChangeCheckBox = new CheckBox("Automatically Submit Parameters on Selection");
+  DisclosurePanel parameterDisclosurePanel = new DisclosurePanel(Messages.getInstance().reportParameters());
+  CheckBox submitParametersOnChangeCheckBox = new CheckBox(Messages.getInstance().automaticallySubmitParameters());
 
   public ReportParameterUI() {
-    parameterDisclosurePanel.setWidth("100%");
-    parameterDisclosurePanel.setStyleName("reportParameterDisclosurePanel");
+    parameterDisclosurePanel.setWidth("100%"); //$NON-NLS-1$
+    parameterDisclosurePanel.setStyleName("reportParameterDisclosurePanel"); //$NON-NLS-1$
     parameterDisclosurePanel.setOpen(true);
   }
 
@@ -79,7 +80,7 @@ public class ReportParameterUI extends HorizontalPanel {
       parameterTable.setWidget(row, 1, parameterUI);
       row++;
     }
-    Button submitParametersButton = new Button("Submit");
+    Button submitParametersButton = new Button(Messages.getInstance().submit());
     submitParametersButton.addClickListener(submitParametersListener);
     parameterTable.setWidget(row, 0, submitParametersButton);
     parameterTable.setWidget(row, 1, submitParametersOnChangeCheckBox);
@@ -87,7 +88,7 @@ public class ReportParameterUI extends HorizontalPanel {
 
     // add content to panel
     clear();
-    setWidth("100%");
+    setWidth("100%"); //$NON-NLS-1$
     add(parameterDisclosurePanel);
   }
 
@@ -127,7 +128,7 @@ public class ReportParameterUI extends HorizontalPanel {
           }
         }
       });
-      choices.setWidth("250px");
+      choices.setWidth("250px"); //$NON-NLS-1$
       choices.setVisibleItemCount(parameter.isMultiSelect() ? 5 : 1);
       for (Object choiceKey : parameter.getChoices().keySet()) {
         choices.addItem(parameter.getChoices().get(choiceKey).toString(), choiceKey.toString());

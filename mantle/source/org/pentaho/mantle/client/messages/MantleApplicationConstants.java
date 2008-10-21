@@ -359,6 +359,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String couldNotGetUsers();
 
   /**
+   * Translated "Automatically Submit Parameters on Selection".
+   * 
+   * @return translated "Automatically Submit Parameters on Selection"
+  
+   */
+  @DefaultMessage("Automatically Submit Parameters on Selection")
+  String automaticallySubmitParameters();
+
+  /**
    * Translated "Purge Mondrian Data Cache".
    * 
    * @return translated "Purge Mondrian Data Cache"
@@ -789,6 +798,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Permissions for {0}:")
   String permissionsFor(String arg0);
+
+  /**
+   * Translated "Submit".
+   * 
+   * @return translated "Submit"
+  
+   */
+  @DefaultMessage("Submit")
+  String submit();
 
   /**
    * Translated "Deep Link".
@@ -1347,6 +1365,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("XAction")
   String xaction();
+
+  /**
+   * Translated "Report Parameters".
+   * 
+   * @return translated "Report Parameters"
+  
+   */
+  @DefaultMessage("Report Parameters")
+  String reportParameters();
 
   /**
    * Translated "Navigating away from this page may terminate your session.".
