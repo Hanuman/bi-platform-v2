@@ -71,7 +71,7 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources">
+	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources">
 		<chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
 	</target>
 
@@ -192,7 +192,7 @@
 			<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
 			<copy todir="${stage.dir.server}/tomcat/common/lib">
 				<fileset dir="${lib.dir}">
-					<include name="hsqldb-*.jar" />
+				    <include name="hsqldb-*.jar" />
 					<include name="mysql-connector-*.jar" />
 					<include name="postgresql*.jar" />
 					<include name="naming*.jar" />
@@ -226,6 +226,7 @@
 					<exclude name="hsqldb-*.jar" />
 					<exclude name="mysql-connector-*.jar" />
 					<exclude name="postgresql*.jar" />
+					<exclude name="*-sources.jar" />
 				</fileset>
 			</copy>
 
@@ -250,6 +251,7 @@
 					<exclude name="**/WEB-INF/portlet-instances.xml" />
 				</fileset>
 			</copy>
+		    <delete dir="${prep.pentaho.war.dir}/.settings" />
 
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<!-- get all pentaho jars from the build process -->
@@ -453,7 +455,7 @@
 		</sequential>
 	</target>
 	
-	<target name="validate-mantle-svn-revisions" depends="prep-pentaho-tomcat">
+	<target name="validate-mantle-svn-revisions">
 	<sequential>
 		<mkdir dir="${basedir}/temp/mantle" />
 		<mkdir dir="${basedir}/temp/mantle-pkg" />
@@ -483,6 +485,7 @@
 			<equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
 			<then>
 				<echo message="Mantle SVN revisions in sync" />
+				<delete dir="${basedir}/temp"/>
 			</then>
 			<else>
 				<fail
