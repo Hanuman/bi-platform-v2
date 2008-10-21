@@ -96,7 +96,6 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
       try {
         xslIS = repository.getResourceInputStream(name, true);
       } catch (FileNotFoundException e) {
-        Logger.error(this, e.getLocalizedMessage());
         return null;
       }
     }
