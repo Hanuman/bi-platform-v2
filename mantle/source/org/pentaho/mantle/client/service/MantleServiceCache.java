@@ -30,7 +30,7 @@ public class MantleServiceCache {
     if (service == null) {
       service = (MantleServiceAsync) GWT.create(MantleService.class);
       ServiceDefTarget endpoint = (ServiceDefTarget) service;
-      String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleService";
+      String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleService"; //$NON-NLS-1$
       endpoint.setServiceEntryPoint(moduleRelativeURL);
     }
     return service;

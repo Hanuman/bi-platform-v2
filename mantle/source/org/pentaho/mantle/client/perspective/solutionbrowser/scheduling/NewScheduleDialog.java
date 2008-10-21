@@ -143,7 +143,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     if (startTime == null || startTime.length() < 1) {
       return 0;
     }
-    int afternoonOffset = startTime.endsWith("PM") ? 12 : 0;
+    int afternoonOffset = startTime.endsWith("PM") ? 12 : 0; //$NON-NLS-1$
     int hour = Integer.parseInt(startTime.substring(0, startTime.indexOf(':')));
     hour += afternoonOffset;
     return hour;

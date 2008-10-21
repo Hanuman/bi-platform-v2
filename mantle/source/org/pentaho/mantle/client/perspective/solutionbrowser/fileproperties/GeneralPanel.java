@@ -45,18 +45,18 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   private static MantleApplicationConstants MSG = Messages.getInstance();
 
   public GeneralPanel() {
-    setWidget(0, 0, new Label(MSG.name()+":"));
+    setWidget(0, 0, new Label(MSG.name()+":")); //$NON-NLS-1$
     setWidget(0, 1, nameLabel);
-    setWidget(1, 0, new Label(MSG.location()+":"));
+    setWidget(1, 0, new Label(MSG.location()+":")); //$NON-NLS-1$
     setWidget(1, 1, locationLabel);
-    setWidget(2, 0, new Label(MSG.source()+":"));
+    setWidget(2, 0, new Label(MSG.source()+":")); //$NON-NLS-1$
     setWidget(2, 1, sourceLabel);
-    setWidget(3, 0, new Label(MSG.type()+":"));
+    setWidget(3, 0, new Label(MSG.type()+":")); //$NON-NLS-1$
     setWidget(3, 1, typeLabel);
-    setWidget(4, 0, new Label(MSG.size()+":"));
+    setWidget(4, 0, new Label(MSG.size()+":")); //$NON-NLS-1$
     setWidget(4, 1, sizeLabel);
-    Label lbl = new Label(MSG.lastModified()+":");
-    lbl.addStyleName("nowrap");
+    Label lbl = new Label(MSG.lastModified()+":"); //$NON-NLS-1$
+    lbl.addStyleName("nowrap"); //$NON-NLS-1$
     setWidget(5, 0, lbl);
     setWidget(5, 1, lastModifiedDateLabel);
   }
@@ -73,10 +73,10 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     } else {
       nameLabel.setText(fileInfo.localizedName);
       locationLabel.setText(fileInfo.solution+fileInfo.path);
-      sourceLabel.setText(fileInfo.solution+fileInfo.path+"/"+fileInfo.name);
+      sourceLabel.setText(fileInfo.solution+fileInfo.path+"/"+fileInfo.name); //$NON-NLS-1$
       this.typeLabel.setText(getFileTypeDescription(fileInfo.type, fileInfo.pluginTypeName));
       NumberFormat numberFormat = NumberFormat.getDecimalFormat();
-      sizeLabel.setText(numberFormat.format(fileInfo.size/1000.00)+" KB");
+      sizeLabel.setText(numberFormat.format(fileInfo.size/1000.00)+" KB"); //$NON-NLS-1$
       lastModifiedDateLabel.setText(fileInfo.lastModifiedDate.toString());
     }
   }
@@ -96,7 +96,7 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
       case PLUGIN:
         return pluginTypeName;
       default:
-        return "";
+        return ""; //$NON-NLS-1$
     }
   }
 
@@ -104,7 +104,7 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false, true);
         dialogBox.center();
       }
 
