@@ -1133,6 +1133,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String report();
 
   /**
+   * Translated "All applied schedules will be lost.  Continue?".
+   * 
+   * @return translated "All applied schedules will be lost.  Continue?"
+  
+   */
+  @DefaultMessage("All applied schedules will be lost.  Continue?")
+  String appliedSchedulesWillBeLost();
+
+  /**
    * Translated "OK".
    * 
    * @return translated "OK"

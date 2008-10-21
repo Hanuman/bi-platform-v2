@@ -95,50 +95,50 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     availablePanel.add(availableLB);
     availableLB.setVisibleItemCount(9);
     availableLB.setMultipleSelect(true);
-    availableLB.setWidth("100%");
+    availableLB.setWidth("100%"); //$NON-NLS-1$
 
     VerticalPanel appliedPanel = new VerticalPanel();
     appliedPanel.add(new Label(Messages.getInstance().current()));
     appliedPanel.add(appliedLB);
     appliedLB.setVisibleItemCount(9);
     appliedLB.setMultipleSelect(true);
-    appliedLB.setWidth("100%");
+    appliedLB.setWidth("100%"); //$NON-NLS-1$
 
     // Add the buttons
     VerticalPanel buttonGrid = new VerticalPanel();
     buttonGrid.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
     buttonGrid.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
     buttonGrid.setSpacing(2);
-    moveRightBtn.setText(">");
+    moveRightBtn.setText(">"); //$NON-NLS-1$
     moveRightBtn.setTitle(Messages.getInstance().add());
-    moveRightBtn.setWidth("30px");
+    moveRightBtn.setWidth("30px"); //$NON-NLS-1$
     moveRightBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
         moveSelectedToRight();
       }
     });
     buttonGrid.add(moveRightBtn);
-    moveAllRightBtn.setText(">>");
+    moveAllRightBtn.setText(">>"); //$NON-NLS-1$
     moveAllRightBtn.setTitle(Messages.getInstance().addAll());
-    moveAllRightBtn.setWidth("30px");
+    moveAllRightBtn.setWidth("30px"); //$NON-NLS-1$
     moveAllRightBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
         moveAllToRight();
       }
     });
     buttonGrid.add(moveAllRightBtn);
-    moveLeftBtn.setText("<");
+    moveLeftBtn.setText("<"); //$NON-NLS-1$
     moveLeftBtn.setTitle(Messages.getInstance().remove());
-    moveLeftBtn.setWidth("30px");
+    moveLeftBtn.setWidth("30px"); //$NON-NLS-1$
     moveLeftBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
         moveSelectedToLeft();
       }
     });
     buttonGrid.add(moveLeftBtn);
-    moveAllLeftBtn.setText("<<");
+    moveAllLeftBtn.setText("<<"); //$NON-NLS-1$
     moveAllLeftBtn.setTitle(Messages.getInstance().removeAll());
-    moveAllLeftBtn.setWidth("30px");
+    moveAllLeftBtn.setWidth("30px"); //$NON-NLS-1$
     moveAllLeftBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
         moveAllToLeft();
@@ -155,11 +155,11 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     this.add(scheduleCaptionPanel);
     this.setCellHorizontalAlignment(schedulePanel, HasHorizontalAlignment.ALIGN_CENTER);
 
-    availablePanel.setWidth("100%");
-    buttonGrid.setWidth("100%");
-    appliedPanel.setWidth("100%");
-    schedulePanel.getCellFormatter().setWidth(0, 0, "50%");
-    schedulePanel.getCellFormatter().setWidth(0, 2, "50%");
+    availablePanel.setWidth("100%"); //$NON-NLS-1$
+    buttonGrid.setWidth("100%"); //$NON-NLS-1$
+    appliedPanel.setWidth("100%"); //$NON-NLS-1$
+    schedulePanel.getCellFormatter().setWidth(0, 0, "50%"); //$NON-NLS-1$
+    schedulePanel.getCellFormatter().setWidth(0, 2, "50%"); //$NON-NLS-1$
 
   }
 
@@ -226,7 +226,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
    */
   public void apply() {
     if (dirty) {
-      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm("All applied schedules will be lost.  Continue?")) || (!wasEnabled)) { // We're turning off this subscription... alert the user
+      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getInstance().appliedSchedulesWillBeLost())) || (!wasEnabled)) { // We're turning off this subscription... alert the user
 
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
@@ -294,7 +294,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
       }
 
     };
-    MantleServiceCache.getService().getSubscriptionState(fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), callBack);
+    MantleServiceCache.getService().getSubscriptionState(fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), callBack); //$NON-NLS-1$
   }
 
 }
