@@ -126,7 +126,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @Override
   protected void doUnexpectedFailure(Throwable e) {
     try {
-      getThreadLocalResponse().sendRedirect("Home");
+      getThreadLocalResponse().sendRedirect("Home"); //$NON-NLS-1$
       PentahoSystem.systemExitPoint();
     } catch (IOException e1) {
     }
@@ -135,7 +135,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     try {
-      resp.sendRedirect("Home");
+      resp.sendRedirect("Home"); //$NON-NLS-1$
     } catch (IOException e1) {
     }
   }
@@ -365,8 +365,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
     }
     try {
       SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
@@ -378,8 +378,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
     
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
     }
     
     try {
@@ -403,8 +403,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
 
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled"));
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
     }
     
     try {
@@ -441,7 +441,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName) {
     if (fileName == null || path == null || solutionName == null) {
-      throw new IllegalArgumentException("getSolutionFileInfo called with null parameters");
+      throw new IllegalArgumentException("getSolutionFileInfo called with null parameters"); //$NON-NLS-1$
     }
 
     SolutionFileInfo solutionFileInfo = new SolutionFileInfo();
@@ -457,7 +457,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     int lastDot = -1;
     if (solutionFile.isDirectory()) {
       solutionFileInfo.type = SolutionFileInfo.Type.FOLDER;
-    } else if ((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")) {
+    } else if ((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")) { //$NON-NLS-1$
       String extension = fileName.substring(lastDot);
 
       // Check to see if its a plug-in
@@ -478,11 +478,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         solutionFileInfo.type = SolutionFileInfo.Type.PLUGIN;
         solutionFileInfo.pluginTypeName = info.getDescription();
 
-      } else if (fileName.endsWith("waqr.xaction")) {
+      } else if (fileName.endsWith("waqr.xaction")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
-      } else if (fileName.endsWith("analysisview.xaction")) {
+      } else if (fileName.endsWith("analysisview.xaction")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.ANALYSIS_VIEW;
-      } else if (fileName.endsWith(".url")) {
+      } else if (fileName.endsWith(".url")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.URL;
       } else {
         solutionFileInfo.type = SolutionFileInfo.Type.XACTION;
@@ -491,10 +491,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
     // Get Localized name
     if (!solutionFile.isDirectory()) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title");
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title"); //$NON-NLS-1$
     }
     if (StringUtils.isEmpty(solutionFileInfo.localizedName)) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name");
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name"); //$NON-NLS-1$
     }
 
     if (solutionFile.getData() == null) {
@@ -507,7 +507,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     solutionFileInfo.isDirectory = solutionFile.isDirectory();
     if (!solutionFile.isDirectory()) {
       ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
-      ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(solutionName + path + "/" + fileName);
+      ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(solutionName + path + "/" + fileName); //$NON-NLS-1$
       solutionFileInfo.isSubscribable = (subscribeContent != null) && (subscribeContent.getSchedules() != null && subscribeContent.getSchedules().size() > 0);
     } else {
       solutionFileInfo.isSubscribable = false;
@@ -563,11 +563,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
         if (!solutionFile.isDirectory()) {
           ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
-          String actionRef = fileInfo.solution + fileInfo.path + "/" + fileInfo.name;
+          String actionRef = fileInfo.solution + fileInfo.path + "/" + fileInfo.name; //$NON-NLS-1$
           ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
           if (fileInfo.isSubscribable && subscribeContent == null) {
             // make this actionRef subscribable
-            subscriptionRepository.addContent(actionRef, "");
+            subscriptionRepository.addContent(actionRef, ""); //$NON-NLS-1$
           } else if (!fileInfo.isSubscribable && subscribeContent != null) {
             // remove this actionRef from the subscribable list
             subscriptionRepository.deleteSubscribeContent(subscribeContent);
@@ -591,9 +591,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     // ultimately we'll pull the data from the solutionFile and create a ByteArrayInputStream
     ReportProcessor proc = null;
     try {
-      System.out.println("getLogicalReportPage: " + reportDefinitionPath + " Page: " + logicalPage);
+      System.out.println("getLogicalReportPage: " + reportDefinitionPath + " Page: " + logicalPage); //$NON-NLS-1$ //$NON-NLS-2$
       JFreeReport report = ReportCreator.createReport(reportDefinitionPath, getPentahoSession());
-      report.getReportConfiguration().setConfigProperty("org.jfree.report.modules.output.table.html.BodyFragment", "true");
+      report.getReportConfiguration().setConfigProperty("org.jfree.report.modules.output.table.html.BodyFragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
       ReportContainer outReportContainer = new ReportContainer();
       // TODO: for 0810 this code is needed
@@ -643,7 +643,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     // read properties file
     Properties props = new Properties();
     try {
-      props.load(getClass().getResourceAsStream("/org/pentaho/mantle/server/MantleSettings.properties"));
+      props.load(getClass().getResourceAsStream("/org/pentaho/mantle/server/MantleSettings.properties")); //$NON-NLS-1$
       Enumeration keys = props.keys();
       while (keys.hasMoreElements()) {
         String key = (String) keys.nextElement();
@@ -651,8 +651,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         settings.put(key, value);
       }
 
-      settings.put("login-show-users-list", PentahoSystem.getSystemSetting("login-show-users-list", ""));
-      settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", ""));
+      settings.put("login-show-users-list", PentahoSystem.getSystemSetting("login-show-users-list", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       // see if we have any plugin settings
       IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, getPentahoSession()); //$NON-NLS-1$
@@ -852,8 +852,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         subscriptionBean.setScheduleDate(schedule.getTitle());
       }
       // We have static dashes here because thats the way data is being displayed currently in 1.7
-      subscriptionBean.setSize("---");
-      subscriptionBean.setType("---");
+      subscriptionBean.setSize("---"); //$NON-NLS-1$
+      subscriptionBean.setType("---"); //$NON-NLS-1$
       subscriptionBean.setContent(getContentItems(subscriptionRepository, (Subscription) currentSubscr));
       opSubscrList.add(subscriptionBean);
     }
@@ -894,7 +894,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       for (int j = 0; j < contentItemFileListSize; j++) {
         final ContentItemFile contentItemFile = (ContentItemFile) contentItemFileList.get(j);
         final Date fileItemDate = contentItemFile.getFileDateTime();
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy h:mm a");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy h:mm a"); //$NON-NLS-1$
         final String formattedDateStr = dateFormat.format(fileItemDate);
         final String fileType = contentItemFile.getParent().getMimeType();
         final String fileSize = String.valueOf(contentItemFile.getFileSize());
@@ -954,7 +954,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     HibernateUtil.beginTransaction();
     if (enabled) {
       if (subscribeContent == null) {
-        subscribeContent = subscriptionRepository.addContent(actionRef, "");
+        subscribeContent = subscriptionRepository.addContent(actionRef, ""); //$NON-NLS-1$
       }
 
       subscribeContent.clearsSchedules();
@@ -1060,17 +1060,17 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void setShowNavigator(boolean showNavigator) {
     IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR, "" + showNavigator);
+    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR, "" + showNavigator); //$NON-NLS-1$
   }
 
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames) {
     IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES, "" + showLocalizedFileNames);
+    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES, "" + showLocalizedFileNames); //$NON-NLS-1$
   }
 
   public void setShowHiddenFiles(boolean showHiddenFiles) {
     IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES, "" + showHiddenFiles);
+    settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES, "" + showHiddenFiles); //$NON-NLS-1$
   }
 
   public boolean repositorySupportsACLS() {
