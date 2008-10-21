@@ -32,6 +32,7 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 
 /**
@@ -67,7 +68,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void createMenus() {
     addSpacer(5);
-    add(new FilesToolbarGroup(Messages.getInstance().files()));
+    add(new Label(Messages.getInstance().files()));
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);

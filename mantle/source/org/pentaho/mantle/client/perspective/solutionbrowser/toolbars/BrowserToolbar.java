@@ -25,6 +25,7 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 
 /**
@@ -57,7 +58,7 @@ public class BrowserToolbar extends Toolbar {
    */
   private void createMenus() {
     addSpacer(5);
-    add(new ToolbarGroup(Messages.getInstance().browse()));
+    add(new Label(Messages.getInstance().browse()));
     add(GLUE);
     Image refreshImage = new Image();
     MantleImages.images.refresh().applyTo(refreshImage);
