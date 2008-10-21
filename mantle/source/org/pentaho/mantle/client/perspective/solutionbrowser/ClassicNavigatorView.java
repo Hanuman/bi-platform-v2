@@ -43,12 +43,12 @@ import com.google.gwt.xml.client.NodeList;
 
 public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallback {
 
-  String currentSolutionPath = "";
+  String currentSolutionPath = ""; //$NON-NLS-1$
   Document solutionDocument;
   Widget oldNavigatorTable = null;
 
   public ClassicNavigatorView() {
-    setWidth("100%");
+    setWidth("100%"); //$NON-NLS-1$
     setAnimationEnabled(false);
   }
 
@@ -58,16 +58,16 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
     BreadCrumbsWidget breadCrumbs = new BreadCrumbsWidget(this);
     breadCrumbs.buildBreadCrumbs(currentSolutionPath, solutionDocument);
     VerticalPanel wrapper = new VerticalPanel();
-    wrapper.setWidth("100%");
+    wrapper.setWidth("100%"); //$NON-NLS-1$
     wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 
     FlexTable navigatorTable = new FlexTable();
-    navigatorTable.setWidth("100%");
+    navigatorTable.setWidth("100%"); //$NON-NLS-1$
     navigatorTable.setWidget(0, 0, breadCrumbs);
-    navigatorTable.getCellFormatter().setWidth(0, 0, "100%");
+    navigatorTable.getCellFormatter().setWidth(0, 0, "100%"); //$NON-NLS-1$
     navigatorTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
     navigatorTable.setWidget(1, 0, buildNavigator());
-    navigatorTable.getCellFormatter().setWidth(1, 0, "100%");
+    navigatorTable.getCellFormatter().setWidth(1, 0, "100%"); //$NON-NLS-1$
     navigatorTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
     wrapper.add(navigatorTable);
     add(wrapper);
@@ -86,49 +86,49 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
   private Widget buildNavigator() {
     Element solutionRoot = solutionDocument.getDocumentElement();
     VerticalPanel navigatorPanel = new VerticalPanel();
-    navigatorPanel.setStyleName("classicNavigatorPanel");
+    navigatorPanel.setStyleName("classicNavigatorPanel"); //$NON-NLS-1$
 
-    if (currentSolutionPath == null || "".equals(currentSolutionPath) || "/".equals(currentSolutionPath)) {
+    if (currentSolutionPath == null || "".equals(currentSolutionPath) || "/".equals(currentSolutionPath)) { //$NON-NLS-1$ //$NON-NLS-2$
       NodeList children = solutionRoot.getChildNodes();
 
       HTML solutionBrowserDescription = new HTML(Messages.getInstance().classicSolutionBrowserDescription(), true);
-      solutionBrowserDescription.setStyleName("solutionBrowserDescription");
+      solutionBrowserDescription.setStyleName("solutionBrowserDescription"); //$NON-NLS-1$
       navigatorPanel.add(solutionBrowserDescription);
       int numSolutions = 0;
       for (int i = 0; i < children.getLength(); i++) {
-        boolean isDirectory = "true".equals(((Element) children.item(i)).getAttribute("isDirectory"));
-        boolean visible = "true".equals(((Element) children.item(i)).getAttribute("visible"));
+        boolean isDirectory = "true".equals(((Element) children.item(i)).getAttribute("isDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
+        boolean visible = "true".equals(((Element) children.item(i)).getAttribute("visible")); //$NON-NLS-1$ //$NON-NLS-2$
         if (isDirectory && visible) {
           numSolutions++;
         }
       }
-      Label solutionBrowseLabel = new Label("Browse " + numSolutions + " solution(s)");
-      solutionBrowseLabel.setStyleName("numSolutionsLabel");
+      Label solutionBrowseLabel = new Label(Messages.getInstance().browse() + " " + numSolutions + " " + Messages.getInstance().solutions()); //$NON-NLS-1$ //$NON-NLS-2$
+      solutionBrowseLabel.setStyleName("numSolutionsLabel"); //$NON-NLS-1$
       navigatorPanel.add(solutionBrowseLabel);
 
       // get solution paths
       for (int i = 0; i < children.getLength(); i++) {
         Element childElement = (Element) children.item(i);
-        String fileName = childElement.getAttribute("name");
-        String localizedName = childElement.getAttribute("localized-name");
-        boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory"));
-        boolean visible = "true".equals(childElement.getAttribute("visible"));
+        String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
+        String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
+        boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
+        boolean visible = "true".equals(childElement.getAttribute("visible")); //$NON-NLS-1$ //$NON-NLS-2$
         if (isDirectory && visible) {
           final Label solutionDisclosureHeaderLabel = new Label(localizedName);
           final Image solutionDisclosureHeaderImage = new Image();
           final FlexTable solutionDisclosureHeader = new FlexTable();
-          solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidget");
+          solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidget"); //$NON-NLS-1$
           MouseListener headerMouseListener = new MouseListener() {
 
             public void onMouseDown(Widget sender, int x, int y) {
             }
 
             public void onMouseEnter(Widget sender) {
-              solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidgetHover");
+              solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidgetHover"); //$NON-NLS-1$
             }
 
             public void onMouseLeave(Widget sender) {
-              solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidget");
+              solutionDisclosureHeader.setStyleName("solutionDisclosureHeaderWidget"); //$NON-NLS-1$
             }
 
             public void onMouseMove(Widget sender, int x, int y) {
@@ -143,13 +143,13 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
           MantleImages.images.plus().applyTo(solutionDisclosureHeaderImage);
 
           solutionDisclosureHeader.setWidget(0, 0, solutionDisclosureHeaderImage);
-          solutionDisclosureHeader.getCellFormatter().setWidth(0, 0, "12px");
+          solutionDisclosureHeader.getCellFormatter().setWidth(0, 0, "12px"); //$NON-NLS-1$
           solutionDisclosureHeader.setWidget(0, 1, solutionDisclosureHeaderLabel);
-          solutionDisclosureHeader.getCellFormatter().setWidth(0, 1, "100%");
-          solutionDisclosureHeader.setWidth("100%");
+          solutionDisclosureHeader.getCellFormatter().setWidth(0, 1, "100%"); //$NON-NLS-1$
+          solutionDisclosureHeader.setWidth("100%"); //$NON-NLS-1$
           DisclosurePanel solutionDisclosurePanel = new DisclosurePanel(solutionDisclosureHeader);
           solutionDisclosurePanel.setAnimationEnabled(false);
-          solutionDisclosurePanel.setStyleName("solutionDisclosureWidget");
+          solutionDisclosurePanel.setStyleName("solutionDisclosureWidget"); //$NON-NLS-1$
           solutionDisclosurePanel.addEventHandler(new DisclosureHandler() {
 
             public void onClose(DisclosureEvent event) {
@@ -162,14 +162,14 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
 
           });
           solutionDisclosurePanel.setContent(buildFolderContent(childElement));
-          solutionDisclosurePanel.setWidth("100%");
+          solutionDisclosurePanel.setWidth("100%"); //$NON-NLS-1$
           navigatorPanel.add(solutionDisclosurePanel);
         }
       }
     } else {
       // find element representing the folder aimed at currentSolutionPath
       navigatorPanel.add(buildFolderContent(getElementByPath(getPathParts(currentSolutionPath), solutionRoot)));
-      navigatorPanel.setWidth("100%");
+      navigatorPanel.setWidth("100%"); //$NON-NLS-1$
     }
     return navigatorPanel;
   }
@@ -178,9 +178,9 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
     NodeList children = parentElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Element childElement = (Element) children.item(i);
-      String fileName = childElement.getAttribute("name");
+      String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
       String pathPart = pathParts.get(0);
-      if (pathPart.startsWith("/")) {
+      if (pathPart.startsWith("/")) { //$NON-NLS-1$
         pathPart = pathPart.substring(1);
       }
       if (fileName.equals(pathPart)) {
@@ -197,21 +197,21 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
   }
 
   public static List<String> getPathParts(String fullPath) {
-    String currentSolutionPath = "" + fullPath;
-    int startIndex = currentSolutionPath.indexOf("/");
-    int endIndex = currentSolutionPath.indexOf("/", startIndex + 1);
+    String currentSolutionPath = "" + fullPath; //$NON-NLS-1$
+    int startIndex = currentSolutionPath.indexOf("/"); //$NON-NLS-1$
+    int endIndex = currentSolutionPath.indexOf("/", startIndex + 1); //$NON-NLS-1$
     if (endIndex == -1) {
       endIndex = currentSolutionPath.length() - 1;
     }
     List<String> pathParts = new ArrayList<String>();
     while (startIndex != -1 && startIndex != endIndex) {
       String pathPart = currentSolutionPath.substring(startIndex, endIndex + 1);
-      if (pathPart.endsWith("/")) {
+      if (pathPart.endsWith("/")) { //$NON-NLS-1$
         pathPart = pathPart.substring(0, pathPart.length() - 1);
       }
       pathParts.add(pathPart);
       startIndex = endIndex;
-      endIndex = currentSolutionPath.indexOf("/", startIndex + 1);
+      endIndex = currentSolutionPath.indexOf("/", startIndex + 1); //$NON-NLS-1$
       if (endIndex == -1) {
         endIndex = currentSolutionPath.length() - 1;
       }
@@ -225,34 +225,34 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
 
     // possibly use a flow panel for icons mode
     FlexTable contentList = new FlexTable();
-    contentList.setStyleName("classicNavigatorTable");
-    contentList.setWidth("100%");
+    contentList.setStyleName("classicNavigatorTable"); //$NON-NLS-1$
+    contentList.setWidth("100%"); //$NON-NLS-1$
     NodeList children = parentElement.getChildNodes();
-    contentList.setWidget(0, 0, new Label("Name"));
-    contentList.getCellFormatter().setStyleName(0, 0, "classicNavigatorTableHeader");
+    contentList.setWidget(0, 0, new Label("Name")); //$NON-NLS-1$
+    contentList.getCellFormatter().setStyleName(0, 0, "classicNavigatorTableHeader"); //$NON-NLS-1$
     // contentList.setWidget(0, 2, new Label("Author"));
 
     for (int i = 0; i < children.getLength(); i++) {
       final Element childElement = (Element) children.item(i);
-      final String fileName = childElement.getAttribute("name");
-      String localizedName = childElement.getAttribute("localized-name");
-      String description = childElement.getAttribute("description");
-      final boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory"));
+      final String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
+      String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
+      String description = childElement.getAttribute("description"); //$NON-NLS-1$
+      final boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
       final Image icon = new Image();
       final Label entryLabel = new Label(localizedName);
       final HTML entryDecriptionLabel = new HTML(description);
       FlexTable entryPanel = new FlexTable();
       entryPanel.setWidget(0, 0, entryLabel);
       entryPanel.setWidget(1, 0, entryDecriptionLabel);
-      entryPanel.setWidth("100%");
+      entryPanel.setWidth("100%"); //$NON-NLS-1$
 
       if (isDirectory) {
         MantleImages.images.folder().applyTo(icon);
       } else {
         MantleImages.images.file().applyTo(icon);
       }
-      icon.setStyleName("classicNavigatorFileLabel");
-      entryLabel.setStyleName("classicNavigatorFileLabel");
+      icon.setStyleName("classicNavigatorFileLabel"); //$NON-NLS-1$
+      entryLabel.setStyleName("classicNavigatorFileLabel"); //$NON-NLS-1$
       MouseListener headerMouseListener = new MouseListener() {
 
         public void onMouseDown(Widget sender, int x, int y) {
@@ -264,7 +264,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
           } else {
             MantleImages.images.fileHover().applyTo(icon);
           }
-          entryLabel.setStyleName("classicNavigatorFileLabelHover");
+          entryLabel.setStyleName("classicNavigatorFileLabelHover"); //$NON-NLS-1$
         }
 
         public void onMouseLeave(Widget sender) {
@@ -273,7 +273,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
           } else {
             MantleImages.images.file().applyTo(icon);
           }
-          entryLabel.setStyleName("classicNavigatorFileLabel");
+          entryLabel.setStyleName("classicNavigatorFileLabel"); //$NON-NLS-1$
         }
 
         public void onMouseMove(Widget sender, int x, int y) {
@@ -290,24 +290,24 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
           } else {
             // load xaction or .url
             // get the default URL for this
-        	  String url = childElement.getAttribute("url");
-            if (fileName.endsWith(".xaction")) {
+        	  String url = childElement.getAttribute("url"); //$NON-NLS-1$
+            if (fileName.endsWith(".xaction")) { //$NON-NLS-1$
               String fullPath = buildPathForElement(childElement);
               List<String> pathParts = ClassicNavigatorView.getPathParts(fullPath);
               String solution = pathParts.get(0);
-              if (solution.startsWith("/")) {
+              if (solution.startsWith("/")) { //$NON-NLS-1$
                 solution = solution.substring(1);
               }
-              String path = "";
+              String path = ""; //$NON-NLS-1$
               for (int i = 1; i < pathParts.size() - 1; i++) {
                 path += pathParts.get(i);
               }
-              if (path.startsWith("/")) {
+              if (path.startsWith("/")) { //$NON-NLS-1$
                 path = path.substring(1);
               }
-              url = "ViewAction?solution=" + solution + "&path=" + path + "&action=" + fileName;
+              url = "ViewAction?solution=" + solution + "&path=" + path + "&action=" + fileName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            Window.open(url, "_blank", "");
+            Window.open(url, "_blank", ""); //$NON-NLS-1$ //$NON-NLS-2$
           }
         }
 
@@ -322,8 +322,8 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
       rowPanel.setWidget(0, 1, entryPanel);
 
       contentList.setWidget(i + 1, 0, rowPanel);
-      contentList.getCellFormatter().setStyleName(i + 1, 0, "classicNavigatorTableCell");
-      contentList.getCellFormatter().setWidth(i + 1, 0, "100%");
+      contentList.getCellFormatter().setStyleName(i + 1, 0, "classicNavigatorTableCell"); //$NON-NLS-1$
+      contentList.getCellFormatter().setWidth(i + 1, 0, "100%"); //$NON-NLS-1$
     }
     return contentList;
   }
@@ -331,8 +331,8 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
   private String buildPathForElement(Element element) {
     List<String> parents = new ArrayList<String>();
     while (element != null) {
-      String name = element.getAttribute("name");
-      if (name != null && !"".equalsIgnoreCase(name)) {
+      String name = element.getAttribute("name"); //$NON-NLS-1$
+      if (name != null && !"".equalsIgnoreCase(name)) { //$NON-NLS-1$
         parents.add(name);
       }
       Object tmpParent = element.getParentNode();
@@ -343,9 +343,9 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
       }
     }
     Collections.reverse(parents);
-    String pathForElement = "";
+    String pathForElement = ""; //$NON-NLS-1$
     for (String pathPart : parents) {
-      pathForElement += "/" + pathPart;
+      pathForElement += "/" + pathPart; //$NON-NLS-1$
     }
     return pathForElement;
   }

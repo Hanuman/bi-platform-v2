@@ -1592,6 +1592,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String effectiveValue();
 
   /**
+   * Translated "Solutions".
+   * 
+   * @return translated "Solutions"
+  
+   */
+  @DefaultMessage("Solutions")
+  String solutions();
+
+  /**
    * Translated "Location".
    * 
    * @return translated "Location"
