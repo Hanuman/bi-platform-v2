@@ -36,13 +36,11 @@
 		<param-value>org.pentaho.platform.web.http.context.PentahoSolutionSpringApplicationContext</param-value>
 	</context-param>
 
-    <!--  Spring stuff -->
 	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<!-- These file locations are relative to the "system" folder within your pentaho solutions folder -->
-		<param-value>pentahoSystemConfig.xml adminPlugins.xml systemListeners.xml
-			sessionStartupActions.xml applicationContext-acegi-security.xml applicationContext-common-authorization.xml
-			applicationContext-acegi-security-hibernate.xml applicationContext-pentaho-security-hibernate.xml pentahoObjects.spring.xml</param-value>
+      <param-name>contextConfigLocation</param-name>
+      <!-- This file is relative to the "system" folder within your pentaho solutions folder. -->
+      <!-- Instead of adding files here, add them as imports to pentaho-spring-beans.xml. -->
+      <param-value>pentaho-spring-beans.xml</param-value>
 	</context-param>
 
 	<context-param>
