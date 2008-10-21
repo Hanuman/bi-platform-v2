@@ -129,12 +129,12 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
       }
 
     });
-    usersAndRolesList.setWidth("100%");
-    buttonPanel.setWidth("100%");
+    usersAndRolesList.setWidth("100%"); //$NON-NLS-1$
+    buttonPanel.setWidth("100%"); //$NON-NLS-1$
 
-    permissionsTable.setStyleName("permissionsTable");
-    permissionsTable.setWidth("100%");
-    permissionsTable.setHeight("100%");
+    permissionsTable.setStyleName("permissionsTable"); //$NON-NLS-1$
+    permissionsTable.setWidth("100%"); //$NON-NLS-1$
+    permissionsTable.setHeight("100%"); //$NON-NLS-1$
 
     int row = 0;
     setWidget(row++, 0, new Label(Messages.getInstance().usersAndRoles()));
@@ -142,11 +142,11 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     setWidget(row++, 0, buttonPanel);
     setWidget(row++, 0, permissionsLabel);
     setWidget(row++, 0, permissionsTable);
-    setWidth("100%");
+    setWidth("100%"); //$NON-NLS-1$
   }
 
   public void buildPermissionsTable() {
-    String userOrRoleString = "";
+    String userOrRoleString = ""; //$NON-NLS-1$
     permissionsTable.clear();
     if (usersAndRolesList.getItemCount() == 0) {
       permissionsLabel.setText(Messages.getInstance().permissionsColon());
@@ -176,7 +176,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     final CheckBox grantPermissionCheckBox = new CheckBox(Messages.getInstance().grantPermissions());
     final CheckBox subscribePermissionCheckBox = new CheckBox(Messages.getInstance().schedule());
 
-    if ("".equals(userOrRoleString)) {
+    if ("".equals(userOrRoleString)) { //$NON-NLS-1$
       allPermissionCheckBox.setEnabled(false);
       createPermissionCheckBox.setEnabled(false);
       updatePermissionCheckBox.setEnabled(false);

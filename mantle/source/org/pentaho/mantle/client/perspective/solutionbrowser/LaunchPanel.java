@@ -53,20 +53,20 @@ public class LaunchPanel extends Frame {
     
     this.perspective = perspective;
 
-    String url = "mantle/launch/launch.jsp";
+    String url = "mantle/launch/launch.jsp"; //$NON-NLS-1$
     if (GWT.isScript()) {
       
       String mypath = Window.Location.getPath();
-      if (!mypath.endsWith("/")) {
-        mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1);
+      if (!mypath.endsWith("/")) { //$NON-NLS-1$
+        mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1); //$NON-NLS-1$
       }
-      mypath = mypath.replaceAll("/mantle/", "/");
-      if (!mypath.endsWith("/")) {
-        mypath = "/" + mypath;
+      mypath = mypath.replaceAll("/mantle/", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+      if (!mypath.endsWith("/")) { //$NON-NLS-1$
+        mypath = "/" + mypath; //$NON-NLS-1$
       }    
       url = mypath + url;
     } else {
-      url = "http://localhost:8080/pentaho/mantle/launch/launch.jsp?userid=joe&password=password";
+      url = "http://localhost:8080/pentaho/mantle/launch/launch.jsp?userid=joe&password=password"; //$NON-NLS-1$
     }
     this.setUrl(url);
 

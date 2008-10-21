@@ -41,13 +41,13 @@ public class BookmarkHelper {
 
   public static String toXML(List<Bookmark> bookmarks) throws ParserConfigurationException, TransformerConfigurationException, TransformerException, TransformerFactoryConfigurationError {
     org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-    org.w3c.dom.Element root = document.createElement("bookmarks");
+    org.w3c.dom.Element root = document.createElement("bookmarks"); //$NON-NLS-1$
     document.appendChild(root);
     for (Bookmark bookmark: bookmarks) {
-      org.w3c.dom.Element bookmarkElement = document.createElement("bookmark");
-      bookmarkElement.setAttribute("title", bookmark.getTitle());
-      bookmarkElement.setAttribute("url", bookmark.getUrl());
-      bookmarkElement.setAttribute("group", bookmark.getGroup());
+      org.w3c.dom.Element bookmarkElement = document.createElement("bookmark"); //$NON-NLS-1$
+      bookmarkElement.setAttribute("title", bookmark.getTitle()); //$NON-NLS-1$
+      bookmarkElement.setAttribute("url", bookmark.getUrl()); //$NON-NLS-1$
+      bookmarkElement.setAttribute("group", bookmark.getGroup()); //$NON-NLS-1$
       root.appendChild(bookmarkElement);
     }
     DOMSource source = new DOMSource(document);
@@ -59,14 +59,14 @@ public class BookmarkHelper {
   
   public static List<Bookmark> fromXML(String xml) throws UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
     List<Bookmark> bookmarks = new ArrayList<Bookmark>();
-    org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
-    NodeList nodeList = document.getElementsByTagName("bookmark");
+    org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
+    NodeList nodeList = document.getElementsByTagName("bookmark"); //$NON-NLS-1$
     for (int i=0;i<nodeList.getLength();i++) {
       Element element = (Element)nodeList.item(i);
       Bookmark bookmark = new Bookmark();
-      bookmark.setTitle(element.getAttribute("title"));
-      bookmark.setUrl(element.getAttribute("url"));
-      bookmark.setGroup(element.getAttribute("group"));
+      bookmark.setTitle(element.getAttribute("title")); //$NON-NLS-1$
+      bookmark.setUrl(element.getAttribute("url")); //$NON-NLS-1$
+      bookmark.setGroup(element.getAttribute("group")); //$NON-NLS-1$
       bookmarks.add(bookmark);
     }
     return bookmarks;

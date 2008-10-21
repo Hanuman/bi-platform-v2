@@ -41,6 +41,6 @@ public class OpenDocCommand implements Command {
    * the EE version of the document.
    */
   public void execute() {
-    Window.open(documentationURL, "documentation","");
+    Window.open(documentationURL, "documentation",""); //$NON-NLS-1$ //$NON-NLS-2$
   }
 }

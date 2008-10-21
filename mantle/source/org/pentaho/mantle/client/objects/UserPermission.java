@@ -50,6 +50,6 @@ public class UserPermission implements Serializable {
   }
   
   public String toString() {
-    return "UserPermission[name=" + name + ", mask=" + mask + "]";
+    return "UserPermission[name=" + name + ", mask=" + mask + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 }

@@ -54,7 +54,7 @@ public class FilesListPanel extends FlowPanel {
     toolbar = new FilesToolbar(fileItemCallback);
     SimplePanel toolbarWrapper = new SimplePanel();
     toolbarWrapper.add(toolbar);
-    toolbarWrapper.setStyleName("files-toolbar");
+    toolbarWrapper.setStyleName("files-toolbar"); //$NON-NLS-1$
     add(toolbarWrapper);
 
     SimplePanel filesListWrapper = new SimplePanel();
@@ -75,8 +75,8 @@ public class FilesListPanel extends FlowPanel {
     fp.sinkEvents(Event.KEYEVENTS);
 
     filesListWrapper.add(fp);
-    fp.getElement().getStyle().setProperty("marginTop", "29px");
-    filesListWrapper.setStyleName("files-list-panel");
+    fp.getElement().getStyle().setProperty("marginTop", "29px"); //$NON-NLS-1$ //$NON-NLS-2$
+    filesListWrapper.setStyleName("files-list-panel"); //$NON-NLS-1$
     add(filesListWrapper);
 
     this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
@@ -88,8 +88,8 @@ public class FilesListPanel extends FlowPanel {
     // let's sort this list based on localized name
     Collections.sort(files, new Comparator<Element>() {
       public int compare(Element o1, Element o2) {
-        String name1 = o1.getAttribute("localized-name");
-        String name2 = o2.getAttribute("localized-name");
+        String name1 = o1.getAttribute("localized-name"); //$NON-NLS-1$
+        String name2 = o2.getAttribute("localized-name"); //$NON-NLS-1$
         return name1.compareTo(name2);
       }
     });

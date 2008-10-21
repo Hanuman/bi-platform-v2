@@ -85,16 +85,16 @@ public class FavoritesPanel extends UserPreferencesPanel {
 
   public void init() {
     content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-    content.setWidth("100%");
+    content.setWidth("100%"); //$NON-NLS-1$
     content.add(bookmarkTree);
     bookmarkTree.setAnimationEnabled(true);
     bookmarkTree.sinkEvents(Event.ONDBLCLICK);
-    DOM.setStyleAttribute(bookmarkTree.getElement(), "border", "1px solid black");
+    DOM.setStyleAttribute(bookmarkTree.getElement(), "border", "1px solid black"); //$NON-NLS-1$ //$NON-NLS-2$
     ScrollPanel scroller = new ScrollPanel();
     scroller.add(content);
     add(scroller);
-    scroller.setHeight("400px");
-    scroller.setWidth("400px");
+    scroller.setHeight("400px"); //$NON-NLS-1$
+    scroller.setWidth("400px"); //$NON-NLS-1$
     loadBookmarks();
   }
 

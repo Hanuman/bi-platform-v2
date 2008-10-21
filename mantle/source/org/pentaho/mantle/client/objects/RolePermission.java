@@ -50,6 +50,6 @@ public class RolePermission implements Serializable {
   }
   
   public String toString() {
-    return "RolePermission[name=" + name + ", mask=" + mask + "]";
+    return "RolePermission[name=" + name + ", mask=" + mask + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 }

@@ -33,15 +33,15 @@ public class WaitPopup extends SimplePanel{
   private static int clickCount = 0;
   
   public WaitPopup(){
-    setStyleName("waitPopup");
+    setStyleName("waitPopup"); //$NON-NLS-1$
     VerticalPanel vp = new VerticalPanel();
     Label lbl = new Label(Messages.getInstance().pleaseWait());
-    lbl.setStyleName("waitPopup_title");
+    lbl.setStyleName("waitPopup_title"); //$NON-NLS-1$
     vp.add(lbl);
     lbl = new Label(Messages.getInstance().waitMessage());
-    lbl.setStyleName("waitPopup_msg");
+    lbl.setStyleName("waitPopup_msg"); //$NON-NLS-1$
     vp.add(lbl);
-    vp.setStyleName("waitPopup_table");
+    vp.setStyleName("waitPopup_table"); //$NON-NLS-1$
     this.add(vp);
     
     if (pageBackground == null) {
