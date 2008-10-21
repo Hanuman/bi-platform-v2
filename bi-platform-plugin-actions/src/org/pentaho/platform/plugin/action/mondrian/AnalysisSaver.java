@@ -34,8 +34,7 @@ import org.pentaho.platform.engine.services.PentahoMessenger;
 import org.pentaho.platform.plugin.action.messages.Messages;
 
 /**
- * Utility class used to save an analysis action sequence from a 
- * JPivot view. 
+ * Utility class used to save an analysis action sequence from a JPivot view.
  */
 public class AnalysisSaver extends PentahoMessenger {
   private static final long serialVersionUID = 6290291421129174060L;
@@ -52,7 +51,9 @@ public class AnalysisSaver extends PentahoMessenger {
 
   private static Log logger = null;
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.pentaho.core.system.PentahoBase#getLogger()
    */
   @Override
@@ -60,13 +61,12 @@ public class AnalysisSaver extends PentahoMessenger {
     return AnalysisSaver.logger;
   }
 
-  public static int saveAnalysis(final IPentahoSession session, final HashMap props, final String path,
-      String fileName, final boolean overwrite) {
-	  
+  public static int saveAnalysis(final IPentahoSession session, final HashMap props, final String path, String fileName, final boolean overwrite) {
+
     if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-	  throw new RuntimeException("Save is disabled.");
-	}
-	  
+      throw new RuntimeException(Messages.getErrorString("ANALYSISSAVER.ERROR_0006_SAVE_IS_DISABLED"));
+    }
+
     int result = 0;
     try {
       AnalysisSaver.logger = LogFactory.getLog(AnalysisSaver.class);
@@ -77,8 +77,7 @@ public class AnalysisSaver extends PentahoMessenger {
       String originalActionReference = (String) props.get("actionreference"); //$NON-NLS-1$
 
       if (originalActionReference == null) {
-        throw new MissingParameterException(Messages
-            .getErrorString("ANALYSISSAVER.ERROR_0001_MISSING_ACTION_REFERENCE")); //$NON-NLS-1$
+        throw new MissingParameterException(Messages.getErrorString("ANALYSISSAVER.ERROR_0001_MISSING_ACTION_REFERENCE")); //$NON-NLS-1$
       }
 
       org.dom4j.Document document = solutionRepository.getResourceAsDocument(originalActionReference);
@@ -99,8 +98,7 @@ public class AnalysisSaver extends PentahoMessenger {
         if (!aSolutionFile.isDirectory() && aSolutionFile.getFileName().startsWith(originalFileName)
             && aSolutionFile.getFileName().toLowerCase().endsWith(AnalysisSaver.PROPERTIES_SUFFIX)) {
           String newFileName = aSolutionFile.getFileName().replaceFirst(originalFileName, baseFileName);
-          result = result
-              & solutionRepository.addSolutionFile(baseUrl, path, newFileName, aSolutionFile.getData(), overwrite);
+          result = result & solutionRepository.addSolutionFile(baseUrl, path, newFileName, aSolutionFile.getData(), overwrite);
         }
       }
 
@@ -139,23 +137,21 @@ public class AnalysisSaver extends PentahoMessenger {
       // Next, we need to retrieve the PivotViewComponent action and
       // process/update it.. there could popssibly be more than one
       // PivotViewComponent in an action sequence, however, we have no idea
-      // how to figure out which one to process, so we default to picking the last one we found. 
+      // how to figure out which one to process, so we default to picking the last one we found.
 
-      componentDefinition = (Element) document
-          .selectSingleNode("//action-definition[component-name='PivotViewComponent']/component-definition"); //$NON-NLS-1$
+      componentDefinition = (Element) document.selectSingleNode("//action-definition[component-name='PivotViewComponent']/component-definition"); //$NON-NLS-1$
       if (componentDefinition == null) {
         throw new InvalidDocumentException(Messages.getErrorString("ANALYSISSAVER.ERROR_0005_INVALID_NO_PIVOT_ACTION")); //$NON-NLS-1$
       }
 
       AnalysisSaver.updateComponent(componentDefinition, props);
 
-      // Get the action's root action-output node, in case we need to add the 
+      // Get the action's root action-output node, in case we need to add the
       // appropriate outputs for the pivot view...
-      actionOutput = (Element) document
-          .selectSingleNode("//action-definition[component-name='PivotViewComponent']/action-outputs"); //$NON-NLS-1$
+      actionOutput = (Element) document.selectSingleNode("//action-definition[component-name='PivotViewComponent']/action-outputs"); //$NON-NLS-1$
       AnalysisSaver.updateOutput(actionOutput, props);
 
-      // Get the action's root action sequence output node, in case we need to add the 
+      // Get the action's root action sequence output node, in case we need to add the
       // appropriate outputs for the pivot view...
       actionSequenceOutput = (Element) document.selectSingleNode("//action-sequence/outputs"); //$NON-NLS-1$
       AnalysisSaver.updateOutput(actionSequenceOutput, props);
