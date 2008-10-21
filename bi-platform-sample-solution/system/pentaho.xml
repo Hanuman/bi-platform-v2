@@ -11,7 +11,7 @@
     The login-show-users-list setting when set to true, will show a drop-down list of the default 
     sample pentaho users (joe,suzy,pat,tiffany) in the login dialog which is shown when a user attemps
     to login to the Pentaho User Console (PUC).  The 'true' setting is meant for demo purposes in the community
-    edition.  The enterprise (EE) version will have this setting disabled.
+    edition.
     -->
     <login-show-users-list>true</login-show-users-list> 
         
