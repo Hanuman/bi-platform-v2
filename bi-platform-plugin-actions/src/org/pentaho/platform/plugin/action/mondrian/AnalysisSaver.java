@@ -85,7 +85,6 @@ public class AnalysisSaver extends PentahoMessenger {
 
       // Update the document with the stuff we passed in on the props
       document = AnalysisSaver.updateDocument(document, props);
-      System.out.println(document.asXML());
       fileName = fileName.endsWith(AnalysisSaver.SUFFIX) ? fileName : fileName + AnalysisSaver.SUFFIX;
       result = solutionRepository.addSolutionFile(baseUrl, path, fileName, document.asXML().getBytes(), overwrite);
 
