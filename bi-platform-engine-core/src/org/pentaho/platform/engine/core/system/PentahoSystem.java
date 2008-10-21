@@ -309,7 +309,7 @@ public class PentahoSystem {
 
     PentahoSystem.initXMLFactories();
 
-    StandaloneSession session = new StandaloneSession("system session"); //$NON-NLS-1$
+    SystemStartupSession session = new SystemStartupSession();
     PentahoSystem.loggingLevel = Logger
         .getLogLevel(PentahoSystem.systemSettings.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
     Logger.setLogLevel(PentahoSystem.loggingLevel);

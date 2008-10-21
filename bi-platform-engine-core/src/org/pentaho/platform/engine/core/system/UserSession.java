@@ -26,6 +26,8 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.engine.core.audit.AuditHelper;
+import org.pentaho.platform.engine.core.audit.MessageTypes;
 
 public class UserSession extends StandaloneSession {
 
@@ -41,6 +43,10 @@ public class UserSession extends StandaloneSession {
   public UserSession(final String userName, final Locale locale, final boolean authenticated,
       final IParameterProvider sessionParameters) {
     super(userName, userName, locale);
+
+    // audit session creation
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_START, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
     if (authenticated) {
       setAuthenticated(userName);
       PentahoSystem.sessionStartup(this, sessionParameters);
@@ -56,8 +62,20 @@ public class UserSession extends StandaloneSession {
   public UserSession(final String userName, final Locale locale, final IParameterProvider sessionParameters) {
     super(userName, userName, locale);
 
+    // audit session creation
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_START, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
     // run any session initialization actions
     PentahoSystem.sessionStartup(this, sessionParameters);
+
+  }
+  
+  @Override
+  public void destroy() {
+    // audit session destruction
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_END, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
+    super.destroy();    
   }
 
 }

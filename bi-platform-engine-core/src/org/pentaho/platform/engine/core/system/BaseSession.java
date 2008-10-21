@@ -26,8 +26,6 @@ import java.util.Locale;
 
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.audit.AuditHelper;
-import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.messages.Messages;
 
 public abstract class BaseSession extends PentahoBase implements IPentahoSession {
@@ -56,7 +54,6 @@ public abstract class BaseSession extends PentahoBase implements IPentahoSession
     this.locale = locale;
     actionName = ""; //$NON-NLS-1$
     setLogId(Messages.getString("BaseSession.CODE_LOG_ID", id, ILogger.SESSION_LOG, name)); //$NON-NLS-1$
-    AuditHelper.audit(id, name, actionName, getObjectName(), "", MessageTypes.SESSION_START, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     authenticated = false;
   }
 
@@ -81,7 +78,6 @@ public abstract class BaseSession extends PentahoBase implements IPentahoSession
   }
 
   public void destroy() {
-    AuditHelper.audit(id, name, actionName, getObjectName(), "", MessageTypes.SESSION_END, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
   public void setActionName(final String actionName) {

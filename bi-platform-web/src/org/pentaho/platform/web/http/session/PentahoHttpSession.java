@@ -27,6 +27,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.audit.AuditHelper;
+import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
 import org.pentaho.platform.engine.core.system.BaseSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -48,6 +50,9 @@ public class PentahoHttpSession extends BaseSession {
     super(userName, session.getId(), locale);
 
     this.session = session;
+    
+    // audit session creation
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_START, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // run any session initialization actions
     IParameterProvider sessionParameters = new PentahoSessionParameterProvider(userSession);
@@ -72,4 +77,14 @@ public class PentahoHttpSession extends BaseSession {
     session.removeAttribute(attributeName);
     return result;
   }
+  
+  @Override
+  public void destroy() {
+   
+    // audit session destruction
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_END, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
+    super.destroy();
+  }
+
 }

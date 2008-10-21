@@ -25,6 +25,8 @@ import javax.portlet.PortletSession;
 import org.apache.commons.collections.iterators.EnumerationIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.engine.core.audit.AuditHelper;
+import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.system.BaseSession;
 
 public class PentahoPortletSession extends BaseSession {
@@ -49,6 +51,9 @@ public class PentahoPortletSession extends BaseSession {
     super(userName, portletSession.getId(), locale);
     this.portletSession = portletSession;
     addedAttributes = new ArrayList();
+    
+    // audit session creation
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_START, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 
   public Object getAttribute(final String attributeName) {
@@ -95,6 +100,10 @@ public class PentahoPortletSession extends BaseSession {
         portletSession.removeAttribute((String) attributeIterator.next(), PortletSession.APPLICATION_SCOPE);
       }
     }
+
+    // audit session destruction
+    AuditHelper.audit(getId(), getName(), getActionName(), getObjectName(), "", MessageTypes.SESSION_END, "", "", 0, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
     super.destroy();
   }
 
