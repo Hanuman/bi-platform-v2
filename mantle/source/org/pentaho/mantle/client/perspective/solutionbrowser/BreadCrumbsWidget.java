@@ -19,6 +19,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import java.util.List;
 
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -41,7 +42,7 @@ public class BreadCrumbsWidget extends HorizontalPanel {
     clear();
     FlexTable breadCrumbs = new FlexTable();
     // build top level
-    breadCrumbs.setWidget(0, 0, buildBreadCrumb("Pentaho Solution Browser", "/"));
+    breadCrumbs.setWidget(0, 0, buildBreadCrumb(Messages.getInstance().pentahoSolutionBrowser(), "/"));
     List<String> pathParts = ClassicNavigatorView.getPathParts(currentSolutionPath);
     String myPath = "";
     int i = 1;

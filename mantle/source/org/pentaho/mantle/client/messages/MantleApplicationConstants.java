@@ -539,6 +539,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String admin();
 
   /**
+   * Translated "Pentaho Solution Browser".
+   * 
+   * @return translated "Pentaho Solution Browser"
+  
+   */
+  @DefaultMessage("Pentaho Solution Browser")
+  String pentahoSolutionBrowser();
+
+  /**
    * Translated "Show Actual File Names".
    * 
    * @return translated "Show Actual File Names"
