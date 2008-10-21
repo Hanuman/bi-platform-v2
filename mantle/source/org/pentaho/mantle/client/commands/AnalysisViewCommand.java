@@ -70,7 +70,7 @@ public class AnalysisViewCommand implements Command {
     if (openAnalysisView != null) {
       String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
       Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
-      PromptDialogBox dialog = new PromptDialogBox("Open", "OK", "Cancel", false, true, content);
+      PromptDialogBox dialog = new PromptDialogBox(Messages.getInstance().open(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, content);
       dialog.setCallback(new IDialogCallback() {
 
         public void cancelPressed() {
