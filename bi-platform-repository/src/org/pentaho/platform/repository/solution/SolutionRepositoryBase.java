@@ -59,7 +59,6 @@ import org.pentaho.platform.engine.services.SolutionURIResolver;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.messages.Messages;
-import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.platform.repository.solution.filebased.FileSolutionFile;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.HttpUtil;
@@ -246,8 +245,8 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     } else if ((resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE) || (resourceSource == IActionSequenceResource.FILE_RESOURCE)) {
       ISolutionFile solutionFile = getSolutionFile(actionResource);
       if (solutionFile == null) {
-        String msg = Messages.getErrorString("SOLREPO.ERROR_0006_MISSING_RESOURCE", actionResource.getAddress()); //$NON-NLS-1$
-        error(msg);
+        String msg = "Resource not found: ["+actionResource.getAddress()+"]"; //$NON-NLS-1$ //$NON-NLS-2$
+        debug(msg);
         throw new FileNotFoundException(msg);
       } else if (getLocalizedResource) {
         solutionFile = getLocalizedFile(solutionFile);
