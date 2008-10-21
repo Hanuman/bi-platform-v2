@@ -59,5 +59,12 @@ public interface IAclHolder {
    */
   public void resetAccessControls(List acls);
   
+  /**
+   * Examines whether the existing object has ACLs. If not, it will return the
+   * parent's ACLs. All the way up to the top if necessary. This method should
+   * never return null.
+   * 
+   * @return List containing all the AclEntry objects
+   */
   public List getEffectiveAccessControls();
 }
