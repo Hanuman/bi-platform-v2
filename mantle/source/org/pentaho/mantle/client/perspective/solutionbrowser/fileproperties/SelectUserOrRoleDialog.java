@@ -70,17 +70,17 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     });
     usersListBox.setVisibleItemCount(5);
     rolesListBox.setVisibleItemCount(5);
-    rolesListBox.setWidth("100%");
-    usersListBox.setWidth("100%");
+    rolesListBox.setWidth("100%"); //$NON-NLS-1$
+    usersListBox.setWidth("100%"); //$NON-NLS-1$
     contentTable.clear();
-    contentTable.setWidth("100%");
+    contentTable.setWidth("100%"); //$NON-NLS-1$
     contentTable.setWidget(0, 0, new Label(Messages.getInstance().users()));
     contentTable.setWidget(1, 0, usersListBox);
     contentTable.setWidget(2, 0, new Label(Messages.getInstance().roles()));
     contentTable.setWidget(3, 0, rolesListBox);
     fetchAllUsers(existing);
     fetchAllRoles(existing);
-    setWidth("200px");
+    setWidth("200px"); //$NON-NLS-1$
   }
 
   public void fetchAllRoles(final List<String> existing) {
@@ -110,7 +110,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetUsers(), false, false, true);
         dialogBox.center();
       }
 

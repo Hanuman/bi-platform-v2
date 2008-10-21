@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -66,14 +67,14 @@ public class ReportView extends VerticalPanel {
   }
 
   private void initUI() {
-    setWidth("100%");
+    setWidth("100%"); //$NON-NLS-1$
 
-    htmlScroller.setHeight("100%");
+    htmlScroller.setHeight("100%"); //$NON-NLS-1$
     reportSlot.add(htmlScroller);
 
-    parameterSlot.setWidth("100%");
-    pageSlot.setWidth("100%");
-    reportSlot.setWidth("100%");
+    parameterSlot.setWidth("100%"); //$NON-NLS-1$
+    pageSlot.setWidth("100%"); //$NON-NLS-1$
+    reportSlot.setWidth("100%"); //$NON-NLS-1$
 
     add(parameterSlot);
     add(pageSlot);
@@ -108,7 +109,7 @@ public class ReportView extends VerticalPanel {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox("Error", caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
         dialogBox.center();
       }
 
@@ -132,11 +133,11 @@ public class ReportView extends VerticalPanel {
 
   private Widget buildPageController() {
     final Label errorLabel = new Label();
-    errorLabel.setStyleName("errorLabel");
-    errorLabel.setWidth("100%");
+    errorLabel.setStyleName("errorLabel"); //$NON-NLS-1$
+    errorLabel.setWidth("100%"); //$NON-NLS-1$
     final TextBox pageField = new TextBox();
     pageField.setVisibleLength(4);
-    pageField.setText("" + (logicalPage + 1));
+    pageField.setText("" + (logicalPage + 1)); //$NON-NLS-1$
     pageField.setTextAlignment(TextBox.ALIGN_RIGHT);
     pageField.addKeyboardListener(new KeyboardListener() {
 
@@ -148,14 +149,14 @@ public class ReportView extends VerticalPanel {
           try {
             int page = Integer.parseInt(pageField.getText());
             if (page < 1 || page > reportContainer.getNumPages()) {
-              errorLabel.setText("Page must be between 1 and " + reportContainer.getNumPages() + ".");
+              errorLabel.setText(Messages.getInstance().pageMustBeBetweenOneAnd() + " " + reportContainer.getNumPages() + "."); //$NON-NLS-1$ //$NON-NLS-2$
               return;
             }
-            errorLabel.setText("");
+            errorLabel.setText(""); //$NON-NLS-1$
             logicalPage = page - 1;
             fetchLogicalPage();
           } catch (Exception e) {
-            errorLabel.setText("Invalid page number: " + pageField.getText());
+            errorLabel.setText(Messages.getInstance().invalidPageNumberColon() + " " + pageField.getText()); //$NON-NLS-1$
           }
         }
       }
@@ -167,11 +168,11 @@ public class ReportView extends VerticalPanel {
 
     Image nextPageButton = new Image();
     MantleImages.images.forwardButton().applyTo(nextPageButton);
-    nextPageButton.setStyleName("reportPageControl");
+    nextPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
     nextPageButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
-        errorLabel.setText("");
+        errorLabel.setText(""); //$NON-NLS-1$
         if (logicalPage < reportContainer.getNumPages() - 1) {
           logicalPage++;
           fetchLogicalPage();
@@ -181,11 +182,11 @@ public class ReportView extends VerticalPanel {
     });
     Image lastPageButton = new Image();
     MantleImages.images.forwardToLastPage().applyTo(lastPageButton);
-    lastPageButton.setStyleName("reportPageControl");
+    lastPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
     lastPageButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
-        errorLabel.setText("");
+        errorLabel.setText(""); //$NON-NLS-1$
         logicalPage = reportContainer.getNumPages() - 1;
         fetchLogicalPage();
       }
@@ -194,11 +195,11 @@ public class ReportView extends VerticalPanel {
 
     Image previousPageButton = new Image();
     MantleImages.images.backButton().applyTo(previousPageButton);
-    previousPageButton.setStyleName("reportPageControl");
+    previousPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
     previousPageButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
-        errorLabel.setText("");
+        errorLabel.setText(""); //$NON-NLS-1$
         if (logicalPage > 0) {
           logicalPage--;
           fetchLogicalPage();
@@ -208,11 +209,11 @@ public class ReportView extends VerticalPanel {
     });
     Image firstPageButton = new Image();
     MantleImages.images.backToFirstPage().applyTo(firstPageButton);
-    firstPageButton.setStyleName("reportPageControl");
+    firstPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
     firstPageButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
-        errorLabel.setText("");
+        errorLabel.setText(""); //$NON-NLS-1$
         logicalPage = 0;
         fetchLogicalPage();
       }
@@ -222,16 +223,16 @@ public class ReportView extends VerticalPanel {
     FlexTable pageControlTable = new FlexTable();
     pageControlTable.setWidget(0, 0, firstPageButton);
     pageControlTable.setWidget(0, 1, previousPageButton);
-    pageControlTable.setWidget(0, 2, new Label("Page"));
+    pageControlTable.setWidget(0, 2, new Label(Messages.getInstance().page()));
     pageControlTable.setWidget(0, 3, pageField);
-    pageControlTable.setWidget(0, 4, new Label("of " + reportContainer.getNumPages()));
+    pageControlTable.setWidget(0, 4, new Label(Messages.getInstance().of() + " " + reportContainer.getNumPages())); //$NON-NLS-1$
     pageControlTable.setWidget(0, 5, nextPageButton);
     pageControlTable.setWidget(0, 6, lastPageButton);
     pageControlTable.setWidget(0, 7, errorLabel);
 
     HorizontalPanel pageControlPanel = new HorizontalPanel();
-    pageControlPanel.setWidth("100%");
-    pageControlPanel.setStyleName("pageControlPanel");
+    pageControlPanel.setWidth("100%"); //$NON-NLS-1$
+    pageControlPanel.setStyleName("pageControlPanel"); //$NON-NLS-1$
     pageControlPanel.add(pageControlTable);
 
     return pageControlPanel;

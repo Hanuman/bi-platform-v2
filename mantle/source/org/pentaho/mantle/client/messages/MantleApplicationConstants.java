@@ -17,6 +17,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String couldNotDelete(String arg0);
 
   /**
+   * Translated "Invalid page number:".
+   * 
+   * @return translated "Invalid page number:"
+  
+   */
+  @DefaultMessage("Invalid page number:")
+  String invalidPageNumberColon();
+
+  /**
    * Translated "Reload All Tabs".
    * 
    * @return translated "Reload All Tabs"
@@ -339,6 +348,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("All Permissions")
   String allPermissions();
+
+  /**
+   * Translated "Could not get list of users".
+   * 
+   * @return translated "Could not get list of users"
+  
+   */
+  @DefaultMessage("Could not get list of users")
+  String couldNotGetUsers();
 
   /**
    * Translated "Purge Mondrian Data Cache".
@@ -809,6 +827,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String selectUserOrRole();
 
   /**
+   * Translated "Page must be between 1 and".
+   * 
+   * @return translated "Page must be between 1 and"
+  
+   */
+  @DefaultMessage("Page must be between 1 and")
+  String pageMustBeBetweenOneAnd();
+
+  /**
    * Translated "Size".
    * 
    * @return translated "Size"
@@ -1133,6 +1160,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String info();
 
   /**
+   * Translated "Of".
+   * 
+   * @return translated "Of"
+  
+   */
+  @DefaultMessage("Of")
+  String of();
+
+  /**
    * Translated "Open".
    * 
    * @return translated "Open"
@@ -1167,6 +1203,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Solution Browser refreshed")
   String solutionBrowserRefreshed();
+
+  /**
+   * Translated "Page".
+   * 
+   * @return translated "Page"
+  
+   */
+  @DefaultMessage("Page")
+  String page();
 
   /**
    * Translated "File".
