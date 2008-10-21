@@ -485,6 +485,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String backgroundExecutionWarning();
 
   /**
+   * Translated "Selection:".
+   * 
+   * @return translated "Selection:"
+  
+   */
+  @DefaultMessage("Selection:")
+  String selectionColon();
+
+  /**
    * Translated "Back".
    * 
    * @return translated "Back"
@@ -1014,6 +1023,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Manage Groups")
   String manageGroups();
+
+  /**
+   * Translated "Choice:".
+   * 
+   * @return translated "Choice:"
+  
+   */
+  @DefaultMessage("Choice:")
+  String choiceColon();
 
   /**
    * Translated "You do not have permission to subscribe to this action sequence.".

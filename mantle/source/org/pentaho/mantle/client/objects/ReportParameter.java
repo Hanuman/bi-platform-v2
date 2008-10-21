@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pentaho.mantle.client.messages.Messages;
+
 public class ReportParameter implements Serializable {
   // parameter types
   public static final int STRING = 0;
@@ -104,14 +106,14 @@ public class ReportParameter implements Serializable {
     StringBuffer sb = new StringBuffer();
 
     for (Object choiceKey : getChoices().keySet()) {
-      sb.append("Choice: " + choiceKey + " = " + getChoices().get(choiceKey) + "\n");
+      sb.append(Messages.getInstance().choiceColon() + " " + choiceKey + " = " + getChoices().get(choiceKey) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     for (Object value : getValues()) {
-      sb.append("Selection: " + value + "\n");
+      sb.append(Messages.getInstance().selectionColon() + " " + value + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     if (getValues() == null) {
-      sb.append("Selection: " + getValue() + "\n");
+      sb.append(Messages.getInstance().selectionColon() + " " + getValue() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return sb.toString();
   }
