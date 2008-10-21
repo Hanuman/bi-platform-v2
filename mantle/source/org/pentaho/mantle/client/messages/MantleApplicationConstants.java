@@ -377,6 +377,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String hideHiddenFiles();
 
   /**
+   * Translated "Editing:".
+   * 
+   * @return translated "Editing:"
+  
+   */
+  @DefaultMessage("Editing:")
+  String editingColon();
+
+  /**
    * Translated "Add...".
    * 
    * @return translated "Add..."
@@ -465,6 +474,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Repository Cache")
   String refreshRepository();
+
+  /**
+   * Translated "Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready".
+   * 
+   * @return translated "Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready"
+  
+   */
+  @DefaultMessage("Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready")
+  String backgroundExecutionWarning();
 
   /**
    * Translated "Back".
@@ -989,6 +1007,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String manageGroups();
 
   /**
+   * Translated "You do not have permission to subscribe to this action sequence.".
+   * 
+   * @return translated "You do not have permission to subscribe to this action sequence."
+  
+   */
+  @DefaultMessage("You do not have permission to subscribe to this action sequence.")
+  String noSubscribePermission();
+
+  /**
    * Translated "Reporting metadata refreshed successfully".
    * 
    * @return translated "Reporting metadata refreshed successfully"
@@ -1014,6 +1041,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("File exists, overwrite?")
   String fileExistsOverwrite();
+
+  /**
+   * Translated "Could not get logical report page".
+   * 
+   * @return translated "Could not get logical report page"
+  
+   */
+  @DefaultMessage("Could not get logical report page")
+  String couldNotGetLogicalReportPage();
 
   /**
    * Translated "Open URL...".
@@ -1239,6 +1275,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Cube")
   String cube();
+
+  /**
+   * Translated "Ad Hoc Report Preview".
+   * 
+   * @return translated "Ad Hoc Report Preview"
+  
+   */
+  @DefaultMessage("Ad Hoc Report Preview")
+  String adhocPreview();
 
   /**
    * Translated "Open...".

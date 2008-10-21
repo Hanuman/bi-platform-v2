@@ -33,7 +33,6 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
-import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -73,7 +72,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -86,14 +84,13 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionBrowserPerspective extends HorizontalPanel implements IPerspective, IFileItemCallback, IWorkspaceCallback {
-  private static final String defaultSplitPosition = "220px";
+  private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
 
   private ClassicNavigatorView classicNavigatorView = new ClassicNavigatorView();
   private HorizontalSplitPanel solutionNavigatorAndContentPanel = new HorizontalSplitPanel(MantleImages.images);
@@ -219,7 +216,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
           NamedFrame frame = tabPanel.getFrame();
 
-          Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME);
+          Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME); //$NON-NLS-1$
 
           frame.setVisible(true);
           refreshIfPDF(tabPanel);
@@ -244,33 +241,33 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     clear();
     if (explorerMode) {
 
-      solutionNavigatorPanel.setHeight("100%");
+      solutionNavigatorPanel.setHeight("100%"); //$NON-NLS-1$
       // ----- Create the top panel ----
 
       BrowserToolbar browserToolbar = new BrowserToolbar(this);
       browserToolbar.setHeight("28px"); //$NON-NLS-1$
-      browserToolbar.setWidth("100%");
+      browserToolbar.setWidth("100%"); //$NON-NLS-1$
 
       FlowPanel topPanel = new FlowPanel();
       SimplePanel toolbarWrapper = new SimplePanel();
       toolbarWrapper.add(browserToolbar);
-      toolbarWrapper.setStyleName("files-toolbar");
+      toolbarWrapper.setStyleName("files-toolbar"); //$NON-NLS-1$
       topPanel.add(toolbarWrapper);
 
       SimplePanel filesListWrapper = new SimplePanel();
       filesListWrapper.add(solutionTree);
-      filesListWrapper.setStyleName("files-list-panel");
+      filesListWrapper.setStyleName("files-list-panel"); //$NON-NLS-1$
       topPanel.add(filesListWrapper);
-      solutionTree.getElement().getStyle().setProperty("marginTop", "29px");
+      solutionTree.getElement().getStyle().setProperty("marginTop", "29px"); //$NON-NLS-1$ //$NON-NLS-2$
 
       this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
 
       // --------------------------------
 
       solutionNavigatorPanel.setTopWidget(topPanel);
-      filesListPanel.setWidth("100%");
+      filesListPanel.setWidth("100%"); //$NON-NLS-1$
       solutionNavigatorPanel.setBottomWidget(filesListPanel);
-      solutionNavigatorPanel.setSplitPosition("60%");
+      solutionNavigatorPanel.setSplitPosition("60%"); //$NON-NLS-1$
       solutionNavigatorAndContentPanel.setLeftWidget(solutionNavigatorPanel);
       solutionNavigatorAndContentPanel.setRightWidget(contentPanel);
       contentPanel.setAnimationEnabled(true);
@@ -281,14 +278,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (showSolutionBrowser) {
         solutionNavigatorAndContentPanel.setSplitPosition(defaultSplitPosition);
       } else {
-        solutionNavigatorAndContentPanel.setSplitPosition("0px");
+        solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
       }
-      contentPanel.setHeight("100%");
-      contentPanel.setWidth("100%");
-      contentTabPanel.setHeight("100%");
-      contentTabPanel.setWidth("100%");
-      setHeight("100%");
-      setWidth("100%");
+      contentPanel.setHeight("100%"); //$NON-NLS-1$
+      contentPanel.setWidth("100%"); //$NON-NLS-1$
+      contentTabPanel.setHeight("100%"); //$NON-NLS-1$
+      contentTabPanel.setWidth("100%"); //$NON-NLS-1$
+      setHeight("100%"); //$NON-NLS-1$
+      setWidth("100%"); //$NON-NLS-1$
       add(solutionNavigatorAndContentPanel);
 
       ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
@@ -297,10 +294,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else {
       // load classic view
       // we've got the tree
-      setHeight("100%");
-      setWidth("100%");
-      classicNavigatorView.setHeight("100%");
-      classicNavigatorView.setWidth("100%");
+      setHeight("100%"); //$NON-NLS-1$
+      setWidth("100%"); //$NON-NLS-1$
+      classicNavigatorView.setHeight("100%"); //$NON-NLS-1$
+      classicNavigatorView.setWidth("100%"); //$NON-NLS-1$
       add(classicNavigatorView);
     }
   }
@@ -333,9 +330,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   private boolean existingTabMatchesName(String name) {
-    String key = "title=\"" + name + "\"";
+    String key = "title=\"" + name + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
-    NodeList<com.google.gwt.dom.client.Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div");
+    NodeList<com.google.gwt.dom.client.Element> divs = contentTabPanel.getTabBar().getElement().getElementsByTagName("div"); //$NON-NLS-1$
 
     for (int i = 0; i < divs.getLength(); i++) {
       String tabHtml = divs.getItem(i).getInnerHTML();
@@ -349,15 +346,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void showNewURLTab(String tabName, String tabTooltip, String url) {
     final int elementId = contentTabPanel.getWidgetCount();
-    String frameName = "frameID: " + elementId;
+    String frameName = "frameID: " + elementId; //$NON-NLS-1$
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
 
     Frame frame = panel.getFrame();
-    frame.getElement().setAttribute("id", frameName);
-    frame.setStyleName("gwt-Frame");
+    frame.getElement().setAttribute("id", frameName); //$NON-NLS-1$
+    frame.setStyleName("gwt-Frame"); //$NON-NLS-1$
     panel.add(frame);
-    frame.setWidth("100%");
-    frame.setHeight("100%");
+    frame.setWidth("100%"); //$NON-NLS-1$
+    frame.setHeight("100%"); //$NON-NLS-1$
 
     String finalTabName = tabName;
     String finalTabTooltip = tabTooltip;
@@ -367,12 +364,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       while (true) {
         // Loop until a unique tab name is not found
         // i.e. get the last counter number and then add 1 to it for the new tab name
-        if (existingTabMatchesName(tabName + " (" + counter + ")")) { // unique
+        if (existingTabMatchesName(tabName + " (" + counter + ")")) { // unique //$NON-NLS-1$ //$NON-NLS-2$
           counter++;
           continue;
         } else {
-          finalTabName = tabName + " (" + counter + ")";
-          finalTabTooltip = tabTooltip + " (" + counter + ")";
+          finalTabName = tabName + " (" + counter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+          finalTabTooltip = tabTooltip + " (" + counter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
           break;
         }
       }
@@ -391,7 +388,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     Collections.reverse(parentList);
     for (int i = 1; i < parentList.size(); i++) {
-      parentList.get(i).getStyle().setProperty("height", "100%");
+      parentList.get(i).getStyle().setProperty("height", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     showLaunchOrContent();
 
@@ -412,11 +409,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void openNewHTMLReport(COMMAND mode) {
-    final String reportKey = "/" + selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
+    final String reportKey = "/" + selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName(); //$NON-NLS-1$ //$NON-NLS-2$
     AsyncCallback<ReportContainer> callback = new AsyncCallback<ReportContainer>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not get logical report page.", false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetLogicalReportPage(), false, false, true);
         dialogBox.center();
       }
 
@@ -433,13 +430,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void openFile(final FileCommand.COMMAND mode) {
     String name = selectedFileItem.getName();
-    if (name.endsWith(".xaction")) {
+    if (name.endsWith(".xaction")) { //$NON-NLS-1$
       if (mode == FileCommand.COMMAND.RUN) {
         final Widget openAnalysisView = getOpenAnalysisView();
         if (openAnalysisView != null) {
           String actionName = getTabForWidget(openAnalysisView).getText();
           Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
-          PromptDialogBox dialog = new PromptDialogBox("Open", "OK", "Cancel", false, true, content);
+          PromptDialogBox dialog = new PromptDialogBox(Messages.getInstance().open(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, content);
           dialog.setCallback(new IDialogCallback() {
 
             public void cancelPressed() {
@@ -460,15 +457,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           executeActionSequence(mode);
         }
       }
-    } else if (name.endsWith(".url")) {
+    } else if (name.endsWith(".url")) { //$NON-NLS-1$
       showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
-    } else if (name.endsWith(".prc")) {
+    } else if (name.endsWith(".prc")) { //$NON-NLS-1$
       // open jfreereport!!
       openNewHTMLReport(mode);
     } else {
       // see if this file has a URL
       String url = selectedFileItem.getURL();
-      if (url != null && !"".equals(url)) {
+      if (url != null && !"".equals(url)) { //$NON-NLS-1$
         // we have a URL so open it in a new tab
         showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
       }
@@ -482,7 +479,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
     List<String> pathSegments = new ArrayList<String>();
     if (path != null) {
-      if (path.startsWith("/")) {
+      if (path.startsWith("/")) { //$NON-NLS-1$
         path = path.substring(1);
       }
       StringTokenizer st = new StringTokenizer(path, '/');
@@ -491,9 +488,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
 
-    String repoPath = "";
+    String repoPath = ""; //$NON-NLS-1$
     for (int i = 1; i < pathSegments.size(); i++) {
-      repoPath += "/" + pathSegments.get(i);
+      repoPath += "/" + pathSegments.get(i); //$NON-NLS-1$
     }
 
     final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
@@ -514,7 +511,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       return;
     }
 
-    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null);
+    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null); //$NON-NLS-1$
 
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
     pathSegments.add(name);
@@ -535,8 +532,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     List<com.google.gwt.xml.client.Element> files = (List<com.google.gwt.xml.client.Element>) fileTreeItem.getUserObject();
     if (files != null) {
       for (com.google.gwt.xml.client.Element fileElement : files) {
-        if (name.equals(fileElement.getAttribute("name")) || name.equals(fileElement.getAttribute("localized-name"))) {
-          selectedFileItem.setURL(fileElement.getAttribute("url"));
+        if (name.equals(fileElement.getAttribute("name")) || name.equals(fileElement.getAttribute("localized-name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+          selectedFileItem.setURL(fileElement.getAttribute("url")); //$NON-NLS-1$
         }
       }
     }
@@ -553,11 +550,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void editFile() {
-    if (selectedFileItem.getName().endsWith(".waqr.xaction")) {
-      String filename = selectedFileItem.getName().substring(0, selectedFileItem.getName().indexOf(".waqr.xaction")) + ".waqr.xreportspec";
-      String url = "adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename=" + filename;
+    if (selectedFileItem.getName().endsWith(".waqr.xaction")) { //$NON-NLS-1$
+      String filename = selectedFileItem.getName().substring(0, selectedFileItem.getName().indexOf(".waqr.xaction")) + ".waqr.xreportspec"; //$NON-NLS-1$ //$NON-NLS-2$
+      String url = "adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename=" + filename; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       if (!GWT.isScript()) {
-        url = "http://localhost:8080/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename="
+        url = "http://localhost:8080/pentaho/adhoc/waqr.html?solution=" + selectedFileItem.getSolution() + "&path=" + selectedFileItem.getPath() + "&filename=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             + filename;
       }
 
@@ -570,7 +567,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
+      showNewURLTab(Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), url);
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -591,14 +588,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void editActionFile() {
     if (MantleApplication.showAdvancedFeatures) {
       String fullPath = null;
-      if (selectedFileItem.getSolution().endsWith("/") || selectedFileItem.getPath().startsWith("/")) {
-        fullPath = selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
+      if (selectedFileItem.getSolution().endsWith("/") || selectedFileItem.getPath().startsWith("/")) { //$NON-NLS-1$ //$NON-NLS-2$
+        fullPath = selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName(); //$NON-NLS-1$
       } else {
-        fullPath = selectedFileItem.getSolution() + "/" + selectedFileItem.getPath() + "/" + selectedFileItem.getName();
+        fullPath = selectedFileItem.getSolution() + "/" + selectedFileItem.getPath() + "/" + selectedFileItem.getName(); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      String url = "actioneditor/actioneditor.html?actionSequence=" + fullPath;
+      String url = "actioneditor/actioneditor.html?actionSequence=" + fullPath; //$NON-NLS-1$
       if (!GWT.isScript()) {
-        url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath;
+        url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath; //$NON-NLS-1$
       }
 
       // See if it's already loaded
@@ -610,7 +607,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab("Editing: " + selectedFileItem.getLocalizedName(), "Editing: " + selectedFileItem.getLocalizedName(), url);
+      showNewURLTab(Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), url);
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -632,33 +629,33 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
         String url = null;
         String path = selectedFileItem.getPath();
-        if (path.startsWith("/")) {
+        if (path.startsWith("/")) { //$NON-NLS-1$
           path = path.substring(1);
         }
         if (GWT.isScript()) {
-          url = "ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName();
+          url = "ViewAction?solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           String mypath = Window.Location.getPath();
-          if (!mypath.endsWith("/")) {
-            mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1);
+          if (!mypath.endsWith("/")) { //$NON-NLS-1$
+            mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          mypath = mypath.replaceAll("/mantle/", "/");
-          if (!mypath.endsWith("/")) {
-            mypath = "/" + mypath;
+          mypath = mypath.replaceAll("/mantle/", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+          if (!mypath.endsWith("/")) { //$NON-NLS-1$
+            mypath = "/" + mypath; //$NON-NLS-1$
           }
           url = mypath + url;
         } else {
-          url = "/MantleService?passthru=ViewAction&solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName()
-              + "&userid=joe&password=password";
+          url = "/MantleService?passthru=ViewAction&solution=" + selectedFileItem.getSolution() + "&path=" + path + "&action=" + selectedFileItem.getName() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              + "&userid=joe&password=password"; //$NON-NLS-1$
         }
 
         if (mode == FileCommand.COMMAND.BACKGROUND) {
           MessageDialogBox dialogBox = new MessageDialogBox(
               Messages.getInstance().info(),
-              "Reports that prompt for parameters are not supported with this feature and may result in errors.<BR><BR>  You will be notified when the content is ready.",
+              Messages.getInstance().backgroundExecutionWarning(),
               true, false, true);
           dialogBox.center();
 
-          url += "&background=true";
+          url += "&background=true"; //$NON-NLS-1$
 
           RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
           try {
@@ -676,13 +673,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           }
         } else if (mode == FileCommand.COMMAND.NEWWINDOW) {
           // popup blockers might attack this
-          Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no");
+          Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (mode == FileCommand.COMMAND.SUBSCRIBE) {
-          final String myurl = url + "&subscribepage=yes";
+          final String myurl = url + "&subscribepage=yes"; //$NON-NLS-1$
           AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onFailure(Throwable caught) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), "Could not get file properties.", false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false, true);
               dialogBox.center();
             }
 
@@ -696,7 +693,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
                 } else {
                   MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(),
-                      "You do not have permission to subscribe to this action sequence.", false, false, true);
+                      Messages.getInstance().noSubscribePermission(), false, false, true);
                   dialogBox.center();
                 }
               } 
@@ -731,13 +728,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         RequestBuilder builder = null;
         if (GWT.isScript()) {
           String path = Window.Location.getPath();
-          if (!path.endsWith("/")) {
-            path = path.substring(0, path.lastIndexOf("/") + 1);
+          if (!path.endsWith("/")) { //$NON-NLS-1$
+            path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc");
+          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc"); //$NON-NLS-1$
         } else {
           builder = new RequestBuilder(RequestBuilder.GET,
-              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password");
+              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password"); //$NON-NLS-1$
         }
 
         RequestCallback callback = new RequestCallback() {
@@ -818,7 +815,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       public void onSuccess(Object result) {
         String solutionName = solutionTree.getSolution();
         String path = solutionTree.getPath();
-        if (path.startsWith("/")) {
+        if (path.startsWith("/")) { //$NON-NLS-1$
           path = path.substring(1);
         }
         String actionName = selectedFileItem.getName();
@@ -870,9 +867,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
     if (myIndex >= 0 && myIndex < filesListPanel.getFileCount() - 1) {
-      currentItem.setStyleName("fileLabel");
+      currentItem.setStyleName("fileLabel"); //$NON-NLS-1$
       FileItem nextItem = filesListPanel.getFileItem(myIndex + 1);
-      nextItem.setStyleName("fileLabelSelected");
+      nextItem.setStyleName("fileLabelSelected"); //$NON-NLS-1$
       setSelectedFileItem(nextItem);
     }
   }
@@ -889,9 +886,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
     if (myIndex > 0 && myIndex < filesListPanel.getFileCount()) {
-      currentItem.setStyleName("fileLabel");
+      currentItem.setStyleName("fileLabel"); //$NON-NLS-1$
       FileItem nextItem = filesListPanel.getFileItem(myIndex - 1);
-      nextItem.setStyleName("fileLabelSelected");
+      nextItem.setStyleName("fileLabelSelected"); //$NON-NLS-1$
       setSelectedFileItem(nextItem);
     }
   }
@@ -1086,7 +1083,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (navigatorShowing) {
       solutionNavigatorAndContentPanel.setSplitPosition(defaultSplitPosition);
     } else {
-      solutionNavigatorAndContentPanel.setSplitPosition("0px");
+      solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
     }
     // update view menu
     installViewMenu(perspectiveCallback);
@@ -1096,7 +1093,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (!showSolutionBrowser) {
       solutionNavigatorAndContentPanel.setSplitPosition(defaultSplitPosition);
     } else {
-      solutionNavigatorAndContentPanel.setSplitPosition("0px");
+      solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
     }
     showSolutionBrowser = !showSolutionBrowser;
     // update view menu
@@ -1214,7 +1211,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public String getCurrentFrameElementId() {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
     final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
-    return curPanel.getFrame().getElement().getAttribute("id");
+    return curPanel.getFrame().getElement().getAttribute("id"); //$NON-NLS-1$
   }
 
   public ReloadableIFrameTabPanel getCurrentFrame() {
@@ -1239,13 +1236,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void handleWAQRPreview(String url, String xml) {
-    showNewURLTab(Messages.getInstance().preview(), "Ad Hoc Report Preview", "about:blank");
+    showNewURLTab(Messages.getInstance().preview(), Messages.getInstance().adhocPreview(), "about:blank"); //$NON-NLS-1$
     NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
     final FormPanel form = new FormPanel(namedFrame);
     RootPanel.get().add(form);
     form.setMethod(FormPanel.METHOD_POST);
     form.setAction(url);
-    form.add(new Hidden("reportXml", xml));
+    form.add(new Hidden("reportXml", xml)); //$NON-NLS-1$
     form.submit();
     ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
   }
@@ -1262,7 +1259,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       Widget currentWidget = contentTabPanel.getWidget(i);
       Frame frame = ((ReloadableIFrameTabPanel) currentWidget).getFrame();
       String url = frame.getUrl();
-      if (url.contains(".analysis.xaction")) {
+      if (url.contains(".analysis.xaction")) { //$NON-NLS-1$
         return currentWidget;
       }
     }
