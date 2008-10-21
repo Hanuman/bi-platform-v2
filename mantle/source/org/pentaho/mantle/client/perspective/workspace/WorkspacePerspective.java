@@ -29,15 +29,12 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
-import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
-import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -59,7 +56,7 @@ public class WorkspacePerspective extends ScrollPanel {
   private static final int COMPLETE = 1;
   private static final int MYSCHEDULES = 2;
   private static final int ALLSCHEDULES = 3;
-  private static final String DELETE = "delete";
+  private static final String DELETE = "delete"; //$NON-NLS-1$
 
   private boolean backgroundAlertRaised = false;
   private DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getInstance().allSchedulesAdminOnly(), false);
@@ -78,74 +75,74 @@ public class WorkspacePerspective extends ScrollPanel {
 
   public WorkspacePerspective(final SolutionBrowserPerspective solutionBrowserPerspective, final IPerspectiveCallback perspectiveCallback) {
     this.solutionBrowserPerspective = solutionBrowserPerspective;
-    DOM.setStyleAttribute(getElement(), "backgroundColor", "white");
+    DOM.setStyleAttribute(getElement(), "backgroundColor", "white"); //$NON-NLS-1$ //$NON-NLS-2$
     buildScheduledAndCompletedContentPanel();
   }
 
   public FlexTable buildEmptyBackgroundItemTable(int tableType) {
     FlexTable table = new FlexTable();
-    table.setWidth("100%");
-    table.setStyleName("backgroundContentTable");
-    table.setWidget(0, 0, new Label("Name"));
-    table.setWidget(0, 1, new Label("Date"));
+    table.setWidth("100%"); //$NON-NLS-1$
+    table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
+    table.setWidget(0, 0, new Label(Messages.getInstance().name()));
+    table.setWidget(0, 1, new Label(Messages.getInstance().date()));
     if (tableType == COMPLETE) {
-      table.setWidget(0, 2, new Label("Size"));
+      table.setWidget(0, 2, new Label(Messages.getInstance().size()));
       table.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-      table.setWidget(0, 3, new Label("Type"));
-      table.setWidget(0, 4, new Label("Actions"));
-      table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCellRight");
+      table.setWidget(0, 3, new Label(Messages.getInstance().type()));
+      table.setWidget(0, 4, new Label(Messages.getInstance().actions()));
+      table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCellRight"); //$NON-NLS-1$
     } else {
-      table.setWidget(0, 2, new Label("Actions"));
-      table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell");
-      table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCellRight");
+      table.setWidget(0, 2, new Label(Messages.getInstance().actions()));
+      table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+      table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCellRight"); //$NON-NLS-1$
     }
     return table;
   }
 
   public FlexTable buildEmptyScheduleTable() {
     FlexTable table = new FlexTable();
-    table.setWidth("100%");
-    table.setStyleName("backgroundContentTable");
-    table.setWidget(0, 0, new Label("Job Name"));
-    table.setWidget(0, 1, new Label("Job Group"));
-    table.setWidget(0, 2, new Label("Description"));
-    table.setWidget(0, 3, new Label("Last Run / Next Run"));
-    table.setWidget(0, 4, new Label("State"));
-    table.setWidget(0, 5, new Label("Actions"));
-    table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 5, "backgroundContentHeaderTableCellRight");
+    table.setWidth("100%"); //$NON-NLS-1$
+    table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
+    table.setWidget(0, 0, new Label(Messages.getInstance().jobName()));
+    table.setWidget(0, 1, new Label(Messages.getInstance().jobGroup()));
+    table.setWidget(0, 2, new Label(Messages.getInstance().description()));
+    table.setWidget(0, 3, new Label(Messages.getInstance().lastRunNextRun()));
+    table.setWidget(0, 4, new Label(Messages.getInstance().state()));
+    table.setWidget(0, 5, new Label(Messages.getInstance().actions()));
+    table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 5, "backgroundContentHeaderTableCellRight"); //$NON-NLS-1$
     return table;
   }
 
   private FlexTable buildEmptySubscriptionsTable() {
     FlexTable table = new FlexTable();
-    table.setWidth("100%");
-    table.setStyleName("backgroundContentTable");
+    table.setWidth("100%"); //$NON-NLS-1$
+    table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
     table.setWidget(0, 0, new Label(Messages.getInstance().name()));
     table.setWidget(0, 1, new Label(Messages.getInstance().scheduleDate()));
     table.setWidget(0, 2, new Label(Messages.getInstance().type()));
     table.setWidget(0, 3, new Label(Messages.getInstance().size()));
     table.setWidget(0, 4, new Label(Messages.getInstance().actions()));
-    table.getFlexCellFormatter().setWidth(1, 0, "200em");
-    table.getFlexCellFormatter().setWidth(1, 1, "200em");
-    table.getFlexCellFormatter().setWidth(1, 2, "100em");
-    table.getFlexCellFormatter().setWidth(1, 3, "100em");
-    table.getFlexCellFormatter().setWidth(1, 4, "450em");
+    table.getFlexCellFormatter().setWidth(1, 0, "200em"); //$NON-NLS-1$
+    table.getFlexCellFormatter().setWidth(1, 1, "200em"); //$NON-NLS-1$
+    table.getFlexCellFormatter().setWidth(1, 2, "100em"); //$NON-NLS-1$
+    table.getFlexCellFormatter().setWidth(1, 3, "100em"); //$NON-NLS-1$
+    table.getFlexCellFormatter().setWidth(1, 4, "450em"); //$NON-NLS-1$
 
-    table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell");
-    table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCell");
+    table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
+    table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
     return table;
   }
 
@@ -154,12 +151,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       public void onSuccess(Boolean isAdministrator) {
         workspaceTable = new FlexTable();
-        workspaceTable
-            .setWidget(
-                0,
-                0,
-                new HTML(
-                    "<BR><H3>&nbsp;&nbsp;My Workspace</H3><BR>&nbsp;&nbsp;This page shows reports that you have submitted to run in background on the server.<BR>&nbsp;&nbsp;You can cancel ones that have not run yet, and you can view or delete ones that have.<BR><BR>"));
+        workspaceTable.setWidget(0, 0, new HTML(Messages.getInstance().workspaceMessage()));
         workspaceTable.setWidget(1, 0, waitingContentDisclosure);
         workspaceTable.setWidget(2, 0, completedContentDisclosure);
         workspaceTable.setWidget(3, 0, myScheduledContentDisclosure);
@@ -168,7 +160,7 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
         workspaceTable.setWidget(5, 0, subscriptionsContentDisclosure);
-        DOM.setStyleAttribute(workspaceTable.getElement(), "margin", "10px");
+        DOM.setStyleAttribute(workspaceTable.getElement(), "margin", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
         setWidget(workspaceTable);
       }
 
@@ -196,7 +188,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       HorizontalPanel actionPanel = new HorizontalPanel();
       if (tableType == COMPLETE) {
-        Label viewLabel = new Label("View");
+        Label viewLabel = new Label(Messages.getInstance().view());
         viewLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -209,13 +201,13 @@ public class WorkspacePerspective extends ScrollPanel {
             // Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
             // viewDialog.setContent(iframe);
             // iframe.setPixelSize(1024, 600);
-            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id);
+            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id); //$NON-NLS-1$
           }
 
         });
-        viewLabel.setStyleName("backgroundContentAction");
-        viewLabel.setTitle("View Content");
-        Label deleteLabel = new Label("Delete");
+        viewLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+        viewLabel.setTitle(Messages.getInstance().viewContent());
+        Label deleteLabel = new Label(Messages.getInstance().delete());
         deleteLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -223,14 +215,14 @@ public class WorkspacePerspective extends ScrollPanel {
           }
 
         });
-        deleteLabel.setStyleName("backgroundContentAction");
-        deleteLabel.setTitle("Delete Content");
+        deleteLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+        deleteLabel.setTitle(Messages.getInstance().deleteContent());
 
         actionPanel.add(viewLabel);
-        actionPanel.add(new HTML("&nbsp;|&nbsp;"));
+        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
         actionPanel.add(deleteLabel);
       } else if (tableType == WAITING) {
-        Label cancelLabel = new Label("Cancel");
+        Label cancelLabel = new Label(Messages.getInstance().cancel());
         cancelLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -238,42 +230,42 @@ public class WorkspacePerspective extends ScrollPanel {
           }
 
         });
-        cancelLabel.setStyleName("backgroundContentAction");
-        cancelLabel.setTitle("Cancel Execution");
+        cancelLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+        cancelLabel.setTitle(Messages.getInstance().cancelExecution());
         actionPanel.add(cancelLabel);
       }
 
-      jobTable.setWidget(row + 1, 0, new Label(jobDetail.name == null ? (jobDetail.id == null ? "-" : jobDetail.id) : jobDetail.name));
-      jobTable.setWidget(row + 1, 1, new Label(jobDetail.timestamp == null ? "-" : jobDetail.timestamp));
+      jobTable.setWidget(row + 1, 0, new Label(jobDetail.name == null ? (jobDetail.id == null ? "-" : jobDetail.id) : jobDetail.name)); //$NON-NLS-1$
+      jobTable.setWidget(row + 1, 1, new Label(jobDetail.timestamp == null ? "-" : jobDetail.timestamp)); //$NON-NLS-1$
       if (tableType == COMPLETE) {
-        jobTable.setWidget(row + 1, 2, new Label("" + jobDetail.size));
+        jobTable.setWidget(row + 1, 2, new Label("" + jobDetail.size)); //$NON-NLS-1$
         jobTable.setWidget(row + 1, 3, new Label(jobDetail.type));
         jobTable.setWidget(row + 1, 4, actionPanel);
-        jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell");
-        jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell");
-        jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCell");
+        jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell"); //$NON-NLS-1$
+        jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell"); //$NON-NLS-1$
+        jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCell"); //$NON-NLS-1$
         jobTable.getCellFormatter().setHorizontalAlignment(row + 1, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-        jobTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCell");
-        jobTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellRight");
+        jobTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCell"); //$NON-NLS-1$
+        jobTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellRight"); //$NON-NLS-1$
         if (row == jobDetails.size() - 1) {
           // last
-          jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom");
-          jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom");
-          jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottom");
+          jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+          jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+          jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottom"); //$NON-NLS-1$
           jobTable.getCellFormatter().setHorizontalAlignment(row + 1, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-          jobTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCellBottom");
-          jobTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellBottomRight");
+          jobTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+          jobTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellBottomRight"); //$NON-NLS-1$
         }
       } else {
         jobTable.setWidget(row + 1, 2, actionPanel);
-        jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell");
-        jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell");
-        jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellRight");
+        jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell"); //$NON-NLS-1$
+        jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell"); //$NON-NLS-1$
+        jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellRight"); //$NON-NLS-1$
         if (row == jobDetails.size() - 1) {
           // last
-          jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom");
-          jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom");
-          jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottomRight");
+          jobTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+          jobTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+          jobTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottomRight"); //$NON-NLS-1$
         }
       }
     }
@@ -300,43 +292,43 @@ public class WorkspacePerspective extends ScrollPanel {
       final String subscrName = currentSubscr.getId();
 
       Label lblRunNow = new Label(Messages.getInstance().run());
-      lblRunNow.setStyleName("backgroundContentAction");
+      lblRunNow.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblRunNow.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription("run", subscrName);
+          performActionOnSubscription("run", subscrName); //$NON-NLS-1$
         }
       });
 
       Label lblArchive = new Label(Messages.getInstance().archive());
-      lblArchive.setStyleName("backgroundContentAction");
+      lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblArchive.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription("archive", subscrName);
+          performActionOnSubscription("archive", subscrName); //$NON-NLS-1$
         }
       });
 
       Label lblEdit = new Label(Messages.getInstance().edit());
-      lblEdit.setStyleName("backgroundContentAction");
+      lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblEdit.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription("edit", subscrName);
+          performActionOnSubscription("edit", subscrName); //$NON-NLS-1$
         }
       });
       Label lblDelete = new Label(Messages.getInstance().delete());
-      lblDelete.setStyleName("backgroundContentAction");
+      lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
 
       lblDelete.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          doDelete(true, currentSubscr, "");
+          doDelete(true, currentSubscr, ""); //$NON-NLS-1$
         }
       });
 
       buttonsPanel.add(lblRunNow);
-      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       buttonsPanel.add(lblArchive);
-      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       buttonsPanel.add(lblEdit);
-      buttonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+      buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       buttonsPanel.add(lblDelete);
 
       subscrTable.setWidget(row, 0, namePanel);
@@ -359,26 +351,26 @@ public class WorkspacePerspective extends ScrollPanel {
           HorizontalPanel actionButtonsPanel = new HorizontalPanel();
 
           final Label lblViewContent = new Label(Messages.getInstance().view());
-          lblViewContent.setStyleName("backgroundContentAction");
+          lblViewContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
           lblViewContent.addClickListener(new ClickListener() {
 
             public void onClick(Widget sender) {
               final String fileId = currSchedule[3];
               final String name = subscrName;
-              performActionOnSubscriptionContent("archived", name, fileId);
+              performActionOnSubscriptionContent("archived", name, fileId); //$NON-NLS-1$
             }
           });
           actionButtonsPanel.add(lblViewContent);
 
           final Label lblDeleteContent = new Label(Messages.getInstance().delete());
-          lblDeleteContent.setStyleName("backgroundContentAction");
+          lblDeleteContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
           lblDeleteContent.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
               doDelete(false, currentSubscr, currSchedule[3]);
             }
           });
 
-          actionButtonsPanel.add(new HTML("&nbsp;|&nbsp;"));
+          actionButtonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
           actionButtonsPanel.add(lblDeleteContent);
           subscrTable.setWidget(row, 4, actionButtonsPanel);
         }
@@ -450,7 +442,7 @@ public class WorkspacePerspective extends ScrollPanel {
   }
 
   private void performActionOnSubscriptionContent(final String action, final String subscrName, final String contentID) {
-    performActionOnSubscription(action, subscrName + ":" + contentID);
+    performActionOnSubscription(action, subscrName + ":" + contentID); //$NON-NLS-1$
   }
 
   private void performActionOnSubscription(final String action, final String subscrName) {
@@ -460,7 +452,7 @@ public class WorkspacePerspective extends ScrollPanel {
       public void okPressed() {
         viewDialog.hide();
         // Refresh the view
-        if (action.equals("archive") || action.equals(DELETE)) {
+        if (action.equals("archive") || action.equals(DELETE)) { //$NON-NLS-1$
           refreshWorkspace();
         }
       }
@@ -471,12 +463,12 @@ public class WorkspacePerspective extends ScrollPanel {
 
     final String url;
     if (GWT.isScript()) {
-      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
+      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
     } else {
-      url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName;
+      url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    if (action.equals("archived") || action.equals("run")) {
+    if (action.equals("archived") || action.equals("run")) { //$NON-NLS-1$ //$NON-NLS-2$
       solutionBrowserPerspective.showNewURLTab(subscrName, subscrName, url);
     } else {
       viewDialog.center();
@@ -485,7 +477,7 @@ public class WorkspacePerspective extends ScrollPanel {
       // BISERVER-1931: Reducing the size of the dialog box when
       // subscription is to be deleted
       if (action.equals(DELETE)) {
-        iframe.setSize("100%", "100%");
+        iframe.setSize("100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
       } else {
         iframe.setPixelSize(800, 600);
       }
@@ -499,7 +491,7 @@ public class WorkspacePerspective extends ScrollPanel {
     for (int row = 0; row < scheduleDetails.size(); row++) {
       final JobSchedule jobSchedule = scheduleDetails.get(row);
       HorizontalPanel actionPanel = new HorizontalPanel();
-      Label suspendJobLabel = new Label("Suspend");
+      Label suspendJobLabel = new Label(Messages.getInstance().suspend());
       suspendJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -507,10 +499,10 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
       });
-      suspendJobLabel.setStyleName("backgroundContentAction");
-      suspendJobLabel.setTitle("Suspend this job");
+      suspendJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+      suspendJobLabel.setTitle(Messages.getInstance().suspendThisJob());
 
-      Label resumeJobLabel = new Label("Resume");
+      Label resumeJobLabel = new Label(Messages.getInstance().resume());
       resumeJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -518,10 +510,10 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
       });
-      resumeJobLabel.setStyleName("backgroundContentAction");
-      resumeJobLabel.setTitle("Resume this job");
+      resumeJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+      resumeJobLabel.setTitle(Messages.getInstance().resumeThisJob());
 
-      Label runJobLabel = new Label("Run");
+      Label runJobLabel = new Label(Messages.getInstance().run());
       runJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -529,10 +521,10 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
       });
-      runJobLabel.setStyleName("backgroundContentAction");
-      runJobLabel.setTitle("Run this job");
+      runJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+      runJobLabel.setTitle(Messages.getInstance().runThisJob());
 
-      Label deleteJobLabel = new Label("Delete");
+      Label deleteJobLabel = new Label(Messages.getInstance().delete());
       deleteJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -540,57 +532,57 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
       });
-      deleteJobLabel.setStyleName("backgroundContentAction");
-      deleteJobLabel.setTitle("Delete this job");
+      deleteJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
+      deleteJobLabel.setTitle(Messages.getInstance().deleteThisJob());
 
       if (jobSchedule.triggerState == 0) {
         actionPanel.add(suspendJobLabel);
-        actionPanel.add(new HTML("&nbsp;|&nbsp;"));
+        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
       if (jobSchedule.triggerState == 1) {
         actionPanel.add(resumeJobLabel);
-        actionPanel.add(new HTML("&nbsp;|&nbsp;"));
+        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
       if (jobSchedule.triggerState != 2) {
         actionPanel.add(runJobLabel);
-        actionPanel.add(new HTML("&nbsp;|&nbsp;"));
+        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
       actionPanel.add(deleteJobLabel);
 
       scheduleTable.setWidget(row + 1, 0, new HTML(jobSchedule.jobName));
       scheduleTable.setWidget(row + 1, 1, new HTML(jobSchedule.jobGroup));
-      scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null ? "&nbsp;" : jobSchedule.jobDescription));
-      scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? "Never" : jobSchedule.previousFireTime.toString()) + "<BR>"
-          + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString())));
+      scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
+      scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? Messages.getInstance().never() : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$
+          + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString()))); //$NON-NLS-1$
       scheduleTable.setWidget(row + 1, 4, new HTML(getTriggerStateName(jobSchedule.triggerState)));
       scheduleTable.setWidget(row + 1, 5, actionPanel);
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell");
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell");
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCell");
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCell");
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCell");
-      scheduleTable.getCellFormatter().setStyleName(row + 1, 5, "backgroundContentTableCellRight");
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell"); //$NON-NLS-1$
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCell"); //$NON-NLS-1$
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCell"); //$NON-NLS-1$
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCell"); //$NON-NLS-1$
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCell"); //$NON-NLS-1$
+      scheduleTable.getCellFormatter().setStyleName(row + 1, 5, "backgroundContentTableCellRight"); //$NON-NLS-1$
       if (row == scheduleDetails.size() - 1) {
         // last
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom");
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom");
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottom");
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCellBottom");
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellBottom");
-        scheduleTable.getCellFormatter().setStyleName(row + 1, 5, "backgroundContentTableCellBottomRight");
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 1, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 2, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 3, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 4, "backgroundContentTableCellBottom"); //$NON-NLS-1$
+        scheduleTable.getCellFormatter().setStyleName(row + 1, 5, "backgroundContentTableCellBottomRight"); //$NON-NLS-1$
       }
     }
   }
 
   public String getTriggerStateName(int state) {
     if (state == 0) {
-      return "Normal";
+      return Messages.getInstance().normal();
     } else if (state == 1) {
-      return "Paused";
+      return Messages.getInstance().paused();
     } else if (state == 2) {
-      return "Running";
+      return Messages.getInstance().running();
     }
-    return "Unknown";
+    return Messages.getInstance().unknown();
   }
 
   public void deleteContentItem(final String subscriptionName, final String fileId) {
