@@ -989,6 +989,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   String source();
 
   /**
+   * Translated "Custom CRON Schedule".
+   * 
+   * @return translated "Custom CRON Schedule"
+  
+   */
+  @DefaultMessage("Custom CRON Schedule")
+  String customCRONSchedule();
+
+  /**
    * Translated ""<BR><H3>&nbsp;&nbsp;My Workspace</H3><BR>&nbsp;&nbsp;This page shows reports that you have submitted to run in background on the server.<BR>&nbsp;&nbsp;You can cancel ones that have not run yet, and you can view or delete ones that have.<BR><BR>"".
    * 
    * @return translated ""<BR><H3>&nbsp;&nbsp;My Workspace</H3><BR>&nbsp;&nbsp;This page shows reports that you have submitted to run in background on the server.<BR>&nbsp;&nbsp;You can cancel ones that have not run yet, and you can view or delete ones that have.<BR><BR>""

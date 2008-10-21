@@ -23,6 +23,7 @@ import java.util.Date;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -64,7 +65,7 @@ public class FileCommand implements Command {
       int minute = now.getMinutes();
       int hour = now.getHours();
       final TextBox cronTextBox = new TextBox();
-      cronTextBox.setText(second + " " + minute + " " + hour + " * * ?");
+      cronTextBox.setText(second + " " + minute + " " + hour + " * * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       IDialogCallback callback = new IDialogCallback() {
 
         public void cancelPressed() {
@@ -76,7 +77,7 @@ public class FileCommand implements Command {
         }
 
       };
-      PromptDialogBox inputDialog = new PromptDialogBox("Custom CRON Schedule", "Schedule", "Cancel", false, true);
+      PromptDialogBox inputDialog = new PromptDialogBox(Messages.getInstance().customCRONSchedule(), Messages.getInstance().schedule(), Messages.getInstance().cancel(), false, true);
       inputDialog.setContent(cronTextBox);
       inputDialog.setCallback(callback);
       inputDialog.center();
@@ -96,43 +97,43 @@ public class FileCommand implements Command {
       int day = now.getDate();
       int month = now.getMonth() + 1;
       if (mode == COMMAND.SCHEDULE_DAILY) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " * * ?");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " * * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKDAYS) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON-FRI");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON-FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MWF) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON,WED,FRI");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON,WED,FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_TUTH) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE,THU");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE,THU"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_MON) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_TUE) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_WED) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * WED");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * WED"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_THU) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * THU");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * THU"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_FRI) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * FRI");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_SAT) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SAT");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SAT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_WEEKLY_SUN) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SUN");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SUN"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_1ST) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 1 * ?");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 1 * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_15TH) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 15 * ?");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 15 * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_SUN) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1#1");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1#1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_MON) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 2#1");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 2#1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_FRI) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 6L");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 6L"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_SUN) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1L");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1L"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_DAY) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " L * ?");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " L * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else if (mode == COMMAND.SCHEDULE_ANNUALLY) {
-        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " " + day + " " + month + " ?");
+        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " " + day + " " + month + " ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       } else if (mode == COMMAND.SUBSCRIBE) {
         fileItemCallback.openFile(mode);
       } else if (mode == COMMAND.SHARE) {
