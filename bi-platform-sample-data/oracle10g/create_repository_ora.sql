@@ -18,7 +18,7 @@ drop user hibuser cascade;
  
 create user hibuser identified by "password" default tablespace pentaho_tablespace quota unlimited on pentaho_tablespace temporary tablespace temp quota 5M on system;
 
-grant create session, create procedure, create table to hibuser;
+grant create session, create procedure, create table, create sequence to hibuser;
 
 --CREATE ADDITIONAL REPOSITORY TABLES
 
