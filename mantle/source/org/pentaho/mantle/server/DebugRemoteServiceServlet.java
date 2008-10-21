@@ -130,11 +130,11 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
     if (serializationPolicy == null) {
       // Failed to get the requested serialization policy; use the default
       getServletContext().log(
-          "WARNING: Failed to get the SerializationPolicy '"
+          "WARNING: Failed to get the SerializationPolicy '" //$NON-NLS-1$
               + strongName
-              + "' for module '"
+              + "' for module '" //$NON-NLS-1$
               + moduleBaseURL
-              + "'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result.");
+              + "'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result."); //$NON-NLS-1$
       serializationPolicy = RPC.getDefaultSerializationPolicy();
     }
 
@@ -175,7 +175,7 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
           rpcRequest.getParameters(), rpcRequest.getSerializationPolicy());
     } catch (IncompatibleRemoteServiceException ex) {
       getServletContext().log(
-          "An IncompatibleRemoteServiceException was thrown while processing this call.",
+          "An IncompatibleRemoteServiceException was thrown while processing this call.", //$NON-NLS-1$
           ex);
       return RPC.encodeResponseForFailure(null, ex);
     }
@@ -207,7 +207,7 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
         modulePath = new URL(moduleBaseURL).getPath();
       } catch (MalformedURLException ex) {
         // log the information, we will default
-        getServletContext().log("Malformed moduleBaseURL: " + moduleBaseURL, ex);
+        getServletContext().log("Malformed moduleBaseURL: " + moduleBaseURL, ex); //$NON-NLS-1$
       }
     }
 
@@ -219,11 +219,11 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
      * this method.
      */
     if (modulePath == null || !modulePath.startsWith(contextPath)) {
-      String message = "ERROR: The module path requested, "
+      String message = "ERROR: The module path requested, " //$NON-NLS-1$
           + modulePath
-          + ", is not in the same web application as this servlet, "
+          + ", is not in the same web application as this servlet, " //$NON-NLS-1$
           + contextPath
-          + ".  Your module may not be properly configured or your client and server code maybe out of date.";
+          + ".  Your module may not be properly configured or your client and server code maybe out of date."; //$NON-NLS-1$
       getServletContext().log(message);
     } else {
       // Strip off the context path from the module base URL. It should be a
@@ -242,17 +242,17 @@ public class DebugRemoteServiceServlet extends HttpServlet implements
             serializationPolicy = SerializationPolicyLoader.loadFromStream(is, null);
           } catch (ParseException e) {
             getServletContext().log(
-                "ERROR: Failed to parse the policy file '"
-                    + serializationPolicyFilePath + "'", e);
+                "ERROR: Failed to parse the policy file '" //$NON-NLS-1$
+                    + serializationPolicyFilePath + "'", e); //$NON-NLS-1$
           } catch (IOException e) {
             getServletContext().log(
-                "ERROR: Could not read the policy file '"
-                    + serializationPolicyFilePath + "'", e);
+                "ERROR: Could not read the policy file '" //$NON-NLS-1$
+                    + serializationPolicyFilePath + "'", e); //$NON-NLS-1$
           }
         } else {
-          String message = "ERROR: The serialization policy file '"
+          String message = "ERROR: The serialization policy file '" //$NON-NLS-1$
               + serializationPolicyFilePath
-              + "' was not found; did you forget to include it in this deployment?";
+              + "' was not found; did you forget to include it in this deployment?"; //$NON-NLS-1$
           getServletContext().log(message);
         }
       } finally {

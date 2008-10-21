@@ -20,7 +20,6 @@
 package org.pentaho.mantle.server;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +48,7 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
 
       // If server userid/password was supplied, use basic authentication to
       // authenticate with the server.
-      Credentials creds = new UsernamePasswordCredentials("joe", "password");
+      Credentials creds = new UsernamePasswordCredentials("joe", "password"); //$NON-NLS-1$ //$NON-NLS-2$
       client.getState().setCredentials(AuthScope.ANY, creds);
       client.getParams().setAuthenticationPreemptive(true);
 
@@ -75,25 +74,25 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
 
       
       String requestPayload = RPCServletUtils.readContentAsUtf8(req);
-      System.out.println("INCOMING: " + requestPayload);
-      requestPayload = requestPayload.replaceAll("8888", "8080");
+      System.out.println("INCOMING: " + requestPayload); //$NON-NLS-1$
+      requestPayload = requestPayload.replaceAll("8888", "8080"); //$NON-NLS-1$ //$NON-NLS-2$
       
       PostMethod postMethod = null;
-      if (requestPayload.indexOf("MantleLoginService") != -1) {
-        postMethod = new PostMethod("http://localhost:8080/pentaho/mantleLogin/MantleLoginService");
-      } else if (requestPayload.indexOf("MantleService") != -1) {
-        postMethod = new PostMethod("http://localhost:8080/pentaho/mantle/MantleService");
+      if (requestPayload.indexOf("MantleLoginService") != -1) { //$NON-NLS-1$
+        postMethod = new PostMethod("http://localhost:8080/pentaho/mantleLogin/MantleLoginService"); //$NON-NLS-1$
+      } else if (requestPayload.indexOf("MantleService") != -1) { //$NON-NLS-1$
+        postMethod = new PostMethod("http://localhost:8080/pentaho/mantle/MantleService"); //$NON-NLS-1$
       }
-      requestPayload = requestPayload.replaceAll("org.pentaho.mantle.MantleApplication", "pentaho/mantle");
-      requestPayload = requestPayload.replaceAll("org.pentaho.mantle.login.MantleLogin", "pentaho/mantleLogin");
+      requestPayload = requestPayload.replaceAll("org.pentaho.mantle.MantleApplication", "pentaho/mantle"); //$NON-NLS-1$ //$NON-NLS-2$
+      requestPayload = requestPayload.replaceAll("org.pentaho.mantle.login.MantleLogin", "pentaho/mantleLogin"); //$NON-NLS-1$ //$NON-NLS-2$
       
-      StringRequestEntity stringEntity = new StringRequestEntity(requestPayload, "text/x-gwt-rpc", "UTF-8");
+      StringRequestEntity stringEntity = new StringRequestEntity(requestPayload, "text/x-gwt-rpc", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
       postMethod.setRequestEntity(stringEntity);
 
       try {
         int status = client.executeMethod(postMethod);
         String postResult = postMethod.getResponseBodyAsString();
-        resp.getOutputStream().write(postResult.getBytes("UTF-8"));
+        resp.getOutputStream().write(postResult.getBytes("UTF-8")); //$NON-NLS-1$
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -111,10 +110,10 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
       HttpClient client = new HttpClient();
       GetMethod getMethod = null;
 
-      String passthru = req.getParameter("passthru");
+      String passthru = req.getParameter("passthru"); //$NON-NLS-1$
 
-      if (!"".equals(passthru)) {
-        getMethod = new GetMethod("http://localhost:8080/pentaho/" + passthru);
+      if (!"".equals(passthru)) { //$NON-NLS-1$
+        getMethod = new GetMethod("http://localhost:8080/pentaho/" + passthru); //$NON-NLS-1$
         getMethod.setQueryString(req.getQueryString());
       } else {
         // not known
@@ -124,14 +123,14 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
 
       // If server userid/password was supplied, use basic authentication to
       // authenticate with the server.
-      Credentials creds = new UsernamePasswordCredentials("joe", "password");
+      Credentials creds = new UsernamePasswordCredentials("joe", "password"); //$NON-NLS-1$ //$NON-NLS-2$
       client.getState().setCredentials(AuthScope.ANY, creds);
       client.getParams().setAuthenticationPreemptive(true);
 
       try {
         int status = client.executeMethod(getMethod);
         String postResult = getMethod.getResponseBodyAsString();
-        resp.getOutputStream().write(postResult.getBytes("UTF-8"));
+        resp.getOutputStream().write(postResult.getBytes("UTF-8")); //$NON-NLS-1$
       } catch (IOException e) {
         e.printStackTrace();
       }
