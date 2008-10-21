@@ -499,15 +499,6 @@ public class PentahoSystem {
     return ((PentahoSystem.initializedStatus & errorToCheck) == errorToCheck);
   }
 
-  protected static boolean checkClassExists(final String className) {
-    try {
-      Class.forName(className);
-      return true;
-    } catch (Throwable t) {
-    }
-    return false;
-  }
-  
   //TODO: is this method needed?  See if we can use the factory directly and delete this method.
   public static IContentOutputHandler getOutputDestinationFromContentRef(final String contentTag,
       final IPentahoSession session) {
