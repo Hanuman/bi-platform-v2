@@ -248,8 +248,8 @@ A:hover {
 <script type="text/javascript">
 Button = function(label, container){
 
-		var btn = document.createElement("input");
-		btn.setAttribute("type","button");
+    var btn = document.createElement("input");
+    btn.setAttribute("type","button");
 
 
     table = document.createElement("table");
@@ -292,9 +292,9 @@ Button = function(label, container){
 
     table.onmouseover=function(){
       window.selectedButton = this;
-	    left_td.className="btn_left_hover";
-	    right_td.className="btn_right_hover";
-	    center_td.className="btn_center_hover";
+      left_td.className="btn_left_hover";
+      right_td.className="btn_right_hover";
+      center_td.className="btn_center_hover";
     };
     this.reset = function(){
       left_td.className="btn_left";
@@ -317,14 +317,16 @@ window.onresize = function(){
   }
 }
 
+
 function loader(){
     new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" )%>", "launch_new_report").onClick("openWAQR");
     new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" )%>", "launch_new_analysis").onClick("openAnalysis");
     new Button("<%=Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" )%>", "manage_content").onClick("openManage");
 }
 
-</script>
-
+</script><!--[if lt IE 7]>
+<script defer type="text/javascript" src="../pngfix.js"></script>
+<![endif]-->
 </head>
 
 <body onLoad="loader()">
