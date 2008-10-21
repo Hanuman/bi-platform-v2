@@ -274,7 +274,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void refreshRepository() {
-    PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
+    PentahoSystem.get(ISolutionRepository.class, getPentahoSession()).reloadSolutionRepository(getPentahoSession(), getPentahoSession().getLoggingLevel());
   }
 
   public int cleanContentRepository(int daysBack) {
