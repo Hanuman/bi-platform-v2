@@ -197,7 +197,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     menuAndLogoPanel.setWidget(0, 1, logoPanel);
     menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
     menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px"); //$NON-NLS-1$
-    menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "71px"); //$NON-NLS-1$
+    menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
 
     mainToolbar.setHeight("46px"); //$NON-NLS-1$
     mainToolbar.setWidth("100%"); //$NON-NLS-1$
