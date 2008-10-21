@@ -198,6 +198,7 @@
 					<include name="naming*.jar" />
 					<include name="commons-el.jar" />
 					<include name="jsp-api.jar" />
+					<exclude name="jasperreports-*.jar" />
 				</fileset>
 			</copy>
 
@@ -451,5 +452,44 @@
        	    <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
 		</sequential>
 	</target>
+	
+	<target name="validate-mantle-svn-revisions" depends="prep-pentaho-tomcat">
+	<sequential>
+		<mkdir dir="${basedir}/temp/mantle" />
+		<mkdir dir="${basedir}/temp/mantle-pkg" />
+		
+		<property name="mantle.rev" value="${project.revision}.${build.id}" />
+		<property name="mantle.pkg.rev" value="${project.revision}.${build.id}" />
+
+		<unjar src="${prep.pentaho.war.lib.dir}/mantle-${project.revision}.jar" dest="${basedir}/temp/mantle" />
+		<unzip src="${lib.dir}/mantle-package-${project.revision}.zip" dest="${basedir}/temp/mantle-pkg" />
+
+		<loadfile property="mantle.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+			<filterchain>
+				<linecontains>
+					<contains value="Implementation-Version" />
+				</linecontains>
+			</filterchain>
+		</loadfile>
+
+		<loadfile property="mantle.pkg.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+			<filterchain>
+				<linecontains>
+					<contains value="Implementation-Version" />
+				</linecontains>
+			</filterchain>
+		</loadfile>
+		<if>
+			<equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
+			<then>
+				<echo message="Mantle SVN revisions in sync" />
+			</then>
+			<else>
+				<fail
+					message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
+			</else>
+		</if>
+	</sequential>
+</target>
 
 </project>
