@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
  * Framework for Spring-based object factories.  Subclasses are required only to implement
  * the init method, which is responsible for setting the {@link ApplicationContext}.
  * 
- * TODO remove the custom logic in {@link #retreiveObject(String, IPentahoSession)} and use
+ * TODO (BISERVER-2380) remove the custom logic in {@link #retreiveObject(String, IPentahoSession)} and use
  * a custom Spring scope to handle any session types that Spring does not handle out-of-the-box,
  * such as {@link StandaloneSession}.  In order to do this, we need a way to access the
  * current {@link IPentahoSession} from a static context (perhaps a ThreadLocal).
