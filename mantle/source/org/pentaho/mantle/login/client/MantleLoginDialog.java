@@ -219,7 +219,8 @@ public class MantleLoginDialog extends PromptDialogBox {
       if (cookieCheckedVal != null) {
         newWindowChk.setChecked(Boolean.parseBoolean(cookieCheckedVal));
       } else {
-        newWindowChk.setChecked(true);
+        // default is false, per BISERVER-2384
+        newWindowChk.setChecked(false);
       }
 
       loginPanel.add(newWindowChk);
