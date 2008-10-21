@@ -559,23 +559,23 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       }
 
       public void okPressed() {
-        String repoPath = selectedItem.getPath() + "/" + selectedItem.getName();
+        String repoPath = selectedItem.getPath() + "/" + selectedItem.getName(); //$NON-NLS-1$
         // if a solution folder is selected then the solution-name/path are the same, we can't allow that
         // but we need them to be in the tree like this for building the tree paths correctly (other code)
-        if (repoPath.equals("/" + selectedItem.getSolution())) {
-          repoPath = "";
+        if (repoPath.equals("/" + selectedItem.getSolution())) { //$NON-NLS-1$
+          repoPath = ""; //$NON-NLS-1$
         }
-        String url = "";
+        String url = ""; //$NON-NLS-1$
         if (GWT.isScript()) {
           String windowpath = Window.Location.getPath();
-          if (!windowpath.endsWith("/")) {
-            windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1);
+          if (!windowpath.endsWith("/")) { //$NON-NLS-1$
+            windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          url = windowpath + "SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name="
-              + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText();
+          url = windowpath + "SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText(); //$NON-NLS-1$
         } else if (!GWT.isScript()) {
-          url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path="
-              + repoPath + "&name=" + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText();
+          url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" //$NON-NLS-1$ //$NON-NLS-2$
+              + repoPath + "&name=" + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText(); //$NON-NLS-1$ //$NON-NLS-2$
         }
         final String myurl = url;
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, myurl);
@@ -590,7 +590,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
             public void onResponseReceived(Request request, Response response) {
               Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
-              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue());
+              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue()); //$NON-NLS-1$
               if (result) {
                 RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
                 cmd.execute(false);
@@ -620,19 +620,19 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // if a solution folder is selected then the solution-name/path are the same, we can't allow that
     // but we need them to be in the tree like this for building the tree paths correctly (other code)
     if (repoPath.equals(selectedItem.getSolution())) {
-      repoPath = "";
+      repoPath = ""; //$NON-NLS-1$
     }
-    String url = "";
+    String url = ""; //$NON-NLS-1$
     if (GWT.isScript()) {
       String windowpath = Window.Location.getPath();
-      if (!windowpath.endsWith("/")) {
-        windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1);
+      if (!windowpath.endsWith("/")) { //$NON-NLS-1$
+        windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1); //$NON-NLS-1$
       }
-      url = windowpath + "SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name="
+      url = windowpath + "SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           + selectedItem.getName();
     } else if (!GWT.isScript()) {
-      url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path="
-          + repoPath + "&name=" + selectedItem.getName();
+      url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" //$NON-NLS-1$ //$NON-NLS-2$
+          + repoPath + "&name=" + selectedItem.getName(); //$NON-NLS-1$
     }
     final String myurl = url;
     VerticalPanel vp = new VerticalPanel();
@@ -659,7 +659,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
             public void onResponseReceived(Request request, Response response) {
               Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
-              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue());
+              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue()); //$NON-NLS-1$
               if (result) {
                 RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
                 cmd.execute(false);
