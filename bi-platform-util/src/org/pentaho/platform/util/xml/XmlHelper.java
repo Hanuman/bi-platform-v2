@@ -455,6 +455,7 @@ public class XmlHelper {
   public static final InputStream getLocalizedXsl(final String path, final String xslName,
       final IDocumentResourceLoader loader) {
     String fullPath = null;
+    String defaultPath = null;
     InputStream file = null;
     if (null != path) {
       // try to find it on the specified path
@@ -463,13 +464,13 @@ public class XmlHelper {
     }
     if (null == file) {
       // didn't find the file, let's try default path
-      fullPath = (XmlHelper.DEFAULT_XSL_FOLDER + xslName).replace('\\', '/');
-      file = XmlHelper.getLocalizedFile(fullPath, LocaleHelper.getLocale(), loader);
+      defaultPath = (XmlHelper.DEFAULT_XSL_FOLDER + xslName).replace('\\', '/');
+      file = XmlHelper.getLocalizedFile(defaultPath, LocaleHelper.getLocale(), loader);
     }
     if (null == file) {
       // we should not get this far...
       Logger.error(XmlHelper.class.getName(), Messages.getErrorString(
-          "XmlHelper.ERROR_0011_TRANSFORM_XSL_DOES_NOT_EXIST", fullPath)); //$NON-NLS-1$
+          "XmlHelper.ERROR_0011_TRANSFORM_XSL_DOES_NOT_EXIST", xslName, fullPath+","+defaultPath)); //$NON-NLS-1$
     }
     return file;
   }
