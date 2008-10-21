@@ -946,7 +946,7 @@ public class PentahoSystem {
   }
 
   // Security Helpers
-  @Deprecated  //figure out a better place for this exception logic and remove this wrapper method
+  //TODO: figure out a better place for this exception logic and remove this wrapper method
   public static ICacheManager getCacheManager( IPentahoSession session ) {
     try {
     // TODO get the SimpleMapCacheManager into the object map somehow
