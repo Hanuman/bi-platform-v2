@@ -130,7 +130,7 @@ public class RepositoryUpdateHelper {
     //
     for (int i = 0; i < updatedFiles.size(); i++) {
       File updatedFile = (File) updatedFiles.get(i);
-      String updRepoFileName = convertFileName(updatedFile.getCanonicalPath());
+      String updRepoFileName = convertFileName(updatedFile.getAbsolutePath());
       RepositoryFile updRepoFileObject = (RepositoryFile) dbBasedRepository.getFileByPath(updRepoFileName); // Hibernate Query
       byte[] data = FileHelper.getBytesFromFile(updatedFile);
       updRepoFileObject.setLastModified(updatedFile.lastModified());
@@ -144,7 +144,7 @@ public class RepositoryUpdateHelper {
     RepositoryFile updFolderObject = null;
     for (int i = 0; i < updatedFolders.size(); i++) {
       File updatedFolder = (File) updatedFolders.get(i);
-      String folderNameCorrected = this.convertFileName(updatedFolder.getCanonicalPath());
+      String folderNameCorrected = this.convertFileName(updatedFolder.getAbsolutePath());
       // Check for it to already be there...
       updFolderObject = (RepositoryFile) createdOrRetrievedFolders.get(folderNameCorrected);
       if (updFolderObject == null) {
@@ -249,7 +249,7 @@ public class RepositoryUpdateHelper {
    * @throws IOException
    */
   protected void recordFolder(final File aFile) throws IOException {
-    String fixedFileName = convertFileName(aFile.getCanonicalPath());
+    String fixedFileName = convertFileName(aFile.getAbsolutePath());
     InfoHolder infoHolder = (InfoHolder) reposFileStructure.get(fixedFileName);
     if (infoHolder != null) {
       infoHolder.touched = true;
@@ -272,7 +272,7 @@ public class RepositoryUpdateHelper {
   protected boolean recordFile(final File f) throws IOException {
     boolean changed = false;
     // First, convert the file - this code will move soon
-    String fName = f.getCanonicalPath();
+    String fName = f.getAbsolutePath();
     String convertedSolnFileName = convertFileName(fName);
     long lastRDBMSModDate = getLastModifiedDateFromMap(convertedSolnFileName);
     if (lastRDBMSModDate > 0) {
@@ -332,11 +332,11 @@ public class RepositoryUpdateHelper {
    */
   protected RepositoryFile createFolder(final File newFolder) throws IOException {
     // Determine the corrected file name of the new folder
-    String fixedFolderName = convertFileName(newFolder.getCanonicalPath());
+    String fixedFolderName = convertFileName(newFolder.getAbsolutePath());
     // Get the file's parent folder
     File parentFolder = newFolder.getParentFile();
     // Get the corrected file name of the parent folder
-    String fixedParentFolderName = convertFileName(parentFolder.getCanonicalPath());
+    String fixedParentFolderName = convertFileName(parentFolder.getAbsolutePath());
     // Get the Parent Folder either from our map or from Hibernate if necessary
     RepositoryFile parentFolderObject = (RepositoryFile) getParent(fixedParentFolderName);
     // Now, we have the parent in hand, we can create the RepositoryFile object
@@ -356,7 +356,7 @@ public class RepositoryUpdateHelper {
    */
   protected RepositoryFile createNewFile(final File newFile) throws IOException {
     File parentFolder = newFile.getParentFile(); // Gets the parent folder of the File object
-    String fixedParentFolderName = convertFileName(parentFolder.getCanonicalPath()); // Get the parent RepositoryFile object
+    String fixedParentFolderName = convertFileName(parentFolder.getAbsolutePath()); // Get the parent RepositoryFile object
     RepositoryFile parentFolderObject = (RepositoryFile) getParent(fixedParentFolderName); // Fix up the name for the solution repository
     // Create the new Object
     RepositoryFile newFileObject = new RepositoryFile(newFile.getName(), parentFolderObject, FileHelper
