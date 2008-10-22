@@ -77,11 +77,12 @@ public interface IPentahoObjectFactory {
   public Class getImplementingClass(String key);
 
   /**
-   * Initialize the factory with a configuration file and a runtime context.
+   * Initialize the factory with optional configuration file and a runtime context.
    * @param configFile  an object configuration definition file understandable by the 
    *        factory implementation
    * @param context  a context object whereby the factory implementation can access 
-   *        runtime information, possible types are ServletContext and PortletContext
+   *        runtime information, type of object varies depending on the framework
+   *        used by the factory and the environment in which the application is running.
    */
   public void init(String configFile, Object context);
 }
