@@ -34,6 +34,7 @@ import org.springframework.core.io.FileSystemResource;
  * other parts of the application.
  * 
  * @author Aaron Phillips
+ * @see AbstractSpringPentahoObjectFactory
  *
  */
 public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFactory {
