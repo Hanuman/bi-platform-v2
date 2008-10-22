@@ -470,7 +470,7 @@ public class XmlHelper {
     if (null == file) {
       // we should not get this far...
       Logger.error(XmlHelper.class.getName(), Messages.getErrorString(
-          "XmlHelper.ERROR_0011_TRANSFORM_XSL_DOES_NOT_EXIST", xslName, fullPath+","+defaultPath)); //$NON-NLS-1$
+          "XmlHelper.ERROR_0011_TRANSFORM_XSL_DOES_NOT_EXIST", xslName, fullPath, defaultPath)); //$NON-NLS-1$
     }
     return file;
   }
