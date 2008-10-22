@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
-  <title>08. REGIONAL VARIANCE REPORT</title>
+  <title>%title</title>
   <version>1</version>
   <logging-level>ERROR</logging-level>
   <documentation> 
     <author>Michael Tarallo</author>  
-    <description>Compare Territory Variance Trends Year to Year.</description>  
+    <description>%description</description>  
     <help/>  
     <result-type>report</result-type>  
     <icon/> 

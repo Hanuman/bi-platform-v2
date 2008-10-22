@@ -4,12 +4,12 @@
   <title>%title</title>
   <version>1</version>
   <logging-level>ERROR</logging-level>
-  <visible>false</visible>
   <documentation> 
     <author>Kurtis Cruzada</author>  
     <description>%description</description>  
     <icon>salerep.png</icon>  
-    <help/> 
+    <help/>  
+    <result-type>none</result-type>
   </documentation>
 
   <inputs> 
@@ -352,6 +352,7 @@
     </report-definition> 
   </resources>
   
+  <visible>false</visible>  
   <actions> 
     <action-definition> 
       <component-name>SQLLookupRule</component-name>

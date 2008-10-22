@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
-  <title>02. TOP TEN CUSTOMERS' PRODUCT LINE MIX</title>
+  <title>%title</title>
   <version>1</version>
   <documentation> 
     <author>Kurtis Cruzada</author>  
-    <description>Top Ten Customers based on Sales and breakdown of Product Lines</description>  
+    <description>%description</description>  
     <icon>PentahoReporting.png</icon>  
     <help>Choose Report Output Format.</help>  
     <result-type>report</result-type> 
