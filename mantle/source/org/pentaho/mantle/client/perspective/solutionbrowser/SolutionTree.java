@@ -191,8 +191,10 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
   public List<FileTreeItem> getAllNodes() {
     List<FileTreeItem> nodeList = new ArrayList<FileTreeItem>();
-    nodeList.add((FileTreeItem) getItem(0));
-    getAllNodes((FileTreeItem) getItem(0), nodeList);
+    for(int i=0; i < this.getItemCount(); i++){
+      nodeList.add((FileTreeItem) this.getItem(i));
+      getAllNodes((FileTreeItem) this.getItem(i), nodeList);
+    }
     return nodeList;
   }
 
