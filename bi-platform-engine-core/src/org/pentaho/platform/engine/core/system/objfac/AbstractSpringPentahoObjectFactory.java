@@ -13,7 +13,7 @@
  * See the GNU General Public License for more details.
  *
  *
- * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
+ * Copyright 2008 Pentaho Corporation.  All rights reserved. 
  * 
  * @created Oct 15, 2008
  * @author Aaron Phillips
