@@ -119,6 +119,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       }
 
     });
+    closeTabImage.getElement().setId("killTab"); //$NON-NLS-1$
 
     panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
     panel.add(textLabel);
