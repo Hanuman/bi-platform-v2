@@ -21,30 +21,23 @@
 package org.pentaho.platform.web.http.context;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
-import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.AbstractSpringPentahoObjectFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * A Spring-based Pentaho object factory.  Delegates object creation to the Spring
- * {@link ApplicationContext} created during the initialization of the web application.
+ * This factory implementation can be used in a web environment in which a Spring
+ * {@link WebApplicationContext} has already been created during initialization of
+ * the web application.  WebSpringPentahoObjectFactory will delegate object creation 
+ * and management to the Spring context.  There is one exception to this rule: see 
+ * {@link AbstractSpringPentahoObjectFactory} for more details.
+ * 
  * The Spring bean factory supports the binding of objects to particular scopes.  See Spring
  * documentation for description of the scope types: singleton, prototype, session, and request.
  * The latter two apply only in a web context.
  *
- * There is one scenario in which this factory will handle object retrieval and non delegate to Spring,
- * this is {@link StandaloneSession}.  Spring's session scope relates a bean to an {@link HttpSession},
- * it does not know about custom sessions.  The correct approach to solve this problem is to write a
- * custom Spring scope (called something like "pentahosession").  Unfortunately, we cannot implement
- * a custom scope to handle the {@link StandaloneSession} because the custom scope would not be able
- * to access it.  There is currently no way to statically obtain a reference to a pentaho session.
- * So we are left with using custom logic in this factory to execute a different non-Spring logic path
- * when the IPentahoSession is of type StandaloneSession.
- *
  * @author Aaron Phillips
+ * @see AbstractSpringPentahoObjectFactory
  * @see http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-scopes
  */
 public class WebSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFactory {
