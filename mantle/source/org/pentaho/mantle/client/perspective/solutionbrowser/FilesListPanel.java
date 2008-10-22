@@ -107,7 +107,7 @@ public class FilesListPanel extends FlowPanel {
               lastModifiedDateStr, url, perspective);
           // BISERVER-2317:  Request for more IDs for Mantle UI elements
           // set element id as the filename
-          fileLabel.getElement().setId("file-" + name);
+          fileLabel.getElement().setId("file-" + name); //$NON-NLS-1$
           fileLabel.addFileSelectionChangedListener(toolbar);
           fileLabel.setWidth("100%"); //$NON-NLS-1$
           filesList.setWidget(rowCounter++, 0, fileLabel);

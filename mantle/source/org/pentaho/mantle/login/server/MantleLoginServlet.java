@@ -61,6 +61,6 @@ public class MantleLoginServlet extends RemoteServiceServlet implements MantleLo
   }
 
   public boolean isShowUsersList() {
-    return "true".equalsIgnoreCase(PentahoSystem.getSystemSetting("login-show-users-list", "true"));
+    return "true".equalsIgnoreCase(PentahoSystem.getSystemSetting("login-show-users-list", "true")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 }

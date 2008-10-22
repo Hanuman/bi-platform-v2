@@ -69,7 +69,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
     // BISERVER-2317 Request for more IDs for Mantle UI elements
     // the id for each tab shall be the text which it displays
-    getElement().setId("tab-" + text);
+    getElement().setId("tab-" + text); //$NON-NLS-1$
 
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;

@@ -184,7 +184,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   TreeListener treeListener = new TreeListener() {
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") //$NON-NLS-1$
     public void onTreeItemSelected(TreeItem item) {
       filesListPanel.populateFilesList(SolutionBrowserPerspective.this, solutionTree, selectedFileItem, item);
       filesListPanel.getToolbar().setEnabled(false);

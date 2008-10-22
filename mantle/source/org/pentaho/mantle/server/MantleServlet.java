@@ -159,7 +159,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return SecurityHelper.isPentahoAdministrator(getPentahoSession());
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   private UserFilesComponent getUserFilesComponent() {
     UserFilesComponent userFiles = PentahoSystem.get(UserFilesComponent.class, "IUserFilesComponent", getPentahoSession()); //$NON-NLS-1$
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
@@ -173,7 +173,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return userFiles;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public String getSoftwareUpdatesDocument() {
     if (PentahoVersionCheckReflectHelper.isVersionCheckerAvailable()) {
       List results = PentahoVersionCheckReflectHelper.performVersionCheck(false, -1);
@@ -206,7 +206,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return getPentahoSession() != null && getPentahoSession().isAuthenticated();
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public List<JobDetail> getScheduledBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
@@ -235,7 +235,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public List<JobDetail> getCompletedBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
@@ -427,13 +427,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public List<String> getAllRoles() {
     IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
     return (List<String>) userDetailsRoleListService.getAllRoles();
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") //$NON-NLS-1$
   public List<String> getAllUsers() {
     IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
     return (List<String>) userDetailsRoleListService.getAllUsers();
