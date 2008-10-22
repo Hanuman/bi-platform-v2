@@ -44,11 +44,7 @@ public class RefreshRepositoryCommand implements Command {
 
       public void onSuccess(Void nothing) {
         WaitPopup.getInstance().setVisible(false);
-        if (feedback) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshRepositorySuccess(), false, false, true);
-          dialogBox.center();
-        }
-        navigatorPerspective.refreshPerspective(false);
+        navigatorPerspective.refreshPerspective(feedback);
       }
     };
     WaitPopup.getInstance().setVisible(true);
