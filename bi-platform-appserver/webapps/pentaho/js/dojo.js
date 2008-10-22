@@ -3313,12 +3313,21 @@ dojo.event.MethodJoinPoint.getForMethod=function(obj,_30e){
 if(!obj){
 obj=dj_global;
 }
-if(!obj[_30e]){
-obj[_30e]=function(){
-};
-if(!obj[_30e]){
-dojo.raise("Cannot set do-nothing method on that object "+_30e);
-}
+
+//Workaround for Firefox 2.0.17
+//object["onMouseUp"]  registers as not false, even though it deos not exist. Later access cased massive Component
+//exception and as this is all happening within an eval, it was consumed.
+if((_30e == "onMouseUp") || !obj[_30e] ){ //forcing onMouseUp in here
+    try{
+        if(!obj[_30e]){ //2.0.17 will die here
+        obj[_30e]=function(){
+        };
+        if(!obj[_30e]){
+        dojo.raise("Cannot set do-nothing method on that object "+_30e);
+        }
+      }
+   } catch(e){} //ignore
+//End workaround
 }else{
 if((!dojo.lang.isFunction(obj[_30e]))&&(!dojo.lang.isAlien(obj[_30e]))){
 return null;
