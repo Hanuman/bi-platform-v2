@@ -19,9 +19,9 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
+
+import org.pentaho.mantle.client.objects.SolutionFileInfo;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
@@ -29,7 +29,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import org.pentaho.mantle.client.objects.SolutionFileInfo;
 
 public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
 
