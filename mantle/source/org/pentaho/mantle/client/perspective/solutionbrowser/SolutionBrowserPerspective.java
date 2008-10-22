@@ -662,7 +662,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             builder.sendRequest(null, new RequestCallback() {
 
               public void onError(Request request, Throwable exception) {
-                Window.alert(exception.getMessage());
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotBackgroundExecute(), false, false, true);
+                dialogBox.center();
               }
 
               public void onResponseReceived(Request request, Response response) {
@@ -765,7 +766,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         try {
           builder.sendRequest(null, callback);
         } catch (RequestException e) {
-          Window.alert(e.toString());
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetRepositoryDocument(), false, false, true);
+          dialogBox.center();
         }
       }
 

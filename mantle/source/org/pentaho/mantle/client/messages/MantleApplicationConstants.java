@@ -3,7 +3,7 @@ package org.pentaho.mantle.client.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	E:/development-pentaho/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
+ * 	C:/development-2.0/mantle/source/org/pentaho/mantle/client/messages/MantleApplicationConstants.properties'.
  */
 public interface MantleApplicationConstants extends com.google.gwt.i18n.client.Messages {
   
@@ -1923,6 +1923,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Confirm Delete")
   String deleteConfirm();
+
+  /**
+   * Translated "Background execution failed".
+   * 
+   * @return translated "Background execution failed"
+  
+   */
+  @DefaultMessage("Background execution failed")
+  String couldNotBackgroundExecute();
 
   /**
    * Translated "New Folder Description".
