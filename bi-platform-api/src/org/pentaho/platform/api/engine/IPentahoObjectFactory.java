@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved.
+ * Copyright 2008 Pentaho Corporation.  All rights reserved.
  *
  * @created Oct 11, 2008
  * @author Aaron Phillips
