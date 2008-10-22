@@ -69,7 +69,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
     // BISERVER-2317 Request for more IDs for Mantle UI elements
     // the id for each tab shall be the text which it displays
-    getElement().setId(text);
+    getElement().setId("tab-" + text);
 
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;
@@ -259,6 +259,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void onBrowserEvent(Event event) {
+    // the id's which are set on these menu items must be set AFTER the items are added to their menu
+    // when an element is added to a menu an auto-generated id will be assigned, so we must override this
     if (perspective != null) {
       if ((DOM.eventGetType(event) & Event.ONDBLCLICK) == Event.ONDBLCLICK) {
         openTabInNewWindow();
@@ -271,58 +273,58 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         if (tabContent instanceof ReloadableIFrameTabPanel) {
           if (MantleApplication.showAdvancedFeatures) {
             MenuItem bookmarkMenuItem = new MenuItem(Messages.getInstance().bookmarkTab(), new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this));
-            bookmarkMenuItem.getElement().setId("bookmark"); //$NON-NLS-1$
             menuBar.addItem(bookmarkMenuItem);
+            bookmarkMenuItem.getElement().setId("bookmark"); //$NON-NLS-1$
             menuBar.addSeparator();
           }
         }
         if (tabContent instanceof IReloadableTabPanel) {
           MenuItem backMenuItem = new MenuItem(Messages.getInstance().back(), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this));
-          backMenuItem.getElement().setId("back"); //$NON-NLS-1$
           menuBar.addItem(backMenuItem);
+          backMenuItem.getElement().setId("back"); //$NON-NLS-1$
           menuBar.addSeparator();
           MenuItem reloadTabMenuItem = new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this));
-          reloadTabMenuItem.getElement().setId("reloadTab"); //$NON-NLS-1$
           menuBar.addItem(reloadTabMenuItem);
+          reloadTabMenuItem.getElement().setId("reloadTab"); //$NON-NLS-1$
         }
         if (tabPanel.getTabBar().getTabCount() > 1) {
           MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu,
               this));
-          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
           menuBar.addItem(reloadAllTabsMenuItem);
+          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
         } else {
           MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), (Command) null);
-          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
           menuBar.addItem(reloadAllTabsMenuItem);
+          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
           reloadAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         }
         menuBar.addSeparator();
         if (tabContent instanceof IReloadableTabPanel) {
           MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getInstance().openTabInNewWindow(), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this));
-          openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
           menuBar.addItem(openTabInNewWindowMenuItem);
+          openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
           MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getInstance().createDeepLink(), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this));
-          createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
           menuBar.addItem(createDeepLinkMenuItem);
+          createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
           menuBar.addSeparator();
         }
         menuBar.addItem(new MenuItem(Messages.getInstance().closeTab(), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
         if (tabPanel.getTabBar().getTabCount() > 1) {
           MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this));
-          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
+          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
           MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this));
-          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
           menuBar.addItem(closeAllTabsMenuItem);
+          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
         } else {
           MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), (Command) null);
-          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
           closeOtherTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
           MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), (Command) null);
           closeAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
-          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
           menuBar.addItem(closeAllTabsMenuItem);
+          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
+          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
         }
         popupMenu.setWidget(menuBar);
         popupMenu.hide();

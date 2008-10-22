@@ -105,6 +105,9 @@ public class FilesListPanel extends FlowPanel {
           String url = fileElement.getAttribute("url"); //$NON-NLS-1$
           final FileItem fileLabel = new FileItem(name, fileElement.getAttribute("localized-name"), solutionTree.showLocalizedFileNames, solution, path, //$NON-NLS-1$
               lastModifiedDateStr, url, perspective);
+          // BISERVER-2317:  Request for more IDs for Mantle UI elements
+          // set element id as the filename
+          fileLabel.getElement().setId("file-" + name);
           fileLabel.addFileSelectionChangedListener(toolbar);
           fileLabel.setWidth("100%"); //$NON-NLS-1$
           filesList.setWidget(rowCounter++, 0, fileLabel);
