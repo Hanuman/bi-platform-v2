@@ -18,7 +18,7 @@
  * @author Aaron Phillips
  * 
  */
-package org.pentaho.platform.api.engines;
+package org.pentaho.platform.api.engine;
 
 public interface IPentahoObjectFactory {
   /**
