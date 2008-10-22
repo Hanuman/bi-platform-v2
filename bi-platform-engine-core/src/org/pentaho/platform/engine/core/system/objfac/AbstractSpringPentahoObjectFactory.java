@@ -33,6 +33,16 @@ import org.springframework.context.ApplicationContext;
  * Framework for Spring-based object factories.  Subclasses are required only to implement
  * the init method, which is responsible for setting the {@link ApplicationContext}.
  * 
+ * A note on creation and management of objects:
+ * Object creation and scoping is handled by Spring with one exception: in the case of
+ * a {@link StandaloneSession}.  Spring's session scope relates a bean to an {@link HttpSession},
+ * and as such it does not know about custom sessions.  The correct approach to solve this problem 
+ * is to write a custom Spring scope (called something like "pentahosession").  Unfortunately, we 
+ * cannot implement a custom scope to handle the {@link StandaloneSession} because the custom scope
+ * would not be able to access it.  There is currently no way to statically obtain a reference to a 
+ * pentaho session. So we are left with using custom logic in this factory to execute a different non-Spring logic path
+ * when the IPentahoSession is of type StandaloneSession.
+ * 
  * TODO (BISERVER-2380) remove the custom logic in {@link #retreiveObject(String, IPentahoSession)} and use
  * a custom Spring scope to handle any session types that Spring does not handle out-of-the-box,
  * such as {@link StandaloneSession}.  In order to do this, we need a way to access the
