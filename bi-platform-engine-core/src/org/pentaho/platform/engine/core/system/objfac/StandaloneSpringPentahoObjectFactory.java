@@ -28,8 +28,24 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 
+/**
+ * This factory implementation creates and uses a self-contained Spring
+ * {@link ApplicationContext} which is not tied to or accesible by any
+ * other parts of the application.
+ * 
+ * @author Aaron Phillips
+ *
+ */
 public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFactory {
 
+  /**
+   * Initializes this object factory by creating a self-contained Spring
+   * {@link ApplicationContext} if one is not passed in.
+   * 
+   * @param configFile  the Spring bean definition XML file
+   * @param context   the {@link ApplicationContext} object, if null, then this method
+   *                  will create one
+   */
   public void init(String configFile, Object context) {
     if (context == null) {
       //      beanFactory = new FileSystemXmlApplicationContext(configFile);
