@@ -56,6 +56,7 @@ import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.jfreereport.castormodel.jfree.types.AlignmentEnum;
 import org.pentaho.jfreereport.castormodel.jfree.types.PageFormats;
 import org.pentaho.jfreereport.castormodel.reportspec.Field;
 import org.pentaho.jfreereport.castormodel.reportspec.ReportSpec;
@@ -807,11 +808,31 @@ public class AdhocWebService extends ServletBase {
   {
     if ( AdhocWebService.isNotSetStringProperty( targetField.getHorizontalAlignment() ) )
     {
-      targetField.setHorizontalAlignment( AdhocWebService.DEFAULT_FIELD_PROPS.getHorizontalAlignment() );
+      // get the default horizontal alignment for the field based on the type
+//      targetField.setHorizontalAlignment( AdhocWebService.DEFAULT_FIELD_PROPS.getHorizontalAlignment() );
+      targetField.setHorizontalAlignment(getDefaultHorizontalAlignment(targetField));
     }
     if ( AdhocWebService.isNotSetStringProperty( targetField.getVerticalAlignment() ) )
     {
       targetField.setVerticalAlignment( AdhocWebService.DEFAULT_FIELD_PROPS.getVerticalAlignment() );
+    }
+  }
+
+  /**
+   * Returns the default horizontal alignment for the specified field.
+   * <p/>
+   * If the field is defined as numeric (and yes, the report spec uses the constants from
+   * <code>java.sql.Types</code>), then it should be right justified. Otherwise it should
+   * be left justified. 
+   * @param targetField the field for which the default alignment should be computed
+   * @return the default alignment based on the type of the field
+   */
+  private static String getDefaultHorizontalAlignment(final Field targetField) {
+    switch (targetField.getType()) {
+      case java.sql.Types.NUMERIC:
+        return AlignmentEnum.RIGHT.toString();
+      default:
+        return AlignmentEnum.LEFT.toString();
     }
   }
 
