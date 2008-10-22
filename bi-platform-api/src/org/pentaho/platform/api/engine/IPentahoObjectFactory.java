@@ -71,7 +71,7 @@ public interface IPentahoObjectFactory {
   /**
    * Provides the concrete Class defined for the given object key.
    * @param key  the object identifier, typically the interface name
-   * @return
+   * @return  the type of object associated with key
    */
   @SuppressWarnings("unchecked")
   public Class getImplementingClass(String key);
