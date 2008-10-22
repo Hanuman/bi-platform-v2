@@ -754,7 +754,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             solutionTree.buildSolutionTree(solutionDocument);
             for(TreeItem item : solutionTree.getAllNodes()){
               item.setState(false);
-              Window.alert("collapsed: "+item.getText());
             }
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
