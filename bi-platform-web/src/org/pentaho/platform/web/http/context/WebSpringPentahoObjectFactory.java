@@ -1,29 +1,28 @@
 /*
  * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License, version 2 as published by the Free Software 
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
  * Foundation.
  *
- * You should have received a copy of the GNU General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
+ * You should have received a copy of the GNU Lesser General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
  * or from the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
+ * Copyright 2008 Pentaho Corporation.  All rights reserved.
  *
- * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
- * 
  * @created Oct 11, 2008
  * @author Aaron Phillips
  * 
- */package org.pentaho.platform.web.http.context;
+ */
+package org.pentaho.platform.web.http.context;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.AbstractSpringPentahoObjectFactory;
 import org.springframework.context.ApplicationContext;
@@ -51,13 +50,12 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class WebSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFactory {
 
   /**
-   * Retrieves an implementation of a biserver api interface based on a Spring bean definition
-   * file (e.g. pentahoObjects.spring.xml).
-   *
-   * @see IPentahoObjectFactory
-   * @param interfaceClass  the type of object to retrieve
-   * @param session  the Pentaho session object.  will be null if request to getObject does not originate in a session context
-   *
+   * Initializes this object factory by setting the internal bean factory to the {@link WebApplicationContext}
+   * instance managed by Spring.
+   * 
+   * @param configFile  ignored for this implementation
+   * @param context   the {@link ServletContext} under which this system is currently running.  This
+   *                  is used to retrieve the Spring {@link WebApplicationContext}.
    */
   public void init(String configFile, Object context) {
     assert context instanceof ServletContext : getClass().getSimpleName() + "currently supports only " //$NON-NLS-1$
