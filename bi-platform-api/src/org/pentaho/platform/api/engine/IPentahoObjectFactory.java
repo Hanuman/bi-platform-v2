@@ -20,6 +20,13 @@
  */
 package org.pentaho.platform.api.engine;
 
+/**
+ * The way the BI platform creates and manages system objects.  The {@link IPentahoObjectFactory}
+ * acts like a service locator of objects rather than services.  It is typically accessed via a static
+ * method in PentahoSystem, PentahoSystem.getObjectFactory()
+ * 
+ * @author Aaron Phillips
+ */
 public interface IPentahoObjectFactory {
   /**
    * Retrieves an instance of a Pentaho BI Server API interface using the simple interface name
