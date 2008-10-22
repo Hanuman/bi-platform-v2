@@ -74,5 +74,5 @@
 
 %><%= intro %>
 <%= content %>
-<%= footer %>
+
 

@@ -91,4 +91,3 @@
 %>
 <%= intro %>
 <%= content %>
-<%= footer %>
