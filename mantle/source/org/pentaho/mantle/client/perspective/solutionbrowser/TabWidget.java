@@ -66,6 +66,11 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private String fullText;
 
   public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
+
+    // BISERVER-2317 Request for more IDs for Mantle UI elements
+    // the id for each tab shall be the text which it displays
+    getElement().setId(text);
+
     this.tabPanel = tabPanel;
     this.tabContent = tabContent;
     this.perspective = perspective;
@@ -176,10 +181,10 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     tabPanel.selectTab(0);
   }
 
-  public void back(){
+  public void back() {
     ((IReloadableTabPanel) tabContent).back();
   }
-  
+
   public void closeAllTabs() {
     tabPanel.clear();
     if (tabPanel.getWidgetCount() == 0) {
@@ -231,7 +236,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
       final TextBox groupNameTextBox = new TextBox();
       SuggestBox suggestTextBox = new SuggestBox(oracle, groupNameTextBox);
 
-      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().groupName(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, suggestTextBox);
+      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().groupName(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false,
+          true, suggestTextBox);
       if (perspective != null) {
         perspective.getBookmarks();
       }
@@ -263,37 +269,57 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         menuBar.setAutoOpen(true);
         if (tabContent instanceof ReloadableIFrameTabPanel) {
           if (MantleApplication.showAdvancedFeatures) {
-            menuBar.addItem(new MenuItem(Messages.getInstance().bookmarkTab(), new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this)));
+            MenuItem bookmarkMenuItem = new MenuItem(Messages.getInstance().bookmarkTab(), new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this));
+            bookmarkMenuItem.getElement().setId("bookmark"); //$NON-NLS-1$
+            menuBar.addItem(bookmarkMenuItem);
             menuBar.addSeparator();
           }
         }
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().back(), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this)));
+          MenuItem backMenuItem = new MenuItem(Messages.getInstance().back(), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this));
+          backMenuItem.getElement().setId("back"); //$NON-NLS-1$
+          menuBar.addItem(backMenuItem);
           menuBar.addSeparator();
-          menuBar.addItem(new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)));
+          MenuItem reloadTabMenuItem = new MenuItem(Messages.getInstance().reloadTab(), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this));
+          reloadTabMenuItem.getElement().setId("reloadTab"); //$NON-NLS-1$
+          menuBar.addItem(reloadTabMenuItem);
         }
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().reloadAllTabs(), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, this)));
+          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu,
+              this));
+          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
+          menuBar.addItem(reloadAllTabsMenuItem);
         } else {
-          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), (Command)null);
+          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getInstance().reloadAllTabs(), (Command) null);
+          reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
           menuBar.addItem(reloadAllTabsMenuItem);
           reloadAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         }
         menuBar.addSeparator();
         if (tabContent instanceof IReloadableTabPanel) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().openTabInNewWindow(), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)));
-          menuBar.addItem(new MenuItem(Messages.getInstance().createDeepLink(), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)));
+          MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getInstance().openTabInNewWindow(), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this));
+          openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
+          menuBar.addItem(openTabInNewWindowMenuItem);
+          MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getInstance().createDeepLink(), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this));
+          createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
+          menuBar.addItem(createDeepLinkMenuItem);
           menuBar.addSeparator();
         }
         menuBar.addItem(new MenuItem(Messages.getInstance().closeTab(), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this)));
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().closeOtherTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)));
-          menuBar.addItem(new MenuItem(Messages.getInstance().closeAllTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)));
+          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this));
+          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
+          menuBar.addItem(closeOtherTabsMenuItem);
+          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this));
+          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
+          menuBar.addItem(closeAllTabsMenuItem);
         } else {
-          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), (Command)null);
+          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getInstance().closeOtherTabs(), (Command) null);
+          closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
           closeOtherTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
-          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), (Command)null);
+          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getInstance().closeAllTabs(), (Command) null);
           closeAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
+          closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
           menuBar.addItem(closeAllTabsMenuItem);
         }
@@ -356,7 +382,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
   public void createDeepLink() {
     if (tabContent instanceof ReloadableIFrameTabPanel) {
-      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().deepLink(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true);
+      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getInstance().deepLink(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false,
+          true);
       String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath() //$NON-NLS-1$ //$NON-NLS-2$
           + "?name=" + textLabel.getText() + "&startup-url="; //$NON-NLS-1$ //$NON-NLS-2$
       String startup = ((ReloadableIFrameTabPanel) tabContent).getUrl();
