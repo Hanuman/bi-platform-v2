@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
@@ -456,6 +458,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         } else {
           executeActionSequence(mode);
         }
+      } else {
+        executeActionSequence(mode);
       }
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
       showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
@@ -1264,12 +1268,29 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public Widget getOpenAnalysisView() {
     for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
       Widget currentWidget = contentTabPanel.getWidget(i);
-      Frame frame = ((ReloadableIFrameTabPanel) currentWidget).getFrame();
-      String url = frame.getUrl();
-      if (url.contains(".analysis.xaction")) { //$NON-NLS-1$
+      ReloadableIFrameTabPanel frame = ((ReloadableIFrameTabPanel) currentWidget);
+      String id = frame.getFrame().getElement().getAttribute("id"); //$NON-NLS-1$
+      if (isPivot(id)) {
         return currentWidget;
       }
     }
     return null;
   }
+  
+  /**
+   * This method will check if the given frame(by id) is jpivot.
+   * 
+   * @param elementId
+   */
+  public static native boolean isPivot(String elementId) /*-{
+    var frame = $doc.getElementById(elementId);
+    if (!frame) { 
+      return false; 
+    } 
+    frame = frame.contentWindow;
+    return true == frame.pivot_initialized;
+  }-*/;  
+  
+  
+  
 }
