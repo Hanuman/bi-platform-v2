@@ -1,3 +1,24 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU General Public License, version 2 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ *
+ * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
+ * 
+ * @created Oct 15, 2008
+ * @author Aaron Phillips
+ * 
+ */
 package org.pentaho.platform.engine.core.system.objfac;
 
 import org.pentaho.platform.api.engine.IPentahoInitializer;
@@ -17,21 +38,32 @@ import org.springframework.context.ApplicationContext;
  * such as {@link StandaloneSession}.  In order to do this, we need a way to access the
  * current {@link IPentahoSession} from a static context (perhaps a ThreadLocal).
  * 
+ * @see IPentahoObjectFactory
+ * 
  * @author Aaron Phillips
  */
 public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObjectFactory {
 
   protected ApplicationContext beanFactory;
 
+  /**
+   * @see IPentahoObjectFactory#get(Class, IPentahoSession)
+   */
   public <T> T get(Class<T> interfaceClass, final IPentahoSession session) throws ObjectFactoryException {
     return get(interfaceClass, interfaceClass.getSimpleName(), session);
   }
 
+  /**
+   * @see IPentahoObjectFactory#get(Class, String, IPentahoSession)
+   */
   @SuppressWarnings("unchecked")
   public <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) throws ObjectFactoryException {
     return (T) retreiveObject(key, session);
   }
 
+  /**
+   * @see IPentahoObjectFactory#getObject(String, IPentahoSession)
+   */
   public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException {
     return retreiveObject(key, session);
   }
@@ -98,10 +130,16 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     return object;
   }
 
+  /**
+   * @see IPentahoObjectFactory#objectDefined(String)
+   */
   public boolean objectDefined(String key) {
     return beanFactory.containsBean(key);
   }
 
+  /**
+   * @see IPentahoObjectFactory#getImplementingClass(String)
+   */
   @SuppressWarnings("unchecked")
   public Class getImplementingClass(String key) {
     return beanFactory.getType(key);
