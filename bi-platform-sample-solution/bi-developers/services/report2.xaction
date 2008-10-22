@@ -4,7 +4,6 @@
   <title>JFreeReport HTML Example</title>
   <version>1</version>
   <logging-level>debug</logging-level>
-  <visible>false</visible>
   <documentation> 
     <author>James Dixon</author>  
     <description><![CDATA[
@@ -33,11 +32,11 @@
   </inputs>
 
   <outputs> 
-    <report type="content">
-      <destinations>
-        <response>content</response>
-      </destinations>
-    </report>
+    <report type="content"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </report> 
   </outputs>
 
   <resources> 
@@ -50,41 +49,42 @@
     </report-definition> 
   </resources>
   
+  <visible>false</visible>  
   <actions> 
-    <action-definition>
+    <action-definition> 
       <component-name>SQLLookupRule</component-name>
       <action-type>Query For Report Data</action-type>
-      <action-inputs>
-        <region type="string"/>
-        <department type="string"/>
+      <action-inputs> 
+        <region type="string"/>  
+        <department type="string"/> 
       </action-inputs>
-      <action-outputs>
-        <query-result type="result-set" mapping="reportData"/>
+      <action-outputs> 
+        <query-result type="result-set" mapping="reportData"/> 
       </action-outputs>
-      <component-definition>
-        <jndi>SampleData</jndi>
+      <component-definition> 
+        <jndi>SampleData</jndi>  
         <query><![CDATA[select   QUADRANT_ACTUALS.REGION,   QUADRANT_ACTUALS.DEPARTMENT,   QUADRANT_ACTUALS.POSITIONTITLE,   QUADRANT_ACTUALS.ACTUAL,   QUADRANT_ACTUALS.BUDGET,   QUADRANT_ACTUALS.VARIANCE  
 from QUADRANT_ACTUALS 
 where QUADRANT_ACTUALS.REGION = {PREPARE:region} and QUADRANT_ACTUALS.DEPARTMENT = {PREPARE:department} 
-order by QUADRANT_ACTUALS.REGION, QUADRANT_ACTUALS.DEPARTMENT]]></query>
-      </component-definition>
+order by QUADRANT_ACTUALS.REGION, QUADRANT_ACTUALS.DEPARTMENT]]></query> 
+      </component-definition> 
     </action-definition>
-
-    <action-definition>
+  
+    <action-definition> 
       <component-name>JFreeReportComponent</component-name>
       <action-type>Pentaho Report</action-type>
-      <action-inputs>
-        <data type="result-set" mapping="reportData"/>
+      <action-inputs> 
+        <data type="result-set" mapping="reportData"/> 
       </action-inputs>
-      <action-resources>
-        <report-definition type="resource"/>
+      <action-resources> 
+        <report-definition type="resource"/> 
       </action-resources>
-      <action-outputs>
-        <report-output type="content" mapping="report"/>
+      <action-outputs> 
+        <report-output type="content" mapping="report"/> 
       </action-outputs>
-      <component-definition>
-        <output-type>html</output-type>
-      </component-definition>
+      <component-definition> 
+        <output-type>html</output-type> 
+      </component-definition> 
     </action-definition>
  
   </actions> 

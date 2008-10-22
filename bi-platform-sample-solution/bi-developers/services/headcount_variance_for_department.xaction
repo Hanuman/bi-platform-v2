@@ -4,11 +4,11 @@
   <title>Regions and departments</title>
   <version>1</version>
   <logging-level>debug</logging-level>
-  <visible>false</visible>
   <documentation> 
     <author>James Dixon</author>  
     <description>query rule test</description>  
-    <help>just testing...</help> 
+    <help>just testing...</help>  
+    <result-type>none</result-type>
   </documentation>
 
   <inputs> 
@@ -19,12 +19,13 @@
     </REGION> 
   </inputs>
 
-  <outputs>
-    <rule-result type="result-set"/>
+  <outputs> 
+    <rule-result type="result-set"/> 
   </outputs>
 
   <resources/>
   
+  <visible>false</visible>  
   <actions> 
     <action-definition> 
       <component-name>SQLLookupRule</component-name>

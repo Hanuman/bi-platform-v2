@@ -23,10 +23,10 @@
   </inputs>
 
   <outputs> 
-    <report type="content">
-      <destinations>
-        <response>content</response>
-      </destinations>
+    <report type="content"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
     </report> 
   </outputs>
 
