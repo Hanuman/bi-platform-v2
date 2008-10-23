@@ -3,21 +3,22 @@
   <title>Regions and departments</title>
   <version>1</version>
   <logging-level>debug</logging-level>
-  <visible>false</visible>
   <documentation> 
     <author>James Dixon</author>  
     <description>Return the actual headcount costs total for each region</description>  
-    <help/> 
+    <help/>  
+    <result-type>none</result-type>
   </documentation>
 
   <inputs/>
 
   <outputs> 
-    <rule-result type="result-set"/>
+    <rule-result type="result-set"/> 
   </outputs>
 
   <resources/>
   
+  <visible>false</visible>  
   <!-- Define an output called 'rule-result' -->  
   <!-- This action sequence does not require any external resources -->  
   <actions> 
@@ -36,7 +37,7 @@
 from QUADRANT_ACTUALS 
 group by REGION 
 order by ACTUAL]]></query> 
-      </component-definition>  
+      </component-definition> 
     </action-definition>
  
   </actions> 

@@ -2,12 +2,12 @@
 <action-sequence> 
   <title>Regions and departments</title>
   <version>1</version>
-    <visible>false</visible>
   <logging-level>debug</logging-level>
   <documentation> 
     <author>James Dixon</author>  
     <description>Return the variance between headcount actual and budget for every department in the specified region</description>  
-    <help/> 
+    <help/>  
+    <result-type>none</result-type>
   </documentation>
 
   <inputs> 
@@ -19,11 +19,12 @@
   </inputs>
 
   <outputs> 
-    <rule-result type="result-set"/>
+    <rule-result type="result-set"/> 
   </outputs>
 
   <resources/>
   
+  <visible>false</visible>  
   <!-- Define an input called 'REGION'. This will be passed in when the user clicks on a slice of the pie chart -->  
   <!-- Define an output called 'rule-result' -->  
   <!-- This action sequence does not require any external resources -->  
