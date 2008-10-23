@@ -51,6 +51,7 @@ public class JavaScriptResultSet extends ScriptableObject implements IPentahoRes
     description = new StringBuffer();
     results = null;
   }
+  
 
   public void setResultSet(final IPentahoResultSet pResults) {
     this.results = pResults;
