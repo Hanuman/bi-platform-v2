@@ -22,7 +22,7 @@
   <actions> 
     <action-definition> 
       <component-name>SQLLookupRule</component-name>
-      <action-type>Execute the Query to Gen a Time-Series Dataset</action-type>
+      <action-type>Get Data from</action-type>
       <action-inputs/>
       <action-outputs> 
         <query-result type="result-set" mapping="results"/> 
@@ -33,7 +33,7 @@
 FROM ORDERS INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE INNER JOIN CUSTOMERS ON ORDERS.CUSTOMERNUMBER =CUSTOMERS.CUSTOMERNUMBER  
 INNER JOIN EMPLOYEES ON CUSTOMERS.SALESREPEMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER
 INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE
-WHERE (ORDERS.ORDERDATE >= '2005-01-01' AND ORDERS.ORDERDATE <= '2005-06-30') AND PRODUCTLINE IN ('Classic Cars', 'Motorcycles', 'Planes', 'Ships')
+WHERE (ORDERS.ORDERDATE >= '2003-01-01' AND ORDERS.ORDERDATE <= '2005-06-30') AND PRODUCTLINE IN ('Classic Cars', 'Vintage Cars', 'Motorcycles')
 GROUP BY  PRODUCTLINE, ORDERS.ORDERDATE
 ORDER BY PRODUCTLINE, ORDERS.ORDERDATE]]></query>  
         <jndi><![CDATA[SampleData]]></jndi> 

@@ -1,25 +1,91 @@
 <chart>
-	
-	<!--  this is the background for the whole image -->
-	<!--  TODO support gradient and texture painting -->
+	<!-- Define the chart type -->	
 	<dataset-type>XYSeriesCollection</dataset-type> 
 	<chart-type>LineChart</chart-type>
-	
-	<title>XY Series Sample Chart</title>
+	<!-- Specify the orientation of the bars (vertical/horizontal) -->
+	<orientation>vertical</orientation>
+	<!-- Specify the 3D-ness of the bars -->
+	<is-3D>false</is-3D>
+	<!-- Specify if the bars are stacked -->
+	<is-stacked>false</is-stacked>
+	<!--  Line Chart properties -->
+	<markers-visible>true</markers-visible>
 	<line-style>none</line-style>
 	<line-width>0</line-width>
-	<markers-visible>true</markers-visible>
-	<!-- 
+    <dot-width>1</dot-width>
+    <dot-height>1</dot-height>
+
+	<!-- Specify the title of the chart -->
+	<title>XY Line Chart</title>
+
+	<!-- Specify the location of the title -->
+	<title-position>TOP</title-position>
+
+	<!-- Specify the font of the title -->
+	<title-font>
+		<font-family>Arial</font-family>
+		<size>14</size>
+		<is-bold>true</is-bold>
+		<is-italic>false</is-italic>
+	</title-font>
 	<subtitles>
-		<subtitle>a simple sample</subtitle> 
-	</subtitles> -->
+	  <subtitle>Product Line- MSRP vs Cost </subtitle>
+	  <subtitle>Sales Chart</subtitle>	
+	</subtitles>
+
+    <!-- General Chart Propeties --> 
 	<chart-background type="color">#FFFFFF</chart-background>
-	<plot-background type="color">#FFFFFF</plot-background>
-	<!-- <orientation>horizontal</orientation> -->
-	<height>550</height>
-	<width>650</width>
-	<!-- <is-3D>true</is-3D> -->
-	<!-- <is-stacked>true</is-stacked> -->
+	<plot-background type="color">#EEEEEE</plot-background>
+	<border-visible>false</border-visible>
+	<border-paint>#000000</border-paint>
+	
+	<!--  X-Axis properties -->
+	<domain-title>Quantity Ordered</domain-title>
+	<domain-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-title-font>
+	<domain-tick-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-tick-font>	
+	<domain-label-rotation>.7</domain-label-rotation>
+	<domain-label-rotation-dir></domain-label-rotation-dir>
+    <domain-minimum>700</domain-minimum>
+	<domain-maximum>1900</domain-maximum>
+	
+	<!--  Y-Axis properties -->
+	<range-title>Sales</range-title>
+	<range-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</range-title-font>
+    <range-tick-format>0,000 ($)</range-tick-format>
+    <range-tick-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+    </range-tick-font>
+	<range-minimum>25000</range-minimum>
+	<range-maximum>400000</range-maximum>
+	
+	<!-- Specify is the chart legend should be shown -->
+	<include-legend>true</include-legend>
+    <legend-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>
+    </legend-font> 
+	
+	<!-- Specify the color palette for the chart -->
 	<color-palette>
 		<color>#EE7733</color>
 		<color>#9EAA36</color>
@@ -34,9 +100,7 @@
 		<color>#1E8AD3</color>
 		<color>#AA6611</color>
 		<color>#772200</color>
-	</color-palette>
-	
-    <include-legend>true</include-legend>
+	</color-palette>	
 
 	<!-- Specify where the data for the chart comes from -->
 	<data>

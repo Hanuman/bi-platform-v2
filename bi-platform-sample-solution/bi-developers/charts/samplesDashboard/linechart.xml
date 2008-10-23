@@ -1,58 +1,99 @@
 <chart>
-	
-	<!--  this is the background for the whole image -->
-	<!--  TODO support gradient and texture painting -->
+	<!-- Define the chart type -->	
 	<chart-type>LineChart</chart-type>
-	<title>Sample Chart</title>
-	<!--
-	<subtitles> 
-		<subtitle>a simple sample</subtitle> 
+	<!-- Specify the orientation of the bars (vertical/horizontal) -->
+	<orientation>vertical</orientation>
+	<!-- Specify the 3D-ness of the bars -->
+	<is-3D>false</is-3D>
+	<!-- Specify if the bars are stacked -->
+	<is-stacked>false</is-stacked>
+	<!--  Line Chart properties -->
+	<markers-visible>true</markers-visible>
+	<line-style>dash</line-style>
+	<line-width>1.0</line-width>
+	<!-- Specify the title of the chart -->
+	<title>Line Chart</title>
+
+	<!-- Specify the location of the title -->
+	<title-position>TOP</title-position>
+
+	<!-- Specify the font of the title -->
+	<title-font>
+		<font-family>Arial</font-family>
+		<size>14</size>
+		<is-bold>true</is-bold>
+		<is-italic>false</is-italic>
+	</title-font>
+	<subtitles>
+	  <subtitle>Yearly Product Line</subtitle>
+	  <subtitle>Sales Chart</subtitle>	
 	</subtitles>
-	-->
+
+    <!-- General Chart Propeties --> 
+	<chart-background type="color">#FFFFFF</chart-background>
+	<plot-background type="color">#EEEEEE</plot-background>
+	<border-visible>false</border-visible>
+	<border-paint>#000000</border-paint>
+	
+	<!--  X-Axis properties -->
+	<domain-title>Years</domain-title>
+	<domain-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-title-font>
+	<domain-tick-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-tick-font>	
 	<domain-label-rotation>.7</domain-label-rotation>
 	<domain-label-rotation-dir></domain-label-rotation-dir>
-	<markers-visible>true</markers-visible>
-	<chart-background type="color">#FFFFFF</chart-background>
-	<plot-background type="color">#FFFFFF</plot-background>
-	<!-- <orientation>Horizontal</orientation> -->
-	<height>550</height>
-	<width>650</width>
-	<!-- <is-3D>true</is-3D> -->
-	<!-- <is-stacked>true</is-stacked> -->
-	<color-palette>
-		<color>#336699</color>
-		<color>#99CCFF</color>
-		<color>#999933</color>
-		<color>#666699</color>
-		<color>#CC9933</color>
-		<color>#006666</color>
-		<color>#3399FF</color>
-		<color>#993300</color>
-		<color>#CCCC99</color>
-		<color>#666666</color>
-		<color>#FFCC66</color>
-		<color>#6699CC</color>
-		<color>#663366</color>
-		<color>#9999CC</color>
-		<color>#CCCCCC</color>
-		<color>#669999</color>
-		<color>#CCCC66</color>
-		<color>#CC6600</color>
-		<color>#9999FF</color>
-		<color>#0066CC</color>
-		<color>#99CCCC</color>
-		<color>#999999</color>
-		<color>#FFCC00</color>
-		<color>#009999</color>
-		<color>#99CC33</color>
-		<color>#FF9900</color>
-		<color>#999966</color>
-		<color>#66CCCC</color>
-		<color>#339966</color>
-		<color>#CCCC33</color>
-	</color-palette>
+
 	
-    <include-legend>false</include-legend>
+	<!--  Y-Axis properties -->
+	<range-title>Sales</range-title>
+	<range-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</range-title-font>
+    <range-tick-format>0,000 ($)</range-tick-format>
+    <range-tick-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+    </range-tick-font>
+	
+	<!-- Specify is the chart legend should be shown -->
+	<include-legend>true</include-legend>
+    <legend-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>
+    </legend-font> 
+	
+	<!-- Specify the color palette for the chart -->
+	<color-palette>
+		<color>#EE7733</color>
+		<color>#9EAA36</color>
+		<color>#BF0000</color>
+		<color>#FCCF12</color>
+		<color>#772200</color>
+		<color>#DDCC88</color>
+		<color>#123D82</color>
+		<color>#4A0866</color>
+		<color>#445500</color>-
+		<color>#FFAA00</color>
+		<color>#1E8AD3</color>
+		<color>#AA6611</color>
+		<color>#772200</color>
+	</color-palette>
 	
 	<!-- Specify where the data for the chart comes from -->
 	<data>
@@ -65,7 +106,7 @@
 		<data-output>rule-result</data-output>
 		
 		<!-- Specify whether to get the chart series from the rows or columns -->
-		<data-orientation>columns</data-orientation>
+        <by-row>true</by-row>
 	</data>	
 
 </chart>

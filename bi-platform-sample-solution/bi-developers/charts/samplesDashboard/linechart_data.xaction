@@ -24,7 +24,7 @@
     <action-definition> 
       <!-- Define a local input called 'REGION' -->  
       <component-name>SQLLookupRule</component-name>
-      <action-type>Query For Variance Data</action-type>
+      <action-type>Query For Data</action-type>
       <action-inputs/>
       <action-outputs> 
         <query-result type="result-set" mapping="rule-result"/> 
@@ -34,17 +34,16 @@
         <jndi>SampleData</jndi>  
         <source>sql</source>  
         <!-- Define the query to execute. Note the parameter {REGION} in the query -->  
-        <query><![CDATA[SELECT CONCAT(CONCAT(CONCAT('Q', QUARTER(ORDERS.ORDERDATE)),'-'),YEAR(ORDERS.ORDERDATE)) AS TIME, SUM(ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE 
-FROM ORDERS 
-INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER 
-INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE  
-INNER JOIN CUSTOMERS ON ORDERS.CUSTOMERNUMBER =CUSTOMERS.CUSTOMERNUMBER  
-INNER JOIN EMPLOYEES ON CUSTOMERS.SALESREPEMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER
-INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE
-
-
-GROUP BY
-CONCAT( YEAR(ORDERS.ORDERDATE), QUARTER(ORDERS.ORDERDATE))]]></query> 
+        <query><![CDATA[SELECT PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2003' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2003",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2004' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2004",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2005' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2005"
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+     INNER JOIN CUSTOMER_W_TER ON ORDERFACT.CUSTOMERNUMBER = CUSTOMER_W_TER.CUSTOMERNUMBER GROUP BY
+     LINE
+ORDER BY
+     2 DESC]]></query> 
       </component-definition>  
       <!-- Define a local output called 'rule-result' -->  
       <!-- Specify the component to execute -->  

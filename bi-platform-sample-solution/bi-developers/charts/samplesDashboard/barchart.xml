@@ -1,42 +1,45 @@
 <chart>
-
-	<!-- This file defines the bar chart that shows the actual-to-budget variance for each department -->
-
 	<!-- Define the chart type -->	
 	<chart-type>BarChart</chart-type>
-
+	<!-- Specify the orientation of the bars -->
+	<orientation>vertical</orientation>
+	<!-- Specify the 3D-ness of the bars -->
+	<is-3D>false</is-3D>
+	<!-- Specify if the bars are stacked -->
+	<is-stacked>false</is-stacked>
+	
 	<!-- Specify the title of the chart -->
-	<title>Headcount Variance</title>
+	<title>Bar Chart</title>
 
 	<!-- Specify the location of the title -->
 	<title-position>TOP</title-position>
 
 	<!-- Specify the font of the title -->
 	<title-font>
-		<font-family>Ariel</font-family>
-		<size>20</size>
-		<is-bold>false</is-bold>
+		<font-family>Arial</font-family>
+		<size>14</size>
+		<is-bold>true</is-bold>
 		<is-italic>false</is-italic>
 	</title-font>
+	<subtitles>
+	  <subtitle>Territory</subtitle>
+	  <subtitle>Sales</subtitle>	
+	</subtitles>
 
+    <!-- General Chart Propeties --> 
 	<chart-background type="color">#FFFFFF</chart-background>
 	<plot-background type="color">#EEEEEE</plot-background>
-
-	<!-- Specify the orientation of the bars -->
-	<orientation>vertical</orientation>
-
-	<!-- Specify the 3D-ness of the bars -->
-	<is-3D>false</is-3D>
-
-	<!-- Specify if the bars are stacked -->
-	<is-stacked>false</is-stacked>
-
-	<!-- Specify if the chart has a border and the border color -->
 	<border-visible>false</border-visible>
 	<border-paint>#000000</border-paint>
 
 	<!-- Specify is the chart legend should be shown -->
-	   <include-legend>false</include-legend> 
+	   <include-legend>true</include-legend> 
+       <legend-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>
+       </legend-font> 
 
 	<!-- Specify the color palette for the chart -->
 	<color-palette>

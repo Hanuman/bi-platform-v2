@@ -1,12 +1,103 @@
 <chart> 
-  <chart-type>BarLineChart</chart-type>  
-  <border-visible>true</border-visible>  
-  <include-legend>false</include-legend>  
-  <is-3D>false</is-3D>  
-  <markers-visible>false</markers-visible>  
-  <orientation>vertical</orientation>  
-  <color-palette> 
-  		<color>#EE7733</color>
+	<!-- Define the chart type -->	
+   <chart-type>BarLineChart</chart-type> 
+  	<!-- Specify the orientation of the bars -->
+	<orientation>vertical</orientation>
+	<!-- Specify the 3D-ness of the bars -->
+	<is-3D>false</is-3D>
+	<!-- Specify if the bars are stacked -->
+	<is-stacked>false</is-stacked>
+	<!-- Specify Bar-Line properties -->
+    <bar-series> 
+      <series>TOTAL</series>  
+      <series>COST</series>
+    </bar-series>  
+    <line-series> 
+      <series>MARGIN</series> 
+    </line-series>  
+    <markers-visible>true</markers-visible>  
+
+	<!-- Specify the title of the chart -->
+	<title>Bar Line Chart</title>
+
+	<!-- Specify the location of the title -->
+	<title-position>TOP</title-position>
+
+	<!-- Specify the font of the title -->
+	<title-font>
+		<font-family>Arial</font-family>
+		<size>14</size>
+		<is-bold>true</is-bold>
+		<is-italic>false</is-italic>
+	</title-font>
+	<subtitles>
+	  <subtitle>Product Line Analysis</subtitle>
+	  <subtitle>Sales compared to Margin %</subtitle>	
+	</subtitles>
+
+    <!-- General Chart Propeties --> 
+	<chart-background type="color">#FFFFFF</chart-background>
+	<plot-background type="color">#EEEEEE</plot-background>
+	<border-visible>false</border-visible>
+	<border-paint>#000000</border-paint>
+
+	<!--  X-Axis properties -->
+	<domain-title>Years</domain-title>
+	<domain-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-title-font>
+	<domain-tick-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</domain-tick-font>	
+    <domain-label-rotation-dir>up</domain-label-rotation-dir>  
+    <domain-label-rotation>0.7</domain-label-rotation>  
+	
+	<!--  Y1-Axis properties -->
+	<range-title>Sales/Cost</range-title>
+	<range-title-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+	</range-title-font>
+    <range-tick-format>0,000 ($)</range-tick-format>
+    <range-tick-font>
+      <font-family>Arial</font-family>
+	  <size>10</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>	
+    </range-tick-font>
+
+	<!--  Y2-Axis properties -->
+    <lines-range-title>Margin in %</lines-range-title>  
+    <lines-range-tick-font> 
+      <font-family>Arial</font-family>  
+      <size>10</size>  
+      <is-bold>false</is-bold>  
+      <is-italic>false</is-italic> 
+    </lines-range-tick-font>  
+    <lines-range-tick-format>#,##0 %</lines-range-tick-format>  
+    <lines-range-minimum>.40</lines-range-minimum>  
+    <lines-range-maximum>.60</lines-range-maximum> 
+
+	<!-- Specify is the chart legend should be shown -->
+	   <include-legend>true</include-legend> 
+       <legend-font>
+      <font-family>Arial</font-family>
+	  <size>8</size>
+	  <is-bold>false</is-bold>
+	  <is-italic>false</is-italic>
+       </legend-font> 
+
+	<!-- Specify the color palette for the chart -->
+	<color-palette>
+		<color>#EE7733</color>
 		<color>#9EAA36</color>
 		<color>#BF0000</color>
 		<color>#FCCF12</color>
@@ -14,54 +105,17 @@
 		<color>#DDCC88</color>
 		<color>#123D82</color>
 		<color>#4A0866</color>
-		<color>#445500</color>
+		<color>#445500</color>-
 		<color>#FFAA00</color>
 		<color>#1E8AD3</color>
 		<color>#AA6611</color>
 		<color>#772200</color>
-  </color-palette>  
-  <paramName>department</paramName>  
-  <domain-label-rotation-dir>up</domain-label-rotation-dir>  
-  <domain-label-rotation>0.25</domain-label-rotation>  
-  <use-base-url>false</use-base-url>  
-  <url-target>_self</url-target>  
-  <bar-series> 
-    <series>actual</series>  
-    <series>budget</series> 
-  </bar-series>  
-  <line-series> 
-    <series>variance</series> 
-  </line-series>  
-  <lines-range-tick-format>###0.00 %</lines-range-tick-format>  
-  <range-tick-format>#,##0 EUR</range-tick-format>  
-  <lines-range-tick-font> 
-    <font-family>Arial</font-family>  
-    <size>10</size>  
-    <is-bold>false</is-bold>  
-    <is-italic>false</is-italic> 
-  </lines-range-tick-font>  
-  <range-tick-font> 
-    <font-family>Arial</font-family>  
-    <size>10</size>  
-    <is-bold>false</is-bold>  
-    <is-italic>false</is-italic> 
-  </range-tick-font>  
-  <range-title-font> 
-    <font-family>Arial</font-family>  
-    <size>10</size>  
-    <is-bold>false</is-bold>  
-    <is-italic>false</is-italic> 
-  </range-title-font>  
-  <range-title>Actual/Budget in EUR</range-title>  
-  <lines-range-tick-font> 
-    <font-family>Arial</font-family>  
-    <size>10</size>  
-    <is-bold>false</is-bold>  
-    <is-italic>false</is-italic> 
-  </lines-range-tick-font>  
-  <lines-range-title>Variance in %</lines-range-title>  
-  <lines-range-minimum>-0.1</lines-range-minimum>  
-  <lines-range-maximum>0.1</lines-range-maximum> 
+	</color-palette>
+
+   <!-- Miscellaneous -->
+    <paramName>department</paramName>  
+    <use-base-url>false</use-base-url>  
+    <url-target>_self</url-target>  
 
 	<!-- Specify where the data for the chart comes from -->
 	<data>

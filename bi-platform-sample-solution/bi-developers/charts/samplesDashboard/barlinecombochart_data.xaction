@@ -20,13 +20,23 @@
   <actions> 
     <action-definition> 
       <component-name>SQLLookupRule</component-name>
-      <action-type>Relational</action-type>
+      <action-type>Get Data from</action-type>
       <action-outputs> 
         <query-result type="result-set" mapping="results"/> 
       </action-outputs>
       <component-definition> 
         <jndi><![CDATA[SampleData]]></jndi>  
-        <query><![CDATA[select department, sum(actual) as Actual, sum(budget) as Budget, ((sum(variance))/(sum(budget))) as Variance from QUADRANT_ACTUALS GROUP BY department]]></query>  
+        <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE) AS COST,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE)/SUM(ORDERFACT.TOTALPRICE) AS MARGIN
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC]]></query>  
         <live><![CDATA[true]]></live> 
       </component-definition> 
     </action-definition>

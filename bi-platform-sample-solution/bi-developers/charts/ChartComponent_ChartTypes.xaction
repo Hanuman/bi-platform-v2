@@ -172,7 +172,16 @@
       <component-definition> 
         <jndi><![CDATA[SampleData]]></jndi>  
         <live><![CDATA[true]]></live>  
-        <query><![CDATA[select productname, buyprice, msrp from PRODUCTS where productname like '196%' order by productname]]></query> 
+        <query><![CDATA[SELECT PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2003' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2003",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2004' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2004",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2005' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2005"
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+     INNER JOIN CUSTOMER_W_TER ON ORDERFACT.CUSTOMERNUMBER = CUSTOMER_W_TER.CUSTOMERNUMBER GROUP BY
+     LINE
+ORDER BY
+     2 DESC]]></query> 
       </component-definition> 
     </action-definition>
   
@@ -195,7 +204,7 @@
         </action-outputs>
         <component-definition> 
           <by-row>true</by-row>  
-          <title><![CDATA[Pricing for 1960's Models]]></title>  
+          <title><![CDATA[BAR CHART]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -222,7 +231,7 @@
         </action-outputs>
         <component-definition> 
           <by-row>true</by-row>  
-          <title><![CDATA[Pricing for 1960's Models]]></title>  
+          <title><![CDATA[Line Chart]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -249,7 +258,7 @@
         </action-outputs>
         <component-definition> 
           <by-row>true</by-row>  
-          <title><![CDATA[Pricing for 1960's Models]]></title>  
+          <title><![CDATA[PIE CHART]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -276,7 +285,7 @@
         </action-outputs>
         <component-definition> 
           <by-row>true</by-row>  
-          <title><![CDATA[Pricing for 1960's Models]]></title>  
+          <title><![CDATA[AREA CHART]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -303,7 +312,7 @@
         </action-outputs>
         <component-definition> 
           <by-row>true</by-row>  
-          <title><![CDATA[Pricing for 1960's Models]]></title>  
+          <title><![CDATA[DASH LINE]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -321,7 +330,17 @@
         </action-outputs>
         <component-definition> 
           <jndi><![CDATA[SampleData]]></jndi>  
-          <query><![CDATA[select department, sum(actual) as Actual, sum(budget) as Budget,  (cast(sum(variance) as decimal(15,4)) / CAST(sum(budget) as decimal(15,4))) as variance from QUADRANT_ACTUALS GROUP BY department order by department]]></query>  
+          <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE) AS COST,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE)/SUM(ORDERFACT.TOTALPRICE) AS MARGIN
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC]]></query>  
           <live><![CDATA[true]]></live> 
         </component-definition> 
       </action-definition>
@@ -342,6 +361,7 @@
           <image-tag type="string"/> 
         </action-outputs>
         <component-definition> 
+          <title><![CDATA[BAR LINE]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -380,6 +400,7 @@
           <image-tag type="string"/> 
         </action-outputs>
         <component-definition> 
+          <title><![CDATA[BUBBLE CHART]]></title>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height> 
         </component-definition> 
@@ -425,7 +446,7 @@ results.addRow( new Array(57.0, 0.0, 100.0) );
           <by-row>true</by-row>  
           <width><![CDATA[550]]></width>  
           <height><![CDATA[550]]></height>  
-          <title><![CDATA[My Dial Chart]]></title> 
+          <title><![CDATA[Dial]]></title> 
         </component-definition> 
       </action-definition>
  
@@ -442,7 +463,18 @@ results.addRow( new Array(57.0, 0.0, 100.0) );
         <component-definition> 
           <jndi><![CDATA[SampleData]]></jndi>  
           <live><![CDATA[true]]></live>  
-          <query><![CDATA[select PRODUCTLINE, SUM(BUYPRICE) as BuyPrice, SUM(MSRP) as MSRP from PRODUCTS group by PRODUCTLINE order by PRODUCTLINE;]]></query> 
+          <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.QUANTITYORDERED) AS QUANTITY,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL,
+     PRODUCTS.PRODUCTNAME AS NAME
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE,
+     PRODUCTS.PRODUCTNAME
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC, PRODUCTS.PRODUCTNAME ASC]]></query> 
         </component-definition> 
       </action-definition>
   
@@ -461,11 +493,11 @@ results.addRow( new Array(57.0, 0.0, 100.0) );
           <chart-mapping type="string"/>  
           <image-tag type="string"/> 
         </action-outputs>
-        <component-definition> 
+        <component-definition>
           <by-row>false</by-row>  
-          <width><![CDATA[450]]></width>  
-          <height><![CDATA[300]]></height>  
-          <title><![CDATA[XY Chart Sample]]></title> 
+          <width><![CDATA[750]]></width>  
+          <height><![CDATA[550]]></height>  
+          <title><![CDATA[XY Chart]]></title>
         </component-definition> 
       </action-definition>
  
@@ -522,12 +554,13 @@ results.addRow( new Array(57.0, 0.0, 100.0) );
         <component-definition> 
           <jndi><![CDATA[SampleData]]></jndi>  
           <live><![CDATA[true]]></live>  
-          <query><![CDATA[select a.productname as productname, b.orderdate, SUM(c.quantityordered) as orders
-    from    PRODUCTS as a, 
-            ORDERS as b, 
-            ORDERDETAILS as c   
-    where   a.productcode = c.productcode AND MONTH(b.orderdate) = 1 AND (a.productname LIKE '1969%') 
-    group by a.productname, b.orderdate]]></query> 
+          <query><![CDATA[SELECT PRODUCTLINE, ORDERS.ORDERDATE, SUM(ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE 
+FROM ORDERS INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE INNER JOIN CUSTOMERS ON ORDERS.CUSTOMERNUMBER =CUSTOMERS.CUSTOMERNUMBER  
+INNER JOIN EMPLOYEES ON CUSTOMERS.SALESREPEMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER
+INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE
+WHERE (ORDERS.ORDERDATE >= '2003-01-01' AND ORDERS.ORDERDATE <= '2005-06-30') AND PRODUCTLINE IN ('Classic Cars', 'Vintage Cars', 'Motorcycles')
+GROUP BY  PRODUCTLINE, ORDERS.ORDERDATE
+ORDER BY PRODUCTLINE, ORDERS.ORDERDATE]]></query> 
         </component-definition> 
       </action-definition>
   
@@ -546,11 +579,11 @@ results.addRow( new Array(57.0, 0.0, 100.0) );
           <chart-mapping type="string"/>  
           <image-tag type="string"/> 
         </action-outputs>
-        <component-definition> 
+        <component-definition>
           <by-row>false</by-row>  
-          <width><![CDATA[450]]></width>  
-          <height><![CDATA[300]]></height>  
-          <title><![CDATA[Time Series Chart Sample]]></title> 
+          <width><![CDATA[750]]></width>  
+          <height><![CDATA[550]]></height>  
+          <title><![CDATA[Time Series Chart Sample]]></title>
         </component-definition> 
       </action-definition>
  

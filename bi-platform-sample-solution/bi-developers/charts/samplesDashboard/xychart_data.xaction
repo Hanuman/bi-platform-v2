@@ -22,14 +22,25 @@
   <actions> 
     <action-definition> 
       <component-name>SQLLookupRule</component-name>
-      <action-type>Execute the Query to Gen an XY Series Dataset</action-type>
+      <action-type>Get data from</action-type>
       <action-outputs> 
         <query-result type="result-set" mapping="results"/> 
       </action-outputs>
       <component-definition> 
         <jndi><![CDATA[SampleData]]></jndi>  
         <live><![CDATA[true]]></live>  
-        <query><![CDATA[Select PRODUCTLINE, MSRP, BUYPRICE FROM PRODUCTS order by PRODUCTLINE]]></query> 
+        <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.QUANTITYORDERED) AS QUANTITY,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL,
+     PRODUCTS.PRODUCTNAME AS NAME
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE,
+     PRODUCTS.PRODUCTNAME
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC, PRODUCTS.PRODUCTNAME ASC]]></query> 
       </component-definition> 
     </action-definition>
  

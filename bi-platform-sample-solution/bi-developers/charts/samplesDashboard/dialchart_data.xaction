@@ -12,11 +12,7 @@
   <inputs/>
 
   <outputs> 
-    <results type="string">
-      <destinations>
-        <response>content</response>
-      </destinations>
-    </results>
+    <results type="string"/>
   </outputs>
 
   <resources/>

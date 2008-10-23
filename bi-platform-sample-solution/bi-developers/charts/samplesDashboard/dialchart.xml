@@ -1,13 +1,32 @@
 <chart>
 	<chart-type>DialChart</chart-type>
 	<units></units>
+    <!-- Specify the title of the chart -->
+	<title>Dial</title>
+
+	<!-- Specify the location of the title -->
+	<title-position>bottom</title-position>
+	
+	<!-- Specify the font of the title -->
+	<title-font>
+		<font-family>Arial</font-family>
+		<size>14</size>
+		<is-bold>true</is-bold>
+		<is-italic>false</is-italic>
+	</title-font>
+	<subtitles>
+	  <subtitle>Dial</subtitle>
+	  <subtitle>Margin Gauge</subtitle>	
+	</subtitles>
+
 	
 	<!--  this is the color of the needle -->
 	<needle-color>#000080</needle-color>
 	
 	<!--  this is the background for the whole image -->
 	<!-- chart-background type="color">#ffffff</chart-background> -->
-	<chart-background type="gradient">
+	<chart-background type="color">#FFFFFF</chart-background>
+	<!-- <chart-background type="gradient">
 		<x1>0.0</x1>
 		<y1>0.0</y1>
 		<color1>#dddddd</color1>
@@ -15,7 +34,7 @@
 		<y2>100.0</y2>
 		<color2>#FFFFFF</color2>
 		<cyclic>true</cyclic>
-	</chart-background>
+	</chart-background> -->
 	
 	<!--  this ia the background for the dial -->
 	<plot-background type="gradient">

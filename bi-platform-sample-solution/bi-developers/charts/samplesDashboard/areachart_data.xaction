@@ -1,49 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
-  <title>Barchart Data</title>
+  <title>Areachart Data</title>
   <version>1</version>
   <logging-level>debug</logging-level>
   <documentation> 
-    <author>Gretchen Moran</author>  
-    <description>Return the variance between headcount actual and budget for every department</description>  
+    <author>Kurtis Cruzada</author>  
+    <description/>  
     <help/> 
   </documentation>
 
   <inputs/>
 
   <outputs> 
-    <query_result type="result-set"/>
+    <query_result type="result-set"/> 
   </outputs>
 
-  <resources> 
-    <catalog> 
-      <solution-file> 
-        <location>steelwheels.mondrian.xml</location>  
-        <mime-type>text/plain</mime-type> 
-      </solution-file> 
-    </catalog> 
-  </resources>
+  <resources/>
   
-  <!-- Define an input called 'REGION'. This will be passed in when the user clicks on a slice of the pie chart -->  
-  <!-- Define an output called 'rule-result' -->  
-  <!-- This action sequence does not require any external resources -->  
   <actions> 
     <action-definition> 
-      <component-name>MDXLookupRule</component-name>
-      <action-type>OLAP</action-type>
-      <action-resources> 
-        <catalog type="resource"/> 
-      </action-resources>
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get data</action-type>
       <action-outputs> 
-        <query-results type="result-set" mapping="query_result"/> 
+        <query-result type="result-set" mapping="query_result"/> 
       </action-outputs>
       <component-definition> 
-        <jndi>SampleData</jndi>  
-        <location>mondrian</location>  
-        <query><![CDATA[select {[Time].Children} ON COLUMNS,
-  {[Product].Children} ON ROWS
-from [SteelWheelsSales]
-where [Measures].[Sales]]]></query> 
+        <jndi><![CDATA[SampleData]]></jndi>  
+        <live><![CDATA[false]]></live>  
+        <query><![CDATA[SELECT PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2003' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2003",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2004' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2004",
+     SUM(CASE ORDERFACT.YEAR_ID WHEN '2005' THEN (ORDERFACT.TOTALPRICE) ELSE 0 END) AS "2005"
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+     INNER JOIN CUSTOMER_W_TER ON ORDERFACT.CUSTOMERNUMBER = CUSTOMER_W_TER.CUSTOMERNUMBER GROUP BY
+     LINE
+ORDER BY
+     2 DESC]]></query> 
       </component-definition> 
     </action-definition>
  
