@@ -23,7 +23,6 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.FileSelectionListenerCollection;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.SourcesFileSelectionChanged;
@@ -162,46 +161,45 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       menuBar.addItem(new MenuItem(Messages.getInstance().open(), new FileCommand(FileCommand.COMMAND.RUN, popupMenu, fileItemCallback)));
       menuBar.addItem(new MenuItem(Messages.getInstance().openInNewWindow(), new FileCommand(FileCommand.COMMAND.NEWWINDOW, popupMenu, fileItemCallback)));
       menuBar.addItem(new MenuItem(Messages.getInstance().runInBackground(), new FileCommand(FileCommand.COMMAND.BACKGROUND, popupMenu, fileItemCallback)));
-
+      /*
+       * Need to get the file name that was clicked on to see if it is a WAQR report. 
+       * Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
+       * nullifying the command attached to MenutItem click.
+       */
+      if (name.contains("waqr.xaction")) { //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
+        
+        // WG: Experimental Action Sequence Editor
+        if (MantleApplication.showAdvancedFeatures) {
+          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+        }
+        
+      } else if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
+        
+        // WG: Experimental Action Sequence Editor
+        if (MantleApplication.showAdvancedFeatures) {
+          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+        }
+      } else {
+        final FileCommand nullFileCommand = null;
+        final MenuItem editMenuItem = new MenuItem(Messages.getInstance().edit(), nullFileCommand);
+        editMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
+        menuBar.addItem(editMenuItem);
+        
+        // WG: Experimental Action Sequence Editor
+        if (MantleApplication.showAdvancedFeatures) {
+          if (name.endsWith(".xaction")) {  //$NON-NLS-1$
+            menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+          }
+        }
+      }
       menuBar.addSeparator();
       menuBar.addItem(Messages.getInstance().scheduleEllipsis(), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback));
     }
 
-    /*
-     * Need to get the file name that was clicked on to see if it is a WAQR report. 
-     * Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
-     * nullifying the command attached to MenutItem click.
-     */
-    if (name.contains("waqr.xaction")) { //$NON-NLS-1$
-      menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
-      
-      // WG: Experimental Action Sequence Editor
-      if (MantleApplication.showAdvancedFeatures) {
-        menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
-      }
-      
-    } else if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
-      menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
-      
-      // WG: Experimental Action Sequence Editor
-      if (MantleApplication.showAdvancedFeatures) {
-        menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
-      }
-    } else {
-      final FileCommand nullFileCommand = null;
-      final MenuItem editMenuItem = new MenuItem(Messages.getInstance().edit(), nullFileCommand);
-      editMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
-      menuBar.addItem(editMenuItem);
-      
-      // WG: Experimental Action Sequence Editor
-      if (MantleApplication.showAdvancedFeatures) {
-        if (name.endsWith(".xaction")) {  //$NON-NLS-1$
-          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
-        }
-      }
-    }
     menuBar.addSeparator();
-    menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, fileItemCallback)));
+    menuBar.addItem(new MenuItem(Messages.getInstance().propertiesEllipsis(), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, fileItemCallback)));
     popupMenu.setWidget(menuBar);
 
     Timer t = new Timer() {

@@ -1878,6 +1878,15 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
    */
   @DefaultMessage("Properties")
   String properties();
+  
+  /**
+   * Translated "Properties...".
+   * 
+   * @return translated "Properties..."
+  
+   */
+  @DefaultMessage("Properties...")
+  String propertiesEllipsis();
 
   /**
    * Translated "Favorites".
