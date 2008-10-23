@@ -17,12 +17,14 @@
 package org.pentaho.mantle.login.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.login.client.messages.MantleLoginMessages;
 import org.pentaho.mantle.login.client.messages.Messages;
 
@@ -64,12 +66,6 @@ public class MantleLoginDialog extends PromptDialogBox {
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
   static {
-    defaultUsers.put(MSGS.selectUser(), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
-    defaultUsers.put("Joe (admin)", new String[] { "joe", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    defaultUsers.put("Suzy", new String[] { "suzy", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    defaultUsers.put("Pat", new String[] { "pat", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    defaultUsers.put("Tiffany", new String[] { "tiffany", "password" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
     SERVICE = (MantleLoginServiceAsync) GWT.create(MantleLoginService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     String moduleRelativeURL = GWT.getModuleBaseURL() + "MantleLoginService"; //$NON-NLS-1$
@@ -146,24 +142,78 @@ public class MantleLoginDialog extends PromptDialogBox {
     }
     passwordTextBox.setText(""); //$NON-NLS-1$
     setFocusWidget(userTextBox);
-    addDefaultUsers();
     SERVICE.isShowUsersList(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
-        setContent(buildLoginPanel());
-        if (isAttached() && isVisible()) {
-          center();
-        }
+        getLoginSettingsAndShow(false);
       }
 
-      public void onSuccess(Boolean result) {
-        showUsersList = result;
-        setContent(buildLoginPanel());
-        if (isAttached() && isVisible()) {
-          center();
-        }
+      public void onSuccess(Boolean showUsersList) {
+        getLoginSettingsAndShow(showUsersList);
       }
     });
+  }
+
+  public void getLoginSettingsAndShow(final boolean showUsersListDefault) {
+    // we can override showUsersList with a setting in loginsettings.properties (not present by default)
+    showUsersList = showUsersListDefault;
+    String path = Window.Location.getPath();
+    if (!path.endsWith("/")) { //$NON-NLS-1$
+      path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
+    }
+    path = path.replaceAll("/mantle/", "/mantleLogin/");
+    if (path.indexOf("mantleLogin") == -1) {
+      path += "mantleLogin/";
+    }
+    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, path + "loginsettings.properties");
+    try {
+      requestBuilder.sendRequest(null, new RequestCallback() {
+        public void onError(Request request, Throwable exception) {
+          setContent(buildLoginPanel(false));
+          if (isAttached() && isVisible()) {
+            center();
+          }
+        }
+
+        public void onResponseReceived(Request request, Response response) {
+          String text = response.getText();
+          StringTokenizer lineTokenizer = new StringTokenizer(text, '\n');
+          HashMap<String, String> settings = new HashMap<String, String>();
+          for (int i = 0; i < lineTokenizer.countTokens(); i++) {
+            String line = lineTokenizer.tokenAt(i);
+            if (line.indexOf('=') != -1) {
+              StringTokenizer settingTokenizer = new StringTokenizer(lineTokenizer.tokenAt(i), '=');
+              String key = settingTokenizer.tokenAt(0);
+              String value = settingTokenizer.tokenAt(1);
+              settings.put(key, value);
+            }
+          }
+          defaultUsers.clear();
+          defaultUsers.put(MSGS.selectUser(), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
+          StringTokenizer useridTokenizer = new StringTokenizer(settings.get("userIds"), ',');
+          StringTokenizer passwordTokenizer = new StringTokenizer(settings.get("userPasswords"), ',');
+          StringTokenizer userdisplayTokenizer = new StringTokenizer(settings.get("userDisplayNames"), ',');
+          for (int i = 0; i < useridTokenizer.countTokens(); i++) {
+            defaultUsers.put(userdisplayTokenizer.tokenAt(i).trim(), new String[] { useridTokenizer.tokenAt(i).trim(), passwordTokenizer.tokenAt(i).trim() }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          }
+          // provide the opportunity to override showUsersList with a setting
+          if (settings.get("showUsersList") != null) {
+            showUsersList = "true".equalsIgnoreCase(settings.get("showUsersList"));
+          }
+          // get the default 'open in new window' flag, this is the default, overridden by a cookie
+          boolean openInNewWindowDefault = "true".equalsIgnoreCase(settings.get("openInNewWindow"));
+          setContent(buildLoginPanel(openInNewWindowDefault));
+          if (isAttached() && isVisible()) {
+            center();
+          }
+        }
+      });
+    } catch (RequestException e) {
+      setContent(buildLoginPanel(false));
+      if (isAttached() && isVisible()) {
+        center();
+      }
+    }
   }
 
   public MantleLoginDialog(AsyncCallback callback, boolean showNewWindowOption) {
@@ -194,7 +244,8 @@ public class MantleLoginDialog extends PromptDialogBox {
     });
   }
 
-  private Widget buildLoginPanel() {
+  private Widget buildLoginPanel(boolean openInNewWindowDefault) {
+
     userTextBox.setWidth("100%"); //$NON-NLS-1$
     passwordTextBox.setWidth("100%"); //$NON-NLS-1$
     usersListBox.setWidth("100%"); //$NON-NLS-1$
@@ -205,6 +256,8 @@ public class MantleLoginDialog extends PromptDialogBox {
     loginPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     SimplePanel spacer;
     if (showUsersList) {
+      // populate default users list box
+      addDefaultUsers();
       loginPanel.add(new Label(MSGS.sampleUser() + ":")); //$NON-NLS-1$
       loginPanel.add(usersListBox);
       spacer = new SimplePanel();
@@ -236,7 +289,7 @@ public class MantleLoginDialog extends PromptDialogBox {
         newWindowChk.setChecked(Boolean.parseBoolean(cookieCheckedVal));
       } else {
         // default is false, per BISERVER-2384
-        newWindowChk.setChecked(false);
+        newWindowChk.setChecked(openInNewWindowDefault);
       }
 
       loginPanel.add(newWindowChk);
@@ -250,6 +303,7 @@ public class MantleLoginDialog extends PromptDialogBox {
   }
 
   public void addDefaultUsers() {
+    usersListBox.clear();
     for (Map.Entry<String, String[]> entry : defaultUsers.entrySet()) {
       usersListBox.addItem(entry.getKey());
     }
