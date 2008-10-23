@@ -528,36 +528,15 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>MantleStyle</servlet-name>
-		<jsp-file>/mantle/MantleStyle.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
 		<servlet-name>MantleLoginService</servlet-name>
 		<servlet-class>org.pentaho.mantle.login.server.MantleLoginServlet</servlet-class>
 	</servlet>
-
-	<servlet>
-		<servlet-name>MantleStyleManager</servlet-name>
-		<servlet-class>org.pentaho.mantle.server.MantleStyleManager</servlet-class>
-	</servlet>
-
 
   <!-- insert additional servlets -->
 
 	<servlet-mapping>
 		<servlet-name>MantleService</servlet-name>
 		<url-pattern>/mantle/MantleService</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>MantleStyle</servlet-name>
-		<url-pattern>/mantle/MantleStyle.css</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>MantleStyleManager</servlet-name>
-		<url-pattern>/mantle/MantleStyleManager</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

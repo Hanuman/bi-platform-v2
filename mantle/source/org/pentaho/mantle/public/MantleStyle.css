@@ -1,6 +1,5 @@
-<% response.setContentType("text/css"); %>
 
-<%@page import="org.pentaho.mantle.server.*" %>
+
 
 html{
   height: 100%;
@@ -23,7 +22,7 @@ body{
 }
 
 .launchPanel {
-  background-color: <%= MantleStyleManager.getTabPanelBackgroundColor(request) %>;
+  background-color: white;
   background-image: url(quicklaunch_bg.png);
   background-repeat: no-repeat;
   background-position: center;
@@ -228,7 +227,7 @@ body{
 
 .gwt-HorizontalSplitPanel .hsplitter {
   cursor: w-resize;
-  width: <%= MantleStyleManager.getSplitPanelDividerWidth(request) %>;
+  width: 10px;
   background-image: url(splitter_horz_bg.png);
   background-repeat: repeat-y;
   border-left: 1px solid #848484;
@@ -308,7 +307,7 @@ body{
 }
 
 body {
-  background-color: <%= MantleStyleManager.getBodyBackground(request) %>;
+  background-color: white;
   color: black;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
   font-size: 10pt;
@@ -471,7 +470,7 @@ a:active, a:hover {
 }
 
 .gwt-Frame {
-	background-color: <%= MantleStyleManager.getBodyBackground(request) %>;
+	background-color: white;
 	border: none;
 	overflow:visible; 
 	width:100%; 

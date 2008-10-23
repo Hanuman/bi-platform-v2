@@ -47,7 +47,6 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
   }
 
   public void init() {
-    preferencesPanelMap.put(Messages.getInstance().styles(), new StyleEditorPanel());
     preferencesPanelMap.put(Messages.getInstance().repository(), new RepositoryPanel());
     preferencesPanelMap.put(Messages.getInstance().favorites(), new FavoritesPanel());
 
