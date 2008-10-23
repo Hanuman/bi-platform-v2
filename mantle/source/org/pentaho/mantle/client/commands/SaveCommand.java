@@ -149,9 +149,9 @@ public class SaveCommand implements Command {
       if (filename.indexOf("analysisview.xaction") == -1) {
         frame.myFilename = filename + ".analysisview.xaction";
       }
-      frame.controller.saveAs(frame.myFilename, filename, frame.mySolution, frame.myPath, frame.myOverwrite);
+      frame.controller.saveAs(frame.myFilename, filename, solution, path, overwrite);
     } else {
-      frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, frame.mySolution, frame.myPath, "html", frame.myOverwrite);
+      frame.gCtrlr.repositoryBrowserController.remoteSave(frame.myFilename, solution, path, "html", overwrite);
     }
   }-*/;
 
