@@ -162,11 +162,11 @@ public class MantleLoginDialog extends PromptDialogBox {
     if (!path.endsWith("/")) { //$NON-NLS-1$
       path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
     }
-    path = path.replaceAll("/mantle/", "/mantleLogin/");
-    if (path.indexOf("mantleLogin") == -1) {
-      path += "mantleLogin/";
+    path = path.replaceAll("/mantle/", "/mantleLogin/"); //$NON-NLS-1$ //$NON-NLS-2$
+    if (path.indexOf("mantleLogin") == -1) { //$NON-NLS-1$
+      path += "mantleLogin/"; //$NON-NLS-1$
     }
-    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, path + "loginsettings.properties");
+    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, path + "loginsettings.properties"); //$NON-NLS-1$
     try {
       requestBuilder.sendRequest(null, new RequestCallback() {
         public void onError(Request request, Throwable exception) {
@@ -180,9 +180,9 @@ public class MantleLoginDialog extends PromptDialogBox {
           String propertiesFileText = response.getText();
           // build a simple map of key/value pairs from the properties file
           HashMap<String,String> settings = PropertiesUtil.buildProperties(propertiesFileText);
-          StringTokenizer useridTokenizer = new StringTokenizer(settings.get("userIds"), ',');
-          StringTokenizer passwordTokenizer = new StringTokenizer(settings.get("userPasswords"), ',');
-          StringTokenizer userdisplayTokenizer = new StringTokenizer(settings.get("userDisplayNames"), ',');
+          StringTokenizer useridTokenizer = new StringTokenizer(settings.get("userIds"), ','); //$NON-NLS-1$
+          StringTokenizer passwordTokenizer = new StringTokenizer(settings.get("userPasswords"), ','); //$NON-NLS-1$
+          StringTokenizer userdisplayTokenizer = new StringTokenizer(settings.get("userDisplayNames"), ','); //$NON-NLS-1$
           // build default users list
           defaultUsers.clear();
           defaultUsers.put(MSGS.selectUser(), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -190,11 +190,11 @@ public class MantleLoginDialog extends PromptDialogBox {
             defaultUsers.put(userdisplayTokenizer.tokenAt(i), new String[] { useridTokenizer.tokenAt(i), passwordTokenizer.tokenAt(i) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
           // provide the opportunity to override showUsersList with a setting
-          if (settings.get("showUsersList") != null) {
-            showUsersList = "true".equalsIgnoreCase(settings.get("showUsersList"));
+          if (settings.get("showUsersList") != null) { //$NON-NLS-1$
+            showUsersList = "true".equalsIgnoreCase(settings.get("showUsersList")); //$NON-NLS-1$ //$NON-NLS-2$
           }
           // get the default 'open in new window' flag, this is the default, overridden by a cookie
-          boolean openInNewWindowDefault = "true".equalsIgnoreCase(settings.get("openInNewWindow"));
+          boolean openInNewWindowDefault = "true".equalsIgnoreCase(settings.get("openInNewWindow")); //$NON-NLS-1$ //$NON-NLS-2$
           setContent(buildLoginPanel(openInNewWindowDefault));
           if (isAttached() && isVisible()) {
             center();
