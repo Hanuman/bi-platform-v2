@@ -20,11 +20,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IConditionalExecution;
+import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
 
 public class ConditionalExecution implements IConditionalExecution {
 
@@ -44,7 +46,7 @@ public class ConditionalExecution implements IConditionalExecution {
 
   public boolean shouldExecute(final Map currentInputs, final Log logger) throws Exception {
     boolean shouldExecute = true;
-    Context cx = Context.enter();
+    Context cx = ContextFactory.getGlobal().enterContext();
     try {
       ScriptableObject scriptable = new RhinoScriptable();
       // initialize the standard javascript objects
@@ -68,6 +70,11 @@ public class ConditionalExecution implements IConditionalExecution {
         Object wrapper;
         if (inputValue instanceof IPentahoResultSet) {
           JavaScriptResultSet results = new JavaScriptResultSet();
+          
+          //Required as of Rhino 1.7R1 to resolve caching, base object 
+          //inheritance and property tree
+          results.setPrototype(scriptable);
+          
           results.setResultSet((IPentahoResultSet) inputValue);
           wrapper = Context.javaToJS(inputValue, results);
         } else {

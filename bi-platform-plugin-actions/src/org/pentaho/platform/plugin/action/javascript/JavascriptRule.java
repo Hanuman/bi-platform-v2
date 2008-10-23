@@ -18,11 +18,13 @@ package org.pentaho.platform.plugin.action.javascript;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -125,9 +127,10 @@ public class JavascriptRule extends ComponentBase {
    */
   @Override
   protected boolean executeAction() {
-    Context cx = Context.enter();
+    Context cx = ContextFactory.getGlobal().enterContext();
     StringBuffer buffer = new StringBuffer();
-    Iterator iter = getResourceNames().iterator();
+    @SuppressWarnings("unchecked")
+    Iterator<String> iter = getResourceNames().iterator();
     while (iter.hasNext()) {
       IActionSequenceResource resource = getResource(iter.next().toString());
       // If this is a javascript resource then append it to the script string
@@ -136,7 +139,7 @@ public class JavascriptRule extends ComponentBase {
       }
     }
 
-    ArrayList outputNames = new ArrayList();
+    List<String> outputNames = new ArrayList<String>();
     JavascriptAction jscriptAction = (JavascriptAction) getActionDefinition();
 
     IActionOutput[] actionOutputs = jscriptAction.getOutputs();
@@ -198,7 +201,7 @@ public class JavascriptRule extends ComponentBase {
             if ((outputNames.size() == 1) && (resultObject != null)) {
               jscriptAction.getOutput(outputNames.get(0).toString()).setValue(convertWrappedJavaObject(resultObject));
             } else {
-              ArrayList setOutputs = new ArrayList(outputNames.size());
+              List<String> setOutputs = new ArrayList<String>(outputNames.size());
               Object[] ids = ScriptableObject.getPropertyIds(scope);
               for (Object element : ids) {
                 int idx = outputNames.indexOf(element.toString());
@@ -238,8 +241,9 @@ public class JavascriptRule extends ComponentBase {
   protected Object executeScript(final ScriptableObject scriptable, final Scriptable scope, final String script,
       final Context cx) throws Exception {
     ScriptableObject.defineClass(scope, JavaScriptResultSet.class);
-    Set inputNames = getInputNames();
-    Iterator inputNamesIterator = inputNames.iterator();
+    @SuppressWarnings("unchecked")
+    Set<String> inputNames = getInputNames();
+    Iterator<String> inputNamesIterator = inputNames.iterator();
     String inputName;
     Object inputValue;
     while (inputNamesIterator.hasNext()) {
@@ -251,6 +255,11 @@ public class JavascriptRule extends ComponentBase {
       Object wrapper;
       if (inputValue instanceof IPentahoResultSet) {
         JavaScriptResultSet results = new JavaScriptResultSet();
+        
+        //Required as of Rhino 1.7R1 to resolve caching, base object 
+        //inheritance and property tree
+        results.setPrototype(scriptable);
+        
         results.setResultSet((IPentahoResultSet) inputValue);
         wrapper = Context.javaToJS(inputValue, results);
       } else {
