@@ -17,6 +17,7 @@
  * @created Sep 4, 2008 
  * @author mdamour
  */
+
 package org.pentaho.mantle.client.toolbars;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
@@ -123,6 +124,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     workspaceToggleButton.setCommand(new Command() {
      public void execute() {
          workspaceCmd.execute();
+         solutionBrowser.toggleWorkspace();
       }  
     });
     toggleWorkspaceButton();

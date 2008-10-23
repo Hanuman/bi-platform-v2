@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved.
+ * Copyright 2008 Pentaho Corporation.  All rights reserved. 
  *
  * Created Mar 25, 2008
  * @author Michael D'Amour
@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.crypto.spec.IvParameterSpec;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
@@ -119,14 +117,18 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   // commands
   Command ShowWorkSpaceCommand = new Command() {
     public void execute() {
-      showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
-      if (showWorkspaceMenuItem.isChecked()) {
-        showWorkspace();
-      } else {
-        showLaunchOrContent();
-      }
+      toggleWorkspace();
     }
   };
+  
+  public void toggleWorkspace() {
+    showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
+    if (showWorkspaceMenuItem.isChecked()) {
+      showWorkspace();
+    } else {
+      showLaunchOrContent();
+    }
+  }
   Command ToggleClassicViewCommand = new Command() {
 
     public void execute() {
@@ -215,7 +217,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
-
+          
           NamedFrame frame = tabPanel.getFrame();
 
           Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME); //$NON-NLS-1$
@@ -405,7 +407,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public TabWidget getCurrentTab() {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab()));
   }
-
+  
   public TabWidget getTabForWidget(Widget tabWidget) {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getWidgetIndex(tabWidget)));
   }
@@ -440,17 +442,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
           PromptDialogBox dialog = new PromptDialogBox(Messages.getInstance().open(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, content);
           dialog.setCallback(new IDialogCallback() {
-
+  
             public void cancelPressed() {
               // TODO Auto-generated method stub
-
+              
             }
-
+  
             public void okPressed() {
               contentTabPanel.remove(openAnalysisView);
               executeActionSequence(mode);
             }
-
+            
           });
           dialog.center();
           dialog.show();
@@ -462,7 +464,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         executeActionSequence(mode);
       }
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
-      showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) { //$NON-NLS-1$
       // open jfreereport!!
       openNewHTMLReport(mode);
@@ -475,6 +477,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
   }
+  
 
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
@@ -510,11 +513,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           (new OpenFileCommand(SolutionBrowserPerspective.this)).execute();
         }
       });
-
+      
       dialogBox.center();
       return;
     }
-
+    
     selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null); //$NON-NLS-1$
 
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
@@ -582,7 +585,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     }
   }
-
+  
   /**
    * this method launches the experimental action editor from Mantle.
    * 
@@ -601,7 +604,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (!GWT.isScript()) {
         url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath; //$NON-NLS-1$
       }
-
+  
       // See if it's already loaded
       for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
@@ -612,16 +615,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
       showNewURLTab(Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), Messages.getInstance().editingColon() + selectedFileItem.getLocalizedName(), url);
-
+  
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
       fileInfo.setPath(selectedFileItem.getPath());
-      this.getCurrentFrame().setFileInfo(fileInfo);
+        this.getCurrentFrame().setFileInfo(fileInfo);
     }
   }
-
+  
   void executeActionSequence(final FileCommand.COMMAND mode) {
     // open in content panel
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction
@@ -757,8 +760,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
             if(collapse){
-              for(TreeItem item : solutionTree.getAllNodes()){
-                item.setState(false);
+            for(TreeItem item : solutionTree.getAllNodes()){
+              item.setState(false);
               }
             }
             // update classic view
@@ -918,7 +921,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onSuccess(Object result) {
             createSchedule();
           }
-        });
+        });    
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
@@ -1122,6 +1125,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
     };
+    fireSolutionBrowserListenerEvent();
     MantleServiceCache.getService().setShowNavigator(showSolutionBrowser, callback);
   }
 
@@ -1239,7 +1243,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }-*/;
 
   private void refreshIfPDF(ReloadableIFrameTabPanel frame) {
-    if (isPDF(frame.getElement())) {
+    if(isPDF(frame.getElement())){
       frame.reload();
     }
   }
@@ -1268,7 +1272,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
    * return null if there is no open analysis view and returns the Widget the view is in if there is an open analysis view.
    */
   public Widget getOpenAnalysisView() {
-    for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
+    for (int i=0; i<contentTabPanel.getWidgetCount(); i++) {
       Widget currentWidget = contentTabPanel.getWidget(i);
       ReloadableIFrameTabPanel frame = ((ReloadableIFrameTabPanel) currentWidget);
       String id = frame.getFrame().getElement().getAttribute("id"); //$NON-NLS-1$
@@ -1288,7 +1292,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     var frame = $doc.getElementById(elementId);
     if (!frame) { 
       return false; 
-    } 
+  }
     frame = frame.contentWindow;
     return true == frame.pivot_initialized;
   }-*/;  
