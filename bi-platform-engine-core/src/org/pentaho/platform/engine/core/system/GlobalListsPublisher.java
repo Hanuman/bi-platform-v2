@@ -49,7 +49,7 @@ public class GlobalListsPublisher extends BasePublisher {
   public String publish(final IPentahoSession localSession) {
     try {
       PentahoSystem.clearGlobals();
-      PentahoSystem.sessionStartup(localSession, false);
+      PentahoSystem.globalStartup(localSession);
     } catch (Throwable t) {
       error(Messages.getErrorString("GlobalListsPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
       return Messages.getString("GlobalListsPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$

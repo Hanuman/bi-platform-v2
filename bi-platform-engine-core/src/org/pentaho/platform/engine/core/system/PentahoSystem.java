@@ -79,6 +79,7 @@ import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
+
 public class PentahoSystem {
 
   public static final boolean debug = true;
@@ -309,7 +310,9 @@ public class PentahoSystem {
 
     PentahoSystem.initXMLFactories();
 
-    SystemStartupSession session = new SystemStartupSession();
+    // get a system startup session that will be used to init the platform
+    IPentahoSession session = PentahoSystem.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+    
     PentahoSystem.loggingLevel = Logger
         .getLogLevel(PentahoSystem.systemSettings.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
     Logger.setLogLevel(PentahoSystem.loggingLevel);
@@ -342,7 +345,7 @@ public class PentahoSystem {
     } catch (PentahoSystemException e1) {
       throw new RuntimeException( e1 ); // this is fatal
     }
-    PentahoSystem.sessionStartup( session, false, null );
+    PentahoSystem.globalStartup( session );
     
     // store a list of the system listeners
     try {
@@ -529,7 +532,7 @@ public class PentahoSystem {
     return null;
       }
     }
-  
+
   //TODO: remove this wrapper method and investigate use of exceptions from pentaho object factory
   /**
    * A convenience method for retrieving Pentaho system objects from the object factory.
@@ -564,13 +567,9 @@ public class PentahoSystem {
     return PentahoSystem.globalParameters;
   }
 
-  public static void sessionStartup(final IPentahoSession session, final IParameterProvider sessionParameters) {
-	    PentahoSystem.sessionStartup(session, true, sessionParameters);
-	  }
-
   public static void sessionStartup(final IPentahoSession session) {
-	    PentahoSystem.sessionStartup(session, true, null);
-	  }
+    PentahoSystem.sessionStartup(session);
+	}
 
   public static void clearGlobals() {
     PentahoSystem.globalAttributes.clear();
@@ -584,13 +583,7 @@ public class PentahoSystem {
     return PentahoSystem.globalAttributes.remove(key);
   }
 
-  public static void sessionStartup(final IPentahoSession session, final boolean doSession ) {
-	  PentahoSystem.sessionStartup( session, doSession, null );
-	  
-  }
-
-  public static void sessionStartup(final IPentahoSession session, boolean doSession,
-      IParameterProvider sessionParameters) {
+  public static void sessionStartup(final IPentahoSession session, IParameterProvider sessionParameters) {
 
     List<ISessionStartupAction> sessionStartupActions = PentahoSystem.getSessionStartupActions(session);
     if (sessionStartupActions == null) {
@@ -598,20 +591,13 @@ public class PentahoSystem {
       return;
     }
 
-    if (!session.isAuthenticated() && doSession) {
+    if (!session.isAuthenticated()) {
       return;
     }
     
-    boolean doGlobals = PentahoSystem.globalAttributes.size() == 0;
     // TODO this needs more validation
     if(sessionStartupActions != null) {
 	    for (ISessionStartupAction sessionStartupAction : sessionStartupActions) {
-	      if (PentahoSystem.SCOPE_GLOBAL.equals(sessionStartupAction.getActionOutputScope()) && !doGlobals) {
-	        // see if this has been done already
-	        continue;
-	      } else if (SCOPE_SESSION.equals(sessionStartupAction.getActionOutputScope()) && !doSession) {
-	        continue;
-	      }
 	      // parse the actionStr out to identify an action
 	      ActionInfo actionInfo = ActionInfo.parseActionString(sessionStartupAction.getActionPath());
 	      if (actionInfo != null) {
@@ -661,16 +647,8 @@ public class PentahoSystem {
 	
 	              Object data = output.getValue();
 	              if (data != null) {
-	                if (SCOPE_SESSION.equals(sessionStartupAction.getActionOutputScope())) {
-	                  session.removeAttribute(attributeName);
-	                  session.setAttribute(attributeName, data);
-	                } else if (PentahoSystem.SCOPE_GLOBAL.equals(sessionStartupAction.getActionOutputScope())) {
-	                  PentahoSystem.globalAttributes.remove(attributeName);
-	                  PentahoSystem.globalAttributes.put(attributeName, data);
-	                } else {
-	                  Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-	                      "PentahoSystem.ERROR_0024_BAD_SCOPE_SYSTEM_ACTION", sessionStartupAction.getActionOutputScope())); //$NON-NLS-1$
-	                }
+                  session.removeAttribute(attributeName);
+                  session.setAttribute(attributeName, data);
 	              }
 	            }
 	          }
@@ -688,6 +666,85 @@ public class PentahoSystem {
     }
   }
 
+  public static void globalStartup(final IPentahoSession session) {
+    // getGlobalStartupActions doesn't pay any attention to session class
+    List<ISessionStartupAction> globalStartupActions = PentahoSystem.getGlobalStartupActions();
+    if (globalStartupActions == null) {
+      // nothing to do...
+      return;
+    }
+
+    boolean doGlobals = PentahoSystem.globalAttributes.size() == 0;
+    // see if this has been done already
+    if (!doGlobals) {
+      return;
+    }
+    
+    if(globalStartupActions != null) {
+      for (ISessionStartupAction globalStartupAction : globalStartupActions) {
+        // parse the actionStr out to identify an action
+        ActionInfo actionInfo = ActionInfo.parseActionString(globalStartupAction.getActionPath());
+        if (actionInfo != null) {
+          // now execute the action...
+  
+          SimpleOutputHandler outputHandler = null;
+  
+          String instanceId = null;
+  
+          ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+          solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
+          solutionEngine.init(session);
+  
+          String baseUrl = ""; //$NON-NLS-1$  
+          HashMap parameterProviderMap = new HashMap();
+          IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);
+  
+          ArrayList messages = new ArrayList();
+  
+          IRuntimeContext context = null;
+          try {
+            context = solutionEngine
+                .execute(
+                    actionInfo.getSolutionName(),
+                    actionInfo.getPath(),
+                    actionInfo.getActionName(),
+                    "Session startup actions", false, true, instanceId, false, parameterProviderMap, outputHandler, null, urlFactory, messages); //$NON-NLS-1$
+  
+            // if context is null, then we cannot check the status
+            if (null == context) {
+              return;
+            }
+            
+            if (context.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
+              // now grab any outputs
+              Iterator outputNameIterator = context.getOutputNames().iterator();
+              while (outputNameIterator.hasNext()) {
+  
+                String attributeName = (String) outputNameIterator.next();
+                IActionParameter output = context.getOutputParameter(attributeName);
+  
+                Object data = output.getValue();
+                if (data != null) {
+                  PentahoSystem.globalAttributes.remove(attributeName);
+                  PentahoSystem.globalAttributes.put(attributeName, data);
+                }
+              }
+            }
+          } finally {
+            if (context != null) {
+              context.dispose();
+            }
+          }
+  
+        } else {
+          Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+              "PentahoSystem.ERROR_0016_COULD_NOT_PARSE_ACTION", globalStartupAction.getActionPath())); //$NON-NLS-1$
+        }
+      }
+    }
+  }
+  
+  
   public static void shutdown() {
     if (LocaleHelper.getLocale() == null) {
       LocaleHelper.setLocale(Locale.getDefault());
@@ -1028,7 +1085,6 @@ public class PentahoSystem {
     }
   }
   
-  
   public static IPentahoConnection getConnection( String datasourceType, IPentahoSession session, ILogger logger ) {
 	  String key = CONNECTION_PREFIX+datasourceType;
     String scope = (String) PentahoSystem.connectionScopeMap.get(key);
@@ -1116,6 +1172,18 @@ public class PentahoSystem {
 	        startupActions.add(sessionStartupAction);
 	      }
 	    }
+    }
+    return startupActions;
+  }
+  
+  private static List<ISessionStartupAction> getGlobalStartupActions() {
+    ArrayList<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
+    if(sessionStartupActions != null) {
+      for (ISessionStartupAction sessionStartupAction : sessionStartupActions) {
+        if (sessionStartupAction.getActionOutputScope().equals(SCOPE_GLOBAL)) {
+          startupActions.add(sessionStartupAction);
+        }
+      }
     }
     return startupActions;
   }

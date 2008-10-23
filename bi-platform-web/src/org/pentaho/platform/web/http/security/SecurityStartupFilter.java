@@ -72,7 +72,7 @@ public class SecurityStartupFilter implements Filter {
           // Do the startup actions...
         	
           IParameterProvider sessionParameters = new PentahoSessionParameterProvider(userSession);
-          PentahoSystem.sessionStartup(userSession, true, sessionParameters);
+          PentahoSystem.sessionStartup(userSession, sessionParameters);
         } catch (Exception ex) {
           SecurityStartupFilter.logger.error(ex.getLocalizedMessage(), ex);
           // Yes, keep going, in spite of the error.

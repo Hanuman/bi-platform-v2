@@ -126,14 +126,6 @@ public class ProxyServlet extends ServletBase {
     super.init(servletConfig);
   }
 
-  protected void setupSession(final IPentahoSession userSession) {
-    PentahoSystem.sessionStartup(userSession);
-  }
-
-  protected void removeUserSession(final IPentahoSession userSession) {
-    userSession.destroy();
-  }
-
   protected void doProxy(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     if (proxyURL == null) { // Got nothing from web.xml
       return;

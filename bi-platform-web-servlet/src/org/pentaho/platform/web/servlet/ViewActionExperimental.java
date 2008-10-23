@@ -73,16 +73,6 @@ public class ViewActionExperimental extends ServletBase {
     super();
   }
 
-  protected void setupSession(final IPentahoSession userSession) {
-
-    PentahoSystem.sessionStartup(userSession);
-
-  }
-
-  protected void removeUserSession(final IPentahoSession userSession) {
-    userSession.destroy();
-  }
-
   protected boolean doBackgroundExecution(final HttpServletRequest request, final HttpServletResponse response,
       final IPentahoSession userSession) throws ServletException, IOException {
     if ("true".equals(request.getParameter("background"))) { //$NON-NLS-1$ //$NON-NLS-2$

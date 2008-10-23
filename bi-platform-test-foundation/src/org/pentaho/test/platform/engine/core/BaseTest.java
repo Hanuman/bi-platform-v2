@@ -210,7 +210,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
     // Override to load startup actions. This returns an IPentahoSession
     // so subclasses can create a mock authenticated user session for
     // testing.
-    PentahoSystem.sessionStartup(session, false);
+    PentahoSystem.globalStartup(session);
     return session;
   }
 

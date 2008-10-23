@@ -53,14 +53,6 @@ public class GetContent extends ServletBase {
     super();
   }
 
-  protected void setupSession(final IPentahoSession userSession) {
-    PentahoSystem.sessionStartup(userSession);
-  }
-
-  protected void removeUserSession(final IPentahoSession userSession) {
-    userSession.destroy();
-  }
-
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     doGet(request, response);

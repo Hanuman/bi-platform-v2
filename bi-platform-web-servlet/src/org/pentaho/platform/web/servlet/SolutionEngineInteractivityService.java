@@ -70,14 +70,6 @@ public class SolutionEngineInteractivityService extends ServletBase {
     super();
   }
 
-  protected void setupSession(final IPentahoSession userSession) {
-    PentahoSystem.sessionStartup(userSession);
-  }
-
-  protected void removeUserSession(final IPentahoSession userSession) {
-    userSession.destroy();
-  }
-
   protected boolean doMessages(final HttpServletRequest request) {
     return "true".equalsIgnoreCase(request.getParameter("debug")); //$NON-NLS-1$ //$NON-NLS-2$
   }
