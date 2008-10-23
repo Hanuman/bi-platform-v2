@@ -220,7 +220,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           
           NamedFrame frame = tabPanel.getFrame();
 
-          Window.setTitle(getCurrentTab().getText() + " - " + MantleApplication.PRODUCT_NAME); //$NON-NLS-1$
+          Window.setTitle(MantleApplication.PRODUCT_NAME + " - " + getCurrentTab().getText()); //$NON-NLS-1$
 
           frame.setVisible(true);
           refreshIfPDF(tabPanel);
