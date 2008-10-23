@@ -726,7 +726,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void fetchSolutionDocument(final boolean showSuccess) {
+  public void fetchSolutionDocument(final boolean showSuccess, final boolean collapse) {
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -756,7 +756,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
-            if(!showSuccess){
+            if(collapse){
               for(TreeItem item : solutionTree.getAllNodes()){
                 item.setState(false);
               }
@@ -787,7 +787,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           }
 
           public void onSuccess(Boolean result) {
-            fetchSolutionDocument(showSuccess);
+            fetchSolutionDocument(showSuccess, collapse);
           }
 
         });
@@ -797,9 +797,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void loadPerspective(boolean force, boolean showStatus) {
-    if (!hasBeenLoaded || force) {
-      fetchSolutionDocument(showStatus);
+    if (!hasBeenLoaded){
+      fetchSolutionDocument(showStatus, /*collapse*/ true);
       hasBeenLoaded = true;
+    } else if(force) {
+      fetchSolutionDocument(showStatus, /*collapse*/ false);
     }
     workspacePanel.refreshWorkspace();
     installViewMenu(perspectiveCallback);
