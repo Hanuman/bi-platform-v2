@@ -23,6 +23,7 @@ package org.pentaho.platform.engine.core.system.objfac;
 
 import java.io.File;
 
+import org.pentaho.platform.engine.core.messages.Messages;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -48,6 +49,8 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
    *                  will create one
    */
   public void init(String configFile, Object context) {
+
+    
     if (context == null) {
       //      beanFactory = new FileSystemXmlApplicationContext(configFile);
       File f = new File(configFile);
@@ -58,6 +61,12 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
 
       beanFactory = appCtx;
     } else {
+      if (!(context instanceof ApplicationContext)) {
+        String msg = Messages.getErrorString("StandalonePentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
+            getClass().getSimpleName(), "ApplicationContext", context.getClass().getName()); //$NON-NLS-1$
+        throw new IllegalArgumentException(msg);
+      }
+      
       beanFactory = (ApplicationContext) context;
     }
   }
