@@ -23,6 +23,7 @@ package org.pentaho.platform.web.http.context;
 import javax.servlet.ServletContext;
 
 import org.pentaho.platform.engine.core.system.objfac.AbstractSpringPentahoObjectFactory;
+import org.pentaho.platform.web.http.messages.Messages;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -31,7 +32,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * the web application.  WebSpringPentahoObjectFactory will delegate object creation 
  * and management to the Spring context.  There is one exception to this rule: see 
  * {@link AbstractSpringPentahoObjectFactory} for more details.
- * 
+ * <p>
  * The Spring bean factory supports the binding of objects to particular scopes.  See Spring
  * documentation for description of the scope types: singleton, prototype, session, and request.
  * The latter two apply only in a web context.
@@ -49,10 +50,15 @@ public class WebSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFa
    * @param configFile  ignored for this implementation
    * @param context   the {@link ServletContext} under which this system is currently running.  This
    *                  is used to retrieve the Spring {@link WebApplicationContext}.
+   * @throws IllegalArgumentException if context is not the correct type, only ServletContext is accepted
    */
   public void init(String configFile, Object context) {
-    assert context instanceof ServletContext : getClass().getSimpleName() + "currently supports only " //$NON-NLS-1$
-        + ServletContext.class.getName()+".  You have tried to initialize with "+context.getClass().getName(); //$NON-NLS-1$
+    if (!(context instanceof ServletContext)) {
+      String msg = Messages.getErrorString("WebSpringPentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
+          ServletContext.class.getName(), context.getClass().getName());
+      throw new IllegalArgumentException(msg);
+    }
+
     ServletContext servletContext = (ServletContext) context;
     beanFactory = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
   }

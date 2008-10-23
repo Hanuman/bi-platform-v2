@@ -150,13 +150,14 @@ public class SolutionContextListener implements ServletContextListener {
     try {
       Class<?> classObject = Class.forName(pentahoObjectFactoryClassName);
       pentahoObjectFactory = (IPentahoObjectFactory) classObject.newInstance();
-      pentahoObjectFactory.init(pentahoObjectFactoryConfigFile, context);
-      PentahoSystem.setObjectFactory(pentahoObjectFactory);
     } catch (Exception e) {
-      Logger.fatal(this, Messages.getString("SolutionContextListener.ERROR_BAD_OBJECT_FACTORY", pentahoObjectFactoryClassName), e); //$NON-NLS-1$
-      // Cannot proceed without an object factory, so we'll throw a runtime exception
-      throw new RuntimeException(e);
+      String msg = Messages.getString("SolutionContextListener.ERROR_BAD_OBJECT_FACTORY", pentahoObjectFactoryClassName); //$NON-NLS-1$
+      //Cannot proceed without an object factory, so we'll put some context around what
+      //we were trying to do throw a runtime exception
+      throw new RuntimeException(msg, e);
     }
+    pentahoObjectFactory.init(pentahoObjectFactoryConfigFile, context);
+    PentahoSystem.setObjectFactory(pentahoObjectFactory);
   }
 
   /**
