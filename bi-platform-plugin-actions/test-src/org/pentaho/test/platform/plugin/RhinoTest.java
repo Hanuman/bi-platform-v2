@@ -1,6 +1,7 @@
 package org.pentaho.test.platform.plugin;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;
 import org.pentaho.platform.plugin.condition.javascript.RhinoScriptable;
 import org.pentaho.test.platform.engine.core.BaseTest;
@@ -19,7 +20,7 @@ public class RhinoTest extends BaseTest {
   public void testRhino() {
     // Creates and enters a Context. The Context stores information
     // about the execution environment of a script.
-    Context cx = Context.enter();
+    Context cx = ContextFactory.getGlobal().enterContext();
     try {
       // Initialize the standard objects (Object, Function, etc.)
       // This must be done before scripts can be executed. Returns
