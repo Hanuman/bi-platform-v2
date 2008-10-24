@@ -12,4 +12,5 @@ PentahoSystem which is initialized after Spring
   default-lazy-init="true">
   
   <bean id="ISolutionEngine" class="org.pentaho.platform.engine.services.solution.SolutionEngine" scope="prototype" />
+  <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
 </beans>

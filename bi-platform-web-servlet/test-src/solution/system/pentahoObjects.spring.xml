@@ -43,4 +43,5 @@ PentahoSystem which is initialized after Spring
     this when the PluginSettings code is fully implemented.
   -->
   <bean id="IPluginSettings" class="java.lang.String" scope="prototype" />
+  <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
 </beans>

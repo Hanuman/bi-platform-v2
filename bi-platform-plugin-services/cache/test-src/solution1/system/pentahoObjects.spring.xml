@@ -20,4 +20,5 @@ PentahoSystem which is initialized after Spring
   <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService" scope="prototype" />
   <bean id="IPasswordService" class="org.pentaho.platform.util.Base64PasswordService" scope="singleton" />
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="singleton" />
+  <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
 </beans>

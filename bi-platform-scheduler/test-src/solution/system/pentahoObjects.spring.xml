@@ -18,4 +18,5 @@ PentahoSystem which is initialized after Spring
   <bean id="ISubscriptionRepository" class="org.pentaho.platform.repository.subscription.SubscriptionRepository" scope="singleton" />
   <bean id="ISubscriptionScheduler" class="org.pentaho.platform.scheduler.QuartzSubscriptionScheduler" scope="singleton" />
   <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService" scope="prototype" />
+  <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
 </beans>
