@@ -11,6 +11,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -57,6 +58,8 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
     if (initOk) {
       return;
     }
+    
+    PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
     if (PentahoSystem.getApplicationContext() == null) {
       StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
       // set the base url assuming there is a running server on port 8080
