@@ -166,9 +166,9 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
-      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.UNABLE_TO_SUBMIT_USER_JOB"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB"), ex);
     } catch (ParseException ex) {
-      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.INVALID_DATE_FORMAT"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT"), ex);
     }
   }
   
@@ -202,8 +202,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       }
       return rtn;
     } catch (SchedulerException ex) {
-      logger.error( Messages.getString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER"), ex ); //$NON-NLS-1$
-      throw new BackgroundExecutionException(Messages.getString("BackgroundExecuteHelper.UNABLE_TO_SUBMIT_USER_JOB"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER"), ex);
     }
   }
 

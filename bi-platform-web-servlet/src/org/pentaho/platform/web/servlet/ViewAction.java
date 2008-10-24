@@ -104,7 +104,7 @@ public class ViewAction extends ServletBase {
           backgroundResponse = bex.getLocalizedMessage();
           response.getWriter().print(backgroundResponse);
           response.getWriter().print(footer);
-          error(Messages.getErrorString("ViewAction.ERROR_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION"), bex); //$NON-NLS-1$
+          error(Messages.getErrorString("ViewAction.ERROR_0004_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION"), bex); //$NON-NLS-1$
           return false;          
         }
         response.getWriter().print(backgroundResponse);
@@ -319,7 +319,7 @@ public class ViewAction extends ServletBase {
         resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);  
       } catch(BackgroundExecutionException bex) {
         resp = bex.getLocalizedMessage();
-        error(Messages.getErrorString("ViewAction.ViewAction.ERROR_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
+        error(Messages.getErrorString("ViewAction.ERROR_0003_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
         outputStream.write(resp.getBytes());
         contentItem.closeOutputStream();
         return false; 

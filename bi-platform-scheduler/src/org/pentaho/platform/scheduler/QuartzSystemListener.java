@@ -93,11 +93,11 @@ public class QuartzSystemListener implements IPentahoSystemListener {
         }
       } catch (ObjectFactoryException objface) {
       	Logger.error(this, Messages.getErrorString(
-            "QuartzSystemListener.UNABLE_TO_INSTANTIATE_OBJECT",QuartzSystemListener.class.getName()), objface); //$NON-NLS-1$
+            "QuartzSystemListener.ERROR_0005_UNABLE_TO_INSTANTIATE_OBJECT",QuartzSystemListener.class.getName()), objface); //$NON-NLS-1$
       	return false;
       } catch (DatasourceServiceException dse) {
         Logger.error(this, Messages.getErrorString(
-            "QuartzSystemListener.UNABLE_TO_GET_DATASOURCE",QuartzSystemListener.class.getName()), dse); //$NON-NLS-1$
+            "QuartzSystemListener.ERROR_0006_UNABLE_TO_GET_DATASOURCE",QuartzSystemListener.class.getName()), dse); //$NON-NLS-1$
         return false;        
       }
     }

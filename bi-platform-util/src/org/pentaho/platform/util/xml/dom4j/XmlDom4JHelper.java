@@ -106,9 +106,9 @@ public class XmlDom4JHelper {
       inStrm = new ByteArrayInputStream(bytes);
       document = XmlDom4JHelper.getDocFromStream(inStrm, encoding, resolver);
     } catch (DocumentException e) {
-      throw  new XmlParseException(Messages.getString("XmlDom4JHelper.UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e);
+      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0001_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e);
     } catch (UnsupportedEncodingException e) {
-      throw  new XmlParseException(Messages.getString("XmlDom4JHelper.UNSUPPORTED_ENCODING"), e);
+      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0002_UNSUPPORTED_ENCODING"), e);
     } finally {
       XmlDom4JHelper.closeInputStream(inStrm);
     }
