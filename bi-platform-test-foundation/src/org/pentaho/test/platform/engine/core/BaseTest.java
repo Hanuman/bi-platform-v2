@@ -43,6 +43,7 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -91,6 +92,9 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
     if (initOk) {
       return;
     }
+    
+    PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
+    
     if (PentahoSystem.getApplicationContext() == null) {
       StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
       // set the base url assuming there is a running server on port 8080

@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.engine.core.solution.CustomSettingsParameterProvider;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
@@ -33,6 +34,7 @@ public class SettingsParameterProviderTest extends TestCase {
 
 	  private void init() {
 		  if( !PentahoSystem.getInitializedOK() ) {
+		        PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
 		        StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
 		        String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
 		        IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();

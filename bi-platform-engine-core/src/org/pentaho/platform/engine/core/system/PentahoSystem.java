@@ -120,8 +120,6 @@ public class PentahoSystem {
 
   public static final String SCOPE_SESSION = "session"; //$NON-NLS-1$
 
-  public static final String SCOPE_THREAD = "thread"; //$NON-NLS-1$
-
   public static final String SCOPE_LOCAL = "local"; //$NON-NLS-1$
 
   public static final String SCOPE = "scope"; //$NON-NLS-1$
@@ -137,13 +135,15 @@ public class PentahoSystem {
 
   private static SimpleParameterProvider globalParameters;
 
-  private static ISystemSettings systemSettings;
+  private static ISystemSettings systemSettingsService;
 
   private static List<IPentahoPublisher> publishers = new ArrayList<IPentahoPublisher>();
 
   private static List<IPentahoSystemListener> listeners = new ArrayList<IPentahoSystemListener>();
   
   private static List<ISessionStartupAction> sessionStartupActions = new ArrayList<ISessionStartupAction>();
+  
+  private static IPentahoObjectFactory pentahoObjectFactory = null;
   
   /**
    * Maps an interface name to the scope as defined in the pentaho.xml file connectionClassNameMap, connectionScopeMap, and globalConnectionsMap are related
@@ -264,8 +264,6 @@ public class PentahoSystem {
       LocaleHelper.setLocale(Locale.getDefault());
     }
     
-    PentahoSystem.systemSettings = new PathBasedSystemSettings();
-
     // test to see if we have a valid document
     String test = PentahoSystem.getSystemSetting("pentaho-system", null);//$NON-NLS-1$ 
     if( test == null ) {
@@ -288,21 +286,21 @@ public class PentahoSystem {
       PentahoSystem.ACLFileExtensionList.add(extn);
     }
 
-    DEFAULT_CONDITIONAL_EXECUTION_PROVIDER = PentahoSystem.systemSettings.getSystemSetting(
+    DEFAULT_CONDITIONAL_EXECUTION_PROVIDER = PentahoSystem.systemSettingsService.getSystemSetting(
         "objects/IConditionalExecution", //$NON-NLS-1$
         "org.pentaho.platform.plugin.condition.javascript.ConditionalExecution"); //$NON-NLS-1$    
 
-    DEFAULT_MESSAGE_FORMATTER = PentahoSystem.systemSettings.getSystemSetting("objects/IMessageFormatter", //$NON-NLS-1$
+    DEFAULT_MESSAGE_FORMATTER = PentahoSystem.systemSettingsService.getSystemSetting("objects/IMessageFormatter", //$NON-NLS-1$
         "org.pentaho.platform.engine.services.MessageFormatter"); //$NON-NLS-1$    
     
-    DEFAULT_NAVIGATION_COMPONENT = PentahoSystem.systemSettings.getSystemSetting("objects/INavigationComponent", //$NON-NLS-1$
+    DEFAULT_NAVIGATION_COMPONENT = PentahoSystem.systemSettingsService.getSystemSetting("objects/INavigationComponent", //$NON-NLS-1$
         "org.pentaho.platform.uifoundation.component.xml.NavigationComponent"); //$NON-NLS-1$  
     
-    List settingsList = PentahoSystem.systemSettings.getSystemSettings("pentaho-system"); //$NON-NLS-1$
+    List settingsList = PentahoSystem.systemSettingsService.getSystemSettings("pentaho-system"); //$NON-NLS-1$
     if (null == settingsList) {
       // the application context is not configure correctly
       Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-          "PentahoSystem.ERROR_0001_SYSTEM_SETTINGS_INVALID", PentahoSystem.systemSettings.getSystemCfgSourceName())); //$NON-NLS-1$
+          "PentahoSystem.ERROR_0001_SYSTEM_SETTINGS_INVALID", PentahoSystem.systemSettingsService.getSystemCfgSourceName())); //$NON-NLS-1$
       PentahoSystem.initializedStatus |= PentahoSystem.SYSTEM_SETTINGS_FAILED;
       PentahoSystem.addInitializationFailureMessage(PentahoSystem.SYSTEM_SETTINGS_FAILED, Messages
           .getErrorString("PentahoSystem.ERROR_0001_SYSTEM_SETTINGS_INVALID")); //$NON-NLS-1$
@@ -311,10 +309,16 @@ public class PentahoSystem {
     PentahoSystem.initXMLFactories();
 
     // get a system startup session that will be used to init the platform
-    IPentahoSession session = PentahoSystem.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+    IPentahoSession session = null;
+    try {
+      session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+    }
+    catch (ObjectFactoryException e) {
+      throw new RuntimeException(e);
+    }
     
     PentahoSystem.loggingLevel = Logger
-        .getLogLevel(PentahoSystem.systemSettings.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
+        .getLogLevel(PentahoSystem.systemSettingsService.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
     Logger.setLogLevel(PentahoSystem.loggingLevel);
 
     // to guarantee hostnames in SSL mode are not being spoofed
@@ -322,7 +326,7 @@ public class PentahoSystem {
 
     // get a list of the connection providers
     // TODO move some ofthis code to the connection provider factory
-    List connectionNodes = PentahoSystem.systemSettings.getSystemSettings("connections/*"); //$NON-NLS-1$
+    List connectionNodes = PentahoSystem.systemSettingsService.getSystemSettings("connections/*"); //$NON-NLS-1$
     if (connectionNodes != null) {
       Iterator connectionIterator = connectionNodes.iterator();
       while (connectionIterator.hasNext()) {
@@ -408,7 +412,7 @@ public class PentahoSystem {
     // before calling initXMLFactories.";
 
     String xpathToXMLFactoryNodes = "xml-factories/factory-impl"; //$NON-NLS-1$
-    List nds = PentahoSystem.systemSettings.getSystemSettings(xpathToXMLFactoryNodes);
+    List nds = PentahoSystem.systemSettingsService.getSystemSettings(xpathToXMLFactoryNodes);
     if (null != nds) {
       for (Iterator it = nds.iterator(); it.hasNext();) {
         Node nd = (Node) it.next();
@@ -541,7 +545,7 @@ public class PentahoSystem {
     try {
       return pentahoObjectFactory.get( interfaceClass, session );
     } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+      Logger.error( PentahoSystem.class.getName(), e.getMessage(), e);
       return null;
     }
   }
@@ -554,7 +558,7 @@ public class PentahoSystem {
     try {
       return pentahoObjectFactory.get( interfaceClass, key, session );
     } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+      Logger.error( PentahoSystem.class.getName(), e.getMessage(), e);
       return null;
     }
   }
@@ -894,20 +898,20 @@ public class PentahoSystem {
   }
 
   public static String getSystemSetting(final String path, final String settingName, final String defaultValue) {
-    return PentahoSystem.systemSettings.getSystemSetting(path, settingName, defaultValue);
+    return PentahoSystem.systemSettingsService.getSystemSetting(path, settingName, defaultValue);
   }
 
   public static String getSystemSetting(final String settingName, final String defaultValue) {
     // TODO make this more efficient using caching
-    return PentahoSystem.systemSettings.getSystemSetting(settingName, defaultValue);
+    return PentahoSystem.systemSettingsService.getSystemSetting(settingName, defaultValue);
   }
 
   public static ISystemSettings getSystemSettings() {
-    return PentahoSystem.systemSettings;
+    return PentahoSystem.systemSettingsService;
   }
 
   public static void refreshSettings() {
-    PentahoSystem.systemSettings.resetSettingsCache();
+    PentahoSystem.systemSettingsService.resetSettingsCache();
   }
 
   public static String publish(final IPentahoSession session, final String className) {
@@ -1133,7 +1137,7 @@ public class PentahoSystem {
 	    return null;
   }
 
-  private static IPentahoObjectFactory pentahoObjectFactory = null;
+  
   public static void setObjectFactory( IPentahoObjectFactory pentahoObjectFactory ) {
     PentahoSystem.pentahoObjectFactory = pentahoObjectFactory;
   }
@@ -1142,7 +1146,7 @@ public class PentahoSystem {
     return publishers;
   }
 
-  static void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
+  public static void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
     publishers = administrationPlugins;
   }
   
@@ -1151,7 +1155,7 @@ public class PentahoSystem {
     return listeners;
   }
 
-  static void setSystemListeners(List<IPentahoSystemListener> systemListeners) {
+  public static void setSystemListeners(List<IPentahoSystemListener> systemListeners) {
     listeners = systemListeners;
   }
 
@@ -1159,8 +1163,12 @@ public class PentahoSystem {
     return sessionStartupActions;
   }
   
-  static void setSessionStartupActions(List<ISessionStartupAction> actions) {
+  public static void setSessionStartupActions(List<ISessionStartupAction> actions) {
     sessionStartupActions = actions;
+  }
+  
+  public static void setSystemSettingsService(ISystemSettings systemSettingsService) {
+    PentahoSystem.systemSettingsService = systemSettingsService;
   }
   
   private static List<ISessionStartupAction> getSessionStartupActions(IPentahoSession session) {
@@ -1221,5 +1229,4 @@ public class PentahoSystem {
   public static IPentahoObjectFactory getObjectFactory() {
 	    return pentahoObjectFactory;
   }
-
 }

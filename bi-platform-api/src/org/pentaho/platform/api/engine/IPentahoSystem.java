@@ -27,5 +27,4 @@ package org.pentaho.platform.api.engine;
  * be easily substituted.
  */
 public interface IPentahoSystem {
-  public boolean init(IApplicationContext applicationContext);
 }

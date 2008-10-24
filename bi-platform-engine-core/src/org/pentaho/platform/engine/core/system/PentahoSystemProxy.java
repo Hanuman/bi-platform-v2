@@ -24,45 +24,33 @@ package org.pentaho.platform.engine.core.system;
 
 import java.util.List;
 
-import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
+import org.pentaho.platform.api.engine.ISystemSettings;
 
 /**
  * TODO: 
  * Since we have moved to a service locator pattern with PentahoSystem being the static root reference,
  * we do not support other implementations of PentahoSystem.  A better approach is to inject plugins
- * lisetners and actions locators into PentahoSystem.
+ * listeners and actions locators into PentahoSystem.
  */
 public class PentahoSystemProxy implements IPentahoSystem {
   
-  public boolean init(IApplicationContext applicationContext) {
-    return PentahoSystem.init(applicationContext);
-  }
-
-  public List<IPentahoPublisher> getAdministrationPlugins() {
-    return PentahoSystem.getAdministrationPlugins();
-  }
-
   public void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
     PentahoSystem.setAdministrationPlugins(administrationPlugins);
-  }
-
-  public List<IPentahoSystemListener> getSystemListeners() {
-    return PentahoSystem.getSystemListeners();
   }
 
   public void setSystemListeners(List<IPentahoSystemListener> systemListeners) {
     PentahoSystem.setSystemListeners(systemListeners);
   }
 
-  public List<ISessionStartupAction> getSessionStartupActions() {
-    return PentahoSystem.getSessionStartupActions();
-  }
-  
   public void setSessionStartupActions(List<ISessionStartupAction> registries) {
     PentahoSystem.setSessionStartupActions(registries);
+  }
+  
+  public void setSystemSettingsService(ISystemSettings systemSettingsService) {
+    PentahoSystem.setSystemSettingsService(systemSettingsService);
   }
 }

@@ -46,6 +46,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -72,6 +73,7 @@ public abstract class BaseTestCase extends TestCase {
   }
   
   protected void init(String solutionPath) {
+    PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
     applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
     applicationContext.setBaseUrl(getBaseUrl());
     String inContainer = System.getProperty("incontainer", "false"); //$NON-NLS-1$ //$NON-NLS-2$
