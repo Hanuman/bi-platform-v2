@@ -15,6 +15,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -37,6 +38,7 @@ public class ServiceLayerTest extends TestCase {
     StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(getSolutionPath(), ""); //$NON-NLS-1$
     String objectFactoryCreatorCfgFile = getSolutionPath() + SYSTEM_FOLDER + "/" + DEFAULT_SPRING_CONFIG_FILE_NAME; //$NON-NLS-1$
     
+    PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
     IPentahoObjectFactory pentahoObjectFactory = new StandaloneSpringPentahoObjectFactory();
     pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
     PentahoSystem.setObjectFactory( pentahoObjectFactory );
