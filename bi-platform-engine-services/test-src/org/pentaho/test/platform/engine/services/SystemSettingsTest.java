@@ -36,6 +36,7 @@ import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.util.IVersionHelper;
+import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
@@ -59,6 +60,7 @@ public class SystemSettingsTest extends TestCase {
 	    }
 	}
     public boolean init() {        
+      PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
 	    File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
 	    StandaloneApplicationContext applicationContext = null;
 	    if(file.exists()) {
