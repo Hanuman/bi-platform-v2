@@ -44,15 +44,7 @@
 
 	// create a new Pentaho session 
 	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
-	%>
-<html>
-	<head>
-		<title>Pentaho Sample Dashboard - JSP</title>
-	</head>
-	<body>
-<table class="Banner" cellpadding="0" width="100%">
-  <tbody>
-
+	%>	
 	<%
 	// See if we have a 'territory' parameter
 	String territory = request.getParameter("territory");
@@ -68,27 +60,18 @@
 		title = "Sales for " + territory;
 	}
 	%>
-
-  	<h1 style='font-family:Arial'></h1>
-
-  	<table>
+	<head>
+		<title>Steel Wheels - Revenue Analysis</title>
+	</head>
+	<body>
+  	<table  background="/sw-style/active/logo_backup.png">
   		<tr>
-  			<td width="75%"><img src="/sw-style/active/logo.png" border="0" />
-  			</td>
-  			<td align="right" style="font-family:Arial;font-weight:bold" background="/sw-style/active/banner.png" valign="top" width="25%"><%= title %></td>
-  		</tr>
-  		<tr>
-  			<td  width="75%">
-  			</td>
-  			<td align="right" valign="top" width="25%"></td>
-  		</tr>  		
-  	</table>
-
-  	<table style="text-align: left; width: 100%; background-color: rgb(231, 238, 248);">
-	
+  			<td width="750" height="40" align="right" valign="middle" style="font-family:Arial;font-weight:bold" border="0"/><%= title %></td>
+  		</tr>		
+  	</table>	
+  	<table class="homeDashboard" cellpadding="0" cellspacing="0" border="0" >
 	<tr>
 		<td valign="top" align="center">
-
 	<%
 		// Make a pie chart showing the territories
 		// create the parameres for the pie chart
@@ -106,18 +89,13 @@
 		// use the chart definition in 'steel-wheels/dashboard/territory.widget.xml'
         	ChartHelper.doPieChart( "steel-wheels", "dashboards", "territory.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
-
 		<%= content.toString() %>
-			<span style="font-family:Arial;font-size:12;font-weight:plain"> (Click on a Territory) </span>
-		</td>
-			
+		</td>			
 		<td valign="top" align="center">
-
 	<%
 			if( territory == null ) {
 			// if the user has clicked on a slice of the pie chart we should have a territory to work with
-	%>
-			
+	%>			
 	<%
 			// Make a bar chart showing the department 
 			// create the parameres for the bar chart
@@ -130,26 +108,22 @@
 			parameters.setParameter( "inner-param", "TERRITORY"); //$NON-NLS-1$ //$NON-NLS-2$
 			parameters.setParameter( "inner-param", "PRODUCTLINE"); //$NON-NLS-1$ //$NON-NLS-2$
 			// set the width and the height
-			parameters.setParameter( "image-width", "550"); //$NON-NLS-1$ //$NON-NLS-2$
+			parameters.setParameter( "image-width", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
 			messages = new ArrayList();
 			// call the chart helper to generate the pie chart image and to get the HTML content
 			// use the chart definition in 'steel-wheels/dashboard/productline.widget.xml'
 			ChartHelper.doChart( "steel-wheels", "dashboards", "productline_all.widget.xml", parameters, content, userSession, messages, null ); 
-		%>
-		
+		%>		
 		<%= content.toString() %>
-			<span style="font-family:Arial;font-size:12;font-weight:plain"> (Click on a Product Line) </span>
 		<%
 			}
 		%>
-
 	<%
 		if( territory != null ) {
 			// if the user has clicked on a slice of the pie chart we should have a territory to work with
-	%>
-			
+	%>			
 	<%
 			// Make a bar chart showing the department 
 			// create the parameres for the bar chart
@@ -162,7 +136,7 @@
 			    parameters.setParameter( "inner-param", "TERRITORY"); //$NON-NLS-1$ //$NON-NLS-2$
         		parameters.setParameter( "inner-param", "PRODUCTLINE"); //$NON-NLS-1$ //$NON-NLS-2$
 			// set the width and the height
-        		parameters.setParameter( "image-width", "550"); //$NON-NLS-1$ //$NON-NLS-2$
+        		parameters.setParameter( "image-width", "400"); //$NON-NLS-1$ //$NON-NLS-2$
         		parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
         		messages = new ArrayList();
@@ -171,20 +145,15 @@
 	        	ChartHelper.doChart( "steel-wheels", "dashboards", "productline.widget.xml", parameters, content, userSession, messages, null ); 
 	%>
 			<%= content.toString() %>
-				<span style="font-family:Arial;font-size:12;font-weight:plain"> (Click on a Product Line) </span>
 	<%
 		}
 	%>
 		</td>
-	</tr>
-  	</table>
-  	
-  		<table style="text-align: left; width: 100%; background-color: rgb(231, 238, 248);">
+	</tr> 	
+    </table>
+  	<table class="homeDashboard" cellpadding="0" cellspacing="0" border="0" >
   	<tr>
-  			<td valign="top"> 	
-  			</td>
-  			<td>
-  				
+  		<td valign="top" align="center"> 	  				
   	<%
   				if( productline != null ) {
   				
@@ -200,7 +169,7 @@
   				// define the category axis of the bar chart
   				parameters.setParameter( "inner-param", "PRODUCTLINE"); //$NON-NLS-1$ //$NON-NLS-2$
   				// set the width and the height
-  				parameters.setParameter( "image-width", "550"); //$NON-NLS-1$ //$NON-NLS-2$
+  				parameters.setParameter( "image-width", "750"); //$NON-NLS-1$ //$NON-NLS-2$
   				parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
   				content = new StringBuffer(); 
   				messages = new ArrayList();
@@ -208,19 +177,13 @@
   				// use the chart definition in 'steel-wheels/dashboard/regions.widget.xml'
   				ChartHelper.doChart( "steel-wheels", "dashboards", "SalesOvertime.widget.xml", parameters, content, userSession, messages, null ); 
   	%>
-  				
-  				<span style="font-family:Arial;font-weight:bold"></span>
-  				
   	<%= content.toString() %>
   	<%
   		}
   	%>
-  				
  	<%
-  				if( productline == null ) {
-  		
-		  		// if the user has clicked on a bar of the bar chart we should have a territory and productline to work with
-  		
+  				if( productline == null ) { 		
+		  		// if the user has clicked on a bar of the bar chart we should have a territory and productline to work with 		
   				// create a dial and supply a value we create from the current time
   				// create the parameters for the line chart
   				parameters = new SimpleParameterProvider();
@@ -229,24 +192,20 @@
   				// define the category axis of the bar chart
   				parameters.setParameter( "inner-param", "PRODUCTLINE"); //$NON-NLS-1$ //$NON-NLS-2$
   				// set the width and the height
-  				parameters.setParameter( "image-width", "550"); //$NON-NLS-1$ //$NON-NLS-2$
+  				parameters.setParameter( "image-width", "750"); //$NON-NLS-1$ //$NON-NLS-2$
   				parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
   				content = new StringBuffer(); 
   				messages = new ArrayList();
   				// call the chart helper to generate the pie chart image and to get the HTML content
   				// use the chart definition in 'steel-wheels/dashboard/regions.widget.xml'
   				ChartHelper.doChart( "steel-wheels", "dashboards", "SalesOvertime_All.widget.xml", parameters, content, userSession, messages, null ); 
-  	%>
-  		
-  		<span style="font-family:Arial;font-weight:bold"></span>
-  		
+  	%>  		
   		<%= content.toString() %>
   	<%
   		}
   	%>	
-  			</td>
-  		</tr>
-  		</table>
-
+  		</td>
+  	</tr>
+  </table>
 </body>
 </html>

@@ -70,8 +70,8 @@
 	SimpleParameterProvider parameters = new SimpleParameterProvider();
 	parameters.setParameter( "drill-url", "PreviousHome?territory={territory}" );
 	parameters.setParameter( "inner-param", "territory"); //$NON-NLS-1$ //$NON-NLS-2$
-	parameters.setParameter( "image-width", "375"); //$NON-NLS-1$ //$NON-NLS-2$
-	parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-width", "350"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
 	StringBuffer content = new StringBuffer(); 
 	ArrayList messages = new ArrayList();
 	ChartHelper.doPieChart( "steel-wheels", "homeDashboard", "territory.widget.xml", parameters, content, userSession, messages, null ); 
@@ -90,16 +90,16 @@
 	parameters.setParameter( "productline", productline );
 	parameters.setParameter( "inner-param", "territory"); //$NON-NLS-1$ //$NON-NLS-2$
 	parameters.setParameter( "inner-param", "productline"); //$NON-NLS-1$ //$NON-NLS-2$
-	parameters.setParameter( "image-width", "375"); //$NON-NLS-1$ //$NON-NLS-2$
-	parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-width", "350"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-height", "200"); //$NON-NLS-1$ //$NON-NLS-2$
 	content = new StringBuffer(); 
 	messages = new ArrayList();
     ChartHelper.doPieChart( "steel-wheels", "homeDashboard", "productline.widget.xml", parameters, content, userSession, messages, null ); 
 	pie2 = content.toString();
 	
 	parameters = new SimpleParameterProvider();
-	parameters.setParameter( "image-width", "500"); //$NON-NLS-1$ //$NON-NLS-2$
-	parameters.setParameter( "image-height", "525"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-width", "400"); //$NON-NLS-1$ //$NON-NLS-2$
+	parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 	parameters.setParameter( "territory", territory );
 	parameters.setParameter( "productline", productline );  			
 	parameters.setParameter( "inner-param", "territory"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -114,25 +114,14 @@
 
 <html>
 	<head>
-		<title>Steel Wheels</title>
+		<title>Steel Wheels - Top Ten</title>
 	</head>
 	<body>
-<center>
-	
-		<BR/>
-  	<table>
+  	<table  background="/sw-style/active/logo_backup.png">
   		<tr>
-  			<td width="75%"><img src="/sw-style/active/logo_backup.png" border="0" /></a>
-  			</td>
-  			<td align="right" style="font-family:Arial;font-weight:bold" background="/sw-style/active/banner.png" valign="middle" width="25%"></a><%= title %></td>
-  		</tr>
-  		<tr>
-  			<td  width="75%">
-  			</td>
-  			<td align="right" valign="top" width="25%"></td>
-  		</tr>  		
+  			<td width="750" height="40" align="right" valign="middle" style="font-family:Arial;font-weight:bold" border="0"/><%= title %></td>
+  		</tr>		
   	</table>	
-		<BR/>
   		<table class="homeDashboard" cellpadding="0" cellspacing="0" border="0" >
 			<tr>
 				<td valign="top" align="center"><%= pie1 %></td>
