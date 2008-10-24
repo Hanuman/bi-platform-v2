@@ -39,4 +39,5 @@ PentahoSystem which is initialized after Spring
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="singleton" />
   <bean id="IDatasourceMgmtService" class="org.pentaho.platform.repository.datasource.DatasourceMgmtService" scope="prototype" />
   <bean id="IPluginSettings" class="org.pentaho.platform.engine.services.PluginSettings" scope="singleton" />
+  <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
 </beans>
