@@ -162,10 +162,34 @@ function doCancel( id ) {
 	} catch (e) {}
 }
 
+//BISERVER-2409
+//Take care of appending ? and ampersand in the url at appropriate locations
+function modifyURL(url, appendStr) {
+	// Basic assumption is appendStr is a string that does not start with ampersand (&)
+	// If it does remove it.
+	if (appendStr.substring(0,1)=="&") {
+		appendStr = append.substring(1);
+	}
+
+	if ( (url.substring(url.length-1)=="?") || (url.substring(url.length-1)=="&") ) {
+		// the url ends with a question mark (?) or an ampersand (&), so simply append the appendStr
+		url += appendStr;
+	} else if (url.indexOf('?') != -1) {
+		// There is a question mark in the url, so append the url with & and appendStr
+		url += "&" + appendStr;
+	} else {
+		// if the url does not have a question mark appended to it and it does not contain a question mark 
+		// then append ? and the appendStr
+		url += "?" + appendStr;
+	}
+	return url;
+}
+
 function doSave( id, url, createNew ) {
 	var submitUrl = null;
+
 	if (!USEPOSTFORFORMS) {
-		submitUrl = url + '&subscribe=save';
+		submitUrl = modifyURL(url, 'subscribe=save');
 	} else {
 		submitUrl = url;
 	}
@@ -183,7 +207,8 @@ function doSave( id, url, createNew ) {
 	if( params == null ) {
 		return false;
 	}
-	submitUrl += params;
+
+	submitUrl = modifyURL(submitUrl, params);	
 	var form = document.forms['save_form_'+id];
 	var name = form.elements['subscribe-name'].value;
 	if( name == '' ) {
