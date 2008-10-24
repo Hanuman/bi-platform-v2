@@ -314,6 +314,7 @@ public class PentahoSystem {
       session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
     }
     catch (ObjectFactoryException e) {
+      //we cannot recover from this, throw a Runtime exception
       throw new RuntimeException(e);
     }
     
@@ -545,7 +546,7 @@ public class PentahoSystem {
     try {
       return pentahoObjectFactory.get( interfaceClass, session );
     } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage(), e);
+      Logger.warn( PentahoSystem.class.getName(), e.getMessage(), e);
       return null;
     }
   }
@@ -558,7 +559,7 @@ public class PentahoSystem {
     try {
       return pentahoObjectFactory.get( interfaceClass, key, session );
     } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage(), e);
+      Logger.warn( PentahoSystem.class.getName(), e.getMessage(), e);
       return null;
     }
   }

@@ -25,6 +25,7 @@ import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
@@ -83,7 +84,8 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     try {
       object = beanFactory.getType(key).newInstance();
     } catch (Exception e) {
-      throw new ObjectFactoryException("Could not create an instance of object with key ["+key+"]", e); //$NON-NLS-1$ //$NON-NLS-2$
+      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
+      throw new ObjectFactoryException(msg, e);
     }
     return object;
   }
@@ -93,7 +95,8 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     try {
       object = beanFactory.getBean(beanId);
     } catch (Throwable t) {
-      throw new ObjectFactoryException("Could not retrieve object with key ["+beanId+"]",t); //$NON-NLS-1$ //$NON-NLS-2$
+      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_RETRIEVE_OBJECT", beanId); //$NON-NLS-1$
+      throw new ObjectFactoryException(msg,t);
     }
     return object;
   }
