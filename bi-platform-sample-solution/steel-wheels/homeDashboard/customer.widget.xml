@@ -1,7 +1,6 @@
 <chart>
 
 	<!-- This file defines the bar chart that shows the actual-to-budget variance for each department -->
-
 	<!-- Define the chart type -->	
 	<chart-type>BarChart</chart-type>
 

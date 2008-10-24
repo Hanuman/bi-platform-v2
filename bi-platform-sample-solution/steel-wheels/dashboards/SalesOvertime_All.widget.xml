@@ -13,13 +13,13 @@
 
 	<!-- Specify the font of the title -->
 	<title-font>
-		<font-family>Ariel</font-family>
-		<size>14</size>
-		<is-bold>true</is-bold>
+		<font-family>Arial</font-family>
+		<size>12</size>
+		<is-bold>false</is-bold>
 		<is-italic>false</is-italic>
 	</title-font>
     <range-title></range-title>
-	<domain-label-rotation>1.1</domain-label-rotation>
+	<domain-label-rotation>.7</domain-label-rotation>
 	<domain-label-rotation-dir></domain-label-rotation-dir>
 	<domain-title></domain-title>
 	<chart-background type="color">#FFFFFF</chart-background>
@@ -42,19 +42,19 @@
 
 	<!-- Specify the color palette for the chart -->
 	<color-palette>
-		<color>#336699</color>
-		<color>#99CCFF</color>
-		<color>#999933</color>
-		<color>#666699</color>
-		<color>#CC9933</color>
-		<color>#006666</color>
-		<color>#3399FF</color>
-		<color>#993300</color>
-		<color>#CCCC99</color>
-		<color>#666666</color>
-		<color>#FFCC66</color>
-		<color>#6699CC</color>
-		<color>#663366</color>
+		<color>#387179</color>
+		<color>#626638</color>
+		<color>#A8979A</color>
+		<color>#B09A6B</color>
+		<color>#772200</color>
+		<color>#C52F0D</color>
+		<color>#123D82</color>
+		<color>#4A0866</color>
+		<color>#445500</color>
+		<color>#FFAA00</color>
+		<color>#1E8AD3</color>
+		<color>#AA6611</color>
+		<color>#772200</color>
 	</color-palette>
 
 	<!-- Specify where the data for the chart comes from -->

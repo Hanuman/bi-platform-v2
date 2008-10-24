@@ -1,7 +1,7 @@
 <chart>
 
 	<!-- This file defines the pie chart that shows the actual values for each region -->
-
+    <start-angle>200</start-angle>
 	<!-- Specify the title of the chart -->
 	<title>Click on Productline</title>
 
@@ -10,14 +10,18 @@
 
 	<!-- Specify the font of the title -->
 	<title-font>
-		<font-family>Ariel</font-family>
+		<font-family>Arial</font-family>
 		<size>12</size>
 		<is-bold>false</is-bold>
 		<is-italic>false</is-italic>
 	</title-font>
 
-	<width>380</width>
-	<height>200</height>
+   <label-font>
+		<font-family>Arial</font-family>
+		<size>9</size>
+		<is-bold>false</is-bold>
+		<is-italic>false</is-italic>
+   </label-font> 
 
 	<!-- Specify the 3D-ness of the bars -->
 	<is-3D>false</is-3D>
