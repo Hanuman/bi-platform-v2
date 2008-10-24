@@ -46,8 +46,7 @@
 <body>
 
 <table width="90%"  border="1" cellspacing="5" cellpadding="5">
-  <tr>
-    
+  <tr> 
     <td> <!-- -------------------------- BAR CHART ------------------------- -->
 		<%
 
@@ -78,7 +77,8 @@
 		<%= content.toString() %>
     
     </td>
-    
+  </tr>
+  <tr>      
     <td>  <!-- -------------------------- AREA CHART ------------------------- -->
 
     	<%
@@ -91,10 +91,7 @@
 		%>
 		<br/>
 		<%= content.toString() %>
-
 	</td>
-  </tr>
-  <tr>
     <td> <!-- -------------------------- DIAL CHART ------------------------- -->
     
     	<%
@@ -107,8 +104,9 @@
 		%>
 		<br/>
 		<%= content.toString() %>
-    
     </td>
+  </tr>
+  <tr>  
     <td> <!-- -------------------------- PIE CHART ------------------------- -->
 
     	<%
@@ -167,6 +165,8 @@
 		<%= content.toString() %>
 
 	</td>
+  </tr>
+  <tr>
     <td> <!-- -------------------------- BUBBLE CHART ------------------------- -->
     	<%
 	    	parameters = new SimpleParameterProvider();
@@ -180,8 +180,6 @@
 		<%= content.toString() %>
 
 	</td>
-  </tr>
-  <tr>
     <td> <!-- ------------------- MULTIPLE PIE CHART (PIE GRID)  ------------------------- -->
 
     	<%
@@ -196,14 +194,7 @@
 		<%= content.toString() %>
 
 	</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
+  </tr>	
 </table>
 
 
