@@ -545,9 +545,9 @@ public class WorkspacePerspective extends ScrollPanel {
       }
       if (jobSchedule.triggerState != 2) {
         actionPanel.add(runJobLabel);
-        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
+//        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
-      actionPanel.add(deleteJobLabel);
+//      actionPanel.add(deleteJobLabel);
 
       scheduleTable.setWidget(row + 1, 0, new HTML(jobSchedule.jobName));
       scheduleTable.setWidget(row + 1, 1, new HTML(jobSchedule.jobGroup));
