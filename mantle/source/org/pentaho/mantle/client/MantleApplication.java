@@ -95,14 +95,17 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   MenuBar menuBar = new MenuBar() {
     public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
       super.onPopupClosed(sender, autoClosed);
-      this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
+      
+      if (this.getSelectedItem() != null){
+        this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
+      }
     }
 
     @Override
     public void onBrowserEvent(Event e) {
       super.onBrowserEvent(e);
 
-      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName())) { //$NON-NLS-1$ //$NON-NLS-2$
+      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName()) && this.getSelectedItem() != null) { //$NON-NLS-1$ //$NON-NLS-2$
         this.getSelectedItem().addStyleDependentName("selected"); //$NON-NLS-1$
       }
     }
