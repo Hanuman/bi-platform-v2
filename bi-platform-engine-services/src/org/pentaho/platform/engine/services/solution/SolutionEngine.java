@@ -448,7 +448,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
 
   private IActionSequence createActionSequence(final String actionName, final String actionPath,
       final String solutionName) {
-    ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
     solutionRepository.setMessages(getMessages());
     return solutionRepository.getActionSequence(solutionName, actionPath, actionName, loggingLevel,
         ISolutionRepository.ACTION_EXECUTE);
