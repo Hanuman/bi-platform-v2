@@ -63,6 +63,7 @@ INSTRUCTIONS
   <property name="source-solution" value="../bi-platform-sample-solution" />
   <property name="target-solution" value="${stage.dir}/biserver-ce/pentaho-solutions" />
   <property name="jre.dir" value="../dummy-jre" />
+  <property name="suppress-svn-validation" value="true" />
 
   <path id="classpath">
     <!-- classes dir is both a destination for .class files and a source for dependencies -->

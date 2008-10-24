@@ -455,7 +455,7 @@
 		</sequential>
 	</target>
 	
-	<target name="validate-mantle-svn-revisions">
+	<target name="validate-mantle-svn-revisions" unless="supress-svn-validation">
 	<sequential>
 		<mkdir dir="${basedir}/temp/mantle" />
 		<mkdir dir="${basedir}/temp/mantle-pkg" />
