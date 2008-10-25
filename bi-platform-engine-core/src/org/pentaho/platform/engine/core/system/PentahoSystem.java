@@ -137,7 +137,7 @@ public class PentahoSystem {
 
   private static ISystemSettings systemSettingsService;
 
-  private static List<IPentahoPublisher> publishers = new ArrayList<IPentahoPublisher>();
+  private static List<IPentahoPublisher> administrationPlugins = new ArrayList<IPentahoPublisher>();
 
   private static List<IPentahoSystemListener> listeners = new ArrayList<IPentahoSystemListener>();
   
@@ -590,7 +590,7 @@ public class PentahoSystem {
 
   public static void sessionStartup(final IPentahoSession session, IParameterProvider sessionParameters) {
 
-    List<ISessionStartupAction> sessionStartupActions = PentahoSystem.getSessionStartupActions(session);
+    List<ISessionStartupAction> sessionStartupActions = PentahoSystem.getSessionStartupActionsForType(session.getClass().getName());
     if (sessionStartupActions == null) {
       // nothing to do...
       return;
@@ -915,11 +915,12 @@ public class PentahoSystem {
     PentahoSystem.systemSettingsService.resetSettingsCache();
   }
 
+  //TODO: shouldn't this be called execute or something like that?
   public static String publish(final IPentahoSession session, final String className) {
-    Iterator publisherIterator = PentahoSystem.publishers.iterator();
+    Iterator<IPentahoPublisher> publisherIterator = PentahoSystem.administrationPlugins.iterator();
     // TODO: audit this
     while (publisherIterator.hasNext()) {
-      IPentahoPublisher publisher = (IPentahoPublisher) publisherIterator.next();
+      IPentahoPublisher publisher = publisherIterator.next();
       if ((publisher != null) && ((className == null) || className.equals(publisher.getClass().getName()))) {
         try {
           return publisher.publish(session, PentahoSystem.loggingLevel);
@@ -931,16 +932,18 @@ public class PentahoSystem {
     return Messages.getErrorString("PentahoSystem.ERROR_0017_PUBLISHER_NOT_FOUND"); //$NON-NLS-1$
   }
 
+  //FIXME: should be named getAdministrationPlugins
   public static List getPublisherList() {
-    return new ArrayList(PentahoSystem.publishers);
+    return new ArrayList(PentahoSystem.administrationPlugins);
   }
 
+  @Deprecated //Admin plugins are no longer declared in pentaho.xml
   public static Document getPublishersDocument() {
 
     Document document = DocumentHelper.createDocument();
     Element root = document.addElement("publishers"); //$NON-NLS-1$
-    if(publishers != null) {
-	    Iterator publisherIterator = PentahoSystem.publishers.iterator();
+    if(administrationPlugins != null) {
+	    Iterator publisherIterator = PentahoSystem.administrationPlugins.iterator();
 	    // TODO: audit this
 	    // refresh the system settings
 	    while (publisherIterator.hasNext()) {
@@ -1138,43 +1141,69 @@ public class PentahoSystem {
 	    return null;
   }
 
+  /**
+   * Gets the factory that will create and manage Pentaho system objects.
+   * 
+   * @return the factory
+   */
+  public static IPentahoObjectFactory getObjectFactory() {
+    return pentahoObjectFactory;
+  }
   
+  /**
+   * Registers the factory that will create and manage Pentaho system objects.
+   * 
+   * @param pentahoObjectFactory  the factory
+   */
   public static void setObjectFactory( IPentahoObjectFactory pentahoObjectFactory ) {
     PentahoSystem.pentahoObjectFactory = pentahoObjectFactory;
   }
 
-  static List<IPentahoPublisher> getAdministrationPlugins() {
-    return publishers;
-  }
-
+  /**
+   * Registers administrative capabilities that can be invoked later 
+   * via {@link PentahoSystem#publish(IPentahoSession, String)}
+   * 
+   * @param administrationPlugins
+   */
   public static void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
-    publishers = administrationPlugins;
+    PentahoSystem.administrationPlugins = administrationPlugins;
   }
   
-	// All these methods are transitional.
-  static List<IPentahoSystemListener> getSystemListeners() {
-    return listeners;
-  }
-
+  /**
+   * Registers custom handlers that are notified of both system startup and 
+   * system shutdown events.
+   * 
+   * @param systemListeners the system event handlers
+   */
   public static void setSystemListeners(List<IPentahoSystemListener> systemListeners) {
     listeners = systemListeners;
   }
 
-  static List<ISessionStartupAction> getSessionStartupActions() {
-    return sessionStartupActions;
-  }
-  
+  /**
+   * Registers server actions that will be invoked when a session is created.
+   * NOTE: it is completely up to the {@link IPentahoSession} implementation whether
+   * to advise the system of it's creation via 
+   * {@link PentahoSystem#sessionStartup(IPentahoSession)}.
+   * 
+   * @param actions the server actions to execute on session startup
+   */
   public static void setSessionStartupActions(List<ISessionStartupAction> actions) {
     sessionStartupActions = actions;
   }
   
+  /**
+   * Sets the system settings service: the means by which the platform obtains it's 
+   * overall system settings.
+   * 
+   * @param systemSettingsService
+   */
   public static void setSystemSettingsService(ISystemSettings systemSettingsService) {
     PentahoSystem.systemSettingsService = systemSettingsService;
   }
   
-  private static List<ISessionStartupAction> getSessionStartupActions(IPentahoSession session) {
+  //TODO: move this to a helper
+  private static List<ISessionStartupAction> getSessionStartupActionsForType(String sessionClassName) {
     ArrayList<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
-    String sessionClassName = session.getClass().getName();
     if(sessionStartupActions != null) {
 	    for (ISessionStartupAction sessionStartupAction : sessionStartupActions) {
 	      if (sessionStartupAction.getSessionType().equals(sessionClassName)) {
@@ -1185,6 +1214,8 @@ public class PentahoSystem {
     return startupActions;
   }
   
+  //TODO: if a ISessionStartupAction is called on something other than a session, should
+  //we be using it here in a global context?
   private static List<ISessionStartupAction> getGlobalStartupActions() {
     ArrayList<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
     if(sessionStartupActions != null) {
@@ -1227,7 +1258,5 @@ public class PentahoSystem {
     }
   }
   
-  public static IPentahoObjectFactory getObjectFactory() {
-	    return pentahoObjectFactory;
-  }
+
 }
