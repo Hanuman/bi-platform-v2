@@ -169,7 +169,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
    */
   public void onModuleLoad() {
     // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-    Messages.setMessageBundle(new MessageBundle("messages/", "messages", this));
+    Messages.setMessageBundle(new MessageBundle("messages/", "messages", this)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {
@@ -179,10 +179,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     viewMenu = new MenuBar(true);
     // menu items (to be enabled/disabled)
-    printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand(solutionBrowserPerspective));
-    saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(solutionBrowserPerspective, false));
-    saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAs"), new SaveCommand(solutionBrowserPerspective, true));
-    propertiesMenuItem = new PentahoMenuItem(Messages.getString("properties"), propertiesCommand);
+    printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand(solutionBrowserPerspective)); //$NON-NLS-1$
+    saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(solutionBrowserPerspective, false)); //$NON-NLS-1$
+    saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAs"), new SaveCommand(solutionBrowserPerspective, true)); //$NON-NLS-1$
+    propertiesMenuItem = new PentahoMenuItem(Messages.getString("properties"), propertiesCommand); //$NON-NLS-1$
 
     mainToolbar = new MainToolbar(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     // first things first... make sure we've registered our native hooks
     setupNativeHooks(this, solutionBrowserPerspective);
 
-    Window.setTitle(Messages.getString("productName"));
+    Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
 
     Timer timer = new Timer() {
 
@@ -260,7 +260,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       public String onWindowClosing() {
         // close only if we have stuff open
         if (solutionBrowserPerspective.getContentTabPanel().getTabBar().getTabCount() > 0) {
-          return Messages.getString("windowCloseWarning");
+          return Messages.getString("windowCloseWarning"); //$NON-NLS-1$
         }
         return null;
       }
@@ -308,7 +308,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUserSettings"), true, false, true);
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUserSettings"), true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.center();
       }
 
@@ -332,7 +332,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
               logoPanel.setLaunchURL(url);
             }
           } catch (Exception e) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUserSettings"), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUserSettings"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
             dialogBox.center();
           }
         }
@@ -430,15 +430,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         MenuBar fileMenu = new MenuBar(true);
         MenuBar newMenu = new MenuBar(true);
-        newMenu.addItem(Messages.getString("newAdhocReport"), new WAQRCommand(solutionBrowserPerspective));
-        newMenu.addItem(Messages.getString("newAnalysisView"), new AnalysisViewCommand(solutionBrowserPerspective));
+        newMenu.addItem(Messages.getString("newAdhocReport"), new WAQRCommand(solutionBrowserPerspective)); //$NON-NLS-1$
+        newMenu.addItem(Messages.getString("newAnalysisView"), new AnalysisViewCommand(solutionBrowserPerspective)); //$NON-NLS-1$
         // add additions to the file menu
         customizeMenu(newMenu, "file-new", settings); //$NON-NLS-1$
 
-        fileMenu.addItem(Messages.getString("_new"), newMenu);
-        fileMenu.addItem(Messages.getString("openEllipsis"), new OpenFileCommand(solutionBrowserPerspective));
+        fileMenu.addItem(Messages.getString("_new"), newMenu); //$NON-NLS-1$
+        fileMenu.addItem(Messages.getString("openEllipsis"), new OpenFileCommand(solutionBrowserPerspective)); //$NON-NLS-1$
         if (showAdvancedFeatures) {
-          fileMenu.addItem(Messages.getString("openURLEllipsis"), new OpenURLCommand(solutionBrowserPerspective));
+          fileMenu.addItem(Messages.getString("openURLEllipsis"), new OpenURLCommand(solutionBrowserPerspective)); //$NON-NLS-1$
         }
         fileMenu.addSeparator();
 
@@ -449,24 +449,24 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         fileMenu.addItem(printMenuItem);
         fileMenu.addSeparator();
         if (showAdvancedFeatures) {
-          fileMenu.addItem(Messages.getString("userPreferencesEllipsis"), new ShowPreferencesCommand());
+          fileMenu.addItem(Messages.getString("userPreferencesEllipsis"), new ShowPreferencesCommand()); //$NON-NLS-1$
           fileMenu.addSeparator();
         }
         MenuBar manageContentMenu = new MenuBar(true);
-        manageContentMenu.addItem(new MenuItem(Messages.getString("edit"), new ManageContentEditCommand(solutionBrowserPerspective)));
-        manageContentMenu.addItem(new MenuItem(Messages.getString("share"), new ManageContentShareCommand(solutionBrowserPerspective)));
-        manageContentMenu.addItem(new MenuItem(Messages.getString("schedule"), new ManageContentScheduleCommand(solutionBrowserPerspective)));
+        manageContentMenu.addItem(new MenuItem(Messages.getString("edit"), new ManageContentEditCommand(solutionBrowserPerspective))); //$NON-NLS-1$
+        manageContentMenu.addItem(new MenuItem(Messages.getString("share"), new ManageContentShareCommand(solutionBrowserPerspective))); //$NON-NLS-1$
+        manageContentMenu.addItem(new MenuItem(Messages.getString("schedule"), new ManageContentScheduleCommand(solutionBrowserPerspective))); //$NON-NLS-1$
         customizeMenu(manageContentMenu, "file-manage", settings); //$NON-NLS-1$
-        fileMenu.addItem(Messages.getString("manage"), manageContentMenu);
+        fileMenu.addItem(Messages.getString("manage"), manageContentMenu); //$NON-NLS-1$
         fileMenu.addSeparator();
         fileMenu.addItem(propertiesMenuItem);
         fileMenu.addSeparator();
-        fileMenu.addItem(Messages.getString("logout"), true, new LogoutCommand());
+        fileMenu.addItem(Messages.getString("logout"), true, new LogoutCommand()); //$NON-NLS-1$
 
         // add additions to the file menu
         customizeMenu(fileMenu, "file", settings); //$NON-NLS-1$
 
-        menuBar.addItem(Messages.getString("file"), fileMenu);
+        menuBar.addItem(Messages.getString("file"), fileMenu); //$NON-NLS-1$
 
         // add plugin perspectives (urls)
         int numPluginPerspectives = Integer.parseInt(settings.get("num-plugin-perspectives")); //$NON-NLS-1$
@@ -480,36 +480,36 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         // add additions to the view menu
         customizeMenu(viewMenu, "view", settings); //$NON-NLS-1$
-        menuBar.addItem(Messages.getString("view"), viewMenu);
+        menuBar.addItem(Messages.getString("view"), viewMenu); //$NON-NLS-1$
 
         MenuBar toolsMenu = new MenuBar(true);
         if (isAdministrator) {
           MenuBar adminMenu = new MenuBar(true);
-          adminMenu.addItem(Messages.getString("refreshRepository"), refreshRepositoryCommand);
-          adminMenu.addItem(Messages.getString("refreshSystemSettings"), new RefreshSystemSettingsCommand());
-          adminMenu.addItem(Messages.getString("refreshReportingMetadata"), new RefreshMetaDataCommand());
-          adminMenu.addItem(Messages.getString("executeGlobalActions"), new ExecuteGlobalActionsCommand());
-          adminMenu.addItem(Messages.getString("purgeMondrianSchemaCache"), new PurgeMondrianSchemaCacheCommand());
+          adminMenu.addItem(Messages.getString("refreshRepository"), refreshRepositoryCommand); //$NON-NLS-1$
+          adminMenu.addItem(Messages.getString("refreshSystemSettings"), new RefreshSystemSettingsCommand()); //$NON-NLS-1$
+          adminMenu.addItem(Messages.getString("refreshReportingMetadata"), new RefreshMetaDataCommand()); //$NON-NLS-1$
+          adminMenu.addItem(Messages.getString("executeGlobalActions"), new ExecuteGlobalActionsCommand()); //$NON-NLS-1$
+          adminMenu.addItem(Messages.getString("purgeMondrianSchemaCache"), new PurgeMondrianSchemaCacheCommand()); //$NON-NLS-1$
           // add additions to the admin menu
 
-          toolsMenu.addItem(Messages.getString("refresh"), adminMenu);
+          toolsMenu.addItem(Messages.getString("refresh"), adminMenu); //$NON-NLS-1$
           toolsMenu.addSeparator();
-          toolsMenu.addItem(Messages.getString("softwareUpdates"), new CheckForSoftwareUpdatesCommand());
-          menuBar.addItem(Messages.getString("tools"), toolsMenu);
+          toolsMenu.addItem(Messages.getString("softwareUpdates"), new CheckForSoftwareUpdatesCommand()); //$NON-NLS-1$
+          menuBar.addItem(Messages.getString("tools"), toolsMenu); //$NON-NLS-1$
           // add additions to the admin menu
           customizeMenu(toolsMenu, "tools", settings); //$NON-NLS-1$
           customizeMenu(adminMenu, "tools-refresh", settings); //$NON-NLS-1$
         }
 
         MenuBar helpMenu = new MenuBar(true);
-        helpMenu.addItem(Messages.getString("documentationEllipsis"), new OpenDocCommand(settings.get("documentation-url"), solutionBrowserPerspective)); //$NON-NLS-1$
+        helpMenu.addItem(Messages.getString("documentationEllipsis"), new OpenDocCommand(settings.get("documentation-url"), solutionBrowserPerspective)); //$NON-NLS-1$ //$NON-NLS-2$
         helpMenu.addSeparator();
-        helpMenu.addItem(Messages.getString("pentahoHomePageName"), new PentahoHomeCommand());
+        helpMenu.addItem(Messages.getString("pentahoHomePageName"), new PentahoHomeCommand()); //$NON-NLS-1$
         helpMenu.addSeparator();
-        helpMenu.addItem(Messages.getString("about"), new AboutCommand());
+        helpMenu.addItem(Messages.getString("about"), new AboutCommand()); //$NON-NLS-1$
         // add additions to the help menu
         customizeMenu(helpMenu, "help", settings); //$NON-NLS-1$
-        menuBar.addItem(Messages.getString("help"), helpMenu);
+        menuBar.addItem(Messages.getString("help"), helpMenu); //$NON-NLS-1$
       }
 
       public void onFailure(Throwable caught) {

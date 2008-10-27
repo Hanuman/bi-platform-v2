@@ -42,7 +42,7 @@ public class BreadCrumbsWidget extends HorizontalPanel {
     clear();
     FlexTable breadCrumbs = new FlexTable();
     // build top level
-    breadCrumbs.setWidget(0, 0, buildBreadCrumb(Messages.getString("pentahoSolutionBrowser"), "/")); //$NON-NLS-1$
+    breadCrumbs.setWidget(0, 0, buildBreadCrumb(Messages.getString("pentahoSolutionBrowser"), "/")); //$NON-NLS-1$ //$NON-NLS-2$
     List<String> pathParts = ClassicNavigatorView.getPathParts(currentSolutionPath);
     String myPath = ""; //$NON-NLS-1$
     int i = 1;

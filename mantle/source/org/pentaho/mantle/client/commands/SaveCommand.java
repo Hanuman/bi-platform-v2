@@ -53,10 +53,10 @@ public class SaveCommand implements Command {
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
       if (isSaveAs) {
-        dialog.setTitle(Messages.getString("saveAs"));
-        dialog.setText(Messages.getString("saveAs"));
+        dialog.setTitle(Messages.getString("saveAs")); //$NON-NLS-1$
+        dialog.setText(Messages.getString("saveAs")); //$NON-NLS-1$
       } else {
-        dialog.setTitle(Messages.getString("save"));
+        dialog.setTitle(Messages.getString("save")); //$NON-NLS-1$
       }
 
       if (!MantleApplication.showAdvancedFeatures) {
@@ -76,9 +76,9 @@ public class SaveCommand implements Command {
 
           if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
-            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getString("question"), Messages.getString("yes"), Messages.getString("no"),
+            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getString("question"), Messages.getString("yes"), Messages.getString("no"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 false, true);
-            overWriteDialog.setContent(new Label(Messages.getString("fileExistsOverwrite"), false));
+            overWriteDialog.setContent(new Label(Messages.getString("fileExistsOverwrite"), false)); //$NON-NLS-1$
             overWriteDialog.setCallback(new IDialogCallback() {
               public void okPressed() {
                 doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);

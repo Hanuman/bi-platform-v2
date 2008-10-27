@@ -45,7 +45,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
   private HashMap<String, List<String>> schemaCubeHashMap;
 
   public AnalysisViewDialog(Document solutionRepositoryDoc) {
-    super(Messages.getString("newAnalysisView"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new VerticalPanel());
+    super(Messages.getString("newAnalysisView"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new VerticalPanel()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     buildAnalysisView(solutionRepositoryDoc);
     lboxSchema.setTabIndex(1);
     lboxCube.setTabIndex(2);
@@ -60,8 +60,8 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public Widget buildAnalysisView(Document solutionRepositoryDoc) {
     VerticalPanel mainPanel = (VerticalPanel) getContent();
     mainPanel.setSpacing(5);
-    Label schemaLabel = new Label(Messages.getString("schema"));
-    Label cubeLabel = new Label(Messages.getString("cube"));
+    Label schemaLabel = new Label(Messages.getString("schema")); //$NON-NLS-1$
+    Label cubeLabel = new Label(Messages.getString("cube")); //$NON-NLS-1$
 
     lboxSchema.addChangeListener(new ChangeListener() {
       public void onChange(Widget sender) {
@@ -105,7 +105,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
 
           public void onFailure(Throwable caughtLogin) {
             // we are already logged in, or something horrible happened
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false,
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
                 true);
             dialogBox.center();
           }
@@ -130,7 +130,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
             updateCubeListBox(lboxSchema.getItemText(lboxSchema.getSelectedIndex()));
           }
         } else {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("noMondrianSchemas"), false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("noMondrianSchemas"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
           dialogBox.center();
         }
       }
@@ -164,7 +164,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public boolean validate() {
     final String schema = getSchema();
     if (schema == null || schema.length() == 0) {
-      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("selectSchema"), false, false, true);
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("selectSchema"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
       dialogBox.setWidth("15em"); //$NON-NLS-1$
       dialogBox.center();
       return false;
@@ -172,7 +172,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
 
     final String cube = getSchema();
     if (cube == null || cube.length() == 0) {
-      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("selectCube"), false, false, true);
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("selectCube"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
       dialogBox.setWidth("15em"); //$NON-NLS-1$
       dialogBox.center();
       return false;

@@ -54,7 +54,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
   }
 
   public SelectUserOrRoleDialog(List<String> existing, final IUserRoleSelectedCallback callback) {
-    super(Messages.getString("selectUserOrRole"), Messages.getString("ok"), Messages.getString("cancel"), false, true, contentTable);
+    super(Messages.getString("selectUserOrRole"), Messages.getString("ok"), Messages.getString("cancel"), false, true, contentTable); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setCallback(new IDialogCallback() {
 
       public void cancelPressed() {
@@ -74,9 +74,9 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     usersListBox.setWidth("100%"); //$NON-NLS-1$
     contentTable.clear();
     contentTable.setWidth("100%"); //$NON-NLS-1$
-    contentTable.setWidget(0, 0, new Label(Messages.getString("users")));
+    contentTable.setWidget(0, 0, new Label(Messages.getString("users"))); //$NON-NLS-1$
     contentTable.setWidget(1, 0, usersListBox);
-    contentTable.setWidget(2, 0, new Label(Messages.getString("roles")));
+    contentTable.setWidget(2, 0, new Label(Messages.getString("roles"))); //$NON-NLS-1$
     contentTable.setWidget(3, 0, rolesListBox);
     fetchAllUsers(existing);
     fetchAllRoles(existing);
@@ -87,7 +87,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRoles"), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRoles"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
@@ -110,7 +110,7 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUsers"), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUsers"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 

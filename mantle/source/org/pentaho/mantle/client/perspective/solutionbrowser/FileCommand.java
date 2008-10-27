@@ -77,7 +77,7 @@ public class FileCommand implements Command {
         }
 
       };
-      PromptDialogBox inputDialog = new PromptDialogBox(Messages.getString("customCRONSchedule"), Messages.getString("schedule"), Messages.getString("cancel"), false, true);
+      PromptDialogBox inputDialog = new PromptDialogBox(Messages.getString("customCRONSchedule"), Messages.getString("schedule"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       inputDialog.setContent(cronTextBox);
       inputDialog.setCallback(callback);
       inputDialog.center();

@@ -61,7 +61,7 @@ public class BrowserToolbar extends Toolbar {
    */
   private void createMenus() {
     addSpacer(5);
-    add(new Label(Messages.getString("browse")));
+    add(new Label(Messages.getString("browse"))); //$NON-NLS-1$
     add(GLUE);
     Image refreshImage = new Image();
     MantleImages.images.refresh().applyTo(refreshImage);
@@ -69,7 +69,7 @@ public class BrowserToolbar extends Toolbar {
     MantleImages.images.runDisabled().applyTo(refreshDisabledImage);
     refreshBtn = new ToolbarButton(refreshImage, refreshDisabledImage);
     refreshBtn.setCommand(new RefreshRepositoryCommand(solutionBrowserPerspective));
-    refreshBtn.setToolTip(Messages.getString("refresh"));
+    refreshBtn.setToolTip(Messages.getString("refresh")); //$NON-NLS-1$
     add(refreshBtn);
   }
 

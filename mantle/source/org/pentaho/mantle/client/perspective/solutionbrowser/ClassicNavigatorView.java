@@ -91,7 +91,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
     if (currentSolutionPath == null || "".equals(currentSolutionPath) || "/".equals(currentSolutionPath)) { //$NON-NLS-1$ //$NON-NLS-2$
       NodeList children = solutionRoot.getChildNodes();
 
-      HTML solutionBrowserDescription = new HTML(Messages.getString("classicSolutionBrowserDescription"), true);
+      HTML solutionBrowserDescription = new HTML(Messages.getString("classicSolutionBrowserDescription"), true); //$NON-NLS-1$
       solutionBrowserDescription.setStyleName("solutionBrowserDescription"); //$NON-NLS-1$
       navigatorPanel.add(solutionBrowserDescription);
       int numSolutions = 0;
@@ -102,7 +102,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
           numSolutions++;
         }
       }
-      Label solutionBrowseLabel = new Label(Messages.getString("browse") + " " + numSolutions + " " + Messages.getString("solutions")); //$NON-NLS-1$ //$NON-NLS-2$
+      Label solutionBrowseLabel = new Label(Messages.getString("browse") + " " + numSolutions + " " + Messages.getString("solutions")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       solutionBrowseLabel.setStyleName("numSolutionsLabel"); //$NON-NLS-1$
       navigatorPanel.add(solutionBrowseLabel);
 

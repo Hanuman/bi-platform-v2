@@ -41,17 +41,17 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   FileItem fileItem;
 
   public GeneralPanel() {
-    setWidget(0, 0, new Label(Messages.getString("name")+":")); //$NON-NLS-1$
+    setWidget(0, 0, new Label(Messages.getString("name")+":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(0, 1, nameLabel);
-    setWidget(1, 0, new Label(Messages.getString("location")+":")); //$NON-NLS-1$
+    setWidget(1, 0, new Label(Messages.getString("location")+":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(1, 1, locationLabel);
-    setWidget(2, 0, new Label(Messages.getString("source") + ":")); //$NON-NLS-1$
+    setWidget(2, 0, new Label(Messages.getString("source") + ":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(2, 1, sourceLabel);
-    setWidget(3, 0, new Label(Messages.getString("type") + ":")); //$NON-NLS-1$
+    setWidget(3, 0, new Label(Messages.getString("type") + ":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(3, 1, typeLabel);
-    setWidget(4, 0, new Label(Messages.getString("size") + ":")); //$NON-NLS-1$
+    setWidget(4, 0, new Label(Messages.getString("size") + ":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(4, 1, sizeLabel);
-    Label lbl = new Label(Messages.getString("lastModified") +":"); //$NON-NLS-1$
+    Label lbl = new Label(Messages.getString("lastModified") +":"); //$NON-NLS-1$ //$NON-NLS-2$
     lbl.addStyleName("nowrap"); //$NON-NLS-1$
     setWidget(5, 0, lbl);
     setWidget(5, 1, lastModifiedDateLabel);
@@ -80,15 +80,15 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   private String getFileTypeDescription(SolutionFileInfo.Type type, String pluginTypeName){
     switch(type){
       case FOLDER:
-        return Messages.getString("folder");
+        return Messages.getString("folder"); //$NON-NLS-1$
       case ANALYSIS_VIEW:
-        return Messages.getString("analysisView");
+        return Messages.getString("analysisView"); //$NON-NLS-1$
       case XACTION:
-        return Messages.getString("xaction");
+        return Messages.getString("xaction"); //$NON-NLS-1$
       case URL:
         return "URL";   //$NON-NLS-1$
       case REPORT:
-        return Messages.getString("report");
+        return Messages.getString("report"); //$NON-NLS-1$
       case PLUGIN:
         return pluginTypeName;
       default:
@@ -100,7 +100,7 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 

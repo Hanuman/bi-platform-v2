@@ -106,14 +106,14 @@ public class ReportParameter implements Serializable {
     StringBuffer sb = new StringBuffer();
 
     for (Object choiceKey : getChoices().keySet()) {
-      sb.append(Messages.getString("choiceColon") + " " + choiceKey + " = " + getChoices().get(choiceKey) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      sb.append(Messages.getString("choiceColon") + " " + choiceKey + " = " + getChoices().get(choiceKey) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }
 
     for (Object value : getValues()) {
-      sb.append(Messages.getString("selectionColon") + " " + value + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+      sb.append(Messages.getString("selectionColon") + " " + value + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     if (getValues() == null) {
-      sb.append(Messages.getString("selectionColon") + " " + getValue() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+      sb.append(Messages.getString("selectionColon") + " " + getValue() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     return sb.toString();
   }

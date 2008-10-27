@@ -71,7 +71,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void createMenus() {
     addSpacer(5);
-    add(new Label(Messages.getString("files")));
+    add(new Label(Messages.getString("files"))); //$NON-NLS-1$
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);
@@ -80,7 +80,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     runBtn = new ToolbarButton(runImage, runDisabledImage);
     runCmd = new FileCommand(FileCommand.COMMAND.RUN, null, callback);
     runBtn.setCommand(runCmd);
-    runBtn.setToolTip(Messages.getString("open"));
+    runBtn.setToolTip(Messages.getString("open")); //$NON-NLS-1$
     add(runBtn);
 
     Image editImage = new Image();
@@ -90,7 +90,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     editBtn = new ToolbarButton(editImage, editDisabledImage);
     editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null, callback);
     editBtn.setCommand(editCmd);
-    editBtn.setToolTip(Messages.getString("edit"));
+    editBtn.setToolTip(Messages.getString("edit")); //$NON-NLS-1$
     add(editBtn);
 
     Image miscImage = new Image();
@@ -101,7 +101,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleServiceCache.getService().repositorySupportsACLS(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
         scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       }
 
     });
-    miscComboBtn.setToolTip(Messages.getString("options"));
+    miscComboBtn.setToolTip(Messages.getString("options")); //$NON-NLS-1$
     add(miscComboBtn);
 
     setEnabled(false);

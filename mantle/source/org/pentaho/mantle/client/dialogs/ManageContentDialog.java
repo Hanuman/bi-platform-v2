@@ -35,14 +35,14 @@ public class ManageContentDialog extends PromptDialogBox {
   private RadioButton scheduleRadioButton = new RadioButton("manage"); //$NON-NLS-1$
 
   public ManageContentDialog() {
-    super(Messages.getString("manageContent"), Messages.getString("ok"), Messages.getString("cancel"), false, true);
+    super(Messages.getString("manageContent"), Messages.getString("ok"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    editRadioButton.setText(Messages.getString("edit"));
-    shareRadioButton.setText(Messages.getString("share"));
-    scheduleRadioButton.setText(Messages.getString("schedule"));
+    editRadioButton.setText(Messages.getString("edit")); //$NON-NLS-1$
+    shareRadioButton.setText(Messages.getString("share")); //$NON-NLS-1$
+    scheduleRadioButton.setText(Messages.getString("schedule")); //$NON-NLS-1$
 
     VerticalPanel contentPanel = new VerticalPanel();
-    contentPanel.add(new Label(Messages.getString("manageContentSelectFunction")));
+    contentPanel.add(new Label(Messages.getString("manageContentSelectFunction"))); //$NON-NLS-1$
     contentPanel.add(new HTML("<BR>")); //$NON-NLS-1$
     contentPanel.add(editRadioButton);
     contentPanel.add(shareRadioButton);

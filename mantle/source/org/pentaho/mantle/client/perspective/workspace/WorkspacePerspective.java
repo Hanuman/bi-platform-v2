@@ -61,11 +61,11 @@ public class WorkspacePerspective extends ScrollPanel {
   private static final String DELETE = "delete"; //$NON-NLS-1$
 
   private boolean backgroundAlertRaised = false;
-  private DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getString("allSchedulesAdminOnly"), false);
-  private DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getString("publicSchedules"), false);
-  private DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getString("mySchedules"), false);
-  private DisclosurePanel waitingContentDisclosure = new DisclosurePanel(Messages.getString("waiting"), false);
-  private DisclosurePanel completedContentDisclosure = new DisclosurePanel(Messages.getString("complete"), false);
+  private DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getString("allSchedulesAdminOnly"), false); //$NON-NLS-1$
+  private DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getString("publicSchedules"), false); //$NON-NLS-1$
+  private DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getString("mySchedules"), false); //$NON-NLS-1$
+  private DisclosurePanel waitingContentDisclosure = new DisclosurePanel(Messages.getString("waiting"), false); //$NON-NLS-1$
+  private DisclosurePanel completedContentDisclosure = new DisclosurePanel(Messages.getString("complete"), false); //$NON-NLS-1$
   private FlexTable allScheduledContentTable;
   private FlexTable subscriptionsContentTable;
   private FlexTable myScheduledContentTable;
@@ -85,20 +85,20 @@ public class WorkspacePerspective extends ScrollPanel {
     FlexTable table = new FlexTable();
     table.setWidth("100%"); //$NON-NLS-1$
     table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
-    table.setWidget(0, 0, new Label(Messages.getString("name")));
-    table.setWidget(0, 1, new Label(Messages.getString("date")));
+    table.setWidget(0, 0, new Label(Messages.getString("name"))); //$NON-NLS-1$
+    table.setWidget(0, 1, new Label(Messages.getString("date"))); //$NON-NLS-1$
     if (tableType == COMPLETE) {
-      table.setWidget(0, 2, new Label(Messages.getString("size")));
+      table.setWidget(0, 2, new Label(Messages.getString("size"))); //$NON-NLS-1$
       table.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-      table.setWidget(0, 3, new Label(Messages.getString("type")));
-      table.setWidget(0, 4, new Label(Messages.getString("actions")));
+      table.setWidget(0, 3, new Label(Messages.getString("type"))); //$NON-NLS-1$
+      table.setWidget(0, 4, new Label(Messages.getString("actions"))); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 3, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 4, "backgroundContentHeaderTableCellRight"); //$NON-NLS-1$
     } else {
-      table.setWidget(0, 2, new Label(Messages.getString("actions")));
+      table.setWidget(0, 2, new Label(Messages.getString("actions"))); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
       table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCellRight"); //$NON-NLS-1$
@@ -110,12 +110,12 @@ public class WorkspacePerspective extends ScrollPanel {
     FlexTable table = new FlexTable();
     table.setWidth("100%"); //$NON-NLS-1$
     table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
-    table.setWidget(0, 0, new Label(Messages.getString("jobName")));
-    table.setWidget(0, 1, new Label(Messages.getString("jobGroup")));
-    table.setWidget(0, 2, new Label(Messages.getString("description")));
-    table.setWidget(0, 3, new Label(Messages.getString("lastRunNextRun")));
-    table.setWidget(0, 4, new Label(Messages.getString("state")));
-    table.setWidget(0, 5, new Label(Messages.getString("actions")));
+    table.setWidget(0, 0, new Label(Messages.getString("jobName"))); //$NON-NLS-1$
+    table.setWidget(0, 1, new Label(Messages.getString("jobGroup"))); //$NON-NLS-1$
+    table.setWidget(0, 2, new Label(Messages.getString("description"))); //$NON-NLS-1$
+    table.setWidget(0, 3, new Label(Messages.getString("lastRunNextRun"))); //$NON-NLS-1$
+    table.setWidget(0, 4, new Label(Messages.getString("state"))); //$NON-NLS-1$
+    table.setWidget(0, 5, new Label(Messages.getString("actions"))); //$NON-NLS-1$
     table.getCellFormatter().setStyleName(0, 0, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
     table.getCellFormatter().setStyleName(0, 1, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
     table.getCellFormatter().setStyleName(0, 2, "backgroundContentHeaderTableCell"); //$NON-NLS-1$
@@ -129,11 +129,11 @@ public class WorkspacePerspective extends ScrollPanel {
     FlexTable table = new FlexTable();
     table.setWidth("100%"); //$NON-NLS-1$
     table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
-    table.setWidget(0, 0, new Label(Messages.getString("name")));
-    table.setWidget(0, 1, new Label(Messages.getString("scheduleDate")));
-    table.setWidget(0, 2, new Label(Messages.getString("type")));
-    table.setWidget(0, 3, new Label(Messages.getString("size")));
-    table.setWidget(0, 4, new Label(Messages.getString("actions")));
+    table.setWidget(0, 0, new Label(Messages.getString("name"))); //$NON-NLS-1$
+    table.setWidget(0, 1, new Label(Messages.getString("scheduleDate"))); //$NON-NLS-1$
+    table.setWidget(0, 2, new Label(Messages.getString("type"))); //$NON-NLS-1$
+    table.setWidget(0, 3, new Label(Messages.getString("size"))); //$NON-NLS-1$
+    table.setWidget(0, 4, new Label(Messages.getString("actions"))); //$NON-NLS-1$
     table.getFlexCellFormatter().setWidth(1, 0, "200em"); //$NON-NLS-1$
     table.getFlexCellFormatter().setWidth(1, 1, "200em"); //$NON-NLS-1$
     table.getFlexCellFormatter().setWidth(1, 2, "100em"); //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       public void onSuccess(Boolean isAdministrator) {
         workspaceTable = new FlexTable();
-        workspaceTable.setWidget(0, 0, new HTML(Messages.getString("workspaceMessage")));
+        workspaceTable.setWidget(0, 0, new HTML(Messages.getString("workspaceMessage"))); //$NON-NLS-1$
         workspaceTable.setWidget(1, 0, waitingContentDisclosure);
         workspaceTable.setWidget(2, 0, completedContentDisclosure);
         workspaceTable.setWidget(3, 0, myScheduledContentDisclosure);
@@ -190,7 +190,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       HorizontalPanel actionPanel = new HorizontalPanel();
       if (tableType == COMPLETE) {
-        Label viewLabel = new Label(Messages.getString("view"));
+        Label viewLabel = new Label(Messages.getString("view")); //$NON-NLS-1$
         viewLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -208,8 +208,8 @@ public class WorkspacePerspective extends ScrollPanel {
 
         });
         viewLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-        viewLabel.setTitle(Messages.getString("viewContent"));
-        Label deleteLabel = new Label(Messages.getString("delete"));
+        viewLabel.setTitle(Messages.getString("viewContent")); //$NON-NLS-1$
+        Label deleteLabel = new Label(Messages.getString("delete")); //$NON-NLS-1$
         deleteLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -218,13 +218,13 @@ public class WorkspacePerspective extends ScrollPanel {
 
         });
         deleteLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-        deleteLabel.setTitle(Messages.getString("deleteContent"));
+        deleteLabel.setTitle(Messages.getString("deleteContent")); //$NON-NLS-1$
 
         actionPanel.add(viewLabel);
         actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
         actionPanel.add(deleteLabel);
       } else if (tableType == WAITING) {
-        Label cancelLabel = new Label(Messages.getString("cancel"));
+        Label cancelLabel = new Label(Messages.getString("cancel")); //$NON-NLS-1$
         cancelLabel.addClickListener(new ClickListener() {
 
           public void onClick(Widget sender) {
@@ -233,7 +233,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
         });
         cancelLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-        cancelLabel.setTitle(Messages.getString("cancelExecution"));
+        cancelLabel.setTitle(Messages.getString("cancelExecution")); //$NON-NLS-1$
         actionPanel.add(cancelLabel);
       }
 
@@ -293,7 +293,7 @@ public class WorkspacePerspective extends ScrollPanel {
       HorizontalPanel buttonsPanel = new HorizontalPanel();
       final String subscrName = currentSubscr.getId();
 
-      Label lblRunNow = new Label(Messages.getString("run"));
+      Label lblRunNow = new Label(Messages.getString("run")); //$NON-NLS-1$
       lblRunNow.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblRunNow.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
@@ -301,7 +301,7 @@ public class WorkspacePerspective extends ScrollPanel {
         }
       });
 
-      Label lblArchive = new Label(Messages.getString("archive"));
+      Label lblArchive = new Label(Messages.getString("archive")); //$NON-NLS-1$
       lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblArchive.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
@@ -309,14 +309,14 @@ public class WorkspacePerspective extends ScrollPanel {
         }
       });
 
-      Label lblEdit = new Label(Messages.getString("edit"));
+      Label lblEdit = new Label(Messages.getString("edit")); //$NON-NLS-1$
       lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblEdit.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
           performActionOnSubscription("edit", subscrName); //$NON-NLS-1$
         }
       });
-      Label lblDelete = new Label(Messages.getString("delete"));
+      Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
 
       lblDelete.addClickListener(new ClickListener() {
@@ -352,7 +352,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
           HorizontalPanel actionButtonsPanel = new HorizontalPanel();
 
-          final Label lblViewContent = new Label(Messages.getString("view"));
+          final Label lblViewContent = new Label(Messages.getString("view")); //$NON-NLS-1$
           lblViewContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
           lblViewContent.addClickListener(new ClickListener() {
 
@@ -364,7 +364,7 @@ public class WorkspacePerspective extends ScrollPanel {
           });
           actionButtonsPanel.add(lblViewContent);
 
-          final Label lblDeleteContent = new Label(Messages.getString("delete"));
+          final Label lblDeleteContent = new Label(Messages.getString("delete")); //$NON-NLS-1$
           lblDeleteContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
           lblDeleteContent.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
@@ -390,15 +390,15 @@ public class WorkspacePerspective extends ScrollPanel {
       callback = new AsyncCallback<String>() {
         public void onFailure(Throwable caught) {
           if (caught instanceof SimpleMessageException) {
-            new MessageDialogBox(Messages.getString("error"), caught.getMessage(), false, false, true).center();
+            new MessageDialogBox(Messages.getString("error"), caught.getMessage(), false, false, true).center(); //$NON-NLS-1$
           } else {
-            new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotSchedule"), false, false, true).center();
+            new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotSchedule"), false, false, true).center(); //$NON-NLS-1$ //$NON-NLS-2$
           }
         }
 
         public void onSuccess(String result) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("runInBackground"),
-                                           Messages.getString("reportIsScheduledForBE"), false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("runInBackground"), //$NON-NLS-1$
+                                           Messages.getString("reportIsScheduledForBE"), false, false, true); //$NON-NLS-1$
           dialogBox.center();
         }
       };
@@ -412,12 +412,12 @@ public class WorkspacePerspective extends ScrollPanel {
   private void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
     VerticalPanel vp = new VerticalPanel();
     if (isPublicSchedule) {
-      vp.add(new Label(Messages.getString("deletePublicSchedule")));
+      vp.add(new Label(Messages.getString("deletePublicSchedule"))); //$NON-NLS-1$
     } else {
-      vp.add(new Label(Messages.getString("deleteContentItem")));
+      vp.add(new Label(Messages.getString("deleteContentItem"))); //$NON-NLS-1$
     }
 
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp);
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     final IDialogCallback callback = new IDialogCallback() {
       public void cancelPressed() {
@@ -473,7 +473,7 @@ public class WorkspacePerspective extends ScrollPanel {
   }
 
   private void performActionOnSubscription(final String action, final String subscrName) {
-    final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getString("view"), Messages.getString("close"), null, false, false);
+    final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getString("view"), Messages.getString("close"), null, false, false); //$NON-NLS-1$ //$NON-NLS-2$
     viewDialog.setContent(new VerticalPanel());
     viewDialog.setCallback(new IDialogCallback() {
       public void okPressed() {
@@ -518,7 +518,7 @@ public class WorkspacePerspective extends ScrollPanel {
     for (int row = 0; row < scheduleDetails.size(); row++) {
       final JobSchedule jobSchedule = scheduleDetails.get(row);
       HorizontalPanel actionPanel = new HorizontalPanel();
-      Label suspendJobLabel = new Label(Messages.getString("suspend"));
+      Label suspendJobLabel = new Label(Messages.getString("suspend")); //$NON-NLS-1$
       suspendJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -527,9 +527,9 @@ public class WorkspacePerspective extends ScrollPanel {
 
       });
       suspendJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      suspendJobLabel.setTitle(Messages.getString("suspendThisJob"));
+      suspendJobLabel.setTitle(Messages.getString("suspendThisJob")); //$NON-NLS-1$
 
-      Label resumeJobLabel = new Label(Messages.getString("resume"));
+      Label resumeJobLabel = new Label(Messages.getString("resume")); //$NON-NLS-1$
       resumeJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -538,9 +538,9 @@ public class WorkspacePerspective extends ScrollPanel {
 
       });
       resumeJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      resumeJobLabel.setTitle(Messages.getString("resumeThisJob"));
+      resumeJobLabel.setTitle(Messages.getString("resumeThisJob")); //$NON-NLS-1$
 
-      Label runJobLabel = new Label(Messages.getString("run"));
+      Label runJobLabel = new Label(Messages.getString("run")); //$NON-NLS-1$
       runJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -549,9 +549,9 @@ public class WorkspacePerspective extends ScrollPanel {
 
       });
       runJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      runJobLabel.setTitle(Messages.getString("runThisJob"));
+      runJobLabel.setTitle(Messages.getString("runThisJob")); //$NON-NLS-1$
 
-      Label deleteJobLabel = new Label(Messages.getString("delete"));
+      Label deleteJobLabel = new Label(Messages.getString("delete")); //$NON-NLS-1$
       deleteJobLabel.addClickListener(new ClickListener() {
 
         public void onClick(Widget sender) {
@@ -560,7 +560,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       });
       deleteJobLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      deleteJobLabel.setTitle(Messages.getString("deleteThisJob"));
+      deleteJobLabel.setTitle(Messages.getString("deleteThisJob")); //$NON-NLS-1$
 
       if (jobSchedule.triggerState == 0) {
         actionPanel.add(suspendJobLabel);
@@ -579,7 +579,7 @@ public class WorkspacePerspective extends ScrollPanel {
       scheduleTable.setWidget(row + 1, 0, new HTML(jobSchedule.jobName));
       scheduleTable.setWidget(row + 1, 1, new HTML(jobSchedule.jobGroup));
       scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
-      scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? Messages.getString("never") : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$
+      scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? Messages.getString("never") : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$ //$NON-NLS-2$
           + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString()))); //$NON-NLS-1$
       scheduleTable.setWidget(row + 1, 4, new HTML(getTriggerStateName(jobSchedule.triggerState)));
       scheduleTable.setWidget(row + 1, 5, actionPanel);
@@ -603,13 +603,13 @@ public class WorkspacePerspective extends ScrollPanel {
 
   public String getTriggerStateName(int state) {
     if (state == 0) {
-      return Messages.getString("normal");
+      return Messages.getString("normal"); //$NON-NLS-1$
     } else if (state == 1) {
-      return Messages.getString("paused");
+      return Messages.getString("paused"); //$NON-NLS-1$
     } else if (state == 2) {
-      return Messages.getString("running");
+      return Messages.getString("running"); //$NON-NLS-1$
     }
-    return Messages.getString("unknown");
+    return Messages.getString("unknown"); //$NON-NLS-1$
   }
 
   public void deleteContentItem(final String subscriptionName, final String fileId) {

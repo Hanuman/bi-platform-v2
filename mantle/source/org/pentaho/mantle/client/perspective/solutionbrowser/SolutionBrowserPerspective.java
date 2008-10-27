@@ -181,10 +181,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   };
 
   // menu items
-  CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand);
-  CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand);
-  CheckBoxMenuItem showLocalizedFileNamesMenuItem = new CheckBoxMenuItem(Messages.getString("showLocalizedFileNames"), ToggleLocalizedNamesCommand);
-  CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand(this));
+  CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand); //$NON-NLS-1$
+  CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand); //$NON-NLS-1$
+  CheckBoxMenuItem showLocalizedFileNamesMenuItem = new CheckBoxMenuItem(Messages.getString("showLocalizedFileNames"), ToggleLocalizedNamesCommand); //$NON-NLS-1$
+  CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand(this)); //$NON-NLS-1$
 
   TreeListener treeListener = new TreeListener() {
 
@@ -220,7 +220,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           
           NamedFrame frame = tabPanel.getFrame();
 
-          Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$
+          Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$ //$NON-NLS-2$
 
           frame.setVisible(true);
           refreshIfPDF(tabPanel);
@@ -323,7 +323,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     int showIndex = -1;
     if (contentTabPanel.getWidgetCount() == 0) {
       showIndex = contentPanel.getWidgetIndex(launchPanel);
-      Window.setTitle(Messages.getString("productName"));
+      Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
     } else {
       showIndex = contentPanel.getWidgetIndex(contentTabPanel);
     }
@@ -417,7 +417,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     AsyncCallback<ReportContainer> callback = new AsyncCallback<ReportContainer>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetLogicalReportPage"), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetLogicalReportPage"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
@@ -439,8 +439,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         final Widget openAnalysisView = getOpenAnalysisView();
         if (openAnalysisView != null) {
           String actionName = getTabForWidget(openAnalysisView).getText();
-          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName));
-          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content);
+          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
+          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           dialog.setCallback(new IDialogCallback() {
   
             public void cancelPressed() {
@@ -502,7 +502,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
     if (!fileExists) {
-      final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("fileDoesNotExist", name), false, false, true);
+      final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("fileDoesNotExist", name), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 
       dialogBox.setCallback(new IDialogCallback() {
         public void cancelPressed() {
@@ -574,7 +574,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url);
+      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -614,7 +614,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url);
+      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
   
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -657,8 +657,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
         if (mode == FileCommand.COMMAND.BACKGROUND) {
           MessageDialogBox dialogBox = new MessageDialogBox(
-              Messages.getString("info"),
-              Messages.getString("backgroundExecutionWarning"),
+              Messages.getString("info"), //$NON-NLS-1$
+              Messages.getString("backgroundExecutionWarning"), //$NON-NLS-1$
               true, false, true);
           dialogBox.center();
 
@@ -669,7 +669,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             builder.sendRequest(null, new RequestCallback() {
 
               public void onError(Request request, Throwable exception) {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true);
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
                 dialogBox.center();
               }
 
@@ -687,7 +687,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onFailure(Throwable caught) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true);
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
               dialogBox.center();
             }
 
@@ -700,8 +700,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 //                  getCurrentFrame().setFileInfo(fileInfo);
 
                 } else {
-                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"),
-                      Messages.getString("noSubscribePermission"), false, false, true);
+                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+                      Messages.getString("noSubscribePermission"), false, false, true); //$NON-NLS-1$
                   dialogBox.center();
                 }
               } 
@@ -748,7 +748,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         RequestCallback callback = new RequestCallback() {
 
           public void onError(Request request, Throwable exception) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false,
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, //$NON-NLS-1$ //$NON-NLS-2$
                 false, true);
             dialogBox.center();
           }
@@ -768,7 +768,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
             if (showSuccess) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("solutionBrowserRefreshed"), false, false,
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("solutionBrowserRefreshed"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
                   true);
               dialogBox.center();
             }
@@ -778,7 +778,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         try {
           builder.sendRequest(null, callback);
         } catch (RequestException e) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
           dialogBox.center();
         }
       }
@@ -839,15 +839,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         AsyncCallback callback = new AsyncCallback() {
 
           public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false,
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
                 true);
             dialogBox.center();
           }
 
           public void onSuccess(Object result) {
             MessageDialogBox dialogBox = new MessageDialogBox(
-                Messages.getString("info"),
-                Messages.getString("actionSequenceScheduledSuccess"),
+                Messages.getString("info"), //$NON-NLS-1$
+                Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
                 true, false, true);
             dialogBox.center();
           }
@@ -982,7 +982,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (!groupMap.keySet().isEmpty()) {
       favoritesGroupMenuBar.addSeparator();
     }
-    favoritesGroupMenuBar.addItem(new MenuItem(Messages.getString("manageGroups"), new Command() {
+    favoritesGroupMenuBar.addItem(new MenuItem(Messages.getString("manageGroups"), new Command() { //$NON-NLS-1$
       public void execute() {
         // bring up dialog to edit groups
         UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.PREFERENCE.FAVORITES);
@@ -995,7 +995,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     AsyncCallback<List<Bookmark>> callback = new AsyncCallback<List<Bookmark>>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotLoadBookmarks"), true, false, true);
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotLoadBookmarks"), true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.center();
       }
 
@@ -1043,14 +1043,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       viewMenuItems.add(showWorkspaceMenuItem);
       // viewMenuItems.add(showHiddenFilesMenuItem);
       if (MantleApplication.showAdvancedFeatures) {
-        favoritesGroupMenuBar.setTitle(Messages.getString("favoriteGroups"));
+        favoritesGroupMenuBar.setTitle(Messages.getString("favoriteGroups")); //$NON-NLS-1$
         viewMenuItems.add(favoritesGroupMenuBar);
       }
     }
 
     viewMenuItems.add(new MenuItemSeparator());
 
-    viewMenuItems.add(new MenuItem(Messages.getString("refresh"), new RefreshPerspectiveCommand(this)));
+    viewMenuItems.add(new MenuItem(Messages.getString("refresh"), new RefreshPerspectiveCommand(this))); //$NON-NLS-1$
     perspectiveCallback.installViewMenu(viewMenuItems);
   }
 
@@ -1183,7 +1183,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       } catch (Exception e) {
         // don't let this fail, it will disturb normal processing
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), e.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), e.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
       }
     }
@@ -1253,7 +1253,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void handleWAQRPreview(String url, String xml) {
-    showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$
+    showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
     final FormPanel form = new FormPanel(namedFrame);
     RootPanel.get().add(form);

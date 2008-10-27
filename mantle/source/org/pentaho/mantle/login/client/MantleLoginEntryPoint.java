@@ -34,21 +34,21 @@ public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCall
 
   private Timer popupWarningTimer = new Timer() {
     public void run() {
-      MessageDialogBox message = new MessageDialogBox(Messages.getString("error"), Messages.getString("popupWarning"), true, false, true);
+      MessageDialogBox message = new MessageDialogBox(Messages.getString("error"), Messages.getString("popupWarning"), true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
       message.center();
     }
   };
 
   public void onModuleLoad() {
     // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-    Messages.setMessageBundle(new MessageBundle("messages/", "MantleLoginMessages", this));
+    Messages.setMessageBundle(new MessageBundle("messages/", "MantleLoginMessages", this)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), err.getMessage(), false, true, true);
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), err.getMessage(), false, true, true); //$NON-NLS-1$
         dialog.setCallback(new IDialogCallback() {
           public void cancelPressed() {
           }

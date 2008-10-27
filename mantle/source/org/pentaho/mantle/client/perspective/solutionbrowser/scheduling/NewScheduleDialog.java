@@ -52,7 +52,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
    * @param actionName
    */
   public NewScheduleDialog(String solutionName, String path, String actionName) {
-    super(Messages.getString("newSchedule"), null, false, false);
+    super(Messages.getString("newSchedule"), null, false, false); //$NON-NLS-1$
     this.solutionName = solutionName;
     this.path = path;
     this.actionName = actionName;
@@ -70,14 +70,14 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     AsyncCallback scheduleCallback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
         setDone(false);
       }
 
       public void onSuccess(Object result) {
         MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("info"), Messages.getString("actionSequenceScheduledSuccess"), 
+            Messages.getString("info"), Messages.getString("actionSequenceScheduledSuccess"),  //$NON-NLS-1$ //$NON-NLS-2$
             true, false, true);
         dialogBox.center();
         setDone(true);

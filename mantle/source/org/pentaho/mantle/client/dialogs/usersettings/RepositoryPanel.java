@@ -53,9 +53,9 @@ public class RepositoryPanel extends UserPreferencesPanel {
     add(scroller);
     scroller.setHeight("400px"); //$NON-NLS-1$
     scroller.setWidth("400px"); //$NON-NLS-1$
-    showNavigatorCB.setText(Messages.getString("showSolutionBrowser"));
-    showLocalizedFileNamesCB.setText(Messages.getString("showLocalizedFileNames"));
-    showHiddenFilesCB.setText(Messages.getString("showHiddenFiles"));
+    showNavigatorCB.setText(Messages.getString("showSolutionBrowser")); //$NON-NLS-1$
+    showLocalizedFileNamesCB.setText(Messages.getString("showLocalizedFileNames")); //$NON-NLS-1$
+    showHiddenFilesCB.setText(Messages.getString("showHiddenFiles")); //$NON-NLS-1$
     loadAndApplyUserSettings();
   }
 
@@ -148,7 +148,7 @@ public class RepositoryPanel extends UserPreferencesPanel {
       anythingSet = true;
     }
     if (anythingSet) {
-      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("preferencesSetSuccess"), true, false, true);
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("preferencesSetSuccess"), true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
       dialogBox.center();
     }
     return true;
