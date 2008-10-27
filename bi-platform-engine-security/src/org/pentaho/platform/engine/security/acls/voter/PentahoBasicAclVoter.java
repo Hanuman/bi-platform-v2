@@ -90,6 +90,10 @@ public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAc
     if (auth == null) {
       return false;
     }
+    // admins can do anything they want!
+    if (isPentahoAdministrator(session)) {
+      return true;
+    }
     AclEntry[] effectiveAcls = getEffectiveAcls(session, holder);
     if ((effectiveAcls == null) || (effectiveAcls.length == 0)) {
       return false;
