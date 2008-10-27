@@ -32,12 +32,12 @@ public class RefreshMetaDataCommand implements Command {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().refreshReportingMetadataFailed(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("refreshReportingMetadataFailed"), false, false, true);
         dialogBox.center();
       }
 
       public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshReportingMetadataSuccess(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshReportingMetadataSuccess"), false, false, true);
         dialogBox.center();
       }
     };

@@ -16,14 +16,26 @@
  */
 package org.pentaho.mantle.client.messages;
 
-import com.google.gwt.core.client.GWT;
+import org.pentaho.gwt.widgets.client.utils.MessageBundle;
 
 public class Messages {
 
-  private static MantleApplicationConstants messages = (MantleApplicationConstants) GWT.create(MantleApplicationConstants.class);
+  private static MessageBundle messageBundle;
 
-  public static MantleApplicationConstants getInstance() {
-    return messages;
+  public static String getString(String key) {
+    return messageBundle.getString(key);
+  }
+
+  public static String getString(String key, String... parameters) {
+    return messageBundle.getString(key, parameters);
+  }
+
+  public static MessageBundle getMessageBundle() {
+    return messageBundle;
+  }
+
+  public static void setMessageBundle(MessageBundle messageBundle) {
+    Messages.messageBundle = messageBundle;
   }
 
 }

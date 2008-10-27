@@ -53,7 +53,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
 
   boolean wasEnabled = false;
 
-  CheckBox enableSubscriptions = new CheckBox(Messages.getInstance().enableSubscription());
+  CheckBox enableSubscriptions = new CheckBox(Messages.getString("enableSubscription"));
 
   ListBox availableLB = new ListBox();
 
@@ -85,20 +85,20 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     this.add(enableSubscriptions);
     this.setSpacing(10);
 
-    CaptionPanel scheduleCaptionPanel = new CaptionPanel(Messages.getInstance().schedule());
+    CaptionPanel scheduleCaptionPanel = new CaptionPanel(Messages.getString("schedule"));
 
     FlexTable schedulePanel = new FlexTable();
     schedulePanel.setSize("100%", "100%"); //$NON-NLS-1$//$NON-NLS-2$
 
     VerticalPanel availablePanel = new VerticalPanel();
-    availablePanel.add(new Label(Messages.getInstance().available()));
+    availablePanel.add(new Label(Messages.getString("available")));
     availablePanel.add(availableLB);
     availableLB.setVisibleItemCount(9);
     availableLB.setMultipleSelect(true);
     availableLB.setWidth("100%"); //$NON-NLS-1$
 
     VerticalPanel appliedPanel = new VerticalPanel();
-    appliedPanel.add(new Label(Messages.getInstance().current()));
+    appliedPanel.add(new Label(Messages.getString("current")));
     appliedPanel.add(appliedLB);
     appliedLB.setVisibleItemCount(9);
     appliedLB.setMultipleSelect(true);
@@ -110,7 +110,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     buttonGrid.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
     buttonGrid.setSpacing(2);
     moveRightBtn.setText(">"); //$NON-NLS-1$
-    moveRightBtn.setTitle(Messages.getInstance().add());
+    moveRightBtn.setTitle(Messages.getString("add"));
     moveRightBtn.setWidth("30px"); //$NON-NLS-1$
     moveRightBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
@@ -119,7 +119,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     });
     buttonGrid.add(moveRightBtn);
     moveAllRightBtn.setText(">>"); //$NON-NLS-1$
-    moveAllRightBtn.setTitle(Messages.getInstance().addAll());
+    moveAllRightBtn.setTitle(Messages.getString("addAll"));
     moveAllRightBtn.setWidth("30px"); //$NON-NLS-1$
     moveAllRightBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
@@ -128,7 +128,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     });
     buttonGrid.add(moveAllRightBtn);
     moveLeftBtn.setText("<"); //$NON-NLS-1$
-    moveLeftBtn.setTitle(Messages.getInstance().remove());
+    moveLeftBtn.setTitle(Messages.getString("remove"));
     moveLeftBtn.setWidth("30px"); //$NON-NLS-1$
     moveLeftBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
@@ -137,7 +137,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     });
     buttonGrid.add(moveLeftBtn);
     moveAllLeftBtn.setText("<<"); //$NON-NLS-1$
-    moveAllLeftBtn.setTitle(Messages.getInstance().removeAll());
+    moveAllLeftBtn.setTitle(Messages.getString("removeAll"));
     moveAllLeftBtn.setWidth("30px"); //$NON-NLS-1$
     moveAllLeftBtn.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
@@ -226,12 +226,12 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
    */
   public void apply() {
     if (dirty) {
-      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getInstance().appliedSchedulesWillBeLost())) || (!wasEnabled)) { // We're turning off this subscription... alert the user
+      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getString("appliedSchedulesWillBeLost"))) || (!wasEnabled)) { // We're turning off this subscription... alert the user
 
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
             dialogBox.center();
           }
 
@@ -289,7 +289,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
       }
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
         dialogBox.center();
       }
 

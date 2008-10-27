@@ -54,7 +54,7 @@ public class PluginPerspective extends DockPanel implements IPerspective, Comman
 
   public void installViewMenu(final IPerspectiveCallback perspectiveCallback) {
     List<UIObject> viewMenuItems = new ArrayList<UIObject>();
-    viewMenuItems.add(new MenuItem(Messages.getInstance().refresh(), new RefreshPerspectiveCommand(this)));
+    viewMenuItems.add(new MenuItem(Messages.getString("refresh"), new RefreshPerspectiveCommand(this)));
     perspectiveCallback.installViewMenu(viewMenuItems);
   }
 

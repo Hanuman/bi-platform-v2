@@ -158,48 +158,48 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       // scheduleMenu.addItem("Custom...", new FileCommand(FileCommand.SCHEDULE_CUSTOM, popupMenu, fileItemCallback));
       // scheduleMenu.addItem("New...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
 
-      menuBar.addItem(new MenuItem(Messages.getInstance().open(), new FileCommand(FileCommand.COMMAND.RUN, popupMenu, fileItemCallback)));
-      menuBar.addItem(new MenuItem(Messages.getInstance().openInNewWindow(), new FileCommand(FileCommand.COMMAND.NEWWINDOW, popupMenu, fileItemCallback)));
-      menuBar.addItem(new MenuItem(Messages.getInstance().runInBackground(), new FileCommand(FileCommand.COMMAND.BACKGROUND, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getString("open"), new FileCommand(FileCommand.COMMAND.RUN, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getString("openInNewWindow"), new FileCommand(FileCommand.COMMAND.NEWWINDOW, popupMenu, fileItemCallback)));
+      menuBar.addItem(new MenuItem(Messages.getString("runInBackground"), new FileCommand(FileCommand.COMMAND.BACKGROUND, popupMenu, fileItemCallback)));
       /*
        * Need to get the file name that was clicked on to see if it is a WAQR report. 
        * Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
        * nullifying the command attached to MenutItem click.
        */
       if (name.contains("waqr.xaction")) { //$NON-NLS-1$
-        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
+        menuBar.addItem(new MenuItem(Messages.getString("edit"), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
         
         // WG: Experimental Action Sequence Editor
         if (MantleApplication.showAdvancedFeatures) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+          menuBar.addItem(new MenuItem(Messages.getString("editAction"), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
         }
         
       } else if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
-        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
+        menuBar.addItem(new MenuItem(Messages.getString("edit"), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback)));
         
         // WG: Experimental Action Sequence Editor
         if (MantleApplication.showAdvancedFeatures) {
-          menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+          menuBar.addItem(new MenuItem(Messages.getString("editAction"), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
         }
       } else {
         final FileCommand nullFileCommand = null;
-        final MenuItem editMenuItem = new MenuItem(Messages.getInstance().edit(), nullFileCommand);
+        final MenuItem editMenuItem = new MenuItem(Messages.getString("edit"), nullFileCommand);
         editMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         menuBar.addItem(editMenuItem);
         
         // WG: Experimental Action Sequence Editor
         if (MantleApplication.showAdvancedFeatures) {
           if (name.endsWith(".xaction")) {  //$NON-NLS-1$
-            menuBar.addItem(new MenuItem(Messages.getInstance().editAction(), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
+            menuBar.addItem(new MenuItem(Messages.getString("editAction"), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback)));
           }
         }
       }
       menuBar.addSeparator();
-      menuBar.addItem(Messages.getInstance().scheduleEllipsis(), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback));
+      menuBar.addItem(Messages.getString("scheduleEllipsis"), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback));
     }
 
     menuBar.addSeparator();
-    menuBar.addItem(new MenuItem(Messages.getInstance().propertiesEllipsis(), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, fileItemCallback)));
+    menuBar.addItem(new MenuItem(Messages.getString("propertiesEllipsis"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, fileItemCallback)));
     popupMenu.setWidget(menuBar);
 
     Timer t = new Timer() {

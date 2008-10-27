@@ -53,13 +53,13 @@ public class OpenURLCommand implements Command {
       public boolean validate() {
         boolean isValid = !"".equals(textBox.getText()) && textBox.getText() != null; //$NON-NLS-1$
         if (!isValid) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().urlNotSpecified(), false, false, true);
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("urlNotSpecified"), false, false, true);
           dialogBox.center();
         }
         return isValid;
       }
     };
-    PromptDialogBox promptDialog = new PromptDialogBox(Messages.getInstance().enterURL(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, textBox);
+    PromptDialogBox promptDialog = new PromptDialogBox(Messages.getString("enterURL"), Messages.getString("ok"), Messages.getString("cancel"), false, true, textBox);
     promptDialog.setValidatorCallback(validatorCallback);
     promptDialog.setCallback(callback);
     promptDialog.setWidth("500px"); //$NON-NLS-1$

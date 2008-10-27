@@ -35,10 +35,10 @@ public class WaitPopup extends SimplePanel{
   public WaitPopup(){
     setStyleName("waitPopup"); //$NON-NLS-1$
     VerticalPanel vp = new VerticalPanel();
-    Label lbl = new Label(Messages.getInstance().pleaseWait());
+    Label lbl = new Label(Messages.getString("pleaseWait"));
     lbl.setStyleName("waitPopup_title"); //$NON-NLS-1$
     vp.add(lbl);
-    lbl = new Label(Messages.getInstance().waitMessage());
+    lbl = new Label(Messages.getString("waitMessage"));
     lbl.setStyleName("waitPopup_msg"); //$NON-NLS-1$
     vp.add(lbl);
     vp.setStyleName("waitPopup_table"); //$NON-NLS-1$

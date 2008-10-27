@@ -49,7 +49,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
 
   public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
     super(
-        Messages.getInstance().properties(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        Messages.getString("properties"), Messages.getString("ok"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
 
     generalTab = new GeneralPanel();
@@ -82,7 +82,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
     this.propertyTabs.setStyleName("gwt-Dialog-TabPanel"); //$NON-NLS-1$
     this.propertyTabs.getTabBar().setStyleName("gwt-Dialog-TabBar"); //$NON-NLS-1$
     this.isAdministrator = isAdministrator;
-    propertyTabs.add(generalTab, new TabWidget(Messages.getInstance().general(), Messages.getInstance().general(), null, propertyTabs, generalTab));
+    propertyTabs.add(generalTab, new TabWidget(Messages.getString("general"), Messages.getString("general"), null, propertyTabs, generalTab));
     fetchFileInfoAndInitTabs();
     getWidget().setHeight("100%"); //$NON-NLS-1$
     getWidget().setWidth("100%"); //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
 
           public void onFailure(Throwable caughtLogin) {
             // we are already logged in, or something horrible happened
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false,
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false,
                 true);
             dialogBox.center();
           }
@@ -111,12 +111,12 @@ public class FilePropertiesDialog extends PromptDialogBox {
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (isAdministrator && !fileInfo.isDirectory()) {
           propertyTabs.remove(subscriptionsTab);
-          propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getInstance().advanced(), Messages.getInstance().advanced(), null, propertyTabs,
+          propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getString("advanced"), Messages.getString("advanced"), null, propertyTabs,
               subscriptionsTab));
         }
         if (fileInfo.supportsAccessControls && fileInfo.canEffectiveUserManage) {
           propertyTabs.remove(permissionsTab);
-          propertyTabs.add(permissionsTab, new TabWidget(Messages.getInstance().share(), Messages.getInstance().share(), null, propertyTabs, permissionsTab));
+          propertyTabs.add(permissionsTab, new TabWidget(Messages.getString("share"), Messages.getString("share"), null, propertyTabs, permissionsTab));
         }
         // init all tabs
         for (int i = 0; i < propertyTabs.getTabBar().getTabCount(); i++) {

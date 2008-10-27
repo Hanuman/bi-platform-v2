@@ -57,10 +57,10 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
   SolutionFileInfo fileInfo;
 
   ListBox usersAndRolesList = new ListBox(false);
-  Label permissionsLabel = new Label(Messages.getInstance().permissionsColon());
+  Label permissionsLabel = new Label(Messages.getString("permissionsColon"));
   FlexTable permissionsTable = new FlexTable();
-  RoundedButton removeButton = new RoundedButton(Messages.getInstance().remove());
-  RoundedButton addButton = new RoundedButton(Messages.getInstance().addPeriods());
+  RoundedButton removeButton = new RoundedButton(Messages.getString("remove"));
+  RoundedButton addButton = new RoundedButton(Messages.getString("addPeriods"));
 
   public PermissionsPanel() {
     removeButton.addClickListener(new ClickListener() {
@@ -97,7 +97,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
 
           public void roleSelected(String role) {
             fileInfo.rolePermissions.add(new RolePermission(role, PERM_NOTHING));
-            usersAndRolesList.addItem(role + Messages.getInstance().role(role), role);
+            usersAndRolesList.addItem(role + Messages.getString("role", role), role);
             existingUsersAndRoles.add(role);
             usersAndRolesList.setSelectedIndex(usersAndRolesList.getItemCount() - 1);
             buildPermissionsTable();
@@ -105,7 +105,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
 
           public void userSelected(String user) {
             fileInfo.userPermissions.add(new UserPermission(user, PERM_NOTHING));
-            usersAndRolesList.addItem(Messages.getInstance().user(user), user);
+            usersAndRolesList.addItem(Messages.getString("user", user), user);
             existingUsersAndRoles.add(user);
             usersAndRolesList.setSelectedIndex(usersAndRolesList.getItemCount() - 1);
             buildPermissionsTable();
@@ -137,7 +137,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     permissionsTable.setHeight("100%"); //$NON-NLS-1$
 
     int row = 0;
-    setWidget(row++, 0, new Label(Messages.getInstance().usersAndRoles()));
+    setWidget(row++, 0, new Label(Messages.getString("usersAndRoles")));
     setWidget(row++, 0, usersAndRolesList);
     setWidget(row++, 0, buttonPanel);
     setWidget(row++, 0, permissionsLabel);
@@ -149,10 +149,10 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     String userOrRoleString = ""; //$NON-NLS-1$
     permissionsTable.clear();
     if (usersAndRolesList.getItemCount() == 0) {
-      permissionsLabel.setText(Messages.getInstance().permissionsColon());
+      permissionsLabel.setText(Messages.getString("permissionsColon"));
     } else {
       userOrRoleString = usersAndRolesList.getValue(usersAndRolesList.getSelectedIndex());
-      permissionsLabel.setText(Messages.getInstance().permissionsFor(userOrRoleString));
+      permissionsLabel.setText(Messages.getString("permissionsFor", userOrRoleString));
     }
     int mask = PERM_NOTHING;
     for (UserPermission userPermission : fileInfo.userPermissions) {
@@ -168,13 +168,13 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
       }
     }
     // create checkboxes, with listeners who update the fileInfo lists
-    final CheckBox allPermissionCheckBox = new CheckBox(Messages.getInstance().allPermissions());
-    final CheckBox createPermissionCheckBox = new CheckBox(Messages.getInstance().create());
-    final CheckBox updatePermissionCheckBox = new CheckBox(Messages.getInstance().update());
-    final CheckBox executePermissionCheckBox = new CheckBox(Messages.getInstance().execute());
-    final CheckBox deletePermissionCheckBox = new CheckBox(Messages.getInstance().delete());
-    final CheckBox grantPermissionCheckBox = new CheckBox(Messages.getInstance().grantPermissions());
-    final CheckBox subscribePermissionCheckBox = new CheckBox(Messages.getInstance().schedule());
+    final CheckBox allPermissionCheckBox = new CheckBox(Messages.getString("allPermissions"));
+    final CheckBox createPermissionCheckBox = new CheckBox(Messages.getString("create"));
+    final CheckBox updatePermissionCheckBox = new CheckBox(Messages.getString("update"));
+    final CheckBox executePermissionCheckBox = new CheckBox(Messages.getString("execute"));
+    final CheckBox deletePermissionCheckBox = new CheckBox(Messages.getString("delete"));
+    final CheckBox grantPermissionCheckBox = new CheckBox(Messages.getString("grantPermissions"));
+    final CheckBox subscribePermissionCheckBox = new CheckBox(Messages.getString("schedule"));
 
     if ("".equals(userOrRoleString)) { //$NON-NLS-1$
       allPermissionCheckBox.setEnabled(false);
@@ -291,7 +291,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
         dialogBox.center();
       }
 
@@ -310,11 +310,11 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     usersAndRolesList.clear();
     existingUsersAndRoles.clear();
     for (UserPermission userPermission : fileInfo.userPermissions) {
-      usersAndRolesList.addItem(Messages.getInstance().user(userPermission.name), userPermission.name);
+      usersAndRolesList.addItem(Messages.getString("user", userPermission.name), userPermission.name);
       existingUsersAndRoles.add(userPermission.name);
     }
     for (RolePermission rolePermission : fileInfo.rolePermissions) {
-      usersAndRolesList.addItem(Messages.getInstance().role(rolePermission.name), rolePermission.name);
+      usersAndRolesList.addItem(Messages.getString("role", rolePermission.name), rolePermission.name);
       existingUsersAndRoles.add(rolePermission.name);
     }
     if (usersAndRolesList.getItemCount() > 0) {

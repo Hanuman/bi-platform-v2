@@ -71,7 +71,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void createMenus() {
     addSpacer(5);
-    add(new Label(Messages.getInstance().files()));
+    add(new Label(Messages.getString("files")));
     add(GLUE);
     Image runImage = new Image();
     MantleImages.images.run().applyTo(runImage);
@@ -80,7 +80,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     runBtn = new ToolbarButton(runImage, runDisabledImage);
     runCmd = new FileCommand(FileCommand.COMMAND.RUN, null, callback);
     runBtn.setCommand(runCmd);
-    runBtn.setToolTip(Messages.getInstance().open());
+    runBtn.setToolTip(Messages.getString("open"));
     add(runBtn);
 
     Image editImage = new Image();
@@ -90,7 +90,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     editBtn = new ToolbarButton(editImage, editDisabledImage);
     editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null, callback);
     editBtn.setCommand(editCmd);
-    editBtn.setToolTip(Messages.getInstance().edit());
+    editBtn.setToolTip(Messages.getString("edit"));
     add(editBtn);
 
     Image miscImage = new Image();
@@ -101,29 +101,29 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleServiceCache.getService().repositorySupportsACLS(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
         dialogBox.center();
         scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getInstance().schedule(), scheduleCmd); //$NON-NLS-1$
+        miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
         propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getInstance().properties(), propertiesCmd); //$NON-NLS-1$
+        miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
       }
 
       public void onSuccess(Boolean result) {
         if (result) {
           shareCmd = new FileCommand(FileCommand.COMMAND.SHARE, miscComboBtn.getPopup(), callback);
-          miscMenus.addItem(Messages.getInstance().share(), shareCmd); //$NON-NLS-1$
+          miscMenus.addItem(Messages.getString("share"), shareCmd); //$NON-NLS-1$
         }
         scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getInstance().schedule(), scheduleCmd); //$NON-NLS-1$
+        miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
         propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getInstance().properties(), propertiesCmd); //$NON-NLS-1$
+        miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
       }
 
     });
-    miscComboBtn.setToolTip(Messages.getInstance().options());
+    miscComboBtn.setToolTip(Messages.getString("options"));
     add(miscComboBtn);
 
     setEnabled(false);

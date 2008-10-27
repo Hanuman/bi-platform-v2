@@ -39,7 +39,7 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
   PREFERENCE initialSelectedPreference = PREFERENCE.STYLES;
 
   public UserPreferencesDialog(PREFERENCE initialSelectedPreference) {
-    super(Messages.getInstance().userPreferences(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, new HorizontalPanel());
+    super(Messages.getString("userPreferences"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new HorizontalPanel());
     setCallback(this);
     setValidatorCallback(this);
     this.initialSelectedPreference = initialSelectedPreference;
@@ -47,8 +47,8 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
   }
 
   public void init() {
-    preferencesPanelMap.put(Messages.getInstance().repository(), new RepositoryPanel());
-    preferencesPanelMap.put(Messages.getInstance().favorites(), new FavoritesPanel());
+    preferencesPanelMap.put(Messages.getString("repository"), new RepositoryPanel());
+    preferencesPanelMap.put(Messages.getString("favorites"), new FavoritesPanel());
 
     HorizontalPanel content = (HorizontalPanel) getContent();
     content.setSpacing(10);
@@ -66,11 +66,11 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
     preferencesList.addChangeListener(this);
     for (int i = 0; i < preferencesList.getItemCount(); i++) {
       String item = preferencesList.getItemText(i);
-      if (initialSelectedPreference.equals(PREFERENCE.STYLES) && item.equalsIgnoreCase(Messages.getInstance().styles())) {
+      if (initialSelectedPreference.equals(PREFERENCE.STYLES) && item.equalsIgnoreCase(Messages.getString("styles"))) {
         preferencesList.setSelectedIndex(i);
-      } else if (initialSelectedPreference.equals(PREFERENCE.REPOSITORY) && item.equalsIgnoreCase(Messages.getInstance().repository())) {
+      } else if (initialSelectedPreference.equals(PREFERENCE.REPOSITORY) && item.equalsIgnoreCase(Messages.getString("repository"))) {
         preferencesList.setSelectedIndex(i);
-      } else if (initialSelectedPreference.equals(PREFERENCE.FAVORITES) && item.equalsIgnoreCase(Messages.getInstance().favorites())) {
+      } else if (initialSelectedPreference.equals(PREFERENCE.FAVORITES) && item.equalsIgnoreCase(Messages.getString("favorites"))) {
         preferencesList.setSelectedIndex(i);
       }
     }

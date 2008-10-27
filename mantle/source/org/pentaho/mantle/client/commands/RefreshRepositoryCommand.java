@@ -38,7 +38,7 @@ public class RefreshRepositoryCommand implements Command {
 
       public void onFailure(Throwable caught) {
         WaitPopup.getInstance().setVisible(false);
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshRepositoryFailed(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true);
         dialogBox.center();
       }
 

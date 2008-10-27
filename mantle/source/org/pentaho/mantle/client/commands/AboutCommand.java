@@ -34,7 +34,7 @@ public class AboutCommand implements Command {
       }
 
       public void onSuccess(String version) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().about(), version, false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("about"), version, false, false, true);
         dialogBox.center();
       }
     };

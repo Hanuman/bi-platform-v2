@@ -109,7 +109,7 @@ public class ReportView extends VerticalPanel {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), caught.toString(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true);
         dialogBox.center();
       }
 
@@ -149,14 +149,14 @@ public class ReportView extends VerticalPanel {
           try {
             int page = Integer.parseInt(pageField.getText());
             if (page < 1 || page > reportContainer.getNumPages()) {
-              errorLabel.setText(Messages.getInstance().pageMustBeBetweenOneAnd() + " " + reportContainer.getNumPages() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+              errorLabel.setText(Messages.getString("pageMustBeBetweenOneAnd") + " " + reportContainer.getNumPages() + "."); //$NON-NLS-1$ //$NON-NLS-2$
               return;
             }
             errorLabel.setText(""); //$NON-NLS-1$
             logicalPage = page - 1;
             fetchLogicalPage();
           } catch (Exception e) {
-            errorLabel.setText(Messages.getInstance().invalidPageNumberColon() + " " + pageField.getText()); //$NON-NLS-1$
+            errorLabel.setText(Messages.getString("invalidPageNumberColon") + " " + pageField.getText()); //$NON-NLS-1$
           }
         }
       }
@@ -223,9 +223,9 @@ public class ReportView extends VerticalPanel {
     FlexTable pageControlTable = new FlexTable();
     pageControlTable.setWidget(0, 0, firstPageButton);
     pageControlTable.setWidget(0, 1, previousPageButton);
-    pageControlTable.setWidget(0, 2, new Label(Messages.getInstance().page()));
+    pageControlTable.setWidget(0, 2, new Label(Messages.getString("page")));
     pageControlTable.setWidget(0, 3, pageField);
-    pageControlTable.setWidget(0, 4, new Label(Messages.getInstance().of() + " " + reportContainer.getNumPages())); //$NON-NLS-1$
+    pageControlTable.setWidget(0, 4, new Label(Messages.getString("of") + " " + reportContainer.getNumPages())); //$NON-NLS-1$
     pageControlTable.setWidget(0, 5, nextPageButton);
     pageControlTable.setWidget(0, 6, lastPageButton);
     pageControlTable.setWidget(0, 7, errorLabel);

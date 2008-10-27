@@ -52,7 +52,7 @@ public class AnalysisViewCommand implements Command {
         }
         
         navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);
-        navigatorPerspective.showNewURLTab(Messages.getInstance().newAnalysisView(), Messages.getInstance().newAnalysisView(), newAnalysisViewURL);
+        navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL);
         //navigatorPerspective.refreshPerspective(false);
       }
     };
@@ -69,8 +69,8 @@ public class AnalysisViewCommand implements Command {
     final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
     if (openAnalysisView != null) {
       String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
-      Widget content = new HTML(Messages.getInstance().analysisViewIsOpen(actionName));
-      PromptDialogBox dialog = new PromptDialogBox(Messages.getInstance().open(), Messages.getInstance().ok(), Messages.getInstance().cancel(), false, true, content);
+      Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName));
+      PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content);
       dialog.setCallback(new IDialogCallback() {
 
         public void cancelPressed() {

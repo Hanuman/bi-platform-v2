@@ -71,20 +71,20 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.open_32().applyTo(openImage);
     openFileButton = new ToolbarButton(openImage);
     openFileButton.setCommand(new OpenFileCommand(solutionBrowser));
-    openFileButton.setToolTip(Messages.getInstance().openEllipsis());
+    openFileButton.setToolTip(Messages.getString("openEllipsis"));
 
     
     Image newAnalysisImage = new Image();
     MantleImages.images.new_analysis_32().applyTo(newAnalysisImage);
     newAnalysisButton = new ToolbarButton(newAnalysisImage);
     newAnalysisButton.setCommand(new AnalysisViewCommand(solutionBrowser));
-    newAnalysisButton.setToolTip(Messages.getInstance().newAnalysisViewEllipsis());
+    newAnalysisButton.setToolTip(Messages.getString("newAnalysisViewEllipsis"));
 
     Image newAdhocImage = new Image();
     MantleImages.images.new_report_32().applyTo(newAdhocImage);
     newAdhocButton = new ToolbarButton(newAdhocImage);
     newAdhocButton.setCommand(new WAQRCommand(solutionBrowser));
-    newAdhocButton.setToolTip(Messages.getInstance().newAdhocReportEllipsis());
+    newAdhocButton.setToolTip(Messages.getString("newAdhocReportEllipsis"));
 
     
     
@@ -94,7 +94,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.print_32_disabled().applyTo(printDisabledImage);
     printButton = new ToolbarButton(printImage, printDisabledImage);
     printButton.setCommand(new PrintCommand(solutionBrowser));
-    printButton.setToolTip(Messages.getInstance().print());
+    printButton.setToolTip(Messages.getString("print"));
     printButton.setEnabled(false);
 
     Image saveButtonImage = new Image();
@@ -103,7 +103,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.save_32_disabled().applyTo(saveDisabledImage);
     saveButton = new ToolbarButton(saveButtonImage, saveDisabledImage);
     saveButton.setCommand(new SaveCommand(solutionBrowser, false));
-    saveButton.setToolTip(Messages.getInstance().save());
+    saveButton.setToolTip(Messages.getString("save"));
     saveButton.setEnabled(false);
 
     Image saveAsButtonImage = new Image();
@@ -112,7 +112,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     MantleImages.images.saveAs_32_disabled().applyTo(saveAsDisabledImage);
     saveAsButton = new ToolbarButton(saveAsButtonImage, saveAsDisabledImage);
     saveAsButton.setCommand(new SaveCommand(solutionBrowser, true));
-    saveAsButton.setToolTip(Messages.getInstance().saveAs());
+    saveAsButton.setToolTip(Messages.getString("saveAs"));
     saveAsButton.setEnabled(false);
 
     Image toggleWorkspaceImage = new Image();
@@ -128,7 +128,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
       }  
     });
     toggleWorkspaceButton();
-    workspaceToggleButton.setToolTip(Messages.getInstance().workspace());
+    workspaceToggleButton.setToolTip(Messages.getString("workspace"));
 
     MantleImages.images.browser_show_32().applyTo(browseShowImage);
     MantleImages.images.browser_hide_32().applyTo(browseHideImage);
@@ -141,7 +141,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
         toggleBrowserButton();
       }
     });
-    showBrowserToggleButton.setToolTip(Messages.getInstance().toggleSolutionBrowser());
+    showBrowserToggleButton.setToolTip(Messages.getString("toggleSolutionBrowser"));
 
     addSpacer(10);
     add(openFileButton);

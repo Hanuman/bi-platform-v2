@@ -37,7 +37,7 @@ public class RefreshSystemSettingsCommand implements Command {
       }
 
       public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().refreshSystemSettingsSuccess(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshSystemSettingsSuccess"), false, false, true);
         dialogBox.center();
       }
     };

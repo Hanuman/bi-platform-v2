@@ -40,7 +40,7 @@ public class CleanContentRepositoryCommand implements Command {
       }
 
       public void onSuccess(Integer numItemsCleaned) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().cleanContentRepositorySuccess(), false,
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("cleanContentRepositorySuccess"), false,
             false, true);
         dialogBox.center();
       }

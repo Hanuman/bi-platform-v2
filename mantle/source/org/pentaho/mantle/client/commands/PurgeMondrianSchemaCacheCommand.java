@@ -36,7 +36,7 @@ public class PurgeMondrianSchemaCacheCommand implements Command {
       }
 
       public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().info(), Messages.getInstance().mondrianSchemaCacheFlushedSuccessfully(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("mondrianSchemaCacheFlushedSuccessfully"), false, false, true);
         dialogBox.center();
       }
     };

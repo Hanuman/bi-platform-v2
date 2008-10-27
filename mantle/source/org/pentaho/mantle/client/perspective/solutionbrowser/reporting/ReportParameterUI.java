@@ -42,8 +42,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ReportParameterUI extends HorizontalPanel {
 
-  DisclosurePanel parameterDisclosurePanel = new DisclosurePanel(Messages.getInstance().reportParameters());
-  CheckBox submitParametersOnChangeCheckBox = new CheckBox(Messages.getInstance().automaticallySubmitParameters());
+  DisclosurePanel parameterDisclosurePanel = new DisclosurePanel(Messages.getString("reportParameters"));
+  CheckBox submitParametersOnChangeCheckBox = new CheckBox(Messages.getString("automaticallySubmitParameters"));
 
   public ReportParameterUI() {
     parameterDisclosurePanel.setWidth("100%"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class ReportParameterUI extends HorizontalPanel {
       parameterTable.setWidget(row, 1, parameterUI);
       row++;
     }
-    Button submitParametersButton = new Button(Messages.getInstance().submit());
+    Button submitParametersButton = new Button(Messages.getString("submit"));
     submitParametersButton.addClickListener(submitParametersListener);
     parameterTable.setWidget(row, 0, submitParametersButton);
     parameterTable.setWidget(row, 1, submitParametersOnChangeCheckBox);

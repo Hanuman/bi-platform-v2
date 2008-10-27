@@ -57,11 +57,11 @@ public class FavoritesPanel extends UserPreferencesPanel {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem(Messages.getInstance().edit(), new Command() {
+        menuBar.addItem(new MenuItem(Messages.getString("edit"), new Command() {
           public void execute() {
           }
         }));
-        menuBar.addItem(new MenuItem(Messages.getInstance().delete(), new Command() {
+        menuBar.addItem(new MenuItem(Messages.getString("delete"), new Command() {
           public void execute() {
           }
         }));

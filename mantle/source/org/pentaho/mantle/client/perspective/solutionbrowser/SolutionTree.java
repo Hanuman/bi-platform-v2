@@ -80,7 +80,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // popupMenu.setAnimationEnabled(false);
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
     DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
-    addItem(new TreeItem(Messages.getInstance().loadingEllipsis()));
+    addItem(new TreeItem(Messages.getString("loadingEllipsis")));
 
     DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0"); //$NON-NLS-1$ //$NON-NLS-2$
     DOM.setStyleAttribute(focusable.getElement(), "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -120,7 +120,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem(Messages.getInstance().properties(), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this)));
+        menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this)));
         popupMenu.setWidget(menuBar);
         popupMenu.hide(); 
         Timer t = new Timer() {
@@ -545,12 +545,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     folderDescTextBox.setVisibleLength(80);
 
     VerticalPanel vp = new VerticalPanel();
-    vp.add(new Label(Messages.getInstance().newFolderName()));
+    vp.add(new Label(Messages.getString("newFolderName")));
     vp.add(folderNameTextBox);
-    vp.add(new Label(Messages.getInstance().newFolderDesc()));
+    vp.add(new Label(Messages.getString("newFolderDesc")));
     vp.add(folderDescTextBox);
-    final PromptDialogBox newFolderDialog = new PromptDialogBox(Messages.getInstance().newFolder(), Messages.getInstance().ok(), Messages.getInstance()
-        .cancel(), false, true, vp);
+    final PromptDialogBox newFolderDialog = new PromptDialogBox(Messages.getString("newFolder"), Messages.getString("ok"), Messages.getString("cancel"), false, true, vp);
     newFolderDialog.setFocusWidget(folderNameTextBox);
     folderNameTextBox.setFocus(true);
 
@@ -585,7 +584,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           builder.sendRequest(null, new RequestCallback() {
 
             public void onError(Request request, Throwable exception) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotCreateFolder(folderNameTextBox.getText()),
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateFolder", folderNameTextBox.getText()),
                   false, false, true);
               dialogBox.center();
             }
@@ -597,8 +596,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
                 RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
                 cmd.execute(false);
               } else {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(),
-                    Messages.getInstance().couldNotCreateFolder(selectedItem.getName()), false, false, true);
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"),
+                    Messages.getString("couldNotCreateFolder", selectedItem.getName()), false, false, true);
                 dialogBox.center();
               }
             }
@@ -638,9 +637,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
     final String myurl = url;
     VerticalPanel vp = new VerticalPanel();
-    vp.add(new Label(Messages.getInstance().deleteQuestion(selectedItem.getLocalizedName())));
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getInstance().deleteConfirm(), Messages.getInstance().yes(), Messages
-        .getInstance().no(), false, true, vp);
+    vp.add(new Label(Messages.getString("deleteQuestion", selectedItem.getLocalizedName())));
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp);
 
     final IDialogCallback callback = new IDialogCallback() {
 
@@ -654,7 +652,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           builder.sendRequest(null, new RequestCallback() {
 
             public void onError(Request request, Throwable exception) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotDelete(selectedItem.getName()),
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotDelete", selectedItem.getName()),
                   false, false, true);
               dialogBox.center();
             }
@@ -666,8 +664,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
                 RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
                 cmd.execute(false);
               } else {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(),
-                    Messages.getInstance().couldNotDelete(selectedItem.getName()), false, false, true);
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"),
+                    Messages.getString("couldNotDelete", selectedItem.getName()), false, false, true);
                 dialogBox.center();
               }
             }

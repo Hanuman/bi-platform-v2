@@ -42,20 +42,19 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   Label sizeLabel = new Label();
   Label lastModifiedDateLabel = new Label();
   FileItem fileItem;
-  private static MantleApplicationConstants MSG = Messages.getInstance();
 
   public GeneralPanel() {
-    setWidget(0, 0, new Label(MSG.name()+":")); //$NON-NLS-1$
+    setWidget(0, 0, new Label(Messages.getString("name")+":")); //$NON-NLS-1$
     setWidget(0, 1, nameLabel);
-    setWidget(1, 0, new Label(MSG.location()+":")); //$NON-NLS-1$
+    setWidget(1, 0, new Label(Messages.getString("location")+":")); //$NON-NLS-1$
     setWidget(1, 1, locationLabel);
-    setWidget(2, 0, new Label(MSG.source()+":")); //$NON-NLS-1$
+    setWidget(2, 0, new Label(Messages.getString("source") + ":")); //$NON-NLS-1$
     setWidget(2, 1, sourceLabel);
-    setWidget(3, 0, new Label(MSG.type()+":")); //$NON-NLS-1$
+    setWidget(3, 0, new Label(Messages.getString("type") + ":")); //$NON-NLS-1$
     setWidget(3, 1, typeLabel);
-    setWidget(4, 0, new Label(MSG.size()+":")); //$NON-NLS-1$
+    setWidget(4, 0, new Label(Messages.getString("size") + ":")); //$NON-NLS-1$
     setWidget(4, 1, sizeLabel);
-    Label lbl = new Label(MSG.lastModified()+":"); //$NON-NLS-1$
+    Label lbl = new Label(Messages.getString("lastModified") +":"); //$NON-NLS-1$
     lbl.addStyleName("nowrap"); //$NON-NLS-1$
     setWidget(5, 0, lbl);
     setWidget(5, 1, lastModifiedDateLabel);
@@ -84,15 +83,15 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   private String getFileTypeDescription(SolutionFileInfo.Type type, String pluginTypeName){
     switch(type){
       case FOLDER:
-        return MSG.folder();
+        return Messages.getString("folder");
       case ANALYSIS_VIEW:
-        return MSG.analysisView();
+        return Messages.getString("analysisView");
       case XACTION:
-        return MSG.xaction();
+        return Messages.getString("xaction");
       case URL:
         return "URL";   //$NON-NLS-1$
       case REPORT:
-        return MSG.report();
+        return Messages.getString("report");
       case PLUGIN:
         return pluginTypeName;
       default:
@@ -104,7 +103,7 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().error(), Messages.getInstance().couldNotGetFileProperties(), false, false, true);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true);
         dialogBox.center();
       }
 
