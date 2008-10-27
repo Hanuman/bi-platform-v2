@@ -124,13 +124,6 @@
                                 </anonymous-authentication>
 	<!-- Insert additional pentaho-system -->
 	
-	<connections>
-		<SQL scope="local">org.pentaho.platform.plugin.services.connections.sql.SQLConnection</SQL>
-		<MDX scope="local">org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection</MDX>
-		<XML scope="local">org.pentaho.platform.plugin.services.connections.xquery.XQConnection</XML>
-		<HQL scope="local">org.pentaho.platform.plugin.services.connections.hql.HQLConnection</HQL>
-	</connections>
-	
     <audit>
       <auditLogFile>/PentahoAuditLog.log</auditLogFile>
       <id_separator><![CDATA[\t]]></id_separator>

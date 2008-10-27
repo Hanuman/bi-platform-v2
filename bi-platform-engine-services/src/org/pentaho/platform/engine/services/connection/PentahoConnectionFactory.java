@@ -25,7 +25,11 @@ import java.util.Properties;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.util.logging.Logger;
 
 /**
  * @author wseyler
@@ -34,6 +38,8 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
  * Preferences - Java - Code Style - Code Templates
  */
 public class PentahoConnectionFactory {
+
+  private static final String CONNECTION_PREFIX = "connection-"; //$NON-NLS-1$
 
   /**
    * @param datasourceType
@@ -113,9 +119,19 @@ public class PentahoConnectionFactory {
      * if the datasourceType, location, username, or password have changed
      * then we create a new one.
      */
-    IPentahoConnection connection = PentahoSystem.getConnection(datasourceType, session, logger);
-    connection.setProperties(properties);
+    String key = CONNECTION_PREFIX + datasourceType;
+    IPentahoConnection connection = null;
+    try {
+      connection = PentahoSystem.getObjectFactory().get(IPentahoConnection.class, key, session);
+      if (connection instanceof IPentahoLoggingConnection) {
+        ((IPentahoLoggingConnection) connection).setLogger(logger);
+      }
+      connection.setProperties(properties);
+    } catch (ObjectFactoryException e) {
+      Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+          "PentahoConnectionFactory.ERROR_0001_COULD_NOT_CREATE_CONNECTION", key), e); //$NON-NLS-1$
+    }
+
     return connection;
   }
-
 }

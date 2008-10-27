@@ -116,14 +116,6 @@ public class SystemSettingsTest extends TestCase {
         }
     }
 
-    public void testSettings() {
-    	Assert.assertTrue( "Initialization of the platform failed", init() );
-        // String setting = PentahoSystem.getSystemSetting("objects/ISolutionEngine", null); //$NON-NLS-1$
-        // Assert.assertNotNull("Solution Engine implementor is not specified", setting); //$NON-NLS-1$
-        PentahoSystem.retrySystemInit();
-        PentahoSystem.refreshSettings();
-    }
-
     public void testPublishers() {
     	Assert.assertTrue( "Initialization of the platform failed", init() );
         String publishersXml = null;
@@ -184,7 +176,6 @@ public class SystemSettingsTest extends TestCase {
         SystemSettingsTest test = new SystemSettingsTest();
         try {
             test.testASetUp();
-            test.testSettings();
             test.testVersion();
             test.testPublishers();
         } finally {

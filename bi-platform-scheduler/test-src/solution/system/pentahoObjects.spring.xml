@@ -19,4 +19,12 @@ PentahoSystem which is initialized after Spring
   <bean id="ISubscriptionScheduler" class="org.pentaho.platform.scheduler.QuartzSubscriptionScheduler" scope="singleton" />
   <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService" scope="prototype" />
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
+    
+    <!-- Data connections.  Connections objects should be accessed through PentahoConnectionFactory, 
+       not directly from the PentahoObjectFactory. -->
+  <bean id="connection-SQL" class="org.pentaho.platform.plugin.services.connections.sql.SQLConnection" scope="prototype" />
+  <bean id="connection-MDX" class="org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection" scope="prototype" />
+  <bean id="connection-XML" class="org.pentaho.platform.plugin.services.connections.xquery.XQConnection" scope="prototype" />
+  <bean id="connection-HQL" class="org.pentaho.platform.plugin.services.connections.hql.HQLConnection" scope="prototype" />
+  
 </beans>

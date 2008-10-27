@@ -38,7 +38,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionParameter;
@@ -126,11 +125,6 @@ public class PentahoSystem {
 
   public static final String PENTAHO_SESSION_KEY = "pentaho-session-context"; //$NON-NLS-1$
 
-  /**
-   * maps an interface name to an instance of a class that implements the interface connectionClassNameMap, connectionScopeMap, and globalConnectionsMap are related Map<String, Object>
-   */
-  private static final Map globalConnectionsMap = Collections.synchronizedMap(new HashMap());
-
   private static Map globalAttributes;
 
   private static SimpleParameterProvider globalParameters;
@@ -145,16 +139,6 @@ public class PentahoSystem {
   
   private static IPentahoObjectFactory pentahoObjectFactory = null;
   
-  /**
-   * Maps an interface name to the scope as defined in the pentaho.xml file connectionClassNameMap, connectionScopeMap, and globalConnectionsMap are related
-   */
-  private static Map connectionScopeMap;
-
-  /**
-   * maps interface name to a class name that implements the interface connectionClassNameMap, connectionScopeMap, and globalConnectionsMap are related Map<String, String>
-   */
-  private static Map connectionClassNameMap;
-
   private static final Map initializationFailureDetailsMap = new HashMap();
 
   private static final List<String> RequiredObjects = new ArrayList<String>();
@@ -193,10 +177,6 @@ public class PentahoSystem {
 
   private static final String CACHE_MANAGER = "ICacheManager"; //$NON-NLS-1$
 
-  private static final String CONNECTION_PREFIX = "connection-"; //$NON-NLS-1$
-
-  // private static Map globalConnectionsMap = Collections.synchronizedMap(new
-  // HashMap());
   private static IUserDetailsRoleListService userDetailsRoleListService;
 
   private static final List ACLFileExtensionList = new ArrayList();
@@ -232,16 +212,6 @@ public class PentahoSystem {
     PentahoSystem.IgnoredObjects.add("IAuditEntry"); //$NON-NLS-1$
   }
 
-  public static synchronized boolean retrySystemInit() {
-    IApplicationContext appContext = PentahoSystem.applicationContext;
-    PentahoSystem.connectionScopeMap.clear();
-    PentahoSystem.globalAttributes.clear();
-    PentahoSystem.globalParameters = null;
-    PentahoSystem.connectionScopeMap = null;
-    PentahoSystem.globalAttributes = null;
-    return PentahoSystem.init(appContext);
-  }
-
   public static boolean init(final IApplicationContext pApplicationContext) {
     return PentahoSystem.init(pApplicationContext, null);
   }
@@ -249,8 +219,6 @@ public class PentahoSystem {
   public static boolean init(final IApplicationContext pApplicationContext, final Map listenerMap) {
     PentahoSystem.initializedStatus = PentahoSystem.SYSTEM_INITIALIZED_OK;
 
-    PentahoSystem.connectionScopeMap = new HashMap();
-    PentahoSystem.connectionClassNameMap = new HashMap();
     PentahoSystem.globalAttributes = Collections.synchronizedMap(new HashMap());
     PentahoSystem.globalParameters = new SimpleParameterProvider(PentahoSystem.globalAttributes);
 
@@ -286,16 +254,6 @@ public class PentahoSystem {
       PentahoSystem.ACLFileExtensionList.add(extn);
     }
 
-    DEFAULT_CONDITIONAL_EXECUTION_PROVIDER = PentahoSystem.systemSettingsService.getSystemSetting(
-        "objects/IConditionalExecution", //$NON-NLS-1$
-        "org.pentaho.platform.plugin.condition.javascript.ConditionalExecution"); //$NON-NLS-1$    
-
-    DEFAULT_MESSAGE_FORMATTER = PentahoSystem.systemSettingsService.getSystemSetting("objects/IMessageFormatter", //$NON-NLS-1$
-        "org.pentaho.platform.engine.services.MessageFormatter"); //$NON-NLS-1$    
-    
-    DEFAULT_NAVIGATION_COMPONENT = PentahoSystem.systemSettingsService.getSystemSetting("objects/INavigationComponent", //$NON-NLS-1$
-        "org.pentaho.platform.uifoundation.component.xml.NavigationComponent"); //$NON-NLS-1$  
-    
     List settingsList = PentahoSystem.systemSettingsService.getSystemSettings("pentaho-system"); //$NON-NLS-1$
     if (null == settingsList) {
       // the application context is not configure correctly
@@ -324,25 +282,6 @@ public class PentahoSystem {
 
     // to guarantee hostnames in SSL mode are not being spoofed
     PentahoSystem.registerHostnameVerifier();
-
-    // get a list of the connection providers
-    // TODO move some ofthis code to the connection provider factory
-    List connectionNodes = PentahoSystem.systemSettingsService.getSystemSettings("connections/*"); //$NON-NLS-1$
-    if (connectionNodes != null) {
-      Iterator connectionIterator = connectionNodes.iterator();
-      while (connectionIterator.hasNext()) {
-    	  Element node = (Element) connectionIterator.next();
-    	  String connectionClass = node.getText();
-    	  String connectionKey = CONNECTION_PREFIX + node.getName();
-    	  String connectionScope = node.attributeValue( PentahoSystem.SCOPE );
-        connectionScopeMap.put(connectionKey, connectionScope);
-        connectionClassNameMap.put(connectionKey, connectionClass);
-    	  if( PentahoSystem.SCOPE_GLOBAL.equals( connectionScope ) ) {
-    	      Object obj = PentahoSystem.createObject(connectionClass);
-          globalConnectionsMap.put(connectionKey, obj);
-    	  }
-      }
-    }
 
     assert null != pentahoObjectFactory : "pentahoObjectFactory must be non-null"; //$NON-NLS-1$
     try {
@@ -937,7 +876,6 @@ public class PentahoSystem {
     return new ArrayList(PentahoSystem.administrationPlugins);
   }
 
-  @Deprecated //Admin plugins are no longer declared in pentaho.xml
   public static Document getPublishersDocument() {
 
     Document document = DocumentHelper.createDocument();
@@ -1011,12 +949,12 @@ public class PentahoSystem {
   }
 
   // Security Helpers
-  //TODO: figure out a better place for this exception logic and remove this wrapper method
+  //TODO: clean this up so we don't have a fallback impl
   public static ICacheManager getCacheManager( IPentahoSession session ) {
     try {
     // TODO get the SimpleMapCacheManager into the object map somehow
     	// we will try to use a simple map cache manager if one has not been configured
-    	ICacheManager cacheManager = (ICacheManager)pentahoObjectFactory.getObject( PentahoSystem.CACHE_MANAGER, session );
+    	ICacheManager cacheManager = pentahoObjectFactory.get(ICacheManager.class, session );
       return cacheManager;
     } catch (ObjectFactoryException e) {
     	ICacheManager cacheManager = SimpleMapCacheManager.getInstance();
@@ -1093,53 +1031,6 @@ public class PentahoSystem {
     }
   }
   
-  public static IPentahoConnection getConnection( String datasourceType, IPentahoSession session, ILogger logger ) {
-	  String key = CONNECTION_PREFIX+datasourceType;
-    String scope = (String) PentahoSystem.connectionScopeMap.get(key);
-	    if ( SCOPE_GLOBAL.equalsIgnoreCase(scope)) {
-      return (IPentahoConnection) PentahoSystem.globalConnectionsMap.get(key);
-	    } else if ( SCOPE_SESSION.equalsIgnoreCase(scope)) {
-	      if (session == null) {
-        Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-            "PentahoSystem.ERROR_0026_COULD_NOT_CREATE_CONNECTION", datasourceType)); //$NON-NLS-1$
-	        return null;
-	      }
-	      Object attribute = session.getAttribute( key );
-	      if ((attribute != null) && (attribute instanceof IPentahoConnection)) {
-	        // Set the session which is a threadlocal...
-	        return (IPentahoConnection) attribute;
-	      }
-      String connectionClass = (String) PentahoSystem.connectionClassNameMap.get(key);
-	      Object obj = PentahoSystem.createObject(connectionClass);
-	      if ((obj == null) || !(obj instanceof IPentahoConnection)) {
-        Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-            "PentahoSystem.ERROR_0026_COULD_NOT_CREATE_CONNECTION", connectionClass)); //$NON-NLS-1$
-	        return null;
-	      }
-	      IPentahoConnection connection = (IPentahoConnection) obj;
-	      session.setAttribute(key, connection);
-	      if( connection instanceof IPentahoLoggingConnection ) {
-		      ((IPentahoLoggingConnection)connection).setLogger(logger);
-	      }
-	      return connection;
-	    } else if ( SCOPE_LOCAL.equalsIgnoreCase(scope)) {
-      String connectionClass = (String) PentahoSystem.connectionClassNameMap.get(key);
-		      Object obj = PentahoSystem.createObject(connectionClass);
-		      if ((obj == null) || !(obj instanceof IPentahoConnection)) {
-        Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-            "PentahoSystem.ERROR_0026_COULD_NOT_CREATE_CONNECTION", connectionClass)); //$NON-NLS-1$
-		        return null;
-		      }
-		      IPentahoConnection connection = (IPentahoConnection) obj;
-		      if( connection instanceof IPentahoLoggingConnection ) {
-			      ((IPentahoLoggingConnection)connection).setLogger(logger);
-		      }
-		      return connection;
-	    }
-	    
-	    
-	    return null;
-  }
 
   /**
    * Gets the factory that will create and manage Pentaho system objects.
