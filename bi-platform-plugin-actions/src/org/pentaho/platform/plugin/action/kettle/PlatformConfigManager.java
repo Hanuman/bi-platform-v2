@@ -1,12 +1,12 @@
 package org.pentaho.platform.plugin.action.kettle;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.pentaho.di.core.config.BasicConfigManager;
 import org.pentaho.di.core.plugins.PluginLocation;
+import org.pentaho.platform.api.engine.ISolutionFile;
 
 /**
  * This configuration manager can be used to load kettle plugins located at ${PENTAHO_SOLUTIONS}/system/kettle/plugins
@@ -22,9 +22,9 @@ import org.pentaho.di.core.plugins.PluginLocation;
 public class PlatformConfigManager<T extends PluginLocation> extends
 		BasicConfigManager<T> {
 
-	private File pluginsFolder;
+	private ISolutionFile pluginsFolder;
 
-	PlatformConfigManager(File pluginsFolder) {
+	PlatformConfigManager(ISolutionFile pluginsFolder) {
 		this.pluginsFolder = pluginsFolder;
 	}
 
@@ -32,8 +32,8 @@ public class PlatformConfigManager<T extends PluginLocation> extends
 	public Collection<T> load()  {
 		Set<T> configObjs = new LinkedHashSet<T>();
 		PluginLocation pl = new PluginLocation();
-		pl.setId(pluginsFolder.getAbsolutePath());
-		pl.setLocation(pluginsFolder.getAbsolutePath());
+		pl.setId(pluginsFolder.getFullPath());
+		pl.setLocation(pluginsFolder.getFullPath());
 		configObjs.add((T) pl);
 		
 		return configObjs;

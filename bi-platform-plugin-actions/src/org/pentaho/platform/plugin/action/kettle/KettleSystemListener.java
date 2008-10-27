@@ -21,11 +21,16 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
+import org.pentaho.di.core.config.KettleConfig;
+import org.pentaho.di.core.exception.KettleConfigException;
+import org.pentaho.di.core.plugins.PluginLoader;
+import org.pentaho.di.core.plugins.PluginLocation;
 import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.job.JobEntryLoader;
 import org.pentaho.di.trans.StepLoader;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
+import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -52,8 +57,19 @@ public class KettleSystemListener implements IPentahoSystemListener {
           .getString("KettleSystemListener.ERROR_0002_JOB_ENTRY_LOAD_FAILED")); //$NON-NLS-1$
     }
     
-
-    
+    ISolutionFile pluginsFolder =  PentahoSystem.get(ISolutionRepository.class, session).getFileByPath("/system/kettle/plugins");//new File (PentahoSystem.getApplicationContext().getSolutionRootPath(),"system/kettle/plugins");
+	  if (pluginsFolder!=null)
+	  {
+		  try {
+			  KettleConfig.getInstance().addConfig("platform-kettle-cfg",new PlatformConfigManager<PluginLocation>(pluginsFolder));
+			  PluginLoader.getInstance().load("platform-kettle-cfg");
+		  }
+		  catch(KettleConfigException e) {
+			 Logger.error(KettleSystemListener.class.getName(),Messages
+			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED",pluginsFolder.getFullPath())); //$NON-NLS-1$
+		  }
+	  }
+        
     return true;
   }
 
@@ -64,7 +80,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
 
     InputStream is = null;
     try {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class,session);
 
       if (!repository.resourceExists(kettlePropsFilename)) {
         return props;
