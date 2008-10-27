@@ -25,7 +25,6 @@ package org.pentaho.platform.engine.core.system;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoPublisher;
-import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
 import org.pentaho.platform.api.engine.ISystemSettings;
@@ -36,7 +35,7 @@ import org.pentaho.platform.api.engine.ISystemSettings;
  * <p>
  * Please do not reference this class in your code.
  */
-public class SpringPentahoSystemProxy implements IPentahoSystem {
+public class SpringPentahoSystemProxy {
   
   public void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
     PentahoSystem.setAdministrationPlugins(administrationPlugins);
