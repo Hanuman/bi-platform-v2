@@ -1163,7 +1163,7 @@ public class PentahoSystem {
    * Registers administrative capabilities that can be invoked later 
    * via {@link PentahoSystem#publish(IPentahoSession, String)}
    * 
-   * @param administrationPlugins
+   * @param administrationPlugins a list of admin functions to register
    */
   public static void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
     PentahoSystem.administrationPlugins = administrationPlugins;
@@ -1195,7 +1195,7 @@ public class PentahoSystem {
    * Sets the system settings service: the means by which the platform obtains it's 
    * overall system settings.
    * 
-   * @param systemSettingsService
+   * @param systemSettingsService the settings service
    */
   public static void setSystemSettingsService(ISystemSettings systemSettingsService) {
     PentahoSystem.systemSettingsService = systemSettingsService;
