@@ -93,11 +93,11 @@ public class PentahoRole implements IPentahoRole {
   }
 
   public void setUsers(Set<IPentahoUser> users) {
-    this.users = new HashSet<IPentahoUser>(users);
+    this.users = users;
   }
 
   public Set<IPentahoUser> getUsers() {
-    return new HashSet<IPentahoUser>(users);
+    return users;
   }
 
   public boolean addUser(IPentahoUser user) {

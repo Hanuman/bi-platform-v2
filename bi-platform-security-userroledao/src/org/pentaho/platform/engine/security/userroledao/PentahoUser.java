@@ -96,13 +96,11 @@ public class PentahoUser implements IPentahoUser {
   }
 
   public void setRoles(Set<IPentahoRole> roles) {
-    // defensive copy
-    this.roles = new HashSet<IPentahoRole>(roles);
+    this.roles = roles;
   }
 
   public Set<IPentahoRole> getRoles() {
-    // defensive copy
-    return new HashSet<IPentahoRole>(roles);
+    return roles;
   }
 
   public boolean equals(Object obj) {

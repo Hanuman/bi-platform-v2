@@ -14,7 +14,8 @@
       inverse="true" means that any users added to a role's users set will not be persisted; instead, you must persist
       by editing the other direction (i.e. add a role to the user object)
     -->
-    <set name="users" table="GRANTED_AUTHORITIES" inverse="true" order-by="USERNAME">
+    <!-- lazy=false since session is closed in dao; if lazy=true, session would need to stay open beyond dao call -->
+    <set name="users" table="GRANTED_AUTHORITIES" inverse="true" order-by="USERNAME" lazy="false">
       <key column="AUTHORITY" />
       <many-to-many column="USERNAME" class="PentahoUser" />
     </set>

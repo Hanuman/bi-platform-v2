@@ -14,7 +14,8 @@
     <property name="password" column="PASSWORD" type="string" length="50" not-null="true" />
     <property name="description" column="DESCRIPTION" type="string" length="100" not-null="false" />
     <property name="enabled" column="ENABLED" type="boolean" not-null="true" />
-    <set name="roles" table="GRANTED_AUTHORITIES" order-by="AUTHORITY">
+    <!-- lazy=false since session is closed in dao; if lazy=true, session would need to stay open beyond dao call -->
+    <set name="roles" table="GRANTED_AUTHORITIES" order-by="AUTHORITY" lazy="false">
       <key column="USERNAME" />
       <many-to-many column="AUTHORITY" class="PentahoRole" />
     </set>
