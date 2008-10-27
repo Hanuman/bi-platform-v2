@@ -18,7 +18,8 @@ package org.pentaho.mantle.login.client;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
-import org.pentaho.mantle.login.client.messages.MantleLoginMessages;
+import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
+import org.pentaho.gwt.widgets.client.utils.MessageBundle;
 import org.pentaho.mantle.login.client.messages.Messages;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -26,23 +27,28 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class MantleLoginEntryPoint implements EntryPoint {
+public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCallback {
 
   private MantleLoginDialog loginDialog;
   private String returnLocation;
-  private static MantleLoginMessages MSG = Messages.getInstance();
-  private Timer popupWarningTimer = new Timer(){
+
+  private Timer popupWarningTimer = new Timer() {
     public void run() {
-      MessageDialogBox message = new MessageDialogBox(MSG.error(), MSG.popupWarning(), true, false, true);
+      MessageDialogBox message = new MessageDialogBox(Messages.getString("error"), Messages.getString("popupWarning"), true, false, true);
       message.center();
     }
   };
-  
+
   public void onModuleLoad() {
+    // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
+    Messages.setMessageBundle(new MessageBundle("messages/", "MantleLoginMessages", this));
+  }
+
+  public void bundleLoaded(String bundleName) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getInstance().error(), err.getMessage(), false, true, true);
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), err.getMessage(), false, true, true);
         dialog.setCallback(new IDialogCallback() {
           public void cancelPressed() {
           }
@@ -61,7 +67,7 @@ public class MantleLoginEntryPoint implements EntryPoint {
           Window.open(URL, "puc", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
           // Schedule checking of new Window (Popup checker).
           popupWarningTimer.schedule(5000);
-          
+
         } else if (!returnLocation.equals("")) { //$NON-NLS-1$
           Window.Location.assign(returnLocation);
         } else {
@@ -75,27 +81,27 @@ public class MantleLoginEntryPoint implements EntryPoint {
 
     setupNativeHooks(loginDialog, this);
     setReturnLocation(null);
-
   }
 
   public void setReturnLocation(String str) {
     returnLocation = str;
   }
 
-  public void cancelPopupAlertTimer(){
+  public void cancelPopupAlertTimer() {
     popupWarningTimer.cancel();
     Window.Location.reload();
   }
-  
-  public native void setupNativeHooks(MantleLoginDialog dialog, MantleLoginEntryPoint entry) /*-{
-      $wnd.openLoginDialog = function(location) {
-        entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::setReturnLocation(Ljava/lang/String;)(location);
-        dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::center()();
-      }
-      
-      $wnd.reportWindowOpened = function(){
-        entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::cancelPopupAlertTimer()();
-      }
-    }-*/;
+
+  public native void setupNativeHooks(MantleLoginDialog dialog, MantleLoginEntryPoint entry)
+  /*-{
+     $wnd.openLoginDialog = function(location) {
+       entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::setReturnLocation(Ljava/lang/String;)(location);
+       dialog.@org.pentaho.mantle.login.client.MantleLoginDialog::center()();
+     }
+       
+     $wnd.reportWindowOpened = function(){
+       entry.@org.pentaho.mantle.login.client.MantleLoginEntryPoint::cancelPopupAlertTimer()();
+     }
+   }-*/;
 
 }

@@ -26,7 +26,6 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.PropertiesUtil;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
-import org.pentaho.mantle.login.client.messages.MantleLoginMessages;
 import org.pentaho.mantle.login.client.messages.Messages;
 
 import com.google.gwt.core.client.GWT;
@@ -41,6 +40,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -62,7 +62,6 @@ public class MantleLoginDialog extends PromptDialogBox {
   private static boolean showUsersList = false;
   private static boolean showNewWindowOption = true;
   private static MantleLoginServiceAsync SERVICE;
-  private static MantleLoginMessages MSGS = Messages.getInstance();
 
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
 
@@ -103,12 +102,12 @@ public class MantleLoginDialog extends PromptDialogBox {
                 Cookies.setCookie("loginNewWindowChecked", "" + newWindowChk.isChecked(), expirationDate); //$NON-NLS-1$ //$NON-NLS-2$
                 outerCallback.onSuccess(newWindowChk != null && newWindowChk.isChecked());
               } else {
-                outerCallback.onFailure(new Throwable(MSGS.authFailed()));
+                outerCallback.onFailure(new Throwable(Messages.getString("authFailed")));
               }
             }
 
             public void onFailure(final Throwable caught) {
-              MessageDialogBox errBox = new MessageDialogBox(MSGS.loginError(), MSGS.authFailed(), false, false, true);
+              MessageDialogBox errBox = new MessageDialogBox(Messages.getString("loginError"), Messages.getString("authFailed"), false, false, true);
               errBox.setCallback(new IDialogCallback() {
                 public void cancelPressed() {
                 }
@@ -134,7 +133,7 @@ public class MantleLoginDialog extends PromptDialogBox {
   };
 
   public MantleLoginDialog() {
-    super(MSGS.login(), MSGS.login(), MSGS.cancel(), false, true);
+    super(Messages.getString("login"), Messages.getString("login"), Messages.getString("cancel"), false, true);
     setCallback(myCallback);
     userTextBox.setTabIndex(1);
     passwordTextBox.setTabIndex(2);
@@ -185,7 +184,7 @@ public class MantleLoginDialog extends PromptDialogBox {
           StringTokenizer userdisplayTokenizer = new StringTokenizer(settings.get("userDisplayNames"), ','); //$NON-NLS-1$
           // build default users list
           defaultUsers.clear();
-          defaultUsers.put(MSGS.selectUser(), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
+          defaultUsers.put(Messages.getString("selectUser"), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
           for (int i = 0; i < useridTokenizer.countTokens(); i++) {
             defaultUsers.put(userdisplayTokenizer.tokenAt(i), new String[] { useridTokenizer.tokenAt(i), passwordTokenizer.tokenAt(i) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
@@ -251,13 +250,13 @@ public class MantleLoginDialog extends PromptDialogBox {
     if (showUsersList) {
       // populate default users list box
       addDefaultUsers();
-      loginPanel.add(new Label(MSGS.sampleUser() + ":")); //$NON-NLS-1$
+      loginPanel.add(new Label(Messages.getString("sampleUser") + ":")); //$NON-NLS-1$
       loginPanel.add(usersListBox);
       spacer = new SimplePanel();
       spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
     }
-    loginPanel.add(new Label(MSGS.username() + ":")); //$NON-NLS-1$
+    loginPanel.add(new Label(Messages.getString("username") + ":")); //$NON-NLS-1$
     loginPanel.add(userTextBox);
 
     spacer = new SimplePanel();
@@ -265,7 +264,7 @@ public class MantleLoginDialog extends PromptDialogBox {
     loginPanel.add(spacer);
 
     loginPanel.setCellHeight(spacer, "8px"); //$NON-NLS-1$
-    loginPanel.add(new Label(MSGS.password() + ":")); //$NON-NLS-1$
+    loginPanel.add(new HTML(Messages.getString("password") + ":")); //$NON-NLS-1$
     loginPanel.add(passwordTextBox);
 
     // New Window checkbox
@@ -275,7 +274,7 @@ public class MantleLoginDialog extends PromptDialogBox {
       loginPanel.add(spacer);
       loginPanel.setCellHeight(spacer, "8px"); //$NON-NLS-1$
 
-      newWindowChk.setText(MSGS.launchInNewWindow());
+      newWindowChk.setText(Messages.getString("launchInNewWindow"));
 
       String cookieCheckedVal = Cookies.getCookie("loginNewWindowChecked"); //$NON-NLS-1$
       if (cookieCheckedVal != null) {
