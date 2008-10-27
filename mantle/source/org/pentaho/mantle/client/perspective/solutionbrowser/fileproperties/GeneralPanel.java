@@ -19,10 +19,7 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 
-import java.io.File;
-
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
-import org.pentaho.mantle.client.messages.MantleApplicationConstants;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
