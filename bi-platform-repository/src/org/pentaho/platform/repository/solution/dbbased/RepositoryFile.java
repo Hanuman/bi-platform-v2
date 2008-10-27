@@ -402,6 +402,11 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   /**
    * Chains up to find the access controls that are in force on this object.
    * Could end up chaining all the way to the root.
+   * 
+   * <p>Note that (1) defining no access control entries of your own and (2) removing all of your access control
+   * entries is indistiguishable in the current design. In #1, we chain up because we inherit. But in #2, it might be 
+   * expected that by explicitly removing all access control entries, the chaining up ends.  That is not the case in the
+   * current design.</p> 
    */
   public List getEffectiveAccessControls() {
     List acls = this.getAccessControls();
