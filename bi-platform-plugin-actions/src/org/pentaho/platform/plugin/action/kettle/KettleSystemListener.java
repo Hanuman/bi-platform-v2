@@ -57,7 +57,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
           .getString("KettleSystemListener.ERROR_0002_JOB_ENTRY_LOAD_FAILED")); //$NON-NLS-1$
     }
     
-    ISolutionFile pluginsFolder =  PentahoSystem.get(ISolutionRepository.class, session).getFileByPath("/system/kettle/plugins");//new File (PentahoSystem.getApplicationContext().getSolutionRootPath(),"system/kettle/plugins");
+    ISolutionFile pluginsFolder =  PentahoSystem.get(ISolutionRepository.class, session).getFileByPath("/system/kettle/plugins");//$NON-NLS-1$
 	  if (pluginsFolder!=null)
 	  {
 		  try {
