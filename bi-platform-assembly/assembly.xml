@@ -218,6 +218,7 @@
 			</copy>
 
 			<!-- Add general libs -->
+		  
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
@@ -229,7 +230,7 @@
 					<exclude name="*-sources.jar" />
 				</fileset>
 			</copy>
-
+		  
 			<!-- Add manifest -->
 			<mkdir dir="${prep.pentaho.war.dir}/META-INF" />
 			<manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
@@ -455,7 +456,7 @@
 		</sequential>
 	</target>
 	
-	<target name="validate-mantle-svn-revisions" unless="supress-svn-validation">
+	<target name="validate-mantle-svn-revisions" unless="suppress-svn-validation">
 	<sequential>
 		<mkdir dir="${basedir}/temp/mantle" />
 		<mkdir dir="${basedir}/temp/mantle-pkg" />
