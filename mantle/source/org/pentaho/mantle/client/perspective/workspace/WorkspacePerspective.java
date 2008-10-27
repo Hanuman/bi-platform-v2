@@ -24,10 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
+import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
+import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
@@ -303,7 +305,7 @@ public class WorkspacePerspective extends ScrollPanel {
       lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblArchive.addClickListener(new ClickListener() {
         public void onClick(Widget sender) {
-          performActionOnSubscription("archive", subscrName); //$NON-NLS-1$
+          runAndArchive(subscrName);
         }
       });
 
@@ -378,6 +380,32 @@ public class WorkspacePerspective extends ScrollPanel {
     }
   }
 
+  /**
+   * Runs and Archives the report attached to the given public schedule
+   * @param publicSchedule Public schedule name
+   */
+  private void runAndArchive(final String publicSchedule) {
+    AsyncCallback<String> callback = null;
+    if (publicSchedule != null) {
+      callback = new AsyncCallback<String>() {
+        public void onFailure(Throwable caught) {
+          if (caught instanceof SimpleMessageException) {
+            new MessageDialogBox(Messages.getInstance().error(),caught.getMessage(), false, false, true).center();
+          } else {
+            new MessageDialogBox(Messages.getInstance().error(),Messages.getInstance().couldNotSchedule(), false, false, true).center();
+          }
+        }
+
+        public void onSuccess(String result) {
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getInstance().runInBackground(),
+                                           Messages.getInstance().reportIsScheduledForBE(), false, false, true);
+          dialogBox.center();
+        }
+      };
+      MantleServiceCache.getService().runAndArchivePublicSchedule(publicSchedule, callback);
+    }   
+  }
+    
   /*
    * Helper method to delete the content items or the public schedule based on what's passed in.
    */

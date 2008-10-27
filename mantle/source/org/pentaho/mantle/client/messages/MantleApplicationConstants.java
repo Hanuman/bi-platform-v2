@@ -2107,9 +2107,25 @@ public interface MantleApplicationConstants extends com.google.gwt.i18n.client.M
   /**
    * Translated "{0} (User)".
    * 
-   * @return translated "{0} (User)"
-  
+   * @return translated "{0} (User)"  
    */
   @DefaultMessage("{0} (User)")
   String user(String arg0);
+
+  /**
+   * Translated "Report is scheduled for background execution.".
+   * 
+   * @return translated "Report is scheduled for background execution."  
+   */
+  @DefaultMessage("Report is scheduled for background execution.")
+  String reportIsScheduledForBE();
+
+
+  /**
+   * Translated "Report could not be scheduled for background execution.".
+   * 
+   * @return translated "Report could not be scheduled for background execution."  
+   */
+  @DefaultMessage("Report could not be scheduled for background execution.")
+  String couldNotSchedule();
 }

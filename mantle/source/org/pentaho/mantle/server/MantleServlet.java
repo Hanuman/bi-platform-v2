@@ -104,6 +104,7 @@ import org.pentaho.platform.util.VersionHelper;
 import org.pentaho.platform.util.VersionInfo;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
+import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.refactor.UserFilesComponent;
 import org.pentaho.ui.xul.IMenuCustomization;
@@ -758,6 +759,25 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return unusedScheduleList;
   }
 
+  /**
+   * Runs and archives the given public schedule.
+   * @param publicScheduleName The public scedule to be run.
+   * @return message The message that was returned from the API after running and archiving the given public schedule. 
+   */
+  public String runAndArchivePublicSchedule(String publicScheduleName) throws SimpleMessageException {
+    final IPentahoSession userSession = getPentahoSession();    
+    HttpSessionParameterProvider sessionParameters = new HttpSessionParameterProvider(userSession);
+    
+    String response = null;
+    try {
+      response = SubscriptionHelper.createSubscriptionArchive(publicScheduleName, userSession, null, sessionParameters);  
+    } catch(BackgroundExecutionException bex) {
+      response = bex.getLocalizedMessage();
+      throw new SimpleMessageException(Messages.getErrorString("ViewAction.ViewAction.ERROR_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$      
+    }
+    return response;
+  }
+  
   /**
    * Delete the contents under the public schedule and then delete the public schedule
    * 
