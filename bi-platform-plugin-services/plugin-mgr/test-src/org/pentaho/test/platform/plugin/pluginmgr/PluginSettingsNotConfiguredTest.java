@@ -8,7 +8,6 @@ import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
@@ -19,7 +18,6 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObj
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginSettings;
-import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.TestManager;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
