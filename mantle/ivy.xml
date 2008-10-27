@@ -49,7 +49,7 @@
         </dependency>
 
 
-        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic" rev="0.8.9.8-ext" conf="default->default"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.10" conf="default->default"/>
 
         <!--  Testing dependencies -->
         <dependency org="junit"          name="junit"          rev="4.4" conf="test->default"/>

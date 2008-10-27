@@ -25,7 +25,7 @@
     <!--  internal dependencies -->
         
     <!--  reporting -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.8" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.10" />
 
 
     <!-- platform -->
