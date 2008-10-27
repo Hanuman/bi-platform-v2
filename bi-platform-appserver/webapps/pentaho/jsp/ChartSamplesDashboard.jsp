@@ -40,22 +40,23 @@
 %>
 <html>
 <head>
-<title>Pentaho Chart Samples Dashboard</title>
+      <link rel="stylesheet" type="text/css" href="/pentaho-style/active/default.css"></link>
+<title>Pentaho Chart Examples</title>
 </head>
 
 <body>
-
-<table width="90%"  border="1" cellspacing="5" cellpadding="5">
+<div style="margin:10px;border:0px none #808080;padding:5px;">
+<table class="parameter_table" width="90%"  border="1" cellspacing="5" cellpadding="5">
   <tr> 
     <td> <!-- -------------------------- BAR CHART ------------------------- -->
 		<%
 
     		SimpleParameterProvider parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			StringBuffer content = new StringBuffer(); 
       		ArrayList messages = new ArrayList();
-       		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "barchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+       		ChartHelper.doChart( "steel-wheels", "charts", "barchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 
        	%>
 		<br/>
@@ -67,11 +68,11 @@
     
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "linechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "linechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -83,53 +84,68 @@
 
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "areachart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "areachart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
 	</td>
-    <td> <!-- -------------------------- DIAL CHART ------------------------- -->
-    
-    	<%
-	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
-			content = new StringBuffer(); 
-      		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "dialchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
-		%>
-		<br/>
-		<%= content.toString() %>
-    </td>
-  </tr>
-  <tr>  
     <td> <!-- -------------------------- PIE CHART ------------------------- -->
 
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "piechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "piechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
 
+	</td>
+  </tr>
+  <tr>  
+        <td> <!-- -------------------------- BAR LINE COMBO  CHART ------------------------- -->
+
+    	<%
+	    	parameters = new SimpleParameterProvider();
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
+			content = new StringBuffer(); 
+      		messages = new ArrayList();
+      		ChartHelper.doChart( "steel-wheels", "charts", "barlinecombochart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+		%>
+		<br/>
+		<%= content.toString() %>
 	</td>
     <td> <!-- -------------------------- TIME SERIES CHART ------------------------- -->
 
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "timeserieschart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "timeserieschart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+		%>
+		<br/>
+		<%= content.toString() %>
+	</td>
+  </tr>
+  <tr>
+    <td COLSPAN=2> <!-- -------------------------- XY CHART -------------------------------------- -->
+
+    	<%
+	    	parameters = new SimpleParameterProvider();
+      		parameters.setParameter( "image-width", "740"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
+			content = new StringBuffer(); 
+      		messages = new ArrayList();
+      		ChartHelper.doChart( "steel-wheels", "charts", "xychart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
@@ -137,66 +153,48 @@
 	</td>
   </tr>
   <tr>
-    <td> <!-- -------------------------- BAR LINE COMBO  CHART ------------------------- -->
+    <td COLSPAN=2> <!-- ------------------- MULTIPLE PIE CHART (PIE GRID)  ------------------------- -->
 
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "740"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "barlinecombochart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "piegridchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
-
 	</td>
-    <td> <!-- -------------------------- XY CHART -------------------------------------- -->
-
+   </tr>
+   <tr>
+       <td> <!-- -------------------------- BUBBLE CHART ------------------------- -->
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "xychart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "bubblechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
-
-	</td>
-  </tr>
-  <tr>
-    <td> <!-- -------------------------- BUBBLE CHART ------------------------- -->
+	  </td>
+    <td> <!-- -------------------------- DIAL CHART ------------------------- -->
+    
     	<%
 	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+      		parameters.setParameter( "image-height", "400"); //$NON-NLS-1$ //$NON-NLS-2$
 			content = new StringBuffer(); 
       		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "bubblechart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
+      		ChartHelper.doChart( "steel-wheels", "charts", "dialchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
 		%>
 		<br/>
 		<%= content.toString() %>
-
-	</td>
-    <td> <!-- ------------------- MULTIPLE PIE CHART (PIE GRID)  ------------------------- -->
-
-    	<%
-	    	parameters = new SimpleParameterProvider();
-      		parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-      		parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
-			content = new StringBuffer(); 
-      		messages = new ArrayList();
-      		ChartHelper.doChart( "bi-developers", "charts/samplesDashboard", "piegridchart.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$
-		%>
-		<br/>
-		<%= content.toString() %>
-
-	</td>
+    </td>	
   </tr>	
 </table>
-
-
+</div>
 </body>
 </html>
