@@ -35,7 +35,6 @@ import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPentahoSystem;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
@@ -54,6 +53,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 
+/**
+ * A Base class for platform integration tests.  Uses Spring to populate required PentahoSystem dependencies
+ * (admin plugins, system listeners, object factory, system settings, etc) 
+ * and uses the {@link StandaloneSpringPentahoObjectFactory} as the object factory implementation.  Also
+ * inits the system.
+ */
 public abstract class BaseTest extends GenericPentahoTest implements IActionCompleteListener, ILogger {
 
   protected static final boolean debug = PentahoSystem.debug;
@@ -113,7 +118,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       PentahoSystem.setObjectFactory( pentahoObjectFactory );
 
       //force Spring to inject PentahoSystem, there has got to be a better way than this, perhaps an alternate way of initting spring's app context
-      springApplicationContext.getBean("pentahoSystem", IPentahoSystem.class);
+      springApplicationContext.getBean("pentahoSystemProxy");
       initOk = PentahoSystem.init(applicationContext);
     } else {
       initOk = true;

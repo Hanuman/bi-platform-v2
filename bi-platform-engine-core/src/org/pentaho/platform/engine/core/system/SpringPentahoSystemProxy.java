@@ -31,12 +31,12 @@ import org.pentaho.platform.api.engine.ISessionStartupAction;
 import org.pentaho.platform.api.engine.ISystemSettings;
 
 /**
- * TODO: 
- * Since we have moved to a service locator pattern with PentahoSystem being the static root reference,
- * we do not support other implementations of PentahoSystem.  A better approach is to inject plugins
- * listeners and actions locators into PentahoSystem.
+ * This class exists for the sole purpose of providing a way for Spring to inject
+ * Spring-created objects into a static {@link PentahoSystem}.  
+ * <p>
+ * Please do not reference this class in your code.
  */
-public class PentahoSystemProxy implements IPentahoSystem {
+public class SpringPentahoSystemProxy implements IPentahoSystem {
   
   public void setAdministrationPlugins(List<IPentahoPublisher> administrationPlugins) {
     PentahoSystem.setAdministrationPlugins(administrationPlugins);
