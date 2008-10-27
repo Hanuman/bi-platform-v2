@@ -25,6 +25,4 @@ grant create session, create procedure, create table, create sequence to hibuser
 conn hibuser/password;
 CREATE TABLE DATASOURCE(NAME VARCHAR2(50) NOT NULL PRIMARY KEY,MAXACTCONN INTEGER NOT NULL,DRIVERCLASS VARCHAR2(50) NOT NULL,IDLECONN INTEGER NOT NULL,USERNAME VARCHAR2(50) NOT NULL,PASSWORD VARCHAR2(150) NOT NULL,URL VARCHAR2(100) NOT NULL,QUERY VARCHAR2(100) NOT NULL,WAIT INTEGER NOT NULL);
 
--- Fixes a problem where the chronstring was not allowing nulls and couldn't be fixed by editing the mapping and reving the class
-ALTER TABLE PRO_SCHEDULE MODIFY CRONSTRING VARCHAR(256) NULL;
 commit;
