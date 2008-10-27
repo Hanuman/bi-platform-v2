@@ -10,6 +10,10 @@ public class Messages {
     return messageBundle.getString(key);
   }
 
+  public static String getString(String key, String...parameters) {
+    return messageBundle.getString(key, parameters);
+  }
+
   public static MessageBundle getMessageBundle() {
     return messageBundle;
   }
