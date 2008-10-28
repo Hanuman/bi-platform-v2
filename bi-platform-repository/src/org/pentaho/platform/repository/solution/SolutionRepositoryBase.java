@@ -596,6 +596,13 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     if (!path.endsWith("/") && !path.endsWith("\\")) { //$NON-NLS-1$//$NON-NLS-2$
       path += File.separator;
     }
+
+    // do not allow publishing to root path
+    if (path.equals(File.separator)) {
+      logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
+      return ISolutionRepository.FILE_ADD_FAILED;
+    }
+
     File fNew = new File(baseUrl + path + fileName);
     int status = ISolutionRepository.FILE_ADD_SUCCESSFUL;
     if (fNew.exists() && !overwrite) {

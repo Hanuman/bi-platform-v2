@@ -71,6 +71,7 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.repository.solution.SolutionRepositoryBase;
 import org.pentaho.platform.repository.solution.filebased.FileInfo;
 import org.pentaho.platform.util.FileHelper;
+import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
@@ -1171,6 +1172,13 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
       path = path.substring(0, path.length() - 1);
     }
+    
+    // do not allow publishing to root path
+    if (StringUtil.isEmpty(path)) {
+      logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
+      return ISolutionRepository.FILE_ADD_FAILED;
+    }
+    
     // allow any user to add to system/tmp (e.g. during new analysis view) 
     if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase.isSystemTmpPath(path))) {
       // add file using file based technique to send it to disk
