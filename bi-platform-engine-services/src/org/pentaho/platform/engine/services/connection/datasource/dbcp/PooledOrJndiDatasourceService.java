@@ -30,7 +30,6 @@ import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceExcep
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.logging.Logger;
 
 public class PooledOrJndiDatasourceService extends BaseDatasourceService {
 
@@ -40,7 +39,7 @@ public class PooledOrJndiDatasourceService extends BaseDatasourceService {
 	DataSource retrieve(String datasource) throws DatasourceServiceException {
 		DataSource ds = null;
 		try {
-      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null);
+      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().get(IDatasourceMgmtService.class,null);
 			IDatasource dataSource = datasourceMgmtSvc.getDatasource(datasource);
 			// Look in the database for the datasource
 			if(dataSource != null) {
@@ -59,7 +58,6 @@ public class PooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(datasource);  
       }
       catch(DatasourceServiceException dse) {
-       Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
        throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
       }
 		} catch (DatasourceMgmtServiceException daoe) {
@@ -67,7 +65,6 @@ public class PooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(datasource);  
       }
       catch(DatasourceServiceException dse) {
-        Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
         throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);        
       }
 		}

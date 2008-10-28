@@ -56,7 +56,7 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
       return (DataSource) foundDs;
     }
     try {
-      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null); 
+      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().get(IDatasourceMgmtService.class,null); 
       IDatasource datasource = datasourceMgmtSvc.getDatasource(dsName);
       // Look in the database for the datasource
       if(datasource != null) {
@@ -71,7 +71,6 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(dsName);  
       }
       catch(DatasourceServiceException dse) {
-       Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
        throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
       }
 
@@ -80,7 +79,6 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(dsName);  
       }
       catch(DatasourceServiceException dse) {
-       Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
        throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
       }
 

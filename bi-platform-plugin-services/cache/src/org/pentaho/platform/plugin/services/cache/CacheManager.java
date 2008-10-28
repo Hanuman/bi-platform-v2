@@ -18,7 +18,6 @@
 package org.pentaho.platform.plugin.services.cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -175,18 +174,18 @@ public class CacheManager implements ICacheManager {
         regionCache = new HashMap<String, Cache>();
         Cache cache = getCacheProvider().buildCache(SESSION, cacheProperties);
         if (cache == null) {
-          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE"));
+          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE")); //$NON-NLS-1$
         } else {
           regionCache.put(SESSION, cache);
         }
         cache = getCacheProvider().buildCache(GLOBAL, cacheProperties);
         if (cache == null) {
-          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE"));
+          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE")); //$NON-NLS-1$
         } else {
           regionCache.put(GLOBAL, cache);
         }
       } else {
-        CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0002_NOT_INSTANCE_OF_CACHE_PROVIDER"));
+        CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0002_NOT_INSTANCE_OF_CACHE_PROVIDER")); //$NON-NLS-1$
       }
     }
   }
@@ -249,16 +248,16 @@ public class CacheManager implements ICacheManager {
       if(!cacheEnabled(region)) {
         Cache cache = getCacheProvider().buildCache(region, cacheProperties);
         if (cache == null) {
-          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE"));
+          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE")); //$NON-NLS-1$
         } else {
           regionCache.put(region, cache);
           returnValue = true;
         }
       } else {
-        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0002_REGION_ALREADY_EXIST"));
+        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0002_REGION_ALREADY_EXIST", region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
     return returnValue;
   }
@@ -269,17 +268,17 @@ public class CacheManager implements ICacheManager {
       if(!cacheEnabled(region)) {
         Cache cache = getCacheProvider().buildCache(region, null);
         if (cache == null) {
-          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE"));
+          CacheManager.logger.error(Messages.getString("CacheManager.ERROR_0005_UNABLE_TO_BUILD_CACHE")); //$NON-NLS-1$
         } else {
           regionCache.put(region, cache);
           returnValue = true;
         }
       } else {
-        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0002_REGION_ALREADY_EXIST"));
+        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0002_REGION_ALREADY_EXIST", region)); //$NON-NLS-1$
         returnValue = true;
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
     return returnValue;
   }
@@ -290,10 +289,10 @@ public class CacheManager implements ICacheManager {
       if(cache != null) {
         cache.clear();        
       } else {
-        CacheManager.logger.info(Messages.getString("CacheManager.INFO_0001_CACHE_DOES_NOT_EXIST"));
+        CacheManager.logger.info(Messages.getString("CacheManager.INFO_0001_CACHE_DOES_NOT_EXIST", region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
   }
 
@@ -302,10 +301,10 @@ public class CacheManager implements ICacheManager {
       if(cacheEnabled(region)) {
         clearRegionCache(region);
       } else {
-        CacheManager.logger.info(Messages.getString("CacheManager.INFO_0001_CACHE_DOES_NOT_EXIST"));
+        CacheManager.logger.info(Messages.getString("CacheManager.INFO_0001_CACHE_DOES_NOT_EXIST",region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
   }
 
@@ -315,10 +314,10 @@ public class CacheManager implements ICacheManager {
         Cache cache = regionCache.get(region);
         cache.put(key, value);
       } else {
-          CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST"));
+          CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST",region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
   }
 
@@ -329,10 +328,10 @@ public class CacheManager implements ICacheManager {
       if (cacheEnabled(region)) {
         returnValue = cache.get(key);
       } else {
-        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST"));
+        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST",region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
 
     return returnValue;
@@ -353,7 +352,7 @@ public class CacheManager implements ICacheManager {
         }
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
     return list;
   }
@@ -369,7 +368,7 @@ public class CacheManager implements ICacheManager {
         }
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
     return set;
   }
@@ -385,7 +384,7 @@ public class CacheManager implements ICacheManager {
         }
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
     return set;
   }
@@ -395,10 +394,10 @@ public class CacheManager implements ICacheManager {
       if (cacheEnabled(region)) {
         cache.remove(key);
       } else {
-        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST"));
+        CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0003_REGION_DOES_NOT_EXIST", region)); //$NON-NLS-1$
       }
     } else {
-      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED"));
+      CacheManager.logger.warn(Messages.getString("CacheManager.WARN_0001_CACHE_NOT_ENABLED")); //$NON-NLS-1$
     }
   }
 

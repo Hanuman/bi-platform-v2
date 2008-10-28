@@ -55,7 +55,7 @@ public class NonPooledDatasourceService extends BaseDatasourceService {
       return (DataSource) foundDs;
     }
     try {
-      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null); 
+      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().get(IDatasourceMgmtService.class,null); 
       IDatasource datasource = datasourceMgmtSvc.getDatasource(dsName);
       if(datasource != null) {
         dataSource = convert(datasource);
