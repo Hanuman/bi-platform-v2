@@ -289,7 +289,6 @@ public class PentahoSystem {
     } catch (PentahoSystemException e1) {
       throw new RuntimeException( e1 ); // this is fatal
     }
-    PentahoSystem.globalStartup( session );
     
     // store a list of the system listeners
     try {
@@ -302,6 +301,9 @@ public class PentahoSystem {
       return false;
     }
 
+    // once everything else is initialized, start global actions
+    PentahoSystem.globalStartup( session );
+    
     return true;
   }
 
