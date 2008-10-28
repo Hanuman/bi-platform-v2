@@ -269,10 +269,10 @@ public class MantleLoginDialog extends PromptDialogBox {
 
     boolean reallyShowNewWindowOption = showNewWindowOption;
     
-    String showNewWindowOverride = Window.Location.getParameter("showNewWindowOption");
-    if (showNewWindowOverride != null && !"".equals(showNewWindowOverride)) {
+    String showNewWindowOverride = Window.Location.getParameter("showNewWindowOption"); //$NON-NLS-1$
+    if (showNewWindowOverride != null && !"".equals(showNewWindowOverride)) { //$NON-NLS-1$
       // if the override is set, we MUST obey it above all else
-      reallyShowNewWindowOption = "true".equals(showNewWindowOverride);
+      reallyShowNewWindowOption = "true".equals(showNewWindowOverride); //$NON-NLS-1$
     }
     // New Window checkbox
     if (reallyShowNewWindowOption) {
