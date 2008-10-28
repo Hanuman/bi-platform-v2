@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.services.outputhandler.BaseOutputHandler;
+import org.pentaho.platform.plugin.services.messages.Messages;
 
 public class FileOutputHandler extends BaseOutputHandler {
   protected static final Log logger = LogFactory.getLog(FileOutputHandler.class);
@@ -37,14 +38,18 @@ public class FileOutputHandler extends BaseOutputHandler {
     File file = new File(contentRef);
     File dir = file.getParentFile();
     if ((dir != null) && !dir.exists()) {
-      dir.mkdirs();
+      boolean result = dir.mkdirs();
+      if (!result) {
+        logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0001_COULD_NOT_CREATE_DIRECTORY", dir.getAbsolutePath()));
+        return null;
+      }
     }
     try {
       FileOutputStream outputStream = new FileOutputStream(file);
       SimpleContentItem content = new SimpleContentItem(outputStream);
       return content;
     } catch (FileNotFoundException e) {
-      FileOutputHandler.logger.error(null, e);
+      logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0002_COULD_NOT_CREATE_OUTPUT_FILE", file.getAbsolutePath()), e);
     }
     return null;
   }
