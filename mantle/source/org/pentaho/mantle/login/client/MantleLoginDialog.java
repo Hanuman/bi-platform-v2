@@ -135,13 +135,6 @@ public class MantleLoginDialog extends PromptDialogBox {
   public MantleLoginDialog() {
     super(Messages.getString("login"), Messages.getString("login"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setCallback(myCallback);
-    userTextBox.setTabIndex(1);
-    passwordTextBox.setTabIndex(2);
-    if (showNewWindowOption) {
-      newWindowChk.setTabIndex(3);
-    }
-    passwordTextBox.setText(""); //$NON-NLS-1$
-    setFocusWidget(userTextBox);
     SERVICE.isShowUsersList(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
@@ -293,6 +286,14 @@ public class MantleLoginDialog extends PromptDialogBox {
 
       loginPanel.add(newWindowChk);
     }
+    
+    userTextBox.setTabIndex(1);
+    passwordTextBox.setTabIndex(2);
+    if (reallyShowNewWindowOption) {
+      newWindowChk.setTabIndex(3);
+    }
+    passwordTextBox.setText(""); //$NON-NLS-1$
+    setFocusWidget(userTextBox);
 
     return loginPanel;
   }
