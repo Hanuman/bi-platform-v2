@@ -67,6 +67,7 @@ import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -95,7 +96,29 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private VerticalPanel mainApplicationPanel = new VerticalPanel();
   private FlexTable menuAndLogoPanel = new FlexTable();
 
-  MenuBar menuBar = new MantleMenuBar();
+  MenuBar menuBar = new MantleMenuBar(){
+
+    @Override
+    public void onBrowserEvent(Event event) {
+      super.onBrowserEvent(event);
+
+      final MenuItem item = getSelectedItem();
+      switch (DOM.eventGetType(event)) {
+        case Event.ONMOUSEOVER: {
+          if (!"DIV".equals(event.getTarget().getNodeName())) { //$NON-NLS-1$ 
+            this.getSelectedItem().addStyleDependentName("selected"); //$NON-NLS-1$
+          }
+          break;
+        }
+      }
+    }
+    
+    @Override
+    public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+      super.onPopupClosed(sender, autoClosed);
+      this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
+    }
+  };
   
   // menu items (to be enabled/disabled)
   MenuBar viewMenu = new MantleMenuBar(true);

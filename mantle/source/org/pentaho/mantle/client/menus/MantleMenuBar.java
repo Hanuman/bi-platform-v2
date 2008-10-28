@@ -2,6 +2,7 @@ package org.pentaho.mantle.client.menus;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.DOM;
@@ -37,15 +38,6 @@ public class MantleMenuBar extends MenuBar{
         }
         break;
       }
-      case Event.ONMOUSEOVER: {
-        if (!"DIV".equals(event.getTarget().getNodeName())) { //$NON-NLS-1$ 
-          this.getSelectedItem().addStyleDependentName("selected"); //$NON-NLS-1$
-        }
-        if(item != null){
-          hidePDFFrames(item);
-        }
-        break;
-      }
     }
   }
 
@@ -66,13 +58,17 @@ public class MantleMenuBar extends MenuBar{
   }
   
   private Frame getActiveBrowserPerspectiveFrame(){
-    return SolutionBrowserPerspective.getInstance().getCurrentFrame().getFrame();
+    ReloadableIFrameTabPanel panel = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    if(panel == null){
+      return null;
+    } else {
+      return panel.getFrame();
+    }
   }
     
   @Override
   public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
     super.onPopupClosed(sender, autoClosed);
-    this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
 
 
     Frame frame = getActiveBrowserPerspectiveFrame();
