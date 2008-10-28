@@ -94,7 +94,6 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCube;
 import org.pentaho.platform.plugin.services.versionchecker.PentahoVersionCheckReflectHelper;
 import org.pentaho.platform.repository.content.ContentItemFile;
-import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.repository.subscription.Schedule;
 import org.pentaho.platform.repository.subscription.Subscription;
@@ -816,7 +815,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @return Error message if error occurred else success message
    */
   public String deleteSubscriptionArchive(String publicScheduleName, String contentId) {
-    HibernateUtil.beginTransaction();
     final IPentahoSession session = getPentahoSession();
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscription subscription = subscriptionRepository.getSubscription(publicScheduleName, session);
@@ -831,8 +829,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
 
     contentItem.removeVersion(contentId);
-
-    HibernateUtil.commitTransaction();
 
     return Messages.getString("SubscriptionHelper.USER_ARCHIVE_DELETED"); //$NON-NLS-1$
   }
@@ -971,7 +967,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules) {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
-    HibernateUtil.beginTransaction();
     if (enabled) {
       if (subscribeContent == null) {
         subscribeContent = subscriptionRepository.addContent(actionRef, ""); //$NON-NLS-1$
@@ -993,7 +988,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         subscriptionRepository.deleteContent(subscribeContent);
       }
     }
-    HibernateUtil.commitTransaction();
   }
 
   /**
