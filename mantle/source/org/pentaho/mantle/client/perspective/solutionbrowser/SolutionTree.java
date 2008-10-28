@@ -122,7 +122,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         menuBar.setAutoOpen(true);
         menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this))); //$NON-NLS-1$
         popupMenu.setWidget(menuBar);
-        popupMenu.hide(); 
+        popupMenu.hide();
         Timer t = new Timer() {
           public void run() {
             popupMenu.show();
@@ -191,7 +191,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
   public List<FileTreeItem> getAllNodes() {
     List<FileTreeItem> nodeList = new ArrayList<FileTreeItem>();
-    for(int i=0; i < this.getItemCount(); i++){
+    for (int i = 0; i < this.getItemCount(); i++) {
       nodeList.add((FileTreeItem) this.getItem(i));
       getAllNodes((FileTreeItem) this.getItem(i), nodeList);
     }
@@ -251,36 +251,27 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   }
 
   public FileTreeItem getTreeItem(List<String> pathSegments) {
-    boolean foundMatch = false;
-    FileTreeItem selectedItem = null;
-
-    // find the tree node whose location matches the pathSegment paths
+    if (pathSegments.size() == 0) {
+      return null;
+    }
+    int segmentIndex = 0;
     for (int x = 0; x < getItemCount(); x++) {
-      FileTreeItem rootItem = (FileTreeItem) getItem(x);
-      selectedItem = rootItem;
-      for (String segment : pathSegments) {
-        foundMatch = false;
-        // Check first if the current selected item already matches the directory at the root level
-        // If so then go to the next segment
-        if (segment.equalsIgnoreCase(selectedItem.getFileName())) {
-          foundMatch = true;
-          continue;
-        }
-        // Here we are checking into the contents of the directory
-        // i.e. directories and files existing under the top level directory
-        for (int i = 0; i < selectedItem.getChildCount(); i++) {
-          FileTreeItem item = (FileTreeItem) selectedItem.getChild(i);
-          if (segment.equals(item.getFileName())) {
-            foundMatch = true;
-            selectedItem = item;
-            break;
+      FileTreeItem item = (FileTreeItem) getItem(x);
+      if (item.getFileName().equals(pathSegments.get(segmentIndex))) {
+        // we found the correct 'root', now search children
+        segmentIndex++;
+        for (int i=0;i<item.getChildCount() && segmentIndex < pathSegments.size();i++) {
+          FileTreeItem childItem = (FileTreeItem)item.getChild(i);
+          if (childItem.getFileName().equals(pathSegments.get(segmentIndex))) {
+            item = childItem;
+            i=0;
+            segmentIndex++;
           }
         }
-      }
-      // if we actually found something meaningful,
-      // then we do not need to look through the rest of the directories
-      if (foundMatch) {
-        return selectedItem;
+        // if segmentIndex has reached the end, we have found our match
+        if (segmentIndex == pathSegments.size()) {
+          return item;
+        }
       }
     }
     return null;
@@ -549,7 +540,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     vp.add(folderNameTextBox);
     vp.add(new Label(Messages.getString("newFolderDesc"))); //$NON-NLS-1$
     vp.add(folderDescTextBox);
-    final PromptDialogBox newFolderDialog = new PromptDialogBox(Messages.getString("newFolder"), Messages.getString("ok"), Messages.getString("cancel"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final PromptDialogBox newFolderDialog = new PromptDialogBox(
+        Messages.getString("newFolder"), Messages.getString("ok"), Messages.getString("cancel"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     newFolderDialog.setFocusWidget(folderNameTextBox);
     folderNameTextBox.setFocus(true);
 
@@ -584,7 +576,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           builder.sendRequest(null, new RequestCallback() {
 
             public void onError(Request request, Throwable exception) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateFolder", folderNameTextBox.getText()), //$NON-NLS-1$ //$NON-NLS-2$
+              MessageDialogBox dialogBox = new MessageDialogBox(
+                  Messages.getString("error"), Messages.getString("couldNotCreateFolder", folderNameTextBox.getText()), //$NON-NLS-1$ //$NON-NLS-2$
                   false, false, true);
               dialogBox.center();
             }
@@ -638,7 +631,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     final String myurl = url;
     VerticalPanel vp = new VerticalPanel();
     vp.add(new Label(Messages.getString("deleteQuestion", selectedItem.getLocalizedName()))); //$NON-NLS-1$
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
+        Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     final IDialogCallback callback = new IDialogCallback() {
 

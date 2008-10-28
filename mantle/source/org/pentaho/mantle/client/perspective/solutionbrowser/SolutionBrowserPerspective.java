@@ -440,7 +440,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (name.endsWith(".xaction")) { //$NON-NLS-1$
       if (mode == FileCommand.COMMAND.RUN) {
         final Widget openAnalysisView = getOpenAnalysisView();
-        if (openAnalysisView != null && name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
+        if (openAnalysisView != null && name.endsWith(".analysis.xaction")) { //$NON-NLS-1$
           String actionName = getTabForWidget(openAnalysisView).getText();
           Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
           PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
