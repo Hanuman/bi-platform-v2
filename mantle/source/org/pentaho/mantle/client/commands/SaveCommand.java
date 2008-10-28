@@ -146,8 +146,8 @@ public class SaveCommand implements Command {
                 
     if(frame.pivot_initialized) {
       // do jpivot save
-      if (filename.indexOf("analysisview.xaction") == -1) {
-        frame.myFilename = filename + ".analysisview.xaction";
+      if (filename.indexOf("analysis.xaction") == -1) {
+        filename = filename + ".analysis.xaction";
       }
       frame.controller.saveAs(filename, filename, solution, path, overwrite);
     } else {
