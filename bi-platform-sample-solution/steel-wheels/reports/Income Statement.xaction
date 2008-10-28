@@ -6,7 +6,7 @@
   <logging-level>ERROR</logging-level>
   <documentation> 
     <author>Michael D'Amour</author>  
-    <description>%description</description>
+    <description>%description</description>  
     <icon>inc_stmt.png</icon>  
     <help/>  
     <result-type>report</result-type> 
@@ -36,17 +36,28 @@
   </resources>
   
   <actions> 
+    <action-definition>
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get Data</action-type>
+      <action-outputs>
+        <query-result type="result-set" mapping="query_result"/>
+      </action-outputs>
+      <component-definition>
+        <jndi><![CDATA[SampleData]]></jndi>
+        <query><![CDATA[select * from TRIAL_BALANCE]]></query>
+        <live><![CDATA[false]]></live>
+      </component-definition>
+    </action-definition>
+
     <action-definition> 
       <component-name>JFreeReportComponent</component-name>
       <action-type>report</action-type>
       <action-inputs> 
-        <output-type type="string"/> 
+        <output-type type="string"/>  
+        <data type="result-set" mapping="query_result"/>
       </action-inputs>
       <component-definition> 
-        <source>sql</source>  
-        <live>true</live>  
-        <jndi>SampleData</jndi>  
-        <query>select *from TRIAL_BALANCE</query> 
+        <live>true</live> 
       </component-definition> 
     </action-definition>
  
