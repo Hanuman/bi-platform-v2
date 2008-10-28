@@ -267,14 +267,14 @@ public class MantleLoginDialog extends PromptDialogBox {
     if (showNewWindowOverride != null && !"".equals(showNewWindowOverride)) { //$NON-NLS-1$
       // if the override is set, we MUST obey it above all else
       reallyShowNewWindowOption = "true".equals(showNewWindowOverride); //$NON-NLS-1$
-    } else if (getReturnLocation() != null && !"".equals(getReturnLocation())) {
-      StringTokenizer st = new StringTokenizer(getReturnLocation(), "?&");
+    } else if (getReturnLocation() != null && !"".equals(getReturnLocation())) { //$NON-NLS-1$
+      StringTokenizer st = new StringTokenizer(getReturnLocation(), "?&"); //$NON-NLS-1$
       // first token will be ignored, it is 'up to the ?'
       for (int i=1;i<st.countTokens();i++) {
-        StringTokenizer paramTokenizer = new StringTokenizer(st.tokenAt(i), "=");
+        StringTokenizer paramTokenizer = new StringTokenizer(st.tokenAt(i), "="); //$NON-NLS-1$
         if (paramTokenizer.countTokens() == 2) {
           // we've got a name=value token
-          if (paramTokenizer.tokenAt(0).equalsIgnoreCase("showNewWindowOption")) {
+          if (paramTokenizer.tokenAt(0).equalsIgnoreCase("showNewWindowOption")) { //$NON-NLS-1$
             reallyShowNewWindowOption = "true".equals(paramTokenizer.tokenAt(1)); //$NON-NLS-1$
             break;
           }

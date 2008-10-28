@@ -48,7 +48,7 @@ public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCall
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("loginError"), false, true, true); //$NON-NLS-1$
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("loginError"), false, true, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setCallback(new IDialogCallback() {
           public void cancelPressed() {
           }
