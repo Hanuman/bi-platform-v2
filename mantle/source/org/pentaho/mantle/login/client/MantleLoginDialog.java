@@ -267,8 +267,15 @@ public class MantleLoginDialog extends PromptDialogBox {
     loginPanel.add(new HTML(Messages.getString("password") + ":")); //$NON-NLS-1$ //$NON-NLS-2$
     loginPanel.add(passwordTextBox);
 
+    boolean reallyShowNewWindowOption = showNewWindowOption;
+    
+    String showNewWindowOverride = Window.Location.getParameter("showNewWindowOption");
+    if (showNewWindowOverride != null && !"".equals(showNewWindowOverride)) {
+      // if the override is set, we MUST obey it above all else
+      reallyShowNewWindowOption = "true".equals(showNewWindowOverride);
+    }
     // New Window checkbox
-    if (showNewWindowOption) {
+    if (reallyShowNewWindowOption) {
       spacer = new SimplePanel();
       spacer.setHeight("8px"); //$NON-NLS-1$
       loginPanel.add(spacer);
