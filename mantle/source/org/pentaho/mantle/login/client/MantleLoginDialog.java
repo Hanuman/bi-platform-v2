@@ -58,9 +58,11 @@ public class MantleLoginDialog extends PromptDialogBox {
   private final ListBox usersListBox = new ListBox();
   private final PasswordTextBox passwordTextBox = new PasswordTextBox();
   private CheckBox newWindowChk = new CheckBox();
-
+  private String returnLocation = null;
+  
   private static boolean showUsersList = false;
   private static boolean showNewWindowOption = true;
+  private static boolean openInNewWindowDefault = false;
   private static MantleLoginServiceAsync SERVICE;
 
   private static LinkedHashMap<String, String[]> defaultUsers = new LinkedHashMap<String, String[]>();
@@ -186,7 +188,7 @@ public class MantleLoginDialog extends PromptDialogBox {
             showUsersList = "true".equalsIgnoreCase(settings.get("showUsersList")); //$NON-NLS-1$ //$NON-NLS-2$
           }
           // get the default 'open in new window' flag, this is the default, overridden by a cookie
-          boolean openInNewWindowDefault = "true".equalsIgnoreCase(settings.get("openInNewWindow")); //$NON-NLS-1$ //$NON-NLS-2$
+          openInNewWindowDefault = "true".equalsIgnoreCase(settings.get("openInNewWindow")); //$NON-NLS-1$ //$NON-NLS-2$
           setContent(buildLoginPanel(openInNewWindowDefault));
           if (isAttached() && isVisible()) {
             center();
@@ -194,7 +196,7 @@ public class MantleLoginDialog extends PromptDialogBox {
         }
       });
     } catch (RequestException e) {
-      setContent(buildLoginPanel(false));
+      setContent(buildLoginPanel(openInNewWindowDefault));
       if (isAttached() && isVisible()) {
         center();
       }
@@ -230,7 +232,6 @@ public class MantleLoginDialog extends PromptDialogBox {
   }
 
   private Widget buildLoginPanel(boolean openInNewWindowDefault) {
-
     userTextBox.setWidth("100%"); //$NON-NLS-1$
     passwordTextBox.setWidth("100%"); //$NON-NLS-1$
     usersListBox.setWidth("100%"); //$NON-NLS-1$
@@ -266,7 +267,21 @@ public class MantleLoginDialog extends PromptDialogBox {
     if (showNewWindowOverride != null && !"".equals(showNewWindowOverride)) { //$NON-NLS-1$
       // if the override is set, we MUST obey it above all else
       reallyShowNewWindowOption = "true".equals(showNewWindowOverride); //$NON-NLS-1$
+    } else if (getReturnLocation() != null && !"".equals(getReturnLocation())) {
+      StringTokenizer st = new StringTokenizer(getReturnLocation(), "?&");
+      // first token will be ignored, it is 'up to the ?'
+      for (int i=1;i<st.countTokens();i++) {
+        StringTokenizer paramTokenizer = new StringTokenizer(st.tokenAt(i), "=");
+        if (paramTokenizer.countTokens() == 2) {
+          // we've got a name=value token
+          if (paramTokenizer.tokenAt(0).equalsIgnoreCase("showNewWindowOption")) {
+            reallyShowNewWindowOption = "true".equals(paramTokenizer.tokenAt(1)); //$NON-NLS-1$
+            break;
+          }
+        }
+      }
     }
+    
     // New Window checkbox
     if (reallyShowNewWindowOption) {
       spacer = new SimplePanel();
@@ -315,6 +330,17 @@ public class MantleLoginDialog extends PromptDialogBox {
         passwordTextBox.setText(defaultUsers.get(key)[1]);
       }
     });
+  }
+
+  public String getReturnLocation() {
+    return returnLocation;
+  }
+
+  public void setReturnLocation(String returnLocation) {
+    this.returnLocation = returnLocation;
+    // the return location might have a parameter in the url to configure options,
+    // so we must rebuild the UI if the return location is changed
+    setContent(buildLoginPanel(openInNewWindowDefault));    
   }
 
 }

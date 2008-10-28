@@ -48,7 +48,7 @@ public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCall
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable err) {
-        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), err.getMessage(), false, true, true); //$NON-NLS-1$
+        MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("loginError"), false, true, true); //$NON-NLS-1$
         dialog.setCallback(new IDialogCallback() {
           public void cancelPressed() {
           }
@@ -80,11 +80,11 @@ public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCall
     loginDialog = new MantleLoginDialog(callback, true);
 
     setupNativeHooks(loginDialog, this);
-    setReturnLocation(null);
   }
 
   public void setReturnLocation(String str) {
     returnLocation = str;
+    loginDialog.setReturnLocation(returnLocation);
   }
 
   public void cancelPopupAlertTimer() {
