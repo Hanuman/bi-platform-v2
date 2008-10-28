@@ -50,6 +50,7 @@ import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
+import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
@@ -94,25 +95,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private VerticalPanel mainApplicationPanel = new VerticalPanel();
   private FlexTable menuAndLogoPanel = new FlexTable();
 
-  private MenuBar menuBar = new MenuBar() {
-    public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-      super.onPopupClosed(sender, autoClosed);
-
-      if (this.getSelectedItem() != null) {
-        this.getSelectedItem().removeStyleDependentName("selected"); //$NON-NLS-1$
-      }
-    }
-
-    @Override
-    public void onBrowserEvent(Event e) {
-      super.onBrowserEvent(e);
-
-      if ("mouseover".equals(e.getType()) && !"DIV".equals(e.getTarget().getNodeName()) && this.getSelectedItem() != null) { //$NON-NLS-1$ //$NON-NLS-2$
-        this.getSelectedItem().addStyleDependentName("selected"); //$NON-NLS-1$
-      }
-    }
-  };
-  private MenuBar viewMenu = new MenuBar(true);
+  MenuBar menuBar = new MantleMenuBar();
+  
+  // menu items (to be enabled/disabled)
+  MenuBar viewMenu = new MantleMenuBar(true);
   private MainToolbar mainToolbar;
   private LogoPanel logoPanel;
 
@@ -125,7 +111,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem saveMenuItem;
   private PentahoMenuItem saveAsMenuItem;
   private PentahoMenuItem propertiesMenuItem;
-
 
   public boolean isAdministrator = false;
 
@@ -182,7 +167,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand(solutionBrowserPerspective)); //$NON-NLS-1$
     saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(solutionBrowserPerspective, false)); //$NON-NLS-1$
     saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAs"), new SaveCommand(solutionBrowserPerspective, true)); //$NON-NLS-1$
-    propertiesMenuItem = new PentahoMenuItem(Messages.getString("properties"), propertiesCommand); //$NON-NLS-1$
+    propertiesMenuItem = new PentahoMenuItem(Messages.getString("propertiesEllipsis"), propertiesCommand); //$NON-NLS-1$
 
     mainToolbar = new MainToolbar(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
@@ -265,10 +250,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         return null;
       }
     });
-
+    
     ElementUtils.convertPNGs();
   }
 
+  
   /**
    * This method is used by things like jpivot in order to show a 'mantle' looking alert dialog instead of a standard alert dialog.
    * 
@@ -279,7 +265,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     MessageDialogBox dialog = new MessageDialogBox(title, message, true, false, true);
     dialog.center();
   }
-
+  
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.mantle_openTab = function(name, title, url) {
@@ -428,10 +414,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         solutionBrowserPerspective.setAdministrator(isAdministrator);
 
-        MenuBar fileMenu = new MenuBar(true);
-        MenuBar newMenu = new MenuBar(true);
+        MenuBar fileMenu = new MantleMenuBar(true);
+        MenuBar newMenu = new MantleMenuBar(true);
         newMenu.addItem(Messages.getString("newAdhocReport"), new WAQRCommand(solutionBrowserPerspective)); //$NON-NLS-1$
-        newMenu.addItem(Messages.getString("newAnalysisView"), new AnalysisViewCommand(solutionBrowserPerspective)); //$NON-NLS-1$
+        newMenu.addItem(Messages.getString("newAnalysisViewEllipsis"), new AnalysisViewCommand(solutionBrowserPerspective)); //$NON-NLS-1$
         // add additions to the file menu
         customizeMenu(newMenu, "file-new", settings); //$NON-NLS-1$
 
@@ -452,10 +438,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           fileMenu.addItem(Messages.getString("userPreferencesEllipsis"), new ShowPreferencesCommand()); //$NON-NLS-1$
           fileMenu.addSeparator();
         }
-        MenuBar manageContentMenu = new MenuBar(true);
-        manageContentMenu.addItem(new MenuItem(Messages.getString("edit"), new ManageContentEditCommand(solutionBrowserPerspective))); //$NON-NLS-1$
-        manageContentMenu.addItem(new MenuItem(Messages.getString("share"), new ManageContentShareCommand(solutionBrowserPerspective))); //$NON-NLS-1$
-        manageContentMenu.addItem(new MenuItem(Messages.getString("schedule"), new ManageContentScheduleCommand(solutionBrowserPerspective))); //$NON-NLS-1$
+        MenuBar manageContentMenu = new MantleMenuBar(true);
+        manageContentMenu.addItem(new MenuItem(Messages.getString("editEllipsis"), new ManageContentEditCommand(solutionBrowserPerspective))); //$NON-NLS-1$
+        manageContentMenu.addItem(new MenuItem(Messages.getString("shareEllipsis"), new ManageContentShareCommand(solutionBrowserPerspective))); //$NON-NLS-1$
+        manageContentMenu.addItem(new MenuItem(Messages.getString("scheduleEllipsis"), new ManageContentScheduleCommand(solutionBrowserPerspective))); //$NON-NLS-1$
         customizeMenu(manageContentMenu, "file-manage", settings); //$NON-NLS-1$
         fileMenu.addItem(Messages.getString("manage"), manageContentMenu); //$NON-NLS-1$
         fileMenu.addSeparator();
@@ -502,7 +488,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         }
 
         MenuBar helpMenu = new MenuBar(true);
-        helpMenu.addItem(Messages.getString("documentationEllipsis"), new OpenDocCommand(settings.get("documentation-url"), solutionBrowserPerspective)); //$NON-NLS-1$ //$NON-NLS-2$
+        helpMenu.addItem(Messages.getString("documentation"), new OpenDocCommand(settings.get("documentation-url"), solutionBrowserPerspective)); //$NON-NLS-1$ //$NON-NLS-2$
         helpMenu.addSeparator();
         helpMenu.addItem(Messages.getString("pentahoHomePageName"), new PentahoHomeCommand()); //$NON-NLS-1$
         helpMenu.addSeparator();
@@ -540,11 +526,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       propertiesMenuItem.setCommand(propertiesCommand);
     } else {
       propertiesMenuItem.setCommand(null);
-    }
-
+    }    
+    
     // Enable/Disable Save menu items based on content
     String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+    
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
       for (String saveType : saveTypes) {

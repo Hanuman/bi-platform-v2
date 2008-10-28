@@ -199,8 +199,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
 
   };
+  
+  private static SolutionBrowserPerspective instance;
 
   public SolutionBrowserPerspective(final IPerspectiveCallback perspectiveCallback) {
+    instance = this;
     this.perspectiveCallback = perspectiveCallback;
     solutionTree.addTreeListener(treeListener);
     workspacePanel = new WorkspacePerspective(this, perspectiveCallback);
@@ -1296,6 +1299,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return true == frame.pivot_initialized;
   }-*/;  
   
-  
-  
+  public static SolutionBrowserPerspective getInstance(){
+    return instance;
+  }
 }

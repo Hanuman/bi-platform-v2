@@ -24,19 +24,26 @@ import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarButton;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarComboButton;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarGroup;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.FrameUtils;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * @author wseyler
@@ -52,7 +59,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
   IFileItemCallback callback;
 
-  MenuBar miscMenus = new MenuBar(true);
+  MenuBar miscMenus = new MantleMenuBar(true);
 
   public FilesToolbar(IFileItemCallback fileItemCallback) {
     super();
@@ -125,8 +132,30 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     });
     miscComboBtn.setToolTip(Messages.getString("options")); //$NON-NLS-1$
     add(miscComboBtn);
-
     setEnabled(false);
+  }
+  
+  
+
+  @Override
+  public void popupClosed(PopupPanel panel) {
+    Frame currentFrame = SolutionBrowserPerspective.getInstance().getCurrentFrame().getFrame();
+    if(currentFrame == null){
+      return;
+    }
+    FrameUtils.setEmbedVisibility(currentFrame, true);
+  }
+
+  @Override
+  public void popupOpened(PopupPanel panel) {
+    Frame currentFrame = SolutionBrowserPerspective.getInstance().getCurrentFrame().getFrame();
+    if(currentFrame == null){
+      return;
+    }
+    if(ElementUtils.elementsOverlap(panel.getElement(), 
+        currentFrame.getElement())){
+      FrameUtils.setEmbedVisibility(currentFrame, false);
+    }
   }
 
   /*

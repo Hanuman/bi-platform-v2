@@ -21,9 +21,9 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.toolbars;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarButton;
-import org.pentaho.gwt.widgets.client.toolbar.ToolbarGroup;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
+import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
@@ -42,7 +42,7 @@ public class BrowserToolbar extends Toolbar {
 
   SolutionBrowserPerspective solutionBrowserPerspective;
 
-  MenuBar miscMenus = new MenuBar(true);
+  MenuBar miscMenus = new MantleMenuBar(true);
 
   public BrowserToolbar(SolutionBrowserPerspective solutionBrowserPerspective) {
     super();
