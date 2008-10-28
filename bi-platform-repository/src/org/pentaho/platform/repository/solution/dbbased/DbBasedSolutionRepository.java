@@ -1434,6 +1434,15 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     //      return Collections.emptyMap();
     //    }
   }
+  
+  /**
+   * TODO mlowery Need to throw exception if unauthorized.
+   * TODO mlowery If we had a READ_PERMS bit, then it would be enforced here.
+   */
+  public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(final ISolutionFile file) {
+    AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+    return permissionMgr.getEffectivePermissions(file);
+  }
 
   @Override
   public ISolutionFile createFolder(final File newFolder) throws IOException {

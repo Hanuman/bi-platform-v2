@@ -43,12 +43,24 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     return AcegiPermissionMgr.singletonPermMgr;
   }
 
-  public Map<IPermissionRecipient, IPermissionMask> getPermissions(final Object object) {
-    IAclHolder aclHolder = (IAclHolder) object;
+  public Map<IPermissionRecipient, IPermissionMask> getPermissions(final Object domainInstance) {
+    IAclHolder aclHolder = (IAclHolder) domainInstance;
     List<IPentahoAclEntry> aclList = aclHolder.getAccessControls();
+    return transformEntries(aclList);
+  }
+
+  public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(Object domainInstance) {
+    IAclHolder aclHolder = (IAclHolder) domainInstance;
+    List<IPentahoAclEntry> aclList = aclHolder.getEffectiveAccessControls();
+    return transformEntries(aclList);
+  }
+  
+  /**
+   * Converts from List&lt;IPentahoAclEntry&gt; to Map&lt;IPermissionRecipient, IPermissionMask&gt;.
+   */
+  protected Map<IPermissionRecipient, IPermissionMask> transformEntries(List<IPentahoAclEntry> entriesFromHolder) {
     Map<IPermissionRecipient, IPermissionMask> permissionsMap = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
-    for (Object element : aclList) {
-      IPentahoAclEntry pentahoAclEntry = (IPentahoAclEntry) element;
+    for (IPentahoAclEntry pentahoAclEntry : entriesFromHolder) {
       IPermissionRecipient permissionRecipient = null;
       if (pentahoAclEntry.getRecipient() instanceof GrantedAuthorityImpl) {
         GrantedAuthorityImpl grantedAuthorityImpl = (GrantedAuthorityImpl) pentahoAclEntry.getRecipient();
@@ -63,7 +75,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     }
     return permissionsMap;
   }
-
+  
   public boolean hasPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permissionMask,
       final Object object) {
     if (object == null || !(object instanceof IAclHolder)) {
@@ -129,7 +141,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     }
     IAclHolder aclHolder = (IAclHolder) object;
     Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = permissionsMap.entrySet();
-    ArrayList<PentahoAclEntry> aclList = new ArrayList<PentahoAclEntry>();
+    ArrayList<IPentahoAclEntry> aclList = new ArrayList<IPentahoAclEntry>();
     for (Entry<IPermissionRecipient, IPermissionMask> mapEntry : mapEntrySet) {
       PentahoAclEntry pentahoAclEntry = new PentahoAclEntry();
       IPermissionRecipient permissionRecipient = mapEntry.getKey();

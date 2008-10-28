@@ -896,6 +896,10 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     return Collections.emptyMap();
   }
 
+  public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(final ISolutionFile file) {
+    return Collections.emptyMap();
+  }
+  
   public boolean synchronizeSolutionWithSolutionSource(final IPentahoSession pSession) {
     throw new UnsupportedOperationException("Synchronization is not supported by this implementor"); //$NON-NLS-1$
   }

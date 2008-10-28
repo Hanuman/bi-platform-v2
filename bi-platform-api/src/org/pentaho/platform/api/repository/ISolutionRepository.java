@@ -546,6 +546,14 @@ public interface ISolutionRepository extends ILogger {
   public Map<IPermissionRecipient, IPermissionMask> getPermissions(ISolutionFile aFile);
 
   /**
+   * Returns the ACL for the given file. If there are no access control entries for the given file, return the access
+   * control entries of an ancestor file.
+   * @param aFile file whose ACL is to be returned
+   * @return ACL
+   */
+  public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(ISolutionFile aFile);
+  
+  /**
    * For ISolutionRepository implementations that have a source and a
    * destination (for example, DBBasedSolutionRepository which has 
    * a file-system source and a DB destination) this is the entry point

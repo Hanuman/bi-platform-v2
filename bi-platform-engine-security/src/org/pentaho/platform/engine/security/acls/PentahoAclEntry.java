@@ -29,6 +29,8 @@ import java.util.Map;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.acl.basic.AbstractBasicAclEntry;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -55,7 +57,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
   private static final int RECIPIENT_STRING = 0;
 
   private static final int RECIPIENT_GRANTEDAUTHORITY = 1;
-  
+
   private static final Map validPermissionsNameMap = new HashMap();
 
   public int recipientType = PentahoAclEntry.RECIPIENT_STRING;
@@ -267,6 +269,26 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
    */
   public static Map getValidPermissionsNameMap(final String permissionsListType) {
     return (Map) PentahoAclEntry.validPermissionsNameMap.get(permissionsListType);
+  }
+
+  public boolean equals(final Object obj) {
+    if (obj instanceof PentahoAclEntry == false) {
+      return false;
+    }
+    if (this == obj) {
+      return true;
+    }
+    PentahoAclEntry rhs = (PentahoAclEntry) obj;
+    return new EqualsBuilder().append(getRecipient(), rhs.getRecipient()).append(getRecipientType(),
+        rhs.getRecipientType()).append(getAclObjectIdentity(), rhs.getAclObjectIdentity()).append(
+        getAclObjectParentIdentity(), rhs.getAclObjectParentIdentity()).append(getValidPermissions(),
+        rhs.getValidPermissions()).append(getMask(), rhs.getMask()).isEquals();
+  }
+
+  public int hashCode() {
+    return new HashCodeBuilder(79, 211).append(getRecipient()).append(getRecipientType())
+        .append(getAclObjectIdentity()).append(getAclObjectParentIdentity()).append(getValidPermissions()).append(
+            getMask()).toHashCode();
   }
 
 }

@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IFileFilter;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISearchable;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -71,7 +72,7 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
 
   private Set childrenFiles = new TreeSet();
 
-  private List accessControls = new ArrayList();
+  private List<IPentahoAclEntry> accessControls = new ArrayList<IPentahoAclEntry>();
 
   public RepositoryFile() {
     super();
@@ -124,7 +125,7 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
     setFullPath(buffer.toString());
   }
 
-  public List getAccessControls() {
+  public List<IPentahoAclEntry> getAccessControls() {
     HibernateUtil.beginTransaction(); // Make sure we're in a transaction
     return this.accessControls;
   }
@@ -132,12 +133,12 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   /**
    * This method's purpose is to allow Hibernate to initialize the ACLs from the data-store. Application clients should likely use resetAccessControls.
    */
-  public void setAccessControls(final List acls) {
+  public void setAccessControls(final List<IPentahoAclEntry> acls) {
     HibernateUtil.beginTransaction(); // Make sure we're in a transaction
     this.accessControls = acls;
   }
 
-  public void resetAccessControls(final List acls) {
+  public void resetAccessControls(final List<IPentahoAclEntry> acls) {
     HibernateUtil.beginTransaction(); // Makes sure we're within a transaction
     if (this.accessControls != null) {
       this.accessControls.clear();
@@ -408,7 +409,7 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
    * expected that by explicitly removing all access control entries, the chaining up ends.  That is not the case in the
    * current design.</p> 
    */
-  public List getEffectiveAccessControls() {
+  public List<IPentahoAclEntry> getEffectiveAccessControls() {
     List acls = this.getAccessControls();
     if (acls.size() == 0) {
       RepositoryFile chain = this;

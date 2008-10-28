@@ -57,7 +57,7 @@ public interface IAclHolder {
    * when the object is being persisted.
    * @param acls
    */
-  public void resetAccessControls(List acls);
+  public void resetAccessControls(List<IPentahoAclEntry> acls);
   
   /**
    * Examines whether the existing object has ACLs. If not, it will return the
@@ -66,5 +66,5 @@ public interface IAclHolder {
    * 
    * @return List containing all the AclEntry objects
    */
-  public List getEffectiveAccessControls();
+  public List<IPentahoAclEntry> getEffectiveAccessControls();
 }

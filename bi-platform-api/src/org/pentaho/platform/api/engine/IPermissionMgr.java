@@ -28,7 +28,22 @@ public interface IPermissionMgr {
   public boolean hasPermission(IPermissionRecipient permissionRecipient, IPermissionMask permission,
       Object domainInstance);
 
+  /**
+   * Returns permission map containing access control entries that are defined directly on this 
+   * <code>domainInstance</code>.
+   * @param domainInstance the object for which to fetch permissions
+   * @return a map of permissions
+   */
   public Map<IPermissionRecipient, IPermissionMask> getPermissions(Object domainInstance);
+  
+  /**
+   * Returns permission map containing access control entries that are defined directly on this 
+   * <code>domainInstance</code>. If there are no direct entries, then the permission map will be the map of one of
+   * <code>domainInstance</code>'s ancestors.
+   * @param domainInstance the object for which to fetch permissions
+   * @return a map of permissions
+   */
+  public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(Object domainInstance);
 
   /**
    * TODO mlowery This is really addPermission. Perhaps a method name change?

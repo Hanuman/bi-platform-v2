@@ -512,14 +512,14 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } else {
       solutionFileInfo.isSubscribable = false;
     }
-
+    
     solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
     solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
     if (solutionFileInfo.canEffectiveUserManage && solutionFileInfo.supportsAccessControls) {
       List<RolePermission> rolePermissions = new ArrayList<RolePermission>();
       List<UserPermission> userPermissions = new ArrayList<UserPermission>();
       if (solutionFile instanceof IAclSolutionFile) {
-        Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
+        Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getEffectivePermissions((solutionFile));
         for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
           IPermissionRecipient permRecipient = filePerm.getKey();
           if (permRecipient instanceof SimpleRole) {
@@ -551,6 +551,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       if (repository.supportsAccessControls()) {
         String fullPath = ActionInfo.buildSolutionPath(fileInfo.solution, fileInfo.path, fileInfo.name);
         ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+        
+        Map<IPermissionRecipient, IPermissionMask> origAcl = repository.getEffectivePermissions((solutionFile));
+        
         Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
         for (UserPermission userPermission : fileInfo.userPermissions) {
           acl.put(new SimpleUser(userPermission.name), new SimplePermissionMask(userPermission.mask));
@@ -558,8 +561,14 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         for (RolePermission rolePermission : fileInfo.rolePermissions) {
           acl.put(new SimpleRole(rolePermission.name), new SimplePermissionMask(rolePermission.mask));
         }
-        repository.setPermissions(solutionFile, acl);
-        repository.resetRepository();
+        
+        // only set the permissions if the user made a change to the effective acls (otherwise, keep inheriting);
+        // this will avoid creating access control entries in the database when they are the same as the ACEs
+        // that would be inherited!
+        if (!origAcl.equals(acl)) {
+          repository.setPermissions(solutionFile, acl);
+          repository.resetRepository();
+        }
 
         if (!solutionFile.isDirectory()) {
           ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
