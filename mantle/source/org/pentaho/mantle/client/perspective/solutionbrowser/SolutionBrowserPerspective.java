@@ -585,6 +585,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       fileInfo.setPath(selectedFileItem.getPath());
       this.getCurrentFrame().setFileInfo(fileInfo);
 
+    } else {
+      MessageDialogBox dialogBox = new MessageDialogBox(
+          Messages.getString("error"), //$NON-NLS-1$
+          Messages.getString("cannotEditFileType"), //$NON-NLS-1$
+          true, false, true);
+      dialogBox.center();
     }
   }
   
