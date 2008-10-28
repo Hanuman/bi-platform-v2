@@ -38,6 +38,12 @@ public class MantleMenuBar extends MenuBar{
         }
         break;
       }
+      case Event.ONMOUSEOVER: {
+        if(item != null){
+          hidePDFFrames(item);
+        }
+        break;
+      }
     }
   }
 

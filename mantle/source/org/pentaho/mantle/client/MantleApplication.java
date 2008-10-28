@@ -491,9 +491,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         customizeMenu(viewMenu, "view", settings); //$NON-NLS-1$
         menuBar.addItem(Messages.getString("view"), viewMenu); //$NON-NLS-1$
 
-        MenuBar toolsMenu = new MenuBar(true);
+        MenuBar toolsMenu = new MantleMenuBar(true);
         if (isAdministrator) {
-          MenuBar adminMenu = new MenuBar(true);
+          MenuBar adminMenu = new MantleMenuBar(true);
           adminMenu.addItem(Messages.getString("refreshRepository"), refreshRepositoryCommand); //$NON-NLS-1$
           adminMenu.addItem(Messages.getString("refreshSystemSettings"), new RefreshSystemSettingsCommand()); //$NON-NLS-1$
           adminMenu.addItem(Messages.getString("refreshReportingMetadata"), new RefreshMetaDataCommand()); //$NON-NLS-1$
