@@ -22,7 +22,6 @@ package org.pentaho.platform.engine.services.connection.datasource.dbcp;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.pentaho.di.core.util.Messages;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
@@ -30,6 +29,7 @@ import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceExcep
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.messages.Messages;
 
 public class PooledOrJndiDatasourceService extends BaseDatasourceService {
 
@@ -58,14 +58,14 @@ public class PooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(datasource);  
       }
       catch(DatasourceServiceException dse) {
-       throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
+       throw new DatasourceServiceException(Messages.getErrorString("PooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
       }
 		} catch (DatasourceMgmtServiceException daoe) {
       try {
         return getJndiDataSource(datasource);  
       }
       catch(DatasourceServiceException dse) {
-        throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);        
+        throw new DatasourceServiceException(Messages.getErrorString("PooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);         //$NON-NLS-1$
       }
 		}
 		return ds;

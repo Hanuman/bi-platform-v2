@@ -21,9 +21,8 @@ package org.pentaho.platform.engine.services.connection.datasource.dbcp;
 
 import javax.sql.DataSource;
 
-import org.pentaho.di.core.util.Messages;
 import org.pentaho.platform.api.data.DatasourceServiceException;
-import org.pentaho.platform.util.logging.Logger;
+import org.pentaho.platform.engine.services.messages.Messages;
 
 public class JndiDatasourceService extends BaseDatasourceService {
 
@@ -43,8 +42,7 @@ public class JndiDatasourceService extends BaseDatasourceService {
       return getJndiDataSource(dsName);  
     }
     catch(DatasourceServiceException dse) {
-     Logger.error(this, Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE")); //$NON-NLS-1$
-     throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_JNDI_DATASOURCE") ,dse); 
+     throw new DatasourceServiceException(Messages.getErrorString("JndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
     }
   }
 

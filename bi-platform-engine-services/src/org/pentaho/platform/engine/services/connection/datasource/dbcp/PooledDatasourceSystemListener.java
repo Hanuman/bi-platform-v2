@@ -59,7 +59,7 @@ public class PooledDatasourceSystemListener implements IPentahoSystemListener {
           cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource.getName(), ds);
         } catch (DatasourceServiceException dse) {
           // Skip this datasource pooling
-          Logger.warn(this, Messages.getErrorString("PooledDatasourceSystemListener.ERROR_0003_UNABLE_TO_POOL_DATASOURCE",datasource.getName())); //$NON-NLS-1$
+          Logger.error(this, Messages.getErrorString("PooledDatasourceSystemListener.ERROR_0003_UNABLE_TO_POOL_DATASOURCE",datasource.getName(), dse.getMessage())); //$NON-NLS-1$
           continue;
         }
        }
@@ -74,11 +74,12 @@ public class PooledDatasourceSystemListener implements IPentahoSystemListener {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void shutdown() {
     ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
     // Extracting pools from the cache  
     List<ObjectPool> objectPools = null;
-    objectPools = (List<ObjectPool>)cacheManager.getAllValuesFromRegionCache(IDatasourceService.JDBC_POOL); //$NON-NLS-1$
+    objectPools = (List<ObjectPool>)cacheManager.getAllValuesFromRegionCache(IDatasourceService.JDBC_POOL);
 
     Logger.debug(this, "PooledDatasourceSystemListener: called for shutdown"); //$NON-NLS-1$
     // Clearing all pools

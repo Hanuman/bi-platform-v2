@@ -115,7 +115,7 @@ public class PooledDatasourceHelper {
 	    Puts pool-specific wrappers on factory connections.  For clarification:
 	    "[PoolableConnection]Factory," not "Poolable[ConnectionFactory]."
 	    */
-	    PoolableConnectionFactory pcf = new PoolableConnectionFactory(factory, // ConnectionFactory
+      PoolableConnectionFactory pcf = new PoolableConnectionFactory(factory, // ConnectionFactory
 	        pool, // ObjectPool
 	        null, // KeyedObjectPoolFactory
 	        validQuery, // String (validation query)
@@ -126,7 +126,7 @@ public class PooledDatasourceHelper {
 	    /*
 	    initialize the pool to X connections
 	    */
-	    Logger.debug(PooledDatasourceHelper.class, "Pool defaults to " + maxActiveConnection + " max active/" + maxIdleConnection + "max idle"  + "with " + waitTime + "wait time"//$NON-NLS-1$ //$NON-NLS-2$
+	    Logger.debug(PooledDatasourceHelper.class, "Pool defaults to " + maxActiveConnection + " max active/" + maxIdleConnection + "max idle"  + "with " + waitTime + "wait time"//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	        + " idle connections."); //$NON-NLS-1$
 	    
 	     for (int i = 0; i < maxIdleConnection; ++i) {

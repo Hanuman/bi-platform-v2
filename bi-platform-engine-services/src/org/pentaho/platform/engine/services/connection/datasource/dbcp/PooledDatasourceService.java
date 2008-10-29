@@ -39,20 +39,20 @@ public class PooledDatasourceService extends BaseDatasourceService {
 	DataSource retrieve(String datasource) throws DatasourceServiceException {
 		DataSource ds = null;
 		try {
-      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().getObject("IDatasourceMgmtService",null);
+      IDatasourceMgmtService datasourceMgmtSvc = (IDatasourceMgmtService) PentahoSystem.getObjectFactory().get(IDatasourceMgmtService.class,null);
 			IDatasource dataSource = datasourceMgmtSvc
 					.getDatasource(datasource);
 			if(datasource != null) {
 	      ds = PooledDatasourceHelper
         .setupPooledDataSource(dataSource);
 			} else  {
-			  throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"));
+			  throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE")); //$NON-NLS-1$
 			}
 			cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource, ds);
     } catch (ObjectFactoryException objface) {
-      throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_INSTANTIATE_OBJECT"),objface);
+      throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"),objface); //$NON-NLS-1$
 		} catch (DatasourceMgmtServiceException daoe) {
-		  throw new DatasourceServiceException(Messages.getString("IDatasourceService.UNABLE_TO_GET_DATASOURCE"),daoe);
+		  throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE"),daoe); //$NON-NLS-1$
 		}
 		return ds;
 	}
