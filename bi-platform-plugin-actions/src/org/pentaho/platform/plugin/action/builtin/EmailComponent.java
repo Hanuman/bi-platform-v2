@@ -102,7 +102,7 @@ public class EmailComponent extends ComponentBase {
         PentahoSystem
             .getMessageFormatter(getSession())
             .formatErrorMessage(
-                "text/html", Messages.getString("Email.USER_COULD_NOT_SEND_EMAIL"), Messages.getString("Email.USER_SETTINGS_HELP", "~/pentaho-demo/pentaho-solutions/system/smtp-email/email_config.xml"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                "text/html", Messages.getString("Email.USER_COULD_NOT_SEND_EMAIL"), Messages.getString("Email.USER_SETTINGS_HELP"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         try {
           feedbackStream.write(messageBuffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
         } catch (Exception e) {
