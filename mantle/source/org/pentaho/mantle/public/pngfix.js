@@ -8,6 +8,10 @@ Use in <HEAD> with DEFER keyword wrapped in conditional comments:
 <script defer type="text/javascript" src="pngfix.js"></script>
 <![endif]-->
 
+add  fixPNGs() call to your document's body onload attribute
+<body onLoad="fixPNGs()">
+
+
 
 WARNINGS!!
 Problem: Containers with PNGs as backgrounds that "stretch" (repeat-x,y) that also have a padding style will not scale properly. 
@@ -83,13 +87,8 @@ function fixPNGs(){
 Recurse to find all elements that have a style with a PNG backgroundImage
 ====================================================================*/
 function searchForBGs(list, node){
-  if(node.style ){
-    if(node.style.backgroundImage.toLowerCase().indexOf(".png") > -1){
-        //if the background is positioned, we can't reproduce that with a filter so ignore
-        if(!node.style.backgroundPosition || node.style.backgroundPosition == ""){
-            list[list.length] = node;
-        }
-    }
+  if(node.style && node.style.backgroundImage && node.style.backgroundImage.toLowerCase().indexOf(".png") > -1){
+    list[list.length] = node;
   }
   for(var i=0; i<node.childNodes.length; i++){
     list = searchForBGs(list, node.childNodes[i]);
