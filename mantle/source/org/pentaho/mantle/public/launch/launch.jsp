@@ -319,9 +319,7 @@ function loader(){
 }
 
 </script>
-<!--[if lt IE 7]>
 <script defer type="text/javascript" src="../pngfix.js"></script>
-<![endif]-->
 </head>
 
 <body onLoad="loader()">
