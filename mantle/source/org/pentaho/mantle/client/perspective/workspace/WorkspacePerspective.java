@@ -575,10 +575,14 @@ public class WorkspacePerspective extends ScrollPanel {
 //        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
 //      actionPanel.add(deleteJobLabel);
+      
+      if (actionPanel.getWidgetCount() == 0) {
+        actionPanel.add(new HTML("&nbsp;")); //$NON-NLS-1$
+      }
 
       scheduleTable.setWidget(row + 1, 0, new HTML(jobSchedule.jobName));
       scheduleTable.setWidget(row + 1, 1, new HTML(jobSchedule.jobGroup));
-      scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
+      scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null || jobSchedule.jobDescription.trim().length() == 0 ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
       scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? Messages.getString("never") : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$ //$NON-NLS-2$
           + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString()))); //$NON-NLS-1$
       scheduleTable.setWidget(row + 1, 4, new HTML(getTriggerStateName(jobSchedule.triggerState)));
