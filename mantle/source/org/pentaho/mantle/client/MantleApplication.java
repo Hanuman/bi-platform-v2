@@ -311,6 +311,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     $wnd.mantle_showMessage = function(title, message) {
       mantle.@org.pentaho.mantle.client.MantleApplication::showMessage(Ljava/lang/String;Ljava/lang/String;)(title, message);
     }
+    
+    $wnd.enableAdhocSave = function(enable) {
+      mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
+    }
+    
   }-*/;
 
   public void loadAndApplyUserSettings() {
@@ -552,7 +557,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }    
     
     // Enable/Disable Save menu items based on content
-    String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    String[] saveTypes = new String[] { ".analysisview.xaction"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
@@ -613,4 +618,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     this.isAdministrator = isAdministrator;
   }
 
+  public void enableAdhocSave(boolean enable){
+    saveMenuItem.setEnabled(enable);
+    saveAsMenuItem.setEnabled(enable);
+    this.mainToolbar.enableAdhocSave(enable);
+  }
 }

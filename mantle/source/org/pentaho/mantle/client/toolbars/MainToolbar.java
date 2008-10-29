@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.Image;
 public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   protected String MAIN_TOOBAR_STYLE_NAME = "mainToolbar"; //$NON-NLS-1$
 
-  private String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  private String[] saveTypes = new String[] { ".analysisview.xaction"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   SolutionBrowserPerspective solutionBrowser;
   
@@ -186,6 +186,11 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     }
     saveButton.setEnabled(saveEnabled);
     saveAsButton.setEnabled(saveEnabled);
+  }
+  
+  public void enableAdhocSave(boolean enable){
+    saveButton.setEnabled(enable);
+    saveAsButton.setEnabled(enable);
   }
 
 }
