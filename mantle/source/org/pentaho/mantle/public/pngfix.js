@@ -69,7 +69,9 @@ function fixPNGs(){
                 if(!background){
                     continue;
                 }
-                fixStyle(sheet[y].style);
+                if(background.toLowerCase().indexOf(".png") > -1){
+                    fixStyle(sheet[y].style);
+                }
             }
         }
 
@@ -82,7 +84,7 @@ Recurse to find all elements that have a style with a PNG backgroundImage
 ====================================================================*/
 function searchForBGs(list, node){
   if(node.style ){
-    if(node.style.backgroundImage.toLowerCase().indexOf("png") > -1){
+    if(node.style.backgroundImage.toLowerCase().indexOf(".png") > -1){
         //if the background is positioned, we can't reproduce that with a filter so ignore
         if(!node.style.backgroundPosition || node.style.backgroundPosition == ""){
             list[list.length] = node;
