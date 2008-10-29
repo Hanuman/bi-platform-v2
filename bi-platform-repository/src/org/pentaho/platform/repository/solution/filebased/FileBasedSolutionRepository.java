@@ -97,9 +97,10 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
   public ClassLoader getClassLoader(final String path) {
     File localeDir = new File(PentahoSystem.getApplicationContext().getSolutionPath(path));
     try {
-      URLClassLoader loader = new URLClassLoader(new URL[] { localeDir.toURL() });
+      URLClassLoader loader = new URLClassLoader(new URL[] { localeDir.toURL() }, null);
       return loader;
     } catch (Exception e) {
+      error(Messages.getErrorString("SolutionRepository.ERROR_0024_CREATING_CLASSLOADER"));
     }
     return null;
   }
@@ -327,7 +328,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
       boolean searching = true;
       while (searching) {
         // look to see if this exists
-        URLClassLoader loader = new URLClassLoader(new URL[] { searchDir.toURL() });
+        URLClassLoader loader = new URLClassLoader(new URL[] { searchDir.toURL() }, null);
         String localeText = null;
         try {
           ResourceBundle rb = ResourceBundle.getBundle(baseName, getLocale(), loader);
