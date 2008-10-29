@@ -29,6 +29,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 
 public class SaveCommand implements Command {
@@ -82,6 +83,7 @@ public class SaveCommand implements Command {
             overWriteDialog.setCallback(new IDialogCallback() {
               public void okPressed() {
                 doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+                Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
               }
 
               public void cancelPressed() {
@@ -91,6 +93,7 @@ public class SaveCommand implements Command {
             overWriteDialog.center();
           } else {
             doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+            Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
             persistFileInfoInFrame();
             clearValues();
           }
@@ -146,10 +149,11 @@ public class SaveCommand implements Command {
                 
     if(frame.pivot_initialized) {
       // do jpivot save
-      if (filename.indexOf("analysis.xaction") == -1) {
-        filename = filename + ".analysis.xaction";
+      var actualFileName = filename;
+      if (filename.indexOf("analysisview.xaction") == -1) {
+        actualFileName = filename + ".analysisview.xaction";
       }
-      frame.controller.saveAs(filename, filename, solution, path, overwrite);
+      frame.controller.saveAs(actualFileName, filename, solution, path, overwrite);
     } else {
       frame.gCtrlr.repositoryBrowserController.remoteSave(filename, solution, path, "html", overwrite);
     }
