@@ -32,17 +32,16 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
@@ -139,19 +138,21 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
   @Override
   public void popupClosed(PopupPanel panel) {
-    Frame currentFrame = SolutionBrowserPerspective.getInstance().getCurrentFrame().getFrame();
-    if(currentFrame == null){
+    ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    if(iframeTab == null || iframeTab.getFrame() == null){
       return;
     }
+    Frame currentFrame = iframeTab.getFrame();
     FrameUtils.setEmbedVisibility(currentFrame, true);
   }
 
   @Override
   public void popupOpened(PopupPanel panel) {
-    Frame currentFrame = SolutionBrowserPerspective.getInstance().getCurrentFrame().getFrame();
-    if(currentFrame == null){
+    ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    if(iframeTab == null || iframeTab.getFrame() == null){
       return;
     }
+    Frame currentFrame = iframeTab.getFrame();
     if(ElementUtils.elementsOverlap(panel.getElement(), 
         currentFrame.getElement())){
       FrameUtils.setEmbedVisibility(currentFrame, false);
