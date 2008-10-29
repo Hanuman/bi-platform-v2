@@ -40,7 +40,7 @@ public class FileOutputHandler extends BaseOutputHandler {
     if ((dir != null) && !dir.exists()) {
       boolean result = dir.mkdirs();
       if (!result) {
-        logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0001_COULD_NOT_CREATE_DIRECTORY", dir.getAbsolutePath()));
+        logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0001_COULD_NOT_CREATE_DIRECTORY", dir.getAbsolutePath())); //$NON-NLS-1$
         return null;
       }
     }
@@ -49,7 +49,7 @@ public class FileOutputHandler extends BaseOutputHandler {
       SimpleContentItem content = new SimpleContentItem(outputStream);
       return content;
     } catch (FileNotFoundException e) {
-      logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0002_COULD_NOT_CREATE_OUTPUT_FILE", file.getAbsolutePath()), e);
+      logger.error(Messages.getErrorString("FileOutputHandler.ERROR_0002_COULD_NOT_CREATE_OUTPUT_FILE", file.getAbsolutePath()), e); //$NON-NLS-1$
     }
     return null;
   }
