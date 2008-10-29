@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <name>Sales_by_Employee.xaction</name>
+  <title>%title</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author>Kurtis Cruzada</author>  
+    <description>%description</description>  
+    <icon>slsbyter.png</icon>  
+    <help/>  
+    <result-type>none</result-type> 
+  </documentation>
+
+  <inputs> 
+    <output-type type="string"> 
+      <default-value><![CDATA[html]]></default-value>  
+      <sources> 
+        <request>type</request> 
+      </sources> 
+    </output-type>  
+    <TERRITORY type="string"> 
+      <sources> 
+        <request>TERRITORY</request> 
+      </sources>  
+      <default-value><![CDATA[NA]]></default-value> 
+    </TERRITORY>  
+    <PRODUCTLINE type="string"> 
+      <sources> 
+        <request>PRODUCTLINE</request> 
+      </sources>  
+      <default-value><![CDATA[Motorcycles]]></default-value> 
+    </PRODUCTLINE>  
+    <output-type-list type="property-map-list"> 
+      <sources> 
+        <runtime>output-type-list</runtime> 
+      </sources>  
+      <default-value type="property-map-list"> 
+        <property-map> 
+          <entry key="report-output-desc">PDF</entry>  
+          <entry key="report-output-type-id">pdf</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="report-output-desc">Excel</entry>  
+          <entry key="report-output-type-id">xls</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="report-output-desc">Web Page</entry>  
+          <entry key="report-output-type-id">html</entry> 
+        </property-map> 
+      </default-value> 
+    </output-type-list> 
+  </inputs>
+
+  <outputs> 
+    <!-- an output stream will be provided by default --> 
+  </outputs>
+
+  <resources> 
+    <!-- use this section to identify any files that the component needs to execute the report -->  
+    <report-definition> 
+      <solution-file> 
+        <location>Sales_by_Employee.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </report-definition> 
+  </resources>
+  
+  <visible>false</visible>  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get Data</action-type>
+      <action-inputs> 
+        <TERRITORY type="string"/>
+        <PRODUCTLINE type="string"/>
+      </action-inputs>
+      <action-outputs> 
+        <query-result type="result-set" mapping="query_result"/> 
+      </action-outputs>
+      <component-definition> 
+        <live>true</live>  
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[SELECT EMPLOYEES.LASTNAME, ROUND(SUM(ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH),0) AS 
+"SOLD_PRICE" FROM ORDERS INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE  INNER JOIN CUSTOMER_W_TER ON ORDERS.CUSTOMERNUMBER =CUSTOMER_W_TER.CUSTOMERNUMBER  INNER JOIN EMPLOYEES ON CUSTOMER_W_TER.EMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE  WHERE  CUSTOMER_W_TER.TERRITORY={PREPARE:TERRITORY} AND PRODUCTS.PRODUCTLINE={PREPARE:PRODUCTLINE} GROUP BY EMPLOYEES.LASTNAME ORDER BY 2 DESC]]></query> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JFreeReportComponent</component-name>
+      <action-type>Run Report</action-type>
+      <action-inputs> 
+        <output-type type="string"/>  
+        <data type="result-set" mapping="query_result"/> 
+      </action-inputs>
+      <action-resources> 
+        <report-definition type="resource"/> 
+      </action-resources>
+      <action-outputs/>
+      <component-definition/> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

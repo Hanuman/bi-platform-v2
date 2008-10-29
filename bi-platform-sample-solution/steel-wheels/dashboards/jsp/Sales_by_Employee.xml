@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE report PUBLIC "-//JFreeReport//DTD report definition//EN//simple/version 0.8.5"
+                        "http://jfreereport.sourceforge.net/report-085.dtd">
+
+<report bottommargin="36" leftmargin="36" name="Sales Report" pageformat="POSTCARD" rightmargin="36" topmargin="36" orientation="portrait">
+
+<parser-config>
+    <property name="Group_by">LASTNAME</property>
+    <property name="Amount">SOLD_PRICE</property>
+    <property name="steel-wheels-location">/ViewAction?solution=steel-wheels&amp;path=reports&amp;</property>    
+</parser-config>
+
+<configuration>
+      <property name="org.jfree.report.modules.output.pageable.pdf.Encoding">iso-8859-15</property>
+</configuration>
+
+<reportheader fontname="SanSerif">
+</reportheader>
+<reportfooter>
+</reportfooter>
+<pageheader fontname="SanSerif" fontsize="8" fontstyle="plain">
+</pageheader>
+<pagefooter fontname="SanSerif">
+</pagefooter>
+<groups>
+    <group name="dummy group">
+    <groupheader fontname="SanSerif">
+    <band x="0" y="0">
+		<rectangle color="#5C7485" draw="false" fill="true" height="15" width="100%" x="0" y="0"/>
+   	  	<message-field height="15" width="79%" x="1%" color="white" alignment="left" y="0" vertical-alignment="middle" nullstring="">$(employee_name)</message-field>
+		<label height="15" width="20%" x="80%" y="0" color="white" alignment="right" vertical-alignment="middle">Sales ($)</label>
+    </band>
+    </groupheader>        
+    <groupfooter pagebreak-after-print="false">
+ 		<line x2="100%" x1="80%" y2="6" y1="6" weight=".75" width="20%" color="black" height="1"/>
+		<rectangle color="#FFC607" draw="false" fill="true" height="15" width="100%" x="0" y="7"/>
+ 		<message-field vertical-alignment="middle" fontname="Arial" fontsize="10" fontstyle="bold" height="15" width="50%" x="0%" y="7">Total </message-field>
+ 		<number-field vertical-alignment="middle" height="15" width="50%" fieldname="totalsales" format="$ #,###" fontsize="10" fontname="Arial" fontstyle="bold" x="50%" y="7" alignment="right" />
+ 		<line x2="100%" x1="80%" y2="23" y1="23" weight=".5" color="black"/>
+		<line x2="100%" x1="80%" y2="25" y1="25" weight=".5" color="black"/>
+    </groupfooter>
+    </group>
+</groups>
+ <items fontname="SanSerif" fontsize="9" fontstyle="plain" layout-cachable="false" visible="true">
+            <rectangle name="background" x="5%" y="0" width="95%" height="15" color="#DFDFDF"/>
+    	  	<string-field height="15" width="35%" fieldname="${Group_by}" x="5%" alignment="left" vertical-alignment="middle"></string-field>
+            <label name="ProductLink" color="#5C7485" fontsize="7" height="15" width="15%" x="40%" alignment="center" vertical-alignment="middle" ></label>
+            <label name="EmployeeLink" color="#5C7485" fontsize="7" height="15" width="15%" x="55%" alignment="center" vertical-alignment="middle" ></label>
+            <label height="15" width="5%" x="70%" alignment="left" vertical-alignment="middle" ></label>
+      		<number-field height="15" width="20%" fieldname="${Amount}" x="80%" alignment="right" format="#,###" vertical-alignment="middle"></number-field>
+ </items>
+   <functions>
+     <function name="backgroundTrigger" class="org.jfree.report.function.ElementVisibilitySwitchFunction">
+       <properties>
+         <property name="element">background</property>
+         <property name="numberOfElements">1</property>
+       </properties>
+     </function>
+    <property-ref name="report.date"/>
+    <property-ref name="employee_name">Employee</property-ref>
+    <property-ref name="output-type"/>
+     <function class="org.jfree.report.function.PageOfPagesFunction" name="PageofPages"/>
+    <function name="totalsales" class="org.jfree.report.function.TotalGroupSumFunction">
+    	<properties>
+    		<property name="field">${Amount}</property>
+    	</properties>
+    </function>
+       <!-- This makes sure, that we can access the parameter as if it was a column from the table -->
+    <property-ref name="${Group_by}"/>
+    <property-ref name="${Amount}"/>
+  </functions>
+</report>
