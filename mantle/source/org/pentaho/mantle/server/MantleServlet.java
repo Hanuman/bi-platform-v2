@@ -114,7 +114,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class MantleServlet extends RemoteServiceServlet implements MantleService {
 
   protected static final Log logger = LogFactory.getLog(MantleServlet.class);
-
+  private static final String DESC_SEPERATOR = " : "; //$NON-NLS-1$
+  
   protected void onBeforeRequestDeserialized(String serializedRequest) {
     PentahoSystem.systemEntryPoint();
   }
@@ -391,7 +392,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       parameterProvider.setParameter(StandardSettings.CRON_STRING, cronExpression);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_NAME, triggerName);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, getPentahoSession().getName());
-      parameterProvider.setParameter(StandardSettings.DESCRIPTION, description);
+      parameterProvider.setParameter(StandardSettings.DESCRIPTION, triggerGroup + DESC_SEPERATOR + description);
       backgroundExecutionHandler.backgroundExecuteAction(getPentahoSession(), parameterProvider);
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
@@ -419,7 +420,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       parameterProvider.setParameter(StandardSettings.END_DATE_TIME, endDate);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_NAME, triggerName);
       parameterProvider.setParameter(StandardSettings.SCHEDULE_GROUP_NAME, getPentahoSession().getName());
-      parameterProvider.setParameter(StandardSettings.DESCRIPTION, description);
+      parameterProvider.setParameter(StandardSettings.DESCRIPTION, triggerGroup + DESC_SEPERATOR + description);
       backgroundExecutionHandler.backgroundExecuteAction(getPentahoSession(), parameterProvider);
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
@@ -512,7 +513,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } else {
       solutionFileInfo.isSubscribable = false;
     }
-    
+
     solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
     solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
     if (solutionFileInfo.canEffectiveUserManage && solutionFileInfo.supportsAccessControls) {
@@ -566,8 +567,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         // this will avoid creating access control entries in the database when they are the same as the ACEs
         // that would be inherited!
         if (!origAcl.equals(acl)) {
-          repository.setPermissions(solutionFile, acl);
-          repository.resetRepository();
+        repository.setPermissions(solutionFile, acl);
+        repository.resetRepository();
         }
 
         if (!solutionFile.isDirectory()) {
@@ -986,7 +987,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       List<ISchedule> availableSchedules = subscriptionRepository.getSchedules();
       for (SubscriptionSchedule currentSchedule : currentSchedules) {
         for (ISchedule availableSchedule : availableSchedules) {
-          if (currentSchedule.title.equals(availableSchedule.getTitle()) && currentSchedule.id.equals(availableSchedule.getId())) {
+          if (currentSchedule.id.equals(availableSchedule.getId())) {
             updatedSchedules.add(availableSchedule);
           }
         }
