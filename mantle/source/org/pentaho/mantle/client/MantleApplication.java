@@ -188,7 +188,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     viewMenu = new MenuBar(true);
     // menu items (to be enabled/disabled)
     printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand(solutionBrowserPerspective)); //$NON-NLS-1$
-    saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(solutionBrowserPerspective, false)); //$NON-NLS-1$
+    saveMenuItem = new PentahoMenuItem(Messages.getString("saveAsEllipsis"), new SaveCommand(solutionBrowserPerspective, false)); //$NON-NLS-1$
     saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAs"), new SaveCommand(solutionBrowserPerspective, true)); //$NON-NLS-1$
     propertiesMenuItem = new PentahoMenuItem(Messages.getString("propertiesEllipsis"), propertiesCommand); //$NON-NLS-1$
 
