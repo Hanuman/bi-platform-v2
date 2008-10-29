@@ -46,67 +46,71 @@
 %>
 <html>
 	<head>
-		<title>Pentaho Regional Report - JSP Sample</title>
+		<title>Pentaho Territory Dashboard</title>
 	</head>
 	<body>
 <%
 
 
 // Take a look to see if we have a region parameter
-String department = request.getParameter("department");
-String title = "Select a region";
-String region = request.getParameter("region");
+String productline = request.getParameter("productline");
+String title = "Sales for All Territories";
+String territory = request.getParameter("territory");
 String categoryName = request.getParameter("categoryName");
-if( "region".equals( categoryName ) ) {
-	region = request.getParameter("category");
+if( "territory".equals( categoryName ) ) {
+	territory = request.getParameter("category");
 }
-if( "department".equals( categoryName ) ) {
-	department = request.getParameter("category");
+if( "productline".equals( categoryName ) ) {
+	productline = request.getParameter("category");
 }
-if( department != null ) {
-	title = "This is headcount spending for " + region + ", " + department;
+if( productline != null ) {
+	title = "Sales for " + territory + ", " + productline;
 } 
-else if ( region != null ) {
-	title = "This is headcount spending for " + region;
+else if ( territory != null ) {
+	title = "Sales for " + territory;
 }
 
 
 %>
 
-<h1 style='font-family:Arial'><%= title %></h1>
-
+  	<table  background="/sw-style/active/banner.png">
+  		<tr>
+  			<td width="800" height="40" align="center" valign="middle" style="font-family:Arial;font-weight:bold" border="0"/><%= title %></td>
+  		</tr>		
+  	</table>	
+  	<table class="homeDashboard" cellpadding="0" cellspacing="0" border="0" >
 <table>
 	<tr>
-		<td valign="top" style="font-family:Arial;font-weight:bold">Select a Region By Clicking on the Pie Chart</br>
+		<td valign="top" style="font-family:Arial;font-weight:normal">Click on a Territory</br>
 <%
         ArrayList messages = new ArrayList();
         SimpleParameterProvider parameters = new SimpleParameterProvider();
-        parameters.setParameter( "drill-url", "SampleFlashDashboard?prochart=true&amp;categoryName=region" );
-        parameters.setParameter( "inner-param", "REGION"); //$NON-NLS-1$ //$NON-NLS-2$
-        parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-        parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+        parameters.setParameter( "drill-url", "SampleFlashDashboard?prochart=true&amp;categoryName=territory" );
+        parameters.setParameter( "inner-param", "TERRITORY"); //$NON-NLS-1$ //$NON-NLS-2$
+        parameters.setParameter( "image-width", "370"); //$NON-NLS-1$ //$NON-NLS-2$
+        parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuffer content = new StringBuffer(); 
-        FlashChartHelper.doFlashChart( "bi-developers", "dashboard", "regions.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        FlashChartHelper.doFlashChart( "steel-wheels", "dashboards", "territory.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 		</td>	
-			<td valign="top" style="font-family:Arial;font-weight:bold">
+			<td valign="top" style="font-family:Arial;font-weight:normal">
 <%
-	if( region != null ) {
+	if( territory != null ) {
 %>
-		Select a Department By Clicking on the Bar Chart</br>
+		Click on a Product Line</br>
 <%
         	messages = new ArrayList();
         	parameters = new SimpleParameterProvider();
-        	parameters.setParameter( "image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
-        	parameters.setParameter( "image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
+        	parameters.setParameter( "image-width", "430"); //$NON-NLS-1$ //$NON-NLS-2$
+        	parameters.setParameter( "image-height", "275"); //$NON-NLS-1$ //$NON-NLS-2$
 		parameters.setParameter( "connection", "SampleData" );
-		parameters.setParameter( "query", "select department, variance from quadrant_actuals where region='{REGION}'" );
-		parameters.setParameter( "REGION", region );
-		parameters.setParameter( "outer-params", "REGION" );
-        	parameters.setParameter( "drill-url", "SampleFlashDashboard?prochart=true&amp;region="+region+"&amp;categoryName=department" );
+		parameters.setParameter( "query", "SELECT PRODUCTS.PRODUCTLINE, SUM(ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) REVENUE FROM ORDERS INNER JOIN ORDERDETAILS ON ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER INNER JOIN PRODUCTS ON ORDERDETAILS.PRODUCTCODE =PRODUCTS.PRODUCTCODE  INNER JOIN CUSTOMERS ON ORDERS.CUSTOMERNUMBER =CUSTOMERS.CUSTOMERNUMBER  INNER JOIN EMPLOYEES ON CUSTOMERS.SALESREPEMPLOYEENUMBER = EMPLOYEES.EMPLOYEENUMBER INNER JOIN OFFICES ON EMPLOYEES.OFFICECODE=OFFICES.OFFICECODE WHERE TERRITORY='{TERRITORY}' GROUP BY PRODUCTS.PRODUCTLINE ORDER BY 2 DESC" );
+		parameters.setParameter( "TERRITORY", territory );
+		parameters.setParameter( "outer-params", "TERRITORY" );
+        	parameters.setParameter( "drill-url", "SampleFlashDashboard?prochart=true&amp;territory="+territory+"&amp;categoryName=productline" );
 		content = new StringBuffer(); 
-        	FlashChartHelper.doFlashChart( "bi-developers", "dashboard", "departments.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	FlashChartHelper.doFlashChart( "steel-wheels", "dashboards", "productline.flashwidget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 <%
@@ -117,9 +121,9 @@ else if ( region != null ) {
 		<td colspan="2" valign="top" style="font-family:Arial;font-weight:bold"><hr size="1"/>
 	</tr>
 	<tr>
-		<td valign="top" style="font-family:Arial;font-weight:bold">
+		<td valign="top" align="center" style="font-family:Arial;font-weight:bold">
 <%
-	if( department != null ) {
+	if( productline != null ) {
 
 		Date now = new Date();
 		int seconds = now.getSeconds();
@@ -131,7 +135,7 @@ else if ( region != null ) {
         parameters.setParameter( "image-height", "250"); //$NON-NLS-1$ //$NON-NLS-2$
 		parameters.setParameter( "value", Long.toString( dialValue ) );
 		content = new StringBuffer();
-        FlashChartHelper.doFlashDial( "bi-developers", "dashboard", "flashdial.widget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        FlashChartHelper.doFlashDial( "steel-wheels", "dashboards", "flashdial.widget.xml", parameters, content, userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 %>
 <%= content.toString() %>
 <%
@@ -139,18 +143,18 @@ else if ( region != null ) {
 %>
 
 		</td>
-		<td valign="top" style="font-family:Arial;font-weight:bold">
+		<td align="center" valign="middle" style="font-family:Arial;font-weight:bold">
 
 <%
-	if( department != null ) {
+	if( productline != null ) {
 
         	messages = new ArrayList();
         	parameters = new SimpleParameterProvider();
-		parameters.setParameter( "region", region );
-		parameters.setParameter( "department", department );
+		parameters.setParameter( "TERRITORY", territory );
+		parameters.setParameter( "PRODUCTLINE", productline );
 		content = new StringBuffer(); 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        	SolutionHelper.doAction( "bi-developers", "dashboard/jsp", "embedded_report.xaction", "SampleFlashDashboard", parameters, outputStream , userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	SolutionHelper.doAction( "steel-wheels", "dashboards/jsp", "Sales_by_Employee.xaction", "SampleFlashDashboard", parameters, outputStream , userSession, messages, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		out.write( outputStream.toString() );
 	}
 %>
