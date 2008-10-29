@@ -1502,14 +1502,14 @@ Calendar.prototype.hideShowCovered = function () {
 			var CY2 = cc.offsetHeight + CY1;
 
 			if (this.hidden || (CX1 > EX2) || (CX2 < EX1) || (CY1 > EY2) || (CY2 < EY1)) {
-				if (!cc.__msh_save_visibility) {
+				//if (!cc.__msh_save_visibility) {      //Script assumed that it was the only one changing the visibility of items
 					cc.__msh_save_visibility = getVisib(cc);
-				}
+				//}
 				cc.style.visibility = cc.__msh_save_visibility;
 			} else {
-				if (!cc.__msh_save_visibility) {
+				//if (!cc.__msh_save_visibility) {      //Script assumed that it was the only one changing the visibility of items
 					cc.__msh_save_visibility = getVisib(cc);
-				}
+				//}
 				cc.style.visibility = "hidden";
 			}
 		}
