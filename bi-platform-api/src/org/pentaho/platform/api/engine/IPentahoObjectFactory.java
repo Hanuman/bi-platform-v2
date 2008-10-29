@@ -21,9 +21,24 @@
 package org.pentaho.platform.api.engine;
 
 /**
- * The way the BI platform creates and manages system objects.  The {@link IPentahoObjectFactory}
- * acts like a service locator of objects rather than services.  It is typically accessed via a static
- * method in PentahoSystem, PentahoSystem.getObjectFactory()
+ * The way the BI platform creates and manages system objects.
+ * <p>
+ * Here is an example of how the API might be used:
+ * <p>
+ * <code>
+ * 1. IPentahoObjectFactory fac = new MyPentahoObjectFactory();<br>
+ * //configure the factory with an object specification file and/or a runtime context object<br>
+ * 2. fac.init(objectSpecFile, contextObject) {@link IPentahoObjectFactory#init(String, Object)}<br>
+ * 3. ISolutionEngine eng = fac.get(ISolutionEngine.class, session) {@link IPentahoObjectFactory#get(Class, IPentahoSession)}
+ * </code>
+ * <p>
+ * 
+ * You will notice that the this way of serving up objects does not expose an API for scoping of objects.
+ * This behavior is delegated to the particular {@link IPentahoObjectFactory} implementation, which means a factory
+ * implementation has total freedom to be as simple or sophisticated at it wants without being required to handle object 
+ * scoping.  Any kind of object binding/scoping or any other rules for the creation and management of objects is totally 
+ * up the implementation.  Typically, a factory implementation would be made aware of it's rules for object creation by 
+ * way of a well-known object specification file, see {@link #init(String, Object)}
  * 
  * @author Aaron Phillips
  */
@@ -58,7 +73,10 @@ public interface IPentahoObjectFactory {
    */
   public <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) throws ObjectFactoryException;
 
-  @Deprecated
+  /**
+   * Deprecated.  Please use {@link #get(Class, IPentahoSession)} or {@link #get(Class, String, IPentahoSession)}
+   * @deprecated
+   */
   public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException;
 
   /**

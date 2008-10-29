@@ -21,17 +21,33 @@
  */
 package org.pentaho.platform.engine.core.system.objfac;
 
+import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 
-@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
+/**
+ * <span style="color:red; font-weight:bold">NOTICE: This class is deprecated and will not exist in platform version 2.1.</span>  <br>
+ * Please use the new way of factory-ing dynamic PentahoObjects.  
+ * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+ * @deprecated
+ */
 public class LocalObjectCreator extends ObjectCreator {
 
+  /**
+   * Please use the new way of factory-ing dynamic PentahoObjects.  
+   * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+   * @deprecated
+   */
   public LocalObjectCreator( String className ) {
     super( className );
   }
 
+  /**
+   * Please use the new way of factory-ing dynamic PentahoObjects.  
+   * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+   * @deprecated
+   */
   public Object getInstance( String key, IPentahoSession session ) throws ObjectFactoryException  {
     Object instance = createObject();
 

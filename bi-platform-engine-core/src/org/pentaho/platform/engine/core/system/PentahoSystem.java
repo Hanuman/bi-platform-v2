@@ -469,7 +469,10 @@ public class PentahoSystem {
     return output;
   }
 
-  @Deprecated
+  /**
+   * Please use {@link PentahoSystem#get(Class, IPentahoSession)} or {@link PentahoSystem#get(Class, String, IPentahoSession)} instead.
+   * @deprecated
+   */
   public static Object getObject(final IPentahoSession session, final String objectName) {
     try {
       return pentahoObjectFactory.getObject( objectName, session );

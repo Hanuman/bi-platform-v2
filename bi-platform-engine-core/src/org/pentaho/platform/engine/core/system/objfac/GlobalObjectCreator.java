@@ -21,23 +21,34 @@
  */
 package org.pentaho.platform.engine.core.system.objfac;
 
+import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 
-@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
+/**
+ * <span style="color:red; font-weight:bold">NOTICE: This class is deprecated and will not exist in platform version 2.1.</span>  <br>
+ * Please use the new way of factory-ing dynamic PentahoObjects.  
+ * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+ * @deprecated
+ */
 public class GlobalObjectCreator extends ObjectCreator {
 
   private Object instance = null;
   
+  /**
+   * Please use the new way of factory-ing dynamic PentahoObjects.  
+   * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+   * @deprecated
+   */
   public GlobalObjectCreator( String className ) {
     super( className );
   }
   
-  // TODO old code for sol rep sets the logging level: repo.setLoggingLevel(PentahoSystem.loggingLevel);
   /**
-   * NOTE: interface name is not used in this method, but is required to satisfy the interface spec.
-   * other implementations do use it.
+   * Please use the new way of factory-ing dynamic PentahoObjects.  
+   * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+   * @deprecated
    */
   public Object getInstance( String key, IPentahoSession session ) throws ObjectFactoryException {
     if ( null == instance ) {

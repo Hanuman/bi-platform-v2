@@ -28,7 +28,13 @@ import org.pentaho.platform.engine.core.messages.Messages;
  * @author Steven Barkdull
  * 
  */
-@Deprecated  //the correct way to access Pentaho system objects is PentahoSystem.getObjectFactory().get(...)
+
+/**
+ * <span style="color:red; font-weight:bold">NOTICE: This class is deprecated and will not exist in platform version 2.1.</span>  <br>
+ * Please use the new way of factory-ing dynamic PentahoObjects.  
+ * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+ * @deprecated
+ */
 public abstract class ObjectCreator implements IObjectCreator {
 
   private String className = null;  
@@ -40,6 +46,11 @@ public abstract class ObjectCreator implements IObjectCreator {
 	  this.classLoader = classLoader;
   }
   
+  /**
+   * Please use the new way of factory-ing dynamic PentahoObjects.  
+   * See an explanation of how to switch from the old way to the new way here: {@link IObjectCreator}
+   * @deprecated
+   */
   public ObjectCreator( String className ) {
 	  classLoader = getClass().getClassLoader();
     if ( StringUtils.isEmpty( className ) ) {
