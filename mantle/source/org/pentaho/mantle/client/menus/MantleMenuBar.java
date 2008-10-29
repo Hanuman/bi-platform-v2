@@ -6,10 +6,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTab
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -17,8 +14,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 
 public class MantleMenuBar extends MenuBar{
 
-  SolutionBrowserPerspective solutionBrowser;
-  
   public MantleMenuBar(){
     super();
   }
