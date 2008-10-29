@@ -23,10 +23,16 @@ public class Messages {
   private static MessageBundle messageBundle;
 
   public static String getString(String key) {
+    if (messageBundle == null) {
+      return key;
+    }
     return messageBundle.getString(key);
   }
 
   public static String getString(String key, String... parameters) {
+    if (messageBundle == null) {
+      return key;
+    }
     return messageBundle.getString(key, parameters);
   }
 
