@@ -116,9 +116,25 @@ public class ActionInfo {
   public static String buildSolutionPath(final String solution, final String path, final String filename) {
     StringBuffer buf = new StringBuffer(ISolutionRepository.SEPARATOR);
     if (StringUtils.isEmpty(path)) {
-      return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(filename).toString(); 
+      if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
+        return buf.append(solution).append(filename).toString();
+      } else {
+        return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(filename).toString();
+      }
     } else {
-      return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
+      if(path.charAt(0) == ISolutionRepository.SEPARATOR){
+        if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
+          return buf.append(solution).append(path).append(filename).toString();
+        } else {
+          return buf.append(solution).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
+        }
+      } else {
+        if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
+          return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(filename).toString();
+        } else {
+          return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
+        }
+      }
     }
   }
 
