@@ -367,16 +367,16 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     SchedulerHelper.suspendJob(getPentahoSession(), jobName, jobGroup);
   }
 
-  public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
-    }
-    try {
-      SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
-    } catch (Exception e) {
-      throw new SimpleMessageException(e.getMessage());
-    }
-  }
+//  public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException {
+//    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+//    }
+//    try {
+//      SchedulerHelper.createCronJob(getPentahoSession(), solutionName, path, actionName, cronExpression);
+//    } catch (Exception e) {
+//      throw new SimpleMessageException(e.getMessage());
+//    }
+//  }
 
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
@@ -399,8 +399,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
     } finally {
+      PentahoSystem.systemExitPoint();  // Since we're creating something an hibernate might throw an exception on the onAfterResponseSerialized() method of this class
+                                        // we need to do it before hand to see if we're going to error out.
     }
-    createCronJob(solutionName, path, actionName, cronExpression);
   }
 
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
@@ -427,6 +428,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } catch (Exception e) {
       throw new SimpleMessageException(e.getMessage());
     } finally {
+      PentahoSystem.systemExitPoint();  // Since we're creating something an hibernate might throw an exception on the onAfterResponseSerialized() method of this class
+      // we need to do it before hand to see if we're going to error out.
     }
   }
 

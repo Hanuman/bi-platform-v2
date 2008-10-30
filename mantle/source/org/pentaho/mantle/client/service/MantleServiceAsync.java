@@ -57,7 +57,7 @@ public interface MantleServiceAsync {
   public void cleanContentRepository(int daysBack, AsyncCallback<Integer> callback);
   public void flushMondrianSchemaCache(AsyncCallback<Void> callback);
   
-  public void createCronJob(String solutionName, String path, String actionName, String cronExpression, AsyncCallback<Void> callback);
+//  public void createCronJob(String solutionName, String path, String actionName, String cronExpression, AsyncCallback<Void> callback);
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description, String cronExpression, AsyncCallback<Void> callback);
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date strStartDate, Date strEndDate, int repeatCount, int strRepeatInterval,
       String solutionName, String path, String actionName, AsyncCallback<Void> callback);

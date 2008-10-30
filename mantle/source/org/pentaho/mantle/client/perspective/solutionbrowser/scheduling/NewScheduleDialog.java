@@ -59,7 +59,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     
     IWizardPanel[] wizardPanels = {scheduleEditorWizardPanel};
     this.setWizardPanels(wizardPanels);
-    setPixelSize(410, 480);
+    setPixelSize(475, 465);
   }
 
   /* (non-Javadoc)

@@ -58,7 +58,7 @@ public interface MantleService extends RemoteService {
   public void flushMondrianSchemaCache();
   
   //schedule API
-  public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException;
+//  public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException;
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description, String cronExpression) throws SimpleMessageException;
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date strStartDate, Date strEndDate, int repeatCount, int strRepeatInterval,
       String solutionName, String path, String actionName) throws SimpleMessageException;

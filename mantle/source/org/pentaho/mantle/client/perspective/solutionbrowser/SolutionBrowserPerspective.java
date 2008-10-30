@@ -836,49 +836,49 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void createSchedule(final String cronExpression) {
-    final AsyncCallback callback = new AsyncCallback() {
-
-      public void onSuccess(Object result) {
-        String solutionName = solutionTree.getSolution();
-        String path = solutionTree.getPath();
-        if (path.startsWith("/")) { //$NON-NLS-1$
-          path = path.substring(1);
-        }
-        String actionName = selectedFileItem.getName();
-
-        AsyncCallback callback = new AsyncCallback() {
-
-          public void onFailure(Throwable caught) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
-                true);
-            dialogBox.center();
-          }
-
-          public void onSuccess(Object result) {
-            MessageDialogBox dialogBox = new MessageDialogBox(
-                Messages.getString("info"), //$NON-NLS-1$
-                Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
-                true, false, true);
-            dialogBox.center();
-          }
-        };
-        MantleServiceCache.getService().createCronJob(solutionName, path, actionName, cronExpression, callback);
-      }
-
-      public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
-
-          public void onFailure(Throwable caught) {
-
-          }
-
-          public void onSuccess(Boolean result) {
-            createSchedule(cronExpression);
-          }
-        });
-      }
-    };
-    MantleServiceCache.getService().isAuthenticated(callback);
+//    final AsyncCallback callback = new AsyncCallback() {
+//
+//      public void onSuccess(Object result) {
+//        String solutionName = solutionTree.getSolution();
+//        String path = solutionTree.getPath();
+//        if (path.startsWith("/")) { //$NON-NLS-1$
+//          path = path.substring(1);
+//        }
+//        String actionName = selectedFileItem.getName();
+//
+//        AsyncCallback callback = new AsyncCallback() {
+//
+//          public void onFailure(Throwable caught) {
+//            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
+//                true);
+//            dialogBox.center();
+//          }
+//
+//          public void onSuccess(Object result) {
+//            MessageDialogBox dialogBox = new MessageDialogBox(
+//                Messages.getString("info"), //$NON-NLS-1$
+//                Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
+//                true, false, true);
+//            dialogBox.center();
+//          }
+//        };
+//        MantleServiceCache.getService().createCronJob(solutionName, path, actionName, cronExpression, callback);
+//      }
+//
+//      public void onFailure(Throwable caught) {
+//        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
+//
+//          public void onFailure(Throwable caught) {
+//
+//          }
+//
+//          public void onSuccess(Boolean result) {
+//            createSchedule(cronExpression);
+//          }
+//        });
+//      }
+//    };
+//    MantleServiceCache.getService().isAuthenticated(callback);
   }
 
   public void selectNextItem(FileItem currentItem) {
