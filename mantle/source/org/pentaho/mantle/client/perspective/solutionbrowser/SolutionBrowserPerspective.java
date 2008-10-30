@@ -1319,7 +1319,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }-*/;
 
   private void refreshIfPDF(ReloadableIFrameTabPanel frame) {
-    if(isPDF(frame.getElement())){
+    if(isPDF(frame.getFrame().getElement())){
       frame.reload();
     }
   }
