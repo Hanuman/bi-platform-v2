@@ -526,7 +526,7 @@
 
 		<version name="revision" />
 
-		<many-to-one name="parent" lazy="true" />
+		<many-to-one name="parent" lazy="proxy" />
 
 		<property name="fileName" not-null="true" />
 

@@ -260,10 +260,15 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
   private String getCatalog() {
     IActionResource hibernateConfigRes = ((HQLConnectionAction) getActionDefinition()).getHibernateConfigResource();
     String catalog = null;
-
+    String resAddress = null;
+    
     if (hibernateConfigRes != null) {
-      IActionSequenceResource resource = getResource(hibernateConfigRes.getName());
-      catalog = resource.getAddress();
+      String resName = this.applyInputsToFormat(hibernateConfigRes.getName());
+      IActionSequenceResource resource = getResource(resName);
+      resAddress = resource.getAddress();
+      if (resAddress != null) {
+        catalog = this.applyInputsToFormat(resAddress);
+      }
       if (resource.getSourceType() == IActionSequenceResource.SOLUTION_FILE_RESOURCE) {
         catalog = PentahoSystem.getApplicationContext().getSolutionPath(catalog);
       }

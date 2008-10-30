@@ -128,15 +128,12 @@ public class HQLConnection implements IPentahoLoggingConnection {
       Query q = sess.createQuery(query);
       List list = q.list();
       localResultSet = generateResultSet(list, q.getReturnAliases(), q.getReturnTypes());
-    } catch (Exception e) {
-      e.printStackTrace();
-      logger.error("Error opening hibernate session", e);
     } finally {
       try {
         if (sess != null) {
           sess.close();
         }
-      } catch (Exception e) {
+     } catch (Exception e) {
         // Doesn't seem like we would get any exception from sess.close()
         logger.error("Exception closing connection", e);
       }
