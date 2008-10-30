@@ -18,20 +18,13 @@
 
 package org.pentaho.platform.engine.security.acls.voter;
 
-import java.util.List;
-
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.acl.AclEntry;
-import org.pentaho.platform.api.engine.IAclHolder;
-import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISystemSettings;
-import org.pentaho.platform.api.repository.IRepositoryFile;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
 public abstract class AbstractPentahoAclVoter implements IAclVoter, IPentahoInitializer {
