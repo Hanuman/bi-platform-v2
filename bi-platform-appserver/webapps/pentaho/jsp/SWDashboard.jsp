@@ -60,6 +60,7 @@
 		title = "Sales for " + territory;
 	}
 	%>
+	<html>
 	<head>
 		<title>Steel Wheels - Revenue Analysis</title>
 	</head>
