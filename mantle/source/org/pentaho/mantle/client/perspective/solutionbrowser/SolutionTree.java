@@ -120,6 +120,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
+        menuBar.addItem(new MenuItem(Messages.getString("delete"), new FileCommand(FileCommand.COMMAND.DELETE, popupMenu, this))); //$NON-NLS-1$
+        menuBar.addSeparator();
         menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this))); //$NON-NLS-1$
         popupMenu.setWidget(menuBar);
         popupMenu.hide();

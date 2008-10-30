@@ -194,6 +194,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
           }
         }
       }
+      menuBar.addItem(new MenuItem(Messages.getString("delete"), new FileCommand(FileCommand.COMMAND.DELETE, popupMenu, fileItemCallback)));
       menuBar.addSeparator();
       menuBar.addItem(Messages.getString("scheduleEllipsis"), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback)); //$NON-NLS-1$
     }

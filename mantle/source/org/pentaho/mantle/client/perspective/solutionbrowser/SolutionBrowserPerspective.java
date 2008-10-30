@@ -33,6 +33,7 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
+import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -72,6 +73,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -84,6 +86,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
@@ -633,6 +636,66 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       fileInfo.setPath(selectedFileItem.getPath());
         this.getCurrentFrame().setFileInfo(fileInfo);
     }
+  }
+
+  public void deleteFile() {
+    // delete file
+    final FileItem selectedItem = getSelectedFileItem();
+    String url = ""; //$NON-NLS-1$
+    if (GWT.isScript()) {
+      String windowpath = Window.Location.getPath();
+      if (!windowpath.endsWith("/")) { //$NON-NLS-1$
+        windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1); //$NON-NLS-1$
+      }
+      url = windowpath + "SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" + selectedItem.getPath() + "&name=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          + selectedItem.getName();
+    } else if (!GWT.isScript()) {
+      url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=delete&solution=" + selectedItem.getSolution() + "&path=" //$NON-NLS-1$ //$NON-NLS-2$
+          + selectedItem.getPath() + "&name=" + selectedItem.getName(); //$NON-NLS-1$
+    }
+    final String myurl = url;
+    VerticalPanel vp = new VerticalPanel();
+    vp.add(new Label(Messages.getString("deleteQuestion", selectedItem.getLocalizedName()))); //$NON-NLS-1$
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
+        Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+    final IDialogCallback callback = new IDialogCallback() {
+
+      public void cancelPressed() {
+        deleteConfirmDialog.hide();
+      }
+
+      public void okPressed() {
+        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, myurl);
+        try {
+          builder.sendRequest(null, new RequestCallback() {
+
+            public void onError(Request request, Throwable exception) {
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotDelete", selectedItem.getName()), //$NON-NLS-1$ //$NON-NLS-2$
+                  false, false, true);
+              dialogBox.center();
+            }
+
+            public void onResponseReceived(Request request, Response response) {
+              Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
+              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue()); //$NON-NLS-1$
+              if (result) {
+                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(SolutionBrowserPerspective.this);
+                cmd.execute(false);
+              } else {
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                    Messages.getString("couldNotDelete", selectedItem.getName()), false, false, true); //$NON-NLS-1$
+                dialogBox.center();
+              }
+            }
+
+          });
+        } catch (RequestException e) {
+        }
+      }
+    };
+    deleteConfirmDialog.setCallback(callback);
+    deleteConfirmDialog.center();    
   }
   
   void executeActionSequence(final FileCommand.COMMAND mode) {
