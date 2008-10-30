@@ -214,8 +214,6 @@ public class TemplateUtil {
         String part = template.substring(lastEnd, start);
         if (PentahoSystem.debug) {
           TemplateUtil.logger.debug("parameter=" + parameter);//$NON-NLS-1$ 
-        }
-        if (PentahoSystem.debug) {
           TemplateUtil.logger.debug("part=" + part);//$NON-NLS-1$ 
         }
         String inputName = parameter.substring(0, pos1);
@@ -223,11 +221,7 @@ public class TemplateUtil {
         int columnNo = Integer.parseInt(columnNoStr);
         if (PentahoSystem.debug) {
           TemplateUtil.logger.debug("inputName=" + inputName);//$NON-NLS-1$ 
-        }
-        if (PentahoSystem.debug) {
           TemplateUtil.logger.debug("columnNoStr=" + columnNoStr);//$NON-NLS-1$ 
-        }
-        if (PentahoSystem.debug) {
           TemplateUtil.logger.debug("columnNo=" + columnNo);//$NON-NLS-1$ 
         }
         Object obj = null;
@@ -446,7 +440,7 @@ public class TemplateUtil {
         Object valueObj;
         if (allParams.containsKey(name)) {
           IActionParameter param = (IActionParameter) allParams.get(name);
-          valueObj = param.getStringValue();
+          valueObj = param.getValue();
         } else {
           valueObj = context.getInputParameterValue(name);
         }
