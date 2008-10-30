@@ -181,7 +181,7 @@ public class MantleLoginDialog extends PromptDialogBox {
           defaultUsers.clear();
           defaultUsers.put(Messages.getString("selectUser"), new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           for (int i = 0; i < useridTokenizer.countTokens(); i++) {
-            defaultUsers.put(userdisplayTokenizer.tokenAt(i), new String[] { useridTokenizer.tokenAt(i), passwordTokenizer.tokenAt(i) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            defaultUsers.put(userdisplayTokenizer.tokenAt(i), new String[] { useridTokenizer.tokenAt(i).trim(), passwordTokenizer.tokenAt(i).trim() }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
           // provide the opportunity to override showUsersList with a setting
           if (settings.get("showUsersList") != null) { //$NON-NLS-1$
