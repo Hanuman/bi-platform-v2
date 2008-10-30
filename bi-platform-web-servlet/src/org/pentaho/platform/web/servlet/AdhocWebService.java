@@ -447,7 +447,7 @@ public class AdhocWebService extends ServletBase {
     
     String[] outputTypeList = { outputType };
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
     String xactionFilename = userSession.getId() + "_wqr_preview.xaction"; //$NON-NLS-1$
 
@@ -532,7 +532,7 @@ public class AdhocWebService extends ServletBase {
     AdhocWebService.startup(null, null);
     List messages = new ArrayList();
     String instanceId = null;
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(ILogger.ERROR);
     solutionEngine.init(session);
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
@@ -1362,7 +1362,7 @@ public class AdhocWebService extends ServletBase {
       throw new AdhocWebServiceException( msg );
     }
     
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String templateFilename = "system/waqr" + templateFolderPath + "/" + ISolutionRepository.INDEX_FILENAME; //$NON-NLS-1$ //$NON-NLS-2$
     try {
       InputStream inStrm = repository.getResourceInputStream(templateFilename, false);
@@ -1381,7 +1381,7 @@ public class AdhocWebService extends ServletBase {
   private void deleteWaqrReport(final IParameterProvider parameterProvider, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     // NOTE: sbarkdull, shouldn't have to place the "/" on the front of the path segments.
     String solution = "/" + parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ //$NON-NLS-2$
     String path = "/" + parameterProvider.getStringParameter("path", null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1396,16 +1396,17 @@ public class AdhocWebService extends ServletBase {
     
     String msg = ""; //$NON-NLS-1$
     String xactionFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xaction"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    boolean success = repository.removeSolutionFile(solution, path, xactionFile);
+    
+    boolean success = SolutionRepositoryService.delete(userSession, solution, path, xactionFile);
     // if we fail to delete the protected xaction file, don't delete the xml or reportspec files
     if (success) {
       String jfreeFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      if (!repository.removeSolutionFile( solution, path, jfreeFile)) {
+      if (!SolutionRepositoryService.delete(userSession, solution, path, jfreeFile)) {
         msg = jfreeFile + " "; //$NON-NLS-1$
       }
 
       String reportSpecFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xreportspec"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      if (!repository.removeSolutionFile(solution, path, reportSpecFile)) {
+      if (!SolutionRepositoryService.delete(userSession, solution, path, reportSpecFile)) {
         msg += reportSpecFile + " "; //$NON-NLS-1$
       }
     } else {
@@ -1466,7 +1467,7 @@ public class AdhocWebService extends ServletBase {
       String msg = Messages.getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String baseUrl = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
 
     Document reportSpecDoc = null;
@@ -1639,7 +1640,7 @@ public class AdhocWebService extends ServletBase {
   public void getTemplateReportSpec(final IParameterProvider parameterProvider, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException {
     
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String reportSpecName = parameterProvider.getStringParameter("reportSpecPath", null); //$NON-NLS-1$
     Document reportSpecDoc = null;
     if ( !StringUtils.isEmpty( reportSpecName ) ) {
@@ -1660,7 +1661,7 @@ public class AdhocWebService extends ServletBase {
   public void getWaqrReportSpecDoc(final IParameterProvider parameterProvider, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException {
     
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
     String path = parameterProvider.getStringParameter("path", null); //$NON-NLS-1$
     String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$
@@ -1801,7 +1802,7 @@ public class AdhocWebService extends ServletBase {
   private Document getFullSolutionDoc( final IPentahoSession userSession ) {
     
     Document fullDoc = null;
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository( userSession );
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     ICacheManager cacheManager = PentahoSystem.getCacheManager( userSession );
 
     if ( null != cacheManager )
@@ -1854,7 +1855,7 @@ public class AdhocWebService extends ServletBase {
    * @param IPentahoSession userSession
    */
   private Document createSolutionRepositoryDoc( final String solutionName, final String path, final IPentahoSession userSession ) {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     Document document = repository.getNavigationUIDocument( solutionName, path, ISolutionRepository.ACTION_EXECUTE );
     
     return document;
@@ -1879,7 +1880,7 @@ public class AdhocWebService extends ServletBase {
    */
   private static String getSolutionRepositoryName(final IPentahoSession userSession)
   {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     ISolutionFile rootFolder = repository.getRootFolder();
     return rootFolder.getSolution();
   }

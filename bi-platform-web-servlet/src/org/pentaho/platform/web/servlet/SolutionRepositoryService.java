@@ -134,7 +134,7 @@ public class SolutionRepositoryService extends ServletBase {
       commonErrorHandler(outputStream, ex.getException());
     } catch (IOException ex) {
       // Use debugErrorHandler for ioException
-      debugErrorHandler( outputStream, ex );
+      debugErrorHandler(outputStream, ex);
     } finally {
       PentahoSystem.systemExitPoint();
     }
@@ -144,11 +144,10 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   /**
-   * Used for logging exceptions that happen that aren't necessarily exceptional. It's common
-   * that IOExceptions will happen as people begin their transactions and then
-   * abandon their web page by closing their browser or current tab. Logging each one fills
-   * up the server log needlessly. Setting to debug level allows us visibility without compromising
-   * a production deployment.
+   * Used for logging exceptions that happen that aren't necessarily exceptional. It's common that IOExceptions will happen as people begin their transactions
+   * and then abandon their web page by closing their browser or current tab. Logging each one fills up the server log needlessly. Setting to debug level allows
+   * us visibility without compromising a production deployment.
+   * 
    * @param outputStream
    * @param ex
    * @throws IOException
@@ -158,7 +157,7 @@ public class SolutionRepositoryService extends ServletBase {
     debug(msg, ex);
     WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
   }
-  
+
   private void commonErrorHandler(final OutputStream outputStream, final Exception ex) throws IOException {
     String msg = Messages.getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
     error(msg, ex);
@@ -187,6 +186,12 @@ public class SolutionRepositoryService extends ServletBase {
       String[] filters = SolutionRepositoryService.getFilters(request);
       Document doc = getSolutionRepositoryDoc(userSession, filters);
       WebServiceUtil.writeDocument(outputStream, doc, wrapWithSOAP);
+    } else if ("delete".equals(component)) { //$NON-NLS-1$
+      String solution = request.getParameter("solution"); //$NON-NLS-1$
+      String path = request.getParameter("path"); //$NON-NLS-1$
+      String name = request.getParameter("name"); //$NON-NLS-1$
+      boolean result = delete(userSession, solution, path, name);
+      WebServiceUtil.writeString(outputStream, "<result>" + result + "</result>", wrapWithSOAP); //$NON-NLS-1$
     } else if ("setAcl".equals(component)) { //$NON-NLS-1$
       setAcl(parameterProvider, outputStream, userSession, wrapWithSOAP);
     } else if ("getAcl".equals(component)) { //$NON-NLS-1$
@@ -200,6 +205,39 @@ public class SolutionRepositoryService extends ServletBase {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     doGet(request, response);
+  }
+
+  /**
+   * This method will delete a file from the ISolutionRepository and respects IPentahoAclEntry.PERM_DELETE.
+   * 
+   * @param userSession
+   *          An IPentahoSession for the user requesting the delete operation
+   * @param solution
+   *          The name of the solution, such as 'steel-wheels'
+   * @param path
+   *          The path within the solution to the file/folder to be deleted (does not include the file/folder itself)
+   * @param name
+   *          The name of the file or folder which will be deleted in the given solution/path
+   * @return Success of the delete operation is returned
+   * @throws IOException
+   */
+  public static synchronized boolean delete(final IPentahoSession userSession, final String solution, final String path, final String name)
+      throws IOException {
+    /*
+    * This method is static/synchronized because we want to be absolutely sure
+    * we prevent cases where multiple delete calls could occur at the same time, not because we feel that something bad could happen,
+    * but because we absolutely want to make sure that nothing bad does happen.  By removing the static from this method we would effectively
+    * open ourselves up for multiple instances of this servlet being allowed to enter the method (most containers will created a pool of
+    * servlets).
+    */
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    String fullPath = ActionInfo.buildSolutionPath(solution, path, name);
+    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+    if (solutionFile != null && repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_DELETE)) {
+      repository.removeSolutionFile(fullPath);
+      return true;
+    }
+    return false;
   }
 
   private boolean acceptFilter(String name, String[] filters) {
@@ -226,7 +264,7 @@ public class SolutionRepositoryService extends ServletBase {
         // we don't want this file, skip to the next one
         continue;
       }
-      
+
       String name = childSolutionFile.getFileName();
       if (name.startsWith(".")) {
         // these are hidden files of some type that are never shown
@@ -235,13 +273,13 @@ public class SolutionRepositoryService extends ServletBase {
       }
       if (childSolutionFile.isDirectory()) {
         // we always process directories
-        
+
         // MDD 10/16/2008 Not always.. what about 'system'
         if (childSolutionFile.getFileName().startsWith("system")) {
           // skip the system dir, we DO NOT ever want this to hit the client
           continue;
-        }        
-        
+        }
+
         Element child = parentElement.getOwnerDocument().createElement("file");
         parentElement.appendChild(child);
         try {
@@ -279,7 +317,7 @@ public class SolutionRepositoryService extends ServletBase {
         boolean addFile = "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
         boolean isPlugin = false;
         // see if there is a plugin for this file type
-        IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(session, "IPluginSettings"); //$NON-NLS-1$
+        IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, session); //$NON-NLS-1$
         if (pluginSettings != null) {
           Set<String> types = pluginSettings.getContentTypes();
           isPlugin = types != null && types.contains(extension);
@@ -289,7 +327,7 @@ public class SolutionRepositoryService extends ServletBase {
         Element child = parentElement.getOwnerDocument().createElement("file");
         parentElement.appendChild(child);
         IFileInfo fileInfo = null;
-        
+
         if (addFile) {
           try {
             // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
@@ -303,7 +341,7 @@ public class SolutionRepositoryService extends ServletBase {
             // add special props?
             // localization..
           } else if (name.endsWith(".url")) {
-  
+
             // add special props
             String props = new String(childSolutionFile.getData());
             StringTokenizer tokenizer = new StringTokenizer(props, "\n");
@@ -397,7 +435,7 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     ISolutionFile rootFile = repository.getRootFolder();
     org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     org.w3c.dom.Element root = document.createElement("repository");
@@ -419,8 +457,7 @@ public class SolutionRepositoryService extends ServletBase {
       throw new SolutionRepositoryServiceException(msg);
     }
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
-
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String fullPath = ActionInfo.buildSolutionPath(solution, path, filename);
     ISolutionFile solutionFile = repository.getFileByPath(fullPath);
 
@@ -507,7 +544,7 @@ public class SolutionRepositoryService extends ServletBase {
       throw new SolutionRepositoryServiceException(msg);
     }
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String fullPath = ActionInfo.buildSolutionPath(solution, path, filename);
     ISolutionFile solutionFile = repository.getFileByPath(fullPath);
 
