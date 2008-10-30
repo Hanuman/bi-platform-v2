@@ -72,8 +72,15 @@ public class SaveCommand implements Command {
           setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
 
           TabWidget tab = navigatorPerspective.getCurrentTab();
-          tab.setLabelText(name);
-          tab.setLabelTooltip(name);
+          String tabName = name;
+          if (tabName.indexOf("analysisview.xaction") != -1) {
+            // trim off the analysisview.xaction from the localized-name
+            tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction")-1);
+          } else if (tabName.indexOf("waqr.xaction") != -1) {
+            tabName = tabName.substring(0, tabName.indexOf("waqr.xaction")-1);
+          }
+          tab.setLabelText(tabName);
+          tab.setLabelTooltip(tabName);
 
           if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
@@ -152,9 +159,16 @@ public class SaveCommand implements Command {
       var actualFileName = filename;
       if (filename.indexOf("analysisview.xaction") == -1) {
         actualFileName = filename + ".analysisview.xaction";
+      } else {
+        // trim off the analysisview.xaction from the localized-name
+        filename = filename.substring(0, filename.indexOf("analysisview.xaction")-1);
       }
       frame.controller.saveAs(actualFileName, filename, solution, path, overwrite);
     } else {
+      // trim off the waqr.xaction from the localized-name (waqr's save will put it back)
+      if (filename.indexOf("waqr.xaction") != -1) {
+        filename = filename.substring(0, filename.indexOf("waqr.xaction")-1);
+      }
       frame.gCtrlr.repositoryBrowserController.remoteSave(filename, solution, path, "html", overwrite);
     }
   }-*/;
