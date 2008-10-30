@@ -335,6 +335,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     if (showIndex != -1) {
       contentPanel.showWidget(showIndex);
+
+      //There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
+      int selectedTab = contentTabPanel.getTabBar().getSelectedTab();
+      if(selectedTab > -1){
+        ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTab);
+        refreshIfPDF(tabPanel);
+      }
+      
     }
     fireSolutionBrowserListenerEvent();
   }
