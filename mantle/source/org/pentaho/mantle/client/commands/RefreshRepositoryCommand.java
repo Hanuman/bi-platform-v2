@@ -43,8 +43,12 @@ public class RefreshRepositoryCommand implements Command {
       }
 
       public void onSuccess(Void nothing) {
+        try {
+          navigatorPerspective.refreshPerspective(false);
+        } catch (Throwable t) {
+          // we want to make sure we don't prevent the waitpopup
+        }
         WaitPopup.getInstance().setVisible(false);
-        navigatorPerspective.refreshPerspective(false);
       }
     };
     WaitPopup.getInstance().setVisible(true);
