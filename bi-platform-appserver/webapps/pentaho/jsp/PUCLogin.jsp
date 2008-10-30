@@ -397,7 +397,6 @@ A:hover {
                             </td>
                             <td>
                             <td class="button_middle" width="100%">Learn More</td>
-                            </td>
                             <td width="7" height="27" class="button_right"><img
                               src="/pentaho-style/images/login/spacer.png" width="7" height="27" /><br />
                             </td>
@@ -433,7 +432,6 @@ A:hover {
                             </td>
                             <td>
                             <td class="button_middle" width="100%">Download PDF</td>
-                            </td>
                             <td width="7" height="27" class="button_right"><img
                               src="/pentaho-style/images/login/spacer.png" width="7" height="27" /><br />
                             </td>
