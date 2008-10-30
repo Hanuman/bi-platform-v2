@@ -967,3 +967,21 @@ gwt-TabPanelBottom {
   margin-left: 40px;
 
 }
+.mantle-toolbar-combo-button{
+  margin: 1px;
+}
+
+.mantle-toolbar-combo-button-hovering{
+  background-color: #E8E8E8;
+  border: 1px solid #AAA;
+  cursor: pointer;
+  margin: 0px;  
+}
+
+.mantle-toolbar-combo-button-disabled{
+  margin: 1px;
+}
+
+.filesPanelToolbar{
+  padding-right:3px;
+}
