@@ -171,7 +171,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     mainToolbar = new MainToolbar(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
-
+    
     // first things first... make sure we've registered our native hooks
     setupNativeHooks(this, solutionBrowserPerspective);
 
@@ -271,10 +271,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         return null;
       }
     });
-
+    
     ElementUtils.convertPNGs();
   }
 
+  
   /**
    * This method is used by things like jpivot in order to show a 'mantle' looking alert dialog instead of a standard alert dialog.
    * 
@@ -285,7 +286,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     MessageDialogBox dialog = new MessageDialogBox(title, message, true, false, true);
     dialog.center();
   }
-
+  
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.mantle_openTab = function(name, title, url) {
@@ -309,10 +310,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::showMessage(Ljava/lang/String;Ljava/lang/String;)(title, message);
     }
     
-    $wnd.enableAdhocSave = function(enable) {
-      mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
+    $wnd.mantle_confirmBackgroundExecutionDialog = function(url) {
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::confirmBackgroundExecutionDialog(Ljava/lang/String;)(url);      
     }
-    
   }-*/;
 
   public void loadAndApplyUserSettings() {
@@ -551,11 +551,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       propertiesMenuItem.setCommand(propertiesCommand);
     } else {
       propertiesMenuItem.setCommand(null);
-    }
-
+    }    
+    
     // Enable/Disable Save menu items based on content
     String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+    
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
       for (String saveType : saveTypes) {

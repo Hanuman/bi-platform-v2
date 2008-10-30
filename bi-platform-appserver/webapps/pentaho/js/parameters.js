@@ -51,7 +51,6 @@ function doRun( id, baseUrl, target, background ) {
 	// ----------------------------------------------------------
 	// change this URL to point to another machine if required...
 	// ----------------------------------------------------------
-
 	var submitUrl = baseUrl;
 	// delete line? var action = submitUrl;
 	var formCheck = false;
@@ -72,16 +71,20 @@ function doRun( id, baseUrl, target, background ) {
 		submitUrl += params;
 		if( background == true ) {
 			submitUrl += '&background=true';
-			if( !confirm (pentaho_backgroundWarning)) {
-				return false;
+			var mantle_enabled = window.parent != null && window.parent.mantle_initialized == true;
+			if (mantle_enabled == true) {
+				window.top.mantle_confirmBackgroundExecutionDialog(submitUrl);
+			} else {
+				// the old way
+				if(!confirm (pentaho_backgroundWarning)) {
+					return false;
+				}
+				return executeAction(target, submitUrl);
 			}
-		}
-		if( target == '' ) {
-			document.location.href=submitUrl;
 		} else {
-			window.open( submitUrl, target, '' );
-		}
-		return false;
+			// the old way
+			return executeAction(target, submitUrl);
+		}					
 	} else {
 		var form = document.forms[ 'form_'+id ];
 		var form2 = document.forms['save_'+id];		
@@ -96,6 +99,16 @@ function doRun( id, baseUrl, target, background ) {
 		} catch (ignored) {
 		}
 	}
+}
+
+// Called internally only
+function executeAction (target, submitUrl) {
+	if( target == '' ) {
+		document.location.href=submitUrl;
+	} else {
+		window.open( submitUrl, target, '' );
+	}
+	return false;
 }
 
 function checkParams(form, type, lastName, gotOne ) {

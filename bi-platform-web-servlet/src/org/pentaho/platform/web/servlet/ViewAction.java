@@ -107,6 +107,7 @@ public class ViewAction extends ServletBase {
           error(Messages.getErrorString("ViewAction.ERROR_0004_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION"), bex); //$NON-NLS-1$
           return false;          
         }
+        response.setHeader("background_execution", "true");
         response.getWriter().print(backgroundResponse);
         response.getWriter().print(footer);
         return true;

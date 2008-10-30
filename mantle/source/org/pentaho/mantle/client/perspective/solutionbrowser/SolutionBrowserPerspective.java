@@ -1376,4 +1376,63 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public static SolutionBrowserPerspective getInstance(){
     return instance;
   }
+  
+  
+  /**
+   * The passed in URL has all the parameters set for background execution. We simply call GET 
+   * on the URL and handle the response object. If the response object contains a particular string
+   * then we display success message box.
+   *  
+   * @param url Complete url with all the parameters set for scheduling a job in the background.
+   */
+  private void runInBackground(final String url) {
+    
+    RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+    try {
+      builder.sendRequest(null, new RequestCallback() {
+        
+        public void onError(Request request, Throwable exception) {
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+          dialogBox.center();
+        }
+        
+        public void onResponseReceived(Request request, Response response) {
+          /*
+           *  We are checking for this specific string because if the job was scheduled 
+           *  successfully by QuartzBackgroundExecutionHelper then the response is an html 
+           *  that contains the specific string. We have coded this way because we did not want to 
+           *  touch the old way.   
+           */
+          if ("true".equals(response.getHeader("background_execution"))) {
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), 
+                                                              Messages.getString("backgroundJobScheduled"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            dialogBox.center();
+          }
+        }
+      });
+    } catch (RequestException e) {
+      Window.alert(e.getLocalizedMessage());
+    }
+  }
+    
+  public void confirmBackgroundExecutionDialog(final String url) {
+    final String title = Messages.getString("confirm");
+    final String message = Messages.getString("userParamBackgroundWarning");
+    VerticalPanel vp = new VerticalPanel();
+    vp.add(new Label(Messages.getString(message))); //$NON-NLS-1$
+
+    final PromptDialogBox scheduleInBackground = new PromptDialogBox(title, Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$
+
+    final IDialogCallback callback = new IDialogCallback() {
+      public void cancelPressed() {
+        scheduleInBackground.hide();
+      }
+
+      public void okPressed() {
+        runInBackground(url);
+      }
+    };
+    scheduleInBackground.setCallback(callback);
+    scheduleInBackground.center();
+  }
 }
