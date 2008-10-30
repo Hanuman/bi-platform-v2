@@ -154,10 +154,10 @@
   
   <target name="deploy-to-pentaho-pci" depends="">
   	<jar basedir="dist/bin" destfile="${pentaho-webapp-root}/WEB-INF/lib/mantle-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" />
-  	<copy todir="${pentaho-webapp-root}/mantle">
+  	<copy todir="${pentaho-webapp-root}/mantle"  failonerror="false">
   		<fileset dir="${gwt.output.dir}/mantle" includes="**/*" />
   	</copy>
-  	<copy todir="${pentaho-webapp-root}/mantleLogin">
+  	<copy todir="${pentaho-webapp-root}/mantleLogin" failonerror="false">
   		<fileset dir="login-output/mantleLogin" includes="**/*" />
   	</copy>
   	<copy todir="${pentaho-webapp-root}/WEB-INF/lib">
@@ -182,14 +182,10 @@
     <antcall target="deploy-to-pentaho-pci"/>
   </target>	
 	
-  <!--
-  <target name="compile-login-deploy" depends="compile-mantle-login">
-    <delete dir="login-compile" />
-    <antcall target="compile-mantle-login"/>
-    <delete dir="_source" />
-    <antcall target="deploy-to-pentaho-pci">
-    </antcall>
-  </target>-->
+  <target name="compile-login-deploy-dev" depends="clean">
+    <antcall target="compile-mantle-login-dev"/>
+    <antcall target="deploy-to-pentaho-pci"/>
+  </target>
 
 
 
