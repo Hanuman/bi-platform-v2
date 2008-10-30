@@ -38,8 +38,10 @@ public class RefreshRepositoryCommand implements Command {
 
       public void onFailure(Throwable caught) {
         WaitPopup.getInstance().setVisible(false);
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-        dialogBox.center();
+        // the success message is nothing but annoying after the waitpopup finishes
+        // MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true);
+        // //$NON-NLS-1$ //$NON-NLS-2$
+        // dialogBox.center();
       }
 
       public void onSuccess(Void nothing) {
