@@ -53,6 +53,8 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
 
   private static final long serialVersionUID = -6052692173173633694L;
 
+  private static final int FILE_ADD_DATASOURCE_PROBLEM = 6;
+  
   // ~ Instance fields =================================================================================================
 
   private IMondrianCatalogService mondrianCatalogService = MondrianCatalogHelper.getInstance();
@@ -152,7 +154,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       	MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$      	
     } catch (DatasourceServiceException dse) {
       MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0001_JNDI_NAMING_ERROR", jndiName), dse); //$NON-NLS-1$
-      resp.getWriter().println(ISolutionRepository.FILE_ADD_FAILED);
+      resp.getWriter().println(FILE_ADD_DATASOURCE_PROBLEM);
       return;
     }
 
