@@ -313,6 +313,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     $wnd.mantle_confirmBackgroundExecutionDialog = function(url) {
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::confirmBackgroundExecutionDialog(Ljava/lang/String;)(url);      
     }
+    
+    $wnd.enableAdhocSave = function(enable) {
+      mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
+    }
   }-*/;
 
   public void loadAndApplyUserSettings() {
