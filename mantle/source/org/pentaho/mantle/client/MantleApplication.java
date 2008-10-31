@@ -171,7 +171,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     mainToolbar = new MainToolbar(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
-    
+
     // first things first... make sure we've registered our native hooks
     setupNativeHooks(this, solutionBrowserPerspective);
 
@@ -217,45 +217,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     menuBar.setHeight("26px"); //$NON-NLS-1$
     menuBar.setWidth("100%"); //$NON-NLS-1$
 
-    menuAndLogoPanel.setCellPadding(0);
-    menuAndLogoPanel.setCellSpacing(0);
-    menuAndLogoPanel.setStyleName("menuBarAndLogoPanel"); //$NON-NLS-1$
-    menuAndLogoPanel.setWidth("100%"); //$NON-NLS-1$
-    menuAndLogoPanel.setWidget(0, 0, menuBar);
-    menuAndLogoPanel.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-    menuAndLogoPanel.setWidget(1, 0, mainToolbar);
-    menuAndLogoPanel.setWidget(0, 1, logoPanel);
-    menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
-    menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px"); //$NON-NLS-1$
-    menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
-
-    mainToolbar.setHeight("46px"); //$NON-NLS-1$
-    mainToolbar.setWidth("100%"); //$NON-NLS-1$
-    mainApplicationPanel.add(menuAndLogoPanel);
-    mainApplicationPanel.setCellHeight(menuAndLogoPanel, "70px"); //$NON-NLS-1$
-
-    perspectivesPanel.setAnimationEnabled(true);
-    perspectivesPanel.setHeight("100%"); //$NON-NLS-1$
-    perspectivesPanel.setWidth("100%"); //$NON-NLS-1$
-
-    solutionBrowserPerspective.addSolutionBrowserListener(mainToolbar);
-    solutionBrowserPerspective.addSolutionBrowserListener(this);
-    perspectivesPanel.add(solutionBrowserPerspective);
-    // perspectivesPanel.add(desktopPerspective);
-    // perspectivesPanel.add(halogenPerspective);
-    showNavigatorCommand.execute();
-
     // load mantle settings
     loadAndApplyMantleSettings();
-
-    // load user settings
-    loadAndApplyUserSettings();
-
-    // load user bookmarks
-    solutionBrowserPerspective.loadBookmarks();
-
-    // show stuff we've created/configured
-    mainApplicationPanel.add(perspectivesPanel);
 
     // add window close listener
     Window.addWindowCloseListener(new WindowCloseListener() {
@@ -271,11 +234,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         return null;
       }
     });
-    
+
     ElementUtils.convertPNGs();
   }
 
-  
   /**
    * This method is used by things like jpivot in order to show a 'mantle' looking alert dialog instead of a standard alert dialog.
    * 
@@ -286,7 +248,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     MessageDialogBox dialog = new MessageDialogBox(title, message, true, false, true);
     dialog.center();
   }
-  
+
   public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.mantle_openTab = function(name, title, url) {
@@ -358,10 +320,50 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   public void loadAndApplyMantleSettings() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<HashMap<String, String>> callback = new AsyncCallback<HashMap<String, String>>() {
 
-      public void onSuccess(Object result) {
-        HashMap<String, String> settings = (HashMap<String, String>) result;
+      public void onSuccess(HashMap<String, String> settings) {
+        menuAndLogoPanel.setCellPadding(0);
+        menuAndLogoPanel.setCellSpacing(0);
+        menuAndLogoPanel.setStyleName("menuBarAndLogoPanel"); //$NON-NLS-1$
+        menuAndLogoPanel.setWidth("100%"); //$NON-NLS-1$
+        if ("true".equals(settings.get("show-logo-panel")) && "true".equals(settings.get("show-menu-bar")) && "true".equals(settings.get("show-main-toolbar"))) {
+          menuAndLogoPanel.setWidget(0, 1, logoPanel);
+          menuAndLogoPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
+          menuAndLogoPanel.getFlexCellFormatter().setWidth(0, 1, "180px"); //$NON-NLS-1$
+          menuAndLogoPanel.getFlexCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
+        }
+        if ("true".equals(settings.get("show-menu-bar"))) {
+          menuAndLogoPanel.setWidget(0, 0, menuBar);
+          menuAndLogoPanel.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+        }
+        if ("true".equals(settings.get("show-main-toolbar"))) {
+          menuAndLogoPanel.setWidget(1, 0, mainToolbar);
+          mainToolbar.setHeight("46px"); //$NON-NLS-1$
+          mainToolbar.setWidth("100%"); //$NON-NLS-1$
+        }
+
+        mainApplicationPanel.add(menuAndLogoPanel);
+        mainApplicationPanel.setCellHeight(menuAndLogoPanel, "1px"); //$NON-NLS-1$
+
+        perspectivesPanel.setAnimationEnabled(true);
+        perspectivesPanel.setHeight("100%"); //$NON-NLS-1$
+        perspectivesPanel.setWidth("100%"); //$NON-NLS-1$
+
+        solutionBrowserPerspective.addSolutionBrowserListener(mainToolbar);
+        solutionBrowserPerspective.addSolutionBrowserListener(MantleApplication.this);
+        perspectivesPanel.add(solutionBrowserPerspective);
+        // perspectivesPanel.add(desktopPerspective);
+        // perspectivesPanel.add(halogenPerspective);
+        showNavigatorCommand.execute();
+        // load user settings
+        loadAndApplyUserSettings();
+
+        // load user bookmarks
+        solutionBrowserPerspective.loadBookmarks();
+
+        // show stuff we've created/configured
+        mainApplicationPanel.add(perspectivesPanel);
 
         // menubar=no,location=no,resizable=yes,scrollbars=no,status=no,width=1200,height=800
         RootPanel.get().add(mainApplicationPanel);
@@ -555,11 +557,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       propertiesMenuItem.setCommand(propertiesCommand);
     } else {
       propertiesMenuItem.setCommand(null);
-    }    
-    
+    }
+
     // Enable/Disable Save menu items based on content
     String[] saveTypes = new String[] { ".analysisview.xaction", ".waqr.xaction", "waqr.html" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    
+
     boolean saveEnabled = false;
     if (selectedTabURL != null) {
       for (String saveType : saveTypes) {
