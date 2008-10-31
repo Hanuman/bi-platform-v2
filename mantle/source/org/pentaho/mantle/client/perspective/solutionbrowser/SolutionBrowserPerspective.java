@@ -532,6 +532,30 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     
     selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null); //$NON-NLS-1$
+    
+    //TODO: Create a more dynamic filter interface
+    if(openMethod == OPEN_METHOD.SCHEDULE) {
+      if(selectedFileItem != null){
+        if(selectedFileItem.getName() != null){
+          if(!selectedFileItem.getName().endsWith(".xaction")){ //$NON-NLS-1$
+            final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+
+            dialogBox.setCallback(new IDialogCallback() {
+              public void cancelPressed() {
+              }
+
+              public void okPressed() {
+                dialogBox.hide();
+                (new OpenFileCommand(SolutionBrowserPerspective.this)).execute(OPEN_METHOD.SCHEDULE);
+              }
+            });
+            
+            dialogBox.center();
+            return;
+          }
+        }
+      }
+    }
 
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
     pathSegments.add(name);
