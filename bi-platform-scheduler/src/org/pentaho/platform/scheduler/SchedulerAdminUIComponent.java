@@ -18,6 +18,7 @@ package org.pentaho.platform.scheduler;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -30,7 +31,9 @@ import org.pentaho.platform.api.engine.ComponentException;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISchedule;
 import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
+import org.pentaho.platform.api.scheduler.IJobSchedule;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -131,6 +134,8 @@ public class SchedulerAdminUIComponent extends XmlComponent {
   public static final String UPDATE_JOB_ACTION_STR = "updateJob"; //$NON-NLS-1$
 
   private Scheduler sched = null;
+  
+  private IBackgroundExecution backgroundExecution = null; 
 
   private static final Log logger = LogFactory.getLog(SchedulerAdminUIComponent.class);
 
@@ -141,6 +146,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     super(urlFactory, messages, null);
     try {
       sched = QuartzSystemListener.getSchedulerInstance();
+      backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getSession());
     } catch (Exception e) {
       error(Messages
           .getString(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0002_NoScheduler") + e.toString())); //$NON-NLS-1$
@@ -330,8 +336,15 @@ public class SchedulerAdminUIComponent extends XmlComponent {
   private Document doDeleteJob() throws ComponentException {
     String jobName = getParameter(JOB_NAME, ""); //$NON-NLS-1$
     String groupName = getParameter(JOB_GROUP, ""); //$NON-NLS-1$
+    
     try {
-      sched.deleteJob(jobName, groupName);
+      // First delete any content that this schedule may have
+      JobDetail jobDetail = sched.getJobDetail(jobName, groupName);
+      String backgroundContentGUID = jobDetail.getJobDataMap().getString(QuartzBackgroundExecutionHelper.BACKGROUND_CONTENT_GUID_STR);
+      if (backgroundContentGUID != null && backgroundContentGUID.length() > 0) {
+        backgroundExecution.removeBackgroundExecutedContentForID(backgroundContentGUID, getSession());
+      }
+      sched.deleteJob(jobName, groupName);    
     } catch (SchedulerException e) {
       throw new ComponentException(Messages.getErrorString(
           "SchedulerAdminUIComponent.ERROR_0422_FAILED_TO_DELETE", jobName, groupName), e); //$NON-NLS-1$
