@@ -100,7 +100,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
       assert (repeatInterval==null && cronString != null) 
       || (repeatInterval!=null && cronString == null) 
-      || (repeatInterval==null && cronString == null) : "cronString and repeatInterval cannot both be non-null"; //$NON-NLS-1$
+      || (repeatInterval==null && cronString == null) : Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0423_INVALID_INTERVAL"); //$NON-NLS-1$
       
       String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
       String actionPath = parameterProvider.getStringParameter(StandardSettings.PATH, null); //$NON-NLS-1$
