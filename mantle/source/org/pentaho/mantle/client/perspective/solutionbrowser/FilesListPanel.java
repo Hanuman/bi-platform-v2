@@ -72,6 +72,7 @@ public class FilesListPanel extends FlowPanel {
         super.onBrowserEvent(event);
       }
     };
+    filesList.setWidth("100%");
     fp.sinkEvents(Event.KEYEVENTS);
 
     filesListWrapper.add(fp);
