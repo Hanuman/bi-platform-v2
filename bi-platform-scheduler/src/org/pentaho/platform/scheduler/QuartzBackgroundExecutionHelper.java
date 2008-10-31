@@ -96,7 +96,12 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
    */
   public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) throws  BackgroundExecutionException{
     try {
-      Scheduler sched = QuartzSystemListener.getSchedulerInstance();
+      String cronString = parameterProvider.getStringParameter(StandardSettings.CRON_STRING, null);
+      String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
+      assert (repeatInterval==null && cronString != null) 
+      || (repeatInterval!=null && cronString == null) 
+      || (repeatInterval==null && cronString == null) : "cronString and repeatInterval cannot both be non-null"; //$NON-NLS-1$
+      
       String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
       String actionPath = parameterProvider.getStringParameter(StandardSettings.PATH, null); //$NON-NLS-1$
       String actionName = parameterProvider.getStringParameter(StandardSettings.ACTION, null); //$NON-NLS-1$
@@ -105,34 +110,32 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       if(actionSeqPath == null  || actionSeqPath.length() <= 0) {
         actionSeqPath = solutionName + ISolutionRepository.SEPARATOR + actionPath + ISolutionRepository.SEPARATOR +  actionName;
       }
-      String cronString = parameterProvider.getStringParameter(StandardSettings.CRON_STRING, null);
-      String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
+      
       String description = parameterProvider.getStringParameter(StandardSettings.DESCRIPTION, null);
       String scheduleName = null;
       String scheduleGroupName = null;
       
-      assert (repeatInterval==null && cronString != null) 
-        || (repeatInterval!=null && cronString == null) 
-        || (repeatInterval==null && cronString == null) : "cronString and repeatInterval cannot both be non-null"; //$NON-NLS-1$
 
-        if ( ( null == cronString ) && ( null == repeatInterval ) ) {
-          // must be a quick one-shot background schedule
-          scheduleName = UUIDUtil.getUUIDAsString();
-          scheduleGroupName = getUserName( userSession );
-        } else {
-          // must be some kind of repeating or cron schedule
-          scheduleName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_NAME, null);
-          scheduleGroupName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_GROUP_NAME, null);
-        }
+      String outputContentGUID = UUIDUtil.getUUIDAsString();
+      
+      if ( ( null == cronString ) && ( null == repeatInterval ) ) {
+        // must be a quick one-shot background schedule
+        scheduleName = outputContentGUID;
+        scheduleGroupName = getUserName( userSession );
+      } else {
+        // must be some kind of repeating or cron schedule
+        scheduleName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_NAME, null);
+        scheduleGroupName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_GROUP_NAME, null);
+      }
 
-      // jobDetail's name will be the value of outputContentGUID, and group name will be the 
-      // value of jobGroupName, which is the user name in the session
       JobDetail jobDetail = createDetailFromParameterProvider(parameterProvider, userSession, 
-          scheduleName, scheduleGroupName, description, actionSeqPath );
+          outputContentGUID, scheduleName, scheduleGroupName, description, actionSeqPath );
       
       // stores the user name and outputContentGUID in the Content Repository's persistent store (e.g. a database via hibernate)
-      trackBackgroundExecution(userSession, scheduleName);
+      trackBackgroundExecution(userSession, outputContentGUID);
 
+      Scheduler sched = QuartzSystemListener.getSchedulerInstance();
+      
       Trigger bgTrigger = null;
       if ( null != cronString ) {
         String startDate = parameterProvider.getStringParameter(StandardSettings.START_DATE_TIME, null);
@@ -155,7 +158,6 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
 
         bgTrigger = new SimpleTrigger(scheduleName, scheduleGroupName );  // trigger fires now (or as soon as possible)
       }
-      // bgTrigger.setPriority(someValue);
 
       sched.scheduleJob(jobDetail, bgTrigger);
       // TODO: Fix with properly formatted HTML template for this status message. (<--this comment is incorrect)
@@ -247,25 +249,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
    * @param actionPath
    * @param actionName
    */
-  protected JobDetail createDetailFromParameterProvider(IParameterProvider parameterProvider,
-      IPentahoSession userSession, String /*jobName*/outputContentGUID, String jobGroup, 
-      String description, String actionSeqPath ) {
-    String userName = getUserName( userSession );
-
-    SimpleDateFormat fmt = new SimpleDateFormat();
-
-    // GEM - JIRA case BISERVER-231
-    // We are not sure why we were prepending the jobname with the action path and 
-    // sequence name, but it resulted in jobnames that exceeded the database column length of
-    // 80 characters. This did not present itself as a problem until we implemented Oracle
-    // as the RDBMS repository, where background job execution failed because of the name length. 
-    // So we now just use the guid as the job name, and will wait and see if this manifests other problems. 
-    
-    
-//    String completeAction = solutionName + "/" + actionPath + "/" + actionName; //$NON-NLS-1$ //$NON-NLS-2$
-//    String jobName = completeAction + "/" + outputContentGUID; //$NON-NLS-1$
-
-    String jobName = outputContentGUID;
+  protected JobDetail createDetailFromParameterProvider(IParameterProvider parameterProvider, IPentahoSession userSession, String outputContentId, String jobName, String jobGroup, String description, String actionSeqPath ) {
     
     JobDetail jobDetail = new JobDetail(jobName, jobGroup, QuartzExecute.class);
     if ( null != description ) {
@@ -273,7 +257,6 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     }
     JobDataMap data = jobDetail.getJobDataMap();
     Iterator<String> inputNamesIterator = parameterProvider.getParameterNames();
-    String outputLocationGUID = UUIDUtil.getUUIDAsString();
     while (inputNamesIterator.hasNext()) {
       String inputName = (String) inputNamesIterator.next();
       Object inputValue = parameterProvider.getParameter(inputName);
@@ -286,9 +269,10 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
         repo.getLoggingLevel(), ISolutionRepository.ACTION_EXECUTE);
     data.put(BACKGROUND_ACTION_NAME_STR, action.getTitle());
     data.put("processId", this.getClass().getName()); //$NON-NLS-1$
-    data.put(BACKGROUND_USER_NAME_STR, userName);
-    data.put(BACKGROUND_CONTENT_GUID_STR, outputContentGUID);
-    data.put(BACKGROUND_CONTENT_LOCATION_STR, DEFAULT_BACKGROUND_LOCATION + "/" + outputLocationGUID); //$NON-NLS-1$ 
+    data.put(BACKGROUND_USER_NAME_STR, getUserName(userSession));
+    data.put(BACKGROUND_CONTENT_GUID_STR, outputContentId);
+    data.put(BACKGROUND_CONTENT_LOCATION_STR, DEFAULT_BACKGROUND_LOCATION + "/" + UUIDUtil.getUUIDAsString()); //$NON-NLS-1$ 
+    SimpleDateFormat fmt = new SimpleDateFormat();
     data.put(BACKGROUND_SUBMITTED, fmt.format(new Date()));
 
     data.put( StandardSettings.SOLUTION, actionInfo.getSolutionName() );

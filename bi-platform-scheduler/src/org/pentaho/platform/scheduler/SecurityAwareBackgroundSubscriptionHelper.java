@@ -28,12 +28,12 @@ public class SecurityAwareBackgroundSubscriptionHelper extends SecurityAwareBack
   // Helper Utility Methods
   @Override
   protected JobDetail createDetailFromParameterProvider(IParameterProvider parameterProvider,
-      IPentahoSession userSession, String outputContentGUID, String jobGroup, String description, 
+      IPentahoSession userSession, String outputContentGUID, String jobName, String jobGroup, String description, 
       String actionSeqPath) {
 
     String subscribeName = parameterProvider.getStringParameter("subscribe-name", null); //$NON-NLS-1$
     JobDetail jobDetail = super.createDetailFromParameterProvider(parameterProvider, userSession, 
-        subscribeName, jobGroup, description, actionSeqPath);
+        outputContentGUID, subscribeName, jobGroup, description, actionSeqPath);
     JobDataMap data = jobDetail.getJobDataMap();
 
     ActionInfo actionInfo = ActionInfo.parseActionString( actionSeqPath );
