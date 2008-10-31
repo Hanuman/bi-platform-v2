@@ -808,7 +808,7 @@
 		<zipfileset dir="${webapp.dir}/WEB-INF/" prefix="META-INF">
 			<include name="jboss-app.xml" />
 		</zipfileset>
-		<fileset dir="${build.ears.dir}/jboss/no-portal/${rdbms}" includes="pentaho.war" />
+		<fileset dir="${build.ears.dir}/jboss/no-portal" includes="pentaho.war" />
 		<fileset dir="${build.res.dir}/jboss/datasources/${rdbms}" />
 		<!-- Include appropriate third party jars -->
 		<zipfileset dir="${build.third-party.dir}" prefix="lib">
