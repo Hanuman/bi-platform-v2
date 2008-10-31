@@ -259,11 +259,11 @@ Controller.prototype.getModel = function()
   this.wiz.getBusyCtrl().show();
   UIUtil.setCursor( document.getElementById( "content0" ), "wait" );
   var localThis = this;
-  pentahoGet( "/pentaho/GetResource", "resource=adhoc/businessviewlist.xsl", 
+  pentahoGet( "../GetResource", "resource=adhoc/businessviewlist.xsl", 
     function ( xmlStr )
     {
       localThis.viewsXsl = XmlUtil.load( xmlStr );
-      pentahoGet( "/pentaho/GetResource", "resource=adhoc/businessview.xsl", 
+      pentahoGet( "../GetResource", "resource=adhoc/businessview.xsl", 
         function( xmlStr )
         {
           localThis.viewXsl = XmlUtil.load( xmlStr );

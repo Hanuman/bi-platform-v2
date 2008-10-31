@@ -22,14 +22,14 @@ WebServiceProxy = function()
 {
 	throw new Error( Messages.getString("CTOR_CALL_UNNEEDED") );
 }
-/*static*/WebServiceProxy.ADHOC_WEBSERVICE_URL = "/pentaho/AdhocWebService";
+/*static*/WebServiceProxy.ADHOC_WEBSERVICE_URL = "../AdhocWebService";
 
 /*static*/WebServiceProxy.msgCtrl = new MessageCtrl();
 
 /**
  * Make a call to the WebService
  * 
- * @param String url base URL to the web service (eg "/pentaho/AdhocWebService")
+ * @param String url base URL to the web service (eg "../AdhocWebService")
  * @param component String referring to the string selector in the adhoc web service
  * that determines which "service" will be called.
  * @parm params Object containing properties, these properties and their values

@@ -43,7 +43,7 @@ TemplatesListCtrl = function( id, className )
 }
 TemplatesListCtrl.prototype = new ListCtrl();
 
-/*static final*/TemplatesListCtrl.GET_IMAGE_URL="/pentaho/GetResource?resource=";
+/*static final*/TemplatesListCtrl.GET_IMAGE_URL="../GetResource?resource=";
 //TODO sbarkdull, the value needs to be better than 10000, see http://www.faqs.org/rfcs/rfc822.html for date format
 /*static final*/TemplatesListCtrl.EXPIRES="expires=1 Dec 2007";		
 

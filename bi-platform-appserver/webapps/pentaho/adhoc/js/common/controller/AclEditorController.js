@@ -32,8 +32,8 @@ AclEditorController = function( dialog )
   );
 };
 
-/*private static*/AclEditorController.PENTAHO_HTTP_WEBSERVICE_URL = "/pentaho/ServiceAction";
-/*private static*/AclEditorController.SOLUTION_REPOSITORY_WEBSERVICE_URL = "/pentaho/SolutionRepositoryService";
+/*private static*/AclEditorController.PENTAHO_HTTP_WEBSERVICE_URL = "../ServiceAction";
+/*private static*/AclEditorController.SOLUTION_REPOSITORY_WEBSERVICE_URL = "../SolutionRepositoryService";
 // TODO sbarkdull, need to localize text
 /*private static*/AclEditorController.FILE_LABEL = Messages.getString( "PATH_LABEL" );
 /*private static*/AclEditorController.DIALOG_TITLE = Messages.getString( "SHARE_PERMISSIONS" );
