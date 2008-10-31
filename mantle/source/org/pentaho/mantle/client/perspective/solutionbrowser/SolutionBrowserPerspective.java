@@ -63,6 +63,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -123,7 +124,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       toggleWorkspace();
     }
   };
-  
+
   public void toggleWorkspace() {
     showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
     if (showWorkspaceMenuItem.isChecked()) {
@@ -132,6 +133,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       showLaunchOrContent();
     }
   }
+
   Command ToggleClassicViewCommand = new Command() {
 
     public void execute() {
@@ -191,7 +193,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   TreeListener treeListener = new TreeListener() {
 
-    @SuppressWarnings("unchecked") //$NON-NLS-1$
+    @SuppressWarnings("unchecked")//$NON-NLS-1$
     public void onTreeItemSelected(TreeItem item) {
       filesListPanel.populateFilesList(SolutionBrowserPerspective.this, solutionTree, selectedFileItem, item);
       filesListPanel.getToolbar().setEnabled(false);
@@ -202,7 +204,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
 
   };
-  
+
   private static SolutionBrowserPerspective instance;
 
   public SolutionBrowserPerspective(final IPerspectiveCallback perspectiveCallback) {
@@ -223,7 +225,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent();
         if (previousIndex != tabIndex) {
           ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
-          
+
           NamedFrame frame = tabPanel.getFrame();
 
           Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -336,13 +338,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (showIndex != -1) {
       contentPanel.showWidget(showIndex);
 
-      //There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
+      // There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
       int selectedTab = contentTabPanel.getTabBar().getSelectedTab();
-      if(selectedTab > -1){
+      if (selectedTab > -1) {
         ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTab);
         refreshIfPDF(tabPanel);
       }
-      
+
     }
     fireSolutionBrowserListenerEvent();
   }
@@ -421,7 +423,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public TabWidget getCurrentTab() {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab()));
   }
-  
+
   public TabWidget getTabForWidget(Widget tabWidget) {
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getWidgetIndex(tabWidget)));
   }
@@ -456,16 +458,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
           PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           dialog.setCallback(new IDialogCallback() {
-  
+
             public void cancelPressed() {
               // do nothing
             }
-  
+
             public void okPressed() {
               contentTabPanel.remove(openAnalysisView);
               executeActionSequence(mode);
             }
-            
+
           });
           dialog.center();
           dialog.show();
@@ -477,7 +479,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         executeActionSequence(mode);
       }
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
-        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+      showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
     } else if (name.endsWith(".prc")) { //$NON-NLS-1$
       // open jfreereport!!
       openNewHTMLReport(mode);
@@ -490,7 +492,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     }
   }
-  
 
   public enum OPEN_METHOD {
     OPEN, EDIT, SHARE, SCHEDULE
@@ -526,19 +527,20 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           (new OpenFileCommand(SolutionBrowserPerspective.this)).execute();
         }
       });
-      
+
       dialogBox.center();
       return;
     }
-    
+
     selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null); //$NON-NLS-1$
-    
-    //TODO: Create a more dynamic filter interface
-    if(openMethod == OPEN_METHOD.SCHEDULE) {
-      if(selectedFileItem != null){
-        if(selectedFileItem.getName() != null){
-          if(!selectedFileItem.getName().endsWith(".xaction")){ //$NON-NLS-1$
-            final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+
+    // TODO: Create a more dynamic filter interface
+    if (openMethod == OPEN_METHOD.SCHEDULE) {
+      if (selectedFileItem != null) {
+        if (selectedFileItem.getName() != null) {
+          if (!selectedFileItem.getName().endsWith(".xaction")) { //$NON-NLS-1$
+            final MessageDialogBox dialogBox = new MessageDialogBox(
+                Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 
             dialogBox.setCallback(new IDialogCallback() {
               public void cancelPressed() {
@@ -549,7 +551,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                 (new OpenFileCommand(SolutionBrowserPerspective.this)).execute(OPEN_METHOD.SCHEDULE);
               }
             });
-            
+
             dialogBox.center();
             return;
           }
@@ -611,7 +613,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
+      showNewURLTab(
+          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -623,14 +626,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else if (selectedFileItem.getName().endsWith(".analysisview.xaction")) { //$NON-NLS-1$
       openFile(COMMAND.RUN);
     } else {
-      MessageDialogBox dialogBox = new MessageDialogBox(
-          Messages.getString("error"), //$NON-NLS-1$
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
           Messages.getString("cannotEditFileType"), //$NON-NLS-1$
           true, false, true);
       dialogBox.center();
     }
   }
-  
+
   /**
    * this method launches the experimental action editor from Mantle.
    * 
@@ -649,7 +651,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (!GWT.isScript()) {
         url = "http://localhost:8080/pentaho/actioneditor/actioneditor.html?actionSequence=" + fullPath; //$NON-NLS-1$
       }
-  
+
       // See if it's already loaded
       for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
@@ -659,14 +661,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           return;
         }
       }
-      showNewURLTab(Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
-  
+      showNewURLTab(
+          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
+
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
       fileInfo.setPath(selectedFileItem.getPath());
-        this.getCurrentFrame().setFileInfo(fileInfo);
+      this.getCurrentFrame().setFileInfo(fileInfo);
     }
   }
 
@@ -727,9 +730,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     };
     deleteConfirmDialog.setCallback(callback);
-    deleteConfirmDialog.center();    
+    deleteConfirmDialog.center();
   }
-  
+
   void executeActionSequence(final FileCommand.COMMAND mode) {
     // open in content panel
     // http://localhost:8080/pentaho/ViewAction?solution=samples&path=reporting&action=JFree_XQuery_report.xaction
@@ -761,8 +764,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
 
         if (mode == FileCommand.COMMAND.BACKGROUND) {
-          MessageDialogBox dialogBox = new MessageDialogBox(
-              Messages.getString("info"), //$NON-NLS-1$
+          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
               Messages.getString("backgroundExecutionWarning"), //$NON-NLS-1$
               true, false, true);
           dialogBox.center();
@@ -774,7 +776,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             builder.sendRequest(null, new RequestCallback() {
 
               public void onError(Request request, Throwable exception) {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+                MessageDialogBox dialogBox = new MessageDialogBox(
+                    Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
                 dialogBox.center();
               }
 
@@ -792,24 +795,25 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
             public void onFailure(Throwable caught) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+              MessageDialogBox dialogBox = new MessageDialogBox(
+                  Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
               dialogBox.center();
             }
 
             public void onSuccess(Boolean subscribable) {
-                 
-                if (subscribable) {
-                  showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl);
 
-                  // Store representation of file in the frame for reference later when save is called
-//                  getCurrentFrame().setFileInfo(fileInfo);
+              if (subscribable) {
+                showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl);
 
-                } else {
-                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
-                      Messages.getString("noSubscribePermission"), false, false, true); //$NON-NLS-1$
-                  dialogBox.center();
-                }
-              } 
+                // Store representation of file in the frame for reference later when save is called
+                // getCurrentFrame().setFileInfo(fileInfo);
+
+              } else {
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+                    Messages.getString("noSubscribePermission"), false, false, true); //$NON-NLS-1$
+                dialogBox.center();
+              }
+            }
           };
           MantleServiceCache.getService().hasAccess(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), 3, callback);
         } else {
@@ -864,9 +868,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
-            if(collapse){
-            for(TreeItem item : solutionTree.getAllNodes()){
-              item.setState(false);
+            if (collapse) {
+              for (TreeItem item : solutionTree.getAllNodes()) {
+                item.setState(false);
               }
             }
             // update classic view
@@ -883,7 +887,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         try {
           builder.sendRequest(null, callback);
         } catch (RequestException e) {
-          MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+          MessageDialogBox dialogBox = new MessageDialogBox(
+              Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
           dialogBox.center();
         }
       }
@@ -905,11 +910,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void loadPerspective(boolean force, boolean showStatus) {
-    if (!hasBeenLoaded){
-      fetchSolutionDocument(showStatus, /*collapse*/ true);
+    if (!hasBeenLoaded) {
+      fetchSolutionDocument(showStatus, /*collapse*/true);
       hasBeenLoaded = true;
-    } else if(force) {
-      fetchSolutionDocument(showStatus, /*collapse*/ false);
+    } else if (force) {
+      fetchSolutionDocument(showStatus, /*collapse*/false);
     }
     workspacePanel.refreshWorkspace();
     installViewMenu(perspectiveCallback);
@@ -931,49 +936,50 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void createSchedule(final String cronExpression) {
-//    final AsyncCallback callback = new AsyncCallback() {
-//
-//      public void onSuccess(Object result) {
-//        String solutionName = solutionTree.getSolution();
-//        String path = solutionTree.getPath();
-//        if (path.startsWith("/")) { //$NON-NLS-1$
-//          path = path.substring(1);
-//        }
-//        String actionName = selectedFileItem.getName();
-//
-//        AsyncCallback callback = new AsyncCallback() {
-//
-//          public void onFailure(Throwable caught) {
-//            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
-//                true);
-//            dialogBox.center();
-//          }
-//
-//          public void onSuccess(Object result) {
-//            MessageDialogBox dialogBox = new MessageDialogBox(
-//                Messages.getString("info"), //$NON-NLS-1$
-//                Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
-//                true, false, true);
-//            dialogBox.center();
-//          }
-//        };
-//        MantleServiceCache.getService().createCronJob(solutionName, path, actionName, cronExpression, callback);
-//      }
-//
-//      public void onFailure(Throwable caught) {
-//        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
-//
-//          public void onFailure(Throwable caught) {
-//
-//          }
-//
-//          public void onSuccess(Boolean result) {
-//            createSchedule(cronExpression);
-//          }
-//        });
-//      }
-//    };
-//    MantleServiceCache.getService().isAuthenticated(callback);
+    // final AsyncCallback callback = new AsyncCallback() {
+    //
+    // public void onSuccess(Object result) {
+    // String solutionName = solutionTree.getSolution();
+    // String path = solutionTree.getPath();
+    // if (path.startsWith("/")) { //$NON-NLS-1$
+    // path = path.substring(1);
+    // }
+    // String actionName = selectedFileItem.getName();
+    //
+    // AsyncCallback callback = new AsyncCallback() {
+    //
+    // public void onFailure(Throwable caught) {
+    // MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$
+    // //$NON-NLS-2$
+    // true);
+    // dialogBox.center();
+    // }
+    //
+    // public void onSuccess(Object result) {
+    // MessageDialogBox dialogBox = new MessageDialogBox(
+    // Messages.getString("info"), //$NON-NLS-1$
+    // Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
+    // true, false, true);
+    // dialogBox.center();
+    // }
+    // };
+    // MantleServiceCache.getService().createCronJob(solutionName, path, actionName, cronExpression, callback);
+    // }
+    //
+    // public void onFailure(Throwable caught) {
+    // MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
+    //
+    // public void onFailure(Throwable caught) {
+    //
+    // }
+    //
+    // public void onSuccess(Boolean result) {
+    // createSchedule(cronExpression);
+    // }
+    // });
+    // }
+    // };
+    // MantleServiceCache.getService().isAuthenticated(callback);
   }
 
   public void selectNextItem(FileItem currentItem) {
@@ -1026,7 +1032,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void onSuccess(Object result) {
             createSchedule();
           }
-        });    
+        });
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
@@ -1088,12 +1094,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       favoritesGroupMenuBar.addSeparator();
     }
     favoritesGroupMenuBar.addItem(new MenuItem(Messages.getString("manageGroups"), new Command() { //$NON-NLS-1$
-      public void execute() {
-        // bring up dialog to edit groups
-        UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.PREFERENCE.FAVORITES);
-        dialog.center();
-      }
-    }));
+          public void execute() {
+            // bring up dialog to edit groups
+            UserPreferencesDialog dialog = new UserPreferencesDialog(UserPreferencesDialog.PREFERENCE.FAVORITES);
+            dialog.center();
+          }
+        }));
   }
 
   public void loadBookmarks() {
@@ -1338,7 +1344,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public ReloadableIFrameTabPanel getCurrentFrame() {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
-    if(curpos == -1){
+    if (curpos == -1) {
       return null;
     }
     final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
@@ -1350,10 +1356,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
   }-*/;
 
-  private void refreshIfPDF(ReloadableIFrameTabPanel frame) {
-    if(isPDF(frame.getFrame().getElement())){
-      frame.reload();
-    }
+  private void refreshIfPDF(final ReloadableIFrameTabPanel frame) {
+    Timer t = new Timer() {
+      public void run() {
+        if (isPDF(frame.getFrame().getElement())) {
+          frame.reload();
+        }
+      }
+    };
+    t.schedule(250);
   }
 
   public void backgroundExecutionCompleted() {
@@ -1380,7 +1391,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
    * return null if there is no open analysis view and returns the Widget the view is in if there is an open analysis view.
    */
   public Widget getOpenAnalysisView() {
-    for (int i=0; i<contentTabPanel.getWidgetCount(); i++) {
+    for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
       Widget currentWidget = contentTabPanel.getWidget(i);
       ReloadableIFrameTabPanel frame = ((ReloadableIFrameTabPanel) currentWidget);
       String id = frame.getFrame().getElement().getAttribute("id"); //$NON-NLS-1$
@@ -1390,44 +1401,43 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     return null;
   }
-  
+
   /**
    * This method will check if the given frame(by id) is jpivot.
    * 
    * @param elementId
    */
   public static native boolean isPivot(String elementId) /*-{
-    var frame = $doc.getElementById(elementId);
-    if (!frame) { 
-      return false; 
-  }
-    frame = frame.contentWindow;
-    return true == frame.pivot_initialized;
-  }-*/;  
-  
-  public static SolutionBrowserPerspective getInstance(){
+     var frame = $doc.getElementById(elementId);
+     if (!frame) { 
+       return false; 
+   }
+     frame = frame.contentWindow;
+     return true == frame.pivot_initialized;
+   }-*/;
+
+  public static SolutionBrowserPerspective getInstance() {
     return instance;
   }
-  
-  
+
   /**
-   * The passed in URL has all the parameters set for background execution. We simply call GET 
-   * on the URL and handle the response object. If the response object contains a particular string
-   * then we display success message box.
-   *  
-   * @param url Complete url with all the parameters set for scheduling a job in the background.
+   * The passed in URL has all the parameters set for background execution. We simply call GET on the URL and handle the response object. If the response object
+   * contains a particular string then we display success message box.
+   * 
+   * @param url
+   *          Complete url with all the parameters set for scheduling a job in the background.
    */
   private void runInBackground(final String url) {
-    
+
     RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
     try {
       builder.sendRequest(null, new RequestCallback() {
-        
+
         public void onError(Request request, Throwable exception) {
           MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
           dialogBox.center();
         }
-        
+
         public void onResponseReceived(Request request, Response response) {
           /*
            *  We are checking for this specific string because if the job was scheduled 
@@ -1436,8 +1446,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
            *  touch the old way.   
            */
           if ("true".equals(response.getHeader("background_execution"))) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), 
-                                                              Messages.getString("backgroundJobScheduled"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("backgroundJobScheduled"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
             dialogBox.center();
           }
         }
@@ -1446,7 +1455,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       Window.alert(e.getLocalizedMessage());
     }
   }
-    
+
   public void confirmBackgroundExecutionDialog(final String url) {
     final String title = Messages.getString("confirm");
     final String message = Messages.getString("userParamBackgroundWarning");
