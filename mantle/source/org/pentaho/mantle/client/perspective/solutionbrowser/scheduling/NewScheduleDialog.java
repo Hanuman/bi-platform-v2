@@ -89,7 +89,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     if (scheduleType == ScheduleType.SECONDS ||   // Simple Trigger Types
         scheduleType == ScheduleType.MINUTES ||
         scheduleType == ScheduleType.HOURS ||
-        scheduleType == ScheduleType.DAILY) {
+        (scheduleType == ScheduleType.DAILY && scheduleEditorWizardPanel.getRepeatCount() != -1)) {
       String triggerName = scheduleEditorWizardPanel.getTriggerName();
       String triggerGroup = scheduleEditorWizardPanel.getTriggerGroup();
       String description = scheduleEditorWizardPanel.getDescription();
