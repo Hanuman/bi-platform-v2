@@ -450,7 +450,7 @@ public class WorkspacePerspective extends ScrollPanel {
     if (scheduleList != null) {
       AsyncCallback<String> callback = new AsyncCallback<String>() {
         public void onFailure(Throwable caught) {
-          Window.alert(caught.getMessage());
+          new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotDeletePublicScheduleAndContents"), false, false, true).center(); //$NON-NLS-1$
         }
 
         public void onSuccess(String result) {
