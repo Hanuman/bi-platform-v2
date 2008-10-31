@@ -123,7 +123,7 @@ public class SQLConnection implements IPentahoLoggingConnection {
     init(driverName, location, userName, password);
   }
 
-  private void init(final String driverName, final String location, final String userName, final String password) {
+  protected void init(final String driverName, final String location, final String userName, final String password) {
     // bump();
     try {
       /*
@@ -164,7 +164,7 @@ public class SQLConnection implements IPentahoLoggingConnection {
     return IPentahoConnection.SQL_DATASOURCE;
   }
 
-  private void initWithJNDI(final String jndiName) {
+  protected void initWithJNDI(final String jndiName) {
     // bump();
     // myCtr = connectionCtr;
     try {

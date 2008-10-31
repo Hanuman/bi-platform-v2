@@ -107,12 +107,12 @@ public class MDXConnection implements IPentahoLoggingConnection {
     init(connectStr);
   }
 
-  private void init(final String connectStr) {
+  protected void init(final String connectStr) {
       Util.PropertyList properties = Util.parseConnectString(connectStr);
       init(properties);
   }
 
-  private void init(final Properties properties) {
+  protected void init(final Properties properties) {
       Util.PropertyList pl = new Util.PropertyList();
       Enumeration enum1 = properties.keys();
       while (enum1.hasMoreElements()) {
@@ -123,7 +123,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
       init(pl);
   }
   
-  private void init(final String driver, final String provider, final String userName, final String password) {
+  protected void init(final String driver, final String provider, final String userName, final String password) {
     StringBuffer buffer = new StringBuffer();
     buffer.append("provider=" + provider); //$NON-NLS-1$
     //
@@ -152,7 +152,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
     init(buffer.toString());
   }
 
-  private void init(Util.PropertyList properties) {
+  protected void init(Util.PropertyList properties) {
     try {
       if (nativeConnection != null) { // Assume we're open
         close();
