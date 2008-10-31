@@ -95,6 +95,11 @@
      <priority value="WARN"/>
      <appender-ref ref="PENTAHOFILE"/>
    </category>
+   
+   <category name="org.jfree.JCommon">
+      <priority value="ERROR"/>
+      <appender-ref ref="PENTAHOFILE"/>
+   </category> 
 
    <!-- ======================= -->
    <!-- Setup the Root category -->
