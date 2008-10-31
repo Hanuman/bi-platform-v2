@@ -39,6 +39,8 @@ public class SecurityAwareBackgroundSubscriptionHelper extends SecurityAwareBack
     ActionInfo actionInfo = ActionInfo.parseActionString( actionSeqPath );
     data.put(BACKGROUND_CONTENT_LOCATION_STR, SubscriptionHelper.getSubscriptionOutputLocation(
         actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName() ) );
+    
+    // Make the subscribe name the GUID for the content.
     data.put(QuartzBackgroundExecutionHelper.BACKGROUND_CONTENT_GUID_STR, subscribeName);
     return jobDetail;
   }
