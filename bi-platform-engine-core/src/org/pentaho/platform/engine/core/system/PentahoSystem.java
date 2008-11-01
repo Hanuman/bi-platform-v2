@@ -60,6 +60,7 @@ import org.pentaho.platform.api.engine.ISessionStartupAction;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ISubscriptionScheduler;
 import org.pentaho.platform.api.engine.ISystemSettings;
+import org.pentaho.platform.api.engine.IUITemplater;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PentahoSystemException;
@@ -805,6 +806,16 @@ public class PentahoSystem {
     } catch (ObjectFactoryException e) {
       Logger.error( PentahoSystem.class.getName(), e.getMessage() );
         return null;
+    }
+  }  
+  
+  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
+  public static IUITemplater getUITemplater(final IPentahoSession session) {
+    try {
+      return (IUITemplater)pentahoObjectFactory.getObject( "IUITemplater", session ); //$NON-NLS-1$
+    } catch (ObjectFactoryException e) {
+      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+      return null;
     }
   }  
   
