@@ -42,6 +42,7 @@ import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IApplicationContext;
+import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IConditionalExecution;
 import org.pentaho.platform.api.engine.IContentOutputHandler;
@@ -69,7 +70,9 @@ import org.pentaho.platform.api.repository.IRuntimeRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.ui.INavigationComponent;
+import org.pentaho.platform.api.ui.IXMLComponent;
 import org.pentaho.platform.api.usersettings.IUserSettingService;
+import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -448,6 +451,31 @@ public class PentahoSystem {
   private static final boolean hasFailed(final int errorToCheck) {
     return ((PentahoSystem.initializedStatus & errorToCheck) == errorToCheck);
   }
+  
+  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
+  public static IVersionHelper getVersionHelper(final IPentahoSession session) {
+    return (IVersionHelper)PentahoSystem.getObject(session, "IVersionHelper"); //$NON-NLS-1$
+  }
+
+  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
+  public static IUITemplater getUITemplater(final IPentahoSession session) {
+      try {
+      return (IUITemplater)pentahoObjectFactory.getObject( "IUITemplater", session ); //$NON-NLS-1$
+    } catch (ObjectFactoryException e) {
+      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+      return null;
+        }
+        }
+
+  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
+  public static IXMLComponent getUserFilesComponent(final IPentahoSession session) {
+    try {
+      return (IXMLComponent)pentahoObjectFactory.getObject( "IUserFilesComponent", session ); //$NON-NLS-1$
+    } catch (ObjectFactoryException e) {
+      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+      return null;
+    }
+  }
 
   //TODO: is this method needed?  See if we can use the factory directly and delete this method.
   public static IContentOutputHandler getOutputDestinationFromContentRef(final String contentTag,
@@ -806,16 +834,6 @@ public class PentahoSystem {
     } catch (ObjectFactoryException e) {
       Logger.error( PentahoSystem.class.getName(), e.getMessage() );
         return null;
-    }
-  }  
-  
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IUITemplater getUITemplater(final IPentahoSession session) {
-    try {
-      return (IUITemplater)pentahoObjectFactory.getObject( "IUITemplater", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
     }
   }  
   
