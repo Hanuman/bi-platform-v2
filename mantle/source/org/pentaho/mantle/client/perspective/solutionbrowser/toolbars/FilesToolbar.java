@@ -130,6 +130,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
     });
     miscComboBtn.setToolTip(Messages.getString("options")); //$NON-NLS-1$
+    miscComboBtn.setStylePrimaryName("mantle-toolbar-combo-button");
     add(miscComboBtn);
     setEnabled(false);
   }
