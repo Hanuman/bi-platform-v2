@@ -186,6 +186,13 @@ public class SolutionRepositoryService extends ServletBase {
       String[] filters = SolutionRepositoryService.getFilters(request);
       Document doc = getSolutionRepositoryDoc(userSession, filters);
       WebServiceUtil.writeDocument(outputStream, doc, wrapWithSOAP);
+    } else if ("createNewFolder".equals(component)) { //$NON-NLS-1$
+      String solution = request.getParameter("solution"); //$NON-NLS-1$
+      String path = request.getParameter("path"); //$NON-NLS-1$
+      String name = request.getParameter("name"); //$NON-NLS-1$
+      String desc = request.getParameter("desc"); //$NON-NLS-1$
+      boolean result = createFolder(userSession, solution, path, name, desc);
+      WebServiceUtil.writeString(outputStream, "<result>" + result + "</result>", wrapWithSOAP); //$NON-NLS-1$
     } else if ("delete".equals(component)) { //$NON-NLS-1$
       String solution = request.getParameter("solution"); //$NON-NLS-1$
       String path = request.getParameter("path"); //$NON-NLS-1$
@@ -240,6 +247,53 @@ public class SolutionRepositoryService extends ServletBase {
     return false;
   }
 
+  /**
+   * This method creates a folder along with it's index.xml file.  The method 
+   * is static/synchronized because we want to be absolutely sure we prevent 
+   * cases where multiple createFolder calls could occur at the same time.
+   * 
+   * This method also verifies that the user has PERM_CREATE permissions before
+   * creating the folder.
+   * 
+   * @param userSession the current user 
+   * @param solution the solution path
+   * @param path the folder path
+   * @param name the name of the new folder
+   * @param desc the description of the new folder
+   * @return true if success
+   * @throws IOException
+   */
+  public static synchronized boolean createFolder(IPentahoSession userSession, String solution, String path, String name, String desc) throws IOException {
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+    if (solution == null) {
+      solution = "";
+    }
+    String parentFolderPath = ActionInfo.buildSolutionPath(solution, path, "" + ISolutionRepository.SEPARATOR);
+    ISolutionFile parentSolutionFile = repository.getFileByPath(parentFolderPath);
+    if (parentSolutionFile != null && parentSolutionFile.isDirectory() && 
+        repository.hasAccess(parentSolutionFile, IPentahoAclEntry.PERM_CREATE)) {
+      File parent = new File(PentahoSystem.getApplicationContext().getSolutionPath(parentFolderPath));
+      File newFolder = new File(parent, name);
+      if (newFolder.exists()) {
+        // if the new folder already exists, we need to get out
+        return false;
+      }
+      repository.createFolder(newFolder);
+      
+      // create the index file content
+      String defaultIndex = "<index><name>" + name + "</name><description>" + (desc!=null?desc:name) //$NON-NLS-1$
+          + "</description><icon>reporting.png</icon><visible>true</visible><display-type>list</display-type></index>"; //$NON-NLS-1$
+
+      // add the index file to the repository
+      String indexPath = ActionInfo.buildSolutionPath(solution, path, name);
+      String baseURL = PentahoSystem.getApplicationContext().getSolutionPath("");
+      repository.addSolutionFile(baseURL, indexPath, ISolutionRepository.INDEX_FILENAME, defaultIndex.getBytes(), false);
+      return true;
+    }
+    return false;
+  }
+  
+  
   private boolean acceptFilter(String name, String[] filters) {
     if (filters == null || filters.length == 0) {
       return true;
