@@ -673,6 +673,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
   }
 
+  // not implemented here (but interface requires impl)
+  // see: SolutionTree for impl
+  public void createNewFolder() {
+  }
+
+  
   public void deleteFile() {
     // delete file
     final FileItem selectedItem = getSelectedFileItem();
