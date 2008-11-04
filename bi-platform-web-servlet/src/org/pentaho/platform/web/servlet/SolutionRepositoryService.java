@@ -268,6 +268,13 @@ public class SolutionRepositoryService extends ServletBase {
     if (solution == null) {
       solution = "";
     }
+    
+    // verify that the name does not contain a path separator before creating the folder
+    if (name == null || name.indexOf("/") >= 0 || name.indexOf("\\") >= 0 || //$NON-NLS-1$ //$NON-NLS-2$
+        name.indexOf(ISolutionRepository.SEPARATOR) >= 0) {
+      return false;
+    }
+    
     String parentFolderPath = ActionInfo.buildSolutionPath(solution, path, "" + ISolutionRepository.SEPARATOR);
     ISolutionFile parentSolutionFile = repository.getFileByPath(parentFolderPath);
     if (parentSolutionFile != null && parentSolutionFile.isDirectory() && 

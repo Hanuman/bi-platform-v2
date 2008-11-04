@@ -339,6 +339,9 @@ public class RepositoryUpdateHelper {
     String fixedParentFolderName = convertFileName(parentFolder.getAbsolutePath());
     // Get the Parent Folder either from our map or from Hibernate if necessary
     RepositoryFile parentFolderObject = (RepositoryFile) getParent(fixedParentFolderName);
+    if (parentFolderObject == null) {
+      parentFolderObject = (RepositoryFile)dbBasedRepository.getRootFolder();
+    }
     // Now, we have the parent in hand, we can create the RepositoryFile object
     RepositoryFile newFolderObject = new RepositoryFile(newFolder.getName(), parentFolderObject, null, newFolder
         .lastModified());
