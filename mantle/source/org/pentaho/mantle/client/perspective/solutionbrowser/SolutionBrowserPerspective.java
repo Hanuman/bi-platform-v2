@@ -1485,4 +1485,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     scheduleInBackground.setCallback(callback);
     scheduleInBackground.center();
   }
+  
+  
+  public void setCurrentTabEnabled(boolean enabled){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    if(panel != null){
+      panel.setSaveEnabled(enabled);
+    }
+    this.fireSolutionBrowserListenerEvent();
+  }
 }
