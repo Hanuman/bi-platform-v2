@@ -42,7 +42,7 @@
 	<border-paint>#000000</border-paint>
 
 	<!--  X-Axis properties -->
-	<domain-title>Years</domain-title>
+	<domain-title>Product Line</domain-title>
 	<domain-title-font>
       <font-family>Arial</font-family>
 	  <size>12</size>
