@@ -170,14 +170,25 @@ public class SaveCommand implements Command {
         filename = filename.substring(0, filename.indexOf("waqr.xaction")-1);
       }
       try{
+
         // tell WAQR to save it's state based on the current page
         var saveFuncName = "savePg"+frame.gCtrlr.wiz.currPgNum;
         var func = frame.gCtrlr[saveFuncName];
         if(func != undefined && typeof func == "function"){
           frame.gCtrlr[saveFuncName]();
         } 
+
+        // Find save type
+        var saveType = "html"; 
+        try{
+          saveType = frame.gCtrlr.wiz.previewTypeSelect.value;
+        } catch(e){
+          //consume and let default go
+        }
+
         // Perform the save
-        frame.gCtrlr.repositoryBrowserController.remoteSave(filename, solution, path, "html", overwrite);
+        frame.gCtrlr.repositoryBrowserController.remoteSave(filename, solution, path, saveType, overwrite);
+        
       } catch(e){
         //TODO: externalize message once a solution to do so is found.
         $wnd.mantle_showMessage("Error","Error encountered while saving: "+e);
