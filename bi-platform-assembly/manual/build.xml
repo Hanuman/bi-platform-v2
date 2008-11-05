@@ -511,7 +511,7 @@
 	<!-- ===================================================================
 	        target: war-pentaho-tomcat
 	       =================================================================== -->
-	<target name="war-pentaho-tomcat" depends="init, init-pentaho-wars, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war">
+	<target name="war-pentaho-tomcat" depends="init, init-pentaho-wars, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war">
 		<mkdir dir="${build.wars.dir}/tomcat/" />
 
 		<manifest file="${build.wars.dir}/tomcat/MANIFEST.MF">
