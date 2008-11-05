@@ -4,7 +4,7 @@
     <jndi-name>Quartz</jndi-name>
     <connection-url>jdbc:oracle:thin:@localhost:1521:pentaho</connection-url>
     <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
-    <user-name>hibuser</user-name>
+    <user-name>quartz</user-name>
     <password>password</password>
     <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
   </local-tx-datasource>
