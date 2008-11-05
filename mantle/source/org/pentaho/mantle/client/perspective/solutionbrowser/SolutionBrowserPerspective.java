@@ -816,7 +816,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
               } else {
                 MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
-                    Messages.getString("noSubscribePermission"), false, false, true); //$NON-NLS-1$
+                    Messages.getString("noSchedulePermission"), false, false, true); //$NON-NLS-1$
                 dialogBox.center();
               }
             }
@@ -1300,7 +1300,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           listener.solutionBrowserEvent(null, null);
         } else {
           listener.solutionBrowserEvent(tabPanel, selectedFileItem);
-          }
+        }
       } catch (Exception e) {
         // don't let this fail, it will disturb normal processing
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), e.toString(), false, false, true); //$NON-NLS-1$
