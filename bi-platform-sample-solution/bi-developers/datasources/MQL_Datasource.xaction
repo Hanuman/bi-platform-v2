@@ -14,8 +14,8 @@
 
   <inputs/>
 
-  <outputs>
-    <rule-result type="result-set"/>
+  <outputs> 
+    <rule-result type="result-set"/> 
   </outputs>
 
   <resources/>
@@ -24,17 +24,15 @@
     <action-definition> 
       <component-name>MQLRelationalDataComponent</component-name>
       <action-type>Query For Order Info</action-type>
-      <action-inputs> 
-      </action-inputs>
+      <action-inputs/>
       <action-outputs> 
         <query-result type="result-set" mapping="rule-result"/> 
       </action-outputs>
       <component-definition> 
-        <jndi>SampleData</jndi>
-        <query>
-<![CDATA[<mql>
+        <jndi>SampleData</jndi>  
+        <query><![CDATA[<mql>
   <domain_type>relational</domain_type>
-  <domain_id>bi-developers</domain_id>
+  <domain_id>steel-wheels</domain_id>
   <model_id>BV_ORDERS</model_id>
   <model_name>Orders</model_name>
   <selections>
@@ -64,8 +62,7 @@
     </constraint>
   </constraints>
   <orders/>
-</mql>]]>
-</query> 
+</mql>]]></query> 
       </component-definition> 
     </action-definition>
  
