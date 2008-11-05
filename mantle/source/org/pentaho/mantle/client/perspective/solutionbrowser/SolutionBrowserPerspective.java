@@ -538,7 +538,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (openMethod == OPEN_METHOD.SCHEDULE) {
       if (selectedFileItem != null) {
         if (selectedFileItem.getName() != null) {
-          if (!selectedFileItem.getName().endsWith(".xaction")) { //$NON-NLS-1$
+          if (!selectedFileItem.getName().endsWith(".xaction") || selectedFileItem.getName().endsWith(FileItem.ANALYSIS_VIEW_SUFFIX)) { //$NON-NLS-1$
             final MessageDialogBox dialogBox = new MessageDialogBox(
                 Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1300,7 +1300,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           listener.solutionBrowserEvent(null, null);
         } else {
           listener.solutionBrowserEvent(tabPanel, selectedFileItem);
-        }
+          }
       } catch (Exception e) {
         // don't let this fail, it will disturb normal processing
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), e.toString(), false, false, true); //$NON-NLS-1$
@@ -1484,13 +1484,5 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     };
     scheduleInBackground.setCallback(callback);
     scheduleInBackground.center();
-  }
-  
-  public void setCurrentTabEnabled(boolean enabled){
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
-    if(panel != null){
-      panel.setSaveEnabled(enabled);
-    }
-    this.fireSolutionBrowserListenerEvent();
   }
 }

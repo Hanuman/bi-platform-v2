@@ -40,6 +40,9 @@ import com.google.gwt.user.client.ui.PopupPanel;
 
 public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
+  public static final String ANALYSIS_VIEW_SUFFIX = ".analysisview.xaction"; //$NON-NLS-1$
+  public static final String WAQR_VIEW_SUFFIX = ".waqr.xaction"; //$NON-NLS-1$
+  
   // by creating a single popupMenu, we're reducing total # of widgets used
   // and we can be sure to hide any existing ones by calling hide
   static PopupPanel popupMenu = new PopupPanel(true);
@@ -64,9 +67,9 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     ElementUtils.preventTextSelection(fileLabel.getElement());
 
     Image fileIcon = new Image();
-    if (name.endsWith(".waqr.xaction")) { //$NON-NLS-1$
+    if (name.endsWith(WAQR_VIEW_SUFFIX)) { //$NON-NLS-1$
       MantleImages.images.file_report().applyTo(fileIcon);
-    } else if (name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
+    } else if (name.endsWith(ANALYSIS_VIEW_SUFFIX)) { 
       MantleImages.images.file_analysis().applyTo(fileIcon);
     } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
       MantleImages.images.file_action().applyTo(fileIcon);
@@ -160,13 +163,15 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
       menuBar.addItem(new MenuItem(Messages.getString("open"), new FileCommand(FileCommand.COMMAND.RUN, popupMenu, fileItemCallback))); //$NON-NLS-1$
       menuBar.addItem(new MenuItem(Messages.getString("openInNewWindow"), new FileCommand(FileCommand.COMMAND.NEWWINDOW, popupMenu, fileItemCallback))); //$NON-NLS-1$
-      menuBar.addItem(new MenuItem(Messages.getString("runInBackground"), new FileCommand(FileCommand.COMMAND.BACKGROUND, popupMenu, fileItemCallback))); //$NON-NLS-1$
+      if (!name.endsWith(ANALYSIS_VIEW_SUFFIX)) { // Don't want to run JPivot in the background
+        menuBar.addItem(new MenuItem(Messages.getString("runInBackground"), new FileCommand(FileCommand.COMMAND.BACKGROUND, popupMenu, fileItemCallback))); //$NON-NLS-1$
+      }
       /*
        * Need to get the file name that was clicked on to see if it is a WAQR report. 
        * Since as of this coding date GWT did not have a disable functionality for Menu item we are achieving so by applying a style and
        * nullifying the command attached to MenutItem click.
        */
-      if (name.contains("waqr.xaction")) { //$NON-NLS-1$
+      if (name.endsWith(WAQR_VIEW_SUFFIX)) {
         menuBar.addItem(new MenuItem(Messages.getString("edit"), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback))); //$NON-NLS-1$
         
         // WG: Experimental Action Sequence Editor
@@ -174,7 +179,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
           menuBar.addItem(new MenuItem(Messages.getString("editAction"), new FileCommand(FileCommand.COMMAND.EDIT_ACTION, popupMenu, fileItemCallback))); //$NON-NLS-1$
         }
         
-      } else if (name.contains("analysisview.xaction")) { //$NON-NLS-1$
+      } else if (name.endsWith(ANALYSIS_VIEW_SUFFIX)) {
         menuBar.addItem(new MenuItem(Messages.getString("edit"), new FileCommand(FileCommand.COMMAND.EDIT, popupMenu, fileItemCallback))); //$NON-NLS-1$
         
         // WG: Experimental Action Sequence Editor
@@ -195,8 +200,10 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
         }
       }
       menuBar.addItem(new MenuItem(Messages.getString("delete"), new FileCommand(FileCommand.COMMAND.DELETE, popupMenu, fileItemCallback)));
-      menuBar.addSeparator();
-      menuBar.addItem(Messages.getString("scheduleEllipsis"), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback)); //$NON-NLS-1$
+      if (!name.endsWith(ANALYSIS_VIEW_SUFFIX)) { // Don't want to run JPivot views to be scheduled
+        menuBar.addSeparator();
+        menuBar.addItem(Messages.getString("scheduleEllipsis"), new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, popupMenu, fileItemCallback)); //$NON-NLS-1$
+      }
     }
 
     menuBar.addSeparator();

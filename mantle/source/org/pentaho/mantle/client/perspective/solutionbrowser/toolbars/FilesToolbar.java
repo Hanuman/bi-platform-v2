@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
@@ -55,6 +56,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   ToolbarComboButton miscComboBtn;
   ToolbarButton runBtn, editBtn;
   FileCommand runCmd, editCmd, shareCmd, scheduleCmd, deleteCmd, propertiesCmd;
+  MenuItem scheduleMenuItem = null;
 
   IFileItemCallback callback;
 
@@ -110,7 +112,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
         scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
+        scheduleMenuItem = miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
         propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
@@ -122,7 +124,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
           miscMenus.addItem(Messages.getString("share"), shareCmd); //$NON-NLS-1$
         }
         scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
+        scheduleMenuItem = miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
         propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
         miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
         miscComboBtn.setMenu(miscMenus);
@@ -176,6 +178,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     setEnabled(selectedFileItem != null);
     // only allow edit on waqr
     editBtn.setEnabled(selectedFileItem != null && selectedFileItem.getName().endsWith(".waqr.xaction")); //$NON-NLS-1$
+    scheduleMenuItem.setVisible(!selectedFileItem.getName().endsWith(FileItem.ANALYSIS_VIEW_SUFFIX));
   }
   
   /**
