@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <console> 
-  <platform-username>joe</platform-username>  
-  <biserver-status-check-period-millis>30000</biserver-status-check-period-millis>  
-  <homepage-timeout-millis>15000</homepage-timeout-millis>  
   <solution-path>../pentaho-solutions</solution-path>
   <war-path>../tomcat/webapps/pentaho</war-path>
-  <jdbc-drivers-path></jdbc-drivers-path>  
-  <hibernate-config-path>hsql.hibernate.cfg.xml</hibernate-config-path>
+  <platform-username>joe</platform-username>  
+  <biserver-status-check-period-millis>30000</biserver-status-check-period-millis>  
+  <homepage-url>http://www.pentaho.com/console_home</homepage-url>  
+  <homepage-timeout-millis>15000</homepage-timeout-millis>  
+  <!-- comma separated list of roles (no spaces) -->  
+  <default-roles>Authenticated</default-roles>
 </console>
