@@ -53,6 +53,11 @@ public class AnalysisViewCommand implements Command {
         
         navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);
         navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        //Set it to save-enabled and fire event
+        navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
+        navigatorPerspective.fireSolutionBrowserListenerEvent();
+        
         //navigatorPerspective.refreshPerspective(false);
       }
     };

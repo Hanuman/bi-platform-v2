@@ -1286,17 +1286,20 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void fireSolutionBrowserListenerEvent() {
     // does this take parameters? or should it simply return the state
+
+		// Get a reference to the current tab
+    ReloadableIFrameTabPanel tabPanel = null;
+    if (contentTabPanel.getTabBar().getTabCount() > 0) {
+      tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab());
+    }
+    
     for (SolutionBrowserListener listener : listeners) {
       try {
         if (showWorkspaceMenuItem.isChecked()) {
           // cause all menus to be disabled for the selected file/tab
           listener.solutionBrowserEvent(null, null);
         } else {
-          String selectedTabURL = null;
-          if (contentTabPanel.getTabBar().getTabCount() > 0) {
-            selectedTabURL = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getUrl();
-          }
-          listener.solutionBrowserEvent(selectedTabURL, selectedFileItem);
+          listener.solutionBrowserEvent(tabPanel, selectedFileItem);
         }
       } catch (Exception e) {
         // don't let this fail, it will disturb normal processing
@@ -1481,5 +1484,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     };
     scheduleInBackground.setCallback(callback);
     scheduleInBackground.center();
+  }
+  
+  public void setCurrentTabEnabled(boolean enabled){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    if(panel != null){
+      panel.setSaveEnabled(enabled);
+    }
+    this.fireSolutionBrowserListenerEvent();
   }
 }

@@ -23,4 +23,7 @@ public interface IReloadableTabPanel {
   public void reload();
   public void back();
   public void openTabInNewWindow();
+  public boolean isSaveEnabled();
+  public void setSaveEnabled(boolean enabled);
+  public String getUrl();
 }

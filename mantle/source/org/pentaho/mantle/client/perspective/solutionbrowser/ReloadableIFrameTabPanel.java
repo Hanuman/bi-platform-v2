@@ -36,6 +36,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   CustomFrame frame;
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
+  protected boolean saveEnabled;
   
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
@@ -45,6 +46,9 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   
   public ReloadableIFrameTabPanel(String name, String url) {
     this.url = url;
+    
+    setSaveEnabled(url.endsWith("analysisview.xaction")); //$NON-NLS-1$
+    
     frame = new CustomFrame(name, url);
     add(frame);
   }
@@ -207,5 +211,13 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
       
       
     }-*/;
+  }
+
+  public boolean isSaveEnabled() {
+    return saveEnabled;
+  }
+
+  public void setSaveEnabled(boolean enabled) {
+    saveEnabled = enabled;  
   }
 }

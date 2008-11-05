@@ -33,6 +33,7 @@ import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
@@ -46,10 +47,7 @@ import com.google.gwt.user.client.ui.Image;
 public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   protected String MAIN_TOOBAR_STYLE_NAME = "mainToolbar"; //$NON-NLS-1$
 
-  private String[] saveTypes = new String[] { ".analysisview.xaction"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
   SolutionBrowserPerspective solutionBrowser;
-  
   
   ToolbarButton openFileButton;
   ToolbarButton newAnalysisButton;
@@ -172,18 +170,19 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     showBrowserToggleButton.setEnabled(true);
   }
   
-  public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem) {
     toggleBrowserButton();
     toggleWorkspaceButton();
-    printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
+    
+    String selectedTabURL = null;
     boolean saveEnabled = false;
-    if (selectedTabURL != null) {
-      for (String saveType : saveTypes) {
-        if (selectedTabURL.toLowerCase().indexOf(saveType) != -1) {
-          saveEnabled = true;
-        }
-      }
+    
+    if(panel != null){
+      selectedTabURL = panel.getUrl();
+      saveEnabled = panel.isSaveEnabled();
     }
+    
+    printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
     saveButton.setEnabled(saveEnabled);
     saveAsButton.setEnabled(saveEnabled);
   }

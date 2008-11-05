@@ -21,5 +21,5 @@ public interface SolutionBrowserListener {
   // would like to let the listeners know (where possible):
   // -current tab (url)
   // -selected file item
-  public void solutionBrowserEvent(String selectedTabURL, FileItem selectedFileItem);
+  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem);
 }
