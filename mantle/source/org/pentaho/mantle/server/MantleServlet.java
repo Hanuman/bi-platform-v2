@@ -380,6 +380,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
+    if (!hasAccess(solutionName, path, actionName, ISolutionRepository.ACTION_SUBSCRIBE)) {
+      throw new SimpleMessageException(ServerMessages.getString("noSchedulePermission")); //$NON-NLS-1$
+    }
     
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
@@ -406,7 +409,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
-
+    if (!hasAccess(solutionName, path, actionName, ISolutionRepository.ACTION_SUBSCRIBE)) {
+      throw new SimpleMessageException(ServerMessages.getString("noSchedulePermission")); //$NON-NLS-1$
+    }
+    
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
     }

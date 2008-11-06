@@ -32,7 +32,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.messages.MessageUtil;
 
 public class ServerMessages {
-  private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
+  private static final String BUNDLE_NAME = "org.pentaho.mantle.messages.messages"; //$NON-NLS-1$
 
   private static final Map locales = Collections.synchronizedMap(new HashMap());
 
