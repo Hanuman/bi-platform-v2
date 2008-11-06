@@ -1,4 +1,4 @@
-<%@ page language="java" 
+<%@ page language="java"
 	import="org.pentaho.platform.engine.core.system.PentahoSystem,
 			org.pentaho.platform.api.engine.IPentahoSession,
 	        org.pentaho.platform.web.jsp.messages.Messages,
@@ -65,7 +65,7 @@
 	// Get a templater object
 	String intro = "";
 	String footer = "";
-	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
+	IUITemplater templater = PentahoSystem.getUITemplater( userSession );
 	if( templater != null ) {
 
 		// Load a template for this web page
@@ -199,7 +199,12 @@ Once you have the new key you need to add it to the Google settings file in the 
             					</td>
             					<td style="background-image: url(/pentaho-style/images/fly-top1.png); width: 100%; ">
 								<span style="font: normal 1.1em Tahoma, 'Trebuchet MS', Arial;">Select Sales Thresholds</span>
-            					</td>
+						</td>
+                                             <!-- Keep this for a backup
+            					<td width="100%" style="background-image: url(/pentaho-style/images/fly-top1.png); background-repeat: repeat-x; height: 25px; width: 100%; margin:0px; padding:0px ">
+								<span class="a" style="font: normal 1.1em Tahoma, 'Trebuchet MS', Arial;">Select Sales Thresholds</span>
+							</td>
+                                             -->
           				</tr>
           				<tr>
             					<td colspan="2" style="background-color: #e5e5e5;">
