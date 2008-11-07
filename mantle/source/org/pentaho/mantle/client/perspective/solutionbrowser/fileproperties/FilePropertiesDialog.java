@@ -143,11 +143,12 @@ public class FilePropertiesDialog extends PromptDialogBox {
         showTab(defaultTab);
       }
     };
-    if (fileItem.getName() == null || fileItem.getSolution() == null) {
-      // No propertes to show
-      return;
+    if ((fileItem.getPath() == null || "".equals(fileItem.getPath())) && (fileItem.getSolution().equals(fileItem.getName()))) {
+      // no path, in this situation, we're probably looking at the solution itself
+      MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), "", "", callback);
+    } else {
+      MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
     }
-    MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
   }
 
   public void showTab(Tabs tab) {
