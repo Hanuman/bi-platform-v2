@@ -296,6 +296,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     if (!dirty) {
       // do nothing if we're not dirty (make sure to invoke callback)
       applyCallback.okPressed();
+      return;
     }
     // send the fileInfo back to the server, we've updated it
     AsyncCallback<Void> callback = new AsyncCallback<Void>() {
