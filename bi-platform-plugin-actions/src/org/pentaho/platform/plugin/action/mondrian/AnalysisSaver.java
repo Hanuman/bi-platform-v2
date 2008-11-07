@@ -85,7 +85,7 @@ public class AnalysisSaver extends PentahoMessenger {
       // Update the document with the stuff we passed in on the props
       document = AnalysisSaver.updateDocument(document, props);
       fileName = fileName.endsWith(AnalysisSaver.SUFFIX) ? fileName : fileName + AnalysisSaver.SUFFIX;
-      result = solutionRepository.addSolutionFile(baseUrl, path, fileName, document.asXML().getBytes(), overwrite);
+      result = solutionRepository.publish(baseUrl, path, fileName, document.asXML().getBytes(), overwrite);
 
       // Now save the resource files
       ActionInfo actionInfo = ActionInfo.parseActionString(originalActionReference);
@@ -98,7 +98,7 @@ public class AnalysisSaver extends PentahoMessenger {
         if (!aSolutionFile.isDirectory() && aSolutionFile.getFileName().startsWith(originalFileName)
             && aSolutionFile.getFileName().toLowerCase().endsWith(AnalysisSaver.PROPERTIES_SUFFIX)) {
           String newFileName = aSolutionFile.getFileName().replaceFirst(originalFileName, baseFileName);
-          result = result & solutionRepository.addSolutionFile(baseUrl, path, newFileName, aSolutionFile.getData(), overwrite);
+          result = result & solutionRepository.publish(baseUrl, path, newFileName, aSolutionFile.getData(), overwrite);
         }
       }
 

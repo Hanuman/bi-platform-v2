@@ -34,7 +34,7 @@ import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISearchable;
 import org.pentaho.platform.api.repository.ISolutionRepository;
-//import org.pentaho.platform.repository.hibernate.HibernateUtil;
+import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
 
@@ -126,7 +126,7 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   }
 
   public List<IPentahoAclEntry> getAccessControls() {
-//    HibernateUtil.beginTransaction(); // Make sure we're in a transaction
+    HibernateUtil.beginTransaction(); // Make sure we're in a transaction
     return this.accessControls;
   }
 
@@ -134,12 +134,12 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
    * This method's purpose is to allow Hibernate to initialize the ACLs from the data-store. Application clients should likely use resetAccessControls.
    */
   public void setAccessControls(final List<IPentahoAclEntry> acls) {
-//    HibernateUtil.beginTransaction(); // Make sure we're in a transaction
+    HibernateUtil.beginTransaction(); // Make sure we're in a transaction
     this.accessControls = acls;
   }
 
   public void resetAccessControls(final List<IPentahoAclEntry> acls) {
-//    HibernateUtil.beginTransaction(); // Makes sure we're within a transaction
+    HibernateUtil.beginTransaction(); // Makes sure we're within a transaction
     if (this.accessControls != null) {
       this.accessControls.clear();
       this.accessControls.addAll(acls);

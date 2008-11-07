@@ -1345,6 +1345,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       ISolutionFile justPublishedFile = getFileByPath(fullPath);
       // entire ACL is replaced for new files
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      HibernateUtil.beginTransaction();
       permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
     }
     return res;
