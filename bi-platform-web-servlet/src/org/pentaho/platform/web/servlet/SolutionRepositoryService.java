@@ -228,15 +228,9 @@ public class SolutionRepositoryService extends ServletBase {
    * @return Success of the delete operation is returned
    * @throws IOException
    */
-  public static synchronized boolean delete(final IPentahoSession userSession, final String solution, final String path, final String name)
+  public static boolean delete(final IPentahoSession userSession, final String solution, final String path, final String name)
       throws IOException {
-    /*
-    * This method is static/synchronized because we want to be absolutely sure
-    * we prevent cases where multiple delete calls could occur at the same time, not because we feel that something bad could happen,
-    * but because we absolutely want to make sure that nothing bad does happen.  By removing the static from this method we would effectively
-    * open ourselves up for multiple instances of this servlet being allowed to enter the method (most containers will created a pool of
-    * servlets).
-    */
+
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String fullPath = ActionInfo.buildSolutionPath(solution, path, name);
     ISolutionFile solutionFile = repository.getFileByPath(fullPath);
@@ -248,10 +242,7 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   /**
-   * This method creates a folder along with it's index.xml file.  The method 
-   * is static/synchronized because we want to be absolutely sure we prevent 
-   * cases where multiple createFolder calls could occur at the same time.
-   * 
+   * This method creates a folder along with it's index.xml file.  
    * This method also verifies that the user has PERM_CREATE permissions before
    * creating the folder.
    * 
@@ -263,7 +254,7 @@ public class SolutionRepositoryService extends ServletBase {
    * @return true if success
    * @throws IOException
    */
-  public static synchronized boolean createFolder(IPentahoSession userSession, String solution, String path, String name, String desc) throws IOException {
+  public static boolean createFolder(IPentahoSession userSession, String solution, String path, String name, String desc) throws IOException {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     if (solution == null) {
       solution = "";
