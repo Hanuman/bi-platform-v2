@@ -16,7 +16,6 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TreeItem;
 

@@ -128,39 +128,6 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     menuBar.setAutoOpen(true);
 
     if (name.endsWith(".xaction")) { //$NON-NLS-1$
-      // runMenu.addSeparator();
-      // runMenu.addItem(new MenuItem("Subscribe", new FileCommand(FileCommand.SUBSCRIBE, popupMenu, fileItemCallback)));
-
-      // MenuBar scheduleMenu = new MenuBar(true);
-      // scheduleMenu.addItem(new MenuItem("Daily", new FileCommand(FileCommand.SCHEDULE_DAILY, popupMenu, fileItemCallback)));
-      // scheduleMenu.addItem(new MenuItem("Weekdays (M-F)", new FileCommand(FileCommand.SCHEDULE_WEEKDAYS, popupMenu, fileItemCallback)));
-      // scheduleMenu.addItem(new MenuItem("Every Mon/Wed/Fri", new FileCommand(FileCommand.SCHEDULE_MWF, popupMenu, fileItemCallback)));
-      // scheduleMenu.addItem(new MenuItem("Every Tu/Th", new FileCommand(FileCommand.SCHEDULE_TUTH, popupMenu, fileItemCallback)));
-      //
-      // MenuBar weeklyMenu = new MenuBar(true);
-      // weeklyMenu.addItem(new MenuItem("Every Sunday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_SUN, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Monday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_MON, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Tuesday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_TUE, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Wednesday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_WED, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Thursday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_THU, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Friday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_FRI, popupMenu, fileItemCallback)));
-      // weeklyMenu.addItem(new MenuItem("Every Saturday", new FileCommand(FileCommand.SCHEDULE_WEEKLY_SAT, popupMenu, fileItemCallback)));
-      // scheduleMenu.addItem("Weekly ", weeklyMenu);
-      //
-      // MenuBar monthlyMenu = new MenuBar(true);
-      // monthlyMenu.addItem(new MenuItem("1st of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_1ST, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("15th of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_15TH, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("First Sunday of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_FIRST_SUN, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("First Monday of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_FIRST_MON, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("Last Sunday of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_LAST_SUN, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("Last Friday of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_LAST_FRI, popupMenu, fileItemCallback)));
-      // monthlyMenu.addItem(new MenuItem("Last Day of the Month", new FileCommand(FileCommand.SCHEDULE_MONTHLY_LAST_DAY, popupMenu, fileItemCallback)));
-      // scheduleMenu.addItem("Monthly ", monthlyMenu);
-      // scheduleMenu.addItem("Annually", new FileCommand(FileCommand.SCHEDULE_ANUALLY, popupMenu, fileItemCallback));
-      // scheduleMenu.addSeparator();
-      // scheduleMenu.addItem("Custom...", new FileCommand(FileCommand.SCHEDULE_CUSTOM, popupMenu, fileItemCallback));
-      // scheduleMenu.addItem("New...", new FileCommand(FileCommand.SCHEDULE_NEW, popupMenu, fileItemCallback));
-
       menuBar.addItem(new MenuItem(Messages.getString("open"), new FileCommand(FileCommand.COMMAND.RUN, popupMenu, fileItemCallback))); //$NON-NLS-1$
       menuBar.addItem(new MenuItem(Messages.getString("openInNewWindow"), new FileCommand(FileCommand.COMMAND.NEWWINDOW, popupMenu, fileItemCallback))); //$NON-NLS-1$
       if (!name.endsWith(ANALYSIS_VIEW_SUFFIX)) { // Don't want to run JPivot in the background

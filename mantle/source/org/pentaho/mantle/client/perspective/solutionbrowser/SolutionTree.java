@@ -28,6 +28,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
@@ -52,7 +53,6 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -91,7 +91,6 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1); //$NON-NLS-1$
     DOM.appendChild(getElement(), focusable.getElement());
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
-
   }
 
   public void onBrowserEvent(Event event) {
@@ -111,7 +110,6 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
     }
 
-    super.onBrowserEvent(event);
     try {
       if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
         // load menu (Note: disabled as Delete and Properties have no meaning for Folders now
@@ -132,8 +130,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           }
         };
         t.schedule(250);
+        event.cancelBubble(true);
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
+      } else {
+        super.onBrowserEvent(event);
       }
     } catch (Throwable t) {
       // death to this browser event
@@ -527,84 +528,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   }
 
   public void createNewFolder() {
-    FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
-    String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
-    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null,
-        null, null);
-    final TextBox folderNameTextBox = new TextBox();
-    folderNameTextBox.setTabIndex(1);
-    folderNameTextBox.setVisibleLength(80);
-    final TextBox folderDescTextBox = new TextBox();
-    folderDescTextBox.setTabIndex(2);
-    folderDescTextBox.setVisibleLength(80);
-
-    VerticalPanel vp = new VerticalPanel();
-    vp.add(new Label(Messages.getString("newFolderName"))); //$NON-NLS-1$
-    vp.add(folderNameTextBox);
-    vp.add(new Label(Messages.getString("newFolderDesc"))); //$NON-NLS-1$
-    vp.add(folderDescTextBox);
-    final PromptDialogBox newFolderDialog = new PromptDialogBox(
-        Messages.getString("newFolder"), Messages.getString("ok"), Messages.getString("cancel"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    newFolderDialog.setFocusWidget(folderNameTextBox);
-    folderNameTextBox.setFocus(true);
-
-    final IDialogCallback callback = new IDialogCallback() {
-
-      public void cancelPressed() {
-        newFolderDialog.hide();
-      }
-
-      public void okPressed() {
-        String repoPath = selectedItem.getPath() + "/" + selectedItem.getName(); //$NON-NLS-1$
-        // if a solution folder is selected then the solution-name/path are the same, we can't allow that
-        // but we need them to be in the tree like this for building the tree paths correctly (other code)
-        if (repoPath.equals("/" + selectedItem.getSolution())) { //$NON-NLS-1$
-          repoPath = ""; //$NON-NLS-1$
-        }
-        String url = ""; //$NON-NLS-1$
-        if (GWT.isScript()) {
-          String windowpath = Window.Location.getPath();
-          if (!windowpath.endsWith("/")) { //$NON-NLS-1$
-            windowpath = windowpath.substring(0, windowpath.lastIndexOf("/") + 1); //$NON-NLS-1$
-          }
-          url = windowpath + "SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" + repoPath + "&name=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText(); //$NON-NLS-1$
-        } else if (!GWT.isScript()) {
-          url = "http://localhost:8080/pentaho/SolutionRepositoryService?component=createNewFolder&solution=" + selectedItem.getSolution() + "&path=" //$NON-NLS-1$ //$NON-NLS-2$
-              + repoPath + "&name=" + folderNameTextBox.getText() + "&desc=" + folderDescTextBox.getText(); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        final String myurl = url;
-        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, myurl);
-        try {
-          builder.sendRequest(null, new RequestCallback() {
-
-            public void onError(Request request, Throwable exception) {
-              MessageDialogBox dialogBox = new MessageDialogBox(
-                  Messages.getString("error"), Messages.getString("couldNotCreateFolder", folderNameTextBox.getText()), //$NON-NLS-1$ //$NON-NLS-2$
-                  false, false, true);
-              dialogBox.center();
-            }
-
-            public void onResponseReceived(Request request, Response response) {
-              Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
-              boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue()); //$NON-NLS-1$
-              if (result) {
-                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
-                cmd.execute(false);
-              } else {
-                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-                    Messages.getString("couldNotCreateFolder", selectedItem.getName()), false, false, true); //$NON-NLS-1$
-                dialogBox.center();
-              }
-            }
-
-          });
-        } catch (RequestException e) {
-        }
-      }
-    };
-    newFolderDialog.setCallback(callback);
-    newFolderDialog.center();
+    NewFolderCommand cmd = new NewFolderCommand(this);
+    cmd.execute();
   }
 
   public void deleteFile() {

@@ -43,13 +43,11 @@ import com.google.gwt.xml.client.Element;
 public class FilesListPanel extends FlowPanel {
   protected String FILES_LABEL_STYLE_NAME = "filesPanelMenuLabel"; //$NON-NLS-1$
 
-  FlexTable filesList = new FlexTable();
-  FilesToolbar toolbar;
-  IFileItemCallback fileItemCallback;
-
+  private FlexTable filesList = new FlexTable();
+  private FilesToolbar toolbar;
+  
   public FilesListPanel(final IFileItemCallback fileItemCallback) {
     super();
-    this.fileItemCallback = fileItemCallback;
     // Create the toolbar
     toolbar = new FilesToolbar(fileItemCallback);
     SimplePanel toolbarWrapper = new SimplePanel();
