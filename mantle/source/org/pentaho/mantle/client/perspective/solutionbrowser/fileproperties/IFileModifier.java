@@ -19,10 +19,11 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 
 public interface IFileModifier {
   public void init(FileItem fileItem, SolutionFileInfo fileInfo);
-  public void apply();
+  public void apply(IDialogCallback callback);
 }

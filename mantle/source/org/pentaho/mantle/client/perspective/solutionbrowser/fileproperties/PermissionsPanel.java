@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.RolePermission;
@@ -51,6 +52,8 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
   public static final int PERM_DELETE = 0x10;
   public static final int PERM_UPDATE_PERMS = 0x20;
 
+  private boolean dirty = false;
+  
   List<String> existingUsersAndRoles = new ArrayList<String>();
 
   FileItem fileItem;
@@ -70,6 +73,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
         if (usersAndRolesList.getItemCount() == 0) {
           return;
         }
+        dirty = true;
         final String userOrRoleString = usersAndRolesList.getValue(usersAndRolesList.getSelectedIndex());
         for (UserPermission userPermission : fileInfo.userPermissions) {
           if (userOrRoleString.equals(userPermission.name)) {
@@ -93,6 +97,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     addButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
+        dirty = true;
         final SelectUserOrRoleDialog pickUserRoleDialog = new SelectUserOrRoleDialog(existingUsersAndRoles, new IUserRoleSelectedCallback() {
 
           public void roleSelected(String role) {
@@ -262,6 +267,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
 
   public void updatePermissionMask(boolean grant, int mask) {
     if (usersAndRolesList.getSelectedIndex() >= 0) {
+      dirty = true;
       final String userOrRoleString = usersAndRolesList.getValue(usersAndRolesList.getSelectedIndex());
       for (UserPermission userPermission : fileInfo.userPermissions) {
         if (userOrRoleString.equals(userPermission.name)) {
@@ -286,18 +292,27 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     }
   }
 
-  public void apply() {
+  public void apply(final IDialogCallback applyCallback) {
+    if (!dirty) {
+      // do nothing if we're not dirty (make sure to invoke callback)
+      applyCallback.okPressed();
+    }
     // send the fileInfo back to the server, we've updated it
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
+        // invoke the next
+        applyCallback.okPressed();
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(Void nothing) {
         // MessageDialogBox dialogBox = new MessageDialogBox("Info", "Permissions set.", false, null, false, true);
         // dialogBox.center();
+        // invoke the next
+        dirty = false;
+        applyCallback.okPressed();
       }
     };
 

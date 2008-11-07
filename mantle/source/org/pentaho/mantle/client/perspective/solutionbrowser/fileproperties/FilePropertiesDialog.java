@@ -46,10 +46,10 @@ public class FilePropertiesDialog extends PromptDialogBox {
   private FileItem fileItem;
   private boolean isAdministrator = false;
   private Tabs defaultTab = Tabs.GENERAL;
+  private int tabApplyCounter = 0;
 
   public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
-    super(
-        Messages.getString("properties"), Messages.getString("ok"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    super(Messages.getString("properties"), Messages.getString("ok"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
 
     generalTab = new GeneralPanel();
@@ -66,12 +66,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
       }
 
       public void okPressed() {
-        for (int i = 0; i < propertyTabs.getTabBar().getTabCount(); i++) {
-          Widget w = propertyTabs.getWidget(i);
-          if (w instanceof IFileModifier) {
-            ((IFileModifier) w).apply();
-          }
-        }
+        applyPanel();
         if (callback != null) {
           callback.okPressed();
         }
@@ -87,6 +82,26 @@ public class FilePropertiesDialog extends PromptDialogBox {
     getWidget().setHeight("100%"); //$NON-NLS-1$
     getWidget().setWidth("100%"); //$NON-NLS-1$
     setPixelSize(390, 420);
+  }
+
+  private void applyPanel() {
+    // this method will chain asynchronous requests
+    if (tabApplyCounter < propertyTabs.getWidgetCount()) {
+      Widget w = propertyTabs.getWidget(tabApplyCounter);
+      if (w instanceof IFileModifier) {
+        ((IFileModifier) w).apply(new IDialogCallback() {
+          public void okPressed() {
+            ++tabApplyCounter;
+            // apply the next guy
+            applyPanel();
+          }
+
+          public void cancelPressed() {
+            // unused
+          }
+        });
+      }
+    }
   }
 
   public void fetchFileInfoAndInitTabs() {

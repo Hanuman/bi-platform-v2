@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -46,28 +47,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author wseyler
- *
+ * 
  */
 public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
-  boolean dirty = false;
+  private boolean dirty = false;
+  private boolean wasEnabled = false;
+  private CheckBox enableSubscriptions = new CheckBox(Messages.getString("enableSubscription")); //$NON-NLS-1$
 
-  boolean wasEnabled = false;
+  private ListBox availableLB = new ListBox();
+  private ListBox appliedLB = new ListBox();
 
-  CheckBox enableSubscriptions = new CheckBox(Messages.getString("enableSubscription")); //$NON-NLS-1$
+  private RoundedButton moveRightBtn = new RoundedButton();
+  private RoundedButton moveLeftBtn = new RoundedButton();
+  private RoundedButton moveAllRightBtn = new RoundedButton();
+  private RoundedButton moveAllLeftBtn = new RoundedButton();
 
-  ListBox availableLB = new ListBox();
-
-  ListBox appliedLB = new ListBox();
-
-  RoundedButton moveRightBtn = new RoundedButton();
-
-  RoundedButton moveLeftBtn = new RoundedButton();
-
-  RoundedButton moveAllRightBtn = new RoundedButton();
-
-  RoundedButton moveAllLeftBtn = new RoundedButton();
-
-  FileItem fileItem = null;
+  private FileItem fileItem = null;
 
   public SubscriptionsPanel() {
     layout();
@@ -195,7 +190,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     }
     removeItems(srcLB, moveAll);
     if (srcLB.getItemCount() > 0) {
-      if ( (srcLB.getItemCount() - 1) < srcSelectionIndex) {
+      if ((srcLB.getItemCount() - 1) < srcSelectionIndex) {
         srcLB.setSelectedIndex(srcLB.getItemCount() - 1);
       } else {
         srcLB.setSelectedIndex(srcSelectionIndex);
@@ -224,19 +219,22 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
   /* (non-Javadoc)
    * @see org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.IFileModifier#apply()
    */
-  public void apply() {
+  public void apply(final IDialogCallback applyCallback) {
     if (dirty) {
-      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getString("appliedSchedulesWillBeLost"))) || (!wasEnabled)) { // We're turning off this subscription... alert the user //$NON-NLS-1$
-
+      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getString("appliedSchedulesWillBeLost"))) || (!wasEnabled)) { // We're
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
             MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
             dialogBox.center();
+            // invoke the next
+            applyCallback.okPressed();
           }
 
           public void onSuccess(Void nothing) {
-            dirty = false; // I don't know if this even gets back here    
+            dirty = false; // I don't know if this even gets back here
+            // invoke the next
+            applyCallback.okPressed();
           }
 
         };
@@ -247,8 +245,12 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
           subSchedule.id = appliedLB.getValue(i);
           currentSchedules.add(subSchedule);
         }
-        MantleServiceCache.getService().setSubscriptions(fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), enableSubscriptions.isChecked(), currentSchedules, callback); //$NON-NLS-1$
+        MantleServiceCache.getService().setSubscriptions(
+            fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), enableSubscriptions.isChecked(), currentSchedules, callback); //$NON-NLS-1$
       }
+    } else {
+      // invoke the next
+      applyCallback.okPressed();
     }
   }
 

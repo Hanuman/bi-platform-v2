@@ -19,6 +19,7 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -39,7 +40,7 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   Label sizeLabel = new Label();
   Label lastModifiedDateLabel = new Label();
   FileItem fileItem;
-
+  
   public GeneralPanel() {
     setWidget(0, 0, new Label(Messages.getString("name")+":")); //$NON-NLS-1$ //$NON-NLS-2$
     setWidget(0, 1, nameLabel);
@@ -57,8 +58,9 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
     setWidget(5, 1, lastModifiedDateLabel);
   }
 
-  public void apply() {
+  public void apply(IDialogCallback callback) {
     // hit server with new settings
+    callback.okPressed();
   }
 
   public void init(FileItem file, SolutionFileInfo fileInfo) {
@@ -97,15 +99,14 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   }
 
   public void populateUIFromServer() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
-      public void onSuccess(Object result) {
-        SolutionFileInfo fileInfo = (SolutionFileInfo) result;
+      public void onSuccess(SolutionFileInfo fileInfo) {
         init(fileItem, fileInfo);
       }
     };
