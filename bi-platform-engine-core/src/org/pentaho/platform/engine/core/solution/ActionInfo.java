@@ -21,9 +21,10 @@ import org.pentaho.platform.api.util.PentahoCheckedChainedException;
 public class ActionInfo {
 
   /**
-   * TODO the method PentahoSystem.parseActionString() should be converted into a ctor for this class, and then removed. Callers should be adjusted. ActionResource.getLocationInSolution should be refactored into a method in this class, and
-   * callers adjusted. In general, the solutionName, path and actionName should likely be abstracted into an opaque class that can be passed around, instead of passing around 3 strings, and manually combining and parsing them in many
-   * places.
+   * TODO the method PentahoSystem.parseActionString() should be converted into a ctor for this class, and then removed. Callers should be adjusted.
+   * ActionResource.getLocationInSolution should be refactored into a method in this class, and callers adjusted. In general, the solutionName, path and
+   * actionName should likely be abstracted into an opaque class that can be passed around, instead of passing around 3 strings, and manually combining and
+   * parsing them in many places.
    * 
    * @author Steven Barkdull
    * 
@@ -99,7 +100,7 @@ public class ActionInfo {
     // see if the name has an extension
     if (!mustBeComplete && (name.indexOf('.') == -1)) {
       // not really a filename
-      if ( StringUtils.isEmpty( path )) {
+      if (StringUtils.isEmpty(path)) {
         path = name;
       } else {
         path = path + ISolutionRepository.SEPARATOR + name;
@@ -116,24 +117,22 @@ public class ActionInfo {
   public static String buildSolutionPath(final String solution, final String path, final String filename) {
     StringBuffer buf = new StringBuffer(ISolutionRepository.SEPARATOR);
     if (StringUtils.isEmpty(path)) {
-      if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
+      if (!StringUtils.isEmpty(filename) && filename.charAt(0) == ISolutionRepository.SEPARATOR) {
         return buf.append(solution).append(filename).toString();
       } else {
         return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(filename).toString();
       }
-    } else {
-      if(path.charAt(0) == ISolutionRepository.SEPARATOR){
-        if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
-          return buf.append(solution).append(path).append(filename).toString();
-        } else {
-          return buf.append(solution).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
-        }
+    } else if (path.charAt(0) == ISolutionRepository.SEPARATOR) {
+      if (!StringUtils.isEmpty(filename) && filename.charAt(0) == ISolutionRepository.SEPARATOR) {
+        return buf.append(solution).append(path).append(filename).toString();
       } else {
-        if(filename.charAt(0) == ISolutionRepository.SEPARATOR){
-          return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(filename).toString();
-        } else {
-          return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
-        }
+        return buf.append(solution).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
+      }
+    } else {
+      if (!StringUtils.isEmpty(filename) && filename.charAt(0) == ISolutionRepository.SEPARATOR) {
+        return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(filename).toString();
+      } else {
+        return buf.append(solution).append(ISolutionRepository.SEPARATOR).append(path).append(ISolutionRepository.SEPARATOR).append(filename).toString();
       }
     }
   }
