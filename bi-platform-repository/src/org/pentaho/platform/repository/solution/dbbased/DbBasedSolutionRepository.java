@@ -89,7 +89,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   private RepositoryFile rootDirectory;
 
-  private final byte[] lock = new byte[0];
+  private static final byte[] lock = new byte[0];
 
   private boolean repositoryInit = false;
 
@@ -703,20 +703,22 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   public boolean synchronizeSolutionWithSolutionSource(final IPentahoSession pSession) {
-    try {
-      RepositoryFile solution = (RepositoryFile) getRootFolder();
-      if (solution != null) {
-        HibernateUtil.beginTransaction();
-        HibernateUtil.makeTransient(solution);
-        HibernateUtil.commitTransaction();
-        HibernateUtil.flushSession();
+    synchronized(lock) {
+      try {
+        RepositoryFile solution = (RepositoryFile) getRootFolder();
+        if (solution != null) {
+          HibernateUtil.beginTransaction();
+          HibernateUtil.makeTransient(solution);
+          HibernateUtil.commitTransaction();
+          HibernateUtil.flushSession();
+        }
+        this.loadSolutionFromFileSystem(pSession, PentahoSystem.getApplicationContext().getSolutionPath(""), true); //$NON-NLS-1$
+        return true;
+      } catch (Exception ex) {
+        SolutionRepositoryBase.logger.error(ex);
       }
-      this.loadSolutionFromFileSystem(pSession, PentahoSystem.getApplicationContext().getSolutionPath(""), true); //$NON-NLS-1$
-      return true;
-    } catch (Exception ex) {
-      SolutionRepositoryBase.logger.error(ex);
+      return false;
     }
-    return false;
   }
 
   public boolean solutionSynchronizationSupported() {
@@ -745,82 +747,84 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * @throws RepositoryException
    * @author mbatchel
    */
-  public synchronized List loadSolutionFromFileSystem(final IPentahoSession pSession, final String solutionRoot,
+  public List loadSolutionFromFileSystem(final IPentahoSession pSession, final String solutionRoot,
       final boolean deleteOrphans) throws RepositoryException {
-    SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0001_BEGIN_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
-    HibernateUtil.beginTransaction();
-    File solutionFile = new File(solutionRoot);
-    RepositoryFile solution = null;
-    try {
-      if (solutionFile.isDirectory()) {
-        Map reposFileStructure = this.getAllRepositoryModDates();
-        /*
-         * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base:
-         * /solutions
-         */
-        String fromBase = solutionFile.getCanonicalPath();
-        String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
-            : "/" + solutionFile.getName(); //$NON-NLS-1$
-        RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
-        //
-        // Check to see if we're just doing a refresh...
-        //
-        InfoHolder checkBase = (InfoHolder) reposFileStructure.get(toBase);
-        if (checkBase != null) {
-          // It's there - we're refreshing
-          checkBase.touched = true;
-          // Get the solution object from Hibernate
-          solution = (RepositoryFile) getFileByPath(null); // Hibernate Query
-          updateHelper.createdOrRetrievedFolders.put(toBase, solution); // Store for later reference
-        } else {
-          solution = new RepositoryFile(solutionFile.getName(), null, null, solutionFile.lastModified()); // Create
-          // entry
-          // Put the created folder into the created map for later use
-          updateHelper.createdOrRetrievedFolders.put(toBase, solution); // Store for later reference
-          SolutionRepositoryBase.logger.info(Messages.getString(
-              "SolutionRepository.INFO_0002_UPDATED_FOLDER", solution.getFullPath())); //$NON-NLS-1$
-        }
-        repositoryName = solution.getFullPath() + ISolutionRepository.SEPARATOR;
-        // Find and record changes and updates
-        recurseCheckUpdatedFiles(updateHelper, solutionFile);
-        //
-        // The following lines are order dependent
-        //
-        // Handle updated Files and Folders
-        updateHelper.processUpdates();
-        // Handle added folders and files
-        updateHelper.processAdditions();
-        // Save solution state
-        HibernateUtil.makePersistent(solution);
-        // Process deletions
-        List deletions = updateHelper.processDeletions(deleteOrphans);
-        // Publish ACLs
-        IAclPublisher aclPublisher = PentahoSystem.getAclPublisher(pSession);
-        if (aclPublisher != null) {
-          aclPublisher.publishDefaultAcls(solution);
-        }
-        // Tell Hibernate we're ready for a commit - we're done now
-        HibernateUtil.commitTransaction();
-        HibernateUtil.flushSession();
-        // The next two lines were from the old code
-        resetRepository(); // Clear the cache of old stuff
-        SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0003_END_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
-        return deletions;
-      } else {
-        throw new RepositoryException(Messages.getString(
-            "SolutionRepository.ERROR_0012_INVALID_SOLUTION_ROOT", solutionRoot)); //$NON-NLS-1$
-      }
-    } catch (HibernateException hibernateException) {
-      // re-throw exception so that it abandons the process
+    synchronized(lock) {
+      SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0001_BEGIN_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
+      HibernateUtil.beginTransaction();
+      File solutionFile = new File(solutionRoot);
+      RepositoryFile solution = null;
       try {
-        HibernateUtil.rollbackTransaction();
-      } catch (HibernateException ignored) {
-        SolutionRepositoryBase.logger.error("SolutionRepository.ERROR_0011_TRANSACTION_FAILED", ignored); //$NON-NLS-1$
+        if (solutionFile.isDirectory()) {
+          Map reposFileStructure = this.getAllRepositoryModDates();
+          /*
+           * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base:
+           * /solutions
+           */
+          String fromBase = solutionFile.getCanonicalPath();
+          String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
+              : "/" + solutionFile.getName(); //$NON-NLS-1$
+          RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
+          //
+          // Check to see if we're just doing a refresh...
+          //
+          InfoHolder checkBase = (InfoHolder) reposFileStructure.get(toBase);
+          if (checkBase != null) {
+            // It's there - we're refreshing
+            checkBase.touched = true;
+            // Get the solution object from Hibernate
+            solution = (RepositoryFile) getFileByPath(null); // Hibernate Query
+            updateHelper.createdOrRetrievedFolders.put(toBase, solution); // Store for later reference
+          } else {
+            solution = new RepositoryFile(solutionFile.getName(), null, null, solutionFile.lastModified()); // Create
+            // entry
+            // Put the created folder into the created map for later use
+            updateHelper.createdOrRetrievedFolders.put(toBase, solution); // Store for later reference
+            SolutionRepositoryBase.logger.info(Messages.getString(
+                "SolutionRepository.INFO_0002_UPDATED_FOLDER", solution.getFullPath())); //$NON-NLS-1$
+          }
+          repositoryName = solution.getFullPath() + ISolutionRepository.SEPARATOR;
+          // Find and record changes and updates
+          recurseCheckUpdatedFiles(updateHelper, solutionFile);
+          //
+          // The following lines are order dependent
+          //
+          // Handle updated Files and Folders
+          updateHelper.processUpdates();
+          // Handle added folders and files
+          updateHelper.processAdditions();
+          // Save solution state
+          HibernateUtil.makePersistent(solution);
+          // Process deletions
+          List deletions = updateHelper.processDeletions(deleteOrphans);
+          // Publish ACLs
+          IAclPublisher aclPublisher = PentahoSystem.getAclPublisher(pSession);
+          if (aclPublisher != null) {
+            aclPublisher.publishDefaultAcls(solution);
+          }
+          // Tell Hibernate we're ready for a commit - we're done now
+          HibernateUtil.commitTransaction();
+          HibernateUtil.flushSession();
+          // The next two lines were from the old code
+          resetRepository(); // Clear the cache of old stuff
+          SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0003_END_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
+          return deletions;
+        } else {
+          throw new RepositoryException(Messages.getString(
+              "SolutionRepository.ERROR_0012_INVALID_SOLUTION_ROOT", solutionRoot)); //$NON-NLS-1$
+        }
+      } catch (HibernateException hibernateException) {
+        // re-throw exception so that it abandons the process
+        try {
+          HibernateUtil.rollbackTransaction();
+        } catch (HibernateException ignored) {
+          SolutionRepositoryBase.logger.error("SolutionRepository.ERROR_0011_TRANSACTION_FAILED", ignored); //$NON-NLS-1$
+        }
+        throw new RepositoryException(hibernateException);
+      } catch (IOException ex) {
+        // re-throw exception so that it abandons the process
+        throw new RepositoryException(ex);
       }
-      throw new RepositoryException(hibernateException);
-    } catch (IOException ex) {
-      // re-throw exception so that it abandons the process
-      throw new RepositoryException(ex);
     }
   }
 
@@ -1015,39 +1019,41 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   @Override
   public boolean removeSolutionFile(final String solutionPath) {
-    // remove file based files
-    super.removeSolutionFile(solutionPath);
-    // Build the path
-    String fullPath = repositoryName;
-    String sepStr = Character.toString(ISolutionRepository.SEPARATOR);
-    if ((solutionPath != null) && (solutionPath.length() > 0)) {
-      if (fullPath.endsWith(sepStr) && solutionPath.startsWith(sepStr)) {
-        fullPath += solutionPath.substring(1);
-      } else if (!fullPath.endsWith(sepStr) && !solutionPath.startsWith(sepStr)) {
-        fullPath += sepStr + solutionPath.substring(1);
+    synchronized(lock) {
+      // remove file based files
+      super.removeSolutionFile(solutionPath);
+      // Build the path
+      String fullPath = repositoryName;
+      String sepStr = Character.toString(ISolutionRepository.SEPARATOR);
+      if ((solutionPath != null) && (solutionPath.length() > 0)) {
+        if (fullPath.endsWith(sepStr) && solutionPath.startsWith(sepStr)) {
+          fullPath += solutionPath.substring(1);
+        } else if (!fullPath.endsWith(sepStr) && !solutionPath.startsWith(sepStr)) {
+          fullPath += sepStr + solutionPath.substring(1);
+        } else {
+          fullPath += solutionPath;
+        }
       } else {
-        fullPath += solutionPath;
+        if (fullPath.endsWith(sepStr)) {
+          fullPath = fullPath.substring(0, fullPath.length() - 1); // take off the path separator character
+        }
       }
-    } else {
-      if (fullPath.endsWith(sepStr)) {
-        fullPath = fullPath.substring(0, fullPath.length() - 1); // take off the path separator character
+      RepositoryFile file = (RepositoryFile) getFileByPath(fullPath);
+      if (file == null) {
+        return false;
       }
+      RepositoryFile parent = (RepositoryFile) file.retrieveParent();
+      if (parent != null) { // this take care of the case of deleting the
+        // repository completely
+        parent.removeChildFile(file);
+      }
+      Session hibSession = HibernateUtil.getSession();
+      Transaction trans = hibSession.beginTransaction();
+      hibSession.delete(file);
+      trans.commit();
+      resetRepository();
+      return true;
     }
-    RepositoryFile file = (RepositoryFile) getFileByPath(fullPath);
-    if (file == null) {
-      return false;
-    }
-    RepositoryFile parent = (RepositoryFile) file.retrieveParent();
-    if (parent != null) { // this take care of the case of deleting the
-      // repository completely
-      parent.removeChildFile(file);
-    }
-    Session hibSession = HibernateUtil.getSession();
-    Transaction trans = hibSession.beginTransaction();
-    hibSession.delete(file);
-    trans.commit();
-    resetRepository();
-    return true;
   }
 
   @Override
@@ -1164,69 +1170,71 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   @Override
   public int addSolutionFile(final String baseUrl, String path, final String fileName, final byte[] data,
       boolean overwrite) {
-    // TODO mlowery Allow this method for Pentaho administrators only. Use a RunAsManager when calling this method 
-    // from within this class.  That way you prevent external callers from directly calling this method.
-
-    // baseUrl is ignored
-    // We handle publish to the system folder differently since it's not in the DB.
-    if ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
-      path = path.substring(0, path.length() - 1);
-    }
-    
-    // do not allow publishing to root path
-    if (StringUtil.isEmpty(path)) {
-      logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
-      return ISolutionRepository.FILE_ADD_FAILED;
-    }
-    
-    // allow any user to add to system/tmp (e.g. during new analysis view) 
-    if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase.isSystemTmpPath(path))) {
-      // add file using file based technique to send it to disk
-      return super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
-    }
-    RepositoryFile parent = (RepositoryFile) getFileByPath(path);
-    RepositoryFile reposFile = (RepositoryFile) getFileByPath(path + ISolutionRepository.SEPARATOR + fileName);
-    HibernateUtil.beginTransaction();
-    if (reposFile == null) {
-      if ((parent == null) || !parent.isDirectory()
-          || (!hasAccess(parent, ISolutionRepository.ACTION_CREATE) && !isPentahoAdministrator())) {
+    synchronized(lock) {
+      // TODO mlowery Allow this method for Pentaho administrators only. Use a RunAsManager when calling this method 
+      // from within this class.  That way you prevent external callers from directly calling this method.
+  
+      // baseUrl is ignored
+      // We handle publish to the system folder differently since it's not in the DB.
+      if ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
+        path = path.substring(0, path.length() - 1);
+      }
+      
+      // do not allow publishing to root path
+      if (StringUtil.isEmpty(path)) {
+        logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
+        return ISolutionRepository.FILE_ADD_FAILED;
+      }
+      
+      // allow any user to add to system/tmp (e.g. during new analysis view) 
+      if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase.isSystemTmpPath(path))) {
+        // add file using file based technique to send it to disk
+        return super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
+      }
+      RepositoryFile parent = (RepositoryFile) getFileByPath(path);
+      RepositoryFile reposFile = (RepositoryFile) getFileByPath(path + ISolutionRepository.SEPARATOR + fileName);
+      HibernateUtil.beginTransaction();
+      if (reposFile == null) {
+        if ((parent == null) || !parent.isDirectory()
+            || (!hasAccess(parent, ISolutionRepository.ACTION_CREATE) && !isPentahoAdministrator())) {
+          HibernateUtil.commitTransaction();
+          HibernateUtil.flushSession();
+          return ISolutionRepository.FILE_ADD_FAILED;
+        }
+        try {
+          reposFile = new RepositoryFile(fileName, parent, data);
+          HibernateUtil.commitTransaction();
+          HibernateUtil.flushSession();
+          resetRepository();
+          super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
+          return ISolutionRepository.FILE_ADD_SUCCESSFUL;
+        } catch (Exception e) {
+          SolutionRepositoryBase.logger.error(e);
+          return ISolutionRepository.FILE_ADD_FAILED;
+        }
+      }
+      if (!overwrite) {
+        HibernateUtil.commitTransaction();
+        HibernateUtil.flushSession();
+        return ISolutionRepository.FILE_EXISTS;
+      }
+      if (hasAccess(reposFile, ISolutionRepository.ACTION_UPDATE) || isPentahoAdministrator()) {
+        reposFile.setData(data);
+        super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
+        resetRepository();
+      } else {
         HibernateUtil.commitTransaction();
         HibernateUtil.flushSession();
         return ISolutionRepository.FILE_ADD_FAILED;
       }
       try {
-        reposFile = new RepositoryFile(fileName, parent, data);
         HibernateUtil.commitTransaction();
         HibernateUtil.flushSession();
-        resetRepository();
-        super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
         return ISolutionRepository.FILE_ADD_SUCCESSFUL;
       } catch (Exception e) {
         SolutionRepositoryBase.logger.error(e);
         return ISolutionRepository.FILE_ADD_FAILED;
       }
-    }
-    if (!overwrite) {
-      HibernateUtil.commitTransaction();
-      HibernateUtil.flushSession();
-      return ISolutionRepository.FILE_EXISTS;
-    }
-    if (hasAccess(reposFile, ISolutionRepository.ACTION_UPDATE) || isPentahoAdministrator()) {
-      reposFile.setData(data);
-      super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
-      resetRepository();
-    } else {
-      HibernateUtil.commitTransaction();
-      HibernateUtil.flushSession();
-      return ISolutionRepository.FILE_ADD_FAILED;
-    }
-    try {
-      HibernateUtil.commitTransaction();
-      HibernateUtil.flushSession();
-      return ISolutionRepository.FILE_ADD_SUCCESSFUL;
-    } catch (Exception e) {
-      SolutionRepositoryBase.logger.error(e);
-      return ISolutionRepository.FILE_ADD_FAILED;
     }
   }
 
@@ -1454,28 +1462,30 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   @Override
   public ISolutionFile createFolder(final File newFolder) throws IOException {
-    HibernateUtil.beginTransaction();
-    try {
-      String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath("");
-      File solutionFile = new File(solutionRoot);
-      if (solutionFile.isDirectory()) {
-        Map reposFileStructure = this.getAllRepositoryModDates();
-        /*
-         * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base: /solutions
-         */
-        String fromBase = solutionFile.getCanonicalPath();
-        String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
-            : "/" + solutionFile.getName(); //$NON-NLS-1$
-        RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
-        ISolutionFile returnFile = updateHelper.createFolder(newFolder);
-        super.createFolder(newFolder);
-        return returnFile;
+    synchronized(lock) {
+      HibernateUtil.beginTransaction();
+      try {
+        String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath("");
+        File solutionFile = new File(solutionRoot);
+        if (solutionFile.isDirectory()) {
+          Map reposFileStructure = this.getAllRepositoryModDates();
+          /*
+           * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base: /solutions
+           */
+          String fromBase = solutionFile.getCanonicalPath();
+          String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
+              : "/" + solutionFile.getName(); //$NON-NLS-1$
+          RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
+          ISolutionFile returnFile = updateHelper.createFolder(newFolder);
+          super.createFolder(newFolder);
+          return returnFile;
+        }
+      } finally {
+        HibernateUtil.commitTransaction();
+        HibernateUtil.flushSession();
       }
-    } finally {
-      HibernateUtil.commitTransaction();
-      HibernateUtil.flushSession();
+      return null;
     }
-    return null;
   }
 
 }
