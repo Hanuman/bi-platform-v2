@@ -114,8 +114,17 @@ public class ActionInfo {
     return ActionInfo.buildSolutionPath(this.solutionName, this.path, this.actionName);
   }
 
-  public static String buildSolutionPath(final String solution, final String path, final String filename) {
+  public static String buildSolutionPath(final String solution, String path, String filename) {
     StringBuffer buf = new StringBuffer(ISolutionRepository.SEPARATOR);
+    
+    // if the solutionName is the same as the fileName and the path is empty, then we are
+    // probably trying to load the solution root itself
+    if (solution != null && solution.equals(filename) && "".equals(path)) {
+      filename = "";
+    }
+    if (path.equalsIgnoreCase("/")) {
+      path = "";
+    }
     if (StringUtils.isEmpty(path)) {
       if (!StringUtils.isEmpty(filename) && filename.charAt(0) == ISolutionRepository.SEPARATOR) {
         return buf.append(solution).append(filename).toString();
