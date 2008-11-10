@@ -1176,7 +1176,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   
       // baseUrl is ignored
       // We handle publish to the system folder differently since it's not in the DB.
-      if ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
+      while ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
         path = path.substring(0, path.length() - 1);
       }
       
