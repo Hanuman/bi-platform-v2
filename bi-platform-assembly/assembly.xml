@@ -254,14 +254,6 @@
 			</copy>
 		    <delete dir="${prep.pentaho.war.dir}/.settings" />
 			
-			<!-- Fix for PPP-1459 - manually copy the pdf docs to mantle dir as well -->
-			<mkdir dir="${prep.pentaho.war.dir}/mantle/docs"/>
-			<copy todir="${prep.pentaho.war.dir}/mantle/docs" overwrite="true">
-				<fileset dir="${prep.pentaho.war.dir}/docs/">
-					<include name="**/*.pdf"/>
-				</fileset>
-			</copy>
-
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<!-- get all pentaho jars from the build process -->
 				<fileset dir="${lib.dir}">
