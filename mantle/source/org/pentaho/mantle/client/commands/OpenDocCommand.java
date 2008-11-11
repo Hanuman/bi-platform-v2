@@ -41,6 +41,15 @@ public class OpenDocCommand implements Command {
    * the EE version of the document.
    */
   public void execute() {
-    Window.open(documentationURL, "documentation",""); //$NON-NLS-1$ //$NON-NLS-2$
+    openDoc(documentationURL);
   }
+  
+  private native void openDoc(String url)/*-{
+    if(url && url != '' && (url.indexOf('/') == -1 || url.indexOf('/') > 0)){
+      url = "/"+url;
+    }
+    var curLoc = $wnd.location.href;
+    var loc = curLoc.substring(0, curLoc.lastIndexOf('/')) + url;
+    $wnd.open(loc, "_top","");
+  }-*/;
 }
