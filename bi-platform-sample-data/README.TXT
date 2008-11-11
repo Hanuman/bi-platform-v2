@@ -4,7 +4,10 @@ the following order:
 create_repository_<db>.sql
 create_quartz_<db>.sql
 
-If you would like to use Pentaho's default sample users and hsqldb sample data
-source, run the following script after running the create scripts:
+If you would like to create the sample data source connection, run the following script after running the create script:
 
-load_sample_users_<db>.sql
+create_sample_datasource_<db>.sql
+
+If you want to use an existing 1.7.0 Pentaho rdbms repository database, run the following script:
+
+migration.sql
