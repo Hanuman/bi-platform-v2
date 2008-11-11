@@ -425,7 +425,7 @@ A:hover {
                         <table cellspacing="0" cellpadding="0" border="0" class="button"
                           width="50" onMouseOver="this.className='button_over'"
                           onMouseOut="this.className='button'" align="right"
-                          style="margin-top: 6px;"  onClick="window.open(window.location.href.replace('Login', '<%= PentahoSystem.getSystemSetting("documentation-url", "docs/pentaho_ce_user_guide_v20.pdf") %>'), '_blank');">
+                          style="margin-top: 6px;"  onClick="window.open(window.location.href.replace('Login', '<%= PentahoSystem.getSystemSetting("documentation-url", "docs/evaluating_pentaho_reporting_v20.pdf") %>'), '_blank');">
                           <tr>
                             <td width="7" height="27" class="button_left"><img
                               src="/pentaho-style/images/login/spacer.png" width="7" height="27" /><br />
