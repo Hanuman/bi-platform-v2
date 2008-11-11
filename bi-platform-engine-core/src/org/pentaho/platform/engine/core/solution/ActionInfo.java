@@ -122,7 +122,7 @@ public class ActionInfo {
     if (solution != null && solution.equals(filename) && "".equals(path)) {
       filename = "";
     }
-    if (path.equalsIgnoreCase("/")) {
+    if (path != null && path.equalsIgnoreCase("/")) {
       path = "";
     }
     if (StringUtils.isEmpty(path)) {
