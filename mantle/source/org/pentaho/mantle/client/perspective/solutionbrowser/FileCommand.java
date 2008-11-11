@@ -85,6 +85,8 @@ public class FileCommand implements Command {
       inputDialog.setContent(cronTextBox);
       inputDialog.setCallback(callback);
       inputDialog.center();
+    } else if (mode == COMMAND.SHARE) {
+      fileItemCallback.shareFile();
     } else {
 //      Date now = new Date();
       // need to build cron expressions for each possible type
@@ -140,8 +142,6 @@ public class FileCommand implements Command {
 //        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " " + day + " " + month + " ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 //      } else if (mode == COMMAND.SUBSCRIBE) {
 //        fileItemCallback.openFile(mode);
-//      } else if (mode == COMMAND.SHARE) {
-//        fileItemCallback.shareFile();
 //      }
     }
   }
