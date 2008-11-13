@@ -58,8 +58,8 @@
       <exclude org="javax.activation" module="activation" />
     </dependency>
     
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.0" />
-    <dependency org="pentaho.kettle" name="kettle-core"   rev="3.1.0" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
+    <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" />
     
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
       changing="true" />
