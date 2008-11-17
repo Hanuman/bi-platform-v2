@@ -57,20 +57,19 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     int rowCount = 0;
     int colCount = 0;
 
-    List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_COLUMN].getPositions();
-    if ((positions != null) && (positions.size() > 0)) {
-      rowCount = ((List) positions.get(0)).size() + 1;
+    List positions = nativeResultSet.getAxes()[AXIS_COLUMN].getPositions();
+    if (positions != null && positions.size() > 0) {
+      rowCount = ((List) positions.get(0)).size();
       colCount = positions.size();
     }
     Object[][] result = new Object[rowCount][colCount];
     for (int c = 0; c < colCount; c++) {
       List members = (List) positions.get(c);
       Member member = null;
-      for (int r = 0; r < rowCount - 1; r++) {
+      for (int r = 0; r < rowCount; r++) {
         member = (Member) members.get(r);
         result[r][c] = member.getCaption();
       }
-      result[rowCount - 1][c] = member.getHierarchy().getCaption();
     }
     return result;
   }
@@ -79,20 +78,19 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     int rowCount = 0;
     int colCount = 0;
 
-    List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_ROW].getPositions();
-    if ((positions != null) && (positions.size() > 0)) {
+    List positions = nativeResultSet.getAxes()[AXIS_ROW].getPositions();
+    if (positions != null && positions.size() > 0) {
       rowCount = positions.size();
-      colCount = ((List) positions.get(0)).size() + 1;
+      colCount = ((List) positions.get(0)).size();
     }
     Object[][] result = new Object[rowCount][colCount];
     for (int r = 0; r < rowCount; r++) {
       List members = (List) positions.get(r);
       Member member = null;
-      for (int c = 0; c < colCount - 1; c++) {
+      for (int c = 0; c < colCount; c++) {
         member = (Member) members.get(c);
         result[r][c] = member.getCaption();
       }
-      result[r][colCount - 1] = member.getHierarchy().getCaption();
     }
     return result;
   }
@@ -106,20 +104,13 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     String[] colNames = null;
 
     if (nativeResultSet != null) {
-      colNames = new String[getColumnCount()];
+      colNames = new String[this.rowHeaders[0].length];
 
       // Flatten out the column headers into one column-name
-      for (int i = 0; i < colNames.length; ++i) {
-        List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_ROW].getPositions();
-        if (i < ((List) positions.get(0)).size()) {
-          Member member = (Member) ((List) positions.get(0)).get(i);
-          Hierarchy hierarchy = member.getHierarchy();
-          colNames[i] = hierarchy.getCaption();
-        } else {
-          colNames[i] = ((Member) ((List) positions.get(0)).get(((List) positions.get(0)).size() - 1)).getHierarchy()
-              .getName()
-              + "{" + i + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
+      for (int i = 0; i < colNames.length; ++i) 
+      {
+        Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
+        colNames[i] = "["+member.getDimension().getName()+"].["+member.getHierarchy().getName()+"].["+member.getLevel().getName()+"]";
       }
     }
 
