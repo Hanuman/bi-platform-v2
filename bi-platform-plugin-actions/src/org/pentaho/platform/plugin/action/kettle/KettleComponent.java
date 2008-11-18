@@ -56,8 +56,9 @@ import org.pentaho.platform.util.xml.w3c.XmlW3CHelper;
  * KettleComponent shows a list of available transformations in the root of the choosen repository.
  * 
  * @author Matt
- * 
- * Legitimate outputs:
+ */
+
+ /* Legitimate outputs:
  *  EXECUTION_STATUS_OUTPUT - (execution-status)
  *    [JOB | TRANS] Returns the resultant execution status
  *    
@@ -301,8 +302,6 @@ public class KettleComponent extends ComponentBase implements RowListener {
       String value = null;
       if (isDefinedInput(name)) {
         value = getInputStringValue(name);
-      }
-      if (!parameterList.contains(value)) {
         parameterList.add(value);
       }
     }
