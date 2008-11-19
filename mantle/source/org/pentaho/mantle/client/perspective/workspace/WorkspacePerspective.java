@@ -291,39 +291,23 @@ public class WorkspacePerspective extends ScrollPanel {
       Label type = new Label(currentSubscr.getType());
 
       HorizontalPanel buttonsPanel = new HorizontalPanel();
-      final String subscrName = currentSubscr.getId();
+      final String subscriptionId = currentSubscr.getId();
 
       Label lblRunNow = new Label(Messages.getString("run")); //$NON-NLS-1$
       lblRunNow.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblRunNow.addClickListener(new ClickListener() {
-        public void onClick(Widget sender) {
-          performActionOnSubscription("run", subscrName); //$NON-NLS-1$
-        }
-      });
+      lblRunNow.addClickListener(new RunSubscriptionClickListener(subscriptionId));
 
       Label lblArchive = new Label(Messages.getString("archive")); //$NON-NLS-1$
       lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblArchive.addClickListener(new ClickListener() {
-        public void onClick(Widget sender) {
-          runAndArchive(subscrName);
-        }
-      });
+      lblArchive.addClickListener(new RunAndArchiveClickListener(subscriptionId));
 
       Label lblEdit = new Label(Messages.getString("edit")); //$NON-NLS-1$
       lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblEdit.addClickListener(new ClickListener() {
-        public void onClick(Widget sender) {
-          performActionOnSubscription("edit", subscrName); //$NON-NLS-1$
-        }
-      });
+      lblEdit.addClickListener(new EditSubscriptionClickListener(subscriptionId));
+      
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-
-      lblDelete.addClickListener(new ClickListener() {
-        public void onClick(Widget sender) {
-          doDelete(true, currentSubscr, ""); //$NON-NLS-1$
-        }
-      });
+      lblDelete.addClickListener(new DeleteSubscriptionClickListener(currentSubscr));
 
       buttonsPanel.add(lblRunNow);
       buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
@@ -358,7 +342,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
             public void onClick(Widget sender) {
               final String fileId = currSchedule[3];
-              final String name = subscrName;
+              final String name = subscriptionId;
               performActionOnSubscriptionContent("archived", name, fileId); //$NON-NLS-1$
             }
           });
@@ -384,7 +368,7 @@ public class WorkspacePerspective extends ScrollPanel {
    * Runs and Archives the report attached to the given public schedule
    * @param publicSchedule Public schedule name
    */
-  private void runAndArchive(final String publicSchedule) {
+  void runAndArchive(final String publicSchedule) {
     AsyncCallback<String> callback = null;
     if (publicSchedule != null) {
       callback = new AsyncCallback<String>() {
@@ -406,10 +390,7 @@ public class WorkspacePerspective extends ScrollPanel {
     }   
   }
     
-  /*
-   * Helper method to delete the content items or the public schedule based on what's passed in.
-   */
-  private void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
+  void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
     VerticalPanel vp = new VerticalPanel();
     if (isPublicSchedule) {
       vp.add(new Label(Messages.getString("deletePublicSchedule"))); //$NON-NLS-1$
@@ -472,7 +453,7 @@ public class WorkspacePerspective extends ScrollPanel {
     performActionOnSubscription(action, subscrName + ":" + contentID); //$NON-NLS-1$
   }
 
-  private void performActionOnSubscription(final String action, final String subscrName) {
+  void performActionOnSubscription(final String action, final String subscrName) {
     final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getString("view"), Messages.getString("close"), null, false, false); //$NON-NLS-1$ //$NON-NLS-2$
     viewDialog.setContent(new VerticalPanel());
     viewDialog.setCallback(new IDialogCallback() {
@@ -970,6 +951,47 @@ public class WorkspacePerspective extends ScrollPanel {
 
   public void setBackgroundAlertRaised(boolean backgroundAlertRaised) {
     this.backgroundAlertRaised = backgroundAlertRaised;
+  }
+  
+  // Event classes
+  public class RunAndArchiveClickListener implements ClickListener {
+    String subscriptionId;
+    public RunAndArchiveClickListener(String subscriptionID) {
+      this.subscriptionId = subscriptionID;
+    }
+    public void onClick(Widget arg0) {
+      runAndArchive(subscriptionId);
+    }   
+  }
+  
+  public class RunSubscriptionClickListener implements ClickListener {
+    String subscriptionId;
+    public RunSubscriptionClickListener(String subscriptionID) {
+      this.subscriptionId = subscriptionID;
+    }
+    public void onClick(Widget arg0) {
+      performActionOnSubscription("run", subscriptionId); //$NON-NLS-1$
+    }
+  }
+  
+  public class EditSubscriptionClickListener implements ClickListener {
+    String subscriptionId;
+    public EditSubscriptionClickListener(String subscriptionID) {
+      this.subscriptionId = subscriptionID;
+    }
+    public void onClick(Widget arg0) {
+      performActionOnSubscription("edit", subscriptionId); //$NON-NLS-1$
+    }
+  }
+ 
+  public class DeleteSubscriptionClickListener implements ClickListener {
+    SubscriptionBean subscription;
+    public DeleteSubscriptionClickListener(SubscriptionBean subscription) {
+      this.subscription = subscription;
+    }
+    public void onClick(Widget sender) {
+      doDelete(true, subscription, ""); //$NON-NLS-1$
+    }
   }
 
 }

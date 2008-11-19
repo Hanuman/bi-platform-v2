@@ -474,7 +474,7 @@ public class SubscriptionHelper {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider(contentParameters);
     parameterProvider.setParameters(subscriptionParameters);
     String subsName = parameterProvider.getStringParameter("subscribe-name", null); //$NON-NLS-1$
-    if (subsName == null) {
+    if (subscriptionName != null) {
       parameterProvider.setParameter("subscribe-name", subscriptionName); //$NON-NLS-1$
     }
     ActionInfo contentInfo = ActionInfo.parseActionString(content.getActionReference());
