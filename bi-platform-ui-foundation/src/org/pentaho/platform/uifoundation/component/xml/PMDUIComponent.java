@@ -157,9 +157,6 @@ public class PMDUIComponent extends XmlComponent {
     schemaMeta.setActiveLocale(locale);
     List models = schemaMeta.getBusinessModels().getList();
 
-    MetaObjectComparator comparator = new MetaObjectComparator(locale);
-    Collections.sort(models, comparator);
-
     Iterator it = models.iterator();
     Element modelNode;
     while (it.hasNext()) {
@@ -242,8 +239,6 @@ public class PMDUIComponent extends XmlComponent {
     UniqueList uniqueCategories = rootCategory.getBusinessCategories();
     List childCategories = uniqueCategories.getList();
 
-    MetaObjectComparator comparator = new MetaObjectComparator(locale);
-    Collections.sort(childCategories, comparator);
     Iterator it = childCategories.iterator();
 
     Element tableNode;
@@ -252,7 +247,6 @@ public class PMDUIComponent extends XmlComponent {
 
     BusinessColumn column;
     List columns;
-    MetaObjectComparator columnComparator;
     Iterator columnsIterator;
 
     while (it.hasNext()) {
@@ -268,9 +262,6 @@ public class PMDUIComponent extends XmlComponent {
         tableNode.addElement("view_description").setText(businessView.getDescription(locale)); //$NON-NLS-1$
       }
       columns = businessView.getBusinessColumns().getList();
-
-      columnComparator = new MetaObjectComparator(locale);
-      Collections.sort(columns, columnComparator);
       columnsIterator = columns.iterator();
       while (columnsIterator.hasNext()) {
         column = (BusinessColumn) columnsIterator.next();
