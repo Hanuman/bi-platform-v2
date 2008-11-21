@@ -1131,7 +1131,8 @@ public class PentahoSystem {
     ArrayList<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
     if(sessionStartupActions != null) {
 	    for (ISessionStartupAction sessionStartupAction : sessionStartupActions) {
-	      if (sessionStartupAction.getSessionType().equals(sessionClassName)) {
+	      if (sessionStartupAction.getSessionType().equals(sessionClassName) && 
+	          sessionStartupAction.getActionOutputScope().equals(SCOPE_SESSION)) {
 	        startupActions.add(sessionStartupAction);
 	      }
 	    }
