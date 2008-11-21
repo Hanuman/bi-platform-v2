@@ -473,7 +473,6 @@ public class SubscriptionHelper {
     Map subscriptionParameters = subscription.getParameters();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider(contentParameters);
     parameterProvider.setParameters(subscriptionParameters);
-    String subsName = parameterProvider.getStringParameter("subscribe-name", null); //$NON-NLS-1$
     if (subscriptionName != null) {
       parameterProvider.setParameter("subscribe-name", subscriptionName); //$NON-NLS-1$
     }
