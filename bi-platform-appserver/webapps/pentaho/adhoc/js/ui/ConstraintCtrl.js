@@ -52,10 +52,27 @@ ConstraintCtrl = function( operator, columnName, comparator, condition,
 	td = document.createElement( "td" );
 	tr.appendChild( td );
 	select = this.createComparisonElem( comparatorAr );
+  //Hook up check for comparators that don't need a right-hand value
+  select.onchange = function(){
+    if(BVItem.SINGLE_COMPARATORS[this.value]){
+      //no right-hand value needed
+      textInput.disabled = true;
+    } else {
+      textInput.disabled = false;
+    }
+  };
+  
 	td.appendChild( select );
 	if ( comparator != undefined )
 	{
 		select.value = comparator;		// -------------------------
+    //Check to see if the comparator doesn't need a right-hand value
+    if(BVItem.SINGLE_COMPARATORS[select.value]){
+      //no right-hand value needed
+      textInput.disabled = true;
+    } else {
+      textInput.disabled = false;
+    }
 	}
 	
 	// ctrl 4 user value

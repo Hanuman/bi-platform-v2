@@ -200,5 +200,7 @@ SOLUTION_REPOSITORY: "Solution Repository",
 step1_div:"Select Business Model",
 step2_div:"Make Selections",
 step3_div:"Customize Selections",
-step4_div:"Report Settings"
+step4_div:"Report Settings",
+IS_NULL: "Is Null",
+IS_NOT_NULL: "Is not Null"
 }

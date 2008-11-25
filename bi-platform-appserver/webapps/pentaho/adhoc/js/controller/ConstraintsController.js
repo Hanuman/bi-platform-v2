@@ -140,6 +140,14 @@ ConstraintsController.prototype.validateColumnConstraintsNotEmpty = function( co
   	var constraintCtrl = columnConstraintCtrl.getConstraintCtrl( constraintIdx );
   	var constraintValue = constraintCtrl.getValue();
   	var constraintValid = !StringUtils.isEmpty( constraintValue.compareValue );
+    // Check to see if it's a null comparison, in which case it's ok
+    if(!constraintValid){
+      if(constraintValue.comparator == Constraints.operatorMap[ "isNull" ] 
+         || constraintValue.comparator == Constraints.operatorMap[ "isNotNull" ]){
+        constraintValid = true;        
+      }
+    }
+    
   	if ( !constraintValid )
   	{
       invalidAr.push( { ctrl: constraintCtrl, reason: Messages.getString( "VALUE_MUST_BE_NONEMPTY" ) } );
@@ -156,6 +164,14 @@ ConstraintsController.prototype.validateColumnConstraintsNumeric = function( col
   	var constraintCtrl = columnConstraintCtrl.getConstraintCtrl( constraintIdx );
   	var constraintValue = constraintCtrl.getValue();
   	var constraintValid = StringUtils.isNumeric( constraintValue.compareValue );
+    // Check to see if it's a null comparison, in which case it's ok
+    if(!constraintValid){
+      if(constraintValue.comparator == Constraints.operatorMap[ "isNull" ] 
+         || constraintValue.comparator == Constraints.operatorMap[ "isNotNull" ]){
+        constraintValid = true;        
+      }
+    }
+    
   	if ( !constraintValid )
   	{
       invalidAr.push( { ctrl: constraintCtrl, reason: Messages.getString( "VALUE_MUST_BE_NUMERIC" ) } );

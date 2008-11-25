@@ -166,6 +166,12 @@ Constraints.prototype.xformStringConstraintParams = function( comparatorFunkName
 			return { comparatorFunkName: Messages.getString( "BEGINS_WITH" ), rightParam: param[1] };
 		}
 	}
+  else if( comparatorFunkName == "ISNA" )
+  {
+     var funkName =  bIsNot ? Messages.getString( "IS_NOT_NULL" ) : Messages.getString( "IS_NULL" );
+     return { comparatorFunkName: funkName, rightParam: param[0] };
+     
+  }
 	throw new Error( Messages.getString( "INVALID_COMPARATOR_NAME", comparatorFunkName ) );
 }
 
@@ -176,6 +182,9 @@ Constraints.operatorMap[ ">=" ] = Messages.getString( "ON_OR_AFTER" );
 Constraints.operatorMap[ "<=" ] = Messages.getString( "ON_OR_BEFORE" );
 Constraints.operatorMap[ ">" ] = Messages.getString( "AFTER" );
 Constraints.operatorMap[ "<" ] = Messages.getString( "BEFORE" );
+Constraints.operatorMap[ "isNull" ] = Messages.getString( "IS_NULL" );
+Constraints.operatorMap[ "isNotNull" ] = Messages.getString( "IS_NOT_NULL" );
+
 
 /**
  * @param String comparatorFunkName one of the values in the arrays: BVItem.COMPARATOR.STRING
@@ -213,22 +222,47 @@ Constraints.prototype.asConstraintXml = function( bvItem, isFirst )
 }
 /*static*/Constraints.makeNumericOperand = function( tableId, columnId, comparator, condition )
 {
+  switch( comparator )
+  {
+    case Messages.getString( "IS_NULL" ):
+      return "ISNA([" + tableId + "." + columnId + "]; NULL())";
+    case Messages.getString( "IS_NOT_NULL" ):
+      return "NOT(ISNA([" + tableId + "." + columnId + "]; NULL()))";
+    default:
 	return "[" + tableId + "." + columnId + "] "
 		+ comparator + " "
 		+ condition;
 }
+}
 /*static*/Constraints.makeDateOperand = function( tableId, columnId, comparator, condition )
 {
+  switch( comparator )
+  {
+    case Messages.getString( "IS_NULL" ):
+      return "ISNA([" + tableId + "." + columnId + "]; NULL())";
+    case Messages.getString( "IS_NOT_NULL" ):
+      return "NOT(ISNA([" + tableId + "." + columnId + "]; NULL()))";
+    default:
 	comparator = Constraints.mapDateComparatorToNumericComparator( comparator );
 	return "[" + tableId + "." + columnId + "] "
 		+ comparator + " "
 		+ condition;
 }
+}
 /*static*/Constraints.makeBooleanOperand = function( tableId, columnId, comparator, condition )
 {
+  switch( comparator )
+  {
+    case Messages.getString( "IS_NULL" ):
+      return "ISNA([" + tableId + "." + columnId + "]; NULL())";
+    case Messages.getString( "IS_NOT_NULL" ):
+      return "NOT(ISNA([" + tableId + "." + columnId + "]; NULL()))";
+    default:
+      comparator = Constraints.mapDateComparatorToNumericComparator( comparator );
 	return "[" + tableId + "." + columnId + "] "
 		+ comparator + " "
 		+ condition;
+  }
 }
 
 /*
@@ -257,6 +291,10 @@ Marc Batchelor: For more info, try checking out the JDBC spec, somewhere around 
 			return "LIKE( [" + tableId + "." + columnId + "];" + "\"" + condition + "%\"" + ")";
 		case Messages.getString( "DOES_NOT_CONTAIN" ):
 			return "NOT( LIKE( [" + tableId + "." + columnId + "];" + "\"%" + condition + "%\"" + ") )";
+    case Messages.getString( "IS_NULL" ):
+      return "ISNA([" + tableId + "." + columnId + "]; NULL())";
+    case Messages.getString( "IS_NOT_NULL" ):
+      return "NOT(ISNA([" + tableId + "." + columnId + "]; NULL()))";
 		default:
 			throw new Error( Messages.getString( "unknownComparator", comparator ) );
 	}

@@ -125,16 +125,30 @@ BVItem.COMPARATOR.STRING = [
 	Messages.getString( "CONTAINS" ), 
 	Messages.getString( "ENDS_WITH" ), 
 	Messages.getString( "BEGINS_WITH" ), 
-	Messages.getString( "DOES_NOT_CONTAIN" ) ];
-BVItem.COMPARATOR.NUMERIC = [ "=", "<>", ">=", "<=", ">", "<" ];
-BVItem.COMPARATOR.BOOLEAN = [ "=", "<>" ];
+  Messages.getString( "DOES_NOT_CONTAIN" ),
+  Messages.getString( "IS_NULL" ),
+  Messages.getString( "IS_NOT_NULL" ) ];
+BVItem.COMPARATOR.NUMERIC = [ "=", "<>", ">=", "<=", ">", "<",
+  Messages.getString( "IS_NULL" ),
+  Messages.getString( "IS_NOT_NULL" ) ];
+BVItem.COMPARATOR.BOOLEAN = [ "=", "<>",
+  Messages.getString( "IS_NULL" ),
+  Messages.getString( "IS_NOT_NULL" ) ];
 BVItem.COMPARATOR.DATE = [ 
 	Messages.getString( "ON" ), 
 	Messages.getString( "NOT_ON" ), 
 	Messages.getString( "ON_OR_AFTER" ), 
 	Messages.getString( "ON_OR_BEFORE" ), 
 	Messages.getString( "AFTER" ), 
-	Messages.getString( "BEFORE" )];
+  Messages.getString( "BEFORE" ),
+  Messages.getString( "IS_NULL" ),
+  Messages.getString( "IS_NOT_NULL" )];
+  
+//Comparators with no right-hand parameters (is null, etc).
+BVItem.SINGLE_COMPARATORS = {};
+BVItem.SINGLE_COMPARATORS[Messages.getString( "IS_NULL" )] = {};
+BVItem.SINGLE_COMPARATORS[Messages.getString( "IS_NOT_NULL" )] = {};
+  
 	
 BVItem.COMPARATOR_MAP = new Object();
 BVItem.COMPARATOR_MAP[ BVItem.TYPE.NUMERIC ] = BVItem.COMPARATOR.NUMERIC;

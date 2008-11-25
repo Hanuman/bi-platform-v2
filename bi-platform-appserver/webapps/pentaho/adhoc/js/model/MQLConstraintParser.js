@@ -24,6 +24,8 @@ MQLConstraintParser = function()
 // match "[tableId.columnId] operator value". value may be in double quotes. return tableId.columnId, the operator, and the value (unquoted)
 /*static*/MQLConstraintParser.RE_INFIX_COMPARATOR_FUNCTION_PARTS = /^\s*\[([^\]]+)\]\s*([<>=]{1,2})\s*(DATEVALUE\()?"?([^"]*)"?(\))?\s*$/;
 // /*static*/MQLConstraintParser.RE_INFIX_COMPARATOR_FUNCTION_PARTS = /^\s*\[([^\]]+)\]\s*([<>=]{1,2})\s*"?([^"]*)"?\s*$/;
+// match ISNA, followed by a param list, where the param list look like ( param  ), return the function ISNA, and the param
+/*static*/MQLConstraintParser.RE_NOT_FUNCTION_PARTS = /^\s*(ISNA)\((.+)\)\s*$/;
 
 // match NOT, followed by a param list, where the param list look like ( param ; param ), return the function NOT, and the 2 params
 /*static*/MQLConstraintParser.RE_NOT_FUNCTION_PARTS = /^\s*(NOT)\((.+)\)\s*$/;
