@@ -2,6 +2,7 @@ package org.pentaho.test.platform.plugin;
 
 import java.io.OutputStream;
 
+import org.junit.Ignore;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
@@ -10,6 +11,7 @@ import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 
+@Ignore
 public class EmailTest extends BaseTestCase {
 
   private SimpleSmtpServer smtpServer;
