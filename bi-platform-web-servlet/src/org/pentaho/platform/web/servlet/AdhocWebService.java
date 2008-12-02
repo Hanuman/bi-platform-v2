@@ -547,9 +547,14 @@ public class AdhocWebService extends ServletBase {
             xactionStr,
             "preview.xaction", "Adhoc Reporting", false, true, instanceId, false, parameterProviderMap, outputHandler, null, urlFactory, messages); //$NON-NLS-1$ //$NON-NLS-2$
 
-    //if ( IRuntimeContext.RUNTIME_STATUS_SUCCESS != solutionEngine.getStatus() ) {
-    // TODO sbarkdull, surface an error
-    //}
+    if ( IRuntimeContext.RUNTIME_STATUS_SUCCESS != solutionEngine.getStatus() ) {
+      try {
+        outputStream.write(Messages.getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes());
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
     return runtimeContext;
   }
 
