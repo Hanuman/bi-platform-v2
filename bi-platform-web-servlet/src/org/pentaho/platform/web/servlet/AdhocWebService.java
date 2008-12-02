@@ -551,8 +551,7 @@ public class AdhocWebService extends ServletBase {
       try {
         outputStream.write(Messages.getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes());
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        logger.error(e);
       }
     }
     return runtimeContext;
