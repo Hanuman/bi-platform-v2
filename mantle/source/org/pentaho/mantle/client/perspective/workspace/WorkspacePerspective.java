@@ -304,7 +304,7 @@ public class WorkspacePerspective extends ScrollPanel {
       Label lblEdit = new Label(Messages.getString("edit")); //$NON-NLS-1$
       lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblEdit.addClickListener(new EditSubscriptionClickListener(subscriptionId));
-      
+
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
       lblDelete.addClickListener(new DeleteSubscriptionClickListener(currentSubscr));
@@ -366,7 +366,9 @@ public class WorkspacePerspective extends ScrollPanel {
 
   /**
    * Runs and Archives the report attached to the given public schedule
-   * @param publicSchedule Public schedule name
+   * 
+   * @param publicSchedule
+   *          Public schedule name
    */
   void runAndArchive(final String publicSchedule) {
     AsyncCallback<String> callback = null;
@@ -382,14 +384,14 @@ public class WorkspacePerspective extends ScrollPanel {
 
         public void onSuccess(String result) {
           MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("runInBackground"), //$NON-NLS-1$
-                                           Messages.getString("reportIsScheduledForBE"), false, false, true); //$NON-NLS-1$
+              Messages.getString("reportIsScheduledForBE"), false, false, true); //$NON-NLS-1$
           dialogBox.center();
         }
       };
       MantleServiceCache.getService().runAndArchivePublicSchedule(publicSchedule, callback);
-    }   
+    }
   }
-    
+
   void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
     VerticalPanel vp = new VerticalPanel();
     if (isPublicSchedule) {
@@ -398,7 +400,8 @@ public class WorkspacePerspective extends ScrollPanel {
       vp.add(new Label(Messages.getString("deleteContentItem"))); //$NON-NLS-1$
     }
 
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
+        Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     final IDialogCallback callback = new IDialogCallback() {
       public void cancelPressed() {
@@ -553,19 +556,21 @@ public class WorkspacePerspective extends ScrollPanel {
       }
       if (jobSchedule.triggerState != 2) {
         actionPanel.add(runJobLabel);
-//        actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
+        // actionPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
       }
-//      actionPanel.add(deleteJobLabel);
-      
+      // actionPanel.add(deleteJobLabel);
+
       if (actionPanel.getWidgetCount() == 0) {
         actionPanel.add(new HTML("&nbsp;")); //$NON-NLS-1$
       }
 
       scheduleTable.setWidget(row + 1, 0, new HTML(jobSchedule.jobName));
       scheduleTable.setWidget(row + 1, 1, new HTML(jobSchedule.jobGroup));
-      scheduleTable.setWidget(row + 1, 2, new HTML(jobSchedule.jobDescription == null || jobSchedule.jobDescription.trim().length() == 0 ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
-      scheduleTable.setWidget(row + 1, 3, new HTML((jobSchedule.previousFireTime == null ? Messages.getString("never") : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$ //$NON-NLS-2$
-          + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString()))); //$NON-NLS-1$
+      scheduleTable.setWidget(row + 1, 2, new HTML(
+          jobSchedule.jobDescription == null || jobSchedule.jobDescription.trim().length() == 0 ? "&nbsp;" : jobSchedule.jobDescription)); //$NON-NLS-1$
+      scheduleTable.setWidget(row + 1, 3, new HTML(
+          (jobSchedule.previousFireTime == null ? Messages.getString("never") : jobSchedule.previousFireTime.toString()) + "<BR>" //$NON-NLS-1$ //$NON-NLS-2$
+              + (jobSchedule.nextFireTime == null ? "-" : jobSchedule.nextFireTime.toString()))); //$NON-NLS-1$
       scheduleTable.setWidget(row + 1, 4, new HTML(getTriggerStateName(jobSchedule.triggerState)));
       scheduleTable.setWidget(row + 1, 5, actionPanel);
       scheduleTable.getCellFormatter().setStyleName(row + 1, 0, "backgroundContentTableCell"); //$NON-NLS-1$
@@ -601,11 +606,15 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<String> callback = new AsyncCallback<String>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotDeleteContentItem"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(String message) {
-        Window.alert(message);
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+            message, false, false, true); //$NON-NLS-1$
+        dialogBox.center();
         refreshWorkspace();
       }
     };
@@ -616,7 +625,9 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotFetchWaitingBackgroundItems"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(List<JobDetail> scheduledJobs) {
@@ -635,7 +646,9 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotFetchCompletedBackgroundItems"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(List<JobDetail> result) {
@@ -685,7 +698,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotCancelBackgroundJob"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Boolean result) {
@@ -699,7 +714,6 @@ public class WorkspacePerspective extends ScrollPanel {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-
           }
 
           public void onSuccess(Boolean result) {
@@ -719,7 +733,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotDeleteContentItem"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Boolean result) {
@@ -753,7 +769,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotSuspendJob"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Void result) {
@@ -767,7 +785,6 @@ public class WorkspacePerspective extends ScrollPanel {
         MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
 
           public void onFailure(Throwable caught) {
-
           }
 
           public void onSuccess(Boolean result) {
@@ -787,7 +804,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotResumeJob"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Void nothing) {
@@ -820,7 +839,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotDeleteJob"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Void nothing) {
@@ -854,7 +875,9 @@ public class WorkspacePerspective extends ScrollPanel {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
-            Window.alert(caught.toString());
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
           public void onSuccess(Void nothing) {
@@ -885,7 +908,6 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
       }
 
       public void onSuccess(Void nothing) {
@@ -899,7 +921,9 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotFetchMySchedules"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(List<JobSchedule> scheduledJobs) {
@@ -916,7 +940,9 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<List<SubscriptionBean>> callback = new AsyncCallback<List<SubscriptionBean>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotFetchSubscriptions"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(List<SubscriptionBean> subscriptionsInfo) {
@@ -932,7 +958,9 @@ public class WorkspacePerspective extends ScrollPanel {
     AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("couldNotFetchAllSchedules"), false, false, true); //$NON-NLS-1$
+        dialogBox.center();
       }
 
       public void onSuccess(List<JobSchedule> scheduledJobs) {
@@ -952,43 +980,51 @@ public class WorkspacePerspective extends ScrollPanel {
   public void setBackgroundAlertRaised(boolean backgroundAlertRaised) {
     this.backgroundAlertRaised = backgroundAlertRaised;
   }
-  
+
   // Event classes
   public class RunAndArchiveClickListener implements ClickListener {
     String subscriptionId;
+
     public RunAndArchiveClickListener(String subscriptionID) {
       this.subscriptionId = subscriptionID;
     }
+
     public void onClick(Widget arg0) {
       runAndArchive(subscriptionId);
-    }   
+    }
   }
-  
+
   public class RunSubscriptionClickListener implements ClickListener {
     String subscriptionId;
+
     public RunSubscriptionClickListener(String subscriptionID) {
       this.subscriptionId = subscriptionID;
     }
+
     public void onClick(Widget arg0) {
       performActionOnSubscription("run", subscriptionId); //$NON-NLS-1$
     }
   }
-  
+
   public class EditSubscriptionClickListener implements ClickListener {
     String subscriptionId;
+
     public EditSubscriptionClickListener(String subscriptionID) {
       this.subscriptionId = subscriptionID;
     }
+
     public void onClick(Widget arg0) {
       performActionOnSubscription("edit", subscriptionId); //$NON-NLS-1$
     }
   }
- 
+
   public class DeleteSubscriptionClickListener implements ClickListener {
     SubscriptionBean subscription;
+
     public DeleteSubscriptionClickListener(SubscriptionBean subscription) {
       this.subscription = subscription;
     }
+
     public void onClick(Widget sender) {
       doDelete(true, subscription, ""); //$NON-NLS-1$
     }

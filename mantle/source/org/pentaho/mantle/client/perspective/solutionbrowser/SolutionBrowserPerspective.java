@@ -1533,7 +1533,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       });
     } catch (RequestException e) {
-      Window.alert(e.getLocalizedMessage());
+      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+          Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$
+      dialogBox.center();
     }
   }
 
