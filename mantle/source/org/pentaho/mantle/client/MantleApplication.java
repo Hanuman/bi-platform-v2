@@ -364,6 +364,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         // load user bookmarks
         solutionBrowserPerspective.loadBookmarks();
 
+        // update supported file types
+        solutionBrowserPerspective.buildEnabledOptionsList(settings);
+        
         // show stuff we've created/configured
         mainApplicationPanel.add(perspectivesPanel);
 

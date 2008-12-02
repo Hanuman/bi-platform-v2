@@ -34,6 +34,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback;
 import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
@@ -176,9 +177,15 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void updateMenus(FileItem selectedFileItem) {
     setEnabled(selectedFileItem != null);
-    // only allow edit on waqr
-    editBtn.setEnabled(selectedFileItem != null && selectedFileItem.getName().endsWith(".waqr.xaction")); //$NON-NLS-1$
-    scheduleMenuItem.setVisible(!selectedFileItem.getName().endsWith(FileItem.ANALYSIS_VIEW_SUFFIX));
+    editBtn.setEnabled(selectedFileItem != null && selectedFileItem.isCommandEnabled(COMMAND.EDIT)); //$NON-NLS-1$
+    if (selectedFileItem != null && selectedFileItem.isCommandEnabled(COMMAND.SCHEDULE_NEW)) {
+      scheduleMenuItem.setCommand(scheduleCmd);
+      scheduleMenuItem.setStyleName("gwt-MenuItem"); //$NON-NLS-1$
+    } else {
+      scheduleMenuItem.setCommand(null);
+      scheduleMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
+    }
+
   }
   
   /**

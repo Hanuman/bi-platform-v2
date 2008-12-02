@@ -26,6 +26,7 @@ import java.util.Set;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.ui.IFileTypePlugin;
 
 /**
  * 
@@ -75,6 +76,14 @@ public interface IPluginSettings {
 	 * @return List of IMenuCustomization objects
 	 */
 	public List getMenuCustomizations();
+	
+	/**
+	 * Returns a list of file type plugins, that specify behavior for viewing and 
+	 * editing plugins.
+	 * 
+	 * @return list of file type plugins
+	 */
+	public List<IFileTypePlugin> getFileTypePlugins();
 	
 	/**
 	 * Causes the plugin settings object to re-register all of the plugins that

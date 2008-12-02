@@ -78,6 +78,7 @@ import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.scheduler.IJobDetail;
 import org.pentaho.platform.api.scheduler.IJobSchedule;
+import org.pentaho.platform.api.ui.IFileTypePlugin;
 import org.pentaho.platform.api.usersettings.IUserSettingService;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -732,6 +733,18 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
               aboutIdx++;
             }
           }
+        }
+        
+        // load file type plugins from IPluginSettings
+        
+        int i = 0;
+        for (IFileTypePlugin plugin : pluginSettings.getFileTypePlugins()) {
+          settings.put("plugin-file-type-" + i, plugin.getFileExtension()); //$NON-NLS-1$
+          settings.put("plugin-file-type-open-url-" + i, plugin.getOpenUrlPattern()); //$NON-NLS-1$
+          settings.put("plugin-file-type-edit-url-" + i, plugin.getEditUrlPattern()); //$NON-NLS-1$
+          settings.put("plugin-file-type-enabled-options-" + i, plugin.getEnabledOptions()); //$NON-NLS-1$
+          
+          i++;
         }
       }
 

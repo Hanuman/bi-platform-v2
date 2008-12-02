@@ -103,7 +103,7 @@ public class FilesListPanel extends FlowPanel {
           String lastModifiedDateStr = fileElement.getAttribute("lastModifiedDate"); //$NON-NLS-1$
           String url = fileElement.getAttribute("url"); //$NON-NLS-1$
           final FileItem fileLabel = new FileItem(name, fileElement.getAttribute("localized-name"), solutionTree.showLocalizedFileNames, solution, path, //$NON-NLS-1$
-              lastModifiedDateStr, url, perspective);
+              lastModifiedDateStr, url, perspective, perspective.getEnabledOptions(name));
           // BISERVER-2317:  Request for more IDs for Mantle UI elements
           // set element id as the filename
           fileLabel.getElement().setId("file-" + name); //$NON-NLS-1$

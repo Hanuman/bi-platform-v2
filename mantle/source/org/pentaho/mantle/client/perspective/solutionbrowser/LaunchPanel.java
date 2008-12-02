@@ -71,6 +71,9 @@ public class LaunchPanel extends Frame {
     $wnd.openManage = function(){
       panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openManage()();
     }
+    $wnd.openURL = function(name, tooltip, url){
+      panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openURL(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, tooltip, url);
+    }
     var iwind = ele.contentWindow;
     
   
@@ -100,6 +103,10 @@ public class LaunchPanel extends Frame {
 
   public void openManage(){
     new ManageContentCommand(perspective).execute();
+  }
+  
+  public void openURL(String name, String tooltip, String url) {
+    perspective.showNewURLTab(name, tooltip, url);
   }
 
 }

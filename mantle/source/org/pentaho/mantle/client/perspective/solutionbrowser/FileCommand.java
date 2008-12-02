@@ -32,7 +32,8 @@ import com.google.gwt.user.client.ui.TextBox;
 public class FileCommand implements Command {
 
   public static enum COMMAND {
-    RUN, EDIT, DELETE, PROPERTIES, BACKGROUND, NEWWINDOW, SCHEDULE_DAILY, SCHEDULE_WEEKDAYS, SCHEDULE_MWF, SCHEDULE_TUTH, SCHEDULE_WEEKLY_MON, SCHEDULE_WEEKLY_TUE, SCHEDULE_WEEKLY_WED, SCHEDULE_WEEKLY_THU, SCHEDULE_WEEKLY_FRI, SCHEDULE_WEEKLY_SAT, SCHEDULE_WEEKLY_SUN, SCHEDULE_MONTHLY_1ST, SCHEDULE_MONTHLY_15TH, SCHEDULE_MONTHLY_FIRST_SUN, SCHEDULE_MONTHLY_FIRST_MON, SCHEDULE_MONTHLY_LAST_FRI, SCHEDULE_MONTHLY_LAST_SUN, SCHEDULE_MONTHLY_LAST_DAY, SCHEDULE_ANNUALLY, SCHEDULE_CUSTOM, SCHEDULE_NEW, SUBSCRIBE, SHARE, EDIT_ACTION, CREATE_FOLDER
+    RUN, EDIT, DELETE, PROPERTIES, BACKGROUND, NEWWINDOW,
+    SCHEDULE_CUSTOM, SCHEDULE_NEW, SUBSCRIBE, SHARE, EDIT_ACTION, CREATE_FOLDER
   };
 
   COMMAND mode = COMMAND.RUN;
@@ -87,62 +88,6 @@ public class FileCommand implements Command {
       inputDialog.center();
     } else if (mode == COMMAND.SHARE) {
       fileItemCallback.shareFile();
-    } else {
-//      Date now = new Date();
-      // need to build cron expressions for each possible type
-      // Seconds 0-59 , - * /
-      // Minutes 0-59 , - * /
-      // Hours 0-23 , - * /
-      // Day-of-month 1-31 , - * ? / L W C
-      // Month 1-12 or JAN-DEC , - * /
-      // Day-of-Week 1-7 or SUN-SAT , - * ? / L C #
-      // Year (Optional) empty, 1970-2099 , - * /
-//      int second = now.getSeconds();
-//      int minute = now.getMinutes();
-//      int hour = now.getHours();
-//      int day = now.getDate();
-//      int month = now.getMonth() + 1;
-//      if (mode == COMMAND.SCHEDULE_DAILY) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " * * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKDAYS) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON-FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MWF) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON,WED,FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_TUTH) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE,THU"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_MON) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * MON"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_TUE) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * TUE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_WED) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * WED"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_THU) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * THU"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_FRI) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * FRI"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_SAT) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SAT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_WEEKLY_SUN) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * SUN"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_1ST) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 1 * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_15TH) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " 15 * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_SUN) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1#1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_FIRST_MON) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 2#1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_FRI) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 6L"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_SUN) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " ? * 1L"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_MONTHLY_LAST_DAY) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " L * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      } else if (mode == COMMAND.SCHEDULE_ANNUALLY) {
-//        fileItemCallback.createSchedule(second + " " + minute + " " + hour + " " + day + " " + month + " ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-//      } else if (mode == COMMAND.SUBSCRIBE) {
-//        fileItemCallback.openFile(mode);
-//      }
     }
   }
 

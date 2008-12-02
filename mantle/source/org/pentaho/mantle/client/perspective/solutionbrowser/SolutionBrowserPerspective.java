@@ -122,6 +122,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private List<Bookmark> bookmarks;
   private List<SolutionBrowserListener> listeners = new ArrayList<SolutionBrowserListener>();
 
+  private List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
+  private List<FileTypePlugin> fileTypePluginList = new ArrayList<FileTypePlugin>();
+  
   // commands
   Command ShowWorkSpaceCommand = new Command() {
     public void execute() {
@@ -246,6 +249,24 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
     });
     buildUI();
+  }
+  
+  public FileTypeEnabledOptions getEnabledOptions(String filename) {
+    for (FileTypeEnabledOptions option : enabledOptionsList) {
+      if (option.isSupportedFile(filename)) {
+        return option;
+      }
+    }
+    return null;
+  }
+  
+  public FileTypePlugin getFileTypePlugin(String filename) {
+    for (FileTypePlugin plugin : fileTypePluginList) {
+      if (plugin.isSupportedFile(filename)) {
+        return plugin;
+      }
+    }
+    return null;
   }
 
   public void hideFrame(int tabIndex) {
@@ -505,16 +526,41 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         executeActionSequence(mode);
       }
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
-      showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+      if (mode == FileCommand.COMMAND.NEWWINDOW) {
+        Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+      } else {
+        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+      }
     } else if (name.endsWith(".prc")) { //$NON-NLS-1$
       // open jfreereport!!
       openNewHTMLReport(mode);
     } else {
+      
+      // see if this file is a plugin
+      FileTypePlugin plugin = getFileTypePlugin(selectedFileItem.getName());
+      if (plugin != null && plugin.openUrlPattern != null) {
+        // load the editor for this plugin
+        String url = plugin.getOpenUrl(selectedFileItem);
+        if (url != null && !"".equals(url)) { //$NON-NLS-1$
+          // we have a URL so open it in a new tab
+          if (mode == FileCommand.COMMAND.NEWWINDOW) {
+            Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+          } else {
+            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, url);
+          }
+          return;
+        }
+      }
+      
       // see if this file has a URL
       String url = selectedFileItem.getURL();
       if (url != null && !"".equals(url)) { //$NON-NLS-1$
         // we have a URL so open it in a new tab
-        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        if (mode == FileCommand.COMMAND.NEWWINDOW) {
+          Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        }
       }
     }
   }
@@ -558,7 +604,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       return;
     }
 
-    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null); //$NON-NLS-1$
+    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null, null); //$NON-NLS-1$
 
     // TODO: Create a more dynamic filter interface
     if (openMethod == OPEN_METHOD.SCHEDULE) {
@@ -652,10 +698,39 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else if (selectedFileItem.getName().endsWith(".analysisview.xaction")) { //$NON-NLS-1$
       openFile(COMMAND.RUN);
     } else {
-      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-          Messages.getString("cannotEditFileType"), //$NON-NLS-1$
-          true, false, true);
-      dialogBox.center();
+      // check to see if a plugin supports editing
+      FileTypePlugin plugin = getFileTypePlugin(selectedFileItem.getName());
+      if (plugin != null && plugin.editUrlPattern != null) {
+        
+        // load the editor for this plugin
+        
+        String editUrl = plugin.getEditUrl(selectedFileItem);
+        // See if it's already loaded
+        for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
+          Widget w = contentTabPanel.getWidget(i);
+          if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(editUrl)) {
+            // Already up, select and exit
+            contentTabPanel.selectTab(i);
+            return;
+          }
+        }
+        showNewURLTab(
+            Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), editUrl); //$NON-NLS-1$ //$NON-NLS-2$
+
+        // Store representation of file in the frame for reference later when save is called
+        SolutionFileInfo fileInfo = new SolutionFileInfo();
+        fileInfo.setName(selectedFileItem.getName());
+        fileInfo.setSolution(selectedFileItem.getSolution());
+        fileInfo.setPath(selectedFileItem.getPath());
+        this.getCurrentFrame().setFileInfo(fileInfo);
+
+        
+      } else {
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+            Messages.getString("cannotEditFileType"), //$NON-NLS-1$
+            true, false, true);
+        dialogBox.center();
+      }
     }
   }
 
@@ -1540,10 +1615,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void confirmBackgroundExecutionDialog(final String url) {
-    final String title = Messages.getString("confirm");
-    final String message = Messages.getString("userParamBackgroundWarning");
+    final String title = Messages.getString("confirm"); //$NON-NLS-1$
+    final String message = Messages.getString("userParamBackgroundWarning"); //$NON-NLS-1$
     VerticalPanel vp = new VerticalPanel();
-    vp.add(new Label(Messages.getString(message))); //$NON-NLS-1$
+    vp.add(new Label(Messages.getString(message))); 
 
     final PromptDialogBox scheduleInBackground = new PromptDialogBox(title, Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1567,4 +1642,99 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     this.fireSolutionBrowserListenerEvent();
   }
+  
+  public void buildEnabledOptionsList(Map<String, String> settings) {
+    
+    enabledOptionsList.clear();
+    fileTypePluginList.clear();
+
+    // load plugins
+    int index = 0;
+    String pluginSetting = "plugin-file-type-" + index; //$NON-NLS-1$
+    while(settings.containsKey(pluginSetting)) {
+      String fileExtension = settings.get(pluginSetting);
+      String openUrl = settings.get("plugin-file-type-open-url-" + index); //$NON-NLS-1$
+      String editUrl = settings.get("plugin-file-type-edit-url-" + index); //$NON-NLS-1$
+      String supportedOptions = settings.get("plugin-file-type-enabled-options-" + index); //$NON-NLS-1$
+      FileTypePlugin plugin = new FileTypePlugin(fileExtension, openUrl, editUrl);
+      FileTypeEnabledOptions pluginMenu = new FileTypeEnabledOptions(fileExtension);
+      pluginMenu.applyOptions(supportedOptions);
+      fileTypePluginList.add(plugin);
+      enabledOptionsList.add(pluginMenu);
+
+      // check for another one
+      pluginSetting = "plugin-file-type-" + (++index); //$NON-NLS-1$
+    }
+    
+    FileTypeEnabledOptions waqrMenu = new FileTypeEnabledOptions(FileItem.WAQR_VIEW_SUFFIX);
+    waqrMenu.addCommand(COMMAND.RUN);
+    waqrMenu.addCommand(COMMAND.NEWWINDOW);
+    waqrMenu.addCommand(COMMAND.BACKGROUND);
+    waqrMenu.addCommand(COMMAND.EDIT);
+    waqrMenu.addCommand(COMMAND.EDIT_ACTION);
+    waqrMenu.addCommand(COMMAND.DELETE);
+    waqrMenu.addCommand(COMMAND.SCHEDULE_NEW);
+    waqrMenu.addCommand(COMMAND.PROPERTIES);
+    enabledOptionsList.add(waqrMenu);
+    
+    FileTypeEnabledOptions analysisMenu = new FileTypeEnabledOptions(FileItem.ANALYSIS_VIEW_SUFFIX);
+    analysisMenu.addCommand(COMMAND.RUN);
+    analysisMenu.addCommand(COMMAND.NEWWINDOW);
+    analysisMenu.addCommand(COMMAND.EDIT);
+    analysisMenu.addCommand(COMMAND.EDIT_ACTION);
+    analysisMenu.addCommand(COMMAND.DELETE);
+    analysisMenu.addCommand(COMMAND.PROPERTIES);
+    enabledOptionsList.add(analysisMenu);
+    
+    FileTypeEnabledOptions xactionMenu = new FileTypeEnabledOptions(FileItem.XACTION_SUFFIX);
+    xactionMenu.addCommand(COMMAND.RUN);
+    xactionMenu.addCommand(COMMAND.NEWWINDOW);
+    xactionMenu.addCommand(COMMAND.BACKGROUND);
+    xactionMenu.addCommand(COMMAND.EDIT_ACTION);
+    xactionMenu.addCommand(COMMAND.DELETE);
+    xactionMenu.addCommand(COMMAND.SCHEDULE_NEW);
+    xactionMenu.addCommand(COMMAND.PROPERTIES);
+    enabledOptionsList.add(xactionMenu);
+    
+    FileTypeEnabledOptions defaultMenu = new FileTypeEnabledOptions(null);
+    defaultMenu.addCommand(COMMAND.RUN);
+    defaultMenu.addCommand(COMMAND.NEWWINDOW);
+    defaultMenu.addCommand(COMMAND.DELETE);
+    defaultMenu.addCommand(COMMAND.PROPERTIES);
+    enabledOptionsList.add(defaultMenu);
+
+  }
+  
+  static class FileTypePlugin {
+
+    String fileExtension;
+    String openUrlPattern;
+    String editUrlPattern;
+    
+    FileTypePlugin(String fileExtension, String openUrlPattern, String editUrlPattern) {
+      this.fileExtension = fileExtension;
+      this.openUrlPattern = openUrlPattern;
+      this.editUrlPattern = editUrlPattern;
+    }
+    
+    public boolean isSupportedFile(String filename) {
+        return filename != null && filename.endsWith(fileExtension);
+    }
+    
+    private String replacePattern(String url, FileItem item) {
+      String newurl = url.replaceAll("\\{solution\\}", item.getSolution()); //$NON-NLS-1$
+      newurl = newurl.replaceAll("\\{path\\}", item.getPath()); //$NON-NLS-1$
+      return newurl.replaceAll("\\{name\\}", item.getName()); //$NON-NLS-1$
+    }
+    
+    public String getOpenUrl(FileItem item) {
+      return replacePattern(openUrlPattern, item);
+    }
+
+    public String getEditUrl(FileItem item) {
+      return replacePattern(editUrlPattern, item);
+    }
+    
+  }
+
 }

@@ -23,6 +23,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.ui.IFileTypePlugin;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -33,6 +34,7 @@ import org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator;
 import org.pentaho.platform.engine.core.system.objfac.ThreadObjectCreator;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
+import org.pentaho.platform.util.FileTypePlugin;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.ui.xul.IMenuCustomization;
@@ -49,6 +51,8 @@ import org.pentaho.ui.xul.util.MenuCustomization;
 public class PluginSettings implements IPluginSettings {
 
 	protected static List<IMenuCustomization> menuCustomizations = new ArrayList<IMenuCustomization>();
+
+	protected static List<IFileTypePlugin> fileTypePlugins = new ArrayList<IFileTypePlugin>();
 	
 	protected Map<String,IObjectCreator> contentGeneratorCreatorMap = new HashMap<String,IObjectCreator>();
 
@@ -186,6 +190,7 @@ public class PluginSettings implements IPluginSettings {
 	private synchronized void reset() {
 		// clear out the existing settings
 		menuCustomizations.clear();
+    fileTypePlugins.clear();		
 		contentGeneratorMap.clear();
 		contentInfoForTypeLists.clear();
 		contentTypeByExtension.clear();
@@ -265,6 +270,7 @@ public class PluginSettings implements IPluginSettings {
 		
 		result &= processPluginInfo( doc, folder, session, comments );
 		result &= processMenuItems( doc, session, comments );
+		result &= processFileItemPlugins( doc, session, comments );
 		result &= processContentTypes( doc, session, comments );
 		result &= processContentGenerators( doc, session, comments, folder, repo, hasLib );
 		
@@ -329,6 +335,37 @@ public class PluginSettings implements IPluginSettings {
 		
 		return result;
 	}
+	
+	/**
+	 * loads the file type plugins provided by a plugin.  File Type plugins
+	 * specify how file types in client tools are managed.
+	 * 
+	 * @param doc the document to parse
+	 * @param session the current session
+	 * @param comments list of comments to return to user
+	 * 
+	 * @return true if process was successful.
+	 */
+  protected boolean processFileItemPlugins( Document doc, IPentahoSession session, List<String> comments ) {
+    List<?> nodes = doc.selectNodes( "//file-type-plugin" ); //$NON-NLS-1$
+    for( Object obj: nodes ) {
+      Element node = (Element) obj;
+      String fileExtension = node.attributeValue( "file-extension" ); //$NON-NLS-1$
+      String enabledOptions = node.attributeValue( "enabled-options" ); //$NON-NLS-1$
+      String openUrlPattern = node.attributeValue( "open-url-pattern" ); //$NON-NLS-1$
+      String editUrlPattern = node.attributeValue( "edit-url-pattern" ); //$NON-NLS-1$
+      try {
+        IFileTypePlugin plugin = new FileTypePlugin(fileExtension, enabledOptions, openUrlPattern, editUrlPattern);
+        fileTypePlugins.add(plugin);
+        comments.add( Messages.getString("PluginSettings.FILE_TYPE_PLUGIN_ADDITION", fileExtension) ); //$NON-NLS-1$
+      } catch (Exception e) {
+        comments.add( Messages.getString("PluginSettings.ERROR_0010_FILE_TYPE_PLUGIN_ERROR", fileExtension) ); //$NON-NLS-1$
+        Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0010_FILE_TYPE_PLUGIN_ERROR", fileExtension), e); //$NON-NLS-1$
+        return false;
+      }
+    }
+    return true;
+  }
 	
 	protected boolean processContentTypes( Document doc, IPentahoSession session, List<String> comments ) {
 		// look for content types
@@ -460,5 +497,14 @@ public class PluginSettings implements IPluginSettings {
 		Class<?> clazz = loader.loadClass(fileInfoClassName);
 		return (IFileInfoGenerator) clazz.newInstance();
 	}
+
+	/**
+	 * returns a list of file type plugins
+	 * 
+	 * @return list
+	 */
+  public List<IFileTypePlugin> getFileTypePlugins() {
+    return fileTypePlugins;
+  }
 	
 }

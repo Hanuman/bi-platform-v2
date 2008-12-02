@@ -55,7 +55,7 @@ public class NewFolderCommand implements Command {
     if (solutionTree != null) {
       FileTreeItem selectedTreeItem = (FileTreeItem) solutionTree.getSelectedItem();
       final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), solutionTree.isShowLocalizedFileNames(),
-          solutionTree.getSolution(), path, null, null, null);
+          solutionTree.getSolution(), path, null, null, null, null);
       path = solutionTree.getPath().substring(0, solutionTree.getPath().lastIndexOf("/")); //$NON-NLS-1$
       repoPath = selectedItem.getPath() + "/" + selectedItem.getName(); //$NON-NLS-1$
       // if a solution folder is selected then the solution-name/path are the same, we can't allow that
