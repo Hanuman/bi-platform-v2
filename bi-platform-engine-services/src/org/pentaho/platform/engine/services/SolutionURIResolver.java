@@ -22,7 +22,9 @@
 
 package org.pentaho.platform.engine.services;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.transform.Source;
@@ -35,6 +37,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader {
 
@@ -54,18 +57,42 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
   }
 
   public InputSource resolveEntity(final String publicId, final String systemId) {
-
     if (repository != null) {
       InputStream xslIS = null;
       try {
+        if (systemId.toLowerCase().indexOf(".dtd")>=0) { //$NON-NLS-1$
+          return resolveDTDEntity(publicId, systemId);
+        }
         xslIS = repository.getResourceInputStream(systemId, true);
         return new InputSource(xslIS);
-      } catch (FileNotFoundException e) {
+      } catch (IOException e) {
         Logger.error(this, e.getLocalizedMessage());
       }
     }
     return null;
 
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
+   *      java.lang.String)
+   */
+  public InputSource resolveDTDEntity(final String publicId, final String systemId) throws IOException {
+
+    int idx = systemId.lastIndexOf('/');
+    String dtdName = systemId.substring(idx + 1);
+    String fullPath = PentahoSystem.getApplicationContext().getSolutionPath("system/dtd/" + dtdName); //$NON-NLS-1$
+
+    try {
+      FileInputStream xslIS = new FileInputStream(fullPath);
+      InputSource source = new InputSource(xslIS);
+      return source;
+    } catch (FileNotFoundException e) {
+
+    }
+    return null;
   }
 
   /*

@@ -111,6 +111,10 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
     return getSystemSettings(SystemSettings.PENTAHOSETTINGSFILENAME, settingName);
   }
 
+  public Document getSettingsDocumentFromFile(File f) throws IOException, DocumentException {
+    return XmlDom4JHelper.getDocFromFile(f, null);
+  }
+  
   /**
    * Get the DOM document initialized by the file specified in the <code>actionPath</code>
    * parameter. If this is the first time the document associated with <code>actionPath</code>
@@ -127,7 +131,7 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
         return null;
       }
       try {
-        systemSettingsDocument = XmlDom4JHelper.getDocFromFile(f, null);
+        systemSettingsDocument = getSettingsDocumentFromFile(f);
         settingsDocumentMap.put(actionPath, systemSettingsDocument);
       } catch (DocumentException e) {
         // todo log this
