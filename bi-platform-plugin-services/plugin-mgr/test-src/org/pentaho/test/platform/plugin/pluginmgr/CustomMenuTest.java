@@ -33,7 +33,7 @@ public class CustomMenuTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(session, "IPluginSettings" ); //$NON-NLS-1$
+	    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
 	    assertNotNull( pluginSettings );
 	    
 	    List<String> messages = new ArrayList<String>();

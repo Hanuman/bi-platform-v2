@@ -1,10 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Plugin 1">
 
-    <content-type type="test-type-1" mime-type="text/text">
+    <content-type type="test-type-1" mime-type="test mime type">
         <title>Test Type 1</title>
         <description>test description</description>
+        <icon-url>test url</icon-url>
+        <operations>
+        	<operation>
+        		<name>op 1 name</name>
+        		<command>op 1 command</command>
+        	</operation>
+        	<operation>
+        		<name>op 2 name</name>
+        		<command>op 2 command</command>
+        	</operation>
+        	<operation>
+        		<name>bad 1</name>
+        		<command></command>
+        	</operation>
+        	<operation>
+        		<name>bad 2</name>
+        	</operation>
+        	<operation>
+        		<name></name>
+        		<command>bad 3</command>
+        	</operation>
+        	<operation>
+        		<command>bad 4</command>
+        	</operation>
+        </operations>
+        
     </content-type>
+    
+    <overlays>
+    	<overlay id="overlay1" resourcebundle="uri1">
+    		<node1>
+    			<node2></node2>
+    		</node1>
+    	</overlay>
+    	<overlay id="overlay2" resourcebundle="uri2">
+    		<node3>
+	    		<node4></node4>
+    		</node3>
+    	</overlay>
+    	<overlay>
+    		<bogus>
+    		</bogus>
+    	</overlay>
+    	<overlay id="">
+    		<bogus>
+    		</bogus>
+    	</overlay>
+    	<overlay id="bogus">
+    	</overlay>
+    	<overlay>
+    	</overlay>
+    </overlays>
     
     <content-type mime-type="text/text">
         <title>Test Type Bad</title>

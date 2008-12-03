@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -20,12 +21,14 @@ import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.api.ui.IFileTypePlugin;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
+import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator;
 import org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator;
@@ -34,7 +37,6 @@ import org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator;
 import org.pentaho.platform.engine.core.system.objfac.ThreadObjectCreator;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.util.FileTypePlugin;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.ui.xul.IMenuCustomization;
@@ -51,8 +53,6 @@ import org.pentaho.ui.xul.util.MenuCustomization;
 public class PluginSettings implements IPluginSettings {
 
 	protected static List<IMenuCustomization> menuCustomizations = new ArrayList<IMenuCustomization>();
-
-	protected static List<IFileTypePlugin> fileTypePlugins = new ArrayList<IFileTypePlugin>();
 	
 	protected Map<String,IObjectCreator> contentGeneratorCreatorMap = new HashMap<String,IObjectCreator>();
 
@@ -63,6 +63,8 @@ public class PluginSettings implements IPluginSettings {
 	protected static Map<String,IContentGeneratorInfo> contentInfoMap = new HashMap<String,IContentGeneratorInfo>();
 	
 	protected static Map<String,IContentInfo> contentTypeByExtension = new HashMap<String,IContentInfo>();
+	
+	protected static List<IXulOverlay> overlays = new ArrayList<IXulOverlay>();
 	
 	protected static PentahoObjectFactory contentGeneratorFactory;
 	
@@ -76,6 +78,10 @@ public class PluginSettings implements IPluginSettings {
 	
 	public Set<String> getContentTypes() {
 		return contentGeneratorMap.keySet();
+	}
+	
+	public List<IXulOverlay> getOverlays(){
+	  return overlays;
 	}
 	
 	public IContentInfo getContentInfoFromExtension( String extension, IPentahoSession session ) {
@@ -189,8 +195,8 @@ public class PluginSettings implements IPluginSettings {
 
 	private synchronized void reset() {
 		// clear out the existing settings
+    overlays.clear();
 		menuCustomizations.clear();
-    fileTypePlugins.clear();		
 		contentGeneratorMap.clear();
 		contentInfoForTypeLists.clear();
 		contentTypeByExtension.clear();
@@ -202,7 +208,7 @@ public class PluginSettings implements IPluginSettings {
 	public synchronized boolean updatePluginSettings( IPentahoSession session, List<String> comments ) {
 		
 		reset();
-		ISolutionRepository repo = PentahoSystem.getSolutionRepository(session);
+		ISolutionRepository repo = PentahoSystem.get( ISolutionRepository.class, session );
 		if( repo == null ) {
 			comments.add( Messages.getString("PluginSettings.ERROR_0008_CANNOT_GET_REPOSITORY") ); //$NON-NLS-1$
 			Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
@@ -270,9 +276,9 @@ public class PluginSettings implements IPluginSettings {
 		
 		result &= processPluginInfo( doc, folder, session, comments );
 		result &= processMenuItems( doc, session, comments );
-		result &= processFileItemPlugins( doc, session, comments );
 		result &= processContentTypes( doc, session, comments );
 		result &= processContentGenerators( doc, session, comments, folder, repo, hasLib );
+		result &= processOverlays( doc, session, comments );
 		
 		if( result ) {
 			comments.add( Messages.getString("PluginSettings.USER_PLUGIN_REFRESH_OK", folder) ); //$NON-NLS-1$
@@ -335,38 +341,30 @@ public class PluginSettings implements IPluginSettings {
 		
 		return result;
 	}
-	
-	/**
-	 * loads the file type plugins provided by a plugin.  File Type plugins
-	 * specify how file types in client tools are managed.
-	 * 
-	 * @param doc the document to parse
-	 * @param session the current session
-	 * @param comments list of comments to return to user
-	 * 
-	 * @return true if process was successful.
-	 */
-  protected boolean processFileItemPlugins( Document doc, IPentahoSession session, List<String> comments ) {
-    List<?> nodes = doc.selectNodes( "//file-type-plugin" ); //$NON-NLS-1$
-    for( Object obj: nodes ) {
-      Element node = (Element) obj;
-      String fileExtension = node.attributeValue( "file-extension" ); //$NON-NLS-1$
-      String enabledOptions = node.attributeValue( "enabled-options" ); //$NON-NLS-1$
-      String openUrlPattern = node.attributeValue( "open-url-pattern" ); //$NON-NLS-1$
-      String editUrlPattern = node.attributeValue( "edit-url-pattern" ); //$NON-NLS-1$
-      try {
-        IFileTypePlugin plugin = new FileTypePlugin(fileExtension, enabledOptions, openUrlPattern, editUrlPattern);
-        fileTypePlugins.add(plugin);
-        comments.add( Messages.getString("PluginSettings.FILE_TYPE_PLUGIN_ADDITION", fileExtension) ); //$NON-NLS-1$
-      } catch (Exception e) {
-        comments.add( Messages.getString("PluginSettings.ERROR_0010_FILE_TYPE_PLUGIN_ERROR", fileExtension) ); //$NON-NLS-1$
-        Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0010_FILE_TYPE_PLUGIN_ERROR", fileExtension), e); //$NON-NLS-1$
-        return false;
-      }
-    }
-    return true;
-  }
-	
+
+	 protected boolean processOverlays( Document doc, IPentahoSession session, List<String> comments ) {
+	    // look for content types
+	    boolean result = true;
+
+	    List<?> nodes = doc.selectNodes( "//overlays/overlay" ); //$NON-NLS-1$
+	    for( Object obj: nodes ) {
+	      Element node = (Element) obj;
+	      String xml = null;
+	      String id = node.attributeValue( "id" ); //$NON-NLS-1$
+	      String resourceBundleUri = node.attributeValue( "resourcebundle" ); //$NON-NLS-1$
+	      if( node.elements() != null && node.elements().size() > 0 ) {
+	        xml = ((Element)node.elements().get(0)).asXML();
+	      }
+	      if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( xml ) ) {
+	        XulOverlay overlay = new XulOverlay( id, null, xml, resourceBundleUri );
+	        overlays.add( overlay );
+	      }
+	      
+	    }
+	    
+	    return result;
+	 }
+	 
 	protected boolean processContentTypes( Document doc, IPentahoSession session, List<String> comments ) {
 		// look for content types
 		boolean result = true;
@@ -377,16 +375,30 @@ public class PluginSettings implements IPluginSettings {
 
 			// create an IMenuCustomization object 
 			String title = XmlDom4JHelper.getNodeText( "title", node ); //$NON-NLS-1$
-			String description = XmlDom4JHelper.getNodeText( "description", node, "" ); //$NON-NLS-1$ //$NON-NLS-2$
 			String extension = node.attributeValue( "type" ); //$NON-NLS-1$
-			String mimeType =  node.attributeValue( "mime-type", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if( title != null && extension != null ) {
+	      String description = XmlDom4JHelper.getNodeText( "description", node, "" ); //$NON-NLS-1$ //$NON-NLS-2$
+	      String mimeType =  node.attributeValue( "mime-type", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+	      String iconUrl =  XmlDom4JHelper.getNodeText( "icon-url", node, "" ); //$NON-NLS-1$ //$NON-NLS-2$
 				ContentInfo contentInfo = new ContentInfo();
 				contentInfo.setDescription( description );
 				contentInfo.setTitle( title );
 				contentInfo.setExtension( extension );
 				contentInfo.setMimeType(mimeType);
+				contentInfo.setIconUrl(iconUrl);
+
+				List<?> operationNodes = node.selectNodes( "operations/operation" ); //$NON-NLS-1$
+        for( Object operationObj : operationNodes) {
+          Element operationNode = (Element) operationObj;
+          String name = XmlDom4JHelper.getNodeText( "name" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
+          String command = XmlDom4JHelper.getNodeText( "command" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
+          if( StringUtils.isNotEmpty( name ) && StringUtils.isNotEmpty( command )  ) {
+            IPluginOperation operation = new PluginOperation( name, command );
+            contentInfo.addOperation(operation);
+          }
+        }
+        
 				contentTypeByExtension.put( extension, contentInfo );
 				comments.add( Messages.getString("PluginSettings.USER_CONTENT_TYPE_REGISTERED", extension, title ) ); //$NON-NLS-1$
 			} else {
@@ -497,14 +509,5 @@ public class PluginSettings implements IPluginSettings {
 		Class<?> clazz = loader.loadClass(fileInfoClassName);
 		return (IFileInfoGenerator) clazz.newInstance();
 	}
-
-	/**
-	 * returns a list of file type plugins
-	 * 
-	 * @return list
-	 */
-  public List<IFileTypePlugin> getFileTypePlugins() {
-    return fileTypePlugins;
-  }
 	
 }

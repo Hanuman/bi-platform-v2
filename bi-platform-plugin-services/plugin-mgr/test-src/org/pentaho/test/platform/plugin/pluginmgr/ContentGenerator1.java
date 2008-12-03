@@ -3,6 +3,7 @@ package org.pentaho.test.platform.plugin.pluginmgr;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -122,4 +123,7 @@ public class ContentGenerator1 implements IContentGenerator {
 
 	}
 
+	 public void setInput( IPentahoStreamSource item ) {
+	   
+	 }
 }

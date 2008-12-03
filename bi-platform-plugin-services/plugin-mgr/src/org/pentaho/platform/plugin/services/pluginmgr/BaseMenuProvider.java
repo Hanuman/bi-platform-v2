@@ -30,7 +30,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 	
 	protected XulDomContainer getXulContainer( String documentPath, IPentahoSession session) {
 		  try {
-			  ISolutionRepository repo = PentahoSystem.getSolutionRepository(session);
+			  ISolutionRepository repo = PentahoSystem.get( ISolutionRepository.class, session );
 			  InputStream in = repo.getResourceInputStream( documentPath, true);
 		      SAXReader rdr = new SAXReader();
 		      final Document doc = rdr.read(in);
@@ -54,7 +54,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 	    	  if( component instanceof XulMenubar && component.getId().equals( id ) ) {
 			      XulMenubar menubar = (XulMenubar) component;
 			      // now get customizations to it
-			      IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(session, "IPluginSettings" ); //$NON-NLS-1$
+			      IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
 			      List<?> menuCustomizations = pluginSettings.getMenuCustomizations();
 			      for( Object custom: menuCustomizations) {
 			    	  if( custom instanceof IMenuCustomization ) {

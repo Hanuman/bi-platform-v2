@@ -30,7 +30,7 @@ public class BaseMenuProviderTest extends BaseTest {
 	    String badXulPath = "bogus"; //$NON-NLS-1$
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IMenuProvider menu = (IMenuProvider) PentahoSystem.getObject(session, "IMenuProvider" ); //$NON-NLS-1$
+	    IMenuProvider menu = PentahoSystem.get( IMenuProvider.class, session ); 
 	    assertNotNull( menu );
 	    
 	    Object obj = menu.getMenuBar("menu", correctXulPath, session); //$NON-NLS-1$

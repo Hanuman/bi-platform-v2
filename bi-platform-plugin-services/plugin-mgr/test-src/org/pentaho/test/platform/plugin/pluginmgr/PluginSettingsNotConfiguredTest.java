@@ -88,7 +88,7 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
 
   private ApplicationContext getSpringApplicationContext() {
 
-    String[] fns = { "pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    String[] fns = { "pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
     GenericApplicationContext appCtx = new GenericApplicationContext();
     XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(appCtx);
@@ -108,7 +108,7 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
     startTest();
 
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
-    IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject(session, "IPluginSettings"); //$NON-NLS-1$
+    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
     assertNull(pluginSettings);
 
     finishTest();
