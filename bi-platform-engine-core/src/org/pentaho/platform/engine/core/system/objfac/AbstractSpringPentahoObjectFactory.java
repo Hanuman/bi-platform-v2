@@ -134,10 +134,6 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     if (object instanceof IPentahoInitializer) {
       ((IPentahoInitializer) object).init(session);
     }
-    //FIXME: hack to support null IPluginSetting's
-    if (object instanceof String) {
-      object = null;
-    }
 
     Logger.debug(this, " got an instance of [" + key + "]: " + object);   //$NON-NLS-1$ //$NON-NLS-2$
     return object;
