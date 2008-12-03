@@ -1,8 +1,10 @@
 package org.pentaho.platform.web.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+//import org.pentaho.commons.connection.SimpleStreamSource;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -53,6 +56,7 @@ public class GenericServlet extends ServletBase {
 	    PentahoSystem.systemEntryPoint();
 
 	    try {
+	      InputStream in = request.getInputStream();
 	    	String servletPath = request.getServletPath();
 	    	String key = request.getPathInfo();
 	    	String contentGeneratorId = ""; //$NON-NLS-1$
@@ -72,10 +76,13 @@ public class GenericServlet extends ServletBase {
 	    		}
 		    	urlPath = "content/"+contentGeneratorId; //$NON-NLS-1$
 	    	}
-	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId );
-	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath );
+        pathParams.setParameter( "query" , request.getQueryString() ); //$NON-NLS-1$
+        pathParams.setParameter( "contentType", request.getContentType() ); //$NON-NLS-1$
+        pathParams.setParameter( "inputstream" , in ); //$NON-NLS-1$
+	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
+	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
 	    	IPentahoSession session = getPentahoSession( request );
-	    	IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.getObject( session, "IPluginSettings" ); //$NON-NLS-1$
+	    	IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); //$NON-NLS-1$
 		    if( pluginSettings == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";
@@ -84,6 +91,15 @@ public class GenericServlet extends ServletBase {
 		    	return;
 		    }
 
+		    // TODO make doing the HTTP headers configurable per content generator
+        SimpleParameterProvider headerParams = new SimpleParameterProvider();
+		    Enumeration names = request.getHeaderNames();
+		    while( names.hasMoreElements() ) {
+		      String name = (String) names.nextElement();
+		      String value = request.getHeader( name );
+		      headerParams.setParameter(name, value);
+		    }
+		    
 		    IContentGenerator contentGenerator = pluginSettings.getContentGenerator(contentGeneratorId, session);
 	    	if( contentGenerator == null ) {
 		    	OutputStream out = response.getOutputStream();
@@ -92,6 +108,10 @@ public class GenericServlet extends ServletBase {
 	    		out.write( message.getBytes() );
 	    		return;
 	    	}
+
+	    	// set the classloader of the current thread to the class loader of 
+	    	// the plugin so that it can load its libraries
+	      Thread.currentThread().setContextClassLoader( contentGenerator.getClass().getClassLoader() );
 
 //		      String proxyClass = PentahoSystem.getSystemSetting( module+"/plugin.xml" , "plugin/content-generators/"+contentGeneratorId, "content generator not found");
 	    	IParameterProvider requestParameters = new HttpRequestParameterProvider( request );
@@ -133,9 +153,11 @@ public class GenericServlet extends ServletBase {
 	    	
 	    	IParameterProvider sessionParameters = new HttpSessionParameterProvider( session );
 	    	
+	    	
 	    	Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
 	    	parameterProviders.put( IParameterProvider.SCOPE_REQUEST , requestParameters );
-	    	parameterProviders.put( IParameterProvider.SCOPE_SESSION , sessionParameters );
+        parameterProviders.put( IParameterProvider.SCOPE_SESSION , sessionParameters );
+        parameterProviders.put( "headers" , headerParams ); //$NON-NLS-1$
 	    	parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
 	        SimpleUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl()
 	                + urlPath+"?"); //$NON-NLS-1$
@@ -145,12 +167,17 @@ public class GenericServlet extends ServletBase {
 	    	contentGenerator.setParameterProviders(parameterProviders);
 	    	contentGenerator.setSession(session);
 	    	contentGenerator.setUrlFactory(urlFactory);
+	    	String contentType = request.getContentType();
+//	    	SimpleStreamSource input = new SimpleStreamSource( "input", contentType, in, null ); //$NON-NLS-1$
+//        contentGenerator.setInput(input);
 	    	contentGenerator.createContent();
 	    	if (PentahoSystem.debug) debug( "Generic Servlet content generate successfully" ); //$NON-NLS-1$
 
 	    } catch ( Exception e ) {
 	    	error( "Errors trying to generate content: "+request.getQueryString(), e );
 	    } finally {
+	      // reset the classloader of the current thread
+	      Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
 	      PentahoSystem.systemExitPoint();
 	    }
 	  }
