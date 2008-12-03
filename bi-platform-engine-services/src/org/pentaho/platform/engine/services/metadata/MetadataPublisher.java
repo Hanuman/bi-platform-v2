@@ -52,6 +52,8 @@ public class MetadataPublisher extends BasePublisher {
 
   public static final int NO_META = (int) Math.pow(2, 2);
 
+  public static String XMI_FILENAME = "metadata.xmi"; //$NON-NLS-1$
+  
   private static int numberUpdated = 0;
 
   @Override
@@ -116,7 +118,7 @@ public class MetadataPublisher extends BasePublisher {
     int result = MetadataPublisher.NO_ERROR;
     String resourceName;
     InputStream xmiInputStream;
-    resourceName = solution + "/metadata.xmi"; //$NON-NLS-1$
+    resourceName = solution + "/" + XMI_FILENAME; //$NON-NLS-1$
     xmiInputStream = null;
     ISolutionRepository repo = PentahoSystem.getSolutionRepository(session);
     if (repo.resourceExists(resourceName)) {
