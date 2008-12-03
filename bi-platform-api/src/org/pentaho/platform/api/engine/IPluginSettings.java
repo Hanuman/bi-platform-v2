@@ -26,7 +26,6 @@ import java.util.Set;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.ui.IFileTypePlugin;
 
 /**
  * 
@@ -78,21 +77,19 @@ public interface IPluginSettings {
 	public List getMenuCustomizations();
 	
 	/**
-	 * Returns a list of file type plugins, that specify behavior for viewing and 
-	 * editing plugins.
-	 * 
-	 * @return list of file type plugins
-	 */
-	public List<IFileTypePlugin> getFileTypePlugins();
-	
-	/**
-	 * Causes the plugin settings object to re-register all of the plugins that
+	 * Causes the plug-in settings object to re-register all of the plug-ins that
 	 * are defined in pentaho-solutions/system/./plugin.xml files
 	 * @param session A session to be used for getting the plugin.xml files
 	 * @param comments A list of strings that readable messages will be added to
-	 * as the plugins are processed.
+	 * as the plug-ins are processed.
 	 * @return true if no errors were encountered
 	 */
 	public boolean updatePluginSettings( IPentahoSession session, List<String> comments );
 
+	/**
+	 * Returns a map of the XUL overlays that are defined by all the plug-ins. The overlays are
+	 * XML fragments. The keys to the map are ids that the plug-ins define.
+	 * @return List of XML XUL overlays
+	 */
+	public List<IXulOverlay> getOverlays();
 }

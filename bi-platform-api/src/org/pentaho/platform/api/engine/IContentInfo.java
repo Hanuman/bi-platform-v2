@@ -1,5 +1,7 @@
 package org.pentaho.platform.api.engine;
 
+import java.util.List;
+
 /**
  * Describes a content type. This class is used to describe content types that
  * users can get to. Implementations of this class are also used as keys to
@@ -40,4 +42,15 @@ public interface IContentInfo {
 	 */
 	public String getMimeType();
 	
+	/**
+	 * Returns a list of the operations that are available for this content type
+	 * @return the available plugin operations
+	 */
+	public List<IPluginOperation> getOperations();
+
+	/**
+	 * Returns an url to an icon for this content type
+	 * @return
+	 */
+	public String getIconUrl();
 }
