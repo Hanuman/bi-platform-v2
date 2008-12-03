@@ -415,7 +415,7 @@ A:hover {
                             <td height="100%" valign="top"  class="text">
                                 The Pentaho BI Suite provides a full spectrum of BI capabilities. Get a quick overview 
                                 of how to create and share reports and analytics with the 
-                                <span style="font-style: italic;">Pentaho User Console Guide</span>.
+                                <span style="font-style: italic;">Evaluating Pentaho Reporting</span> guide.
                                 <br />
                              </td>
                          </tr>
