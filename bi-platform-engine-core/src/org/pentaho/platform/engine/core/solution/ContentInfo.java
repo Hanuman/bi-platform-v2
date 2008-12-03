@@ -1,18 +1,30 @@
 package org.pentaho.platform.engine.core.solution;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.pentaho.platform.api.engine.IContentInfo;
+import org.pentaho.platform.api.engine.IPluginOperation;
 
 public class ContentInfo implements IContentInfo {
 
-	String description;
+  private String description;
 	
-	String extension;
+	private String extension;
 	
-	String mimeType;
+	private String mimeType;
 	
-	String title;
+	private String title;
 
-	public String getDescription() {
+	private List<IPluginOperation> operations = new ArrayList<IPluginOperation>();
+	
+	private String iconUrl;
+	
+	public void setIconUrl(String iconUrl) {
+    this.iconUrl = iconUrl;
+  }
+
+  public String getDescription() {
 		return description;
 	}
 
@@ -44,4 +56,15 @@ public class ContentInfo implements IContentInfo {
 		this.title = title;
 	}
 	
+	 public List<IPluginOperation> getOperations() {
+	   return operations;
+	 }
+
+	  public String getIconUrl() {
+	    return iconUrl;
+	  }
+	  
+	  public void addOperation( IPluginOperation operation ) {
+	    operations.add( operation );
+	  }
 }
