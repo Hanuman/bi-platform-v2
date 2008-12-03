@@ -11,6 +11,7 @@ BI Platform. These administration tasks are accessable from the Pentaho Administ
 	<bean id="administrationPluginsList" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
+				<bean class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager"/>
 				<bean class="org.pentaho.platform.repository.subscription.SubscriptionPublisher"/>
 				<bean class="org.pentaho.platform.engine.services.solution.SolutionPublisher"/>
 				<bean class="org.pentaho.platform.engine.core.system.SettingsPublisher"/>
