@@ -15,7 +15,7 @@ public class ContentInfoTest extends TestCase {
     
     IPluginOperation op = new PluginOperation( "name1", "command1" ); //$NON-NLS-1$ //$NON-NLS-2$
     
-    assertEquals( "Name is wrong", "name1", op.getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals( "Name is wrong", "name1", op.getId() ); //$NON-NLS-1$ //$NON-NLS-2$
     assertEquals( "Command is wrong", "command1", op.getCommand() ); //$NON-NLS-1$ //$NON-NLS-2$
     
   }
@@ -46,10 +46,10 @@ public class ContentInfoTest extends TestCase {
     assertNotNull( "Operations are null", ops ); //$NON-NLS-1$
     assertEquals( "Wrong number of ops", 2, ops.size() ); //$NON-NLS-1$
     
-    assertEquals( "Operation name is wrong", "name1", ops.get(0).getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals( "Operation name is wrong", "name1", ops.get(0).getId() ); //$NON-NLS-1$ //$NON-NLS-2$
     assertEquals( "Operation command is wrong", "command1", ops.get(0).getCommand() ); //$NON-NLS-1$ //$NON-NLS-2$
 
-    assertEquals( "Operation name is wrong", "name2", ops.get(1).getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals( "Operation name is wrong", "name2", ops.get(1).getId() ); //$NON-NLS-1$ //$NON-NLS-2$
     assertEquals( "Operation command is wrong", "command2", ops.get(1).getCommand() ); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
