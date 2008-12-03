@@ -4,21 +4,21 @@ import org.pentaho.platform.api.engine.IPluginOperation;
 
 public class PluginOperation implements IPluginOperation {
 
-  private String name;
+  private String id;
   
   private String command;
   
-  public PluginOperation( String name, String command ) {
-    this.name = name;
+  public PluginOperation( String id, String command ) {
+    this.id = id;
     this.command = command;
+  }
+
+  public String getId() {
+    return id;
   }
   
   public String getCommand() {
     return command;
-  }
-
-  public String getName() {
-    return name;
   }
 
 }

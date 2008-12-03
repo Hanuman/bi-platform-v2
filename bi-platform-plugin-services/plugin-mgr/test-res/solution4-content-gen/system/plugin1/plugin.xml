@@ -7,22 +7,22 @@
         <icon-url>test url</icon-url>
         <operations>
         	<operation>
-        		<name>op 1 name</name>
+        		<id>op 1 name</id>
         		<command>op 1 command</command>
         	</operation>
         	<operation>
-        		<name>op 2 name</name>
+        		<id>op 2 name</id>
         		<command>op 2 command</command>
         	</operation>
         	<operation>
-        		<name>bad 1</name>
+        		<id>bad 1</id>
         		<command></command>
         	</operation>
         	<operation>
-        		<name>bad 2</name>
+        		<id>bad 2</id>
         	</operation>
         	<operation>
-        		<name></name>
+        		<id></id>
         		<command>bad 3</command>
         	</operation>
         	<operation>

@@ -26,6 +26,7 @@ import org.pentaho.gwt.widgets.client.toolbar.ToolbarComboButton;
 import org.pentaho.gwt.widgets.client.toolbar.ToolbarGroup;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;
+import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
@@ -51,13 +52,41 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * 
  */
 public class FilesToolbar extends Toolbar implements IFileSelectionChangedListener {
+  private static final String SEPARATOR = "separator"; //$NON-NLS-1$
   protected String FILES_TOOLBAR_STYLE_NAME = "filesPanelToolbar"; //$NON-NLS-1$
   protected String FILE_GROUP_STYLE_NAME = "filesToolbarGroup"; //$NON-NLS-1$
-
+  
+  private static final String menuItemNames[] = {
+    "openInNewWindow", //$NON-NLS-1$
+    "runInBackground", //$NON-NLS-1$
+ // edit action is a advanced feature, hidden normally
+    "editAction", //$NON-NLS-1$
+    "delete", //$NON-NLS-1$
+    SEPARATOR,
+    "share", //$NON-NLS-1$
+    "scheduleEllipsis", //$NON-NLS-1$
+    SEPARATOR,
+    "propertiesEllipsis" //$NON-NLS-1$ 
+  };
+  
+  FileCommand.COMMAND menuCommands[] = {
+      COMMAND.NEWWINDOW,
+      COMMAND.BACKGROUND,
+      COMMAND.EDIT_ACTION,
+      COMMAND.DELETE,
+      null,
+      COMMAND.SHARE,
+      COMMAND.SCHEDULE_NEW,
+      null,
+      COMMAND.PROPERTIES
+  };
+  
   ToolbarComboButton miscComboBtn;
   ToolbarButton runBtn, editBtn;
-  FileCommand runCmd, editCmd, shareCmd, scheduleCmd, deleteCmd, propertiesCmd;
-  MenuItem scheduleMenuItem = null;
+  FileCommand runCmd, editCmd;
+  MenuItem menuItems[] = null;
+  FileCommand menuFileCommands[] = null;
+  boolean supportsACLs = false;
 
   IFileItemCallback callback;
 
@@ -112,23 +141,11 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
-        scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        scheduleMenuItem = miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
-        propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
-        miscComboBtn.setMenu(miscMenus);
+        createMenuItems(false);
       }
 
       public void onSuccess(Boolean result) {
-        if (result) {
-          shareCmd = new FileCommand(FileCommand.COMMAND.SHARE, miscComboBtn.getPopup(), callback);
-          miscMenus.addItem(Messages.getString("share"), shareCmd); //$NON-NLS-1$
-        }
-        scheduleCmd = new FileCommand(FileCommand.COMMAND.SCHEDULE_NEW, miscComboBtn.getPopup(), callback);
-        scheduleMenuItem = miscMenus.addItem(Messages.getString("schedule"), scheduleCmd); //$NON-NLS-1$
-        propertiesCmd = new FileCommand(FileCommand.COMMAND.PROPERTIES, miscComboBtn.getPopup(), callback);
-        miscMenus.addItem(Messages.getString("properties"), propertiesCmd); //$NON-NLS-1$
-        miscComboBtn.setMenu(miscMenus);
+        createMenuItems(result);
       }
 
     });
@@ -137,8 +154,29 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     add(miscComboBtn);
     setEnabled(false);
   }
-  
-  
+    
+  private void createMenuItems(final boolean supportsACLs) {
+    this.supportsACLs = supportsACLs;
+    menuItems = new MenuItem[menuCommands.length];
+    menuFileCommands = new FileCommand[menuCommands.length];
+    for (int i = 0; i < menuCommands.length; i++) {
+      // skip sharing if we don't support acls
+      if (!supportsACLs && menuCommands[i] == COMMAND.SHARE) {
+        continue;
+      }
+      if (!MantleApplication.showAdvancedFeatures && 
+          menuCommands[i] == COMMAND.EDIT_ACTION) {
+        continue;
+      }
+      if (menuCommands[i] == null) {
+        miscMenus.addSeparator();
+      } else {
+        menuFileCommands[i] = new FileCommand(menuCommands[i], miscComboBtn.getPopup(), callback);
+        menuItems[i] = miscMenus.addItem(Messages.getString(menuItemNames[i]), menuFileCommands[i]);
+      }
+    }
+    miscComboBtn.setMenu(miscMenus);
+  }
 
   @Override
   public void popupClosed(PopupPanel panel) {
@@ -177,15 +215,25 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
    */
   private void updateMenus(FileItem selectedFileItem) {
     setEnabled(selectedFileItem != null);
+    runBtn.setEnabled(selectedFileItem != null && selectedFileItem.isCommandEnabled(COMMAND.RUN)); //$NON-NLS-1$
     editBtn.setEnabled(selectedFileItem != null && selectedFileItem.isCommandEnabled(COMMAND.EDIT)); //$NON-NLS-1$
-    if (selectedFileItem != null && selectedFileItem.isCommandEnabled(COMMAND.SCHEDULE_NEW)) {
-      scheduleMenuItem.setCommand(scheduleCmd);
-      scheduleMenuItem.setStyleName("gwt-MenuItem"); //$NON-NLS-1$
-    } else {
-      scheduleMenuItem.setCommand(null);
-      scheduleMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
-    }
 
+    // iterate over the commands and enable / disable appropriately
+    for (int i = 0; i < menuCommands.length; i++) {
+      // skip sharing if not supporting acls, also skip separators
+      if ((!supportsACLs && menuCommands[i] == COMMAND.SHARE) || menuCommands[i] == null || menuItems[i] == null) {
+        continue;
+      }
+      
+      if (selectedFileItem != null && selectedFileItem.isCommandEnabled(menuCommands[i])) {
+        menuItems[i].setCommand(menuFileCommands[i]);
+        menuItems[i].setStyleName("gwt-MenuItem"); //$NON-NLS-1$
+      } else {
+        menuItems[i].setCommand(null);
+        menuItems[i].setStyleName("disabledMenuItem"); //$NON-NLS-1$
+      }
+    }
+    miscComboBtn.setMenu(miscMenus);
   }
   
   /**
@@ -211,5 +259,9 @@ public class FilesToolbarGroup extends ToolbarGroup {
     public void setTempDisabled(boolean disable) {
       super.setTempDisabled(false);
     }
+  }
+
+  public boolean getSupportsACLs() {
+    return supportsACLs;
   }
 }

@@ -391,10 +391,10 @@ public class PluginSettings implements IPluginSettings {
 				List<?> operationNodes = node.selectNodes( "operations/operation" ); //$NON-NLS-1$
         for( Object operationObj : operationNodes) {
           Element operationNode = (Element) operationObj;
-          String name = XmlDom4JHelper.getNodeText( "name" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
+          String id = XmlDom4JHelper.getNodeText( "id" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
           String command = XmlDom4JHelper.getNodeText( "command" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
-          if( StringUtils.isNotEmpty( name ) && StringUtils.isNotEmpty( command )  ) {
-            IPluginOperation operation = new PluginOperation( name, command );
+          if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( id )  ) {
+            IPluginOperation operation = new PluginOperation( id, command );
             contentInfo.addOperation(operation);
           }
         }

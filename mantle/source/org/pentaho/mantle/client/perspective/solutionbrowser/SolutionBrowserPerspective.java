@@ -123,7 +123,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private List<SolutionBrowserListener> listeners = new ArrayList<SolutionBrowserListener>();
 
   private List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
-  private List<FileTypePlugin> fileTypePluginList = new ArrayList<FileTypePlugin>();
+  private List<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
   
   // commands
   Command ShowWorkSpaceCommand = new Command() {
@@ -260,8 +260,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return null;
   }
   
-  public FileTypePlugin getFileTypePlugin(String filename) {
-    for (FileTypePlugin plugin : fileTypePluginList) {
+  public ContentTypePlugin getContentTypePlugin(String filename) {
+    for (ContentTypePlugin plugin : contentTypePluginList) {
       if (plugin.isSupportedFile(filename)) {
         return plugin;
       }
@@ -537,10 +537,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else {
       
       // see if this file is a plugin
-      FileTypePlugin plugin = getFileTypePlugin(selectedFileItem.getName());
-      if (plugin != null && plugin.openUrlPattern != null) {
+      ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
+      if (plugin != null && plugin.hasCommand(COMMAND.RUN)) {
         // load the editor for this plugin
-        String url = plugin.getOpenUrl(selectedFileItem);
+        String url = plugin.getCommandUrl(selectedFileItem, COMMAND.RUN);
         if (url != null && !"".equals(url)) { //$NON-NLS-1$
           // we have a URL so open it in a new tab
           if (mode == FileCommand.COMMAND.NEWWINDOW) {
@@ -604,7 +604,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       return;
     }
 
-    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null, null); //$NON-NLS-1$
+    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null, null, false, null); //$NON-NLS-1$
 
     // TODO: Create a more dynamic filter interface
     if (openMethod == OPEN_METHOD.SCHEDULE) {
@@ -699,12 +699,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       openFile(COMMAND.RUN);
     } else {
       // check to see if a plugin supports editing
-      FileTypePlugin plugin = getFileTypePlugin(selectedFileItem.getName());
-      if (plugin != null && plugin.editUrlPattern != null) {
+      ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
+      if (plugin != null && plugin.hasCommand(COMMAND.EDIT)) {
         
         // load the editor for this plugin
         
-        String editUrl = plugin.getEditUrl(selectedFileItem);
+        String editUrl = plugin.getCommandUrl(selectedFileItem, COMMAND.EDIT);
         // See if it's already loaded
         for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
           Widget w = contentTabPanel.getWidget(i);
@@ -1646,20 +1646,33 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void buildEnabledOptionsList(Map<String, String> settings) {
     
     enabledOptionsList.clear();
-    fileTypePluginList.clear();
+    contentTypePluginList.clear();
 
     // load plugins
     int index = 0;
-    String pluginSetting = "plugin-file-type-" + index; //$NON-NLS-1$
+    String pluginSetting = "plugin-content-type-" + index; //$NON-NLS-1$
     while(settings.containsKey(pluginSetting)) {
       String fileExtension = settings.get(pluginSetting);
-      String openUrl = settings.get("plugin-file-type-open-url-" + index); //$NON-NLS-1$
-      String editUrl = settings.get("plugin-file-type-edit-url-" + index); //$NON-NLS-1$
-      String supportedOptions = settings.get("plugin-file-type-enabled-options-" + index); //$NON-NLS-1$
-      FileTypePlugin plugin = new FileTypePlugin(fileExtension, openUrl, editUrl);
+      String fileIcon = settings.get("plugin-content-type-icon-" + index);
       FileTypeEnabledOptions pluginMenu = new FileTypeEnabledOptions(fileExtension);
-      pluginMenu.applyOptions(supportedOptions);
-      fileTypePluginList.add(plugin);
+      ContentTypePlugin plugin = new ContentTypePlugin(fileExtension, fileIcon);
+
+      int cmdIndex = 0;
+      String cmdSetting = pluginSetting + "-command-" + cmdIndex;
+      while (settings.containsKey(cmdSetting)) {
+        COMMAND cmd = COMMAND.valueOf(settings.get(cmdSetting));
+        String url = settings.get(pluginSetting + "-command-url-" + cmdIndex);
+        pluginMenu.addCommand(cmd);
+        plugin.addUrlCommand(cmd, url);
+        cmdSetting = pluginSetting + "-command-" + (++cmdIndex);
+      }
+      
+      // all files can share, delete, and have properties
+      pluginMenu.addCommand(COMMAND.SHARE);
+      pluginMenu.addCommand(COMMAND.DELETE);
+      pluginMenu.addCommand(COMMAND.PROPERTIES);
+      
+      contentTypePluginList.add(plugin);
       enabledOptionsList.add(pluginMenu);
 
       // check for another one
@@ -1673,6 +1686,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     waqrMenu.addCommand(COMMAND.EDIT);
     waqrMenu.addCommand(COMMAND.EDIT_ACTION);
     waqrMenu.addCommand(COMMAND.DELETE);
+    waqrMenu.addCommand(COMMAND.SHARE);
     waqrMenu.addCommand(COMMAND.SCHEDULE_NEW);
     waqrMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(waqrMenu);
@@ -1683,6 +1697,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     analysisMenu.addCommand(COMMAND.EDIT);
     analysisMenu.addCommand(COMMAND.EDIT_ACTION);
     analysisMenu.addCommand(COMMAND.DELETE);
+    analysisMenu.addCommand(COMMAND.SHARE);    
     analysisMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(analysisMenu);
     
@@ -1693,6 +1708,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     xactionMenu.addCommand(COMMAND.EDIT_ACTION);
     xactionMenu.addCommand(COMMAND.DELETE);
     xactionMenu.addCommand(COMMAND.SCHEDULE_NEW);
+    xactionMenu.addCommand(COMMAND.SHARE);
     xactionMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(xactionMenu);
     
@@ -1700,21 +1716,25 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     defaultMenu.addCommand(COMMAND.RUN);
     defaultMenu.addCommand(COMMAND.NEWWINDOW);
     defaultMenu.addCommand(COMMAND.DELETE);
+    defaultMenu.addCommand(COMMAND.SHARE);
     defaultMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(defaultMenu);
 
   }
   
-  static class FileTypePlugin {
+  public static class ContentTypePlugin {
 
     String fileExtension;
-    String openUrlPattern;
-    String editUrlPattern;
+    String fileIcon;
+    Map<COMMAND, String> urlCommands = new HashMap<COMMAND, String>();
     
-    FileTypePlugin(String fileExtension, String openUrlPattern, String editUrlPattern) {
+    ContentTypePlugin(String fileExtension, String fileIcon) {
       this.fileExtension = fileExtension;
-      this.openUrlPattern = openUrlPattern;
-      this.editUrlPattern = editUrlPattern;
+      this.fileIcon = fileIcon;
+    }
+    
+    public void addUrlCommand(COMMAND cmd, String url) {
+      urlCommands.put(cmd, url);
     }
     
     public boolean isSupportedFile(String filename) {
@@ -1722,19 +1742,25 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     
     private String replacePattern(String url, FileItem item) {
+      if (url == null) {
+        return null;
+      }
       String newurl = url.replaceAll("\\{solution\\}", item.getSolution()); //$NON-NLS-1$
       newurl = newurl.replaceAll("\\{path\\}", item.getPath()); //$NON-NLS-1$
       return newurl.replaceAll("\\{name\\}", item.getName()); //$NON-NLS-1$
     }
     
-    public String getOpenUrl(FileItem item) {
-      return replacePattern(openUrlPattern, item);
-    }
-
-    public String getEditUrl(FileItem item) {
-      return replacePattern(editUrlPattern, item);
+    public boolean hasCommand(COMMAND cmd) {
+      return urlCommands.containsKey(cmd);
     }
     
+    public String getCommandUrl(FileItem item, COMMAND cmd) {
+      return replacePattern(urlCommands.get(cmd), item);
+    }
+    
+    public String getFileIcon() {
+      return fileIcon;
+    }
   }
 
 }

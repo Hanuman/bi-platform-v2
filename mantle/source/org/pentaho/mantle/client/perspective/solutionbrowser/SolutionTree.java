@@ -484,7 +484,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
     FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null, null,
-        null, null);
+        null, null, false, null);
     FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
   }
@@ -537,7 +537,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
     final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null,
-        null, null, null);
+        null, null, null, false, null);
     String repoPath = selectedItem.getPath();
     // if a solution folder is selected then the solution-name/path are the same, we can't allow that
     // but we need them to be in the tree like this for building the tree paths correctly (other code)

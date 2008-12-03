@@ -50,7 +50,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   public static final String XACTION_SUFFIX = ".xaction"; //$NON-NLS-1$
   public static final String URL_SUFFIX = ".url"; //$NON-NLS-1$
 
-  private static String SEPARATOR = "separator";
+  private static String SEPARATOR = "separator"; //$NON-NLS-1$
   
   private static final String menuItems[] = {
       "open", //$NON-NLS-1$
@@ -61,6 +61,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       "editAction", //$NON-NLS-1$
       "delete", //$NON-NLS-1$
       SEPARATOR,
+      "share", //$NON-NLS-1$
       "scheduleEllipsis", //$NON-NLS-1$
       SEPARATOR,
       "propertiesEllipsis" //$NON-NLS-1$ 
@@ -74,6 +75,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       COMMAND.EDIT_ACTION,
       COMMAND.DELETE,
       null,
+      COMMAND.SHARE,
       COMMAND.SCHEDULE_NEW,
       null,
       COMMAND.PROPERTIES
@@ -91,11 +93,14 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   String url;
   String localizedName;
   FileTypeEnabledOptions options;
+  boolean supportsACLs;
 
   FileSelectionListenerCollection fileSelectionListenerCollection = new FileSelectionListenerCollection();
 
-  public FileItem(String name, String localizedName, boolean useLocalizedName, String solution, String path, String lastModifiedDateStr, String url,
-      IFileItemCallback fileItemCallback, FileTypeEnabledOptions options) {
+  public FileItem(String name, String localizedName, boolean useLocalizedName, 
+      String solution, String path, String lastModifiedDateStr, String url, 
+      IFileItemCallback fileItemCallback, FileTypeEnabledOptions options,
+      boolean supportsACLs, String fileIconStr) {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
@@ -104,7 +109,9 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     ElementUtils.preventTextSelection(fileLabel.getElement());
 
     Image fileIcon = new Image();
-    if (name.endsWith(WAQR_VIEW_SUFFIX)) {
+    if (fileIconStr != null) {
+      fileIcon.setUrl(fileIconStr);
+    } else if (name.endsWith(WAQR_VIEW_SUFFIX)) {
       MantleImages.images.file_report().applyTo(fileIcon);
     } else if (name.endsWith(ANALYSIS_VIEW_SUFFIX)) { 
       MantleImages.images.file_analysis().applyTo(fileIcon);
@@ -129,6 +136,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
     this.lastModifiedDateStr = lastModifiedDateStr;
     this.url = url;
     this.options = options;
+    this.supportsACLs = supportsACLs;
   }
 
   private void select(){
@@ -177,7 +185,7 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       
       if (menuItems[i].equals(SEPARATOR)) {
         menuBar.addSeparator();
-      } else if (options.isCommandEnabled(menuCommands[i])) {
+      } else if (options != null && options.isCommandEnabled(menuCommands[i])) {
         menuBar.addItem(new MenuItem(Messages.getString(menuItems[i]), new FileCommand(menuCommands[i], popupMenu, fileItemCallback)));        
       } else {
         MenuItem item = new MenuItem(Messages.getString(menuItems[i]), (Command)null);

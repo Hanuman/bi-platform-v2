@@ -1,7 +1,22 @@
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core'%><%@
     page
 	language="java"
-	import="org.pentaho.platform.util.messages.LocaleHelper,org.pentaho.platform.api.engine.IPentahoSession,org.pentaho.platform.web.jsp.messages.Messages,org.apache.commons.lang.StringEscapeUtils"%>
+	import="java.io.InputStream,
+			java.util.Locale,
+			java.util.PropertyResourceBundle,
+			java.util.ResourceBundle,
+			java.util.regex.Pattern,
+			java.util.regex.Matcher,
+			org.pentaho.platform.util.messages.LocaleHelper,
+			org.pentaho.platform.api.engine.IPentahoSession,
+			org.pentaho.platform.api.engine.IPluginSettings,
+			org.pentaho.platform.api.repository.ISolutionRepository,
+			org.pentaho.platform.engine.core.system.PentahoSystem,
+			org.pentaho.platform.engine.core.system.StandaloneSession,
+			org.pentaho.platform.util.logging.Logger,
+			org.pentaho.platform.web.jsp.messages.Messages,
+			org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+			org.apache.commons.lang.StringEscapeUtils"%>
 <%
   /*
    * Copyright 2006 Pentaho Corporation.  All rights reserved.
@@ -20,7 +35,8 @@
    *
    */
 %>
-<html>
+
+<%@page import="org.pentaho.platform.api.engine.IXulOverlay"%><html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
@@ -299,7 +315,7 @@ Button = function(label, container){
     
     this.onClick=function(onClick){
       if(window.parent && window.parent.mantle_initialized){
-        table.onclick = function(){window.parent[onClick]()};
+        table.onclick = function(){eval("window.parent." + onClick)};
       }
     };
 }
@@ -310,11 +326,69 @@ window.onresize = function(){
   }
 }
 
-
 function loader(){
-    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" )%>", "launch_new_report").onClick("openWAQR");
-    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" )%>", "launch_new_analysis").onClick("openAnalysis");
-    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" )%>", "manage_content").onClick("openManage");
+    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" )%>", "launch_new_report").onClick("openWAQR()");
+    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" )%>", "launch_new_analysis").onClick("openAnalysis()");
+<%!
+	private static ResourceBundle getBundle(String messageUri) {
+		Locale locale = LocaleHelper.getLocale();
+		IPentahoSession session = new StandaloneSession( "dashboards messages" ); //$NON-NLS-1$
+		try {
+		  	if (messageUri.startsWith("content/")) {
+		  	  messageUri = "system/" + messageUri.substring(8); //$NON-NLS-1$
+		  	}
+			InputStream in = PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream(messageUri, true);
+			return new PropertyResourceBundle( in );
+		} catch (Exception e) {
+			Logger.error( Messages.class.getName(), "Could not get localization bundle", e ); //$NON-NLS-1$
+		}
+		return null;
+	}
+%><% 
+	boolean pluginButton = false;
+	String buttonLabel = "";
+	String buttonCommand = "";
+	String buttonImage = "";
+	IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, PentahoHttpSessionHelper.getPentahoSession(request)); //$NON-NLS-1$
+    if (pluginSettings != null) {
+      	for(IXulOverlay overlayObj : pluginSettings.getOverlays()) {
+      	  if (overlayObj.getId() != null && overlayObj.getId().equals("launch")) {
+			ResourceBundle bundle = getBundle(overlayObj.getResourceBundleUri());
+	    	// replace I18N parameters
+	    	Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}");
+	    	Matcher m = p.matcher(overlayObj.getOverlayXml());
+	    	StringBuffer sb = new StringBuffer();
+	    	while (m.find()) {
+	    	  String param = m.group(1);
+	    	  m.appendReplacement(sb, bundle.getString(param));
+	    	}
+	    	m.appendTail(sb);
+	    	String overlay = sb.toString();
+    	
+			if (overlay.indexOf("id=\"manage_content\"") >= 0) {
+				int startButtonLabel = overlay.indexOf("label=\"");
+				int endButtonLabel = overlay.indexOf("\"", startButtonLabel + 7);
+				buttonLabel = overlay.substring(startButtonLabel + 7, endButtonLabel);
+				
+				int startButtonImage = overlay.indexOf("image=\"");
+				int endButtonImage = overlay.indexOf("\"", startButtonImage + 7);
+				buttonImage = overlay.substring(startButtonImage + 7, endButtonImage);
+	
+				int startButtonCommand = overlay.indexOf("command=\"");
+				int endButtonCommand = overlay.indexOf("\"", startButtonCommand + 9);
+				buttonCommand = overlay.substring(startButtonCommand + 9, endButtonCommand);
+				pluginButton = true;
+				break;
+			}
+      	  }
+    	}
+   	}
+	if (pluginButton) {
+%>    new Button("<%=buttonLabel%>", "manage_content").onClick("<%= buttonCommand%>");
+<%
+	} else {
+%>    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" )%>", "manage_content").onClick("openManage()");
+<%  }  %>
     fixPNGs();
 }
 
@@ -354,10 +428,17 @@ function loader(){
 							src="/pentaho/mantle/launch/images/btn_ql_newanalysis.png"
 							class="ql_new_analysis" /></td>
 						<td align="center" valign="top">&nbsp;</td>
+<% if (pluginButton) { %>
+						<td align="center" valign="top"
+							onClick="window.parent.<%=buttonCommand %>"><img
+							src="../../<%=buttonImage %>"
+							class="ql_manage" /></td>
+<% } else { %>
 						<td align="center" valign="top"
 							onClick="window.parent.openManage()"><img
 							src="/pentaho/mantle/launch/images/btn_ql_manage.png"
 							class="ql_manage" /></td>
+<% } %>
 					</tr>
 					<tr>
 						<td id="launch_new_report" height="100%"><!--  container for New Report Button -->

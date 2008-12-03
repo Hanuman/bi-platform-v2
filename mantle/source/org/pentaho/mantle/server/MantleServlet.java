@@ -62,9 +62,11 @@ import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
+import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -735,18 +737,23 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
           }
         }
         
-        // load file type plugins from IPluginSettings
-/*
+        // load content types from IPluginSettings
         int i = 0;
-        for (IFileTypePlugin plugin : pluginSettings.getFileTypePlugins()) {
-          settings.put("plugin-file-type-" + i, plugin.getFileExtension()); //$NON-NLS-1$
-          settings.put("plugin-file-type-open-url-" + i, plugin.getOpenUrlPattern()); //$NON-NLS-1$
-          settings.put("plugin-file-type-edit-url-" + i, plugin.getEditUrlPattern()); //$NON-NLS-1$
-          settings.put("plugin-file-type-enabled-options-" + i, plugin.getEnabledOptions()); //$NON-NLS-1$
-          
-          i++;
+        for (String contentType : pluginSettings.getContentTypes()) {
+          IContentInfo info = pluginSettings.getContentInfoFromExtension(contentType, getPentahoSession());
+          if (info != null) {
+            settings.put("plugin-content-type-" + i, "." + contentType); //$NON-NLS-1$ //$NON-NLS-2$
+            settings.put("plugin-content-type-icon-" + i, info.getIconUrl()); //$NON-NLS-1$
+            int j = 0;
+            for (IPluginOperation operation : info.getOperations()) {
+              settings.put("plugin-content-type-" + i + "-command-" + j, operation.getId()); //$NON-NLS-1$
+              settings.put("plugin-content-type-" + i + "-command-url-" + j, operation.getCommand()); //$NON-NLS-1$
+              j++;
+            }
+            i++;
+          }
+
         }
-*/
       }
 
     } catch (Exception e) {
