@@ -46,14 +46,16 @@ public interface IPluginSettings {
 	public IContentInfo getContentInfoFromExtension( String extension, IPentahoSession session );
 	
 	/**
-	 * Returns a list of object factories that can be used to create content
+	 * Returns a list of info objects that can be used to create content
 	 * generators for a given type. In most cases there will only be one
 	 * content generator for any one type.
 	 * @param type
 	 * @param session A session used for storing objects from session-scoped factories
 	 * @return List of IObjectCreator objects
 	 */
-	public List<IObjectCreator> getContentGeneratorsForType( String type, IPentahoSession session );
+	public List<IContentGeneratorInfo> getContentGeneratorInfoForType( String type, IPentahoSession session );
+	
+	public IPentahoObjectFactory getObjectFactory();
 	
 	public IContentGenerator getContentGenerator( String id, IPentahoSession session ) throws ObjectFactoryException;
 	
