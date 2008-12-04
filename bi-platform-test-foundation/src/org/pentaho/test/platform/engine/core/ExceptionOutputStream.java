@@ -30,21 +30,21 @@ public class ExceptionOutputStream extends OutputStream {
   @Override
   public void write(final int b) throws IOException {
 
-    throw new IOException("Test Exception");
+    throw new IOException("Test Exception"); //$NON-NLS-1$
 
   }
 
   @Override
   public void write(final byte b[]) throws IOException {
 
-    throw new IOException("Test Exception");
+    throw new IOException("Test Exception"); //$NON-NLS-1$
 
   }
 
   @Override
   public void write(final byte b[], final int off, final int len) throws IOException {
 
-    throw new IOException("Test Exception");
+    throw new IOException("Test Exception"); //$NON-NLS-1$
 
   }
 

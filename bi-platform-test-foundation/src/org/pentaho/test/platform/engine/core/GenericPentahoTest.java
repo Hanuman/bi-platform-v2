@@ -38,7 +38,7 @@ import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 
 public class GenericPentahoTest extends TestCase {
-  private static final String SOLUTION_PATH = "solution.path";
+  private static final String SOLUTION_PATH = "solution.path"; //$NON-NLS-1$
 
   private String solutionPath;
 
@@ -59,9 +59,9 @@ public class GenericPentahoTest extends TestCase {
   private void init() {
     InputStream s = null;
     // start with a default solution path
-    solutionPath = "test-src/solution";
+    solutionPath = "test-src/solution"; //$NON-NLS-1$
     try {
-      URL url = ClassLoader.getSystemResource(PROPERTIES_FILE_NAME); //$NON-NLS-1$
+      URL url = ClassLoader.getSystemResource(PROPERTIES_FILE_NAME);
       if (url != null) {
         s = url.openStream();
       }
@@ -79,17 +79,17 @@ public class GenericPentahoTest extends TestCase {
     }
   }
 
-  public ISolutionEngine getSolutionEngine(String solutionPath) {
+  public ISolutionEngine getSolutionEngine(String path) {
 
-    StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
+    StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(path, ""); //$NON-NLS-1$
     if (!PentahoSystem.getInitializedOK()) {
       PentahoSystem.init(applicationContext);
-      assertTrue("PentahoSystem did not initialize", PentahoSystem.getInitializedOK());
+      assertTrue("PentahoSystem did not initialize", PentahoSystem.getInitializedOK()); //$NON-NLS-1$
     }
 
-    IPentahoSession session = new StandaloneSession("system");
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
-    assertNotNull("SolutionEngine is null", solutionEngine);
+    IPentahoSession session = new StandaloneSession("system"); //$NON-NLS-1$
+    ISolutionEngine solutionEngine = PentahoSystem.get( ISolutionEngine.class, session);
+    assertNotNull("SolutionEngine is null", solutionEngine); //$NON-NLS-1$
     solutionEngine.setLoggingLevel(ILogger.ERROR);
     solutionEngine.init(session);
 

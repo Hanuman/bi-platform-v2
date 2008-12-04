@@ -38,6 +38,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoBase;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -52,9 +53,9 @@ public class TestManager extends PentahoBase {
 
   public static final int STATUS_FAILED = 3;
 
-  private static ArrayList messages;
+  private static ArrayList<String> messages;
 
-  private static ArrayList suites;
+  private static ArrayList<SuiteInfo> suites;
 
   private static TestManager manager;
 
@@ -73,14 +74,15 @@ public class TestManager extends PentahoBase {
       "user.language", //$NON-NLS-1$
       "user.country" }; //$NON-NLS-1$
 
-  public static TestManager getInstance(TestSuite all) throws ClassNotFoundException {
+  public static TestManager getInstance(TestSuite all) throws Exception {
     if (manager == null) {
       String testManagerClassName = PentahoSystem.getSystemSetting(
           "test-suite/test-settings.xml", "test-manager", "org.pentaho.test.TestManager"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       if (testManagerClassName == null) {
         testManagerClassName = "org.pentaho.test.TestManager"; //$NON-NLS-1$
       }
-      manager = (TestManager) PentahoSystem.createObject(testManagerClassName);
+      Class componentClass = Class.forName(testManagerClassName.trim());
+      manager = (TestManager) componentClass.newInstance();
       if (manager != null) {
         manager.init(all);
       } else {
@@ -92,7 +94,7 @@ public class TestManager extends PentahoBase {
 
   public int getSuiteIndex(String suite) {
     for (int idx = 0; idx < suites.size(); idx++) {
-      if (((SuiteInfo) suites.get(idx)).className.equals(suite)) {
+      if ((suites.get(idx)).className.equals(suite)) {
         return idx;
       }
     }
@@ -101,7 +103,7 @@ public class TestManager extends PentahoBase {
 
   public String getSuite(int idx) {
     if (idx < suites.size()) {
-      return ((SuiteInfo) suites.get(idx)).className;
+      return (suites.get(idx)).className;
     }
     return null;
   }
@@ -116,7 +118,7 @@ public class TestManager extends PentahoBase {
 
     Enumeration suitesEnum = getSuites(all);
 
-    suites = new ArrayList();
+    suites = new ArrayList<SuiteInfo>();
     while (suitesEnum.hasMoreElements()) {
       TestSuite suite = (TestSuite) suitesEnum.nextElement();
       SuiteInfo suiteInfo = new SuiteInfo(suite);
@@ -135,7 +137,7 @@ public class TestManager extends PentahoBase {
 
   public SuiteInfo getSuite(String suiteClass) {
     for (int idx = 0; idx < suites.size(); idx++) {
-      SuiteInfo suiteInfo = (SuiteInfo) suites.get(idx);
+      SuiteInfo suiteInfo = suites.get(idx);
       if (suiteInfo.className.equals(suiteClass)) {
         return suiteInfo;
       }
@@ -158,7 +160,7 @@ public class TestManager extends PentahoBase {
     // add some standard settings
     Element propertyNode = propertiesNode.addElement("property"); //$NON-NLS-1$
     propertyNode.addAttribute("name", Messages.getString("UI.USER_TEST_SUITE_SOLUTION_REPOSITORY")); //$NON-NLS-1$ //$NON-NLS-2$
-    propertyNode.addAttribute("value", PentahoSystem.getSolutionRepository(userSession).getClass().toString()); //$NON-NLS-1$
+    propertyNode.addAttribute("value", PentahoSystem.get(ISolutionRepository.class, userSession).getClass().toString()); //$NON-NLS-1$
 
     propertyNode = propertiesNode.addElement("property"); //$NON-NLS-1$
     propertyNode.addAttribute("name", "data.driver"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -168,7 +170,7 @@ public class TestManager extends PentahoBase {
     propertyNode.addAttribute("value", hibernateDriver); //$NON-NLS-1$
 
     for (int idx = 0; idx < suites.size(); idx++) {
-      SuiteInfo suiteInfo = (SuiteInfo) suites.get(idx);
+      SuiteInfo suiteInfo = suites.get(idx);
       suiteInfo.getStatus(root);
     }
     return doc;
@@ -196,7 +198,7 @@ public class TestManager extends PentahoBase {
     test.run();
   }
 
-  public static List getMessagesList() {
+  public static List<String> getMessagesList() {
     return messages;
   }
 
@@ -220,13 +222,11 @@ public class TestManager extends PentahoBase {
 
     private int status;
 
-    private int last_result = 0;
+    private HashMap<String,TestInfo> methodMap = new HashMap<String,TestInfo>();
 
-    private HashMap methodMap = new HashMap();
+    private HashMap<Test,TestInfo> testMap = new HashMap<Test,TestInfo>();
 
-    private HashMap testMap = new HashMap();
-
-    private ArrayList testList = new ArrayList();
+    private ArrayList<TestInfo> testList = new ArrayList<TestInfo>();
 
     private TestSuite suite;
 
@@ -267,7 +267,7 @@ public class TestManager extends PentahoBase {
     }
 
     public TestInfo getTest(String method) {
-      return (TestInfo) methodMap.get(method);
+      return methodMap.get(method);
     }
 
     public void run() {
@@ -285,7 +285,7 @@ public class TestManager extends PentahoBase {
       message = error.getMessage();
       errorCount++;
       status = FAIL;
-      TestInfo testInfo = (TestInfo) testMap.get(test);
+      TestInfo testInfo = testMap.get(test);
       testInfo.addError(error);
       message = Messages.getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
     }
@@ -294,7 +294,7 @@ public class TestManager extends PentahoBase {
       message = error.getMessage();
       failCount++;
       status = FAIL;
-      TestInfo testInfo = (TestInfo) testMap.get(test);
+      TestInfo testInfo = testMap.get(test);
       testInfo.addFailure(error);
       message = Messages.getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
     }
@@ -304,14 +304,14 @@ public class TestManager extends PentahoBase {
         passCount++;
       }
       status = NOT_RUNNING;
-      TestInfo testInfo = (TestInfo) testMap.get(test);
+      TestInfo testInfo = testMap.get(test);
       testInfo.endTest();
       message = ""; //$NON-NLS-1$
     }
 
     public void startTest(Test test) {
       runCount++;
-      TestInfo testInfo = (TestInfo) testMap.get(test);
+      TestInfo testInfo = testMap.get(test);
       testInfo.startTest();
       message = Messages.getString("UI.USER_TEST_SUITE_RUNNING"); //$NON-NLS-1$
     }
@@ -330,7 +330,7 @@ public class TestManager extends PentahoBase {
       int currentRunCount = 0;
       int currentFailCount = 0;
       for (int idx = 0; idx < testList.size(); idx++) {
-        TestInfo test = (TestInfo) testList.get(idx);
+        TestInfo test = testList.get(idx);
         test.getStatus(tests);
         if (test.lastResult == PASS) {
           currentPassCount++;

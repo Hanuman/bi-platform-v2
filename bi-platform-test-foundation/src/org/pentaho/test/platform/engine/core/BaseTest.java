@@ -118,7 +118,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       PentahoSystem.setObjectFactory( pentahoObjectFactory );
 
       //force Spring to inject PentahoSystem, there has got to be a better way than this, perhaps an alternate way of initting spring's app context
-      springApplicationContext.getBean("pentahoSystemProxy");
+      springApplicationContext.getBean("pentahoSystemProxy"); //$NON-NLS-1$
       initOk = PentahoSystem.init(applicationContext);
     } else {
       initOk = true;
@@ -129,13 +129,13 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
 
   private ApplicationContext getSpringApplicationContext() {
 
-    String[] fns = {"pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" };
+    String[] fns = {"pentahoObjects.spring.xml", "adminPlugins.xml", "sessionStartupActions.xml", "systemListeners.xml", "pentahoSystemConfig.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     
     GenericApplicationContext appCtx = new GenericApplicationContext();
     XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(appCtx);
     
     for ( String fn : fns ) {
-      File f = new File( getSolutionPath() + SYSTEM_FOLDER + "/" + fn );
+      File f = new File( getSolutionPath() + SYSTEM_FOLDER + "/" + fn ); //$NON-NLS-1$
       if ( f.exists() ) {
         FileSystemResource fsr = new FileSystemResource( f );
         xmlReader.loadBeanDefinitions( fsr );
@@ -143,15 +143,15 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
     }
     
     String[] beanNames = appCtx.getBeanDefinitionNames();
-    System.out.println( "Loaded Beans: " );
+    System.out.println( "Loaded Beans: " ); //$NON-NLS-1$
     for ( String n : beanNames ) {
-      System.out.println( "bean: " + n );
+      System.out.println( "bean: " + n ); //$NON-NLS-1$
     }
     return appCtx;
   }
   
   protected Map getRequiredListeners() {
-    HashMap listeners = new HashMap();
+    HashMap<String,String> listeners = new HashMap<String,String>();
     listeners.put("globalObjects", "globalObjects"); //$NON-NLS-1$ //$NON-NLS-2$
     return listeners;
   }
@@ -251,7 +251,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       IParameterProvider parameterProvider, IOutputHandler outputHandler, IPentahoSession session) {
     assertTrue(initOk);
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(getLoggingLevel());
     solutionEngine.init(session);
 
@@ -266,7 +266,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
     info(actionName);
 
     String baseUrl = ""; //$NON-NLS-1$  
-    HashMap parameterProviderMap = new HashMap();
+    HashMap<String,IParameterProvider> parameterProviderMap = new HashMap<String,IParameterProvider>();
     parameterProviderMap.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
 
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);

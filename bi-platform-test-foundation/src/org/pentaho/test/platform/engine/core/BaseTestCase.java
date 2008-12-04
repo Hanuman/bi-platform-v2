@@ -38,7 +38,6 @@ import junit.framework.TestCase;
 
 import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.ILogger;
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
@@ -54,12 +53,12 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObj
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 public abstract class BaseTestCase extends TestCase {
-  public static final String SOLUTION_PATH = "test-src/solution";
+  public static final String SOLUTION_PATH = "test-src/solution"; //$NON-NLS-1$
   public static final String SCOPE_REQUEST = "request"; //$NON-NLS-1$
   public static final String SCOPE_SESSION = "session"; //$NON-NLS-1$ 
   private String solutionPath;
-  final String SYSTEM_FOLDER = "/system";
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+  final String SYSTEM_FOLDER = "/system"; //$NON-NLS-1$
+  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml"; //$NON-NLS-1$
 
   StandaloneApplicationContext applicationContext = null;
 
@@ -72,9 +71,9 @@ public abstract class BaseTestCase extends TestCase {
     init(solutionPath);
   }
   
-  protected void init(String solutionPath) {
+  protected void init(String solnPath) {
     PentahoSystem.setSystemSettingsService(new PathBasedSystemSettings());
-    applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
+    applicationContext = new StandaloneApplicationContext(solnPath, ""); //$NON-NLS-1$
     applicationContext.setBaseUrl(getBaseUrl());
     String inContainer = System.getProperty("incontainer", "false"); //$NON-NLS-1$ //$NON-NLS-2$
     if (inContainer.equalsIgnoreCase("false")) { //$NON-NLS-1$
@@ -89,12 +88,12 @@ public abstract class BaseTestCase extends TestCase {
     pentahoObjectFactory.init(objectFactoryCreatorCfgFile, null);
     PentahoSystem.setObjectFactory( pentahoObjectFactory );
     PentahoSystem.init(applicationContext);
-    session = new StandaloneSession("system");
+    session = new StandaloneSession("system"); //$NON-NLS-1$
   }
 
-  protected InputStream getInputStreamFromOutput(String solutionPath, String testName, String extension) {
+  protected InputStream getInputStreamFromOutput(String solnPath, String testName, String extension) {
     String path = PentahoSystem.getApplicationContext().getFileOutputPath(
-        solutionPath + "test/tmp/" + testName + extension); //$NON-NLS-1$
+        solnPath + "test/tmp/" + testName + extension); //$NON-NLS-1$
     File f = new File(path);
     if (f.exists()) {
       try {
@@ -108,17 +107,17 @@ public abstract class BaseTestCase extends TestCase {
     }
   }
 
-  protected OutputStream getOutputStream(String solutionPath, String testName, String extension) {
+  protected OutputStream getOutputStream(String solnPath, String testName, String extension) {
     OutputStream outputStream = null;
     try {
-      IApplicationContext applicationContext = PentahoSystem.getApplicationContext();
-      String outputPath = solutionPath + "/test/tmp";
-      String tmpDir = applicationContext.getFileOutputPath(outputPath);
+      IApplicationContext appContext = PentahoSystem.getApplicationContext();
+      String outputPath = solnPath + "/test/tmp"; //$NON-NLS-1$
+      String tmpDir = appContext.getFileOutputPath(outputPath);
       //String tmpDir = PentahoSystem.getApplicationContext().getFileOutputPath(SOLUTION_PATH +"test/tmp"); //$NON-NLS-1$
       File file = new File(tmpDir);
       file.mkdirs();
       String path = PentahoSystem.getApplicationContext().getFileOutputPath(
-          solutionPath + "/test/tmp/" + testName + extension); //$NON-NLS-1$
+          solnPath + "/test/tmp/" + testName + extension); //$NON-NLS-1$
       outputStream = new FileOutputStream(path);
     } catch (FileNotFoundException e) {
 
@@ -130,7 +129,7 @@ public abstract class BaseTestCase extends TestCase {
       IOutputHandler outputHandler) {
     List messages = new ArrayList();
     String instanceId = null;
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(ILogger.ERROR);
     solutionEngine.init(session);
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
@@ -154,7 +153,7 @@ public abstract class BaseTestCase extends TestCase {
           .execute(
               xactionStr,
               actionSequence,
-              "action sequence test", false, true, instanceId, false, parameterProviderMap, null, null, urlFactory, messages); //$NON-NLS-1$ //$NON-NLS-2$
+              "action sequence test", false, true, instanceId, false, parameterProviderMap, null, null, urlFactory, messages); //$NON-NLS-1$
     } catch (Exception e) {
       // we should not get here
       e.printStackTrace();
