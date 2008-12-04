@@ -2,7 +2,6 @@ package org.pentaho.platform.engine.core.solution;
 
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
-import org.pentaho.platform.api.engine.IObjectCreator;
 
 public class ContentGeneratorInfo implements IContentGeneratorInfo {
 
@@ -38,13 +37,6 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-	
-	public void setObjectCreator( IObjectCreator creator ) {
-	}
-
-	public IObjectCreator getCreator() {
-		return null;
 	}
 	
 	public String getUrl() {
