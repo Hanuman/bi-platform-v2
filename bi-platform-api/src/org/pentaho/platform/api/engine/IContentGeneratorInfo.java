@@ -18,9 +18,5 @@ public interface IContentGeneratorInfo {
 
 	public void setTitle(String title);
 	
-	public void setObjectCreator( IObjectCreator creator );
-
-	public IObjectCreator getCreator();
-	
 	public IFileInfoGenerator getFileInfoGenerator( );
 }
