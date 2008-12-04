@@ -14,8 +14,6 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 	
 	private String url;
 
-	private IObjectCreator creator;
-	
 	private IFileInfoGenerator fileInfoGenerator; 
 	
 	public String getDescription() {
@@ -43,11 +41,10 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 	}
 	
 	public void setObjectCreator( IObjectCreator creator ) {
-		this.creator = creator;
 	}
 
 	public IObjectCreator getCreator() {
-		return creator;
+		return null;
 	}
 	
 	public String getUrl() {
