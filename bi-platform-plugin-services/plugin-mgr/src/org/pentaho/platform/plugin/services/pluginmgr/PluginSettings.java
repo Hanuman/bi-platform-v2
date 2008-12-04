@@ -18,7 +18,6 @@ import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
-import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginOperation;
@@ -88,10 +87,6 @@ public class PluginSettings implements IPluginSettings {
     return contentGeneratorInfoByTypeMap.get( type );
   }
 
-  public List<IObjectCreator> getContentGeneratorsForType( String type, IPentahoSession session ) {
-    return null;
-  }
-	
 	public static PluginSettings getInstance() {
 		return instance;
 	}
