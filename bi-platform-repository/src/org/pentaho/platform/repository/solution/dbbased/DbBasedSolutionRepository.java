@@ -25,10 +25,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,15 +47,20 @@ import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionSequence;
+import org.pentaho.platform.api.engine.IContentGeneratorInfo;
+import org.pentaho.platform.api.engine.IFileInfo;
+import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.ISolutionAttributeContributor;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
+import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.repository.RepositoryException;
@@ -63,7 +70,6 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleSession;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.engine.services.actionsequence.SequenceDefinition;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
@@ -294,38 +300,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     for (RepositoryFile element : files) {
       if (!element.isDirectory()) {
         String fileName = element.getFileName();
-        if (fileName.equals("Entries") || fileName.equals("Repository") || fileName.equals("Root")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          // ignore any CVS files
-          continue;
-        }
-        if (fileName.toLowerCase().endsWith(".url")) { //$NON-NLS-1$
-          if (hasAccess(element, actionOperation)) {
-            addUrlToRepository(element, parentNode);
-          }
-        }
-        if (!fileName.toLowerCase().endsWith(".xaction") && !fileName.toLowerCase().endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-          // ignore any non-XML files
-          continue;
-        }
-        if (fileName.toLowerCase().equals(ISolutionRepository.INDEX_FILENAME)) {
-          // index.xml files are handled in the directory loop below
-          continue;
-        }
-        String path = getSolutionPath(element);
-        if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
-          // create an action sequence document from this
-          info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
-          IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
-          if (actionSequence == null) {
-            if (((solutionId == null) || (solutionId.length() == 0)) && ((path == null) || (path.length() == 0))) {
-              info(Messages.getString("SolutionRepository.INFO_0008_NOT_ADDED", fileName)); //$NON-NLS-1$
-            } else {
-              error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
-            }
-          } else {
-            addToRepository(actionSequence, parentNode, element);
-          }
-        }
+        processFile(fileName, element, parentNode, solutionId, actionOperation);
       }
     }
     for (RepositoryFile element : files) {
@@ -356,6 +331,156 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         processDir(dirNode, element, thisSolution, actionOperation, recurseLevels - 1);
       }
     }
+  }
+
+  protected void processFile(String fileName, RepositoryFile element, final Element parentNode,
+      final String solutionId, final int actionOperation) {
+
+    if (fileName.equals("Entries") || fileName.equals("Repository") || fileName.equals("Root")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      // ignore any CVS files
+      return;
+    }
+    int lastPoint = fileName.lastIndexOf('.');
+    if (lastPoint == -1) {
+      // ignore anything with no extension
+      return;
+    }
+    String extension = fileName.substring(lastPoint + 1).toLowerCase();
+
+    if (fileName.toLowerCase().endsWith(".url")) { //$NON-NLS-1$
+      if (hasAccess(element, actionOperation)) {
+        addUrlToRepository(element, parentNode);
+        return;
+      }
+    }
+    boolean addFile = "xaction".equals(extension); //$NON-NLS-1$
+    IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.get(IPluginSettings.class, getSession());; //$NON-NLS-1$
+    if (pluginSettings != null) {
+      Set<String> types = pluginSettings.getContentTypes();
+      addFile |= types != null && types.contains(extension);
+    }
+    if (!addFile) {
+      return;
+    }
+    String path = getSolutionPath(element);
+    if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
+      // create an action sequence document from this
+      info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
+      IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
+      if (actionSequence == null) {
+        if (((solutionId == null) || (solutionId.length() == 0)) && ((path == null) || (path.length() == 0))) {
+          info(Messages.getString("SolutionRepository.INFO_0008_NOT_ADDED", fileName)); //$NON-NLS-1$
+        } else {
+          error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
+        }
+      } else {
+        addToRepository(actionSequence, parentNode, element);
+      }
+    } else if (pluginSettings != null) {
+      String fullPath = solutionId + ISolutionRepository.SEPARATOR
+          + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
+      try {
+        IFileInfo fileInfo = getFileInfo(solutionId, path, fileName, extension, pluginSettings, actionOperation);
+        addToRepository(fileInfo, solutionId, path, fileName, parentNode, element);
+      } catch (Exception e) {
+        error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
+      }
+    }
+
+  }
+
+  protected IFileInfo getFileInfo(final String solution, final String path, final String fileName,
+      final String extension, IPluginSettings pluginSettings, final int actionOperation) {
+    IFileInfo fileInfo = null;
+    String fullPath = solution + ISolutionRepository.SEPARATOR
+        + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
+    try {
+
+      IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType(extension, getSession());
+      IFileInfoGenerator fig = info.getFileInfoGenerator();
+      if (fig != null) {
+        fig.setLogger(this);
+        ContentType contentType = fig.getContentType();
+        if (contentType == ContentType.INPUTSTREAM) {
+          InputStream in = getResourceInputStream(fullPath, true);
+          fileInfo = fig.getFileInfo(solution, path, fileName, in);
+        } else if (contentType == ContentType.DOM4JDOC) {
+          Document doc = getSolutionDocument(fullPath, actionOperation);
+          fileInfo = fig.getFileInfo(solution, path, fileName, doc);
+        } else if (contentType == ContentType.BYTES) {
+          byte bytes[] = getResourceAsBytes(fullPath, true);
+          fileInfo = fig.getFileInfo(solution, path, fileName, bytes);
+        } else if (contentType == ContentType.STRING) {
+          String str = getResourceAsString(fullPath);
+          fileInfo = fig.getFileInfo(solution, path, fileName, str);
+        }
+      }
+    } catch (Exception e) {
+      error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
+    }
+    return fileInfo;
+  }
+
+  private void addToRepository(final IFileInfo info, final String solution, final String path, final String fileName,
+      final Element parentNode, final RepositoryFile file) {
+    Element dirNode = parentNode.addElement("file"); //$NON-NLS-1$
+    dirNode.addAttribute("type", FileInfo.FILE_TYPE_ACTIVITY); //$NON-NLS-1$
+    dirNode.addElement("filename").setText(fileName); //$NON-NLS-1$
+    dirNode.addElement("path").setText(path); //$NON-NLS-1$
+    dirNode.addElement("solution").setText(solution); //$NON-NLS-1$
+    dirNode.addElement("title").setText(info.getTitle()); //$NON-NLS-1$
+    String description = info.getDescription();
+    if (description == null) {
+      dirNode.addElement("description"); //$NON-NLS-1$
+    } else {
+      dirNode.addElement("description").setText(description); //$NON-NLS-1$
+    }
+    String author = info.getAuthor();
+    if (author == null) {
+      dirNode.addElement("author"); //$NON-NLS-1$
+    } else {
+      dirNode.addElement("author").setText(author); //$NON-NLS-1$
+    }
+    String iconPath = info.getIcon();
+    if ((iconPath != null) && !iconPath.equals("")) { //$NON-NLS-1$
+      String rolloverIconPath = null;
+      int rolloverIndex = iconPath.indexOf("|"); //$NON-NLS-1$
+      if (rolloverIndex > -1) {
+        rolloverIconPath = iconPath.substring(rolloverIndex + 1);
+        iconPath = iconPath.substring(0, rolloverIndex);
+      }
+      if (publishIcon(file.retrieveParent().getFullPath(), iconPath)) {
+        dirNode.addElement("icon").setText("getImage?image=icons/" + iconPath); //$NON-NLS-1$ //$NON-NLS-2$
+      } else {
+        dirNode.addElement("icon").setText(info.getIcon()); //$NON-NLS-1$
+      }
+      if (rolloverIconPath != null) {
+        if (publishIcon(PentahoSystem.getApplicationContext().getSolutionPath(solution + File.separator + path),
+            rolloverIconPath)) {
+          dirNode.addElement("rollovericon").setText("getImage?image=icons/" + rolloverIconPath); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          dirNode.addElement("rollovericon").setText(rolloverIconPath); //$NON-NLS-1$
+        }
+      }
+    }
+    String displayType = info.getDisplayType();
+    if ((displayType == null) || ("none".equalsIgnoreCase(displayType))) { //$NON-NLS-1$
+      // this should be hidden from users
+      dirNode.addAttribute("visible", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+    } else {
+      dirNode.addAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+      dirNode.addAttribute("displaytype", displayType); //$NON-NLS-1$
+    }
+
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
+    
+    boolean subscribable = false;
+    if (subscriptionRepository != null) {
+      subscribable = subscriptionRepository.getContentByActionReference(solution + ISolutionRepository.SEPARATOR + path
+          + ISolutionRepository.SEPARATOR + fileName) != null;
+    }
+    dirNode.addElement("properties").setText("subscribable=" + Boolean.toString(subscribable)); //$NON-NLS-1$ //$NON-NLS-2$
+
   }
 
   protected String getSolutionId(final RepositoryFile file) {
@@ -471,8 +596,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         putRepositoryObjectInCache(DbBasedSolutionRepository.BREAD_CRUMBS_TAG
             + buildDirectoryPath(solution, path, null), localizedPath);
       } else { // Now we've got to check to see if the parent has an index.xml
-        Document indexDoc = getSolutionDocument(directoryFile.retrieveParent().getFullPath() + ISolutionRepository.SEPARATOR
-            + ISolutionRepository.INDEX_FILENAME, ISolutionRepository.ACTION_EXECUTE);
+        Document indexDoc = getSolutionDocument(directoryFile.retrieveParent().getFullPath()
+            + ISolutionRepository.SEPARATOR + ISolutionRepository.INDEX_FILENAME, ISolutionRepository.ACTION_EXECUTE);
         if (indexDoc == null) {
           localizedPath = directoryFile.retrieveParent().getFileName() + ISolutionRepository.SEPARATOR + localizedPath;
         } else {
@@ -557,7 +682,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
   }
 
-  protected void addToRepository(final IActionSequence actionSequence, final Element parentNode, final RepositoryFile file) {
+  protected void addToRepository(final IActionSequence actionSequence, final Element parentNode,
+      final RepositoryFile file) {
     Element dirNode = parentNode.addElement("file"); //$NON-NLS-1$
     dirNode.addAttribute("type", FileInfo.FILE_TYPE_ACTIVITY); //$NON-NLS-1$
     contributeAttributes(file, dirNode);
@@ -616,7 +742,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       dirNode.addAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
       dirNode.addAttribute("displaytype", displayType); //$NON-NLS-1$
     }
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(this.getSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
     boolean subscribable = subscriptionRepository.getContentByActionReference(actionSequence.getSolutionName() + '/'
         + actionSequence.getSolutionPath() + '/' + actionSequence.getSequenceName()) != null;
     dirNode.addElement("properties").setText("subscribable=" + Boolean.toString(subscribable)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -703,7 +829,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   public boolean synchronizeSolutionWithSolutionSource(final IPentahoSession pSession) {
-    synchronized(lock) {
+    synchronized (lock) {
       try {
         RepositoryFile solution = (RepositoryFile) getRootFolder();
         if (solution != null) {
@@ -749,7 +875,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    */
   public List loadSolutionFromFileSystem(final IPentahoSession pSession, final String solutionRoot,
       final boolean deleteOrphans) throws RepositoryException {
-    synchronized(lock) {
+    synchronized (lock) {
       SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0001_BEGIN_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
       HibernateUtil.beginTransaction();
       File solutionFile = new File(solutionRoot);
@@ -798,7 +924,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           // Process deletions
           List deletions = updateHelper.processDeletions(deleteOrphans);
           // Publish ACLs
-          IAclPublisher aclPublisher = PentahoSystem.getAclPublisher(pSession);
+          IAclPublisher aclPublisher = PentahoSystem.get(IAclPublisher.class, pSession);
+          
           if (aclPublisher != null) {
             aclPublisher.publishDefaultAcls(solution);
           }
@@ -912,7 +1039,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         try {
           rtn = (RepositoryFile) qry.uniqueResult();
         } catch (HibernateException ex) {
-          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory.getFullPath()), ex);
+          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory
+              .getFullPath()), ex);
           throw ex;
         }
         if (rtn == null) {
@@ -1019,7 +1147,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   @Override
   public boolean removeSolutionFile(final String solutionPath) {
-    synchronized(lock) {
+    synchronized (lock) {
       // remove file based files
       super.removeSolutionFile(solutionPath);
       // Build the path
@@ -1117,7 +1245,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   public void contributeAttributes(final ISolutionFile solutionFile, final Element childNode) {
     if (solutionFile instanceof IAclHolder) {
       IPentahoSession sess = getSession();
-      IAclVoter voter = PentahoSystem.getAclVoter(sess);
+      IAclVoter voter = PentahoSystem.get(IAclVoter.class, sess);
       IPentahoAclEntry access = voter.getEffectiveAcl(sess, (IAclHolder) solutionFile);
       if (access != null) {
         setXMLPermissionAttributes(access, childNode);
@@ -1170,24 +1298,25 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   @Override
   public int addSolutionFile(final String baseUrl, String path, final String fileName, final byte[] data,
       boolean overwrite) {
-    synchronized(lock) {
+    synchronized (lock) {
       // TODO mlowery Allow this method for Pentaho administrators only. Use a RunAsManager when calling this method 
       // from within this class.  That way you prevent external callers from directly calling this method.
-  
+
       // baseUrl is ignored
       // We handle publish to the system folder differently since it's not in the DB.
       while ((path != null) && (path.endsWith("/") || path.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
         path = path.substring(0, path.length() - 1);
       }
-      
+
       // do not allow publishing to root path
       if (StringUtil.isEmpty(path)) {
         logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
         return ISolutionRepository.FILE_ADD_FAILED;
       }
-      
+
       // allow any user to add to system/tmp (e.g. during new analysis view) 
-      if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase.isSystemTmpPath(path))) {
+      if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase
+          .isSystemTmpPath(path))) {
         // add file using file based technique to send it to disk
         return super.addSolutionFile(baseUrl, path, fileName, data, overwrite);
       }
@@ -1360,7 +1489,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     // the publisher gets full control
     acl.put(new SimpleSession(getSession()), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL));
     IPentahoSession sess = getSession();
-    IAclVoter voter = PentahoSystem.getAclVoter(sess);
+    IAclVoter voter = PentahoSystem.get(IAclVoter.class, sess);
     // and the Pentaho administrator gets full control
     acl.put(new SimpleRole(voter.getAdminRole().getAuthority()), new SimplePermissionMask(
         IPentahoAclEntry.PERM_FULL_CONTROL));
@@ -1451,7 +1580,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     //      return Collections.emptyMap();
     //    }
   }
-  
+
   /**
    * TODO mlowery Need to throw exception if unauthorized.
    * TODO mlowery If we had a READ_PERMS bit, then it would be enforced here.
@@ -1463,7 +1592,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   @Override
   public ISolutionFile createFolder(final File newFolder) throws IOException {
-    synchronized(lock) {
+    synchronized (lock) {
       HibernateUtil.beginTransaction();
       try {
         String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath("");

@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.dom4j.Document;
@@ -41,13 +43,18 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
+import org.pentaho.platform.api.engine.IContentGeneratorInfo;
+import org.pentaho.platform.api.engine.IFileInfo;
+import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
+import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -240,41 +247,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     for (File element : files) {
       if (!element.isDirectory()) {
         String fileName = element.getName();
-        if (fileName.equals("Entries") || fileName.equals("Repository") || fileName.equals("Root")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          // ignore any CVS files
-          continue;
-        }
-        String solutionPath = element.getAbsolutePath().substring(rootPath.length());
-        if (fileName.toLowerCase().endsWith(".url")) { //$NON-NLS-1$
-          addUrlToRepository(element, parentNode, solutionPath);
-        }
-        if (!fileName.toLowerCase().endsWith(".xaction") && !fileName.toLowerCase().endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-          // ignore any non-XML files
-          continue;
-        }
-        if (fileName.toLowerCase().equals(ISolutionRepository.INDEX_FILENAME)) {
-          // index.xml files are handled in the directory loop below
-          continue;
-        }
-        String path = element.getAbsolutePath().substring(pathIdx);
-        if (!path.equals(fileName)) {
-          path = path.substring(0, path.length() - fileName.length() - 1);
-          // windows \ characters in the path gets messy in urls, so
-          // switch them to /
-          path = path.replace('\\', '/');
-        } else {
-          path = ""; //$NON-NLS-1$
-        }
-        if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
-          // create an action sequence document from this
-          info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
-          IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
-          if (actionSequence == null) {
-            error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
-          } else {
-            addToRepository(actionSequence, parentNode, element);
-          }
-        } 
+        processFile( fileName, element, parentNode, solutionId, pathIdx, actionOperation );
       }
     }
     for (File element : files) {
@@ -319,7 +292,155 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
       }
     }
   }
+
+protected void processFile( String fileName, File element, final Element parentNode, final String solutionId, int pathIdx,
+      final int actionOperation ) {
+    if (fileName.equals("Entries") || fileName.equals("Repository") || fileName.equals("Root")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        // ignore any CVS files
+        return;
+      }
+    int lastPoint = fileName.lastIndexOf('.');
+    if( lastPoint == -1 ) {
+      // ignore anything with no extension
+      return;
+    }
+    String extension = fileName.substring( lastPoint+1 ).toLowerCase();
+      String solutionPath = element.getAbsolutePath().substring(rootPath.length());
+      if ("url".equals( extension )) { //$NON-NLS-1$
+        addUrlToRepository(element, parentNode, solutionPath);
+      }
+    boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
+  IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.get(IPluginSettings.class, getSession());; //$NON-NLS-1$
+if( pluginSettings != null ) {
+    Set<String> types = pluginSettings.getContentTypes();
+    addFile |= types != null && types.contains( extension );
+}
+if( !addFile ) {
+  return;
+}
+      String path = element.getAbsolutePath().substring(pathIdx);
+      if (!path.equals(fileName)) {
+        path = path.substring(0, path.length() - fileName.length() - 1);
+        // windows \ characters in the path gets messy in urls, so
+        // switch them to /
+        path = path.replace('\\', '/');
+      } else {
+        path = ""; //$NON-NLS-1$
+      }
+      if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
+        // create an action sequence document from this
+        info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
+        IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
+        if (actionSequence == null) {
+          error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
+        } else {
+          addToRepository(actionSequence, parentNode, element);
+        }
+      }
+      else if( pluginSettings != null ) {
+        String fullPath = solutionId+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
+        try {
+            IFileInfo fileInfo = getFileInfo( solutionId, path, fileName, extension, pluginSettings );
+              addToRepository( fileInfo, solutionId, path, fileName, parentNode, element);
+        } catch (Exception e) {
+          error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
+        }
+      }
+
+}
+
+protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginSettings pluginSettings ) {
+  IFileInfo fileInfo = null;
+  String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
+try {
   
+    IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, getSession());
+      IFileInfoGenerator fig = info.getFileInfoGenerator();
+      if( fig != null ) {
+        fig.setLogger( this );
+        ContentType contentType = fig.getContentType();
+        if( contentType == ContentType.INPUTSTREAM ) {
+              InputStream in = getResourceInputStream( fullPath, true);
+              fileInfo = fig.getFileInfo(solution, path, fileName, in);
+        }
+        else if( contentType == ContentType.DOM4JDOC ) {
+              Document doc = getSolutionDocument( fullPath );
+              fileInfo = fig.getFileInfo(solution, path, fileName, doc );
+        }
+        else if( contentType == ContentType.BYTES ) {
+              byte bytes[] = getResourceAsBytes( fullPath, true );
+              fileInfo = fig.getFileInfo(solution, path, fileName, bytes );
+        }
+        else if( contentType == ContentType.STRING ) {
+              String str = getResourceAsString( fullPath );
+              fileInfo = fig.getFileInfo(solution, path, fileName, str );
+        }
+      }
+} catch (Exception e) {
+  error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
+}
+return fileInfo;
+}
+
+private void addToRepository( final IFileInfo info, final String solution, final String path, final String fileName, final Element parentNode, final File file) {
+    Element dirNode = parentNode.addElement("file"); //$NON-NLS-1$
+    dirNode.addAttribute("type", FileInfo.FILE_TYPE_ACTIVITY); //$NON-NLS-1$
+    dirNode.addElement("filename").setText(fileName); //$NON-NLS-1$
+    dirNode.addElement("path").setText(path); //$NON-NLS-1$
+    dirNode.addElement("solution").setText(solution); //$NON-NLS-1$
+    dirNode.addElement("title").setText( info.getTitle() ); //$NON-NLS-1$
+    String description = info.getDescription();
+    if (description == null) {
+      dirNode.addElement("description"); //$NON-NLS-1$
+    } else {
+      dirNode.addElement("description").setText(description); //$NON-NLS-1$
+    }
+    String author = info.getAuthor();
+    if (author == null) {
+      dirNode.addElement("author"); //$NON-NLS-1$
+    } else {
+      dirNode.addElement("author").setText(author); //$NON-NLS-1$
+    }
+    String iconPath = info.getIcon();
+    if ((iconPath != null) && !iconPath.equals("")) { //$NON-NLS-1$
+      String rolloverIconPath = null;
+      int rolloverIndex = iconPath.indexOf("|"); //$NON-NLS-1$
+      if (rolloverIndex > -1) {
+        rolloverIconPath = iconPath.substring(rolloverIndex + 1);
+        iconPath = iconPath.substring(0, rolloverIndex);
+      }
+      if (publishIcon(file.getParentFile().getAbsolutePath(), iconPath)) {
+        dirNode.addElement("icon").setText("getImage?image=icons/" + iconPath); //$NON-NLS-1$ //$NON-NLS-2$
+      } else {
+        dirNode.addElement("icon").setText(info.getIcon()); //$NON-NLS-1$
+      }
+      if (rolloverIconPath != null) {
+        if (publishIcon(PentahoSystem.getApplicationContext().getSolutionPath(
+            solution + File.separator + path), rolloverIconPath)) {
+          dirNode.addElement("rollovericon").setText("getImage?image=icons/" + rolloverIconPath); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          dirNode.addElement("rollovericon").setText(rolloverIconPath); //$NON-NLS-1$
+        }
+      }
+    }
+    String displayType = info.getDisplayType();
+    if ((displayType == null) || ("none".equalsIgnoreCase(displayType))) { //$NON-NLS-1$
+      // this should be hidden from users
+      dirNode.addAttribute("visible", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+    } else {
+      dirNode.addAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+      dirNode.addAttribute("displaytype", displayType); //$NON-NLS-1$
+    }
+
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
+    boolean subscribable = false;
+    if (subscriptionRepository != null) {
+      subscribable = subscriptionRepository.getContentByActionReference(solution + ISolutionRepository.SEPARATOR
+          + path + ISolutionRepository.SEPARATOR + fileName ) != null;
+    }
+    dirNode.addElement("properties").setText("subscribable=" + Boolean.toString(subscribable)); //$NON-NLS-1$ //$NON-NLS-2$
+
+  }
   // TODO sbarkdull, needs to be refactored, consider if
   // how it should work with/, etc. XmlHelper getLocalizedFile
   protected String getLocaleString(final String key, String baseName, final ISolutionFile baseFile) {
@@ -545,7 +666,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
       dirNode.addAttribute("displaytype", displayType); //$NON-NLS-1$
     }
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getSession());
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
     boolean subscribable = false;
     if (subscriptionRepository != null) {
       subscribable = subscriptionRepository.getContentByActionReference(actionSequence.getSolutionName() + '/'

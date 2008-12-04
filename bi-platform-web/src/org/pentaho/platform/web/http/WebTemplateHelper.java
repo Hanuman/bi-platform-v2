@@ -20,10 +20,12 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUITemplater;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.ui.IMenuProvider;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.actionsequence.ActionResource;
+import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.messages.Messages;
 
@@ -52,10 +54,11 @@ public String processTemplate(String template, final String title, final String 
    */
   public String processTemplate(String template, final String title, final IPentahoSession session) {
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     if (WebTemplateHelper.footerTemplate == null) {
       WebTemplateHelper.footerTemplate = getTemplate(WebTemplateHelper.FOOTER_TEMPLATE_FILENAME, session);
     }
+    template = template.replaceAll("\\{menu\\}", getMenuHtml( session ) ); //$NON-NLS-1$
     template = template.replaceFirst("\\{footer\\}", WebTemplateHelper.footerTemplate); //$NON-NLS-1$
     template = template.replaceAll("\\{title\\}", title); //$NON-NLS-1$
     template = template.replaceAll("\\{home\\}", Messages.getString("UI.USER_HOME")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -103,7 +106,7 @@ public String processTemplate(String template, final String title, final String 
 
     String template = null;
     try {
-      template = PentahoSystem.getSolutionRepository(session).getResourceAsString(resource);
+      template = PentahoSystem.get(ISolutionRepository.class, session).getResourceAsString(resource);
     } catch (Throwable t) {
     }
 
@@ -133,4 +136,13 @@ public String processTemplate(String template, final String title, final String 
         }
       }
 
+  public String getMenuHtml( final IPentahoSession session ) {
+    
+    IMenuProvider menuProvider = (IMenuProvider) PentahoSystem.get(IMenuProvider.class, session);
+    if( menuProvider != null ) {
+      return menuProvider.getMenuBar("menu", "system/ui/menubar.xul", session).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    Logger.error( WebTemplateHelper.class.getName(), Messages.getString("WebTemplateHelper.ERROR_0001_COULD_NOT_CREATE_MENUBAR") ); //$NON-NLS-1$
+    return ""; //$NON-NLS-1$
+  }
 }
