@@ -204,10 +204,10 @@ public class ContentGeneratorTest extends BaseTest {
       assertNotNull( "Operations are null", ops ); //$NON-NLS-1$
       assertEquals( "Wrong number of ops", 2, ops.size() ); //$NON-NLS-1$
       
-      assertEquals( "Operation name is wrong", "op 1 name", ops.get(0).getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( "Operation name is wrong", "op 1 name", ops.get(0).getId() ); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals( "Operation command is wrong", "op 1 command", ops.get(0).getCommand() ); //$NON-NLS-1$ //$NON-NLS-2$
 
-      assertEquals( "Operation name is wrong", "op 2 name", ops.get(1).getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( "Operation name is wrong", "op 2 name", ops.get(1).getId() ); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals( "Operation command is wrong", "op 2 command", ops.get(1).getCommand() ); //$NON-NLS-1$ //$NON-NLS-2$
       
       finishTest();
