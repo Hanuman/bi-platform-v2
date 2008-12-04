@@ -32,7 +32,6 @@ import junit.framework.TestCase;
 
 import org.dom4j.Document;
 import org.dom4j.Node;
-import org.pentaho.platform.api.engine.IObjectFactoryCreator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.util.IVersionHelper;
