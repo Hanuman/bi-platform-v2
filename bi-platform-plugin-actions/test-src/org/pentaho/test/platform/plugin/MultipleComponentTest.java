@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -516,36 +518,44 @@ public class MultipleComponentTest extends BaseTest {
 
   public void testJVMParameterProvider() {
     startTest();
-    JVMParameterProvider provider = new JVMParameterProvider();
+    System.setProperty( "teststring" , "test string");  //$NON-NLS-1$//$NON-NLS-2$
+    System.setProperty( "testlong" , "32");  //$NON-NLS-1$//$NON-NLS-2$
+    System.setProperty( "testdecimal" , "66.6");  //$NON-NLS-1$//$NON-NLS-2$
     Date someDate = new Date();
-    assertEquals(provider.getDateParameter("DOESNTEXIST", someDate), someDate); //$NON-NLS-1$
-    assertEquals(provider.getLongParameter("sun.arch.data.model", 32), 32); //$NON-NLS-1$
-    assertEquals(provider.getStringParameter("file.encoding.pkg", "sun.io"), "sun.io"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals(provider.getDecimalParameter("sun.arch.data.model", new BigDecimal("32")), new BigDecimal("32")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    System.setProperty( "testdate" , DateFormat.getInstance().format(someDate));  //$NON-NLS-1$
+
+    JVMParameterProvider provider = new JVMParameterProvider();
+
+//  assertEquals(someDate, provider.getDateParameter("testdate", null) ); //$NON-NLS-1$
+  assertEquals(someDate, provider.getDateParameter("bogus", someDate) ); //$NON-NLS-1$
+    assertEquals(32, provider.getLongParameter("testlong", 0) ); //$NON-NLS-1$
+    assertEquals("test string", provider.getStringParameter("teststring", null) ); //$NON-NLS-1$ //$NON-NLS-2$ 
+    assertEquals( new BigDecimal("66.6"), provider.getDecimalParameter("testdecimal", null) ); //$NON-NLS-1$ //$NON-NLS-2$
+
+    assertEquals("test string", provider.getParameter("teststring") );//$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("string", provider.getParameterType("teststring") ); //$NON-NLS-1$ //$NON-NLS-2$
+
     Iterator it = provider.getParameterNames();
     while (it.hasNext()) {
       String pName = (String) it.next();
       System.out.println(pName + "=" + provider.getStringParameter(pName, null));//$NON-NLS-1$
     }
-    assertEquals(provider.getParameter("file.encoding.pkg"), "sun.io");//$NON-NLS-1$ //$NON-NLS-2$
-    assertEquals(provider.getParameterType("file.encoding.pkg"), "string"); //$NON-NLS-1$ //$NON-NLS-2$
     finishTest();
   }
 
   public void testJVMParameterProviderDifferentPath() {
     startTest();
     JVMParameterProvider provider = new JVMParameterProvider();
-    assertEquals(provider.getLongParameter("sun.arch.data.model", 32), 32); //$NON-NLS-1$
-    assertEquals(provider.getDecimalParameter("sun.arch.data.modelling", new BigDecimal("32")), new BigDecimal("32")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(99, provider.getLongParameter("bogus", 99) ); //$NON-NLS-1$
+    assertEquals( new BigDecimal("99"), provider.getDecimalParameter("bogus", new BigDecimal("99")) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     finishTest();
   }
 
   public void testJVMParameterProviderDifferentPath2() {
     startTest();
     JVMParameterProvider provider = new JVMParameterProvider();
-    assertEquals(provider.getLongParameter("sun.arch.data.model", 32), 32); //$NON-NLS-1$
     try {
-      Object parameterValue = provider.getDecimalParameter("sun.arch.data.modelling", null);//$NON-NLS-1$
+      Object parameterValue = provider.getDecimalParameter("bogus", null);//$NON-NLS-1$
       System.out.println("Paramater Value Received is " + parameterValue); //$NON-NLS-1$
     } catch (Exception e) {
       e.printStackTrace();
