@@ -9,14 +9,15 @@ import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
-import org.pentaho.platform.api.engine.IObjectCreator;
+import org.pentaho.platform.api.engine.IPentahoObjectFactory;
+//import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator;
+//import org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginSettings;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
@@ -39,8 +40,11 @@ public class ContentGeneratorTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
-	    assertNotNull( pluginSettings );
+	    IPluginSettings ipluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+	    assertNotNull( ipluginSettings );
+	    
+	    assertTrue( ipluginSettings instanceof PluginSettings );
+	    PluginSettings pluginSettings = (PluginSettings) ipluginSettings;
 	    
 	    List<String> messages = new ArrayList<String>();
 	    boolean result = pluginSettings.updatePluginSettings(session, messages);
@@ -61,40 +65,38 @@ public class ContentGeneratorTest extends BaseTest {
 	    assertNotNull( pluginSettings.getContentGenerator( "test4" , session) ); //$NON-NLS-1$
 	    assertNull( pluginSettings.getContentGenerator( "test5" , session) ); //$NON-NLS-1$
 
+	     IPentahoObjectFactory factory = pluginSettings.getObjectFactory();
+
 	    // test the first content type
-	    List<IObjectCreator> creators = pluginSettings.getContentGeneratorsForType("test-type-1", session); //$NON-NLS-1$
+	    List<IContentGeneratorInfo> creators = pluginSettings.getContentGeneratorInfoForType("test-type-1", session); //$NON-NLS-1$
 	    assertEquals( 2, creators.size() );
-	    IObjectCreator creator = creators.get(0);
-	    Object obj = creator.getInstance( "", session); //$NON-NLS-1$
-	    assertNotNull( obj );
-	    IContentGenerator contentGenerator = (IContentGenerator) obj;
-	    assertTrue( contentGenerator instanceof ContentGenerator1 );
+      ContentGenerator1 obj1 = factory.get(ContentGenerator1.class, session);
+      assertNotNull( obj1 );
+      ContentGenerator2 obj2 = factory.get(ContentGenerator2.class, session);
+      assertNotNull( obj2 );
+	    IContentGeneratorInfo creator = creators.get(0);
+      assertEquals( "test1", creator.getId() ); //$NON-NLS-1$
 	    creator = creators.get(1);
-	    obj = creator.getInstance( "", session); //$NON-NLS-1$
-	    assertNotNull( obj );
-	    contentGenerator = (IContentGenerator) obj;
-	    assertTrue( contentGenerator instanceof ContentGenerator2 );
+      assertEquals( "test2", creator.getId() ); //$NON-NLS-1$
 
 	    // test the second content type
-	    creators = pluginSettings.getContentGeneratorsForType("test-type-2", session); //$NON-NLS-1$
+	    creators = pluginSettings.getContentGeneratorInfoForType("test-type-2", session); //$NON-NLS-1$
 	    assertEquals( 2, creators.size() );
-	    creator = creators.get(0);
-	    obj = creator.getInstance( "", session); //$NON-NLS-1$
-	    assertNotNull( obj );
-	    contentGenerator = (IContentGenerator) obj;
-	    assertTrue( contentGenerator instanceof ContentGenerator2 );
-	    creator = creators.get(1);
-	    obj = creator.getInstance( "", session); //$NON-NLS-1$
-	    assertNotNull( obj );
-	    contentGenerator = (IContentGenerator) obj;
-	    assertTrue( contentGenerator instanceof ContentGenerator1 );
+      obj1 = factory.get(ContentGenerator1.class, session);
+      assertNotNull( obj1 );
+      obj2 = factory.get(ContentGenerator2.class, session);
+      assertNotNull( obj2 );
+      creator = creators.get(0);
+      assertEquals( "test3", creator.getId() ); //$NON-NLS-1$
+      creator = creators.get(1);
+      assertEquals( "test4", creator.getId() ); //$NON-NLS-1$
 
 	    // test a bad content type
-	    creators = pluginSettings.getContentGeneratorsForType("test-type-bad", session); //$NON-NLS-1$
+	    creators = pluginSettings.getContentGeneratorInfoForType("test-type-bad", session); //$NON-NLS-1$
 	    assertNull( creators );
 
 	    // test the default content generator (first in the list)
-	    contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-1", session); //$NON-NLS-1$
+	    IContentGenerator contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-1", session); //$NON-NLS-1$
 	    assertTrue( contentGenerator instanceof ContentGenerator1 );
 
 	    contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-2", session); //$NON-NLS-1$
@@ -154,7 +156,7 @@ public class ContentGeneratorTest extends BaseTest {
 	    assertEquals( "test1", contentGeneratorInfo.getId() ); //$NON-NLS-1$
 	    assertEquals( "Test Generator 1", contentGeneratorInfo.getTitle() ); //$NON-NLS-1$
 	    assertEquals( "", contentGeneratorInfo.getUrl() ); //$NON-NLS-1$
-	    assertTrue( contentGeneratorInfo.getCreator() instanceof GlobalObjectCreator ); 
+	    assertNull( contentGeneratorInfo.getCreator() ); 
 	    
 	    IFileInfoGenerator fileInfoGenerator = contentGeneratorInfo.getFileInfoGenerator();
 	    assertNotNull( fileInfoGenerator  );

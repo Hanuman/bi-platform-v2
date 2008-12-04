@@ -30,11 +30,7 @@ import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator;
-import org.pentaho.platform.engine.core.system.objfac.LocalObjectCreator;
-import org.pentaho.platform.engine.core.system.objfac.PentahoObjectFactory;
-import org.pentaho.platform.engine.core.system.objfac.SessionObjectCreator;
-import org.pentaho.platform.engine.core.system.objfac.ThreadObjectCreator;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -54,11 +50,7 @@ public class PluginSettings implements IPluginSettings {
 
 	protected static List<IMenuCustomization> menuCustomizations = new ArrayList<IMenuCustomization>();
 	
-	protected Map<String,IObjectCreator> contentGeneratorCreatorMap = new HashMap<String,IObjectCreator>();
-
-	protected static Map<String,List<IObjectCreator>> contentGeneratorMap = new HashMap<String,List<IObjectCreator>>();
-	
-	protected static Map<String,List<IContentGeneratorInfo>> contentInfoForTypeLists = new HashMap<String,List<IContentGeneratorInfo>>();
+	protected static Map<String,List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = new HashMap<String,List<IContentGeneratorInfo>>();
 	
 	protected static Map<String,IContentGeneratorInfo> contentInfoMap = new HashMap<String,IContentGeneratorInfo>();
 	
@@ -66,7 +58,7 @@ public class PluginSettings implements IPluginSettings {
 	
 	protected static List<IXulOverlay> overlays = new ArrayList<IXulOverlay>();
 	
-	protected static PentahoObjectFactory contentGeneratorFactory;
+	protected static StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 	
 	protected static final ThreadLocal<IPentahoSession> sessions = new ThreadLocal<IPentahoSession>();
 	
@@ -76,8 +68,12 @@ public class PluginSettings implements IPluginSettings {
 		instance = this;
 	}
 	
+	 public IPentahoObjectFactory getObjectFactory() {
+	   return objectFactory;
+	 }
+
 	public Set<String> getContentTypes() {
-		return contentGeneratorMap.keySet();
+		return contentGeneratorInfoByTypeMap.keySet();
 	}
 	
 	public List<IXulOverlay> getOverlays(){
@@ -88,9 +84,13 @@ public class PluginSettings implements IPluginSettings {
 		return contentTypeByExtension.get( extension );
 	}
 	
-	public List<IObjectCreator> getContentGeneratorsForType( String type, IPentahoSession session ) {
-		return contentGeneratorMap.get( type );
-	}
+  public List<IContentGeneratorInfo> getContentGeneratorInfoForType( String type, IPentahoSession session ) {
+    return contentGeneratorInfoByTypeMap.get( type );
+  }
+
+  public List<IObjectCreator> getContentGeneratorsForType( String type, IPentahoSession session ) {
+    return null;
+  }
 	
 	public static PluginSettings getInstance() {
 		return instance;
@@ -101,8 +101,7 @@ public class PluginSettings implements IPluginSettings {
 		if( info == null ) {
 			return null;
 		}
-		IObjectCreator creator = info.getCreator();
-		return creator == null ? null : (IContentGenerator) creator.getInstance( id, session);
+		return (IContentGenerator) objectFactory.getObject( id, session);
 	}
 	
 	public IContentGeneratorInfo getContentGeneratorInfo( String id, IPentahoSession session ) {
@@ -111,7 +110,7 @@ public class PluginSettings implements IPluginSettings {
 	}
 	
 	public IContentGeneratorInfo getDefaultContentGeneratorInfoForType( String type, IPentahoSession session ) {
-		List<IContentGeneratorInfo> contentIds = contentInfoForTypeLists.get( type );
+		List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get( type );
 		if( !CollectionUtils.isEmpty(contentIds) ) {
 			IContentGeneratorInfo info = contentIds.get( 0 );
 			return info;
@@ -120,7 +119,7 @@ public class PluginSettings implements IPluginSettings {
 	}
 	
 	public String getContentGeneratorIdForType( String type, IPentahoSession session ) {
-		List<IContentGeneratorInfo> contentIds = contentInfoForTypeLists.get( type );
+		List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get( type );
 		if( !CollectionUtils.isEmpty(contentIds) ) {
 			IContentGeneratorInfo info = contentIds.get( 0 );
 			return info.getId();
@@ -129,7 +128,7 @@ public class PluginSettings implements IPluginSettings {
 	}
 	
 	public String getContentGeneratorTitleForType( String type, IPentahoSession session ) {
-		List<IContentGeneratorInfo> contentIds = contentInfoForTypeLists.get( type );
+		List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get( type );
 		if( !CollectionUtils.isEmpty(contentIds) ) {
 			IContentGeneratorInfo info = contentIds.get( 0 );
 			return info.getTitle();
@@ -138,7 +137,7 @@ public class PluginSettings implements IPluginSettings {
 	}
 	
 	public String getContentGeneratorUrlForType( String type, IPentahoSession session ) {
-		List<IContentGeneratorInfo> contentIds = contentInfoForTypeLists.get( type );
+		List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get( type );
 		if( !CollectionUtils.isEmpty(contentIds) ) {
 			IContentGeneratorInfo info = contentIds.get( 0 );
 			return info.getUrl();
@@ -149,10 +148,10 @@ public class PluginSettings implements IPluginSettings {
 	public IContentGenerator getContentGeneratorForType( String type, IPentahoSession session ) throws ObjectFactoryException {
 		// return the default content generator for the given type
 		// for now we'll assume the first in the list is the default
-		List<IObjectCreator> contentGenerators = contentGeneratorMap.get( type );
+		List<IContentGeneratorInfo> contentGenerators = contentGeneratorInfoByTypeMap.get( type );
 		if( !CollectionUtils.isEmpty(contentGenerators) ) {
-			IObjectCreator creator = contentGenerators.get( 0 );
-			IContentGenerator generator = (IContentGenerator) creator.getInstance( type, session);
+			String id = contentGenerators.get( 0 ).getId();
+			IContentGenerator generator = (IContentGenerator) objectFactory.getObject(id, session);
 			return generator;
 		}
 		return null;
@@ -197,11 +196,9 @@ public class PluginSettings implements IPluginSettings {
 		// clear out the existing settings
     overlays.clear();
 		menuCustomizations.clear();
-		contentGeneratorMap.clear();
-		contentInfoForTypeLists.clear();
+		contentGeneratorInfoByTypeMap.clear();
 		contentTypeByExtension.clear();
-		contentGeneratorFactory = new PentahoObjectFactory();
-		contentGeneratorCreatorMap = new HashMap<String,IObjectCreator>();
+		objectFactory.init(null, null);
 		SolutionClassLoader.clearResourceCache();
 	}
 	
@@ -231,9 +228,6 @@ public class PluginSettings implements IPluginSettings {
 				result &= processDirectory( kid, repo, session, comments );
 			}
 		}
-		
-		// we have all the content generator creators so we can create the object factory
-		contentGeneratorFactory.setObjectCreators( contentGeneratorCreatorMap );
 		
 		return result;
 	}
@@ -393,7 +387,7 @@ public class PluginSettings implements IPluginSettings {
           Element operationNode = (Element) operationObj;
           String id = XmlDom4JHelper.getNodeText( "id" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
           String command = XmlDom4JHelper.getNodeText( "command" , operationNode, "" ); //$NON-NLS-1$ //$NON-NLS-2$
-          if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( id )  ) {
+          if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( command )  ) {
             IPluginOperation operation = new PluginOperation( id, command );
             contentInfo.addOperation(operation);
           }
@@ -430,68 +424,51 @@ public class PluginSettings implements IPluginSettings {
 				
 				if( id != null && type != null && scope != null && className != null && title != null ) {
 					
-					IObjectCreator creator = null;
-					if( "global".equals( scope ) ) { //$NON-NLS-1$
-						creator = new GlobalObjectCreator( className );
-					}
-					else if( "session".equals( scope ) ) { //$NON-NLS-1$
-						creator = new SessionObjectCreator( className );
-					}
-					else if( "local".equals( scope ) ) { //$NON-NLS-1$
-						creator = new LocalObjectCreator( className );
-					}
-					else if( "thread".equals( scope ) ) { //$NON-NLS-1$
-						creator = new ThreadObjectCreator( className );
-					}
+          ClassLoader loader = new SolutionClassLoader( "system"+ISolutionRepository.SEPARATOR+folder+ISolutionRepository.SEPARATOR+"lib", //$NON-NLS-1$ //$NON-NLS-2$
+              this );
+				  try {
+			      try {
+			        Class clazz = loader.loadClass( className );
+              objectFactory.addObject( clazz.getSimpleName(), className, scope, loader);
+              objectFactory.addObject( id, className, scope, loader);
+			      } catch ( Exception e ) {
+			        comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
+	            continue;
+			      }
 					
-					if( creator != null ) {
-						ClassLoader loader = null;
 						// do a test load of the content generator so we can fail now if the class cannot be found
-						IObjectCreator createNow = new LocalObjectCreator( className );
-						if( hasLib ) {
-							// this needs a solution class loader
-							loader = new SolutionClassLoader( "system"+ISolutionRepository.SEPARATOR+folder+ISolutionRepository.SEPARATOR+"lib", //$NON-NLS-1$ //$NON-NLS-2$
-									this );
-							creator.setClassLoader( loader );
-							createNow.setClassLoader(loader);
-						}
 						// this tests class loading and cast class issues
-						IContentGenerator created = (IContentGenerator) createNow.getInstance(id, session);
+						Object tmpObject = objectFactory.getObject( id, session);
+						
+						if( !(tmpObject instanceof IContentGenerator) ) {
+	            comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
+	            continue;
+						}
 						
 						ContentGeneratorInfo info = new ContentGeneratorInfo();
 						info.setId( id );
 						info.setTitle( title );
 						info.setDescription( description );
-						info.setObjectCreator( creator );
 						info.setUrl( ( url != null ) ? url : "" ); //$NON-NLS-1$
 
 						if( fileInfoClassName != null ) {
 							// try to create the fileinfo generator class
 							IFileInfoGenerator fileInfoGenerator = null;
 
-							if( loader != null ) {
-								fileInfoGenerator = createFileInfoGenerator( fileInfoClassName, loader );
-							} else {
-								fileInfoGenerator = createFileInfoGenerator( fileInfoClassName, getClass().getClassLoader() );
-							}
+              fileInfoGenerator = createFileInfoGenerator( fileInfoClassName, loader );
 							info.setFileInfoGenerator(fileInfoGenerator);
 						}
 
-						contentGeneratorCreatorMap.put( id, creator );
 						contentInfoMap.put( id, info );
-						List<IObjectCreator> creatorList = contentGeneratorMap.get( type );
-						List<IContentGeneratorInfo> infoList = contentInfoForTypeLists.get( type );
-						if( creatorList == null ) {
-							creatorList = new ArrayList<IObjectCreator>();
-							infoList = new ArrayList<IContentGeneratorInfo>();
-							contentGeneratorMap.put( type, creatorList );
-							contentInfoForTypeLists.put( type, infoList );
+						List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get( type );
+						if( generatorList == null ) {
+						  generatorList = new ArrayList<IContentGeneratorInfo>();
+						  contentGeneratorInfoByTypeMap.put( type, generatorList);
 						}
-						creatorList.add( creator );
-						infoList.add( info );
+						generatorList.add( info );
 																		
 						comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_REGISTERED", id, folder ) ); //$NON-NLS-1$
-					} else {
+					} catch (Exception e) {
 						comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
 					}
 				} else {
