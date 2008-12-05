@@ -128,7 +128,9 @@ public class XulMainToolbar extends SimplePanel implements IMessageBundleLoadCal
             btn.setImage(curSrc.replace("mantle/", ""));
             
             curSrc = btn.getDisabledImage();
-            btn.setDisabledImage(curSrc.replace("mantle/", ""));
+            if(curSrc != null ){
+              btn.setDisabledImage(curSrc.replace("mantle/", ""));
+            }
           }
         }
       }
