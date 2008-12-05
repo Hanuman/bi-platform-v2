@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=default%2Cruntime%2Ctest%2Ccodegen%2Csource&amp;ivySettingsPath=file%3A.%2Fivysettings.xml&amp;buildPropertyFiles=build.properties&amp;acceptedTypes=jar&amp;sourceTypes=source&amp;javadocTypes=javadoc&amp;sourceSuffixes=-source%2C-sources%2C-src&amp;javadocSuffixes=-javadoc%2C-javadocs%2C-doc%2C-docs&amp;doRetrieve=false&amp;retrievePattern=lib%2F%5Bconf%5D%2F%5Bartifact%5D.%5Bext%5D&amp;alphaOrder=true"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-scheduler"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-ui-foundation"/>
@@ -16,5 +15,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-services"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin-actions"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-plugin-services"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pentaho-xul-gwt"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pentaho-xul-v2"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=default%2Cruntime%2Ctest%2Ccodegen%2Csource&amp;ivySettingsPath=file%3A.%2Fivysettings.xml&amp;buildPropertyFiles=build.properties&amp;acceptedTypes=jar&amp;sourceTypes=source&amp;javadocTypes=javadoc&amp;sourceSuffixes=-source%2C-sources%2C-src&amp;javadocSuffixes=-javadoc%2C-javadocs%2C-doc%2C-docs&amp;doRetrieve=false&amp;retrievePattern=lib%2F%5Bconf%5D%2F%5Bartifact%5D.%5Bext%5D&amp;alphaOrder=true"/>
 	<classpathentry kind="output" path="eclipse-bin"/>
 </classpath>
