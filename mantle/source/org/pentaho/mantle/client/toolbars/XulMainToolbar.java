@@ -7,9 +7,13 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulDomContainer;
+import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.gwt.GwtXulLoader;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
+import org.pentaho.ui.xul.gwt.tags.GwtToolbar;
+import org.pentaho.ui.xul.gwt.tags.GwtToolbarbutton;
 import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 
 import com.google.gwt.core.client.GWT;
@@ -111,6 +115,23 @@ public class XulMainToolbar extends SimplePanel implements IMessageBundleLoadCal
       Toolbar bar = (Toolbar) container.getDocumentRoot().getElementById("mainToolbar").getManagedObject();    //$NON-NLS-1$
       this.add(bar);
       bar.setStylePrimaryName("mainToolbar");    //$NON-NLS-1$
+      
+      //Fix for image locations in hosted mode. This really needs to be addressed
+      if (!GWT.isScript()) {
+        
+        GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar");
+        for(XulComponent c : toolbar.getChildNodes()){
+          if(c instanceof XulToolbarbutton){
+            GwtToolbarbutton btn = (GwtToolbarbutton) c;
+            
+            String curSrc = btn.getImage();
+            btn.setImage(curSrc.replace("mantle/", ""));
+            
+            curSrc = btn.getDisabledImage();
+            btn.setDisabledImage(curSrc.replace("mantle/", ""));
+          }
+        }
+      }
 
       RootPanel.get().add(runner.getRootPanel());
     } catch (Exception e) {
