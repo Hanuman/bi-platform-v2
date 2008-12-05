@@ -8,8 +8,8 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulComponent;
-import org.pentaho.ui.xul.XulDomContainer;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
+import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulLoader;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
 import org.pentaho.ui.xul.gwt.tags.GwtToolbar;
@@ -93,7 +93,7 @@ public class XulMainToolbar extends SimplePanel implements IMessageBundleLoadCal
       GwtXulRunner runner = new GwtXulRunner();
 
       com.google.gwt.xml.client.Document gwtDoc = XMLParser.parse(xul);
-      XulDomContainer container;
+      GwtXulDomContainer container;
 
       if(bundle != null){
         container = loader.loadXul(gwtDoc, bundle);
