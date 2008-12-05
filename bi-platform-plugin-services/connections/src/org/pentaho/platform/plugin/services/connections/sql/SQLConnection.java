@@ -34,6 +34,7 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.api.engine.PentahoSystemException;
 import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
@@ -261,8 +262,9 @@ public class SQLConnection implements IPentahoLoggingConnection {
    * @return the resultset from the query
    * @throws SQLException indicates an error running the query
    * @throws InterruptedException indicates that the query took longer than the allowed timeout value
+   * @throws PentahoSystemException 
    */
-  public IPentahoResultSet executeQuery(final String query) throws SQLException, InterruptedException {
+  public IPentahoResultSet executeQuery(final String query) throws SQLException, InterruptedException, PentahoSystemException {
     return executeQuery(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
   }
 
@@ -274,16 +276,26 @@ public class SQLConnection implements IPentahoLoggingConnection {
    * @return the result set of data for the query
    * @throws SQLException indicates an error running the query
    * @throws InterruptedException indicates the query took longer than allowable by the query timeout
+   * @throws PentahoSystemException 
    */
   public IPentahoResultSet executeQuery(final String query, final int scrollType, final int concur)
-      throws SQLException, InterruptedException {
+      throws SQLException, InterruptedException, PentahoSystemException {
     // Create a statement for a scrollable resultset.
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
     logger.debug("Executing query with timeout value of [" + timeOut + "]"); //$NON-NLS-1$//$NON-NLS-2$
 
     //Added by Arijit Chatterjee. Sets the value of statement.setQueryTimeout() in seconds
-    stmt.setQueryTimeout(timeOut);
-
+    //The setQueryTimeout introduced a bug where some drivers don't support setting the timeout
+    //So what we're going to do is wrap this in a try/catch and if the timeout was being set to zero
+    //well won't do anything.  If it was being set to anything else we'll throw a pentaho exception
+    try {
+      stmt.setQueryTimeout(timeOut);
+    } catch (Exception e) {
+      if (timeOut != 0) {
+        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", new Integer(timeOut).toString()), e); //$NON-NLS-1$
+      }
+    }
+    
     stmts.add(stmt);
     if (fetchSize > 0) {
       stmt.setFetchSize(fetchSize);
