@@ -47,7 +47,11 @@
           <artifact name="pentaho-gwt-widgets"/>
           <artifact name="pentaho-gwt-widgets" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
-
+        
+        <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul-gwt.revision}" conf="default->default" changing="true">
+          <artifact name="pentaho-xul-gwt"/>
+          <artifact name="pentaho-xul-gwt" type="source" ext="jar" m:classifier="sources"/>
+        </dependency>
 
         <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.10" conf="default->default"/>
 

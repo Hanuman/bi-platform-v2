@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <toolbar id="mainToolbar">
+    <toolbarbutton position="5" id="workspaceButton" image="mantle/images/workspace_32.png" tooltiptext="${workspace}"/>
+    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" tooltiptext="${toggleSolutionBrowser}"/>
+  </toolbar>
+  
+</overlay>

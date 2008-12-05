@@ -16,6 +16,7 @@
 	<path id="classpath">
 		<fileset dir="lib" excludes="pentaho-gwt-widgets*.jar" includes="*.jar, apache-commons/*.jar, gwt-win/*.jar, platform/*.jar, reporting_0894/*.jar" />
 		<fileset dir="../pentaho-gwt-widgets/lib" includes="*.jar, apache-commons/*.jar, gwt-win/*.jar" />
+	  <fileset dir="../pentaho-xul-gwt/lib" excludes="pentaho-gwt-widgets*.jar"  includes="*.jar, apache-commons/*.jar, gwt-win/*.jar" />
 	</path>
 
 	<!-- ===================================================================
@@ -43,6 +44,7 @@
 		<copy todir="_source">
 			<fileset dir="source" includes="**/*" />
 			<fileset dir="../pentaho-gwt-widgets/src" includes="**/*" />
+      <fileset dir="../pentaho-xul-gwt/src" includes="**/*" />
 		</copy>
 		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_MAJOR$" value="${release.major.number}" />
 		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_MINOR$" value="${release.minor.number}" />
@@ -53,6 +55,7 @@
 		<mkdir dir="dist/bin" />
 		<copy todir="dist/bin">
 			<fileset dir="_source" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
+      <fileset dir="../pentaho-xul-gwt/src" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
 			<fileset dir="../pentaho-gwt-widgets/src" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
 		</copy>
 		<mkdir dir="${pentaho-webapp-root}/mantle" />

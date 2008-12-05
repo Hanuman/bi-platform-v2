@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window width="400" height="275" title="Placeholder"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"  xmlns:pen="http://www.pentaho.org/2008/xul" onload="mainToolbarHandler.init()">
+  
+  <toolbar id="mainToolbar">
+    <toolbarspacer width="10"/>
+    <toolbarbutton id="openButton" image="mantle/images/open_32.png" onclick="mainToolbarHandler.openClicked()" tooltiptext="${openEllipsis}"/>
+    <toolbarspacer width="20"/>
+    <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" tooltiptext="${newAdhocReportEllipsis}"/>
+    <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" tooltiptext="${newAnalysisViewEllipsis}"/>
+    <toolbarspacer width="20"/>
+    <toolbarbutton id="saveButton" image="mantle/images/save_32.png" pen:disabledImage="mantle/images/save_32_disabled.png" tooltiptext="${save}"/>
+    <toolbarbutton id="saveAsButton" image="mantle/images/saveAs_32.png" tooltiptext="${saveAs}"/>
+    <toolbarspacer width="20"/>
+    <toolbarbutton id="printButton" image="mantle/images/print_32.png" tooltiptext="${print}"/>
+    <toolbarspacer width="20"/>
+    <toolbarbutton id="workspaceButton" image="mantle/images/workspace_32.png" type="toggle" tooltiptext="${workspace}"/>
+    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" tooltiptext="${toggleSolutionBrowser}"/>
+  </toolbar>
+  
+</window>

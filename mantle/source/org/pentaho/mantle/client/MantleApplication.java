@@ -62,6 +62,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserList
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.toolbars.MainToolbar;
+import org.pentaho.mantle.client.toolbars.XulMainToolbar;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
@@ -101,7 +102,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   // menu items (to be enabled/disabled)
   private MenuBar menuBar;
   private MenuBar viewMenu;
-  private MainToolbar mainToolbar;
+  //private MainToolbar mainToolbar;
+  private XulMainToolbar mainToolbar;
 
   private SolutionBrowserPerspective solutionBrowserPerspective;
   private FileCommand propertiesCommand;
@@ -170,7 +172,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAsEllipsis"), new SaveCommand(solutionBrowserPerspective, true)); //$NON-NLS-1$
     propertiesMenuItem = new PentahoMenuItem(Messages.getString("propertiesEllipsis"), propertiesCommand); //$NON-NLS-1$
 
-    mainToolbar = new MainToolbar(solutionBrowserPerspective);
+    mainToolbar = new XulMainToolbar(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
     
     // first things first... make sure we've registered our native hooks
