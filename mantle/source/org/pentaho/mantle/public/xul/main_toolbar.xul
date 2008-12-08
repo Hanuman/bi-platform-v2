@@ -7,16 +7,16 @@
     <toolbarspacer width="10"/>
     <toolbarbutton id="openButton" image="mantle/images/open_32.png" onclick="mainToolbarHandler.openClicked()" tooltiptext="${openEllipsis}"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" tooltiptext="${newAdhocReportEllipsis}"/>
-    <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" tooltiptext="${newAnalysisViewEllipsis}"/>
+    <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" onclick="mainToolbarHandler.newAdhocClicked()" tooltiptext="${newAdhocReportEllipsis}"/>
+    <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" disabledimage="mantle/images/new_analysis_32_disabled.png" onclick="mainToolbarHandler.newAnalysisClicked()" tooltiptext="${newAnalysisViewEllipsis}"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="saveButton" image="mantle/images/save_32.png" pen:disabledImage="mantle/images/save_32_disabled.png" tooltiptext="${save}"/>
-    <toolbarbutton id="saveAsButton" image="mantle/images/saveAs_32.png" tooltiptext="${saveAs}"/>
+    <toolbarbutton id="saveButton" image="mantle/images/save_32.png" disabledimage="mantle/images/save_32_disabled.png" onclick="mainToolbarHandler.saveClicked()" tooltiptext="${save}" disabled="true"/>
+    <toolbarbutton id="saveAsButton" image="mantle/images/saveAs_32.png" disabledimage="mantle/images/saveAs_32_disabled.png"  onclick="mainToolbarHandler.saveAsClicked()" tooltiptext="${saveAs}" disabled="true"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="printButton" image="mantle/images/print_32.png" tooltiptext="${print}"/>
+    <toolbarbutton id="printButton" image="mantle/images/print_32.png" disabledimage="mantle/images/print_32_disabled.png" onclick="mainToolbarHandler.printClicked()" tooltiptext="${print}" disabled="true"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="workspaceButton" image="mantle/images/workspace_32.png" type="toggle" tooltiptext="${workspace}"/>
-    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" tooltiptext="${toggleSolutionBrowser}"/>
+    <toolbarbutton id="workspaceButton" image="mantle/images/workspace_32.png" type="toggle" onclick="mainToolbarHandler.workspaceClicked()" tooltiptext="${workspace}"/>
+    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" onclick="mainToolbarHandler.showBrowserClicked()" tooltiptext="${toggleSolutionBrowser}"/>
   </toolbar>
   
 </window>
