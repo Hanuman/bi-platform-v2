@@ -317,7 +317,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
             dialogBox.center();
           }
         }
-        mainToolbar.solutionBrowserEvent(null, null);
+        // TODO: replace logic mainToolbar.solutionBrowserEvent(null, null);
       }
     };
     MantleServiceCache.getService().getUserSettings(callback);
@@ -354,7 +354,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         perspectivesPanel.setHeight("100%"); //$NON-NLS-1$
         perspectivesPanel.setWidth("100%"); //$NON-NLS-1$
 
-        solutionBrowserPerspective.addSolutionBrowserListener(mainToolbar);
         solutionBrowserPerspective.addSolutionBrowserListener(MantleApplication.this);
         perspectivesPanel.add(solutionBrowserPerspective);
         // perspectivesPanel.add(desktopPerspective);
@@ -401,7 +400,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           solutionBrowserPerspective.showNewURLTab(title, title, startupURL);
         }
 
-        mainToolbar.solutionBrowserEvent(null, null);
+        // TODO: replace logic mainToolbar.solutionBrowserEvent(null, null);
       }
 
       public void onFailure(Throwable caught) {
