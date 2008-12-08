@@ -23,6 +23,7 @@ public class MainToolbarModel implements SolutionBrowserListener{
   
   public MainToolbarModel(final SolutionBrowserPerspective solutionBrowser){
     this.solutionBrowser = solutionBrowser;
+    solutionBrowser.addSolutionBrowserListener(this);
   }
   
   public void setSaveEnabled(Boolean enabled){
