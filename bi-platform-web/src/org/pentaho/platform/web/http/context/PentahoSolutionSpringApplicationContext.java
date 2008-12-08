@@ -23,6 +23,12 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
+/**
+ * Overrides <code>getResourceByPath</code> so that relative paths are relative to the Pentaho solution repository's 
+ * system directory instead of being relative to <code>WEB-INF</code>.
+ * 
+ * @author mlowery
+ */
 public class PentahoSolutionSpringApplicationContext extends XmlWebApplicationContext {
 
   protected Resource getResourceByPath(String path) {
