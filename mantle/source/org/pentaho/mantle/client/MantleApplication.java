@@ -61,7 +61,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.toolbars.MainToolbar;
 import org.pentaho.mantle.client.toolbars.XulMainToolbar;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
@@ -116,6 +115,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem propertiesMenuItem;
 
   public boolean isAdministrator = false;
+  
 
   public void activatePerspective(IPerspective perspective) {
     for (int i = 0; i < perspectivesPanel.getWidgetCount(); i++) {
@@ -180,6 +180,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
 
+    
     Timer timer = new Timer() {
 
       public void run() {
@@ -283,6 +284,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     $wnd.enableAdhocSave = function(enable) {
       mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
     }
+    
   }-*/;
 
   public void loadAndApplyUserSettings() {
@@ -317,7 +319,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
             dialogBox.center();
           }
         }
-        // TODO: replace logic mainToolbar.solutionBrowserEvent(null, null);
       }
     };
     MantleServiceCache.getService().getUserSettings(callback);
@@ -400,7 +401,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           solutionBrowserPerspective.showNewURLTab(title, title, startupURL);
         }
 
-        // TODO: replace logic mainToolbar.solutionBrowserEvent(null, null);
       }
 
       public void onFailure(Throwable caught) {

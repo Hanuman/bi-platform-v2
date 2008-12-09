@@ -25,6 +25,8 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
   
   private MainToolbarController controller;
   
+  private GwtXulDomContainer container;
+  
   public XulMainToolbar(final SolutionBrowserPerspective solutionBrowser){
     
     //instantiate our Model and Controller
@@ -50,7 +52,7 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
     wrapper.setHandler(controller);
   
     // Add handler to container
-    GwtXulDomContainer container = (GwtXulDomContainer) runner.getXulDomContainers().get(0);
+    container = (GwtXulDomContainer) runner.getXulDomContainers().get(0);
     container.addEventHandler(wrapper);
   
     try{
@@ -65,9 +67,7 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
     Toolbar bar = (Toolbar) container.getDocumentRoot().getElementById("mainToolbar").getManagedObject();    //$NON-NLS-1$
     bar.setStylePrimaryName("mainToolbar");    //$NON-NLS-1$
     this.add(bar);
-    
-    
-    //Fix for image locations in hosted mode. This really needs to be addressed Mantle-wide
+
     if (!GWT.isScript()) {
       
       GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar");  //$NON-NLS-1$
@@ -86,7 +86,10 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
       }
     }
   }
+  
+  public void overlayLoaded(){
     
+  } 
   
 }
 
