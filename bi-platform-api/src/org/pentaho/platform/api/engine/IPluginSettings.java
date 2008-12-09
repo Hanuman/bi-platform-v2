@@ -94,4 +94,11 @@ public interface IPluginSettings {
 	 * @return List of XML XUL overlays
 	 */
 	public List<IXulOverlay> getOverlays();
+	
+  public void addOverlay( String id, String xml, String resourceBundleUri );
+  
+  public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
+      IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException;
+
+  public void addContentInfo( String extension, IContentInfo contentInfo );
 }
