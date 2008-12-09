@@ -18,6 +18,7 @@ import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
+import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginOperation;
@@ -183,6 +184,10 @@ public class PluginSettings implements IPluginSettings {
 		sessions.set( session );
 	}
 	
+	public static void removeSession() {
+	  sessions.remove();
+	}
+	
 	public List<IMenuCustomization> getMenuCustomizations() {
 		return menuCustomizations;
 	}
@@ -345,13 +350,17 @@ public class PluginSettings implements IPluginSettings {
 	        xml = ((Element)node.elements().get(0)).asXML();
 	      }
 	      if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( xml ) ) {
-	        XulOverlay overlay = new XulOverlay( id, null, xml, resourceBundleUri );
-	        overlays.add( overlay );
+	        addOverlay( id, xml, resourceBundleUri);
 	      }
 	      
 	    }
 	    
 	    return result;
+	 }
+	 
+	 public void addOverlay( String id, String xml, String resourceBundleUri ) {
+     XulOverlay overlay = new XulOverlay( id, null, xml, resourceBundleUri );
+     overlays.add( overlay );
 	 }
 	 
 	protected boolean processContentTypes( Document doc, IPentahoSession session, List<String> comments ) {
@@ -388,7 +397,7 @@ public class PluginSettings implements IPluginSettings {
           }
         }
         
-				contentTypeByExtension.put( extension, contentInfo );
+        addContentInfo( extension, contentInfo );
 				comments.add( Messages.getString("PluginSettings.USER_CONTENT_TYPE_REGISTERED", extension, title ) ); //$NON-NLS-1$
 			} else {
 				comments.add( Messages.getString("PluginSettings.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title ) ); //$NON-NLS-1$
@@ -398,6 +407,10 @@ public class PluginSettings implements IPluginSettings {
 		return result;
 	}
 
+	public void addContentInfo( String extension, IContentInfo contentInfo ) {
+    contentTypeByExtension.put( extension, contentInfo );
+	}
+	
 	protected boolean processContentGenerators( Document doc, IPentahoSession session, List<String> comments, String folder, ISolutionRepository repo, boolean hasLib ) {
 		// look for content generators
 		boolean result = true;
@@ -422,47 +435,8 @@ public class PluginSettings implements IPluginSettings {
           ClassLoader loader = new SolutionClassLoader( "system"+ISolutionRepository.SEPARATOR+folder+ISolutionRepository.SEPARATOR+"lib", //$NON-NLS-1$ //$NON-NLS-2$
               this );
 				  try {
-			      try {
-			        Class clazz = loader.loadClass( className );
-              objectFactory.addObject( clazz.getSimpleName(), className, scope, loader);
-              objectFactory.addObject( id, className, scope, loader);
-			      } catch ( Exception e ) {
-			        comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
-	            continue;
-			      }
-					
-						// do a test load of the content generator so we can fail now if the class cannot be found
-						// this tests class loading and cast class issues
-						Object tmpObject = objectFactory.getObject( id, session);
-						
-						if( !(tmpObject instanceof IContentGenerator) ) {
-	            comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
-	            continue;
-						}
-						
-						ContentGeneratorInfo info = new ContentGeneratorInfo();
-						info.setId( id );
-						info.setTitle( title );
-						info.setDescription( description );
-						info.setUrl( ( url != null ) ? url : "" ); //$NON-NLS-1$
-
-						if( fileInfoClassName != null ) {
-							// try to create the fileinfo generator class
-							IFileInfoGenerator fileInfoGenerator = null;
-
-              fileInfoGenerator = createFileInfoGenerator( fileInfoClassName, loader );
-							info.setFileInfoGenerator(fileInfoGenerator);
-						}
-
-						contentInfoMap.put( id, info );
-						List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get( type );
-						if( generatorList == null ) {
-						  generatorList = new ArrayList<IContentGeneratorInfo>();
-						  contentGeneratorInfoByTypeMap.put( type, generatorList);
-						}
-						generatorList.add( info );
-																		
-						comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_REGISTERED", id, folder ) ); //$NON-NLS-1$
+				    addContentGenerator( id, title, description, type, url, scope, className, fileInfoClassName, 
+				         session, comments, folder, loader );
 					} catch (Exception e) {
 						comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
 					}
@@ -477,7 +451,56 @@ public class PluginSettings implements IPluginSettings {
 		return result;
 	}
 	
-	private IFileInfoGenerator createFileInfoGenerator( String fileInfoClassName, ClassLoader loader ) throws Exception {
+	public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
+	    IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    try {
+      Class clazz = loader.loadClass( className );
+      objectFactory.addObject( clazz.getSimpleName(), className, scope, loader);
+      objectFactory.addObject( id, className, scope, loader);
+    } catch ( Exception e ) {
+      comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
+      return;
+    }
+  
+    // do a test load of the content generator so we can fail now if the class cannot be found
+    // this tests class loading and cast class issues
+    Object tmpObject = objectFactory.getObject( id, session);
+    
+    if( !(tmpObject instanceof IContentGenerator) ) {
+      comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
+      return;
+    }
+    
+    if( tmpObject instanceof IPentahoInitializer ) {
+      ((IPentahoInitializer) tmpObject).init(session);
+    }
+    
+    ContentGeneratorInfo info = new ContentGeneratorInfo();
+    info.setId( id );
+    info.setTitle( title );
+    info.setDescription( description );
+    info.setUrl( ( url != null ) ? url : "" ); //$NON-NLS-1$
+
+    if( fileInfoClassName != null ) {
+      // try to create the fileinfo generator class
+      IFileInfoGenerator fileInfoGenerator = null;
+
+      fileInfoGenerator = createFileInfoGenerator( fileInfoClassName, loader );
+      info.setFileInfoGenerator(fileInfoGenerator);
+    }
+
+    contentInfoMap.put( id, info );
+    List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get( type );
+    if( generatorList == null ) {
+      generatorList = new ArrayList<IContentGeneratorInfo>();
+      contentGeneratorInfoByTypeMap.put( type, generatorList);
+    }
+    generatorList.add( info );
+                            
+    comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_REGISTERED", id, location ) ); //$NON-NLS-1$
+	}
+	
+	private IFileInfoGenerator createFileInfoGenerator( String fileInfoClassName, ClassLoader loader ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Class<?> clazz = loader.loadClass(fileInfoClassName);
 		return (IFileInfoGenerator) clazz.newInstance();
 	}
