@@ -79,10 +79,12 @@ public class GenericServlet extends ServletBase {
         pathParams.setParameter( "query" , request.getQueryString() ); //$NON-NLS-1$
         pathParams.setParameter( "contentType", request.getContentType() ); //$NON-NLS-1$
         pathParams.setParameter( "inputstream" , in ); //$NON-NLS-1$
+        pathParams.setParameter( "httpresponse", response ); //$NON-NLS-1$
+        pathParams.setParameter( "httprequest", request ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
 	    	IPentahoSession session = getPentahoSession( request );
-	    	IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); //$NON-NLS-1$
+	    	IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session );
 		    if( pluginSettings == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";
