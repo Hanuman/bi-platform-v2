@@ -97,11 +97,13 @@ public class MainToolbarModel implements SolutionBrowserListener{
   public void executeWorkspaceCommand() {
     ToggleWorkspaceCommand toggleWorkspaceCommand = new ToggleWorkspaceCommand(solutionBrowser);
     toggleWorkspaceCommand.execute();  
+    solutionBrowser.toggleWorkspace();
   }
   
   public void executeShowBrowserCommand() {
     ShowBrowserCommand showBrowserCommand = new ShowBrowserCommand(solutionBrowser);
     showBrowserCommand.execute();
+    controller.setShowBrowserSelected(isSolutionBrowserShowing());
   }
   /**
    * Process incoming events from the SolutionBrowser here
