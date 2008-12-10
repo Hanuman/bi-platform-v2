@@ -46,12 +46,12 @@
           <artifact name="pentaho-gwt-widgets" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
         
-        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul-gwt.revision}" conf="default->default" changing="true">
+        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" conf="default->default" changing="true">
           <artifact name="pentaho-xul-core"/>
           <artifact name="pentaho-xul-core" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
 
-        <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul-gwt.revision}" conf="default->default" changing="true">
+        <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul.revision}" conf="default->default" changing="true">
           <artifact name="pentaho-xul-gwt"/>
           <artifact name="pentaho-xul-gwt" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
