@@ -27,8 +27,6 @@
         <dependency org="com.google.gwt"        name="gwt-servlet"        rev="1.5.2" conf="default->default"/>
 
 		    <!--  Pentaho dependencies -->
-    	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul-core.revision}" changing="true" />
-        
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" conf="default->default" changing="true">
           <artifact name="pentaho-bi-platform-api"/>
           <artifact name="pentaho-bi-platform-api" type="source" ext="jar" m:classifier="sources"/>
@@ -48,6 +46,11 @@
           <artifact name="pentaho-gwt-widgets" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
         
+        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul-gwt.revision}" conf="default->default" changing="true">
+          <artifact name="pentaho-xul-core"/>
+          <artifact name="pentaho-xul-core" type="source" ext="jar" m:classifier="sources"/>
+        </dependency>
+
         <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul-gwt.revision}" conf="default->default" changing="true">
           <artifact name="pentaho-xul-gwt"/>
           <artifact name="pentaho-xul-gwt" type="source" ext="jar" m:classifier="sources"/>
