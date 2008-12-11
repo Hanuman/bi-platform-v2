@@ -3,7 +3,10 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User'/>
 	<inherits name='com.google.gwt.xml.XML'/>
-	<inherits name='org.pentaho.ui.xul'/>
+	
+	<inherits name='org.pentaho.ui.Xul'/>
+    <inherits name='org.pentaho.ui.xul.Gwt'/>
+  <inherits name='com.googlecode.gwtx.Java'/> 
 	
 	<inherits name='org.pentaho.platform.repository.usersettings.pojo.UserSettings'/>
     <inherits name='org.pentaho.mantle.login.MantleLogin' />
