@@ -6,7 +6,7 @@ import java.util.List;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -21,7 +21,7 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 		  
 		// from IPentahoSystemListener
 		List<String> comments = new ArrayList<String>();
-		IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, session);
+		IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
 		if( pluginSettings == null ) {
 			// we cannot continue without the PluginSettings
 			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 	public String publish(IPentahoSession session, int loggingLevel) {
 		// from IPentahoPublisher
 		List<String> comments = new ArrayList<String>();
-		IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, session);
+		IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
 		if( pluginSettings == null ) {
 			// we cannot continue without the PluginSettings
 			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$

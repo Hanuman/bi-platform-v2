@@ -21,8 +21,8 @@ import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
-import org.pentaho.platform.api.engine.IPluginSettings;
 import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -31,6 +31,7 @@ import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -46,7 +47,7 @@ import org.pentaho.ui.xul.util.MenuCustomization;
  * @see WebSpringPentahoObjectFactory
  * @see StandaloneSpringPentahoObjectFactory
  */
-public class PluginSettings implements IPluginSettings {
+public class PluginManager implements IPluginManager {
 
 	protected static List<IMenuCustomization> menuCustomizations = new ArrayList<IMenuCustomization>();
 	
@@ -62,9 +63,9 @@ public class PluginSettings implements IPluginSettings {
 	
 	protected static final ThreadLocal<IPentahoSession> sessions = new ThreadLocal<IPentahoSession>();
 	
-	protected static PluginSettings instance;
+	protected static PluginManager instance;
 	
-	public PluginSettings() {
+	public PluginManager() {
 		instance = this;
 	}
 	
@@ -88,7 +89,7 @@ public class PluginSettings implements IPluginSettings {
     return contentGeneratorInfoByTypeMap.get( type );
   }
 
-	public static PluginSettings getInstance() {
+	public static PluginManager getInstance() {
 		return instance;
 	}
 

@@ -39,10 +39,10 @@ PentahoSystem which is initialized after Spring
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="singleton" />
   <bean id="IDatasourceMgmtService" class="org.pentaho.platform.repository.datasource.DatasourceMgmtService" scope="prototype" />
   <!--
-    The SpringPentahoObjectFactory is set to return a null when the bean is a java.lang.String. This is a hack to overcome halfway implemented IPluginSettings code. Please remove
-    this when the PluginSettings code is fully implemented.
+    The SpringPentahoObjectFactory is set to return a null when the bean is a java.lang.String. This is a hack to overcome halfway implemented IPluginManager code. Please remove
+    this when the PluginManager code is fully implemented.
   -->
-  <bean id="IPluginSettings" class="java.lang.String" scope="prototype" />
+  <bean id="IPluginManager" class="java.lang.String" scope="prototype" />
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
     
     <!-- Data connections.  Connections objects should be accessed through PentahoConnectionFactory, 

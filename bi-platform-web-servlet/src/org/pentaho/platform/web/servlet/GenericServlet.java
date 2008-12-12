@@ -25,7 +25,7 @@ import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -84,7 +84,7 @@ public class GenericServlet extends ServletBase {
 	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
 	    	IPentahoSession session = getPentahoSession( request );
-	    	IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session );
+	    	IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session );
 		    if( pluginSettings == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";

@@ -13,12 +13,12 @@ import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 //import org.pentaho.platform.api.engine.IObjectCreator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginOperation;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 //import org.pentaho.platform.engine.core.system.objfac.GlobalObjectCreator;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginSettings;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class ContentGeneratorTest extends BaseTest {
@@ -40,11 +40,11 @@ public class ContentGeneratorTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginSettings ipluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+	    IPluginManager ipluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
 	    assertNotNull( ipluginSettings );
 	    
-	    assertTrue( ipluginSettings instanceof PluginSettings );
-	    PluginSettings pluginSettings = (PluginSettings) ipluginSettings;
+	    assertTrue( ipluginSettings instanceof PluginManager );
+	    PluginManager pluginSettings = (PluginManager) ipluginSettings;
 	    
 	    List<String> messages = new ArrayList<String>();
 	    boolean result = pluginSettings.updatePluginSettings(session, messages);
@@ -128,14 +128,14 @@ public class ContentGeneratorTest extends BaseTest {
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
 	    
-	    PluginSettings.setSession(session);
-	    assertEquals( "test1", PluginSettings.getContentGeneratorIdForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "Test Generator 1", PluginSettings.getContentGeneratorTitleForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "", PluginSettings.getContentGeneratorUrlForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertNotNull( PluginSettings.getInstance() );
-	    assertEquals( "", PluginSettings.getContentGeneratorIdForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "", PluginSettings.getContentGeneratorTitleForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "", PluginSettings.getContentGeneratorUrlForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    PluginManager.setSession(session);
+	    assertEquals( "test1", PluginManager.getContentGeneratorIdForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "Test Generator 1", PluginManager.getContentGeneratorTitleForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "", PluginManager.getContentGeneratorUrlForType("test-type-1") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertNotNull( PluginManager.getInstance() );
+	    assertEquals( "", PluginManager.getContentGeneratorIdForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "", PluginManager.getContentGeneratorTitleForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "", PluginManager.getContentGeneratorUrlForType("test-type-bad") ); //$NON-NLS-1$ //$NON-NLS-2$
 	    
 	    finishTest();
 	  }
@@ -144,7 +144,7 @@ public class ContentGeneratorTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+	    IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
 	    assertNotNull( pluginSettings );
 	    
 	    List<String> messages = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class ContentGeneratorTest extends BaseTest {
       startTest();
       
       IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-      IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+      IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
       assertNotNull( pluginSettings );
       
       List<String> messages = new ArrayList<String>();
@@ -191,7 +191,7 @@ public class ContentGeneratorTest extends BaseTest {
       startTest();
       
       IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-      IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+      IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
       assertNotNull( pluginSettings );
       
       List<String> messages = new ArrayList<String>();
@@ -218,7 +218,7 @@ public class ContentGeneratorTest extends BaseTest {
       startTest();
       
       IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-      IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+      IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
       assertNotNull( pluginSettings );
       
       List<String> messages = new ArrayList<String>();

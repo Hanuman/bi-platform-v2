@@ -53,7 +53,7 @@ import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -369,7 +369,7 @@ public class SolutionRepositoryService extends ServletBase {
         boolean addFile = "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
         boolean isPlugin = false;
         // see if there is a plugin for this file type
-        IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, session); //$NON-NLS-1$
+        IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
         if (pluginSettings != null) {
           Set<String> types = pluginSettings.getContentTypes();
           isPlugin = types != null && types.contains(extension);

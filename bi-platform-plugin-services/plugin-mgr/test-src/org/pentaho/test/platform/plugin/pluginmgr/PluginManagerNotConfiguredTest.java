@@ -9,7 +9,7 @@ import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
@@ -17,7 +17,7 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginSettings;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.TestManager;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 
-public class PluginSettingsNotConfiguredTest extends BaseTest {
+public class PluginManagerNotConfiguredTest extends BaseTest {
   private static final String SOLUTION_PATH = "plugin-mgr/test-res/solution1-no-config"; //$NON-NLS-1$
 
   private static final String ALT_SOLUTION_PATH = "test-res/solution1-no-config"; //$NON-NLS-1$
@@ -108,19 +108,19 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
     startTest();
 
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
-    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
-    assertNull(pluginSettings);
+    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+    assertNull(pluginManager);
 
     finishTest();
   }
 
-  public void testPluginSettingsStaticMethods() {
+  public void testPluginManagerStaticMethods() {
     startTest();
 
-    assertNull(PluginSettings.getInstance());
-    assertEquals("", PluginSettings.getContentGeneratorIdForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", PluginSettings.getContentGeneratorTitleForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", PluginSettings.getContentGeneratorUrlForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
+    assertNull(PluginManager.getInstance());
+    assertEquals("", PluginManager.getContentGeneratorIdForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
+    assertEquals("", PluginManager.getContentGeneratorTitleForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
+    assertEquals("", PluginManager.getContentGeneratorUrlForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
 
     finishTest();
   }

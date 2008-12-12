@@ -55,7 +55,7 @@ import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionAttributeContributor;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
@@ -354,7 +354,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
     boolean addFile = "xaction".equals(extension); //$NON-NLS-1$
-    IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.get(IPluginSettings.class, getSession());; //$NON-NLS-1$
+    IPluginManager pluginSettings = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
     if (pluginSettings != null) {
       Set<String> types = pluginSettings.getContentTypes();
       addFile |= types != null && types.contains(extension);
@@ -390,7 +390,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   protected IFileInfo getFileInfo(final String solution, final String path, final String fileName,
-      final String extension, IPluginSettings pluginSettings, final int actionOperation) {
+      final String extension, IPluginManager pluginSettings, final int actionOperation) {
     IFileInfo fileInfo = null;
     String fullPath = solution + ISolutionRepository.SEPARATOR
         + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$

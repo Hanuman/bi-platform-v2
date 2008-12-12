@@ -56,7 +56,7 @@ PentahoSystem which is initialized after Spring
   <bean id="IPasswordService" class="org.pentaho.platform.util.Base64PasswordService" scope="singleton" />
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="singleton" />
   <bean id="IDatasourceMgmtService" class="org.pentaho.platform.repository.datasource.DatasourceMgmtService" scope="prototype" />
-  <bean id="IPluginSettings" class="org.pentaho.platform.plugin.services.pluginmgr.PluginSettings" scope="singleton" />
+  <bean id="IPluginManager" class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager" scope="singleton" />
   <bean id="IMenuProvider" class="org.pentaho.platform.web.html.HtmlMenuProvider" scope="singleton" />
 
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />

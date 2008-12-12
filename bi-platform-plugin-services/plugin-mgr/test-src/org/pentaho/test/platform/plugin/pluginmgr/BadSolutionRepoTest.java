@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.messages.Messages;
@@ -30,7 +30,7 @@ public class BadSolutionRepoTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+	    IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
 	    assertNotNull( pluginSettings );
 	    
 	    List<String> messages = new ArrayList<String>();

@@ -67,7 +67,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginOperation;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.repository.IContentItem;
@@ -477,7 +477,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
       // Check to see if its a plug-in
       boolean isPlugin = false;
-      IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, getPentahoSession()); //$NON-NLS-1$
+      IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
 
       if (pluginSettings != null) {
         Set<String> types = pluginSettings.getContentTypes();
@@ -679,7 +679,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       // see if we have any plugin settings
-      IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, getPentahoSession()); //$NON-NLS-1$
+      IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginSettings != null) {
         // get the menu customizations for the plugins, if any
         List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();

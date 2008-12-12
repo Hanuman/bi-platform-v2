@@ -49,7 +49,7 @@ import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
@@ -310,7 +310,7 @@ protected void processFile( String fileName, File element, final Element parentN
         addUrlToRepository(element, parentNode, solutionPath);
       }
     boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
-  IPluginSettings pluginSettings = (IPluginSettings) PentahoSystem.get(IPluginSettings.class, getSession());; //$NON-NLS-1$
+  IPluginManager pluginSettings = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
 if( pluginSettings != null ) {
     Set<String> types = pluginSettings.getContentTypes();
     addFile |= types != null && types.contains( extension );
@@ -349,7 +349,7 @@ if( !addFile ) {
 
 }
 
-protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginSettings pluginSettings ) {
+protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginManager pluginSettings ) {
   IFileInfo fileInfo = null;
   String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
 try {

@@ -6,7 +6,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPluginSettings;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.ui.IMenuProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -54,7 +54,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 	    	  if( component instanceof XulMenubar && component.getId().equals( id ) ) {
 			      XulMenubar menubar = (XulMenubar) component;
 			      // now get customizations to it
-			      IPluginSettings pluginSettings = PentahoSystem.get( IPluginSettings.class, session ); 
+			      IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
 			      List<?> menuCustomizations = pluginSettings.getMenuCustomizations();
 			      for( Object custom: menuCustomizations) {
 			    	  if( custom instanceof IMenuCustomization ) {
