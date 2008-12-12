@@ -354,9 +354,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
     boolean addFile = "xaction".equals(extension); //$NON-NLS-1$
-    IPluginManager pluginSettings = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
-    if (pluginSettings != null) {
-      Set<String> types = pluginSettings.getContentTypes();
+    IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
+    if (pluginManager != null) {
+      Set<String> types = pluginManager.getContentTypes();
       addFile |= types != null && types.contains(extension);
     }
     if (!addFile) {
@@ -376,11 +376,11 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       } else {
         addToRepository(actionSequence, parentNode, element);
       }
-    } else if (pluginSettings != null) {
+    } else if (pluginManager != null) {
       String fullPath = solutionId + ISolutionRepository.SEPARATOR
           + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
       try {
-        IFileInfo fileInfo = getFileInfo(solutionId, path, fileName, extension, pluginSettings, actionOperation);
+        IFileInfo fileInfo = getFileInfo(solutionId, path, fileName, extension, pluginManager, actionOperation);
         addToRepository(fileInfo, solutionId, path, fileName, parentNode, element);
       } catch (Exception e) {
         error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$

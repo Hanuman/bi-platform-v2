@@ -369,9 +369,9 @@ public class SolutionRepositoryService extends ServletBase {
         boolean addFile = "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
         boolean isPlugin = false;
         // see if there is a plugin for this file type
-        IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
-        if (pluginSettings != null) {
-          Set<String> types = pluginSettings.getContentTypes();
+        IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
+        if (pluginManager != null) {
+          Set<String> types = pluginManager.getContentTypes();
           isPlugin = types != null && types.contains(extension);
           addFile |= isPlugin;
         }
@@ -413,15 +413,15 @@ public class SolutionRepositoryService extends ServletBase {
             }
           } else if (isPlugin) {
             // must be a plugin - make it look like a URL
-            IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType(extension, session);
+            IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType(extension, session);
             if (info != null) {
               IFileInfoGenerator fig = info.getFileInfoGenerator();
               if (fig != null) {
                 fig.setLogger(this);
                 // get the file info object for this file
                 fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name, childSolutionFile.getData());
-                String handlerId = pluginSettings.getContentGeneratorIdForType(extension, session);
-                String fileUrl = pluginSettings.getContentGeneratorUrlForType(extension, session);
+                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
                 String solution = childSolutionFile.getSolutionPath();
                 String path = ""; //$NON-NLS-1$
                 int pos = solution.indexOf(ISolutionRepository.SEPARATOR);

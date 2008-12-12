@@ -33,13 +33,13 @@ public class CustomMenuTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
-	    assertNotNull( pluginSettings );
+	    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginSettings.updatePluginSettings(session, messages);
+	    boolean result = pluginManager.updatePluginSettings(session, messages);
 	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
-	    List<?> customs = pluginSettings.getMenuCustomizations();
+	    List<?> customs = pluginManager.getMenuCustomizations();
 	    assertEquals( "Wrong number of menu items created", 3, customs.size() ); //$NON-NLS-1$
 	    
 	    // examine the menu customizations to see if they are what we are expecting
@@ -52,34 +52,34 @@ public class CustomMenuTest extends BaseTest {
 	    assertEquals( custom.getCommand(), "command1" ); //$NON-NLS-1$
 
 	    // now check that the messages are ok
-	    String target = Messages.getString("PluginSettings.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    String target = Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.USER_UPDATING_PLUGIN", "Plugin 1", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    target = Messages.getString("PluginManager.USER_UPDATING_PLUGIN", "Plugin 1", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.USER_MENU_ITEM_ADDITION", "item1", "Test 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    target = Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", "item1", "Test 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.USER_MENU_ITEM_DELETE", "item2" ); //$NON-NLS-1$ //$NON-NLS-2$
+	    target = Messages.getString("PluginManager.USER_MENU_ITEM_DELETE", "item2" ); //$NON-NLS-1$ //$NON-NLS-2$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.USER_MENU_ITEM_REPLACE", "item3", "Test 2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    target = Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", "item3", "Test 2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.USER_PLUGIN_REFRESH_OK", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$
+	    target = Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", "system/plugin3-bad-plugin-xml/plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+	    target = Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", "system/plugin3-bad-plugin-xml/plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 	    assertTrue( messages.contains( target ) );
 	    
-	    target = Messages.getString("PluginSettings.USER_UPDATING_PLUGIN", "Plugin 4", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	    target = Messages.getString("PluginManager.USER_UPDATING_PLUGIN", "Plugin 4", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 	    assertTrue( messages.contains( target ) );
 
-	    target = Messages.getString("PluginSettings.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    target = Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( messages.contains( target ) );
 	    
-	    target = Messages.getString("PluginSettings.USER_PLUGIN_REFRESH_BAD", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$
+	    target = Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$
 	    assertTrue( messages.contains( target ) );
 
 	    

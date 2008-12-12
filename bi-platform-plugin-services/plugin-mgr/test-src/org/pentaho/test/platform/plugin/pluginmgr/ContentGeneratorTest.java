@@ -40,11 +40,11 @@ public class ContentGeneratorTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginManager ipluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
-	    assertNotNull( ipluginSettings );
+	    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+	    assertNotNull( pluginManager );
 	    
-	    assertTrue( ipluginSettings instanceof PluginManager );
-	    PluginManager pluginSettings = (PluginManager) ipluginSettings;
+	    assertTrue( pluginManager instanceof PluginManager );
+	    PluginManager pluginSettings = (PluginManager) pluginManager;
 	    
 	    List<String> messages = new ArrayList<String>();
 	    boolean result = pluginSettings.updatePluginSettings(session, messages);

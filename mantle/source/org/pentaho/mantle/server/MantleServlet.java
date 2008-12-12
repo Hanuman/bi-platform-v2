@@ -477,10 +477,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
       // Check to see if its a plug-in
       boolean isPlugin = false;
-      IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
 
-      if (pluginSettings != null) {
-        Set<String> types = pluginSettings.getContentTypes();
+      if (pluginManager != null) {
+        Set<String> types = pluginManager.getContentTypes();
         for (String type : types) {
           System.out.println(type);
         }
@@ -489,7 +489,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
       if (isPlugin) {
         // Get the reported type from the plug-in manager
-        IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType(extension, getPentahoSession());
+        IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType(extension, getPentahoSession());
         solutionFileInfo.type = SolutionFileInfo.Type.PLUGIN;
         solutionFileInfo.pluginTypeName = info.getDescription();
 

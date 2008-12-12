@@ -54,8 +54,8 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 	    	  if( component instanceof XulMenubar && component.getId().equals( id ) ) {
 			      XulMenubar menubar = (XulMenubar) component;
 			      // now get customizations to it
-			      IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
-			      List<?> menuCustomizations = pluginSettings.getMenuCustomizations();
+			      IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+			      List<?> menuCustomizations = pluginManager.getMenuCustomizations();
 			      for( Object custom: menuCustomizations) {
 			    	  if( custom instanceof IMenuCustomization ) {
 		    			  IMenuCustomization item = (IMenuCustomization) custom;

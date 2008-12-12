@@ -84,8 +84,8 @@ public class GenericServlet extends ServletBase {
 	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
 	    	IPentahoSession session = getPentahoSession( request );
-	    	IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session );
-		    if( pluginSettings == null ) {
+	    	IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session );
+		    if( pluginManager == null ) {
 		    	OutputStream out = response.getOutputStream();
 		    	String message = "Could not get system object: PluginSettings";
 		    	error( message );
@@ -102,7 +102,7 @@ public class GenericServlet extends ServletBase {
 		      headerParams.setParameter(name, value);
 		    }
 		    
-		    IContentGenerator contentGenerator = pluginSettings.getContentGenerator(contentGeneratorId, session);
+		    IContentGenerator contentGenerator = pluginManager.getContentGenerator(contentGeneratorId, session);
 	    	if( contentGenerator == null ) {
 		    	OutputStream out = response.getOutputStream();
 	    		String message = "Could not get content generator for type: "+contentGeneratorId;

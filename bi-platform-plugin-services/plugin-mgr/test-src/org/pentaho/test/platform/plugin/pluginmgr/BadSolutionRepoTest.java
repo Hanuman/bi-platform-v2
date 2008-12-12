@@ -30,11 +30,11 @@ public class BadSolutionRepoTest extends BaseTest {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-	    IPluginManager pluginSettings = PentahoSystem.get( IPluginManager.class, session ); 
-	    assertNotNull( pluginSettings );
+	    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginSettings.updatePluginSettings(session, messages);
+	    boolean result = pluginManager.updatePluginSettings(session, messages);
 	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
 	    assertEquals( "Update failure is for wrong reason", Messages.getString("PluginSettings.ERROR_0008_CANNOT_GET_REPOSITORY"), messages.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
 	    

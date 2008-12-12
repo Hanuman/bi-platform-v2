@@ -21,13 +21,13 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 		  
 		// from IPentahoSystemListener
 		List<String> comments = new ArrayList<String>();
-		IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
-		if( pluginSettings == null ) {
+		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
+		if( pluginManager == null ) {
 			// we cannot continue without the PluginSettings
 			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
 			return false;
 		}
-		pluginSettings.updatePluginSettings( session, comments );
+		pluginManager.updatePluginSettings( session, comments );
 		return true;
 	}
 

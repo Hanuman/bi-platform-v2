@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * This interface is implemented by bi-platform plugins, and is 
  * instantiated for each content request made to the plugin system via the 
- * IPluginSettings API.  Once instantiated, the setter methods are first 
+ * IPluginManager API.  Once instantiated, the setter methods are first 
  * called and then createContent() is called to generate the expected content.
  */
 public interface IContentGenerator extends ILogger {

@@ -208,8 +208,8 @@ public class PluginManager implements IPluginManager {
 		reset();
 		ISolutionRepository repo = PentahoSystem.get( ISolutionRepository.class, session );
 		if( repo == null ) {
-			comments.add( Messages.getString("PluginSettings.ERROR_0008_CANNOT_GET_REPOSITORY") ); //$NON-NLS-1$
-			Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
+			comments.add( Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY") ); //$NON-NLS-1$
+			Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
 			return false;
 		}
 		// look in each of the system setting folders looking for plugin.xml files
@@ -217,8 +217,8 @@ public class PluginManager implements IPluginManager {
 		// TODO convert this to VFS?
 		File systemDir = new File( systemPath ); 
 		if( !systemDir.exists() || !systemDir.isDirectory() ) {
-			comments.add( Messages.getString("PluginSettings.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER") ); //$NON-NLS-1$
-			Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
+			comments.add( Messages.getString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER") ); //$NON-NLS-1$
+			Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
 			return false;
 		}
 		File kids[] = systemDir.listFiles();
@@ -254,13 +254,13 @@ public class PluginManager implements IPluginManager {
 			Document doc = repo.getResourceAsDocument( path );
 			// we have a plugin.xml document
 			if( doc == null ) {
-				comments.add( Messages.getString("PluginSettings.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ) ); //$NON-NLS-1$
-				Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ) ); //$NON-NLS-1$
+				comments.add( Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ) ); //$NON-NLS-1$
+				Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ) ); //$NON-NLS-1$
 				return false;
 			}
 			return processPluginSettings( doc, session, comments, folder.getName(), repo, hasLib );
 		} catch (Exception e) {
-			Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ), e ); //$NON-NLS-1$
+			Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path ), e ); //$NON-NLS-1$
 		}
 		return false;
 		
@@ -276,9 +276,9 @@ public class PluginManager implements IPluginManager {
 		result &= processOverlays( doc, session, comments );
 		
 		if( result ) {
-			comments.add( Messages.getString("PluginSettings.USER_PLUGIN_REFRESH_OK", folder) ); //$NON-NLS-1$
+			comments.add( Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", folder) ); //$NON-NLS-1$
 		} else {
-			comments.add( Messages.getString("PluginSettings.USER_PLUGIN_REFRESH_BAD", folder) ); //$NON-NLS-1$
+			comments.add( Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", folder) ); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -288,7 +288,7 @@ public class PluginManager implements IPluginManager {
 		Element node = (Element) doc.selectSingleNode( "/plugin" ); //$NON-NLS-1$
 		if( node != null ) {
 			String title = node.attributeValue( "title" ); //$NON-NLS-1$
-			comments.add( Messages.getString("PluginSettings.USER_UPDATING_PLUGIN", title, folder ) ); //$NON-NLS-1$
+			comments.add( Messages.getString("PluginManager.USER_UPDATING_PLUGIN", title, folder ) ); //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -320,17 +320,17 @@ public class PluginManager implements IPluginManager {
 				// store it
 				menuCustomizations.add( custom );
 				if( customizationType == CustomizationType.DELETE ) {
-					comments.add( Messages.getString("PluginSettings.USER_MENU_ITEM_DELETE", id) ); //$NON-NLS-1$
+					comments.add( Messages.getString("PluginManager.USER_MENU_ITEM_DELETE", id) ); //$NON-NLS-1$
 				}
 				else if( customizationType == CustomizationType.REPLACE ) {
-					comments.add( Messages.getString("PluginSettings.USER_MENU_ITEM_REPLACE", id, label) ); //$NON-NLS-1$
+					comments.add( Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", id, label) ); //$NON-NLS-1$
 				} else {
-					comments.add( Messages.getString("PluginSettings.USER_MENU_ITEM_ADDITION", id, label) ); //$NON-NLS-1$
+					comments.add( Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label) ); //$NON-NLS-1$
 				}
 				result = true;
 			} catch (Exception e) {
-				comments.add( Messages.getString("PluginSettings.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label) ); //$NON-NLS-1$
-				Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label), e); //$NON-NLS-1$
+				comments.add( Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label) ); //$NON-NLS-1$
+				Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label), e); //$NON-NLS-1$
 			}
 		}
 		
@@ -399,9 +399,9 @@ public class PluginManager implements IPluginManager {
         }
         
         addContentInfo( extension, contentInfo );
-				comments.add( Messages.getString("PluginSettings.USER_CONTENT_TYPE_REGISTERED", extension, title ) ); //$NON-NLS-1$
+				comments.add( Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title ) ); //$NON-NLS-1$
 			} else {
-				comments.add( Messages.getString("PluginSettings.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title ) ); //$NON-NLS-1$
+				comments.add( Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title ) ); //$NON-NLS-1$
 			}
 		}
 		
@@ -439,14 +439,14 @@ public class PluginManager implements IPluginManager {
 				    addContentGenerator( id, title, description, type, url, scope, className, fileInfoClassName, 
 				         session, comments, folder, loader );
 					} catch (Exception e) {
-						comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
+						comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
 					}
 				} else {
-					comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
+					comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
 				}
 			} catch (Exception e) {
-				comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
-				Logger.error( getClass().toString() , Messages.getErrorString("PluginSettings.ERROR_0006_CANNOT_CREATE_CONTENT_GENERATOR_FACTORY", folder), e); //$NON-NLS-1$
+				comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder ) ); //$NON-NLS-1$
+				Logger.error( getClass().toString() , Messages.getErrorString("PluginManager.ERROR_0006_CANNOT_CREATE_CONTENT_GENERATOR_FACTORY", folder), e); //$NON-NLS-1$
 			}
 		}
 		return result;
@@ -459,7 +459,7 @@ public class PluginManager implements IPluginManager {
       objectFactory.addObject( clazz.getSimpleName(), className, scope, loader);
       objectFactory.addObject( id, className, scope, loader);
     } catch ( Exception e ) {
-      comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
+      comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
       return;
     }
   
@@ -468,7 +468,7 @@ public class PluginManager implements IPluginManager {
     Object tmpObject = objectFactory.getObject( id, session);
     
     if( !(tmpObject instanceof IContentGenerator) ) {
-      comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
+      comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, location ) ); //$NON-NLS-1$
       return;
     }
     
@@ -498,7 +498,7 @@ public class PluginManager implements IPluginManager {
     }
     generatorList.add( info );
                             
-    comments.add( Messages.getString("PluginSettings.USER_CONTENT_GENERATOR_REGISTERED", id, location ) ); //$NON-NLS-1$
+    comments.add( Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", id, location ) ); //$NON-NLS-1$
 	}
 	
 	private IFileInfoGenerator createFileInfoGenerator( String fileInfoClassName, ClassLoader loader ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
