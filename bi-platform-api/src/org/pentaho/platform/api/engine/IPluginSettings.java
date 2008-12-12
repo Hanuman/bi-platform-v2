@@ -30,7 +30,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 /**
  * 
  * @author jamesdixon
- *
+ * @deprecated please use IPluginManager instead
  */
 public interface IPluginSettings {
 
