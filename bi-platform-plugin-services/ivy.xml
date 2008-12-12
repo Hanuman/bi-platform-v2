@@ -57,7 +57,8 @@
         <!-- platform -->
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
       changing="true" />
-    <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul-core.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-xul-html" rev="${dependency.pentaho-xul.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"
       changing="true" />
