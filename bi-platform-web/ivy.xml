@@ -34,7 +34,8 @@
 		
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
-    	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul-core.revision}" changing="true" />
+    	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul.revision}" changing="true" />
+    	<dependency org="pentaho" name="pentaho-xul-html" 					 rev="${dependency.pentaho-xul.revision}" changing="true" />
         
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
