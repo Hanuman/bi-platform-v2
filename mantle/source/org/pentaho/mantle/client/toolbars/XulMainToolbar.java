@@ -1,7 +1,6 @@
 package org.pentaho.mantle.client.toolbars;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
@@ -36,7 +35,7 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
     model.setController(controller);
     
     // Invoke the async loading of the XUL DOM.
-    AsyncXulLoader.loadXul("xul/main_toolbar.xul", "messages/messages", this);
+    AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
     
   }
   
