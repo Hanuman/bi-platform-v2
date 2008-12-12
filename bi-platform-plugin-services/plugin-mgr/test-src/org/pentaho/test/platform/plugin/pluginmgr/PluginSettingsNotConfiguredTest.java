@@ -16,7 +16,7 @@ import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginSettings;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.TestManager;
@@ -125,44 +125,44 @@ public class PluginSettingsNotConfiguredTest extends BaseTest {
     finishTest();
   }
 
-  public void testPluginManagerViaPublish() throws Exception {
+  public void testPluginAdapterViaPublish() throws Exception {
     startTest();
 
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
 
-    String str = PentahoSystem.publish(session, "org.pentaho.platform.plugin.services.pluginmgr.PluginManager"); //$NON-NLS-1$
-    assertEquals(str, Messages.getString("PluginManager.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
+    String str = PentahoSystem.publish(session, "org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"); //$NON-NLS-1$
+    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
     finishTest();
   }
 
   @SuppressWarnings("cast")
-  public void testPluginManagerViaPublisherAPI() throws Exception {
+  public void testPluginAdapterViaPublisherAPI() throws Exception {
     startTest();
 
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
 
-    PluginManager mgr = new PluginManager();
+    PluginAdapter mgr = new PluginAdapter();
     assertTrue(mgr instanceof IPentahoPublisher);
     IPentahoPublisher publisher = (IPentahoPublisher) mgr;
 
-    assertEquals(Messages.getString("PluginManager.USER_PLUGIN_MANAGER"), publisher.getName()); //$NON-NLS-1$
-    assertNotSame("!PluginManager.USER_PLUGIN_MANAGER!", publisher.getName()); //$NON-NLS-1$
+    assertEquals(Messages.getString("PluginAdapter.USER_PLUGIN_MANAGER"), publisher.getName()); //$NON-NLS-1$
+    assertNotSame("!PluginAdapter.USER_PLUGIN_MANAGER!", publisher.getName()); //$NON-NLS-1$
 
-    assertEquals(Messages.getString("PluginManager.USER_REFRESH_PLUGINS"), publisher.getDescription()); //$NON-NLS-1$
-    assertNotSame("!PluginManager.USER_REFRESH_PLUGINS!", publisher.getName()); //$NON-NLS-1$
+    assertEquals(Messages.getString("PluginAdapter.USER_REFRESH_PLUGINS"), publisher.getDescription()); //$NON-NLS-1$
+    assertNotSame("!PluginAdapter.USER_REFRESH_PLUGINS!", publisher.getName()); //$NON-NLS-1$
 
     String str = publisher.publish(session, ILogger.DEBUG);
-    assertEquals(str, Messages.getString("PluginManager.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
+    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
     finishTest();
   }
 
   @SuppressWarnings("cast")
-  public void testPluginManagerViaSystemListenerAPI() throws Exception {
+  public void testPluginAdapterViaSystemListenerAPI() throws Exception {
     startTest();
 
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
 
-    PluginManager mgr = new PluginManager();
+    PluginAdapter mgr = new PluginAdapter();
     assertTrue(mgr instanceof IPentahoSystemListener);
 
     IPentahoSystemListener listener = (IPentahoSystemListener) mgr;

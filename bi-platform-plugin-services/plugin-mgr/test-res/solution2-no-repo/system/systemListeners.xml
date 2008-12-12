@@ -14,7 +14,7 @@ VersionCheckSystemListener.
 	<bean id="systemListenersList" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
-				<!-- bean class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager"/ -->
+				<!-- bean class="org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"/ -->
 			</list>
 		</constructor-arg>
 	</bean>
