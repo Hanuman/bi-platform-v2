@@ -66,7 +66,5 @@
         <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="mac"      conf="codegen-mac->default"/>
         <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="windows"  conf="codegen-win->default"/>
         <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="linux"    conf="codegen-linux->default"/>
-        
-        <dependency org="com.google.code.gwtx" name="gwtx" rev="1.5-20081002"                 conf="codegen->default"/>
     </dependencies>
 </ivy-module>
