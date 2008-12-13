@@ -679,10 +679,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       // see if we have any plugin settings
-      IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
-      if (pluginSettings != null) {
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
+      if (pluginManager != null) {
         // get the menu customizations for the plugins, if any
-        List<IMenuCustomization> customs = pluginSettings.getMenuCustomizations();
+        List<IMenuCustomization> customs = pluginManager.getMenuCustomizations();
         int fileIdx = 0;
         int fileNewIdx = 0;
         int fileManageIdx = 0;
@@ -739,8 +739,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         
         // load content types from IPluginSettings
         int i = 0;
-        for (String contentType : pluginSettings.getContentTypes()) {
-          IContentInfo info = pluginSettings.getContentInfoFromExtension(contentType, getPentahoSession());
+        for (String contentType : pluginManager.getContentTypes()) {
+          IContentInfo info = pluginManager.getContentInfoFromExtension(contentType, getPentahoSession());
           if (info != null) {
             settings.put("plugin-content-type-" + i, "." + contentType); //$NON-NLS-1$ //$NON-NLS-2$
             settings.put("plugin-content-type-icon-" + i, info.getIconUrl()); //$NON-NLS-1$

@@ -131,7 +131,7 @@ public class PluginManagerNotConfiguredTest extends BaseTest {
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
 
     String str = PentahoSystem.publish(session, "org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"); //$NON-NLS-1$
-    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
+    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
     finishTest();
   }
 
