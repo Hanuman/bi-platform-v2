@@ -1,7 +1,5 @@
 package org.pentaho.mantle.client.toolbars;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulComponent;
@@ -37,7 +35,7 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
     model.setController(controller);
     
     // Invoke the async loading of the XUL DOM.
-    AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
+    AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);  //$NON-NLS-1$//$NON-NLS-2$
     
   }
   
