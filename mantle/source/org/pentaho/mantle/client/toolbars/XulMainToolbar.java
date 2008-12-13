@@ -1,5 +1,7 @@
 package org.pentaho.mantle.client.toolbars;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulComponent;
@@ -88,6 +90,10 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
   
   public void overlayLoaded(){
     
+  }
+
+  public void overlayRemoved() {
+    throw new RuntimeException("operation not supported"); //$NON-NLS-1$
   } 
   
 }
