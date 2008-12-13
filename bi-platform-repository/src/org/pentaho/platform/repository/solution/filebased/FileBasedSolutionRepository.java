@@ -349,12 +349,12 @@ if( !addFile ) {
 
 }
 
-protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginManager pluginSettings ) {
+protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginManager pluginManager ) {
   IFileInfo fileInfo = null;
   String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
 try {
   
-    IContentGeneratorInfo info = pluginSettings.getDefaultContentGeneratorInfoForType( extension, getSession());
+    IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType( extension, getSession());
       IFileInfoGenerator fig = info.getFileInfoGenerator();
       if( fig != null ) {
         fig.setLogger( this );

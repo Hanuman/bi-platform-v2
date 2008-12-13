@@ -44,31 +44,31 @@ public class ContentGeneratorTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    assertTrue( pluginManager instanceof PluginManager );
-	    PluginManager pluginSettings = (PluginManager) pluginManager;
+	    PluginManager _pluginManager = (PluginManager) pluginManager;
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginSettings.updatePluginSettings(session, messages);
+	    boolean result = _pluginManager.updatePluginSettings(session, messages);
 	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
 	    
 	    assertEquals( "Wrong number of messages created", 19, messages.size() ); //$NON-NLS-1$
 
 	    // check that the content types are ok
-	    Set<String> types = pluginSettings.getContentTypes();
+	    Set<String> types = _pluginManager.getContentTypes();
 	    assertTrue( types.contains( "test-type-1" ) ); //$NON-NLS-1$
 	    assertTrue( types.contains( "test-type-2" ) ); //$NON-NLS-1$
 	    assertFalse( types.contains( "test-type-bad" ) ); //$NON-NLS-1$
 	    
 	    // check that the content generators were created ok
-	    assertNotNull( pluginSettings.getContentGenerator( "test1" , session) ); //$NON-NLS-1$
-	    assertNotNull( pluginSettings.getContentGenerator( "test2" , session) ); //$NON-NLS-1$
-	    assertNotNull( pluginSettings.getContentGenerator( "test3" , session) ); //$NON-NLS-1$
-	    assertNotNull( pluginSettings.getContentGenerator( "test4" , session) ); //$NON-NLS-1$
-	    assertNull( pluginSettings.getContentGenerator( "test5" , session) ); //$NON-NLS-1$
+	    assertNotNull( _pluginManager.getContentGenerator( "test1" , session) ); //$NON-NLS-1$
+	    assertNotNull( _pluginManager.getContentGenerator( "test2" , session) ); //$NON-NLS-1$
+	    assertNotNull( _pluginManager.getContentGenerator( "test3" , session) ); //$NON-NLS-1$
+	    assertNotNull( _pluginManager.getContentGenerator( "test4" , session) ); //$NON-NLS-1$
+	    assertNull( _pluginManager.getContentGenerator( "test5" , session) ); //$NON-NLS-1$
 
-	     IPentahoObjectFactory factory = pluginSettings.getObjectFactory();
+	     IPentahoObjectFactory factory = _pluginManager.getObjectFactory();
 
 	    // test the first content type
-	    List<IContentGeneratorInfo> creators = pluginSettings.getContentGeneratorInfoForType("test-type-1", session); //$NON-NLS-1$
+	    List<IContentGeneratorInfo> creators = _pluginManager.getContentGeneratorInfoForType("test-type-1", session); //$NON-NLS-1$
 	    assertEquals( 2, creators.size() );
       ContentGenerator1 obj1 = factory.get(ContentGenerator1.class, session);
       assertNotNull( obj1 );
@@ -80,7 +80,7 @@ public class ContentGeneratorTest extends BaseTest {
       assertEquals( "test2", creator.getId() ); //$NON-NLS-1$
 
 	    // test the second content type
-	    creators = pluginSettings.getContentGeneratorInfoForType("test-type-2", session); //$NON-NLS-1$
+	    creators = _pluginManager.getContentGeneratorInfoForType("test-type-2", session); //$NON-NLS-1$
 	    assertEquals( 2, creators.size() );
       obj1 = factory.get(ContentGenerator1.class, session);
       assertNotNull( obj1 );
@@ -92,33 +92,33 @@ public class ContentGeneratorTest extends BaseTest {
       assertEquals( "test4", creator.getId() ); //$NON-NLS-1$
 
 	    // test a bad content type
-	    creators = pluginSettings.getContentGeneratorInfoForType("test-type-bad", session); //$NON-NLS-1$
+	    creators = _pluginManager.getContentGeneratorInfoForType("test-type-bad", session); //$NON-NLS-1$
 	    assertNull( creators );
 
 	    // test the default content generator (first in the list)
-	    IContentGenerator contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-1", session); //$NON-NLS-1$
+	    IContentGenerator contentGenerator = _pluginManager.getContentGeneratorForType( "test-type-1", session); //$NON-NLS-1$
 	    assertTrue( contentGenerator instanceof ContentGenerator1 );
 
-	    contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-2", session); //$NON-NLS-1$
+	    contentGenerator = _pluginManager.getContentGeneratorForType( "test-type-2", session); //$NON-NLS-1$
 	    assertTrue( contentGenerator instanceof ContentGenerator2 );
 
-	    contentGenerator = pluginSettings.getContentGeneratorForType( "test-type-bad", session); //$NON-NLS-1$
+	    contentGenerator = _pluginManager.getContentGeneratorForType( "test-type-bad", session); //$NON-NLS-1$
 	    assertNull( contentGenerator );
 
 	    // test the ids
-	    assertEquals( "test1", pluginSettings.getContentGeneratorIdForType( "test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "test3", pluginSettings.getContentGeneratorIdForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( null, pluginSettings.getContentGeneratorIdForType( "test-type-bad", session) ); //$NON-NLS-1$ 
+	    assertEquals( "test1", _pluginManager.getContentGeneratorIdForType( "test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "test3", _pluginManager.getContentGeneratorIdForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( null, _pluginManager.getContentGeneratorIdForType( "test-type-bad", session) ); //$NON-NLS-1$ 
 	    
 	    // test the ids
-	    assertEquals( "Test Generator 1", pluginSettings.getContentGeneratorTitleForType("test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "Test Generator 3", pluginSettings.getContentGeneratorTitleForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( null, pluginSettings.getContentGeneratorTitleForType( "test-type-bad", session) ); //$NON-NLS-1$ 
+	    assertEquals( "Test Generator 1", _pluginManager.getContentGeneratorTitleForType("test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "Test Generator 3", _pluginManager.getContentGeneratorTitleForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( null, _pluginManager.getContentGeneratorTitleForType( "test-type-bad", session) ); //$NON-NLS-1$ 
 	    
 	    // test the urls
-	    assertEquals( "", pluginSettings.getContentGeneratorUrlForType("test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( "/testurl", pluginSettings.getContentGeneratorUrlForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertEquals( null, pluginSettings.getContentGeneratorUrlForType( "test-type-bad", session) ); //$NON-NLS-1$ 
+	    assertEquals( "", _pluginManager.getContentGeneratorUrlForType("test-type-1", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "/testurl", _pluginManager.getContentGeneratorUrlForType( "test-type-2", session) ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( null, _pluginManager.getContentGeneratorUrlForType( "test-type-bad", session) ); //$NON-NLS-1$ 
 
 	    finishTest();
 	  }
