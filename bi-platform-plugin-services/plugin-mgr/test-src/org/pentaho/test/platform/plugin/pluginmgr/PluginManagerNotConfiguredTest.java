@@ -152,7 +152,7 @@ public class PluginManagerNotConfiguredTest extends BaseTest {
     assertNotSame("!PluginAdapter.USER_REFRESH_PLUGINS!", publisher.getName()); //$NON-NLS-1$
 
     String str = publisher.publish(session, ILogger.DEBUG);
-    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_SETTINGS_NOT_CONFIGURED")); //$NON-NLS-1$
+    assertEquals(str, Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
     finishTest();
   }
 
