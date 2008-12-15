@@ -9,7 +9,7 @@
 			java.util.regex.Matcher,
 			org.pentaho.platform.util.messages.LocaleHelper,
 			org.pentaho.platform.api.engine.IPentahoSession,
-			org.pentaho.platform.api.engine.IPluginSettings,
+			org.pentaho.platform.api.engine.IPluginManager,
 			org.pentaho.platform.api.repository.ISolutionRepository,
 			org.pentaho.platform.engine.core.system.PentahoSystem,
 			org.pentaho.platform.engine.core.system.StandaloneSession,
@@ -349,9 +349,9 @@ function loader(){
 	String buttonLabel = "";
 	String buttonCommand = "";
 	String buttonImage = "";
-	IPluginSettings pluginSettings = PentahoSystem.get(IPluginSettings.class, PentahoHttpSessionHelper.getPentahoSession(request)); //$NON-NLS-1$
-    if (pluginSettings != null) {
-      	for(IXulOverlay overlayObj : pluginSettings.getOverlays()) {
+	IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoHttpSessionHelper.getPentahoSession(request)); //$NON-NLS-1$
+    if (pluginManager != null) {
+      	for(IXulOverlay overlayObj : pluginManager.getOverlays()) {
       	  if (overlayObj.getId() != null && overlayObj.getId().equals("launch")) {
 			ResourceBundle bundle = getBundle(overlayObj.getResourceBundleUri());
 	    	// replace I18N parameters
