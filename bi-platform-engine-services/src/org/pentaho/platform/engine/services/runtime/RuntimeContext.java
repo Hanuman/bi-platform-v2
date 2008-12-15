@@ -648,10 +648,12 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       return knownComponents;
     }
     try {
-      InputStream is = solutionRepository.getResourceInputStream("system/plugin.properties", false);
-      Properties overrideComponents = new Properties();
-      overrideComponents.load(is);
-      knownComponents.putAll(overrideComponents); // load over the top of the known properties
+      if( solutionRepository.resourceExists( "system/plugin.properties" ) ) { //$NON-NLS-1$
+        InputStream is = solutionRepository.getResourceInputStream("system/plugin.properties", false);
+        Properties overrideComponents = new Properties();
+        overrideComponents.load(is);
+        knownComponents.putAll(overrideComponents); // load over the top of the known properties
+      }
     } catch (FileNotFoundException ignored) {
       RuntimeContext.logger.warn("No override plugin properties found in the system solution", ignored);
     } catch (IOException ignored) {
