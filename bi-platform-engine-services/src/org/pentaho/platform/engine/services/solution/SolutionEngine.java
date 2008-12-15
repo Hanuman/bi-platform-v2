@@ -228,7 +228,10 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
       debug(Messages.getString("SolutionEngine.DEBUG_GETTING_RUNTIME_CONTEXT")); //$NON-NLS-1$
     }
     boolean newInstance = instanceId == null;
-    IRuntimeRepository runtimeRepository = PentahoSystem.getRuntimeRepository(session);
+    IRuntimeRepository runtimeRepository = null;
+    if( PentahoSystem.getObjectFactory().objectDefined( IRuntimeRepository.class.getSimpleName() ) ) {
+      runtimeRepository = PentahoSystem.get( IRuntimeRepository.class, session);
+    }
 
     IRuntimeElement runtimeData;
     if (runtimeRepository == null) {
