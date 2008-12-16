@@ -39,6 +39,7 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 import org.pentaho.ui.xul.IMenuCustomization.ItemType;
+import org.pentaho.ui.xul.impl.DefaultXulOverlay;
 import org.pentaho.ui.xul.util.MenuCustomization;
 
 /**
@@ -351,7 +352,8 @@ public class PluginManager implements IPluginManager {
 	        xml = ((Element)node.elements().get(0)).asXML();
 	      }
 	      if( StringUtils.isNotEmpty( id ) && StringUtils.isNotEmpty( xml ) ) {
-	        addOverlay( id, xml, resourceBundleUri);
+	        DefaultXulOverlay overlayImpl = new DefaultXulOverlay(id, null, xml, resourceBundleUri);
+	        addOverlay(new XulOverlayAdapter(overlayImpl));
 	      }
 	      
 	    }
@@ -359,9 +361,12 @@ public class PluginManager implements IPluginManager {
 	    return result;
 	 }
 	 
+	 public void addOverlay(IXulOverlay overlay) {
+	   overlays.add(overlay);
+	 }
+	 
 	 public void addOverlay( String id, String xml, String resourceBundleUri ) {
-     XulOverlay overlay = new XulOverlay( id, null, xml, resourceBundleUri );
-     overlays.add( overlay );
+	   overlays.add(new XulOverlayAdapter(new DefaultXulOverlay(id, null, xml, resourceBundleUri)));
 	 }
 	 
 	protected boolean processContentTypes( Document doc, IPentahoSession session, List<String> comments ) {

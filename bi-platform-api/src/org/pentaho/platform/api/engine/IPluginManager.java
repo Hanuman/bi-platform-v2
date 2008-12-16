@@ -28,7 +28,9 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
- * 
+ * A plugin has the following components:
+ * * a registered content type
+ * * a content generator
  * @author jamesdixon
  */
 public interface IPluginManager {
@@ -94,7 +96,17 @@ public interface IPluginManager {
 	 */
 	public List<IXulOverlay> getOverlays();
 	
+	/**
+	 * 
+	 * @param id
+	 * @param xml
+	 * @param resourceBundleUri
+	 * 
+	 * @deprecated use addOverlay(IXulOverlay overlay)
+	 */
   public void addOverlay( String id, String xml, String resourceBundleUri );
+  
+  public void addOverlay(IXulOverlay overlay);
   
   public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
       IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException;
