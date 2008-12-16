@@ -21,5 +21,8 @@ public interface SolutionBrowserListener {
   // would like to let the listeners know (where possible):
   // -current tab (url)
   // -selected file item
-  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem);
+  public enum EventType {
+    UNDEFINED, OPEN, SELECT, DESELECT, CLOSE
+  }
+  public void solutionBrowserEvent(EventType type, IReloadableTabPanel panel, FileItem selectedFileItem);
 }

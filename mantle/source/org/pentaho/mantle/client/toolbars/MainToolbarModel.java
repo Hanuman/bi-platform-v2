@@ -1,5 +1,6 @@
 package org.pentaho.mantle.client.toolbars;
 
+import org.pentaho.mantle.client.XulMain;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
@@ -21,7 +22,7 @@ public class MainToolbarModel implements SolutionBrowserListener{
 
 
   private SolutionBrowserPerspective solutionBrowser;
-  
+  private XulMain main; 
   private boolean saveEnabled = false;
   private boolean saveAsEnabled = false;
   private boolean printEnabled = false;
@@ -31,9 +32,10 @@ public class MainToolbarModel implements SolutionBrowserListener{
   private MainToolbarController controller;
   
   
-  public MainToolbarModel(final SolutionBrowserPerspective solutionBrowser){
+  public MainToolbarModel(final SolutionBrowserPerspective solutionBrowser, XulMain main){
     this.solutionBrowser = solutionBrowser;
     this.solutionBrowser.addSolutionBrowserListener(this);
+    this.main = main;
   }
   
   public void setSaveEnabled(Boolean enabled){
@@ -108,7 +110,7 @@ public class MainToolbarModel implements SolutionBrowserListener{
   /**
    * Process incoming events from the SolutionBrowser here
    */
-  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
 
@@ -123,7 +125,16 @@ public class MainToolbarModel implements SolutionBrowserListener{
     setPrintEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
     setSaveEnabled(saveEnabled);
     setSaveAsEnabled(saveEnabled);
-
+    
+    if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
+      if(panel != null) {
+        main.applyOverlays(panel.getOverlayIds());  
+      }
+    } else if(SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)){
+      if(panel != null) {
+        main.removeOverlays(panel.getOverlayIds());  
+      }
+    }
   }
   
   public void setController(MainToolbarController controller){

@@ -1,7 +1,6 @@
 package org.pentaho.mantle.client.toolbars;
 
 import org.pentaho.ui.xul.EventMethod;
-import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 

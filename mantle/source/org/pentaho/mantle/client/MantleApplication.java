@@ -61,11 +61,12 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.toolbars.XulMainToolbar;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -102,7 +103,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private MenuBar menuBar;
   private MenuBar viewMenu;
   //private MainToolbar mainToolbar;
-  private XulMainToolbar mainToolbar;
+  private XulMain main;
 
   private SolutionBrowserPerspective solutionBrowserPerspective;
   private FileCommand propertiesCommand;
@@ -172,7 +173,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAsEllipsis"), new SaveCommand(solutionBrowserPerspective, true)); //$NON-NLS-1$
     propertiesMenuItem = new PentahoMenuItem(Messages.getString("propertiesEllipsis"), propertiesCommand); //$NON-NLS-1$
 
-    mainToolbar = new XulMainToolbar(solutionBrowserPerspective);
+    main = XulMain.instance(solutionBrowserPerspective);
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
     
     // first things first... make sure we've registered our native hooks
@@ -223,6 +224,18 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
     // load mantle settings
     loadAndApplyMantleSettings();
+    
+    AsyncCallback<List<IXulOverlay>> callback = new AsyncCallback<List<IXulOverlay>>() {
+
+      public void onFailure(Throwable caught) {
+        Window.alert(caught.toString());
+      }
+
+      public void onSuccess(List<IXulOverlay> overlays) {
+        XulMain.getInstance().loadOverlays(overlays);
+      }
+    };
+    MantleServiceCache.getService().getOverlays(callback);    
 
     // add window close listener
     Window.addWindowCloseListener(new WindowCloseListener() {
@@ -285,6 +298,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
     }
     
+    $wnd.registerContentOverlay = function(id) { 
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::registerContentOverlay(Ljava/lang/String;)(id);      
+    }
+    
   }-*/;
 
   public void loadAndApplyUserSettings() {
@@ -343,9 +360,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           menuAndLogoPanel.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
         }
         if ("true".equals(settings.get("show-main-toolbar"))) {
-          menuAndLogoPanel.setWidget(1, 0, mainToolbar);
-          mainToolbar.setHeight("46px"); //$NON-NLS-1$
-          mainToolbar.setWidth("100%"); //$NON-NLS-1$
+          menuAndLogoPanel.setWidget(1, 0, main);
+          main.setHeight("46px"); //$NON-NLS-1$
+          main.setWidth("100%"); //$NON-NLS-1$
         }
 
         mainApplicationPanel.add(menuAndLogoPanel);
@@ -432,7 +449,17 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       String command = settings.get(menuId + "MenuCommand" + idx); //$NON-NLS-1$
       while (title != null) {
         // create a generic UrlCommand for this
+        if(!GWT.isScript()) {
+          int index = command.indexOf("?");
+          if( index >=0) {
+            command = "/MantleService?passthru=" + command.substring(command.indexOf("content"), index) + "&" + command.substring(index+1) + "&userid=joe&password=password"; ;            
+          } else  {
+            command = "/MantleService?passthru=" + command.substring(command.indexOf("content")) + "&userid=joe&password=password"; ;  
+          }
+          
+        }
         UrlCommand menuCommand = new UrlCommand(solutionBrowserPerspective, command, title);
+        
         // add it to the menu
         menu.addItem(title, menuCommand);
         idx++;
@@ -552,7 +579,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     MantleServiceCache.getService().isAdministrator(callback);
   }
 
-  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
     if(panel != null){
@@ -574,7 +601,16 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     
     saveMenuItem.setEnabled(saveEnabled && isEnabled);
     saveAsMenuItem.setEnabled(saveEnabled && isEnabled);
-
+    
+    if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
+      if(panel != null) {
+        main.applyOverlays(panel.getOverlayIds());  
+      }
+    } else if(SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)){
+      if(panel != null) {
+        main.removeOverlays(panel.getOverlayIds());  
+      }
+    }
   }
 
   // Cache menu additions for removal later.

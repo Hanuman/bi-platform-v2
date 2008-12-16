@@ -28,11 +28,11 @@ import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
-import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -108,4 +108,5 @@ public interface MantleServiceAsync {
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames, AsyncCallback<Void> callback);
   public void setShowHiddenFiles(boolean showHiddenFiles, AsyncCallback<Void> callback);
   public void repositorySupportsACLS(AsyncCallback<Boolean> callback);
+  public void getOverlays(AsyncCallback<List<IXulOverlay>> callback);
 }

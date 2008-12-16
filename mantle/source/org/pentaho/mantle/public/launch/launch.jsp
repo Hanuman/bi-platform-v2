@@ -36,7 +36,8 @@
    */
 %>
 
-<%@page import="org.pentaho.platform.api.engine.IXulOverlay"%><html>
+<%@page import="org.pentaho.platform.api.engine.IXulOverlay"%>
+<%@page import="org.pentaho.platform.api.engine.IPluginManager"%><html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 

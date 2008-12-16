@@ -37,6 +37,11 @@
           <artifact name="pentaho-bi-platform-repository" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
         
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" conf="default->default" changing="true">
+          <artifact name="pentaho-bi-platform-plugin-services"/>
+          <artifact name="pentaho-bi-platform-plugin-services" type="source" ext="jar" m:classifier="sources"/>
+        </dependency>
+        
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
         

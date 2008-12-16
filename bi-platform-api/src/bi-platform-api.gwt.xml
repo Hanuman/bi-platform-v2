@@ -1,0 +1,7 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name='com.google.gwt.user.User'/>
+
+    <source path="src" includes="org/pentaho/platform/api/engine/IXulOverlay.*"/>
+</module>

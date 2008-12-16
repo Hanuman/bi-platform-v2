@@ -66,10 +66,12 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISchedule;
@@ -80,7 +82,6 @@ import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.scheduler.IJobDetail;
 import org.pentaho.platform.api.scheduler.IJobSchedule;
-//import org.pentaho.platform.api.ui.IFileTypePlugin;
 import org.pentaho.platform.api.usersettings.IUserSettingService;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -478,7 +479,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       // Check to see if its a plug-in
       boolean isPlugin = false;
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
-
       if (pluginManager != null) {
         Set<String> types = pluginManager.getContentTypes();
         for (String type : types) {
@@ -1137,5 +1137,15 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public String getVersion() {
     VersionInfo versionInfo = VersionHelper.getVersionInfo(PentahoSystem.class);
     return versionInfo.getVersionNumber();
+  }
+
+  public List<IXulOverlay> getOverlays() {
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
+    if (pluginManager != null) {
+      return pluginManager.getOverlays();
+    } else {
+      return null;
+    }
+    
   }
 }

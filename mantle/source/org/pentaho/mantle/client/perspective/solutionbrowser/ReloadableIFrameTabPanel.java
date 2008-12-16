@@ -19,6 +19,7 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import java.util.Set;
 import java.util.Stack;
 
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -37,7 +38,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
   protected boolean saveEnabled;
-  
+  private Set<String> overlayIds;
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
     frame = new CustomFrame(""+System.currentTimeMillis(), url); //$NON-NLS-1$
@@ -220,4 +221,14 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   public void setSaveEnabled(boolean enabled) {
     saveEnabled = enabled;  
   }
+
+  public Set<String> getOverlayIds() {
+    return overlayIds;
+  }
+
+  public void addOverlay(String id) {
+    overlayIds.add(id);
+  }
+  
+  
 }

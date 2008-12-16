@@ -124,7 +124,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   private List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
   private List<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
-  
+  public static final int CURRENT_SELECTED_TAB = -1;
   // commands
   Command ShowWorkSpaceCommand = new Command() {
     public void execute() {
@@ -229,7 +229,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
       public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-        fireSolutionBrowserListenerEvent();
+        fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.DESELECT, previousIndex);
+        fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.SELECT, tabIndex);
         if (previousIndex != tabIndex) {
           ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
 
@@ -371,7 +372,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void showWorkspace() {
     workspacePanel.refreshWorkspace();
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
-    fireSolutionBrowserListenerEvent();
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED,CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
   }
 
   public void showLaunchOrContent() {
@@ -393,7 +394,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
     }
-    fireSolutionBrowserListenerEvent();
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED,CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
   }
 
   private boolean existingTabMatchesName(String name) {
@@ -462,7 +463,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     // update state to workspace state flag
     showWorkspaceMenuItem.setChecked(false);
     // fire
-    fireSolutionBrowserListenerEvent();
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN,CURRENT_SELECTED_TAB);
 
     perspectiveCallback.activatePerspective(this);
   }
@@ -541,14 +542,29 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (plugin != null && plugin.hasCommand(COMMAND.RUN)) {
         // load the editor for this plugin
         String url = plugin.getCommandUrl(selectedFileItem, COMMAND.RUN);
-        if (url != null && !"".equals(url)) { //$NON-NLS-1$
-          // we have a URL so open it in a new tab
-          if (mode == FileCommand.COMMAND.NEWWINDOW) {
-            Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-          } else {
-            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, url);
+        if (GWT.isScript()) {
+          if (url != null && !"".equals(url)) { //$NON-NLS-1$
+            // we have a URL so open it in a new tab
+            if (mode == FileCommand.COMMAND.NEWWINDOW) {
+              Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, url);
+            }
+            return;
           }
-          return;
+        } else {
+          if (url != null && !"".equals(url)) { //$NON-NLS-1$
+            
+            // we have a URL so open it in a new tab
+            String updateUrl = "/MantleService?passthru=" + url; //$NON-NLS-1$
+
+            if (mode == FileCommand.COMMAND.NEWWINDOW) {
+              Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+            }
+            return;
+          }          
         }
       }
       
@@ -1389,7 +1405,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
     };
-    fireSolutionBrowserListenerEvent();
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB);  // TODO not sure what type of event needs to be fired 
     MantleServiceCache.getService().setShowNavigator(showSolutionBrowser, callback);
   }
 
@@ -1412,7 +1428,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void allTabsClosed() {
     // show the "launch" panel
     showLaunchOrContent();
-    fireSolutionBrowserListenerEvent();
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.CLOSE, CURRENT_SELECTED_TAB);
   }
 
   public IPerspectiveCallback getPerspectiveCallback() {
@@ -1431,22 +1447,28 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     listeners.remove(listener);
   }
 
-  public void fireSolutionBrowserListenerEvent() {
+  public void fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType type, int tabIndex) {
     // does this take parameters? or should it simply return the state
 
     // Get a reference to the current tab
     ReloadableIFrameTabPanel tabPanel = null;
-    if (contentTabPanel.getTabBar().getTabCount() > 0) {
-      tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab());
+    if (tabIndex >= 0) {
+      tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
+    } else {
+      int selectedTabIndex = contentTabPanel.getTabBar().getSelectedTab();
+      if(selectedTabIndex > 0) {
+        tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTabIndex);  
+      }
+      
     }
 
     for (SolutionBrowserListener listener : listeners) {
       try {
         if (showWorkspaceMenuItem.isChecked()) {
           // cause all menus to be disabled for the selected file/tab
-          listener.solutionBrowserEvent(null, null);
+          listener.solutionBrowserEvent(null, null, null);
         } else {
-          listener.solutionBrowserEvent(tabPanel, selectedFileItem);
+          listener.solutionBrowserEvent(type, tabPanel, selectedFileItem);
         }
       } catch (Exception e) {
         // don't let this fail, it will disturb normal processing
@@ -1640,7 +1662,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     if (panel != null) {
       panel.setSaveEnabled(enabled);
     }
-    this.fireSolutionBrowserListenerEvent();
+    this.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.SELECT, contentTabPanel.getTabBar().getSelectedTab());
+  }
+
+  /*
+   * registerContentOverlay - register the overlay with the panel. Once the registration is done it fires a soultion browser
+   * event passing the current tab index and the type of event
+   */
+  public void registerContentOverlay(String id){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    panel.addOverlay(id);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
   }
   
   public void buildEnabledOptionsList(Map<String, String> settings) {

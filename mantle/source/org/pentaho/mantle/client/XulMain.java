@@ -1,7 +1,15 @@
-package org.pentaho.mantle.client.toolbars;
+package org.pentaho.mantle.client;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.toolbars.MainToolbarController;
+import org.pentaho.mantle.client.toolbars.MainToolbarModel;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
@@ -17,8 +25,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
+public class XulMain extends SimplePanel implements IXulLoaderCallback{
   
+  private Map<String, IXulOverlay> overlayMap = new HashMap<String, IXulOverlay>();  
   
   private MainToolbarModel model;
   
@@ -26,16 +35,29 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
   
   private GwtXulDomContainer container;
   
-  public XulMainToolbar(final SolutionBrowserPerspective solutionBrowser){
+  private static XulMain _instance = null;
+
+  public static synchronized XulMain instance(final SolutionBrowserPerspective solutionBrowser) {
+    if (null == _instance) {
+      _instance = new XulMain(solutionBrowser);
+    }
+    return _instance;
+  }
+  
+  public static XulMain getInstance() {
+    return _instance;
+  }
+  
+  protected XulMain(final SolutionBrowserPerspective solutionBrowser){
     
     //instantiate our Model and Controller
-    model = new MainToolbarModel(solutionBrowser);
+    model = new MainToolbarModel(solutionBrowser, this);
     controller = new MainToolbarController(model);
     //TODO: remove controller reference from model when Bindings in place
     model.setController(controller);
     
     // Invoke the async loading of the XUL DOM.
-    AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);  //$NON-NLS-1$//$NON-NLS-2$
+    AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
     
   }
   
@@ -88,11 +110,54 @@ public class XulMainToolbar extends SimplePanel implements IXulLoaderCallback{
   
   public void overlayLoaded(){
     
+  } 
+  
+  public void loadOverlays(List<IXulOverlay> overlays) {
+    for(IXulOverlay overlay: overlays) {
+      overlayMap.put(overlay.getId(), overlay);
+    }
+  }
+
+  public void applyOverlays(Set<String> overlayIds) {
+    if(overlayIds != null && !overlayIds.isEmpty()) {
+      for (String overlayId : overlayIds) {
+        applyOverlay(overlayId);
+      }
+    }
+  }
+  public void applyOverlay(String id) {
+    if(overlayMap != null && !overlayMap.isEmpty()) {
+      if(overlayMap.containsKey(id)) {
+        IXulOverlay overlay = overlayMap.get(id); 
+        AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
+      } else {
+        // Should I log this or throw an exception here
+      }
+    }
+  }
+
+  public void removeOverlays(Set<String> overlayIds) {
+    if(overlayIds != null && !overlayIds.isEmpty()) {
+      for (String overlayId : overlayIds) {
+        removeOverlay(overlayId);
+      }
+    }
+  }
+  public void removeOverlay(String id) {
+    if(overlayMap != null && !overlayMap.isEmpty()) {    
+      if(overlayMap.containsKey(id)) {
+        IXulOverlay overlay = overlayMap.get(id); 
+        AsyncXulLoader.removeOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
+      } else {
+        // Should I log this or throw an exception here
+      }
+    }
   }
 
   public void overlayRemoved() {
-    throw new RuntimeException("operation not supported"); //$NON-NLS-1$
-  } 
+    // TODO Auto-generated method stub
+    
+  }
   
 }
 

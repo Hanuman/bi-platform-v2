@@ -19,6 +19,8 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import java.util.Set;
+
 public interface IReloadableTabPanel {
   public void reload();
   public void back();
@@ -26,4 +28,6 @@ public interface IReloadableTabPanel {
   public boolean isSaveEnabled();
   public void setSaveEnabled(boolean enabled);
   public String getUrl();
+  public Set<String> getOverlayIds();
+  public void addOverlay(String id);
 }

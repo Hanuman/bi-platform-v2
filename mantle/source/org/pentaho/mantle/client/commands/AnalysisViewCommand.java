@@ -21,6 +21,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.dialogs.AnalysisViewDialog;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
@@ -56,7 +57,7 @@ public class AnalysisViewCommand implements Command {
         
         //Set it to save-enabled and fire event
         navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
-        navigatorPerspective.fireSolutionBrowserListenerEvent();
+        navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
         
         //navigatorPerspective.refreshPerspective(false);
       }

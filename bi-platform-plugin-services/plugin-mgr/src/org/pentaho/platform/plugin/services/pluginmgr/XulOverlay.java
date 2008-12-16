@@ -1,9 +1,18 @@
 package org.pentaho.platform.plugin.services.pluginmgr;
 
+import java.io.Serializable;
+
 import org.pentaho.platform.api.engine.IXulOverlay;
 
-public class XulOverlay implements IXulOverlay {
+public class XulOverlay implements IXulOverlay, Serializable {
 
+  public XulOverlay() {
+  }
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -2295937752856350528L;
   private String id;
   private String overlayUri;
   private String overlayXml;
@@ -30,6 +39,10 @@ public class XulOverlay implements IXulOverlay {
 
   public String getResourceBundleUri() {
     return resourceBundleUri;
+  }
+
+  public void onModuleLoad() {
+    // no-up
   }
 
 }

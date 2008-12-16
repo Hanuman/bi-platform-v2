@@ -170,7 +170,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     showBrowserToggleButton.setEnabled(true);
   }
   
-  public void solutionBrowserEvent(IReloadableTabPanel panel, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
     toggleBrowserButton();
     toggleWorkspaceButton();
     

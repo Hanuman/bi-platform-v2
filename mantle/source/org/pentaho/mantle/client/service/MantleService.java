@@ -33,6 +33,7 @@ import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
+import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -108,4 +109,6 @@ public interface MantleService extends RemoteService {
   public void setShowHiddenFiles(boolean showHiddenFiles);
   
   public boolean repositorySupportsACLS();
+  
+  public List<IXulOverlay> getOverlays();
 }

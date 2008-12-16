@@ -6,8 +6,9 @@
 	
 	<inherits name='org.pentaho.ui.Xul'/>
     <inherits name='org.pentaho.ui.xul.Gwt'/>
-  <inherits name='com.googlecode.gwtx.Java'/> 
+    <inherits name='com.googlecode.gwtx.Java'/> 
 	
+	<inherits name='org.pentaho.platform.plugin.services.pluginmgr.XulOverlay'/>
 	<inherits name='org.pentaho.platform.repository.usersettings.pojo.UserSettings'/>
     <inherits name='org.pentaho.mantle.login.MantleLogin' />
 
