@@ -7,6 +7,6 @@
     <source path="" includes="**/XulOverlayAdapter.*"/>
       
 	<!-- Specify the app entry point class.                   -->
-	<entry-point class='org.pentaho.platform.plugin.services.pluginmgr.XulOverlayAdapter'/>
+	<!-- entry-point class='org.pentaho.platform.plugin.services.pluginmgr.XulOverlayAdapter'/-->
 	
 </module>
