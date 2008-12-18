@@ -56,6 +56,7 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -383,18 +384,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else {
       showIndex = contentPanel.getWidgetIndex(contentTabPanel);
     }
+    int selectedTab = -1;
     if (showIndex != -1) {
       contentPanel.showWidget(showIndex);
 
       // There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
-      int selectedTab = contentTabPanel.getTabBar().getSelectedTab();
+      selectedTab = contentTabPanel.getTabBar().getSelectedTab();
       if (selectedTab > -1) {
         ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTab);
         refreshIfPDF(tabPanel);
       }
 
     }
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED,CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, selectedTab); // TODO Not sure what event type to pass
   }
 
   private boolean existingTabMatchesName(String name) {
@@ -463,7 +465,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     // update state to workspace state flag
     showWorkspaceMenuItem.setChecked(false);
     // fire
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN,CURRENT_SELECTED_TAB);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
 
     perspectiveCallback.activatePerspective(this);
   }
@@ -1452,7 +1454,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     // Get a reference to the current tab
     ReloadableIFrameTabPanel tabPanel = null;
-    if (tabIndex >= 0) {
+    if (tabIndex >= 0 && contentTabPanel.getWidgetCount() > tabIndex) {
       tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
     } else {
       int selectedTabIndex = contentTabPanel.getTabBar().getSelectedTab();
@@ -1674,6 +1676,21 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     panel.addOverlay(id);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
   }
+
+  public void enableContentEdit(boolean enable){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    panel.setEditEnabled(enable);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
+  }
+  
+
+  public void setContentEditSelected(boolean selected){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    panel.setEditSelected(selected);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
+  }
+  
+  
   
   public void buildEnabledOptionsList(Map<String, String> settings) {
     

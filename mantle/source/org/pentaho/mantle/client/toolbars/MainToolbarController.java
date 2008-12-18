@@ -1,8 +1,14 @@
 package org.pentaho.mantle.client.toolbars;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.pentaho.ui.xul.EventMethod;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Window;
 
 /**
  * 
@@ -21,6 +27,9 @@ public class MainToolbarController extends AbstractXulEventHandler{
   private XulToolbarbutton printBtn;
   private XulToolbarbutton workspaceBtn;
   private XulToolbarbutton showBrowserBtn;
+  private XulToolbarbutton contentEditBtn;
+  
+  private List<JavaScriptObject> callbacks = new ArrayList<JavaScriptObject>();
   
   
   public MainToolbarController(MainToolbarModel model){
@@ -40,6 +49,9 @@ public class MainToolbarController extends AbstractXulEventHandler{
     printBtn = (XulToolbarbutton) document.getElementById("printButton");
     workspaceBtn = (XulToolbarbutton) document.getElementById("workspaceButton");
     showBrowserBtn = (XulToolbarbutton) document.getElementById("showBrowserButton");
+    contentEditBtn = (XulToolbarbutton) document.getElementById("editContentButton");
+    
+    
   }
 
   @EventMethod
@@ -117,6 +129,61 @@ public class MainToolbarController extends AbstractXulEventHandler{
   public String getName() {
     return "mainToolbarHandler";
   }
+  
+  public void executeCallback(String jsScript){
+    for(JavaScriptObject callback : callbacks){
+      executeJS(callback, jsScript);
+    }
+  }
+  public void executeMantleFunc(String funct){
+    executeMantleCall(funct);
+  }
+  
+
+  private native void executeMantleCall(String js)/*-{
+    try{
+      $wnd.eval(js);
+    } catch (e){
+      $wnd.mantle_showMessage("Javascript Error",e.message);
+    }
+  }-*/;
+  
+  
+  private native void executeJS(JavaScriptObject obj, String js)/*-{
+    try{
+      var tempObj = obj;
+      eval("tempObj."+js);
+    } catch (e){
+      $wnd.mantle_showMessage("Javascript Error",e.message+"          "+"tempObj."+js);
+    }
+  }-*/;
+  
+
+  public void addJSCallback(JavaScriptObject obj){
+    callbacks.add(obj);
+  }
+  
+  public void setContentEditEnabled(boolean enable){
+    contentEditBtn.setDisabled(!enable);
+  }
+  
+  public void setContentEditSelected(boolean selected){
+    contentEditBtn.setSelected(selected);  
+  }
+  
+  public void editContentClicked(){
+    for(JavaScriptObject callback : callbacks){
+      model.setContentEditToggled();
+      executeEditContentCallback(callback, model.isContentEditSelected());
+    }
+  }
+
+  private native void executeEditContentCallback(JavaScriptObject obj, boolean selected)/*-{
+    try{
+      obj.editContentToggled(selected);
+    } catch (e){}
+  }-*/;
+  
 
 }
 

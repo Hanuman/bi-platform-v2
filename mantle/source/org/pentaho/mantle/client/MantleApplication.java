@@ -86,6 +86,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.core.client.JavaScriptObject;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -177,7 +178,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$
     
     // first things first... make sure we've registered our native hooks
-    setupNativeHooks(this, solutionBrowserPerspective);
+    setupNativeHooks(this, main, solutionBrowserPerspective);
 
     Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
 
@@ -267,7 +268,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     dialog.center();
   }
   
-  public native void setupNativeHooks(MantleApplication mantle, SolutionBrowserPerspective solutionNavigator)
+  public native void setupNativeHooks(MantleApplication mantle, XulMain main, SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.mantle_openTab = function(name, title, url) {
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
@@ -298,9 +299,22 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::enableAdhocSave(Z)(enable);
     }
     
+    $wnd.enableContentEdit = function(enable) { 
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::enableContentEdit(Z)(enable);      
+    }
+    
+    $wnd.setContentEditSelected = function(enable) { 
+      solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::setContentEditSelected(Z)(enable);      
+    }
+    
     $wnd.registerContentOverlay = function(id) { 
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::registerContentOverlay(Ljava/lang/String;)(id);      
     }
+    
+    $wnd.registerContentCallback = function(callback) { 
+      main.@org.pentaho.mantle.client.XulMain::registerContentCallback(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
+    }
+    
     
   }-*/;
 
@@ -449,7 +463,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       String command = settings.get(menuId + "MenuCommand" + idx); //$NON-NLS-1$
       while (title != null) {
         // create a generic UrlCommand for this
-        if(!GWT.isScript()) {
+        if(!GWT.isScript() && command.indexOf("content") > -1) {
           int index = command.indexOf("?");
           if( index >=0) {
             command = "/MantleService?passthru=" + command.substring(command.indexOf("content"), index) + "&" + command.substring(index+1) + "&userid=joe&password=password"; ;            

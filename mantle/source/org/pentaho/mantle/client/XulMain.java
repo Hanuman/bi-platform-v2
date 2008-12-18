@@ -22,6 +22,7 @@ import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -106,6 +107,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
         }
       }
     }
+    
+    
   }
   
   public void overlayLoaded(){
@@ -115,6 +118,9 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void loadOverlays(List<IXulOverlay> overlays) {
     for(IXulOverlay overlay: overlays) {
       overlayMap.put(overlay.getId(), overlay);
+      if(overlay.getId().startsWith("startup")){
+        AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
+      }
     }
   }
 
@@ -157,6 +163,10 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void overlayRemoved() {
     // TODO Auto-generated method stub
     
+  }
+  
+  public void registerContentCallback(JavaScriptObject obj){
+    this.controller.addJSCallback(obj);
   }
   
 }

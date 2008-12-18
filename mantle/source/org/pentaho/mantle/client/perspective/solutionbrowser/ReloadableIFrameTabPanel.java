@@ -37,7 +37,8 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   CustomFrame frame;
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
-  protected boolean saveEnabled;
+  protected boolean saveEnabled, editContentEnabled, editContentSelected ;
+  
   private Set<String> overlayIds;
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
@@ -230,5 +231,19 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
     overlayIds.add(id);
   }
   
+  public void setEditEnabled(boolean enable){
+    this.editContentEnabled = enable;
+  }
   
+  public boolean isEditEnabled(){
+    return editContentEnabled ;
+  }
+ 
+  public void setEditSelected(boolean selected){
+    this.editContentSelected = selected;
+  }
+  
+  public boolean isEditSelected(){
+    return this.editContentSelected;
+  }
 }

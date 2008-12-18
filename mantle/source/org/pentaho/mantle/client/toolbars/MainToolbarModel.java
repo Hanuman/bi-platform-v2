@@ -27,6 +27,8 @@ public class MainToolbarModel implements SolutionBrowserListener{
   private boolean saveAsEnabled = false;
   private boolean printEnabled = false;
   private boolean newAnalysisEnabled = false;
+  private boolean contentEditEnabled = false;
+  private boolean contentEditSelected = false;
   
   //TODO: Remove once bindings in place
   private MainToolbarController controller;
@@ -113,18 +115,24 @@ public class MainToolbarModel implements SolutionBrowserListener{
   public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
-
+    boolean editIsEnabled = false;
+    boolean editSelected = false;
+    
     controller.setWorkspaceSelected(isWorkspaceShowing());
     controller.setShowBrowserSelected(isSolutionBrowserShowing());
     
     if(panel != null){
       selectedTabURL = panel.getUrl();
       saveEnabled = panel.isSaveEnabled();
+      editIsEnabled = panel.isEditEnabled();
+      editSelected = panel.isEditSelected();
     }
     
     setPrintEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
     setSaveEnabled(saveEnabled);
     setSaveAsEnabled(saveEnabled);
+    setContentEditEnabled(editIsEnabled);
+    setContentEditSelected(editSelected);
     
     if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
       if(panel != null) {
@@ -148,6 +156,23 @@ public class MainToolbarModel implements SolutionBrowserListener{
   
   public boolean isWorkspaceShowing() {
     return solutionBrowser.isWorkspaceShowing();
+  }
+  
+  public void setContentEditEnabled(boolean enable){
+    contentEditEnabled = enable;
+    controller.setContentEditEnabled(enable);
+  }
+  public void setContentEditSelected(boolean selected){
+    contentEditSelected = selected;
+    controller.setContentEditSelected(selected);
+  }
+  
+  public boolean isContentEditSelected(){
+    return this.contentEditSelected;
+  }
+  
+  public void setContentEditToggled(){
+    setContentEditSelected(!this.contentEditSelected);
   }
 }
 

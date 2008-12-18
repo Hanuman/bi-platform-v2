@@ -30,4 +30,9 @@ public interface IReloadableTabPanel {
   public String getUrl();
   public Set<String> getOverlayIds();
   public void addOverlay(String id);
+  public void setEditEnabled(boolean enable);
+  public boolean isEditEnabled();
+  public void setEditSelected(boolean enable);
+  public boolean isEditSelected();
+  
 }
