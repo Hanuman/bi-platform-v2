@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
@@ -110,5 +111,6 @@ public interface MantleService extends RemoteService {
   
   public boolean repositorySupportsACLS();
   
-  public List<XulOverlay> getOverlays();
+  public List<MantleXulOverlay> getOverlays();
+  
 }

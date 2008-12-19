@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
@@ -108,5 +109,5 @@ public interface MantleServiceAsync {
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames, AsyncCallback<Void> callback);
   public void setShowHiddenFiles(boolean showHiddenFiles, AsyncCallback<Void> callback);
   public void repositorySupportsACLS(AsyncCallback<Boolean> callback);
-  public void getOverlays(AsyncCallback<List<XulOverlay>> callback);
+  public void getOverlays(AsyncCallback<List<MantleXulOverlay>> callback);
 }

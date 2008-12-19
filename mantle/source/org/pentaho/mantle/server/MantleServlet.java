@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jfree.report.JFreeReport;
 import org.jfree.report.layout.output.ReportProcessor;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
+import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
@@ -112,6 +113,7 @@ import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MantleServlet extends RemoteServiceServlet implements MantleService {
@@ -1138,13 +1140,22 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return versionInfo.getVersionNumber();
   }
 
-  public List<XulOverlay> getOverlays() {
+  public List<MantleXulOverlay> getOverlays() {
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
+    
+    List<XulOverlay> overlays = pluginManager.getOverlays();
+    List<MantleXulOverlay> result = new ArrayList<MantleXulOverlay>();
+    for(XulOverlay overlay : overlays){
+      
+      MantleXulOverlay tempOverlay = new MantleXulOverlay(overlay.getId(), overlay.getOverlayUri(), overlay.getSource(), overlay.getResourceBundleUri());
+      result.add(tempOverlay);
+    }
     if (pluginManager != null) {
-      return pluginManager.getOverlays();
+      return result;
     } else {
       return null;
     }
     
   }
+
 }

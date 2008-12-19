@@ -1,5 +1,6 @@
 package org.pentaho.mantle.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
 import org.pentaho.mantle.client.toolbars.MainToolbarModel;
 import org.pentaho.ui.xul.XulComponent;
@@ -24,11 +26,12 @@ import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class XulMain extends SimplePanel implements IXulLoaderCallback{
   
-  private Map<String, XulOverlay> overlayMap = new HashMap<String, XulOverlay>();  
+  private Map<String, MantleXulOverlay> overlayMap = new HashMap<String, MantleXulOverlay>();  
   
   private MainToolbarModel model;
   
@@ -114,14 +117,29 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     }
     
     
+    AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
+
+      public void onFailure(Throwable caught) {
+        Window.alert("Error fetching XulOverlay list\n "+caught.toString());
+      }
+
+      public void onSuccess(List<MantleXulOverlay> overlays) {
+        
+        XulMain.getInstance().loadOverlays(overlays);
+      }
+    };
+    MantleServiceCache.getService().getOverlays(callback);    
+    
+
+    
   }
   
   public void overlayLoaded(){
     
   } 
   
-  public void loadOverlays(List<XulOverlay> overlays) {
-    for(XulOverlay overlay: overlays) {
+  public void loadOverlays(List<MantleXulOverlay> overlays) {
+    for(MantleXulOverlay overlay: overlays) {
       overlayMap.put(overlay.getId(), overlay);
       if(overlay.getId().startsWith("startup")){
         AsyncXulLoader.loadOverlayFromSource(overlay.getSource(), overlay.getResourceBundleUri(), container, this);
@@ -139,7 +157,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void applyOverlay(String id) {
     if(overlayMap != null && !overlayMap.isEmpty()) {
       if(overlayMap.containsKey(id)) {
-        XulOverlay overlay = overlayMap.get(id); 
+        MantleXulOverlay overlay = overlayMap.get(id); 
         AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here
@@ -157,7 +175,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void removeOverlay(String id) {
     if(overlayMap != null && !overlayMap.isEmpty()) {    
       if(overlayMap.containsKey(id)) {
-        XulOverlay overlay = overlayMap.get(id); 
+        MantleXulOverlay overlay = overlayMap.get(id); 
         AsyncXulLoader.removeOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here
