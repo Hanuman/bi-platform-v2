@@ -23,9 +23,7 @@ package org.pentaho.platform.api.engine;
 import java.util.List;
 import java.util.Set;
 
-import org.pentaho.platform.api.engine.IContentGenerator;
-import org.pentaho.platform.api.engine.IContentInfo;
-import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.ui.xul.XulOverlay;
 
 /**
  * A plugin has the following components:
@@ -56,8 +54,6 @@ public interface IPluginManager {
 	 */
 	public List<IContentGeneratorInfo> getContentGeneratorInfoForType( String type, IPentahoSession session );
 	
-	public IPentahoObjectFactory getObjectFactory();
-	
 	public IContentGenerator getContentGenerator( String id, IPentahoSession session ) throws ObjectFactoryException;
 	
 	public IContentGeneratorInfo getContentGeneratorInfo( String id, IPentahoSession session );
@@ -79,37 +75,68 @@ public interface IPluginManager {
 	 */
 	public List getMenuCustomizations();
 	
-	/**
-	 * Causes the plug-in settings object to re-register all of the plug-ins that
-	 * are defined in pentaho-solutions/system/./plugin.xml files
-	 * @param session A session to be used for getting the plugin.xml files
-	 * @param comments A list of strings that readable messages will be added to
-	 * as the plug-ins are processed.
-	 * @return true if no errors were encountered
-	 */
-	public boolean updatePluginSettings( IPentahoSession session, List<String> comments );
+	 /**
+   * Causes the plug-in settings object to re-register all of the plug-ins that
+   * are defined in pentaho-solutions/system/./plugin.xml files
+   * @param session A session to be used for getting the plugin.xml files
+   * @param comments A list of strings that readable messages will be added to
+   * as the plug-ins are processed.
+   * @return true if no errors were encountered
+	 * @throws PlatformPluginRegistrationException 
+   */
+	public boolean reload( IPentahoSession session, List<String> comments) throws PlatformPluginRegistrationException;
 
 	/**
 	 * Returns a map of the XUL overlays that are defined by all the plug-ins. The overlays are
 	 * XML fragments. The keys to the map are ids that the plug-ins define.
 	 * @return List of XML XUL overlays
 	 */
-	public List<IXulOverlay> getOverlays();
+	public List<XulOverlay> getOverlays();
+
+	/**
+	 * Registers a plugin with the platform and exposes the bits that compose the plugin to the various utility methods
+	 * of the plugin manager
+	 * @param plugin the platform plugin
+	 * @param comments
+	 * @throws PlatformPluginRegistrationException
+	 */
+	public void registerPlugin(IPlatformPlugin plugin, List<String> comments, IPentahoSession session ) throws PlatformPluginRegistrationException;
+	
+	//
+	// add methods.. these are deprecated.  It doesn't make sense to have a reload/init method as well as individual registry methods.
+	// Plugins are either going to be registered by the implementation class by way of reload _or_ they will be registered by some other
+	// class using the "add" registry methods.
+	//
 	
 	/**
-	 * 
-	 * @param id
-	 * @param xml
-	 * @param resourceBundleUri
-	 * 
-	 * @deprecated use addOverlay(IXulOverlay overlay)
+	 * Register a XUL overlay (XMLfragment) with the plugin manager.
+	 * @param overlay - a XUL overlay
+	 * @deprecated
 	 */
-  public void addOverlay( String id, String xml, String resourceBundleUri );
+  public void addOverlay(XulOverlay overlay);
   
-  public void addOverlay(IXulOverlay overlay);
+  /**
+   * @deprecated it is up to the implementation how it should register plugin contents, there is no need to force it to implement an add method
+   */
+  public void addContentInfo( String extension, IContentInfo contentInfo );
   
+  /**
+   * @deprecated
+   */
   public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
       IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException;
-
-  public void addContentInfo( String extension, IContentInfo contentInfo );
+  
+  /**
+   * @deprecated
+   */
+  public IPentahoObjectFactory getObjectFactory();
+  /**
+   * @deprecated use addOverlay(XulOverlay overlay)
+   */
+  public void addOverlay( String id, String xml, String resourceBundleUri );
+  
+  /**
+   * @deprecated use {@link #reload(IPentahoSession, List)}
+   */
+  public boolean updatePluginSettings( IPentahoSession session, List<String> comments );
 }

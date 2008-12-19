@@ -33,8 +33,8 @@ import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
-import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
+import org.pentaho.ui.xul.XulOverlay;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -110,5 +110,5 @@ public interface MantleService extends RemoteService {
   
   public boolean repositorySupportsACLS();
   
-  public List<IXulOverlay> getOverlays();
+  public List<XulOverlay> getOverlays();
 }

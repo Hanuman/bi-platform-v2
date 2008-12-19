@@ -68,10 +68,8 @@ import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
-import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
-import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISchedule;
@@ -111,6 +109,7 @@ import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.refactor.UserFilesComponent;
 import org.pentaho.ui.xul.IMenuCustomization;
+import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -1139,7 +1138,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return versionInfo.getVersionNumber();
   }
 
-  public List<IXulOverlay> getOverlays() {
+  public List<XulOverlay> getOverlays() {
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
     if (pluginManager != null) {
       return pluginManager.getOverlays();

@@ -36,7 +36,7 @@
    */
 %>
 
-<%@page import="org.pentaho.platform.api.engine.IXulOverlay"%>
+<%@page import="org.pentaho.ui.xul.XulOverlay"%>
 <%@page import="org.pentaho.platform.api.engine.IPluginManager"%><html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
@@ -352,7 +352,7 @@ function loader(){
 	String buttonImage = "";
 	IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoHttpSessionHelper.getPentahoSession(request)); //$NON-NLS-1$
     if (pluginManager != null) {
-      	for(IXulOverlay overlayObj : pluginManager.getOverlays()) {
+      	for(XulOverlay overlayObj : pluginManager.getOverlays()) {
       	  if (overlayObj.getId() != null && overlayObj.getId().equals("launch")) {
 			ResourceBundle bundle = getBundle(overlayObj.getResourceBundleUri());
 	    	// replace I18N parameters

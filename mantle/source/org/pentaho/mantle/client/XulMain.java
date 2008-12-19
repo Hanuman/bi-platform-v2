@@ -9,9 +9,9 @@ import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
 import org.pentaho.mantle.client.toolbars.MainToolbarModel;
-import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
+import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class XulMain extends SimplePanel implements IXulLoaderCallback{
   
-  private Map<String, IXulOverlay> overlayMap = new HashMap<String, IXulOverlay>();  
+  private Map<String, XulOverlay> overlayMap = new HashMap<String, XulOverlay>();  
   
   private MainToolbarModel model;
   
@@ -115,8 +115,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     
   } 
   
-  public void loadOverlays(List<IXulOverlay> overlays) {
-    for(IXulOverlay overlay: overlays) {
+  public void loadOverlays(List<XulOverlay> overlays) {
+    for(XulOverlay overlay: overlays) {
       overlayMap.put(overlay.getId(), overlay);
       if(overlay.getId().startsWith("startup")){
         AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
@@ -134,7 +134,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void applyOverlay(String id) {
     if(overlayMap != null && !overlayMap.isEmpty()) {
       if(overlayMap.containsKey(id)) {
-        IXulOverlay overlay = overlayMap.get(id); 
+        XulOverlay overlay = overlayMap.get(id); 
         AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here
@@ -152,7 +152,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   public void removeOverlay(String id) {
     if(overlayMap != null && !overlayMap.isEmpty()) {    
       if(overlayMap.containsKey(id)) {
-        IXulOverlay overlay = overlayMap.get(id); 
+        XulOverlay overlay = overlayMap.get(id); 
         AsyncXulLoader.removeOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here

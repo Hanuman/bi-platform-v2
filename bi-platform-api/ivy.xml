@@ -19,8 +19,10 @@
         <dependency org="dom4j"               name="dom4j"               rev="1.6.1" transitive="false"/>
         <dependency org="org.acegisecurity"   name="acegi-security"      rev="1.0.6" transitive="false"/>
         
+        
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections"        rev="${dependency.pentaho-connections.revision}"  changing="true"/>
         <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"  changing="true"/>
+        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" changing="true"/>
     </dependencies>
 </ivy-module>

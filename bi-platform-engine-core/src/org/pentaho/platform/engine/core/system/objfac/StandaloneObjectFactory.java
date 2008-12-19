@@ -32,6 +32,8 @@ import org.pentaho.platform.engine.core.messages.Messages;
 
 public class StandaloneObjectFactory implements IPentahoObjectFactory {
 
+  public static enum Scope { GLOBAL, SESSION, REQUEST, THREAD, LOCAL };
+  
   private Map<String,ObjectCreator> creators = new HashMap<String,ObjectCreator>();
   
   public <T> T get(Class<T> interfaceClass, IPentahoSession session) throws ObjectFactoryException {
@@ -67,12 +69,13 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     return creators.get(key) != null;
   }
 
-  public void addObject( String key, String className, String scope ) {
+  public void defineObject( String key, String className, Scope scope ) {
     
-    addObject( key, className, scope, getClass().getClassLoader() );
+    defineObject( key, className, scope, getClass().getClassLoader() );
   }
   
-  public void addObject( String key, String className, String scope, ClassLoader loader ) {
+  public void defineObject( String key, String className, Scope scope, ClassLoader loader ) {
+    
     ObjectCreator creator = new ObjectCreator( className, scope, loader );
     creators.put( key, creator );
   }
@@ -81,42 +84,47 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
 
     ObjectCreator creator = creators.get(key);
     if( creator == null ) {
-      throw new ObjectFactoryException( "Object creator not found" );
+      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
+      throw new ObjectFactoryException( msg );
     }
     
     Object instance = creator.getInstance(key, session);
+    
+    if (instance instanceof IPentahoInitializer) {
+      ((IPentahoInitializer) instance).init(session);
+    }
 
     return instance;
   }
 
   private class ObjectCreator {
 
-    private String scope = null;
+    private Scope scope = null;
     private String className = null;  
     private ThreadLocal<Object> threadLocalInstance = null;
     private Object globalInstance = null;
     private ClassLoader loader;
     
-    public ObjectCreator( String className, String scope, ClassLoader loader ) {
+    public ObjectCreator( String className, Scope scope, ClassLoader loader ) {
       this.className = className.trim();
       this.scope = scope;
       this.loader = loader;
-      if( "thread".equals( scope ) ) { //$NON-NLS-1$
+      if( scope == Scope.THREAD ) { 
         threadLocalInstance = new ThreadLocal<Object>();
       }
     }
     
     public Object getInstance( String key, IPentahoSession session  ) throws ObjectFactoryException {
-      if( "global".equals( scope ) ) { //$NON-NLS-1$
+      if( scope == Scope.GLOBAL ) {
         return getGlobalInstance( key, session );
       }
-      else if( "session".equals( scope ) ) { //$NON-NLS-1$
+      else if( scope == Scope.SESSION ) {
         return getSessionInstance( key, session );
       }
-      else if( "local".equals( scope ) ) { //$NON-NLS-1$
+      else if( scope == Scope.LOCAL ) { 
         return getLocalInstance( key, session );
       }
-      else if( "thread".equals( scope ) ) { //$NON-NLS-1$
+      else if( scope == Scope.THREAD ) {
         return getThreadInstance( key, session );
       }
       throw new ObjectFactoryException( "Invalid scope: "+scope );

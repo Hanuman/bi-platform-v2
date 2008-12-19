@@ -117,10 +117,12 @@ public class PluginManagerNotConfiguredTest extends BaseTest {
   public void testPluginManagerStaticMethods() {
     startTest();
 
-    assertNull(PluginManager.getInstance());
-    assertEquals("", PluginManager.getContentGeneratorIdForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", PluginManager.getContentGeneratorTitleForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", PluginManager.getContentGeneratorUrlForType("test-type-1")); //$NON-NLS-1$//$NON-NLS-2$
+    IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
+    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
+    
+    assertEquals("", pluginManager.getContentGeneratorIdForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
+    assertEquals("", pluginManager.getContentGeneratorTitleForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
+    assertEquals("", pluginManager.getContentGeneratorUrlForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
 
     finishTest();
   }

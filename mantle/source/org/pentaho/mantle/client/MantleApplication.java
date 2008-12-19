@@ -62,8 +62,8 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserList
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
-import org.pentaho.platform.api.engine.IXulOverlay;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
+import org.pentaho.ui.xul.XulOverlay;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -226,13 +226,13 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     // load mantle settings
     loadAndApplyMantleSettings();
     
-    AsyncCallback<List<IXulOverlay>> callback = new AsyncCallback<List<IXulOverlay>>() {
+    AsyncCallback<List<XulOverlay>> callback = new AsyncCallback<List<XulOverlay>>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(List<IXulOverlay> overlays) {
+      public void onSuccess(List<XulOverlay> overlays) {
         XulMain.getInstance().loadOverlays(overlays);
       }
     };

@@ -27,6 +27,7 @@ import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -47,7 +48,11 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
 			return false;
 		}
-		pluginManager.updatePluginSettings( session, comments );
+		try {
+      pluginManager.reload( session, comments );
+    } catch (PlatformPluginRegistrationException e) {
+      Logger.error( getClass().toString(), e.getMessage(), e); //$NON-NLS-1$
+    }
 		return true;
 	}
 

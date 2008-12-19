@@ -19,4 +19,14 @@ public interface IContentGeneratorInfo {
 	public void setTitle(String title);
 	
 	public IFileInfoGenerator getFileInfoGenerator( );
+
+  public String getType();
+
+  public String getFileInfoGeneratorClassname();
+
+  public void setFileInfoGenerator(IFileInfoGenerator fileInfoGenerator);
+
+  public String getClassname();
+
+  public String getScope();
 }

@@ -12,8 +12,16 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 	private String title;
 	
 	private String url;
+	
+	private String type;
 
+	private String fileInfoGeneratorClassname;
+	
 	private IFileInfoGenerator fileInfoGenerator; 
+	
+	private String classname;
+	
+	private String scope;
 	
 	public String getDescription() {
 		return description;
@@ -47,11 +55,45 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 		this.url = url;
 	}
 	
-	public IFileInfoGenerator getFileInfoGenerator() {
+	public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getFileInfoGeneratorClassname() {
+    return fileInfoGeneratorClassname;
+  }
+
+  public void setFileInfoGeneratorClassname(String fileInfoGeneratorClassname) {
+    this.fileInfoGeneratorClassname = fileInfoGeneratorClassname;
+  }
+
+  public IFileInfoGenerator getFileInfoGenerator() {
 		return fileInfoGenerator;
 	}
 
 	public void setFileInfoGenerator(IFileInfoGenerator fileInfoGenerator) {
 		this.fileInfoGenerator = fileInfoGenerator;
 	}
+
+  public String getClassname() {
+    return classname;
+  }
+
+  public void setClassname(String classname) {
+    this.classname = classname;
+  }
+
+  public String getScope() {
+    return scope;
+  }
+
+  public void setScope(String scope) {
+    this.scope = scope;
+  }
+
+
 }

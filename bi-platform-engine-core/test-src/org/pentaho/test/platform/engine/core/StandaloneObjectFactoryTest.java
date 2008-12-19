@@ -4,6 +4,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 
 import junit.framework.TestCase;
 
@@ -28,7 +29,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
 
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "bogus"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), null); //$NON-NLS-1$
 
     try {
       factory.get( Object1.class , session1);
@@ -44,8 +45,8 @@ public class StandaloneObjectFactoryTest extends TestCase {
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
 
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "global"); //$NON-NLS-1$
-    factory.addObject( "bogus2", "bogus", "global"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
+    factory.defineObject( "bogus2", "bogus", Scope.GLOBAL); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     Object1 obj = (Object1) factory.getObject(Object1.class.getSimpleName(), session1);
     assertNotNull( obj );
@@ -63,7 +64,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
 
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "global"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
 
     assertTrue( "Object is not defined", factory.objectDefined( Object1.class.getSimpleName() ) ); //$NON-NLS-1$
     Object1 obj1 = factory.get( Object1.class, session1);
@@ -87,7 +88,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "global"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
@@ -106,7 +107,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object2.class.getSimpleName(), Object2.class.getName(), "global"); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
@@ -125,7 +126,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), "bogus", "global"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.GLOBAL); //$NON-NLS-1$ //$NON-NLS-2$ 
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -142,7 +143,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "session"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.SESSION); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
@@ -164,7 +165,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object2.class.getSimpleName(), Object2.class.getName(), "session"); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.SESSION); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
@@ -183,7 +184,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), "bogus", "session"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.SESSION); //$NON-NLS-1$ //$NON-NLS-2$ 
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -200,7 +201,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "session"); //$NON-NLS-1$ 
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.SESSION); //$NON-NLS-1$ 
         
     try {
       factory.get( Object1.class, null);
@@ -215,7 +216,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "local"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.LOCAL); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -236,7 +237,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object2.class.getSimpleName(), Object2.class.getName(), "local"); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.LOCAL); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -257,7 +258,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), "bogus", "local"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.LOCAL); //$NON-NLS-1$ //$NON-NLS-2$ 
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -274,7 +275,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), Object1.class.getName(), "thread"); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.THREAD); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -295,7 +296,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object2.class.getSimpleName(), Object2.class.getName(), "thread"); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.THREAD); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -316,7 +317,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.addObject( Object1.class.getSimpleName(), "bogus", "thread"); //$NON-NLS-1$ //$NON-NLS-2$ 
+    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.THREAD); //$NON-NLS-1$ //$NON-NLS-2$ 
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
