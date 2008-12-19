@@ -229,7 +229,37 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     AsyncCallback<List<XulOverlay>> callback = new AsyncCallback<List<XulOverlay>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert(caught.toString());
+        Window.alert("Error fetching XulOverlay list\n "+caught.toString());
+        XulOverlay overlay = new XulOverlay(){
+
+          public String getId() {
+            return "startup.main_toolbar";
+          }
+
+          public String getOverlayUri() {
+            return null;  
+          }
+
+          public String getOverlayXml() {
+            return this.getSource();
+          }
+
+          public String getResourceBundleUri() {
+            return "/pentaho/content/dashboards/resources/messages/messages";
+          }
+
+          public String getSource() {
+            return "<overlay id=\"startup.dashboardToolbar\" resourcebundle=\"content/dashboards/resources/messages/messages.properties\">"
+            +"<toolbar id=\"mainToolbar\">"
+            +"<toolbarbutton id=\"openDashboardButton\" image=\"mantle/images/newDashboard_32.png\" onclick=\"mainToolbarHandler.openUrl('Dashboard','Dashboard','content/dashboards?command=new')\" tooltiptext=\"${openEllipsis}\"  insertafter=\"newAnalysisButton\"/>"
+            +"</toolbar>"
+            +"</overlay>";
+          }
+          
+        };
+        List<XulOverlay> overlayList = new ArrayList<XulOverlay>();
+        overlayList.add(overlay);
+        XulMain.getInstance().loadOverlays(overlayList);
       }
 
       public void onSuccess(List<XulOverlay> overlays) {
@@ -237,6 +267,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       }
     };
     MantleServiceCache.getService().getOverlays(callback);    
+    
 
     // add window close listener
     Window.addWindowCloseListener(new WindowCloseListener() {
