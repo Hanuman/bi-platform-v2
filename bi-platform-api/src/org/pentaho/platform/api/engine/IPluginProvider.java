@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * A plugin provider is responsible for serving up {@link IPlatformPlugin}s to whoever is asking, typically
- * IPluginManager.  The plugin provider is not responsible for integrating the plugins into the platform.
+ * {@link IPluginManager}.  The plugin provider is not responsible for integrating the plugins into the platform.
  * It's only role is to render plugin definitions, {@link IPlatformPlugin}s.  A plugin provider might 
  * load plugin definitions from an xml file, or a properties file.  You might also create a plugin provider
  * that creates plugins programmatically.  It won't matter what mechanism you use to define your plugins
