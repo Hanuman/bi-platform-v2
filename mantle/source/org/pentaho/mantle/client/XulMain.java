@@ -37,6 +37,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   private GwtXulDomContainer container;
   
   private static XulMain _instance = null;
+  
+  private SolutionBrowserPerspective solutionBrowser;
 
   public static synchronized XulMain instance(final SolutionBrowserPerspective solutionBrowser) {
     if (null == _instance) {
@@ -50,12 +52,9 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   }
   
   protected XulMain(final SolutionBrowserPerspective solutionBrowser){
-    
+    this.solutionBrowser = solutionBrowser;
     //instantiate our Model and Controller
-    model = new MainToolbarModel(solutionBrowser, this);
-    controller = new MainToolbarController(model);
-    //TODO: remove controller reference from model when Bindings in place
-    model.setController(controller);
+    controller = new MainToolbarController();
     
     // Invoke the async loading of the XUL DOM.
     AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
@@ -84,6 +83,12 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
       e.printStackTrace();
       return;
     }
+
+    //TODO: remove controller reference from model when Bindings in place
+    model = new MainToolbarModel(solutionBrowser, this);
+    model.setController(controller);
+    controller.setModel(model);
+    
   
     // Get the toolbar from the XUL doc
     Toolbar bar = (Toolbar) container.getDocumentRoot().getElementById("mainToolbar").getManagedObject();    //$NON-NLS-1$
@@ -119,7 +124,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     for(XulOverlay overlay: overlays) {
       overlayMap.put(overlay.getId(), overlay);
       if(overlay.getId().startsWith("startup")){
-        AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
+        AsyncXulLoader.loadOverlayFromSource(overlay.getSource(), overlay.getResourceBundleUri(), container, this);
       }
     }
   }

@@ -32,8 +32,8 @@ public class MainToolbarController extends AbstractXulEventHandler{
   private List<JavaScriptObject> callbacks = new ArrayList<JavaScriptObject>();
   
   
-  public MainToolbarController(MainToolbarModel model){
-    this.model = model;
+  public MainToolbarController(){
+    
   }
 
   /** 
@@ -144,7 +144,8 @@ public class MainToolbarController extends AbstractXulEventHandler{
     try{
       $wnd.eval(js);
     } catch (e){
-      $wnd.mantle_showMessage("Javascript Error",e.message);
+      $wnd.mantle_showMessage("Javascript Error",e.message+"\n\n"+js);
+      
     }
   }-*/;
   
@@ -158,6 +159,13 @@ public class MainToolbarController extends AbstractXulEventHandler{
     }
   }-*/;
   
+  public native void openUrl(String title, String name, String uri)/*-{
+    try{
+      $wnd.eval("openURL('"+name+"','"+title+"','"+uri+"')");
+    } catch (e){
+      $wnd.mantle_showMessage("Javascript Error",e.message);
+    }
+  }-*/;
 
   public void addJSCallback(JavaScriptObject obj){
     callbacks.add(obj);
@@ -183,6 +191,16 @@ public class MainToolbarController extends AbstractXulEventHandler{
       obj.editContentToggled(selected);
     } catch (e){}
   }-*/;
+
+  public MainToolbarModel getModel() {
+  
+    return model;
+  }
+
+  public void setModel(MainToolbarModel model) {
+  
+    this.model = model;
+  }
   
 
 }
