@@ -107,7 +107,26 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.GLOBAL );
+        
+    IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
+    IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
+
+    Object2 obj1 = factory.get( Object2.class, session1);
+    assertNotNull( "Object is null", obj1 ); //$NON-NLS-1$
+    
+    Object2 obj2 = factory.get( Object2.class, session2);
+    assertNotNull( "Object is null", obj2 ); //$NON-NLS-1$
+    
+    assertTrue( "Objects are not same", obj1 == obj2 ); //$NON-NLS-1$
+    
+  }
+  
+  public void testGlobalObject3() throws Exception {
+    
+    StandaloneObjectFactory factory = new StandaloneObjectFactory();
+    
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.GLOBAL, getClass().getClassLoader() );
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
@@ -139,6 +158,21 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
   }
   
+  public void testGlobalObjectFail2() throws Exception {
+    
+    StandaloneObjectFactory factory = new StandaloneObjectFactory();
+    
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.GLOBAL, null );
+    IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
+    try {
+      factory.get( Object2.class, session1);
+      assertTrue( "Exception expected", false ); //$NON-NLS-1$
+    } catch (NullPointerException e) {
+      assertFalse( "Exception expected", false ); //$NON-NLS-1$
+    }
+    
+  }
+
   public void testSessionObject1() throws Exception {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
@@ -275,7 +309,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.THREAD); //$NON-NLS-1$
+    factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.THREAD );
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -296,7 +330,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.THREAD); //$NON-NLS-1$
+    factory.defineObject( Object2.class.getSimpleName(), Object2.class.getName(), Scope.THREAD );
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
@@ -317,7 +351,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
-    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.THREAD); //$NON-NLS-1$ //$NON-NLS-2$ 
+    factory.defineObject( Object1.class.getSimpleName(), "bogus", Scope.THREAD ); //$NON-NLS-1$
         
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
 
