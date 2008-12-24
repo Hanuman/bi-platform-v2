@@ -45,6 +45,10 @@ public class StandaloneSession extends BaseSession {
 
   private HashMap attributes;
 
+  public StandaloneSession() {
+    this("unknown");
+  }
+
   public StandaloneSession(final String name) {
     this(name, name);
   }
