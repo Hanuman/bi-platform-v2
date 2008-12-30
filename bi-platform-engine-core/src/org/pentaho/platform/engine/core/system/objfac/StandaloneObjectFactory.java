@@ -90,10 +90,6 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     
     Object instance = creator.getInstance(key, session);
     
-    if (instance instanceof IPentahoInitializer) {
-      ((IPentahoInitializer) instance).init(session);
-    }
-
     return instance;
   }
 
@@ -127,7 +123,7 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
       else if( scope == Scope.THREAD ) {
         return getThreadInstance( key, session );
       }
-      throw new ObjectFactoryException( "Invalid scope: "+scope );
+      return null;
     }
     
     protected Object createObject() throws ObjectFactoryException {
@@ -161,9 +157,9 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     public Object getGlobalInstance( String key, IPentahoSession session ) throws ObjectFactoryException {
       if ( null == globalInstance ) {
         globalInstance = createObject();
-      }
-      if (globalInstance instanceof IPentahoInitializer) {
-        ((IPentahoInitializer) globalInstance).init( session );
+        if (globalInstance instanceof IPentahoInitializer) {
+          ((IPentahoInitializer) globalInstance).init( session );
+        }
       }
       return globalInstance;
     }
@@ -177,10 +173,10 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
 
       if ((instance == null)) {
         instance = createObject();
+        if (instance instanceof IPentahoInitializer) {
+          ((IPentahoInitializer) instance).init( session );
+        }
         session.setAttribute( key, instance );
-      }
-      if (instance instanceof IPentahoInitializer) {
-        ((IPentahoInitializer) instance).init( session );
       }
       return instance;
     }
@@ -199,10 +195,10 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
       
       if ((instance == null)) {
         instance = createObject();
+        if (instance instanceof IPentahoInitializer) {
+          ((IPentahoInitializer) instance).init( session );
+        }
         threadLocalInstance.set( instance );
-      }
-      if (instance instanceof IPentahoInitializer) {
-        ((IPentahoInitializer) instance).init( session );
       }
       return instance;
     }
