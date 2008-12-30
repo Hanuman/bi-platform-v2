@@ -5,13 +5,17 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,20 +77,24 @@ public class SolutionClassLoader extends ClassLoader {
 	  // now add the new jar
 	  jars.add(jar);
   }
-  
+  /*
   public static synchronized void unloadClasses() {
 	  resourceMap.clear();
 	  jars.clear();
   }
-  
+  */
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
 
-	  byte bytes[] = getResourceAsBytes( name );
-	  if( bytes == null ) {
-		  throw new ClassNotFoundException(name);
-	  }
-	  return defineClass( name, bytes, 0, bytes.length );
+    try {
+      byte bytes[] = getResourceAsBytes( name );
+      if( bytes == null ) {
+        throw new ClassNotFoundException(name);
+      }
+      return defineClass( name, bytes, 0, bytes.length );
+    } catch (IOException e ) {
+      throw new ClassNotFoundException(name, e);
+    }
 	  
   }
   
@@ -95,7 +103,7 @@ public class SolutionClassLoader extends ClassLoader {
     jarList.addAll( loadedFrom.keySet() );
     return jarList;
   }
-  
+/*  
   public static boolean unloadJar( String jarLocalName ) {
     List<String> classList = loadedFrom.get( jarLocalName );
     if( classList == null || classList.size() == 0 ) {
@@ -128,14 +136,10 @@ public class SolutionClassLoader extends ClassLoader {
     }
     return true;
   }
-  
+*/  
   private String getJarLocalName( String jarName ) {
     int idx = jarName.indexOf( path );
-    if( idx != -1 ) {
-      return jarName.substring( idx );
-    } else {
-      return jarName;
-    }
+    return jarName.substring( idx );
   }
   
   /**
@@ -146,41 +150,24 @@ public class SolutionClassLoader extends ClassLoader {
   @Override
   public InputStream getResourceAsStream(final String name) {
       try {
-        String entryName = name;
-        String extension = ""; //$NON-NLS-1$
-        if( entryName.endsWith( ".class" ) ) { //$NON-NLS-1$
-          extension = ".class"; //$NON-NLS-1$
-        }
-        else if( entryName.endsWith( ".xml" ) ) { //$NON-NLS-1$
-          extension = ".xml"; //$NON-NLS-1$
-        }
-        else if( entryName.endsWith( ".properties" ) ) { //$NON-NLS-1$
-          extension = ".properties"; //$NON-NLS-1$
-        }
-        entryName = entryName.substring( 0, entryName.length() - extension.length() );
-        entryName = entryName.replace('.', '/');
-        if( "".equals( extension) ) { //$NON-NLS-1$
-          entryName += ".class"; //$NON-NLS-1$
-        } else {
-          entryName += extension;
-        }
+        String entryName = prepareEntryName( name );
     	  for( JarFile jar: jars ) {
-			  ZipEntry entry = jar.getEntry(entryName);
-			  if( entry != null ) {
-			    String jarKey = getJarLocalName( jar.getName() );
-			    List<String> classList = loadedFrom.get( jarKey );
-			    if( classList == null ) {
-			      classList = new ArrayList<String>();
-			      loadedFrom.put( jarKey, classList );
-			    }
-			    classList.add( name );
-		      System.out.println( "adding class: "+jarKey + ISolutionRepository.SEPARATOR + name );
-				  return jar.getInputStream( entry );
-			  }
+  			  ZipEntry entry = jar.getEntry(entryName);
+  			  if( entry != null ) {
+  			    String jarKey = getJarLocalName( jar.getName() );
+  			    List<String> classList = loadedFrom.get( jarKey );
+  			    if( classList == null ) {
+  			      classList = new ArrayList<String>();
+  			      loadedFrom.put( jarKey, classList );
+  			    }
+  			    classList.add( name );
+  		      System.out.println( "adding class: "+jarKey + ISolutionRepository.SEPARATOR + name );
+  				  return jar.getInputStream( entry );
+  			  }
     	  }
       } catch (Exception ignored) {
-          // This situation indicates the resource could not be found. This is a common and correct situation 
-          // and this exception should be ignored.
+        // This situation indicates the resource was found but could not be
+        // opened.
           if (SolutionClassLoader.logger.isTraceEnabled()) {
           	SolutionClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
           }
@@ -190,43 +177,95 @@ public class SolutionClassLoader extends ClassLoader {
       return null;
   }
 
+  @Override
+  protected Enumeration<URL> findResources( String name) throws IOException {
+    
+    List<URL> urls = getResourceList( name, true );
+    @SuppressWarnings({"unchecked"})
+    Enumeration<URL> enumer = IteratorUtils.asEnumeration(urls.iterator());
+    return enumer;
+  }
+
+  @Override
+  protected URL findResource( String name) {
+    
+    try {
+      List<URL> urls = getResourceList( name, false );
+      if( urls.size() > 0 ) {
+        return urls.get( 0 );
+      }
+    } catch ( MalformedURLException e ) {
+      // ignored
+    }
+    return null;
+  }
+
+  private String prepareEntryName( String name ) {
+    String entryName = name;
+    String extension = ""; //$NON-NLS-1$
+    if( entryName.endsWith( ".xml" ) ) { //$NON-NLS-1$
+      extension = ".xml"; //$NON-NLS-1$
+    }
+    else if( entryName.endsWith( ".class" ) ) { //$NON-NLS-1$
+      extension = ".class"; //$NON-NLS-1$
+    }
+    else if( entryName.endsWith( ".properties" ) ) { //$NON-NLS-1$
+      extension = ".properties"; //$NON-NLS-1$
+    }
+    entryName = entryName.substring( 0, entryName.length() - extension.length() );
+    entryName = entryName.replace('.', '/');
+    if( "".equals( extension) ) { //$NON-NLS-1$
+      entryName += ".class"; //$NON-NLS-1$
+    } else {
+      entryName += extension;
+    }
+    return entryName;
+  }
+  
+  private List<URL> getResourceList(final String name, boolean multiple) throws MalformedURLException {
+    List<URL> urls = new ArrayList<URL>();
+    String entryName = prepareEntryName( name );
+    for( JarFile jar: jars ) {
+      ZipEntry entry = jar.getEntry(entryName);
+      if( entry != null ) {
+        String urlPath = "jar:file:"+jar.getName()+"!/"+name; //$NON-NLS-1$ //$NON-NLS-2$
+        URL url = new URL( urlPath );
+        urls.add( url );
+        if( !multiple ) {
+          return urls;
+        }
+      }
+    }
+    return urls;
+  }
+
   /**
    * Returns the requested resource as an InputStream.
    * @param name The resource name
    * @retruns An byte array of the resource, or <code>null</code> if the resource could not be found 
    */
-  protected byte[] getResourceAsBytes(final String name) {
+  protected byte[] getResourceAsBytes(final String name) throws IOException {
 
 	  byte[] classBytes = null;
     InputStream in = null;
     try {
-      try {
-        
-        String key = path + ISolutionRepository.SEPARATOR + name;
-        classBytes = SolutionClassLoader.resourceMap.get(key);
-        if (classBytes == null) {
-          in = getResourceAsStream( name );
-          ByteArrayOutputStream bin = new ByteArrayOutputStream( );
-          byte bytes[] = new byte[4096];
-          int n = in.read( bytes );
-          while( n != -1 ) {
-            bin.write( bytes, 0, n);
-            n = in.read( bytes );
-          }
-          classBytes = bin.toByteArray();
-          SolutionClassLoader.resourceMap.put(key, classBytes);
+      String key = path + ISolutionRepository.SEPARATOR + name;
+      classBytes = SolutionClassLoader.resourceMap.get(key);
+      if (classBytes == null) {
+        in = getResourceAsStream( name );
+        if( in == null ) {
+          return null;
         }
-        } catch (Exception ignored) {
-            // This situation indicates the resource could not be found. This is a common and correct situation 
-            // and this exception should be ignored.
-            if (SolutionClassLoader.logger.isTraceEnabled()) {
-              SolutionClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
-            }
-
-            // Return null to indicate that the resource could not be found (and this is ok) 
-            return null;
-          }
-      return classBytes;
+        ByteArrayOutputStream bin = new ByteArrayOutputStream( );
+        byte bytes[] = new byte[4096];
+        int n = in.read( bytes );
+        while( n != -1 ) {
+          bin.write( bytes, 0, n);
+          n = in.read( bytes );
+        }
+        classBytes = bin.toByteArray();
+        SolutionClassLoader.resourceMap.put(key, classBytes);
+      }
     } finally {
       if( in != null ) {
         try {
@@ -236,10 +275,11 @@ public class SolutionClassLoader extends ClassLoader {
         }
       }
     }
+    return classBytes;
   }
-
+/*
   public static void clearResourceCache() {
 	  SolutionClassLoader.resourceMap.clear();
   }
-
+*/  
 }

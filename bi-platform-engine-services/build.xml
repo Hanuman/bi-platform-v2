@@ -28,4 +28,33 @@
       FOUND IN common_build.xml.
     --> 
 
+	  <property name="testjar.src.dir" value="${basedir}/test-jar-src" description="Test jar source code directory" />
+	  <property name="testjar.classes.dir" value="${basedir}/test-jar-bin" description="Test jar bin directory" />
+	  <property name="testjar.dist.dir" value="${basedir}/test-jar-lib" description="Test jar bin directory" />
+
+	  <target name="testjar" description="Creates the classes for the test jar">
+	    <delete dir="${testjar.classes.dir}" />
+	    <delete dir="${testjar.dist.dir}" />
+	    <mkdir dir="${testjar.classes.dir}" />
+	    <mkdir dir="${testjar.dist.dir}" />
+	    <javac destdir="${testjar.classes.dir}"
+	           debug="${javac.debug}"
+	           deprecation="${javac.deprecation}"
+	           fork="true"
+	           source="${javac.source}"
+	           target="${javac.target}">
+	        <classpath>
+	          <path refid="classpath" />
+	        </classpath>
+	      <src path="${testjar.src.dir}" />
+	    </javac>
+	    <copy todir="${testjar.classes.dir}">
+	      <fileset dir="${testjar.src.dir}" includes="**/*.xml **/*.properties" />
+	    </copy>
+	  	
+      	<jar destfile="${testjar.dist.dir}/test-jar.jar">
+          <fileset dir="${testjar.classes.dir}" />
+        </jar>
+	  </target>
+	
 </project>
