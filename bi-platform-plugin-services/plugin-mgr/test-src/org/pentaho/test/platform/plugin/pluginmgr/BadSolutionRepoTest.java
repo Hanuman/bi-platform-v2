@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.messages.Messages;
@@ -26,7 +27,7 @@ public class BadSolutionRepoTest extends BaseTest {
       }
   }
 
-  public void testBadSolutionRepo() {
+  public void testBadSolutionRepo() throws PlatformPluginRegistrationException {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
@@ -34,9 +35,10 @@ public class BadSolutionRepoTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginManager.updatePluginSettings(session, messages);
-	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
-	    assertEquals( "Update failure is for wrong reason", Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY"), messages.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
+      boolean result = pluginManager.reload(session, messages);
+      // JD - this result should be false
+      assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
+      assertEquals( "Update failure is for wrong reason", Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY"), messages.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
 	    
 	    finishTest();
 	  }

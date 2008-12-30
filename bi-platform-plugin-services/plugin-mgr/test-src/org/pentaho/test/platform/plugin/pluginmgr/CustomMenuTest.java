@@ -29,7 +29,7 @@ public class CustomMenuTest extends BaseTest {
       }
   }
 
-  public void testBadSolutionRepo() {
+  public void testMenus() throws Exception {
 	    startTest();
 	    
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
@@ -37,7 +37,7 @@ public class CustomMenuTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginManager.updatePluginSettings(session, messages);
+	    boolean result = pluginManager.reload(session, messages);
 	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
 	    List<?> customs = pluginManager.getMenuCustomizations();
 	    assertEquals( "Wrong number of menu items created", 3, customs.size() ); //$NON-NLS-1$

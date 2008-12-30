@@ -143,17 +143,22 @@ public class PluginManager implements IPluginManager {
   }
 
   public synchronized boolean reload(IPentahoSession session, List<String> comments) throws PlatformPluginRegistrationException {
-    pluginProvider.reload(session, comments);
+    pluginProvider.getPlugins().clear();
+    boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session, comments);
     
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     objectFactory.init(null, null);
-    SolutionClassLoader.clearResourceCache();
 
     for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
-      registerPlugin(plugin, comments, session);
+      try {
+        registerPlugin(plugin, comments, session);
+      } catch (PlatformPluginRegistrationException e) {
+        // this has been logged already
+        anyErrors = true;
+      }
     }
-    return true;
+    return !anyErrors;
   }
 
   public void registerPlugin(IPlatformPlugin plugin, List<String> comments, IPentahoSession session) throws PlatformPluginRegistrationException {
@@ -162,21 +167,12 @@ public class PluginManager implements IPluginManager {
       contentTypeByExtension.put(info.getExtension(), info);
     }
 
+    ClassLoader loader = new SolutionClassLoader(
+        "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() + ISolutionRepository.SEPARATOR + "lib", //$NON-NLS-1$ //$NON-NLS-2$
+        this);
+
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
-      contentInfoMap.put(cgInfo.getId(), cgInfo);
-      
-      List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get(cgInfo.getTitle());
-      if (generatorList == null) {
-        generatorList = new ArrayList<IContentGeneratorInfo>();
-        contentGeneratorInfoByTypeMap.put(cgInfo.getType(), generatorList);
-      }
-      generatorList.add(cgInfo);
-      
-      ClassLoader loader = new SolutionClassLoader(
-          "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() + ISolutionRepository.SEPARATOR + "lib", //$NON-NLS-1$ //$NON-NLS-2$
-          this);
-      
       String errorMsg = Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getSourceDescription()); //$NON-NLS-1$
 
       //test load the content generator
@@ -214,6 +210,15 @@ public class PluginManager implements IPluginManager {
           throw new PlatformPluginRegistrationException(errorMsg, e);
         }
       }
+      contentInfoMap.put(cgInfo.getId(), cgInfo);
+      
+      List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get(cgInfo.getType());
+      if (generatorList == null) {
+        generatorList = new ArrayList<IContentGeneratorInfo>();
+        contentGeneratorInfoByTypeMap.put(cgInfo.getType(), generatorList);
+      }
+      generatorList.add(cgInfo);
+      
       
       comments.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }

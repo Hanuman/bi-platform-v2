@@ -17,7 +17,6 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.TestManager;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -110,19 +109,6 @@ public class PluginManagerNotConfiguredTest extends BaseTest {
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
     IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
     assertNull(pluginManager);
-
-    finishTest();
-  }
-
-  public void testPluginManagerStaticMethods() {
-    startTest();
-
-    IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
-    IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session ); 
-    
-    assertEquals("", pluginManager.getContentGeneratorIdForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", pluginManager.getContentGeneratorTitleForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
-    assertEquals("", pluginManager.getContentGeneratorUrlForType("test-type-1", session)); //$NON-NLS-1$//$NON-NLS-2$
 
     finishTest();
   }
