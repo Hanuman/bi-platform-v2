@@ -972,10 +972,10 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       String htmlContentHandlerUrlPattern) {
     try {
       IContentRepository contentRepository = null;
-      try {
-        contentRepository = PentahoSystem.getContentRepository(getSession());
-      } catch (Throwable t) {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS"), t); //$NON-NLS-1$
+      if( PentahoSystem.getObjectFactory().objectDefined( IContentRepository.class.getSimpleName() ) ) {
+        contentRepository = PentahoSystem.get( IContentRepository.class, getSession() );
+      } else {
+        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS") ); //$NON-NLS-1$
       }
 
       if (htmlContentHandlerUrlPattern == null) {
