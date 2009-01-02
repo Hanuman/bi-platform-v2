@@ -36,6 +36,8 @@ public class PluginManager implements IPluginManager {
 
   protected Map<String, IContentInfo> contentTypeByExtension = new HashMap<String, IContentInfo>();
 
+  protected Map<String, ClassLoader> classLoaderMap = new HashMap<String, ClassLoader>();
+  
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
   protected final ThreadLocal<IPentahoSession> sessions = new ThreadLocal<IPentahoSession>();
@@ -167,9 +169,13 @@ public class PluginManager implements IPluginManager {
       contentTypeByExtension.put(info.getExtension(), info);
     }
 
-    ClassLoader loader = new SolutionClassLoader(
-        "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() + ISolutionRepository.SEPARATOR + "lib", //$NON-NLS-1$ //$NON-NLS-2$
-        this);
+    ClassLoader loader = classLoaderMap.get( plugin.getSourceDescription() );
+    if( loader == null ) {
+      loader = new SolutionClassLoader(
+          "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() + ISolutionRepository.SEPARATOR + "lib", //$NON-NLS-1$ //$NON-NLS-2$
+          this);
+      classLoaderMap.put(plugin.getSourceDescription(), loader);
+    }
 
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
