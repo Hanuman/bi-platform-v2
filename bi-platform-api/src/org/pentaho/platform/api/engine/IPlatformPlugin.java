@@ -27,11 +27,10 @@ import org.pentaho.ui.xul.XulOverlay;
 /**
  * The root of a logical grouping of BI Platform extensions.  Platform extension
  * points include:
- * <li>Content Generators  (@see {@link IContentGenerator})
- * <li>Overlays  (@see {@link XulOverlay})
- * <li>Menu Customizations
- * 
- * In addition to grouping extensions, an {@link IPlatformPlugin}
+ * <li>Content Generators  (see {@link IContentGenerator})
+ * <li>Overlays  (see {@link XulOverlay})
+ * <li>Menu Customizations (see {@link IMenuCustomization}) 
+ * <p>In addition to grouping extensions, an {@link IPlatformPlugin}
  * include some attributes that allow the platform to identify and use the plugin
  * appropriately.
  * 
