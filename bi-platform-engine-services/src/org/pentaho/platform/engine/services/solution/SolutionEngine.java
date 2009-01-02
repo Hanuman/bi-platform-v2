@@ -498,4 +498,8 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
     this.createFeedbackParameterCallback = callback;
   } 
 
+  protected ICreateFeedbackParameterCallback getCreateFeedbackParameterCallback() {
+    return createFeedbackParameterCallback;
+  } 
+
 }
