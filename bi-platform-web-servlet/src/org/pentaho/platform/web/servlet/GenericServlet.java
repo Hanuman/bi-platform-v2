@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 //import org.pentaho.commons.connection.SimpleStreamSource;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
+import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
@@ -33,6 +34,7 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.HttpOutputHandler;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
+import org.pentaho.platform.web.servlet.messages.Messages;
 
 public class GenericServlet extends ServletBase {
 
@@ -81,13 +83,14 @@ public class GenericServlet extends ServletBase {
         pathParams.setParameter( "inputstream" , in ); //$NON-NLS-1$
         pathParams.setParameter( "httpresponse", response ); //$NON-NLS-1$
         pathParams.setParameter( "httprequest", request ); //$NON-NLS-1$
+        pathParams.setParameter( "remoteaddr", request.getRemoteAddr() ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
 	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
 	    	IPentahoSession session = getPentahoSession( request );
 	    	IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session );
 		    if( pluginManager == null ) {
 		    	OutputStream out = response.getOutputStream();
-		    	String message = "Could not get system object: PluginSettings";
+		    	String message = Messages.getErrorString( "GenericServlet.ERROR_0001_BAD_OBJECT", IPluginManager.class.getSimpleName() ); //$NON-NLS-1$
 		    	error( message );
 		    	out.write( message.getBytes() );
 		    	return;
@@ -105,7 +108,7 @@ public class GenericServlet extends ServletBase {
 		    IContentGenerator contentGenerator = pluginManager.getContentGenerator(contentGeneratorId, session);
 	    	if( contentGenerator == null ) {
 		    	OutputStream out = response.getOutputStream();
-	    		String message = "Could not get content generator for type: "+contentGeneratorId;
+          String message = Messages.getErrorString( "GenericServlet.ERROR_0002_BAD_GENERATOR", contentGeneratorId ); //$NON-NLS-1$
 		    	error( message );
 	    		out.write( message.getBytes() );
 	    		return;
@@ -149,8 +152,7 @@ public class GenericServlet extends ServletBase {
 
 	        IMimeTypeListener listener = new HttpMimeTypeListener(request, response);
 	    	
-	    	OutputStream out = response.getOutputStream();
-	    	HttpOutputHandler outputHandler = new HttpOutputHandler( response, out, true );
+	    	IOutputHandler outputHandler = getOutputHandler( response, true );
 	        outputHandler.setMimeTypeListener(listener);
 	    	
 	    	IParameterProvider sessionParameters = new HttpSessionParameterProvider( session );
@@ -169,18 +171,24 @@ public class GenericServlet extends ServletBase {
 	    	contentGenerator.setParameterProviders(parameterProviders);
 	    	contentGenerator.setSession(session);
 	    	contentGenerator.setUrlFactory(urlFactory);
-	    	String contentType = request.getContentType();
+//	    	String contentType = request.getContentType();
 //	    	SimpleStreamSource input = new SimpleStreamSource( "input", contentType, in, null ); //$NON-NLS-1$
 //        contentGenerator.setInput(input);
 	    	contentGenerator.createContent();
 	    	if (PentahoSystem.debug) debug( "Generic Servlet content generate successfully" ); //$NON-NLS-1$
 
 	    } catch ( Exception e ) {
-	    	error( "Errors trying to generate content: "+request.getQueryString(), e );
+	    	error( Messages.getErrorString( "GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString() ), e ); //$NON-NLS-1$
 	    } finally {
 	      // reset the classloader of the current thread
 	      Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
 	      PentahoSystem.systemExitPoint();
 	    }
+	  }
+	  
+	  protected IOutputHandler getOutputHandler( HttpServletResponse response, boolean allowFeedback ) throws IOException {
+      OutputStream out = response.getOutputStream();
+	    HttpOutputHandler handler = new HttpOutputHandler( response, out, allowFeedback );
+	    return handler;
 	  }
 }
