@@ -32,7 +32,11 @@
 	  <property name="testjar.classes.dir" value="${basedir}/test-jar-bin" description="Test jar bin directory" />
 	  <property name="testjar.dist.dir" value="${basedir}/test-jar-lib" description="Test jar bin directory" />
 
-	  <target name="testjar" description="Creates the classes for the test jar">
+	  <target name="compile"
+	          depends="init, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post, testjar"
+	          description="Performs all the steps to prepare the bin directory with a complete compilation" />
+
+	  <target name="testjar" description="Creates the test jar for the solution classloader tests">
 	    <delete dir="${testjar.classes.dir}" />
 	    <delete dir="${testjar.dist.dir}" />
 	    <mkdir dir="${testjar.classes.dir}" />
@@ -55,6 +59,14 @@
       	<jar destfile="${testjar.dist.dir}/test-jar.jar">
           <fileset dir="${testjar.classes.dir}" />
         </jar>
+
+	  	<!-- now create a bogus jar file -->
+	    <copy todir="${testjar.dist.dir}">
+	      <fileset dir="${testjar.src.dir}" includes="test1.xml" />
+	    </copy>
+	  	
+	  	<move file="${testjar.dist.dir}/test1.xml" tofile="${testjar.dist.dir}/bad.jar"/>
+
 	  </target>
 	
 </project>
