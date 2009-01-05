@@ -24,6 +24,7 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
+import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
@@ -135,7 +136,7 @@ public class PluginManager implements IPluginManager {
     return list;
   }
 
-  public synchronized boolean reload(IPentahoSession session, List<String> comments) throws PlatformPluginRegistrationException {
+  public synchronized boolean reload(IPentahoSession session, List<String> comments) {
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     pluginProvider.getPlugins().clear();
     boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session, comments);
@@ -150,6 +151,7 @@ public class PluginManager implements IPluginManager {
       } catch (PlatformPluginRegistrationException e) {
         // this has been logged already
         anyErrors = true;
+        Logger.error(getClass().toString(), Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN",plugin.getName()), e); //$NON-NLS-1$
       }
     }
     return !anyErrors;
@@ -227,46 +229,25 @@ public class PluginManager implements IPluginManager {
   //
 
   public void addOverlay(XulOverlay overlay) {
-    try {
       reload(null, new ArrayList<String>());
-    } catch (PlatformPluginRegistrationException e) {
-      e.printStackTrace();
-    }
   }
 
   public void addOverlay(String id, String xml, String resourceBundleUri) {
-    try {
-      reload(null, new ArrayList<String>());
-    } catch (PlatformPluginRegistrationException e) {
-      e.printStackTrace();
-    }
+    reload(null, new ArrayList<String>());
   }
 
   public void addContentInfo(String extension, IContentInfo contentInfo) {
-    try {
       reload(null, new ArrayList<String>());
-    } catch (PlatformPluginRegistrationException e) {
-      e.printStackTrace();
-    }
   }
 
   public void addContentGenerator(String id, String title, String description, String type, String url,
       String scopeStr, String className, String fileInfoClassName, IPentahoSession session, List<String> comments,
       String location, ClassLoader loader) throws ObjectFactoryException, ClassNotFoundException,
       InstantiationException, IllegalAccessException {
-    try {
       reload(null, new ArrayList<String>());
-    } catch (PlatformPluginRegistrationException e) {
-      e.printStackTrace();
-    }
   }
 
   public boolean updatePluginSettings(IPentahoSession session, List<String> comments) {
-    try {
       return reload(session, comments);
-    } catch (PlatformPluginRegistrationException e) {
-      e.printStackTrace();
-    }
-    return false;
   }
 }

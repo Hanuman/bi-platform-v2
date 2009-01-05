@@ -84,7 +84,7 @@ public interface IPluginManager {
    * @return true if no errors were encountered
 	 * @throws PlatformPluginRegistrationException 
    */
-	public boolean reload( IPentahoSession session, List<String> comments) throws PlatformPluginRegistrationException;
+	public boolean reload( IPentahoSession session, List<String> comments);
 
 	/**
 	 * Returns a map of the XUL overlays that are defined by all the plug-ins. The overlays are
