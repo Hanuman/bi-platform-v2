@@ -109,29 +109,28 @@ public interface IPluginManager {
 	//
 	
 	/**
-	 * Register a XUL overlay (XMLfragment) with the plugin manager.
-	 * @param overlay - a XUL overlay
-	 * @deprecated
+	 * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
 	 */
   public void addOverlay(XulOverlay overlay);
   
   /**
-   * @deprecated it is up to the implementation how it should register plugin contents, there is no need to force it to implement an add method
+   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
    */
   public void addContentInfo( String extension, IContentInfo contentInfo );
   
   /**
-   * @deprecated
+   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
    */
   public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
       IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException;
   
   /**
-   * @deprecated
+   * @deprecated  a plugin manager should not be required to use an object factory
    */
   public IPentahoObjectFactory getObjectFactory();
+  
   /**
-   * @deprecated use addOverlay(XulOverlay overlay)
+   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
    */
   public void addOverlay( String id, String xml, String resourceBundleUri );
   
