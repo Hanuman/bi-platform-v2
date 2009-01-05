@@ -19,6 +19,7 @@ import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
@@ -27,8 +28,6 @@ import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
 public class PluginManager implements IPluginManager {
-
-  protected IPluginProvider pluginProvider = new SystemPathXmlPluginProvider();
 
   protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = new HashMap<String, List<IContentGeneratorInfo>>();
 
@@ -40,8 +39,6 @@ public class PluginManager implements IPluginManager {
   
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
-  protected final ThreadLocal<IPentahoSession> sessions = new ThreadLocal<IPentahoSession>();
-
   public IPentahoObjectFactory getObjectFactory() {
     return objectFactory;
   }
@@ -51,6 +48,7 @@ public class PluginManager implements IPluginManager {
   }
 
   public List<XulOverlay> getOverlays() {
+    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     List<XulOverlay> list = new ArrayList<XulOverlay>();
     for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
       list.addAll(plugin.getOverlays());
@@ -128,15 +126,8 @@ public class PluginManager implements IPluginManager {
     return null;
   }
 
-  public void setSession(IPentahoSession session) {
-    sessions.set(session);
-  }
-
-  public void removeSession() {
-    sessions.remove();
-  }
-
   public List<IMenuCustomization> getMenuCustomizations() {
+    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     List<IMenuCustomization> list = new ArrayList<IMenuCustomization>();
     for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
       list.addAll(plugin.getMenuCustomizations());
@@ -145,6 +136,7 @@ public class PluginManager implements IPluginManager {
   }
 
   public synchronized boolean reload(IPentahoSession session, List<String> comments) throws PlatformPluginRegistrationException {
+    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     pluginProvider.getPlugins().clear();
     boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session, comments);
     
