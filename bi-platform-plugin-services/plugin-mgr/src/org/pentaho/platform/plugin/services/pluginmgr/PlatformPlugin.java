@@ -27,7 +27,9 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
-
+/**
+ * Default bean implementation of {@link IPlatformPlugin}
+ */
 public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private List<IContentGeneratorInfo> contentGenerators = new ArrayList<IContentGeneratorInfo>();
