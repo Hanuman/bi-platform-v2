@@ -168,7 +168,9 @@ public class PluginManager implements IPluginManager {
       } catch (PlatformPluginRegistrationException e) {
         // this has been logged already
         anyErrors = true;
-        Logger.error(getClass().toString(), Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN",plugin.getName()), e); //$NON-NLS-1$
+        String msg = Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN",plugin.getName()); //$NON-NLS-1$
+        Logger.error(getClass().toString(), msg, e);
+        comments.add(msg);
       }
     }
     return !anyErrors;
