@@ -50,7 +50,7 @@ public class ContentGeneratorTest extends BaseTest {
     boolean result = _pluginManager.updatePluginSettings(session, messages);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
-    assertEquals("Wrong number of messages created", 14, messages.size()); //$NON-NLS-1$
+    assertEquals("Wrong number of messages created", 15, messages.size()); //$NON-NLS-1$
 
     // check that the content types are ok
     Set<String> types = _pluginManager.getContentTypes();
