@@ -156,8 +156,9 @@ public class SolutionClassLoader extends ClassLoader {
   }
 */  
   private String getJarLocalName( String jarName ) {
-    int idx = jarName.indexOf( path );
-    return jarName.substring( idx );
+    String name = jarName.replace('\\', ISolutionRepository.SEPARATOR);
+    int idx = name.indexOf( path );
+    return name.substring( idx );
   }
   
   /**

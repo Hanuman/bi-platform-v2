@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
@@ -209,7 +210,7 @@ public class SolutionClassLoaderTest extends TestCase {
 
     assertNotNull( jarNames );
     assertEquals( 1, jarNames.size() );
-    assertEquals( "test-jar-lib/test-jar.jar", jarNames.get(0) ); //$NON-NLS-1$
+    assertEquals( "test-jar-lib"+ISolutionRepository.SEPARATOR+"test-jar.jar", jarNames.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
         
   }
     
