@@ -153,10 +153,10 @@ public class PluginManager implements IPluginManager {
     return list;
   }
 
-  public synchronized boolean reload(IPentahoSession session, List<String> comments) {
+  public synchronized boolean reload(IPentahoSession session) {
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     pluginProvider.getPlugins().clear();
-    boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session, comments);
+    boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session);
     
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
@@ -164,19 +164,19 @@ public class PluginManager implements IPluginManager {
 
     for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
       try {
-        registerPlugin(plugin, comments, session);
+        registerPlugin(plugin, session);
       } catch (PlatformPluginRegistrationException e) {
         // this has been logged already
         anyErrors = true;
         String msg = Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN",plugin.getName()); //$NON-NLS-1$
         Logger.error(getClass().toString(), msg, e);
-        comments.add(msg);
+        PluginMessageLogger.add(msg);
       }
     }
     return !anyErrors;
   }
 
-  public void registerPlugin(IPlatformPlugin plugin, List<String> comments, IPentahoSession session) throws PlatformPluginRegistrationException {
+  public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session) throws PlatformPluginRegistrationException {
 
     for (IContentInfo info : plugin.getContentInfos()) {
       contentTypeByExtension.put(info.getExtension(), info);
@@ -238,8 +238,7 @@ public class PluginManager implements IPluginManager {
       }
       generatorList.add(cgInfo);
       
-      
-      comments.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }
   }
 
@@ -248,25 +247,25 @@ public class PluginManager implements IPluginManager {
   //
 
   public void addOverlay(XulOverlay overlay) {
-      reload(null, new ArrayList<String>());
+      reload(null);
   }
 
   public void addOverlay(String id, String xml, String resourceBundleUri) {
-    reload(null, new ArrayList<String>());
+    reload(null);
   }
 
   public void addContentInfo(String extension, IContentInfo contentInfo) {
-      reload(null, new ArrayList<String>());
+      reload(null);
   }
 
   public void addContentGenerator(String id, String title, String description, String type, String url,
       String scopeStr, String className, String fileInfoClassName, IPentahoSession session, List<String> comments,
       String location, ClassLoader loader) throws ObjectFactoryException, ClassNotFoundException,
       InstantiationException, IllegalAccessException {
-      reload(null, new ArrayList<String>());
+      reload(null);
   }
 
   public boolean updatePluginSettings(IPentahoSession session, List<String> comments) {
-      return reload(session, comments);
+      return reload(session);
   }
 }

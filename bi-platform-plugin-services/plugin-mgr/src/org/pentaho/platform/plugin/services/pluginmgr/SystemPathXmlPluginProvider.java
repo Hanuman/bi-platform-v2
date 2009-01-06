@@ -58,17 +58,17 @@ import org.pentaho.ui.xul.util.MenuCustomization;
 public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   protected List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
-  
+
   public synchronized void reload(IPentahoSession session, List<String> comments) {
     plugins.clear();
-    
-    load(session, comments);
+
+    load(session);
   }
-  
-  public synchronized boolean load(IPentahoSession session, List<String> comments) {
+
+  public synchronized boolean load(IPentahoSession session) {
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, session);
     if (repo == null) {
-      comments.add(Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
       Logger.error(getClass().toString(), Messages.getErrorString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
       return false;
     }
@@ -77,7 +77,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     // TODO convert this to VFS?
     File systemDir = new File(systemPath);
     if (!systemDir.exists() || !systemDir.isDirectory()) {
-      comments.add(Messages.getString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
       Logger
           .error(getClass().toString(), Messages.getErrorString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
       return false;
@@ -87,15 +87,14 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     // look at each child to see if it is a folder
     for (File kid : kids) {
       if (kid.isDirectory()) {
-        result &= processDirectory(kid, repo, session, comments);
+        result &= processDirectory(kid, repo, session);
       }
     }
 
     return result;
   }
 
-  protected boolean processDirectory(File folder, ISolutionRepository repo, IPentahoSession session,
-      List<String> comments) {
+  protected boolean processDirectory(File folder, ISolutionRepository repo, IPentahoSession session) {
     // see if there is a plugin.xml file
     FilenameFilter filter = new NameFileFilter("plugin.xml", IOCase.SENSITIVE); //$NON-NLS-1$
     File kids[] = folder.listFiles(filter);
@@ -116,12 +115,12 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       Document doc = repo.getResourceAsDocument(path);
       // we have a plugin.xml document
       if (doc == null) {
-        comments.add(Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
         Logger.error(getClass().toString(), Messages.getErrorString(
             "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
         return false;
       }
-      return processPluginSettings(doc, session, comments, folder.getName(), repo, hasLib);
+      return processPluginSettings(doc, session, folder.getName(), repo, hasLib);
     } catch (Exception e) {
       Logger.error(getClass().toString(), Messages.getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
@@ -130,44 +129,43 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   }
 
-  protected boolean processPluginSettings(Document doc, IPentahoSession session, List<String> comments, String folder,
+  protected boolean processPluginSettings(Document doc, IPentahoSession session, String folder,
       ISolutionRepository repo, boolean hasLib) {
     boolean result = true;
 
     PlatformPlugin plugin = new PlatformPlugin();
 
-    result &= processPluginInfo(plugin, doc, folder, session, comments);
-    result &= processMenuItems(plugin, doc, session, comments);
-    result &= processContentTypes(plugin, doc, session, comments);
-    result &= processContentGenerators(plugin, doc, session, comments, folder, repo, hasLib);
-    result &= processOverlays(plugin, doc, session, comments);
-    
+    result &= processPluginInfo(plugin, doc, folder, session);
+    result &= processMenuItems(plugin, doc, session);
+    result &= processContentTypes(plugin, doc, session);
+    result &= processContentGenerators(plugin, doc, session, folder, repo, hasLib);
+    result &= processOverlays(plugin, doc, session);
+
     plugin.setSourceDescription(folder);
 
     plugins.add(plugin);
 
     if (result) {
-      comments.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", folder)); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", folder)); //$NON-NLS-1$
     } else {
-      comments.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", folder)); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", folder)); //$NON-NLS-1$
     }
 
     return result;
   }
 
-  protected boolean processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session,
-      List<String> comments) {
+  protected boolean processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {
     Element node = (Element) doc.selectSingleNode("/plugin"); //$NON-NLS-1$
     if (node != null) {
       String name = node.attributeValue("title"); //$NON-NLS-1$
       plugin.setName(name);
-      comments.add(Messages.getString("PluginManager.USER_UPDATING_PLUGIN", name, folder)); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("PluginManager.USER_UPDATING_PLUGIN", name, folder)); //$NON-NLS-1$
       return true;
     }
     return false;
   }
 
-  protected boolean processMenuItems(PlatformPlugin plugin, Document doc, IPentahoSession session, List<String> comments) {
+  protected boolean processMenuItems(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for menu system customizations
     boolean result = false;
 
@@ -194,15 +192,15 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         //        menuCustomizations.add( custom );
         plugin.addMenuCustomization(custom);
         if (customizationType == CustomizationType.DELETE) {
-          comments.add(Messages.getString("PluginManager.USER_MENU_ITEM_DELETE", id)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_DELETE", id)); //$NON-NLS-1$
         } else if (customizationType == CustomizationType.REPLACE) {
-          comments.add(Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", id, label)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", id, label)); //$NON-NLS-1$
         } else {
-          comments.add(Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label)); //$NON-NLS-1$
         }
         result = true;
       } catch (Exception e) {
-        comments.add(Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label)); //$NON-NLS-1$
         Logger.error(getClass().toString(), Messages.getErrorString(
             "PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label), e); //$NON-NLS-1$
       }
@@ -211,7 +209,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     return result;
   }
 
-  protected boolean processOverlays(PlatformPlugin plugin, Document doc, IPentahoSession session, List<String> comments) {
+  protected boolean processOverlays(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for content types
     boolean result = true;
 
@@ -233,8 +231,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     return result;
   }
 
-  protected boolean processContentTypes(PlatformPlugin plugin, Document doc, IPentahoSession session,
-      List<String> comments) {
+  protected boolean processContentTypes(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for content types
     boolean result = true;
 
@@ -269,9 +266,10 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         }
 
         plugin.addContentInfo(contentInfo);
-        comments.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
       } else {
-        comments.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
+        PluginMessageLogger
+            .add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
       }
     }
 
@@ -279,7 +277,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
   }
 
   protected boolean processContentGenerators(PlatformPlugin plugin, Document doc, IPentahoSession session,
-      List<String> comments, String folder, ISolutionRepository repo, boolean hasLib) {
+      String folder, ISolutionRepository repo, boolean hasLib) {
     // look for content generators
     boolean result = true;
 
@@ -301,16 +299,16 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         if (id != null && type != null && scope != null && className != null && title != null) {
           try {
             IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, scope,
-                className, fileInfoClassName, session, comments, folder);
+                className, fileInfoClassName, session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
-            comments.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+            PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
           }
         } else {
-          comments.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
         }
       } catch (Exception e) {
-        comments.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
         Logger.error(getClass().toString(), Messages.getErrorString(
             "PluginManager.ERROR_0006_CANNOT_CREATE_CONTENT_GENERATOR_FACTORY", folder), e); //$NON-NLS-1$
       }
@@ -320,7 +318,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
       String description, String type, String url, String scopeStr, String className, String fileInfoClassName,
-      IPentahoSession session, List<String> comments, String location) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+      IPentahoSession session, String location) throws ClassNotFoundException,
+      InstantiationException, IllegalAccessException {
 
     ContentGeneratorInfo info = new ContentGeneratorInfo();
     info.setId(id);
@@ -334,7 +333,6 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
     return info;
   }
-
 
   public List<IPlatformPlugin> getPlugins() {
     return plugins;

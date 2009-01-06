@@ -148,7 +148,7 @@ public class ContentGeneratorTest extends BaseTest {
     assertNotNull(pluginSettings);
 
     List<String> messages = new ArrayList<String>();
-    boolean result = pluginSettings.reload(session, messages);
+    boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
     IContentGeneratorInfo contentGeneratorInfo = pluginSettings.getContentGeneratorInfo("test1", session); //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class ContentGeneratorTest extends BaseTest {
     assertNotNull(pluginSettings);
 
     List<String> messages = new ArrayList<String>();
-    boolean result = pluginSettings.reload(session, messages);
+    boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
     IContentInfo contentInfo = pluginSettings.getContentInfoFromExtension("test-type-1", session); //$NON-NLS-1$
@@ -195,7 +195,7 @@ public class ContentGeneratorTest extends BaseTest {
     assertNotNull(pluginSettings);
 
     List<String> messages = new ArrayList<String>();
-    boolean result = pluginSettings.reload(session, messages);
+    boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
     IContentInfo contentInfo = pluginSettings.getContentInfoFromExtension("test-type-1", session); //$NON-NLS-1$
@@ -222,7 +222,7 @@ public class ContentGeneratorTest extends BaseTest {
     assertNotNull(pluginSettings);
 
     List<String> messages = new ArrayList<String>();
-    boolean result = pluginSettings.reload(session, messages);
+    boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
     IContentInfo contentInfo = pluginSettings.getContentInfoFromExtension("test-type-1", session); //$NON-NLS-1$

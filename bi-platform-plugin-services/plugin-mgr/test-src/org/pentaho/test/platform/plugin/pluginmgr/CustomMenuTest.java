@@ -37,7 +37,7 @@ public class CustomMenuTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-	    boolean result = pluginManager.reload(session, messages);
+	    boolean result = pluginManager.reload(session);
 	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
 	    List<?> customs = pluginManager.getMenuCustomizations();
 	    assertEquals( "Wrong number of menu items created", 3, customs.size() ); //$NON-NLS-1$

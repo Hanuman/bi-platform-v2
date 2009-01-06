@@ -84,7 +84,7 @@ public interface IPluginManager {
    * @return true if no errors were encountered
 	 * @throws PlatformPluginRegistrationException 
    */
-	public boolean reload( IPentahoSession session, List<String> comments);
+	public boolean reload(IPentahoSession session);
 
 	/**
 	 * Returns a map of the XUL overlays that are defined by all the plug-ins. The overlays are
@@ -100,7 +100,7 @@ public interface IPluginManager {
 	 * @param comments
 	 * @throws PlatformPluginRegistrationException
 	 */
-	public void registerPlugin(IPlatformPlugin plugin, List<String> comments, IPentahoSession session ) throws PlatformPluginRegistrationException;
+	public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session ) throws PlatformPluginRegistrationException;
 	
 	//
 	// add methods.. these are deprecated.  It doesn't make sense to have a reload/init method as well as individual registry methods.

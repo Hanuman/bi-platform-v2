@@ -35,7 +35,7 @@ public class BadSolutionRepoTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    List<String> messages = new ArrayList<String>();
-      boolean result = pluginManager.reload(session, messages);
+      boolean result = pluginManager.reload(session);
       // JD - this result should be false
       assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
       assertEquals( "Update failure is for wrong reason", Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY"), messages.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
