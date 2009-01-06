@@ -16,6 +16,7 @@ import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.ui.xul.XulOverlay;
 
@@ -46,11 +47,11 @@ public class ContentGeneratorTest extends BaseTest {
     assertTrue(pluginManager instanceof PluginManager);
     PluginManager _pluginManager = (PluginManager) pluginManager;
 
-    List<String> messages = new ArrayList<String>();
-    boolean result = _pluginManager.updatePluginSettings(session, messages);
+    PluginMessageLogger.clear();
+    boolean result = _pluginManager.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
-    assertEquals("Wrong number of messages created", 15, messages.size()); //$NON-NLS-1$
+    assertEquals("Wrong number of messages created", 15, PluginMessageLogger.getAll().size()); //$NON-NLS-1$
 
     // check that the content types are ok
     Set<String> types = _pluginManager.getContentTypes();
