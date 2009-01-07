@@ -19,14 +19,18 @@
 package org.pentaho.test.platform.engine.core;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 
+@SuppressWarnings({"all"})
 public class SimpleParameterProviderTest extends TestCase {
 
   public void testConstructors() {
@@ -39,7 +43,9 @@ public class SimpleParameterProviderTest extends TestCase {
     map.put("param2", "value2");
     params = new SimpleParameterProvider(map);
     assertEquals("param value if wrong", "value2", params.getStringParameter("param2", null));
-
+    assertTrue( params.hasParameter("param2") );
+    assertFalse( params.hasParameter("bogus") );
+    
     params = new SimpleParameterProvider(null);
     assertEquals("param value if wrong", null, params.getStringParameter("param2", null));
 
@@ -105,8 +111,24 @@ public class SimpleParameterProviderTest extends TestCase {
     assertEquals("param value is wrong", 100, val[0]);
     assertEquals("param value is wrong", 999, val[1]);
 
+    Object[][] value2 = new Object[0][0];
+    params.setParameter( "2darray" , value2);
+    assertEquals("param value is wrong", value2, params.getParameter( "2darray") );
+    assertEquals("param value is wrong", null, params.getStringParameter( "2darray", null) );
+    
   }
 
+  public void testResultSet() {
+
+    MemoryResultSet data = new MemoryResultSet();
+    
+    SimpleParameterProvider params = new SimpleParameterProvider();
+    params.setParameter( "data", data);
+    assertTrue( params.hasParameter("data") );
+    assertEquals("param value is wrong", data, params.getListParameter("data"));
+    
+  }
+  
   public void testAdditional() {
 
     String paramStr = "base?int=100&long=200";
@@ -160,6 +182,21 @@ public class SimpleParameterProviderTest extends TestCase {
     params.setParameter("long", new Long(200));
 
     validateLong(params);
+  }
+
+  public void testDates() throws Exception {
+
+    SimpleParameterProvider params = new SimpleParameterProvider();
+    String dateStr = DateFormat.getInstance().format(new Date());
+    Date now = DateFormat.getInstance().parse(dateStr);
+    params.setParameter("date", now);
+    params.setParameter("date2", dateStr);
+    
+    assertEquals( "wrong date", now, params.getDateParameter( "date", null) );
+    assertEquals( "wrong date", now, params.getDateParameter( "bogus", now) );
+    assertEquals( "wrong date", now, params.getDateParameter( "date2", null) );
+    assertNull( "wrong date", params.getDateParameter( "bogus", null) );
+
   }
 
   public void validateLong(SimpleParameterProvider params) {

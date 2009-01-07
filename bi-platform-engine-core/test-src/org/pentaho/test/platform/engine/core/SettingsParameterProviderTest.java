@@ -28,8 +28,10 @@ import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider
 import org.pentaho.platform.engine.core.system.PathBasedSystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 
+@SuppressWarnings({"all"})
 public class SettingsParameterProviderTest extends TestCase {
 
 
@@ -80,6 +82,11 @@ public class SettingsParameterProviderTest extends TestCase {
 		  String value = provider.getStringParameter( "pentaho.xml{pentaho-system/log-file}", null);
 	        
 		  assertEquals( "Could not get setting from pentaho.xml", "server.log", value );
+
+		  value = (String) provider.getParameter( "pentaho.xml{pentaho-system/log-file}" );
+      assertEquals( "Could not get setting from pentaho.xml", "server.log", value );
+      
+      assertFalse( provider.getParameterNames().hasNext() );
 	  }
 	  
 	  public void testSystemSettingsParameterProvider3() {
@@ -113,6 +120,14 @@ public class SettingsParameterProviderTest extends TestCase {
 		  String value = provider.getStringParameter( "settings.xml{settings/setting1}", null);
 	        
 		  assertEquals( "Could not get setting from pentaho.xml", "value1", value );
+
+		  StandaloneSession session = new StandaloneSession("user1");
+		  provider.setSession(session);
+      value = (String) provider.getParameter( "settings.xml{settings/{$user}/setting2}");
+      assertEquals( "Wrong setting value", "value2", value );
+		  
+      assertFalse( provider.getParameterNames().hasNext() );
+
 	  }
 	  
 }

@@ -43,10 +43,10 @@ public class SimpleParameterProvider extends BaseParameterProvider implements IP
   @Override
   protected String getValue(final String name) {
     Object obj = parameters.get(name);
-    if (obj instanceof Object[]) {
+    if (obj instanceof Object[][]) {
       // the string of this is meaningless
       obj = null;
-    } else if (obj instanceof Object[][]) {
+    } else if (obj instanceof Object[]) {
       // the string of this is meaningless
       obj = null;
     }

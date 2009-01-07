@@ -47,6 +47,13 @@ public abstract class BaseParameterProvider implements IParameterProvider {
   }
 
   public Date getDateParameter(final String name, final Date defaultValue) {
+    Object value = getParameter(name);
+    if( value == null ) {
+      return defaultValue;
+    }
+    if( value instanceof Date ) {
+      return (Date) value;
+    }
     return ParameterHelper.parameterToDate(getValue(name), defaultValue);
   }
 

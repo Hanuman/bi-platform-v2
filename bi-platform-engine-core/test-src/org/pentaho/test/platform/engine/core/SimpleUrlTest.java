@@ -37,7 +37,7 @@ public class SimpleUrlTest extends TestCase {
     SimpleUrl url = new SimpleUrl(baseUrl);
     Assert.assertEquals(url.getUrl(), baseUrl);
     url.setParameter("action", "doSomething"); //$NON-NLS-1$  //$NON-NLS-2$
-    Assert.assertEquals(url.getUrl(), baseUrl + "&action=doSomething");
+    Assert.assertEquals(url.getUrl(), baseUrl + "&action=doSomething"); //$NON-NLS-1$
 
   }
 

@@ -21,7 +21,9 @@ package org.pentaho.test.platform.engine.core;
 import junit.framework.TestCase;
 
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.solution.ActionInfo.ActionInfoParseException;
 
+@SuppressWarnings({"all"})
 public class ActionInfoTest extends TestCase {
 
   public void testConstructor() {
@@ -134,6 +136,52 @@ public class ActionInfoTest extends TestCase {
     str = ActionInfo.buildSolutionPath("solution", null, "action");
     assertEquals("buildSolutionPath is invalid", "solution/action", str);
 
+    str = ActionInfo.buildSolutionPath("solution", "/", "action");
+    assertEquals("buildSolutionPath is invalid", "solution/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", null, "/action");
+    assertEquals("buildSolutionPath is invalid", "solution/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "", "/action");
+    assertEquals("buildSolutionPath is invalid", "solution/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "", "solution");
+    assertEquals("buildSolutionPath is invalid", "solution/", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "/path", "action");
+    assertEquals("buildSolutionPath is invalid", "solution/path/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "/path", "/action");
+    assertEquals("buildSolutionPath is invalid", "solution/path/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "path", "action");
+    assertEquals("buildSolutionPath is invalid", "solution/path/action", str);
+
+    str = ActionInfo.buildSolutionPath("solution", "path", "/action");
+    assertEquals("buildSolutionPath is invalid", "solution/path/action", str);
+
   }
 
+  public void testActionInfoParseException() {
+    
+    ActionInfoParseException e = new ActionInfoParseException();
+    assertEquals( "wrong message", null, e.getMessage() );
+    assertNull( "wrong cause", e.getCause() );
+    
+    e = new ActionInfoParseException( "test message" );
+    assertEquals( "wrong message", "test message", e.getMessage() );
+    assertNull( "wrong cause", e.getCause() );
+    
+    Throwable t = new IllegalArgumentException("test cause");
+    
+    e = new ActionInfoParseException( t );
+    assertEquals( "wrong message", "java.lang.IllegalArgumentException: test cause", e.getMessage() );
+    assertEquals( "wrong cause", t, e.getCause() );
+    
+    e = new ActionInfoParseException( "test message", t );
+    assertEquals( "wrong message", "test message", e.getMessage() );
+    assertEquals( "wrong cause", t, e.getCause() );
+    
+    
+  }
 }

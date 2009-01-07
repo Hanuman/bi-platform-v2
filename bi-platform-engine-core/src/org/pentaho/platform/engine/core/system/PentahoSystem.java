@@ -1175,7 +1175,7 @@ public class PentahoSystem {
     for ( String interfaceName : PentahoSystem.KnownOptionalObjects ) {
       boolean isValid = pentahoObjectFactory.objectDefined( interfaceName );
       if ( !isValid ) {
-        Logger.warn(PentahoSystem.class.getName(), Messages.getErrorString(
+        Logger.info(PentahoSystem.class.getName(), Messages.getString(
             "PentahoSystem.ERROR_0021_OBJECT_NOT_SPECIFIED", interfaceName )); //$NON-NLS-1$
       }
     }
