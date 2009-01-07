@@ -13,8 +13,10 @@
  * See the GNU General Public License for more details.
  *
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved. 
+ * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
  * 
+ * @created Dec 4, 2008
+ * @author James Dixon
  */
 package org.pentaho.test.platform.engine.core;
 
