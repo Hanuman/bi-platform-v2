@@ -117,7 +117,7 @@ public class XForm {
   public static String transform(final String xForm, final String method, final IPentahoSession session,
       final IDocumentResourceLoader loader) throws TransformerException {
 
-    HashMap parameters = new HashMap();
+    HashMap<String,String> parameters = new HashMap<String,String>();
     if (method != null) {
       parameters.put("form-method", method); //$NON-NLS-1$
     } else {

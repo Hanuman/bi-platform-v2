@@ -55,14 +55,14 @@ public class StringUtil {
     }
 
     StringTokenizer st = new StringTokenizer(tokenizedString, token);
-    List strList = new ArrayList();
+    List<String> strList = new ArrayList<String>();
     while (st.hasMoreTokens()) {
       String tok = st.nextToken();
       strList.add(tok);
     }
 
     String[] rtnArray = new String[strList.size()];
-    return ((String[]) strList.toArray(rtnArray));
+    return strList.toArray(rtnArray);
   }
 
   /**

@@ -14,7 +14,7 @@ public class MenuCustomization implements IMenuCustomization {
 	
 	private ItemType itemType = ItemType.MENU_ITEM;
 	
-	private String label = "";
+	private String label = ""; //$NON-NLS-1$
 
 	public MenuCustomization() {
 		

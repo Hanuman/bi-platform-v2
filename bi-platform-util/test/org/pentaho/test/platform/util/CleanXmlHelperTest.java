@@ -21,7 +21,7 @@ import java.io.InputStream;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.dom4j.Document;
+//import org.dom4j.Document;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
@@ -49,7 +49,7 @@ public class CleanXmlHelperTest extends TestCase {
 
     try {
 
-      InputStream in = resourceClass.getResourceAsStream("/test/xml/query_without_connection.xaction");
+      InputStream in = resourceClass.getResourceAsStream("/test/xml/query_without_connection.xaction"); //$NON-NLS-1$
       XmlDom4JHelper.getDocFromStream(in);
       Assert.assertTrue(true);
     } catch (Exception e) {
@@ -58,10 +58,10 @@ public class CleanXmlHelperTest extends TestCase {
     }
 
     try {
-      InputStream fis = resourceClass.getResourceAsStream("/test/xml/query_without_connection.xaction"); //$NON-NLS-1$
-      Document doc = XmlDom4JHelper.getDocFromStream(fis);
       // JD - what is this testing?
       /*
+      InputStream fis = resourceClass.getResourceAsStream("/test/xml/query_without_connection.xaction"); //$NON-NLS-1$
+      Document doc = XmlDom4JHelper.getDocFromStream(fis);
        XmlDom4JHelper.saveDomToFile(doc, new File(PentahoSystem.getApplicationContext().getSolutionPath("test/analysis/copy_query_without_connection.xaction")), null); //$NON-NLS-1$
        XmlDom4JHelper.saveDomToFile(doc, PentahoSystem.getApplicationContext().getSolutionPath("test/analysis/copy1_query_without_connection.xaction"), null);//$NON-NLS-1$
        FileWriter writer = new FileWriter(PentahoSystem.getApplicationContext().getSolutionPath("test/analysis/copy2_query_without_connection.xaction")); //$NON-NLS-1$

@@ -333,6 +333,7 @@ public class XmlHelper {
    * @return StringBuffer containing the XML results of the transform. Null if there was an error.
    * @throws TransformerException If attempt to transform the document fails.
    */
+  @SuppressWarnings({"unchecked"})
   public static final StringBuffer transformXml(final String xslName, final String xslPath,
       final InputStream docInStrm, Map params, final IDocumentResourceLoader loader) throws TransformerException {
     StringBuffer result = null;
@@ -488,7 +489,6 @@ public class XmlHelper {
     String baseName = dotIndex == -1 ? fileName : fileName.substring(0, dotIndex); // These two lines fix an index out of bounds
     String extension = dotIndex == -1 ? "" : fileName.substring(dotIndex); // Exception that occurs when a filename has no extension //$NON-NLS-1$
 
-    int slashIndex = fullPath.lastIndexOf("/"); //$NON-NLS-1$
     InputStream in = null;
     try {
       if (!variant.equals("")) { //$NON-NLS-1$

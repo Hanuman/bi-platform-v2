@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ColorHelper {
-  private static final Map colors = new TreeMap();
+  private static final Map<String,Color> colors = new TreeMap<String,Color>();
 
   static {
     // TODO: Use an array and binary search at some point
@@ -178,7 +178,7 @@ public class ColorHelper {
     if (col == null) {
       return def;
     }
-    Color rtn = (Color) ColorHelper.colors.get(col.toLowerCase());
+    Color rtn = ColorHelper.colors.get(col.toLowerCase());
     return (rtn != null) ? rtn : def;
   }
 

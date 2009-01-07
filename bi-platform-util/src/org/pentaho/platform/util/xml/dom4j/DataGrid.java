@@ -67,7 +67,7 @@ public class DataGrid {
 
     // add metadata about the headers
     Element metadataNode = root.addElement("metadata"); //$NON-NLS-1$
-    HashMap headerMap = new HashMap();
+    HashMap<String,String> headerMap = new HashMap<String,String>();
     IPentahoMetaData metadata = results.getMetaData();
     // first process the column headers
     Object headers[][] = metadata.getColumnHeaders();
@@ -87,7 +87,7 @@ public class DataGrid {
         Object columnHeader;
         for (int headerNo = 0; headerNo < headers.length; headerNo++) {
           columnHeader = headers[headerNo][columnNo];
-          headerId = (String) headerMap.get(columnHeader);
+          headerId = headerMap.get(columnHeader);
           currentNode = currentNode.addElement(headerId);
           if (headerNo < row.length) {
             currentNode.addElement("value").setText(row[headerNo].toString()); //$NON-NLS-1$
@@ -102,12 +102,12 @@ public class DataGrid {
     // System .out.println(gridDocument.asXML());
   }
 
-  protected void addHeaderMetadata(final Object headers[][], final Element metadataNode, final HashMap headerMap) {
+  protected void addHeaderMetadata(final Object headers[][], final Element metadataNode, final HashMap<String,String> headerMap) {
     if (headers == null) {
       return;
     }
     // use a map to ensure we only add this information once
-    HashMap metadataMap = new HashMap();
+    HashMap<String,String> metadataMap = new HashMap<String,String>();
     for (Object[] element : headers) {
       for (int y = 0; y < element.length; y++) {
         Object header = element[y];
@@ -127,7 +127,7 @@ public class DataGrid {
     }
   }
 
-  protected void createMetadata(final String header, final Element metadataNode, final HashMap headerMap) {
+  protected void createMetadata(final String header, final Element metadataNode, final HashMap<String,String> headerMap) {
     Element node = metadataNode.addElement("header"); //$NON-NLS-1$
     String id = "header" + headerMap.keySet().size(); //$NON-NLS-1$
     node.addAttribute("id", id); //$NON-NLS-1$

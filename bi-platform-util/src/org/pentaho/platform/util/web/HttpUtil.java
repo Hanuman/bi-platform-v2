@@ -177,7 +177,7 @@ public class HttpUtil {
     if (s == null) {
       throw new IllegalArgumentException();
     }
-    Map rtn = new HashMap();
+    Map<String,String[]> rtn = new HashMap<String,String[]>();
     StringBuffer sb = new StringBuffer();
     String key;
     for (StringTokenizer st = new StringTokenizer(s, "&"); st.hasMoreTokens(); rtn.put(key, valArray)) { //$NON-NLS-1$
@@ -189,7 +189,7 @@ public class HttpUtil {
       key = HttpUtil.parseName(pair.substring(0, pos), sb);
       String val = HttpUtil.parseName(pair.substring(pos + 1, pair.length()), sb);
       if (rtn.containsKey(key)) {
-        String oldVals[] = (String[]) rtn.get(key);
+        String oldVals[] = rtn.get(key);
         valArray = new String[oldVals.length + 1];
         System.arraycopy(oldVals, 0, valArray, 0, oldVals.length);
         valArray[oldVals.length] = val;

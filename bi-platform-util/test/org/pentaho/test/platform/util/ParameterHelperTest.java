@@ -36,7 +36,7 @@ public class ParameterHelperTest extends TestCase {
     Date today = new Date();
     DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.US);
     String strToday = df.format(today);
-    Date date = ParameterHelper.parameterToDate(strToday, today); //$NON-NLS-1$
+    Date date = ParameterHelper.parameterToDate(strToday, today); 
     Assert.assertNotNull(date);
     BigDecimal dec = ParameterHelper.parameterToDecimal("100.43", null); //$NON-NLS-1$
     Assert.assertNotNull(dec);

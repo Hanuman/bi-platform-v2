@@ -78,7 +78,7 @@ public class JVMParameterProvider implements IParameterProvider {
   }
 
   public BigDecimal getDecimalParameter(final String name, final BigDecimal defaultValue) {
-    return ParameterHelper.parameterToDecimal(getStringParameter(name, ""), defaultValue);
+    return ParameterHelper.parameterToDecimal(getStringParameter(name, ""), defaultValue); //$NON-NLS-1$
   }
 
   public Object[] getArrayParameter(final String name, final Object[] defaultValue) {

@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 public class Messages {
   private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
 
-  private static final Map locales = Collections.synchronizedMap(new HashMap());
+  private static final Map<Locale,ResourceBundle> locales = Collections.synchronizedMap(new HashMap<Locale,ResourceBundle>());
 
   protected static Map getLocales() {
     return Messages.locales;
@@ -38,7 +38,7 @@ public class Messages {
 
   private static ResourceBundle getBundle() {
     Locale locale = LocaleHelper.getLocale();
-    ResourceBundle bundle = (ResourceBundle) Messages.locales.get(locale);
+    ResourceBundle bundle = Messages.locales.get(locale);
     if (bundle == null) {
       bundle = ResourceBundle.getBundle(Messages.BUNDLE_NAME, locale);
       Messages.locales.put(locale, bundle);

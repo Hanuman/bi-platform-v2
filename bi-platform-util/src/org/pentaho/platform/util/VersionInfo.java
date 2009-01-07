@@ -168,6 +168,7 @@ public class VersionInfo {
    * NOTE: spaces will be changed to dots before parsing
    * @param version the version number (1.6.0.GA.500 or 1.6.0-RC2.400)
    */
+  @SuppressWarnings({"fallthrough"})
   void setVersion(final String version) {
     // Parse the version
     if (version != null) {

@@ -49,7 +49,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.util.messages.Messages;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -106,9 +105,9 @@ public class XmlDom4JHelper {
       inStrm = new ByteArrayInputStream(bytes);
       document = XmlDom4JHelper.getDocFromStream(inStrm, encoding, resolver);
     } catch (DocumentException e) {
-      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0001_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e);
+      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0001_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
     } catch (UnsupportedEncodingException e) {
-      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0002_UNSUPPORTED_ENCODING"), e);
+      throw  new XmlParseException(Messages.getErrorString("XmlDom4JHelper.ERROR_0002_UNSUPPORTED_ENCODING"), e); //$NON-NLS-1$
     } finally {
       XmlDom4JHelper.closeInputStream(inStrm);
     }

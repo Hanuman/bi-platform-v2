@@ -36,6 +36,7 @@ import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.util.xml.w3c.XmlW3CHelper;
 
+@SuppressWarnings({"all"})
 public class XmlHelperTest extends TestCase {
 
   public void testGetEncoding() {
@@ -47,9 +48,9 @@ public class XmlHelperTest extends TestCase {
         "<?xml encoding='windows-1252' version='1.0'?><root></root>" }; //$NON-NLS-1$
 
     // these should fail, and cause the default system encoding to be returned
-    String[] defaultXmls = { "<?xml encoding='UTF-8' version='1.0'?><root></root>", //$NON-NLS-1$ //$NON-NLS-2$
+    String[] defaultXmls = { "<?xml encoding='UTF-8' version='1.0'?><root></root>", //$NON-NLS-1$ 
         "<?xml encoding='UTF-8' version='1.0'?><root></root>", "<?xml encoding='UTF-8' version=\"1.0\"?><root></root>", //$NON-NLS-1$ //$NON-NLS-2$
-        "<?xml encoding='UTF-8' version='1.0'?><root>encoding=bad</root>" }; //$NON-NLS-1$ //$NON-NLS-2$
+        "<?xml encoding='UTF-8' version='1.0'?><root>encoding=bad</root>" }; //$NON-NLS-1$ 
 
     for (String element : winXmls) {
       String enc = XmlHelper.getEncoding(element);

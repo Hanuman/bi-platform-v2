@@ -26,13 +26,12 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.pentaho.platform.util.xml.w3c.XmlW3CHelper;
-import org.w3c.dom.Document;
 
 public class XmlW3CHelperTest extends TestCase {
 
   public void testXmlW3C() {
     String path = "/test/xml/query_without_connection.xaction"; //$NON-NLS-1$
-    String domString = "<root><subroot>this is sub root</subroot></root>";//$NON-NLS-1$
+//    String domString = "<root><subroot>this is sub root</subroot></root>";//$NON-NLS-1$
 
     Class resourceClass = this.getClass();
     InputStream in = resourceClass.getResourceAsStream(path);
