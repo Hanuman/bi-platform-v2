@@ -23,8 +23,6 @@ package org.pentaho.platform.engine.core.audit;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.AuditException;
 import org.pentaho.platform.api.engine.IAuditEntry;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -38,8 +36,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
  */
 public class AuditEntry {
 
-  private static final Log logger = LogFactory.getLog(AuditEntry.class);
-  
   public static void auditJobDuration(final String jobId, final String instId, final String objId,
       final String objType, final String actor, final String messageType, final String messageName,
       final String messageTxtValue, final float duration) throws AuditException {

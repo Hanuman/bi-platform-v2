@@ -42,11 +42,9 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 
 public class SimpleOutputHandler implements IOutputHandler {
 
-  private Map responseAttributes;
+  private Map<String,Object> responseAttributes;
 
   private IContentItem feedbackContent;
-
-  private IContentItem outputContent;
 
   boolean allowFeedback;
 
@@ -56,7 +54,7 @@ public class SimpleOutputHandler implements IOutputHandler {
 
   private boolean contentGenerated;
 
-  private Map outputs;
+  private Map<String,IContentItem> outputs;
 
   private IPentahoSession session;
 
@@ -68,17 +66,16 @@ public class SimpleOutputHandler implements IOutputHandler {
 
   public SimpleOutputHandler(final IContentItem contentItem, final boolean allowFeedback) {
 
-    responseAttributes = new HashMap();
+    responseAttributes = new HashMap<String,Object>();
     contentGenerated = false;
-    outputs = new HashMap();
-    outputContent = contentItem;
+    outputs = new HashMap<String,IContentItem>();
     try {
       String key = IOutputHandler.RESPONSE + "." + IOutputHandler.CONTENT; //$NON-NLS-1$
-      outputs.put(key, outputContent);
+      outputs.put(key, contentItem);
 
       this.allowFeedback = allowFeedback;
       if (allowFeedback) {
-        feedbackContent = new SimpleContentItem(outputContent.getOutputStream(null));
+        feedbackContent = new SimpleContentItem(contentItem.getOutputStream(null));
       }
     } catch (IOException ioe) {
       SimpleOutputHandler.logger.error(null, ioe);
@@ -92,9 +89,9 @@ public class SimpleOutputHandler implements IOutputHandler {
     if (allowFeedback) {
       feedbackContent = new SimpleContentItem(outputStream);
     }
-    responseAttributes = new HashMap();
+    responseAttributes = new HashMap<String,Object>();
     contentGenerated = false;
-    outputs = new HashMap();
+    outputs = new HashMap<String,IContentItem>();
     setOutputStream(outputStream, IOutputHandler.RESPONSE, IOutputHandler.CONTENT);
   }
 
@@ -179,9 +176,7 @@ public class SimpleOutputHandler implements IOutputHandler {
       final String instanceId, final String localMimeType) {
     String key = outputName + "." + contentName; //$NON-NLS-1$
     if (outputs.get(key) != null) {
-      return (SimpleContentItem) outputs.get(key);
-    } else if ((outputContent != null) && outputName.equals("response") && contentName.equals("content")) { //$NON-NLS-1$ //$NON-NLS-2$
-      return outputContent;
+      return outputs.get(key);
     } else {
       IContentOutputHandler output = PentahoSystem.getOutputDestinationFromContentRef(contentName, session);
       if (output != null) {
