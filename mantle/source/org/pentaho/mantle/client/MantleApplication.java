@@ -445,7 +445,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     // see if we have any plugins to add
     if (settings.get(menuId + "MenuTitle0") != null) { //$NON-NLS-1$
       // we have at least one so we add a separator first
-      menu.addSeparator();
+//      menu.addSeparator();
       // we're going to loop until we don't find any more
       int idx = 0;
       String title = settings.get(menuId + "MenuTitle" + idx); //$NON-NLS-1$
