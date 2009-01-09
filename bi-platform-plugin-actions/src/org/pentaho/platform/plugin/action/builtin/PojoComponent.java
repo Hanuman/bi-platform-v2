@@ -161,17 +161,17 @@ public class PojoComponent extends ComponentBase {
 		}
 
 		// look at the component settings
-		List<?> nodes = defnNode.selectNodes( "*" );
+		List<?> nodes = defnNode.selectNodes( "*" ); //$NON-NLS-1$
 		for( int idx=0; idx<nodes.size(); idx++ ) {
 			Element node = (Element) nodes.get( idx );
 			String name = node.getName().toUpperCase();
-			if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) {
+			if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) { //$NON-NLS-1$ //$NON-NLS-2$
 				String value = node.getText();
 				Method method = setMethods.get( name );
 				if( method != null ) {
 					callMethodWithString( method, value );
 				} else {
-					throw new NoSuchMethodException( "set"+name );
+					throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -185,11 +185,11 @@ public class PojoComponent extends ComponentBase {
 			if( method != null ) {
 				callMethod( method, value );
 			} else {
-				throw new NoSuchMethodException( "set"+name );
+				throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
 			}
 		}
 
-		// now process all of the resources and call them as setters
+		// now process all of the resources and see if we can call them as setters
 		Set<?> resourceNames = getResourceNames();
 		if( resourceNames!= null && resourceNames.size() > 0 ) {
 			it = resourceNames.iterator();
@@ -201,17 +201,17 @@ public class PojoComponent extends ComponentBase {
 				if( method != null ) {
 					method.invoke(pojo, new Object[] { stream } );
 				} else {
-					throw new NoSuchMethodException( "set"+name );
+				  // BISERVER-2715 we should ignore this as the resource might be meant for another component
 				}
 			}
 		}
 		
-		if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" ) && pojo instanceof IStreamingPojo) {
+		if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" ) && pojo instanceof IStreamingPojo) { //$NON-NLS-1$ //$NON-NLS-2$
 			// set the output stream
 			String mimeType = ((IStreamingPojo) pojo).getMimeType();
-			IContentItem contentItem = getOutputContentItem( "outputstream", mimeType );
+			IContentItem contentItem = getOutputContentItem( "outputstream", mimeType ); //$NON-NLS-1$
 			OutputStream out = contentItem.getOutputStream( null );
-			Method method = setMethods.get( "OUTPUTSTREAM" );
+			Method method = setMethods.get( "OUTPUTSTREAM" ); //$NON-NLS-1$
 			method.invoke( pojo , new Object[] {out} );
 		}
 		
@@ -229,7 +229,7 @@ public class PojoComponent extends ComponentBase {
 		it = outputNames.iterator();
 		while( it.hasNext() ) {
 			String name = (String) it.next();
-			if( name.equals( "outputstream" ) ) {
+			if( name.equals( "outputstream" ) ) { //$NON-NLS-1$
 				// we should be done
 			} else {
 				IActionParameter param = getOutputItem( name );
@@ -256,8 +256,8 @@ public class PojoComponent extends ComponentBase {
 	protected boolean validateAction() {
 				
 		boolean ok = false;
-		if( isDefinedInput( "class" ) ) {
-			String className = getInputStringValue( "class" );
+		if( isDefinedInput( "class" ) ) { //$NON-NLS-1$
+			String className = getInputStringValue( "class" ); //$NON-NLS-1$
 			// try to load the class
 			try {
 				// TODO support loading classes from the solution repository
@@ -267,21 +267,21 @@ public class PojoComponent extends ComponentBase {
 				// create a method map
 				for( int idx=0; idx<methods.length; idx++ ) {
 					String name = methods[idx].getName();
-					if( name.startsWith( "set" ) ) {
+					if( name.startsWith( "set" ) ) { //$NON-NLS-1$
 						name = name.substring( 3 ).toUpperCase();
 						setMethods.put( name , methods[idx] );
 					}
-					else if( name.startsWith( "get" ) ) {
+					else if( name.startsWith( "get" ) ) { //$NON-NLS-1$
 						name = name.substring( 3 ).toUpperCase();
 						getMethods.put( name , methods[idx] );
 					}
-					else if( name.equalsIgnoreCase( "execute" ) ) {
+					else if( name.equalsIgnoreCase( "execute" ) ) { //$NON-NLS-1$
 						executeMethod = methods[idx];
 					}
-					else if( name.equalsIgnoreCase( "validate" ) ) {
+					else if( name.equalsIgnoreCase( "validate" ) ) { //$NON-NLS-1$
 						validateMethod = methods[idx];
 					}
-					else if( name.equalsIgnoreCase( "done" ) ) {
+					else if( name.equalsIgnoreCase( "done" ) ) { //$NON-NLS-1$
 						doneMethod = methods[idx];
 					}
 				}
@@ -297,7 +297,7 @@ public class PojoComponent extends ComponentBase {
 					ok = true;
 				}
 			} catch (Throwable e) {
-				error( "Could not load object class" , e);
+				error( "Could not load object class" , e); //$NON-NLS-1$
 			}
 		}
 		
