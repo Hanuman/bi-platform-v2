@@ -119,11 +119,11 @@ public class ActionInfo {
     
     // if the solutionName is the same as the fileName and the path is empty, then we are
     // probably trying to load the solution root itself
-    if (solution != null && solution.equals(filename) && "".equals(path)) {
-      filename = "";
+    if (solution != null && solution.equals(filename) && "".equals(path)) { //$NON-NLS-1$
+      filename = ""; //$NON-NLS-1$
     }
-    if (path != null && path.equalsIgnoreCase("/")) {
-      path = "";
+    if (path != null && path.equalsIgnoreCase("/")) { //$NON-NLS-1$
+      path = ""; //$NON-NLS-1$
     }
     if (StringUtils.isEmpty(path)) {
       if (!StringUtils.isEmpty(filename) && filename.charAt(0) == ISolutionRepository.SEPARATOR) {
