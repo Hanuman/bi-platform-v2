@@ -197,7 +197,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
       final boolean async, final boolean instanceEnds, final String instanceId, final boolean isPersisted,
       final Map parameterProviderMap, final IOutputHandler outputHandler, final IActionCompleteListener pListener,
       final IPentahoUrlFactory urlFactory, final List messages) {
-
+    applyParameterMappers(parameterProviderMap);
     return execute("InMemorySolution", "", sequenceName, processId, async, instanceEnds, instanceId, //$NON-NLS-1$ //$NON-NLS-2$
         isPersisted, parameterProviderMap, outputHandler, pListener, urlFactory, messages, actionSequenceXML);
   }
