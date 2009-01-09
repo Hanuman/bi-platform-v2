@@ -657,6 +657,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   public void enableAdhocSave(boolean enable) {
-    this.solutionBrowserPerspective.setCurrentTabEnabled(enable);
+    this.solutionBrowserPerspective.setCurrentTabSaveEnabled(enable);
   }
 }

@@ -27,6 +27,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class XulMain extends SimplePanel implements IXulLoaderCallback{
@@ -57,7 +58,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   protected XulMain(final SolutionBrowserPerspective solutionBrowser){
     this.solutionBrowser = solutionBrowser;
     //instantiate our Model and Controller
-    controller = new MainToolbarController();
+    controller = new MainToolbarController(solutionBrowser, new MainToolbarModel(solutionBrowser, this));
     
     // Invoke the async loading of the XUL DOM.
     AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
@@ -89,8 +90,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
 
     //TODO: remove controller reference from model when Bindings in place
     model = new MainToolbarModel(solutionBrowser, this);
-    model.setController(controller);
     controller.setModel(model);
+    controller.setSolutionBrowser(solutionBrowser);
     
   
     // Get the toolbar from the XUL doc
@@ -98,23 +99,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     bar.setStylePrimaryName("mainToolbar");    //$NON-NLS-1$
     this.add(bar);
 
-    if (!GWT.isScript()) {
-      
-      GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar");  //$NON-NLS-1$
-      for(XulComponent c : toolbar.getChildNodes()){
-        if(c instanceof XulToolbarbutton){
-          GwtToolbarbutton btn = (GwtToolbarbutton) c;
-          
-          String curSrc = btn.getImage();
-          btn.setImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
-          
-          curSrc = btn.getDisabledImage();
-          if(curSrc != null ){
-            btn.setDisabledImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
-          }
-        }
-      }
-    }
+    //unfortunately hosted mode won't resolve the image with 'mantle/' in it
+    cleanImageUrlsForHostedMode();
     
     
     AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
@@ -134,8 +120,37 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     
   }
   
+  
+  private void cleanImageUrlsForHostedMode(){
+    if (!GWT.isScript()) {
+      
+      GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar");  //$NON-NLS-1$
+      for(XulComponent c : toolbar.getChildNodes()){
+        if(c instanceof XulToolbarbutton){
+          GwtToolbarbutton btn = (GwtToolbarbutton) c;
+          
+          String curSrc = btn.getImage();
+          btn.setImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          
+          curSrc = btn.getDisabledImage();
+          if(curSrc != null ){
+            btn.setDisabledImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          curSrc = btn.getDownimage();
+          if(curSrc != null ){
+            btn.setDownimage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          curSrc = btn.getDownimagedisabled();
+          if(curSrc != null ){
+            btn.setDownimagedisabled(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          }
+        }
+      }
+    }
+  }
+  
   public void overlayLoaded(){
-    
+    cleanImageUrlsForHostedMode();
   } 
   
   public void loadOverlays(List<MantleXulOverlay> overlays) {

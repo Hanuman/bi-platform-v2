@@ -18,7 +18,7 @@
     <toolbarbutton id="printButton" image="mantle/images/print_32.png" disabledimage="mantle/images/print_32_disabled.png" onclick="mainToolbarHandler.printClicked()" tooltiptext="${print}" disabled="true"/>
     <toolbarspacer width="20"/>
     <toolbarbutton id="workspaceButton" image="mantle/images/workspace_32.png" type="toggle" onclick="mainToolbarHandler.workspaceClicked()" tooltiptext="${workspace}"/>
-    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" onclick="mainToolbarHandler.showBrowserClicked()" tooltiptext="${toggleSolutionBrowser}"/>
+    <toolbarbutton id="showBrowserButton" image="mantle/images/browser_show_32.png" downimage="mantle/images/browser_hide_32.png" type="toggle" onclick="mainToolbarHandler.showBrowserClicked()" tooltiptext="${toggleSolutionBrowser}"/>
   </toolbar>
   
 </window>

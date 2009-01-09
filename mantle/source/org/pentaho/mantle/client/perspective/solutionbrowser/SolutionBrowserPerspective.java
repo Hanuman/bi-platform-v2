@@ -56,7 +56,6 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -1659,7 +1658,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     scheduleInBackground.center();
   }
 
-  public void setCurrentTabEnabled(boolean enabled) {
+  public void setCurrentTabSaveEnabled(boolean enabled) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     if (panel != null) {
       panel.setSaveEnabled(enabled);

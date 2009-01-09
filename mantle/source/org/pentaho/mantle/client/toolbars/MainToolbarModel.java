@@ -5,20 +5,19 @@ import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
-import org.pentaho.mantle.client.commands.ShowBrowserCommand;
-import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 /**
  * State model for the main toolbar. Replace controller code calls with Bindings when available.
  * 
  * @author NBaker
  */
-public class MainToolbarModel implements SolutionBrowserListener{
+public class MainToolbarModel extends XulEventSourceAdapter implements SolutionBrowserListener{
 
 
   private SolutionBrowserPerspective solutionBrowser;
@@ -29,9 +28,8 @@ public class MainToolbarModel implements SolutionBrowserListener{
   private boolean newAnalysisEnabled = false;
   private boolean contentEditEnabled = false;
   private boolean contentEditSelected = false;
-  
-  //TODO: Remove once bindings in place
-  private MainToolbarController controller;
+  private boolean showBrowserSelected = false;
+  private boolean workspaceSelected = false;
   
   
   public MainToolbarModel(final SolutionBrowserPerspective solutionBrowser, XulMain main){
@@ -41,31 +39,34 @@ public class MainToolbarModel implements SolutionBrowserListener{
   }
   
   public void setSaveEnabled(Boolean enabled){
+    boolean prevVal = this.saveEnabled;
     saveEnabled = enabled;
-    
-    //TODO: Replace following when bindings in place
-    controller.setSaveEnabled(enabled);
+    this.firePropertyChange("saveEnabled", prevVal, saveEnabled);
+  }
+  
+  public boolean isSaveEnabled(){
+    return this.saveEnabled;
   }
 
   public void setSaveAsEnabled(Boolean enabled){
+    boolean prevVal = this.saveAsEnabled;
     saveAsEnabled = enabled;
-    
-    //TODO: Replace following when bindings in place
-    controller.setSaveAsEnabled(enabled);
+
+    this.firePropertyChange("saveAsEnabled", prevVal, saveEnabled);
   }
 
   public void setPrintEnabled(Boolean enabled){
+    boolean prevVal = this.printEnabled;
     printEnabled = enabled;
-    
-    //TODO: Replace following when bindings in place
-    controller.setPrintEnabled(enabled);
+
+    this.firePropertyChange("printEnabled", prevVal, saveEnabled);
   }
   
   public void setNewAnalysisEnabled(Boolean enabled){
+    boolean prevVal = this.newAnalysisEnabled;
     newAnalysisEnabled = enabled;
-    
-    //TODO: Replace following when bindings in place
-    controller.setNewAnalysisEnabled(enabled);
+
+    this.firePropertyChange("printEnabled", prevVal, newAnalysisEnabled);
   }
   
   public void executeOpenFileCommand() {
@@ -97,18 +98,7 @@ public class MainToolbarModel implements SolutionBrowserListener{
     WAQRCommand wAQRCommand = new WAQRCommand(solutionBrowser);
     wAQRCommand.execute();
   }
-  
-  public void executeWorkspaceCommand() {
-    ToggleWorkspaceCommand toggleWorkspaceCommand = new ToggleWorkspaceCommand(solutionBrowser);
-    toggleWorkspaceCommand.execute();  
-    solutionBrowser.toggleWorkspace();
-  }
-  
-  public void executeShowBrowserCommand() {
-    ShowBrowserCommand showBrowserCommand = new ShowBrowserCommand(solutionBrowser);
-    showBrowserCommand.execute();
-    controller.setShowBrowserSelected(isSolutionBrowserShowing());
-  }
+
   /**
    * Process incoming events from the SolutionBrowser here
    */
@@ -118,8 +108,6 @@ public class MainToolbarModel implements SolutionBrowserListener{
     boolean editIsEnabled = false;
     boolean editSelected = false;
     
-    controller.setWorkspaceSelected(isWorkspaceShowing());
-    controller.setShowBrowserSelected(isSolutionBrowserShowing());
     
     if(panel != null){
       selectedTabURL = panel.getUrl();
@@ -133,6 +121,9 @@ public class MainToolbarModel implements SolutionBrowserListener{
     setSaveAsEnabled(saveEnabled);
     setContentEditEnabled(editIsEnabled);
     setContentEditSelected(editSelected);
+
+    setWorkspaceSelected(solutionBrowser.isWorkspaceShowing());
+    setShowBrowserSelected(solutionBrowser.isNavigatorShowing());
     
     if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
       if(panel != null) {
@@ -145,26 +136,39 @@ public class MainToolbarModel implements SolutionBrowserListener{
     }
   }
   
-  public void setController(MainToolbarController controller){
-    this.controller = controller;
+  public boolean isShowBrowserSelected() {
+    return showBrowserSelected;
+  }
+  
+  public boolean isWorkspaceSelected() {
+    return workspaceSelected;
+  }
+  
+  
+  public void setShowBrowserSelected(boolean showBrowserSelected) {
+    boolean prevVal = this.showBrowserSelected;
     
-  }
   
-  public boolean isSolutionBrowserShowing() {
-    return solutionBrowser.isNavigatorShowing();
+    this.showBrowserSelected = showBrowserSelected;
+    this.firePropertyChange("showBrowserSelected", prevVal, showBrowserSelected);
   }
+
+  public void setWorkspaceSelected(boolean workspaceSelected) {
+    boolean prevVal = this.workspaceSelected;
   
-  public boolean isWorkspaceShowing() {
-    return solutionBrowser.isWorkspaceShowing();
+    this.workspaceSelected = workspaceSelected;
+    this.firePropertyChange("workspaceSelected", prevVal, workspaceSelected);
   }
-  
+
   public void setContentEditEnabled(boolean enable){
+    boolean prevVal = this.contentEditEnabled;
     contentEditEnabled = enable;
-    controller.setContentEditEnabled(enable);
+    this.firePropertyChange("contentEditEnabled", prevVal, contentEditEnabled);
   }
   public void setContentEditSelected(boolean selected){
+    boolean prevVal = this.contentEditSelected;
     contentEditSelected = selected;
-    controller.setContentEditSelected(selected);
+    this.firePropertyChange("contentEditSelected", prevVal, contentEditSelected);
   }
   
   public boolean isContentEditSelected(){
@@ -174,6 +178,11 @@ public class MainToolbarModel implements SolutionBrowserListener{
   public void setContentEditToggled(){
     setContentEditSelected(!this.contentEditSelected);
   }
+
+  public boolean isContentEditEnabled() {
+    return contentEditEnabled;
+  }
+  
 }
 
   

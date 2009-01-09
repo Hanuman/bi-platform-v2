@@ -3,12 +3,16 @@ package org.pentaho.mantle.client.toolbars;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.mantle.client.commands.ShowBrowserCommand;
+import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.EventMethod;
+import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
+import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.Window;
 
 /**
  * 
@@ -28,12 +32,14 @@ public class MainToolbarController extends AbstractXulEventHandler{
   private XulToolbarbutton workspaceBtn;
   private XulToolbarbutton showBrowserBtn;
   private XulToolbarbutton contentEditBtn;
+  private SolutionBrowserPerspective solutionBrowser;
   
   private List<JavaScriptObject> callbacks = new ArrayList<JavaScriptObject>();
   
   
-  public MainToolbarController(){
-    
+  public MainToolbarController(SolutionBrowserPerspective solutionBrowser, MainToolbarModel model){
+    this.solutionBrowser = solutionBrowser;
+    this.model = model;
   }
 
   /** 
@@ -51,7 +57,18 @@ public class MainToolbarController extends AbstractXulEventHandler{
     showBrowserBtn = (XulToolbarbutton) document.getElementById("showBrowserButton");
     contentEditBtn = (XulToolbarbutton) document.getElementById("editContentButton");
     
+    BindingFactory bf = new GwtBindingFactory(this.document);
+    bf.createBinding(model, "saveEnabled", saveBtn, "!disabled");
+    bf.createBinding(model, "saveAsEnabled", saveAsBtn, "!disabled");
+    bf.createBinding(model, "printEnabled", printBtn, "!disabled");
+    bf.createBinding(model, "contentEditEnabled", contentEditBtn, "!disabled");
+    bf.createBinding(model, "contentEditSelected", this, "editContentSelected");
     
+    
+  }
+  
+  public void setEditContentSelected(boolean selected){
+    contentEditBtn.setSelected(selected, false);
   }
 
   @EventMethod
@@ -86,14 +103,17 @@ public class MainToolbarController extends AbstractXulEventHandler{
   
   @EventMethod
   public void workspaceClicked(){
-    model.executeWorkspaceCommand();
-    setWorkspaceSelected(model.isWorkspaceShowing());
+
+    ToggleWorkspaceCommand toggleWorkspaceCommand = new ToggleWorkspaceCommand(solutionBrowser);
+    toggleWorkspaceCommand.execute();
+    model.setWorkspaceSelected(solutionBrowser.isWorkspaceShowing());
   }  
   
   @EventMethod
   public void showBrowserClicked(){
-    model.executeShowBrowserCommand();
-    setShowBrowserSelected(model.isSolutionBrowserShowing());
+    ShowBrowserCommand showBrowserCommand = new ShowBrowserCommand(solutionBrowser);
+    showBrowserCommand.execute();
+    model.setShowBrowserSelected(solutionBrowser.isExplorerViewShowing());
   }  
   
   public void setShowBrowserSelected(boolean flag) {
@@ -201,8 +221,18 @@ public class MainToolbarController extends AbstractXulEventHandler{
   
     this.model = model;
   }
-  
 
+  public SolutionBrowserPerspective getSolutionBrowser() {
+  
+    return solutionBrowser;
+  }
+
+  public void setSolutionBrowser(SolutionBrowserPerspective solutionBrowser) {
+  
+    this.solutionBrowser = solutionBrowser;
+  }
+  
+  
 }
 
   
