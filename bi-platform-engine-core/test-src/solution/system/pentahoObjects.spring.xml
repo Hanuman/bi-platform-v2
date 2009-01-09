@@ -17,6 +17,9 @@ PentahoSystem which is initialized after Spring
   <bean id="IVersionHelper" class="org.pentaho.platform.util.VersionHelper" scope="singleton" />
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.core.system.SystemStartupSession" scope="prototype" />
   
+  <bean id="GoodObject" class="org.pentaho.test.platform.engine.core.GoodObject" scope="session" />
+  <bean id="BadObject" class="org.pentaho.test.platform.engine.core.BadObject" scope="prototype" />
+  <bean id="BadObjectRuntime" class="org.pentaho.test.platform.engine.core.BadObjectRuntime" scope="prototype" />
     
     <!-- Data connections.  Connections objects should be accessed through PentahoConnectionFactory, 
        not directly from the PentahoObjectFactory. -->

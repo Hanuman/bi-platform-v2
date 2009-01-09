@@ -105,7 +105,10 @@ public class StandaloneObjectFactoryTest extends TestCase {
     StandaloneObjectFactory factory = new StandaloneObjectFactory();
     
     factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.GLOBAL); 
-        
+
+    factory.defineObject( BadObjectRuntime.class.getSimpleName(), BadObjectRuntime.class.getName(), Scope.GLOBAL); 
+    factory.defineObject( BadObject.class.getSimpleName(), BadObject.class.getName(), Scope.GLOBAL); 
+
     IPentahoSession session1 = new StandaloneSession( "test user 1" ); //$NON-NLS-1$
     IPentahoSession session2 = new StandaloneSession( "test user 2" ); //$NON-NLS-1$
 
@@ -116,6 +119,20 @@ public class StandaloneObjectFactoryTest extends TestCase {
     assertNotNull( "Object is null", obj2 ); //$NON-NLS-1$
     
     assertTrue( "Objects are not same", obj1 == obj2 ); //$NON-NLS-1$
+    
+    try {
+      factory.get(BadObjectRuntime.class, session1);
+      assertFalse( true );
+    } catch (RuntimeException e) {
+      assertTrue( true );
+    }
+    
+    try {
+      factory.get(BadObject.class, session1);
+      assertFalse( true );
+    } catch (ObjectFactoryException e) {
+      assertTrue( true );
+    }
     
   }
   
