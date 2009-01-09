@@ -41,9 +41,9 @@ public class CustomSettingsParameterProvider extends BaseParameterProvider {
 	protected String getValue(String path) {
 		// apply templates to the part
 		if( session != null ) {
-			path = path.replace( "{$user}" , session.getName() );
+			path = path.replace( "{$user}" , session.getName() ); //$NON-NLS-1$
 		}
-		return SystemSettingsParameterProvider.getSystemSetting( "components/"+path );
+		return SystemSettingsParameterProvider.getSystemSetting( "components/"+path ); //$NON-NLS-1$
 	}
 
 	public Iterator getParameterNames() {

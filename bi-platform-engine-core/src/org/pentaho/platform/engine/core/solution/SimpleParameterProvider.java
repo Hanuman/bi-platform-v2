@@ -32,7 +32,7 @@ import org.pentaho.platform.util.web.HttpUtil;
 
 public class SimpleParameterProvider extends BaseParameterProvider implements IParameterProvider {
 
-  private Map parameters;
+  private Map<String,Object> parameters;
 
   protected static final String ADDITIONAL_PARAMS = "_PENTAHO_ADDITIONAL_PARAMS_";//$NON-NLS-1$
 
@@ -61,9 +61,10 @@ public class SimpleParameterProvider extends BaseParameterProvider implements IP
   // TODO sbarkdull, may want to tweak this ctor to make a copy of the map,
   // otherwise the caller will have a reference to this class's internal
   // data, destroying encapsulation/data hiding
+  @SuppressWarnings({"unchecked"})
   public SimpleParameterProvider(Map parameters) {
     if (parameters == null) {
-      parameters = new HashMap();
+      parameters = new HashMap<String,Object>();
     }
     this.parameters = parameters;
   }
@@ -84,6 +85,7 @@ public class SimpleParameterProvider extends BaseParameterProvider implements IP
     parameters.put(name, value);
   }
 
+  @SuppressWarnings({"unchecked"})
   public void setParameters(final Map newParameters) {
     if (newParameters != null) {
       parameters.putAll(newParameters);
