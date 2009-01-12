@@ -10,8 +10,8 @@
     <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" onclick="mainToolbarHandler.newAdhocClicked()" tooltiptext="${newAdhocReportEllipsis}"/>
     <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" disabledimage="mantle/images/new_analysis_32_disabled.png" onclick="mainToolbarHandler.newAnalysisClicked()" tooltiptext="${newAnalysisViewEllipsis}"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="editContentButton" image="mantle/images/editContent_32.png" disabledimage="mantle/images/editContent_32_disabled.png"  onclick="mainToolbarHandler.editContentClicked()" tooltiptext="${editContent}" disabled="true" type="toggle"/>
-    <toolbarspacer width="20"/>
+    <toolbarbutton id="editContentButton" image="mantle/images/editContent_32.png" disabledimage="mantle/images/editContent_32_disabled.png"  onclick="mainToolbarHandler.editContentClicked()" tooltiptext="${editContent}" disabled="true" type="toggle" pen:visible="false"/>
+    <toolbarspacer id="editButtonSpacer" width="20" pen:visible="false"/>
     <toolbarbutton id="saveButton" image="mantle/images/save_32.png" disabledimage="mantle/images/save_32_disabled.png" onclick="mainToolbarHandler.saveClicked()" tooltiptext="${save}" disabled="true"/>
     <toolbarbutton id="saveAsButton" image="mantle/images/saveAs_32.png" disabledimage="mantle/images/saveAs_32_disabled.png"  onclick="mainToolbarHandler.saveAsClicked()" tooltiptext="${saveAs}" disabled="true"/>
     <toolbarspacer width="20"/>
