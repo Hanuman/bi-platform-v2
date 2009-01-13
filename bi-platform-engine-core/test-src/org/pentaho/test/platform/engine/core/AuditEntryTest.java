@@ -23,6 +23,7 @@ import org.pentaho.platform.api.engine.IAuditEntry;
 import org.pentaho.platform.engine.core.audit.AuditEntry;
 import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
+import org.pentaho.platform.engine.core.audit.NullAuditEntry;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -98,6 +99,13 @@ public class AuditEntryTest extends TestCase {
     assertEquals( "", entry.jobId );
     assertEquals( "testuser", entry.actor );
     assertEquals( messageTxtValue, entry.messageTxtValue );
+  }
+  
+  public void testNullAuditEntry() {
+    IAuditEntry auditEntry = new NullAuditEntry();
+    
+    // this should not fail, even with all nulls as inputs
+    auditEntry.auditAll(null, null, null, null, null, null, null, null, null, 0.0);
   }
 
 }
