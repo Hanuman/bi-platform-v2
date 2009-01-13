@@ -546,7 +546,7 @@ public class PentahoSystem {
   }
 
   public static void sessionStartup(final IPentahoSession session) {
-    PentahoSystem.sessionStartup(session);
+    PentahoSystem.sessionStartup(session, null);
 	}
 
   public static void clearGlobals() {
