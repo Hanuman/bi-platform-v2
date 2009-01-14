@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
+import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
+import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
@@ -49,6 +52,7 @@ import org.pentaho.mantle.client.commands.SaveCommand;
 import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
+import org.pentaho.mantle.client.dialogs.FileDialog;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
@@ -302,6 +306,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     
     $wnd.registerContentCallback = function(callback) { 
       main.@org.pentaho.mantle.client.XulMain::registerContentCallback(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
+    }
+    
+    
+    $wnd.openFileDialog = function(callback,title, okText) { 
+      mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;)(callback, title, okText);      
     }
     
     
@@ -659,4 +668,23 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   public void enableAdhocSave(boolean enable) {
     this.solutionBrowserPerspective.setCurrentTabSaveEnabled(enable);
   }
+  
+  public void showOpenFileDialog(final JavaScriptObject obj, String title, String okText){
+    FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), title, okText);
+    dialog.addFileChooserListener(new FileChooserListener(){
+
+      public void fileSelected(String solution, String path, String name, String localizedFileName) {
+        notifyOpenFileCallback(obj, solution, path, name, localizedFileName);
+      }
+
+      public void fileSelectionChanged(String solution, String path, String name) {}
+      
+    });
+    dialog.show();
+  }
+  
+  private native void notifyOpenFileCallback(JavaScriptObject obj, String solution, String path, String name, String localizedFileName)/*-{
+    obj.fileSelected(solution, path, name, localizedFileName);
+  }-*/;
+  
 }
