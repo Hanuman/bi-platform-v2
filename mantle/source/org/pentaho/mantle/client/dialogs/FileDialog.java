@@ -9,6 +9,10 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 
 import com.google.gwt.xml.client.Document;
 
+/*
+ * Convenience class for showing FileChooserDialog while maintaining a last browsed location.
+ * 
+ */
 public class FileDialog{
 
   private static String lastPath = "";
