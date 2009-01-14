@@ -240,31 +240,4 @@ public class PluginManager implements IPluginManager {
       PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }
   }
-
-  //
-  // deprecated stuff. These all just call reload now.
-  //
-
-  public void addOverlay(XulOverlay overlay) {
-      reload(null);
-  }
-
-  public void addOverlay(String id, String xml, String resourceBundleUri) {
-    reload(null);
-  }
-
-  public void addContentInfo(String extension, IContentInfo contentInfo) {
-      reload(null);
-  }
-
-  public void addContentGenerator(String id, String title, String description, String type, String url,
-      String scopeStr, String className, String fileInfoClassName, IPentahoSession session, List<String> comments,
-      String location, ClassLoader loader) throws ObjectFactoryException, ClassNotFoundException,
-      InstantiationException, IllegalAccessException {
-      reload(null);
-  }
-
-  public boolean updatePluginSettings(IPentahoSession session, List<String> comments) {
-      return reload(session);
-  }
 }

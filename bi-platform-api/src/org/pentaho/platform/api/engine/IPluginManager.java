@@ -101,41 +101,4 @@ public interface IPluginManager {
 	 * @throws PlatformPluginRegistrationException
 	 */
 	public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session ) throws PlatformPluginRegistrationException;
-	
-	//
-	// add methods.. these are deprecated.  It doesn't make sense to have a reload/init method as well as individual registry methods.
-	// Plugins are either going to be registered by the implementation class by way of reload _or_ they will be registered by some other
-	// class using the "add" registry methods.
-	//
-	
-	/**
-	 * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
-	 */
-  public void addOverlay(XulOverlay overlay);
-  
-  /**
-   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
-   */
-  public void addContentInfo( String extension, IContentInfo contentInfo );
-  
-  /**
-   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
-   */
-  public void addContentGenerator( String id, String title, String description, String type, String url, String scope, String className, String fileInfoClassName, 
-      IPentahoSession session, List<String> comments, String location, ClassLoader loader ) throws ObjectFactoryException, ClassNotFoundException, InstantiationException, IllegalAccessException;
-  
-  /**
-   * @deprecated  a plugin manager should not be required to use an object factory
-   */
-  public IPentahoObjectFactory getObjectFactory();
-  
-  /**
-   * @deprecated use {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
-   */
-  public void addOverlay( String id, String xml, String resourceBundleUri );
-  
-  /**
-   * @deprecated use {@link #reload(IPentahoSession, List)}
-   */
-  public boolean updatePluginSettings( IPentahoSession session, List<String> comments );
 }
