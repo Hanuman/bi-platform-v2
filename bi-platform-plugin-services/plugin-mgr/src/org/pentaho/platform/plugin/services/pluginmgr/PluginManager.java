@@ -87,7 +87,7 @@ public class PluginManager implements IPluginManager {
     if (info == null) {
       return null;
     }
-    return (IContentGenerator) objectFactory.getObject(id, session);
+    return objectFactory.get(IContentGenerator.class, id, session);
   }
 
   public IContentGeneratorInfo getContentGeneratorInfo(String id, IPentahoSession session) {
@@ -138,8 +138,7 @@ public class PluginManager implements IPluginManager {
     List<IContentGeneratorInfo> contentGenerators = contentGeneratorInfoByTypeMap.get(type);
     if (!CollectionUtils.isEmpty(contentGenerators)) {
       String id = contentGenerators.get(0).getId();
-      IContentGenerator generator = (IContentGenerator) objectFactory.getObject(id, session);
-      return generator;
+      return objectFactory.get(IContentGenerator.class, id, session);
     }
     return null;
   }
