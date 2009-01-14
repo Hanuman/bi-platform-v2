@@ -172,7 +172,6 @@ public class ContentGeneratorTest extends BaseTest {
     IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
     assertNotNull(pluginSettings);
 
-    List<String> messages = new ArrayList<String>();
     boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
@@ -195,7 +194,6 @@ public class ContentGeneratorTest extends BaseTest {
     IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
     assertNotNull(pluginSettings);
 
-    List<String> messages = new ArrayList<String>();
     boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
@@ -222,7 +220,6 @@ public class ContentGeneratorTest extends BaseTest {
     IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
     assertNotNull(pluginSettings);
 
-    List<String> messages = new ArrayList<String>();
     boolean result = pluginSettings.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
