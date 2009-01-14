@@ -76,13 +76,11 @@ public interface IPluginManager {
 	public List getMenuCustomizations();
 	
 	 /**
-   * Causes the plug-in settings object to re-register all of the plug-ins that
-   * are defined in pentaho-solutions/system/./plugin.xml files
-   * @param session A session to be used for getting the plugin.xml files
-   * @param comments A list of strings that readable messages will be added to
-   * as the plug-ins are processed.
+   * Causes the plug-in manager object to re-register all of the plug-ins that
+   * it knows about, typically calling {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
+   * for each plug-in it discovers.
+   * @param session the current session
    * @return true if no errors were encountered
-	 * @throws PlatformPluginRegistrationException 
    */
 	public boolean reload(IPentahoSession session);
 
@@ -98,7 +96,7 @@ public interface IPluginManager {
 	 * of the plugin manager
 	 * @param plugin the platform plugin
 	 * @param comments
-	 * @throws PlatformPluginRegistrationException
+	 * @throws PlatformPluginRegistrationException if there was a problem registering this plugin
 	 */
 	public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session ) throws PlatformPluginRegistrationException;
 }
