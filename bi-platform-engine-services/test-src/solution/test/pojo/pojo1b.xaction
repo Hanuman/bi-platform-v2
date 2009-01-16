@@ -13,6 +13,7 @@
   <inputs/>
 
   <outputs>
+   	<output1 type="string"/>
   </outputs>
 
   <resources/>
@@ -22,11 +23,13 @@
         <action-name>Test the test POJO</action-name>
         <action-inputs/>
         <action-outputs>
+        	<output1 type="string"/>
         </action-outputs>
         <logging-level>DEBUG</logging-level>
-        <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
         <component-definition>
-        	<!-- no class node defined -->
+          <class>org.pentaho.test.platform.engine.services.TestPojo1</class>
+          <input1>abcde</input1>
         </component-definition>
       </action-definition>
   </actions>

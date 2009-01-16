@@ -10,16 +10,9 @@
     <help></help>
   </documentation>
 
-  <inputs>
-  	<input1 type="string">
-  		<sources>
-  			<system-settings>pentaho.xml{pentaho-system/log-file}</system-settings>
-  		</sources>
-  	</input1>
-  </inputs>
+  <inputs/>
 
   <outputs>
-   	<output1 type="string"/>
   </outputs>
 
   <resources/>
@@ -27,16 +20,13 @@
   <actions>
       <action-definition>
         <action-name>Test the test POJO</action-name>
-        <action-inputs>
-        	<input1/>
-        </action-inputs>
+        <action-inputs/>
         <action-outputs>
-        	<output1 type="string"/>
         </action-outputs>
         <logging-level>DEBUG</logging-level>
-        <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
         <component-definition>
-          <class>org.pentaho.test.platform.engine.services.TestPojo4</class>
+          <class>org.pentaho.test.platform.engine.services.TestPojo3</class>
         </component-definition>
       </action-definition>
   </actions>

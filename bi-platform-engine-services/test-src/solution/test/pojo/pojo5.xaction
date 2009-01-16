@@ -14,6 +14,7 @@
 
   <outputs>
    	<output1 type="string"/>
+   	<output2 type="string"/>
   </outputs>
 
   <resources/>
@@ -24,13 +25,14 @@
         <action-inputs/>
         <action-outputs>
         	<output1 type="string"/>
-        	<badoutput type="string"/>
+        	<output2 type="string"/>
         </action-outputs>
         <logging-level>DEBUG</logging-level>
-        <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
         <component-definition>
-          <class>org.pentaho.test.platform.engine.services.TestPojo4</class>
-          <input1>abcde</input1>
+          <class>org.pentaho.test.platform.engine.services.TestPojo5</class>
+          <input1>hello</input1>
+          <input2>world</input2>
         </component-definition>
       </action-definition>
   </actions>
