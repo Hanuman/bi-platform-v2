@@ -1,8 +1,11 @@
 package org.pentaho.test.platform.engine.services;
 
 
+import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.pentaho.commons.connection.IPentahoStreamSource;
+import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IStreamingPojo;
 
 @SuppressWarnings({"all"})
@@ -39,4 +42,12 @@ public class TestPojo2 implements IStreamingPojo {
 		return true;
 	}
 
+  public void setResource1( InputStream stream ) {
+    PojoComponentTest.setResourceInputStreamCalled = true;
+  }
+  
+	public void setResource2( IActionSequenceResource resource ) {
+    PojoComponentTest.setActionSequenceResourceCalled = true;
+	}
+	
 }

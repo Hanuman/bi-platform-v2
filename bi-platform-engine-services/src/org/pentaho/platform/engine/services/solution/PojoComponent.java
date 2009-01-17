@@ -18,6 +18,7 @@
  */
  package org.pentaho.platform.engine.services.solution;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.Method;
@@ -35,11 +36,18 @@ import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IConfiguredPojo;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IStreamingPojo;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 
+/**
+ * This class interfaces with a plain old Java object and makes it
+ * available as a component within the Pentaho platform
+ * @author jamesdixon
+ *
+ */
 public class PojoComponent extends ComponentBase {
 
   private static final long serialVersionUID = 7064470160805918218L;
@@ -53,6 +61,8 @@ public class PojoComponent extends ComponentBase {
   Method doneMethod = null;
   Method runtimeInputsMethod = null;
   Method runtimeOutputsMethod = null;
+  Method loggerMethod = null;
+  Method sessionMethod = null;
 
   public Log getLogger() {
       return LogFactory.getLog(PojoComponent.class);
@@ -107,6 +117,12 @@ public class PojoComponent extends ComponentBase {
     }
     else if( value instanceof IContentItem && paramclass.equals( String.class ) ) {
       method.invoke(pojo, new Object[] { value.toString() } );
+    }
+    else if( paramclass.equals( IPentahoSession.class ) ) {
+      method.invoke(pojo, new Object[] { (IPentahoSession) value } );
+    }
+    else if( paramclass.equals( Log.class ) ) {
+      method.invoke(pojo, new Object[] { (Log) value } );
     }
     else {
       // just try it I guess
@@ -164,24 +180,20 @@ public class PojoComponent extends ComponentBase {
         if( value != null ) {
           settings.put( path, value );
         }
-        /*
-        String path = keys.next();
-        // parse out the path
-        int pos1 = path.indexOf( '{' );
-        int pos2 = path.indexOf( '}' );
-        if( pos1 > 0 && pos2 > 0 ) {
-          String file = path.substring( 0, pos1 );
-          String setting = path.substring( pos1+1, pos2 );
-          String value = PentahoSystem.getSystemSetting( file, setting, null );
-          if( value != null ) {
-            settings.put( path, value );
-          }
-        }
-        */
       }
       config.configure( settings );
     }
 
+    // set the PentahoSession
+    if( sessionMethod != null ) {
+      callMethod( sessionMethod, getSession() );
+    }
+    
+    // set the logger
+    if( loggerMethod != null ) {
+      callMethod( loggerMethod, getLogger() );
+    }
+    
     Map<String,Object> map = new HashMap<String,Object>();
     // look at the component settings
     List<?> nodes = defnNode.selectNodes( "*" ); //$NON-NLS-1$
@@ -225,10 +237,16 @@ public class PojoComponent extends ComponentBase {
       while( it.hasNext() ) {
         String name = (String) it.next();
         IActionSequenceResource resource = getResource( name );
-        IPentahoStreamSource stream = getResourceDataSource( resource );
         Method method = setMethods.get( name.toUpperCase() );
         if( method != null ) {
-          method.invoke(pojo, new Object[] { stream } );
+          Class<?>[] paramTypes = method.getParameterTypes();
+          if( paramTypes.length == 1 && paramTypes[0] == InputStream.class ) {
+            InputStream in = getRuntimeContext().getResourceInputStream( resource );
+            method.invoke(pojo, new Object[] { in } );
+          }
+          else if( paramTypes.length == 1 && paramTypes[0] == IActionSequenceResource.class ) {
+            method.invoke(pojo, new Object[] { resource } );
+          }
         } else {
           // BISERVER-2715 we should ignore this as the resource might be meant for another component
         }
@@ -322,30 +340,41 @@ public class PojoComponent extends ComponentBase {
         pojo = aClass.newInstance();
         Method methods[] = pojo.getClass().getMethods();
         // create a method map
-        for( int idx=0; idx<methods.length; idx++ ) {
-          String name = methods[idx].getName();
+        for( Method method : methods ) {
+          String name = method.getName();
+          Class<?>[] paramTypes = method.getParameterTypes();
           if( name.equals( "getOutputs" ) ) { //$NON-NLS-1$
-            runtimeOutputsMethod = methods[idx];
+            runtimeOutputsMethod = method;
           }
           else if( name.equals( "setInputs" ) ) { //$NON-NLS-1$
-            runtimeInputsMethod = methods[idx];
+            runtimeInputsMethod = method;
+          }
+          else if( name.equals( "setLogger" ) ) { //$NON-NLS-1$
+            if( paramTypes.length == 1 && paramTypes[0] == Log.class ) {
+              loggerMethod = method;
+            }
+          }
+          else if( name.equals( "setSession" ) ) { //$NON-NLS-1$
+            if( paramTypes.length == 1 && paramTypes[0] == IPentahoSession.class ) {
+              sessionMethod = method;
+            }
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            setMethods.put( name , methods[idx] );
+            setMethods.put( name , method );
           }
           else if( name.startsWith( "get" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            getMethods.put( name , methods[idx] );
+            getMethods.put( name , method );
           }
           else if( name.equalsIgnoreCase( "execute" ) ) { //$NON-NLS-1$
-            executeMethod = methods[idx];
+            executeMethod = method;
           }
           else if( name.equalsIgnoreCase( "validate" ) ) { //$NON-NLS-1$
-            validateMethod = methods[idx];
+            validateMethod = method;
           }
           else if( name.equalsIgnoreCase( "done" ) ) { //$NON-NLS-1$
-            doneMethod = methods[idx];
+            doneMethod = method;
           }
         }
 

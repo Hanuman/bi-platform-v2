@@ -20,7 +20,20 @@
    	</outputstream>
   </outputs>
 
-  <resources/>
+  <resources>
+  	<resource1>
+      <xml> 
+        <location><test-xml/></location>  
+        <mime-type>text/text</mime-type> 
+      </xml> 
+  	</resource1>
+  	<resource2>
+      <xml> 
+        <location><test-xml/></location>  
+        <mime-type>text/text</mime-type> 
+      </xml> 
+  	</resource2>
+  </resources>
 
   <actions>
       <action-definition>
