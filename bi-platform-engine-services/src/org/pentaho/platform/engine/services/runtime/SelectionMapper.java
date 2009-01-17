@@ -130,9 +130,9 @@ public class SelectionMapper implements ISelectionMapper {
       return (null);
     }
 
-    ArrayList values = new ArrayList();
+    ArrayList<Object> values = new ArrayList<Object>();
 
-    HashMap displayNames = (dispColIndex < 0) ? null : new HashMap();
+    HashMap<Object,Object> displayNames = (dispColIndex < 0) ? null : new HashMap<Object,Object>();
     Object row[] = resultSet.next();
     Object value, name;
     while (row != null) {
@@ -211,8 +211,8 @@ public class SelectionMapper implements ISelectionMapper {
       return (null);
     }
 
-    ArrayList selValues = new ArrayList();
-    HashMap dispMap = new HashMap();
+    ArrayList<String> selValues = new ArrayList<String>();
+    HashMap<String,String> dispMap = new HashMap<String,String>();
     String val, disp;
     for (Iterator it = aList.iterator(); it.hasNext();) {
       try {

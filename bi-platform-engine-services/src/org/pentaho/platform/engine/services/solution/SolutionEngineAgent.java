@@ -40,7 +40,7 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 public class SolutionEngineAgent {
 
-  private HashMap parameters;
+  private HashMap<String,String> parameters;
 
   private String userId;
 
@@ -53,7 +53,7 @@ public class SolutionEngineAgent {
   private ISolutionEngine solutionEngine = null;
 
   public SolutionEngineAgent() {
-    parameters = new HashMap();
+    parameters = new HashMap<String,String>();
   }
 
   public void setUserId(final String userId) {
@@ -99,13 +99,13 @@ public class SolutionEngineAgent {
       // create a generic session object
       StandaloneSession session = new StandaloneSession(userId);
 
-      solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+      solutionEngine = PentahoSystem.get(SolutionEngine.class, session);
       solutionEngine.init(session);
 
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parameters);
 
       String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
-      HashMap parameterProviderMap = new HashMap();
+      HashMap<String,IParameterProvider> parameterProviderMap = new HashMap<String,IParameterProvider>();
       parameterProviderMap.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
 
       IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);

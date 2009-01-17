@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
-import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -100,10 +99,4 @@ public abstract class BaseContentGenerator extends PentahoBase implements IConte
 		this.outputHandler = outputHandler;
 	}
 	
-	 public void setInput( IPentahoStreamSource item ) {
-	   // most content generators won't use this so we ignore it
-	   // override this method if a content generator needs the input stream
-	 }
-
-
 }

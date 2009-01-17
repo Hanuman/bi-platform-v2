@@ -24,10 +24,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.actionsequence.dom.IActionDefinition;
-import org.pentaho.platform.api.engine.IActionCompleteListener;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.ICreateFeedbackParameterCallback;
 import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -58,7 +58,7 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 	}
 	
 	protected ISolutionEngine getSolutionEngine() {
-	    return PentahoSystem.getSolutionEngineInstance(userSession);
+	    return PentahoSystem.get(ISolutionEngine.class, userSession);
 	}
 		
 	public void createContent( ) throws Exception {
@@ -66,8 +66,8 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 		// get the solution engine
 	    ISolutionEngine solutionEngine = getSolutionEngine();
 	    if (solutionEngine == null) {
-	    	String message = Messages.getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE");
-	    	error( message ); //$NON-NLS-1$
+	    	String message = Messages.getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE"); //$NON-NLS-1$
+	    	error( message );
 	    	throw new ObjectFactoryException( message );
 	    }
 
@@ -81,19 +81,17 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 	    try {
 
 		    ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
-		    IActionCompleteListener actionCompleteListener = (IActionCompleteListener) getCallback( IActionCompleteListener.class );
 		    String processId = this.getClass().getName();
-		    String instanceId = requestParams.getStringParameter("instance-id", null); //$NON-NLS-1$
-		    boolean instanceEnds = "true".equalsIgnoreCase( requestParams.getStringParameter( "instanceends" ,"true" ) );
+		    boolean instanceEnds = "true".equalsIgnoreCase( requestParams.getStringParameter( "instanceends" ,"true" ) );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
 		    String parameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", "DefaultParameterForm.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
-		    boolean forcePrompt = "true".equalsIgnoreCase( requestParams.getStringParameter( "prompt" ,"false" ) );
+		    boolean forcePrompt = "true".equalsIgnoreCase( requestParams.getStringParameter( "prompt" ,"false" ) );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		    boolean doSubscribe = "yes".equalsIgnoreCase( requestParams.getStringParameter("subscribepage", "no") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		    String solutionName = requestParams.getStringParameter("solution", null); //$NON-NLS-1$
 		    String actionPath = requestParams.getStringParameter("path", null); //$NON-NLS-1$
 		    String actionName = requestParams.getStringParameter("action2", null); //$NON-NLS-1$
 
-		    createOuputFileName( solutionName, actionPath, actionName );
+		    createOutputFileName( solutionName, actionPath, actionName );
 		    
 		    if (actionName == null) {
 		      // now look for a primary action
@@ -117,8 +115,8 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 		    
 		    runtime = solutionEngine.execute(solutionName, actionPath, actionName, processId, false, instanceEnds, instanceId, false, parameterProviders, outputHandler, null, urlFactory, messages);
 
-	        boolean doMessages = "true".equalsIgnoreCase(requestParams.getStringParameter("debug", "false")); //$NON-NLS-1$ //$NON-NLS-2$
-      	    boolean doWrapper = "true".equalsIgnoreCase( requestParams.getStringParameter( "wrapper" ,"true" ) );
+	        boolean doMessages = "true".equalsIgnoreCase(requestParams.getStringParameter("debug", "false")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      	    boolean doWrapper = "true".equalsIgnoreCase( requestParams.getStringParameter( "wrapper" ,"true" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    	postExecute( runtime, doMessages, doWrapper );
 	    } finally {
 		    if( runtime != null ) {
@@ -128,11 +126,11 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 		
 	}
 	
-	protected void createOuputFileName( String solutionName, String actionPath, String actionName ) {
-        ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+	protected void createOutputFileName( String solutionName, String actionPath, String actionName ) {
+        ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
         IActionSequence actionSequence = repository.getActionSequence(solutionName, actionPath, actionName,
                 PentahoSystem.loggingLevel, ISolutionRepository.ACTION_EXECUTE);
-        String fileName = "content";
+        String fileName = "content"; //$NON-NLS-1$
         if (actionSequence != null) {
           String title = actionSequence.getTitle();
           if ((title != null) && (title.length() > 0)) {
@@ -168,19 +166,15 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 
 		IParameterProvider requestParams = parameterProviders.get( IParameterProvider.SCOPE_REQUEST );
 	    ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
-	    IActionCompleteListener actionCompleteListener = (IActionCompleteListener) getCallback( IActionCompleteListener.class );
-	    String processId = this.getClass().getName();
-	    String instanceId = requestParams.getStringParameter("instance-id", null); //$NON-NLS-1$
-	    boolean instanceEnds = "true".equalsIgnoreCase( requestParams.getStringParameter( "instanceends" ,"true" ) );
 
 	    String parameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", "DefaultParameterForm.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
-	    boolean forcePrompt = "true".equalsIgnoreCase( requestParams.getStringParameter( "prompt" ,"false" ) );
+	    boolean forcePrompt = "true".equalsIgnoreCase( requestParams.getStringParameter( "prompt" ,"false" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    boolean doSubscribe = "yes".equalsIgnoreCase( requestParams.getStringParameter("subscribepage", "no") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    String solutionName = requestParams.getStringParameter("solution", null); //$NON-NLS-1$
 	    String actionPath = requestParams.getStringParameter("path", null); //$NON-NLS-1$
 	    String actionName = requestParams.getStringParameter("action2", null); //$NON-NLS-1$
 
-	    createOuputFileName( solutionName, actionPath, actionName );
+	    createOutputFileName( solutionName, actionPath, actionName );
 	    
 	    if (actionName == null) {
 	      // now look for a primary action
@@ -225,11 +219,11 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 
           StringBuffer buffer = new StringBuffer();
           if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
-            PentahoSystem.getMessageFormatter(userSession).formatSuccessMessage(
+            PentahoSystem.get( IMessageFormatter.class, userSession).formatSuccessMessage(
                 "text/html", runtime, buffer, doMessages, doWrapper); //$NON-NLS-1$
           } else {
             // we need an error message...
-            PentahoSystem.getMessageFormatter(userSession).formatFailureMessage(
+            PentahoSystem.get( IMessageFormatter.class, userSession).formatFailureMessage(
                 "text/html", runtime, buffer, messages); //$NON-NLS-1$
           }
           outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));

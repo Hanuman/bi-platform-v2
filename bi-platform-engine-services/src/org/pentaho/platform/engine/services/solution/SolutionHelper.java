@@ -174,7 +174,7 @@ public class SolutionHelper {
     ISolutionEngine solutionEngine = null;
     try {
 
-      solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+      solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
       solutionEngine.init(session);
       solutionEngine.setlistener(execListener);
 
@@ -193,10 +193,10 @@ public class SolutionHelper {
         baseUrl += "ViewAction?";//$NON-NLS-1$ 
       }
 
-      HashMap parameterProviderMap = new HashMap();
+      HashMap<String,IParameterProvider> parameterProviderMap = new HashMap<String,IParameterProvider>();
       parameterProviderMap.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
 
-      IPentahoUrlFactory urlFactory = (IPentahoUrlFactory) new SimpleUrlFactory(baseUrl);
+      IPentahoUrlFactory urlFactory = new SimpleUrlFactory(baseUrl);
 
       ActionInfo solutionRef = ActionInfo.parseActionString(actionSequence);
 

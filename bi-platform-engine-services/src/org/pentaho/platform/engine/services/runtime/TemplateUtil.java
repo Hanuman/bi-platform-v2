@@ -56,7 +56,7 @@ public class TemplateUtil {
 
   private static final Pattern dateExpressionPattern = Pattern.compile(TemplateUtil.DATE_EXPR_PATTERN);
 
-  private static final List SystemInputs = new ArrayList();
+  private static final List<String> SystemInputs = new ArrayList<String>();
 
   private static final Log logger = LogFactory.getLog(TemplateUtil.class);
 
@@ -200,8 +200,8 @@ public class TemplateUtil {
   public static void applyTableTemplate(final String template, final Properties inputs, final Pattern parameterPattern,
       final StringBuffer results) {
     Matcher parameterMatcher = parameterPattern.matcher(template);
-    ArrayList partsList = new ArrayList();
-    ArrayList columnsList = new ArrayList();
+    ArrayList<String> partsList = new ArrayList<String>();
+    ArrayList<Integer> columnsList = new ArrayList<Integer>();
     int idx = 0;
     int lastEnd = 0;
     IPentahoResultSet data = null;
@@ -354,13 +354,14 @@ public class TemplateUtil {
 
     private IRuntimeContext context;
 
-    private Set inputs;
+    private Set<String> inputs;
 
-    private static final Log logger = LogFactory.getLog(InputProperties.class);
+    private static final Log inputPropertiesLogger = LogFactory.getLog(InputProperties.class);
 
+    @SuppressWarnings({"unchecked"})
     InputProperties(final IRuntimeContext context) {
       this.context = context;
-      inputs = new HashSet();
+      inputs = new HashSet<String>();
       inputs.addAll(context.getInputNames());
       inputs.addAll(context.getParameterManager().getCurrentInputNames());
       inputs.add("$user"); //$NON-NLS-1$
@@ -472,7 +473,7 @@ public class TemplateUtil {
             columnIdx = md.getColumnIndex(new String[] { name });
           }
           if (columnIdx < 0) {
-            InputProperties.logger.error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
+            InputProperties.inputPropertiesLogger.error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
             return null;
           }
           int rowCount = rs.getRowCount();

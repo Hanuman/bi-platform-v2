@@ -40,17 +40,17 @@ public class ParameterManager implements IParameterManager {
 
   private static final String[] EMPTY_ARRAY = new String[0];
 
-  private Map allParams;
+  private ListOrderedMap allParams;
 
-  private Map allResources;
+  private ListOrderedMap allResources;
 
-  private List waitingToDieParams;
+  private List<IActionParameter> waitingToDieParams;
 
-  private Map currentInputs;
+  private ListOrderedMap currentInputs;
 
-  private Map currentOutputs;
+  private ListOrderedMap currentOutputs;
 
-  private Map currentResources;
+  private ListOrderedMap currentResources;
 
   private String[] sequenceInputNames;
 
@@ -64,7 +64,7 @@ public class ParameterManager implements IParameterManager {
     allParams = new ListOrderedMap();
     allResources = new ListOrderedMap();
 
-    waitingToDieParams = new ArrayList();
+    waitingToDieParams = new ArrayList<IActionParameter>();
 
     currentInputs = new ListOrderedMap();
     currentResources = new ListOrderedMap();
@@ -74,6 +74,7 @@ public class ParameterManager implements IParameterManager {
     sequenceInputNames = ParameterManager.EMPTY_ARRAY;
   }
 
+  @SuppressWarnings({"all"})
   ParameterManager(final IActionSequence actionSequence) {
     this();
     allParams.putAll(actionSequence.getInputDefinitions());
@@ -163,8 +164,8 @@ public class ParameterManager implements IParameterManager {
     allResources = resetMap(sequenceResourceNames, allResources);
   }
 
-  private Map resetMap(final String[] names, final Map oldMap) {
-    Map newMap = new ListOrderedMap();
+  private ListOrderedMap resetMap(final String[] names, final ListOrderedMap oldMap) {
+    ListOrderedMap newMap = new ListOrderedMap();
     for (String element : names) {
       newMap.put(element, oldMap.get(element));
     }
@@ -270,7 +271,7 @@ public class ParameterManager implements IParameterManager {
    * @return a map with the param name as the key and a ReturnParameter containing the data.
    */
   public Map getReturnParameters() {
-    Map returnMap = new ListOrderedMap();
+    ListOrderedMap returnMap = new ListOrderedMap();
 
     // Iterate for each output defined
     for (Iterator it = sequenceOutputDefs.entrySet().iterator(); it.hasNext();) {

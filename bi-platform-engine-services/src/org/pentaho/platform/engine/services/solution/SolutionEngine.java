@@ -65,7 +65,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
 
   private final boolean debug = PentahoSystem.debug;
 
-  private Map parameterProviders;
+  private Map<String,IParameterProvider> parameterProviders;
 
   private boolean persisted;
 
@@ -101,7 +101,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
   }
 
   public void init(final IPentahoSession pSession) {
-    parameterProviders = new HashMap();
+    parameterProviders = new HashMap<String,IParameterProvider>();
     this.session = pSession;
     this.setParameterProvider(SolutionEngine.JVM_PARAMETER_PROVIDER, new JVMParameterProvider());
     setForcePrompt(false);
@@ -342,6 +342,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
         parameterProviderMap, null);
   }
 
+  @SuppressWarnings({"unchecked"})
   protected IRuntimeContext executeInternal(final String solutionName, final String sequencePath,
       final String sequenceName, final String processId, final boolean async, final boolean instanceEnds,
       final Map parameterProviderMap, final String actionSequenceXML) {
@@ -485,6 +486,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
    * FIXME: This is in dire need of fixing
    * @param parameterProviderMap
    */
+  @SuppressWarnings({"unchecked"})
   protected void applyParameterMappers(final Map parameterProviderMap) {
     IParameterProvider request = (IParameterProvider) parameterProviderMap.get(IParameterProvider.SCOPE_REQUEST);
     if (request != null) {
