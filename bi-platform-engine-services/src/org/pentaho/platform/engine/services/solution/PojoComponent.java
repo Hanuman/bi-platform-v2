@@ -37,6 +37,7 @@ import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IConfiguredPojo;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IStreamingPojo;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
@@ -63,7 +64,8 @@ public class PojoComponent extends ComponentBase {
   Method runtimeOutputsMethod = null;
   Method loggerMethod = null;
   Method sessionMethod = null;
-
+  Method contextMethod = null;
+  
   public Log getLogger() {
       return LogFactory.getLog(PojoComponent.class);
   }
@@ -187,6 +189,11 @@ public class PojoComponent extends ComponentBase {
     // set the PentahoSession
     if( sessionMethod != null ) {
       callMethod( sessionMethod, getSession() );
+    }
+    
+    // set the IRuntimeContext
+    if (contextMethod != null) {
+      callMethod( contextMethod, getRuntimeContext() );
     }
     
     // set the logger
@@ -357,6 +364,11 @@ public class PojoComponent extends ComponentBase {
           else if( name.equals( "setSession" ) ) { //$NON-NLS-1$
             if( paramTypes.length == 1 && paramTypes[0] == IPentahoSession.class ) {
               sessionMethod = method;
+            }
+          }
+          else if( name.equals( "setRuntimeContext" ) ) { //$NON-NLS-1$
+            if( paramTypes.length == 1 && paramTypes[0] == IRuntimeContext.class ) {
+              contextMethod = method;
             }
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
