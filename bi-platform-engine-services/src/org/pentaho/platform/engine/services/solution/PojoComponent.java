@@ -199,7 +199,11 @@ public class PojoComponent extends ComponentBase {
     List<?> nodes = defnNode.selectNodes( "*" ); //$NON-NLS-1$
     for( int idx=0; idx<nodes.size(); idx++ ) {
       Element node = (Element) nodes.get( idx );
-      String name = node.getName().toUpperCase();
+      // inputs may typically contain a dash in them, such as
+      // something like "report-definition" and we should expect
+      // a setter as setReportDefinition, so we will remove the
+      // dashes and everything should proceed as expected
+      String name = node.getName().replace("-", "").toUpperCase();
       if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) { //$NON-NLS-1$ //$NON-NLS-2$
         String value = node.getText();
         Method method = setMethods.get( name );
@@ -219,6 +223,8 @@ public class PojoComponent extends ComponentBase {
     while( it.hasNext() ) {
       String name = (String) it.next();
       Object value = getInputValue( name );
+      // now that we have the value, we can fix the name
+      name = name.replace("-", "");
       Method method = setMethods.get( name.toUpperCase() );
       if( method != null ) {
         callMethod( method, value );
@@ -238,6 +244,7 @@ public class PojoComponent extends ComponentBase {
       while( it.hasNext() ) {
         String name = (String) it.next();
         IActionSequenceResource resource = getResource( name );
+        name = name.replace("-", "");
         resourceMap.put(name, resource);
         Method method = setMethods.get( name.toUpperCase() );
         if( method != null ) {
