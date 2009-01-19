@@ -37,11 +37,9 @@ import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IConfiguredPojo;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IStreamingPojo;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
-import org.pentaho.platform.engine.services.solution.ComponentBase;
 
 /**
  * This class interfaces with a plain old Java object and makes it
@@ -60,11 +58,11 @@ public class PojoComponent extends ComponentBase {
   Method executeMethod = null;
   Method validateMethod = null;
   Method doneMethod = null;
+  Method resourcesMethod = null;
   Method runtimeInputsMethod = null;
   Method runtimeOutputsMethod = null;
   Method loggerMethod = null;
   Method sessionMethod = null;
-  Method contextMethod = null;
   
   public Log getLogger() {
       return LogFactory.getLog(PojoComponent.class);
@@ -122,9 +120,6 @@ public class PojoComponent extends ComponentBase {
     }
     else if( paramclass.equals( IPentahoSession.class ) ) {
       method.invoke(pojo, new Object[] { (IPentahoSession) value } );
-    }
-    else if( paramclass.equals( IRuntimeContext.class ) ) {
-      method.invoke(pojo, new Object[] { (IRuntimeContext) value } );
     }
     else if( paramclass.equals( Log.class ) ) {
       method.invoke(pojo, new Object[] { (Log) value } );
@@ -194,17 +189,12 @@ public class PojoComponent extends ComponentBase {
       callMethod( sessionMethod, getSession() );
     }
     
-    // set the IRuntimeContext
-    if (contextMethod != null) {
-      callMethod( contextMethod, getRuntimeContext() );
-    }
-    
     // set the logger
     if( loggerMethod != null ) {
       callMethod( loggerMethod, getLogger() );
     }
     
-    Map<String,Object> map = new HashMap<String,Object>();
+    Map<String,Object> inputMap = new HashMap<String,Object>();
     // look at the component settings
     List<?> nodes = defnNode.selectNodes( "*" ); //$NON-NLS-1$
     for( int idx=0; idx<nodes.size(); idx++ ) {
@@ -217,7 +207,7 @@ public class PojoComponent extends ComponentBase {
           callMethodWithString( method, value );
         } 
         else if( runtimeInputsMethod != null ) {
-          map.put(name, value);
+          inputMap.put(name, value);
         } else {
           throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
         }
@@ -234,7 +224,7 @@ public class PojoComponent extends ComponentBase {
         callMethod( method, value );
       } 
       else if( runtimeInputsMethod != null ) {
-        map.put(name, value);
+        inputMap.put(name, value);
       } else {
         throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
       }
@@ -242,11 +232,13 @@ public class PojoComponent extends ComponentBase {
 
     // now process all of the resources and see if we can call them as setters
     Set<?> resourceNames = getResourceNames();
+    Map<String, IActionSequenceResource> resourceMap = new HashMap<String, IActionSequenceResource>();
     if( resourceNames!= null && resourceNames.size() > 0 ) {
       it = resourceNames.iterator();
       while( it.hasNext() ) {
         String name = (String) it.next();
         IActionSequenceResource resource = getResource( name );
+        resourceMap.put(name, resource);
         Method method = setMethods.get( name.toUpperCase() );
         if( method != null ) {
           Class<?>[] paramTypes = method.getParameterTypes();
@@ -263,9 +255,14 @@ public class PojoComponent extends ComponentBase {
       }
     }
     
-    if( map.size() > 0 && runtimeInputsMethod != null ) {
+    if ( resourceMap.size() > 0 && resourcesMethod != null ) {
+      // call the resources setter
+      resourcesMethod.invoke( pojo , new Object[] { resourceMap } );
+    }
+    
+    if( inputMap.size() > 0 && runtimeInputsMethod != null ) {
       // call the generic input setter
-      runtimeInputsMethod.invoke( pojo , new Object[] { map } );
+      runtimeInputsMethod.invoke( pojo , new Object[] { inputMap } );
     }
     
     if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" ) && pojo instanceof IStreamingPojo) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -299,12 +296,11 @@ public class PojoComponent extends ComponentBase {
     // now handle outputs
     Set<?> outputNames = getOutputNames();
     // first get the runtime outputs
-    map = new HashMap<String,Object>();
+    Map<String,Object> outputMap = new HashMap<String,Object>();
     if( runtimeOutputsMethod != null ) {
-      map = (Map<String,Object>) runtimeOutputsMethod.invoke( pojo, new Object[] {} );
+      outputMap = (Map<String,Object>) runtimeOutputsMethod.invoke( pojo, new Object[] {} );
     }
-    if( map.size() > 0 ) {
-      
+    if( outputMap.size() > 0 ) {
     }   
     it = outputNames.iterator();
     while( it.hasNext() ) {
@@ -318,7 +314,7 @@ public class PojoComponent extends ComponentBase {
           Object value = method.invoke(pojo, new Object[] { } );
           param.setValue( value );
         } else {
-          Object value = map.get( name );
+          Object value = outputMap.get( name );
           if( value != null ) {
             param.setValue( value );
           } else {
@@ -359,6 +355,9 @@ public class PojoComponent extends ComponentBase {
           else if( name.equals( "setInputs" ) ) { //$NON-NLS-1$
             runtimeInputsMethod = method;
           }
+          else if( name.equals( "setResources" ) ) { //$NON-NLS-1$
+            resourcesMethod = method;
+          }
           else if( name.equals( "setLogger" ) ) { //$NON-NLS-1$
             if( paramTypes.length == 1 && paramTypes[0] == Log.class ) {
               loggerMethod = method;
@@ -367,11 +366,6 @@ public class PojoComponent extends ComponentBase {
           else if( name.equals( "setSession" ) ) { //$NON-NLS-1$
             if( paramTypes.length == 1 && paramTypes[0] == IPentahoSession.class ) {
               sessionMethod = method;
-            }
-          }
-          else if( name.equals( "setRuntimeContext" ) ) { //$NON-NLS-1$
-            if( paramTypes.length == 1 && paramTypes[0] == IRuntimeContext.class ) {
-              contextMethod = method;
             }
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$

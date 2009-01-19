@@ -17,7 +17,14 @@
    	<output2 type="string"/>
   </outputs>
 
-  <resources/>
+  <resources> 
+    <resource1>
+      <solution-file>
+        <location>pojo.txt</location>
+          <mime-type>text/plain</mime-type>
+      </solution-file>
+    </resource1>
+  </resources>
 
   <actions>
       <action-definition>

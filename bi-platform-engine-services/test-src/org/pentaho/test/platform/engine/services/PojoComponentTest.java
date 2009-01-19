@@ -39,7 +39,6 @@ public class PojoComponentTest extends BaseTest {
 	  public static boolean executeCalled = false;
     public static boolean validateCalled = false;
     public static boolean setSessionCalled = false;
-    public static boolean setRuntimeContextCalled = false;
     public static boolean setLoggerCalled = false;
     public static boolean setResourceInputStreamCalled = false;
     public static boolean setActionSequenceResourceCalled = false;
@@ -51,7 +50,6 @@ public class PojoComponentTest extends BaseTest {
 	            String xactionStr = ServiceTestHelper.getXAction( SOLUTION_PATH, "test/pojo/pojo1a.xaction" );
 	            PojoComponentTest.doneCalled = false;
 	            PojoComponentTest.setSessionCalled = false;
-              PojoComponentTest.setRuntimeContextCalled = false;
 	            PojoComponentTest.setLoggerCalled = false;
 	            IRuntimeContext runtimeContext = solutionEngine.execute( 
 	                xactionStr, "test1a.xaction", "empty action sequence test", false, true, null, false, new HashMap(), null, null, new SimpleUrlFactory(""), new ArrayList()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -59,7 +57,6 @@ public class PojoComponentTest extends BaseTest {
 	            assertNotNull( "RuntimeContext is null", runtimeContext );
               assertTrue( "done() was not called", PojoComponentTest.doneCalled );
               assertTrue( "setSession() was not called", PojoComponentTest.setSessionCalled );
-              assertTrue( "setRuntimeContext() was not called", PojoComponentTest.setRuntimeContextCalled );
               assertTrue( "setLogger() was not called", PojoComponentTest.setLoggerCalled );
 	            assertEquals( "Action sequence execution failed", runtimeContext.getStatus(), IRuntimeContext.RUNTIME_STATUS_SUCCESS );
 	        } catch (Exception e) {
