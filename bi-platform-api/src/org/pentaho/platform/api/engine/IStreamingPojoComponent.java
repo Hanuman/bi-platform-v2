@@ -17,12 +17,12 @@
  */
 package org.pentaho.platform.api.engine;
 
-import java.io.OutputStream;
-
-public interface IStreamingPojoComponent extends ISimplePojoComponent {
-
-	public void setOutputStream( OutputStream outputStream );
-	
-	public String getMimeType( );
-	
+/*
+* This is a deprecated class. The one to use is
+* org.pentaho.platform.api.engine.IStreamingPojo
+* @author jamesdixon
+*
+*/
+@Deprecated
+public interface IStreamingPojoComponent extends IStreamingPojo {
 }
