@@ -123,6 +123,9 @@ public class PojoComponent extends ComponentBase {
     else if( paramclass.equals( IPentahoSession.class ) ) {
       method.invoke(pojo, new Object[] { (IPentahoSession) value } );
     }
+    else if( paramclass.equals( IRuntimeContext.class ) ) {
+      method.invoke(pojo, new Object[] { (IRuntimeContext) value } );
+    }
     else if( paramclass.equals( Log.class ) ) {
       method.invoke(pojo, new Object[] { (Log) value } );
     }
