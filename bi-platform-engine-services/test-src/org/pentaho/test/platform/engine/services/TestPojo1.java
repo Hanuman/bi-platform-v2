@@ -3,6 +3,7 @@ package org.pentaho.test.platform.engine.services;
 
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISimplePojoComponent;
 
 public class TestPojo1 implements ISimplePojoComponent {
@@ -24,6 +25,10 @@ public class TestPojo1 implements ISimplePojoComponent {
 	
 	public void setSession( IPentahoSession session ) {
 	  PojoComponentTest.setSessionCalled = true;
+	}
+	
+	public void setRuntimeContext( IRuntimeContext context) {
+    PojoComponentTest.setRuntimeContextCalled = true;
 	}
 	
 	public String getOutput1() {
