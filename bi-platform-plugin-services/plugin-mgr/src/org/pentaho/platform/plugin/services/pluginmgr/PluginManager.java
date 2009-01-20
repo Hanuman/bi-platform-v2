@@ -39,7 +39,6 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
-import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.ui.xul.IMenuCustomization;
@@ -54,7 +53,7 @@ public class PluginManager implements IPluginManager {
   protected Map<String, IContentInfo> contentTypeByExtension = new HashMap<String, IContentInfo>();
 
   protected Map<String, ClassLoader> classLoaderMap = new HashMap<String, ClassLoader>();
-  
+
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
   public IPentahoObjectFactory getObjectFactory() {
@@ -155,8 +154,8 @@ public class PluginManager implements IPluginManager {
   public synchronized boolean reload(IPentahoSession session) {
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
     pluginProvider.getPlugins().clear();
-    boolean anyErrors = !((SystemPathXmlPluginProvider)pluginProvider).load(session);
-    
+    boolean anyErrors = !((SystemPathXmlPluginProvider) pluginProvider).load(session);
+
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     objectFactory.init(null, null);
@@ -167,7 +166,7 @@ public class PluginManager implements IPluginManager {
       } catch (PlatformPluginRegistrationException e) {
         // this has been logged already
         anyErrors = true;
-        String msg = Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN",plugin.getName()); //$NON-NLS-1$
+        String msg = Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN", plugin.getName()); //$NON-NLS-1$
         Logger.error(getClass().toString(), msg, e);
         PluginMessageLogger.add(msg);
       }
@@ -175,23 +174,24 @@ public class PluginManager implements IPluginManager {
     return !anyErrors;
   }
 
-  public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session) throws PlatformPluginRegistrationException {
+  public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
+      throws PlatformPluginRegistrationException {
 
     for (IContentInfo info : plugin.getContentInfos()) {
       contentTypeByExtension.put(info.getExtension(), info);
     }
 
-    ClassLoader loader = classLoaderMap.get( plugin.getSourceDescription() );
-    if( loader == null ) {
-      loader = new SolutionClassLoader(
-          "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() + ISolutionRepository.SEPARATOR + "lib", //$NON-NLS-1$ //$NON-NLS-2$
-          this);
+    ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
+    if (loader == null) {
+      String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath( "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() );
+      loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }
 
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
-      String errorMsg = Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getSourceDescription()); //$NON-NLS-1$
+      String errorMsg = Messages.getString(
+          "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getSourceDescription()); //$NON-NLS-1$
 
       //test load the content generator
       try {
@@ -200,7 +200,7 @@ public class PluginManager implements IPluginManager {
         objectFactory.defineObject(clazz.getSimpleName(), cgInfo.getClassname(), scope, loader);
         objectFactory.defineObject(cgInfo.getId(), cgInfo.getClassname(), scope, loader);
       } catch (Exception e) {
-        throw new PlatformPluginRegistrationException(errorMsg,e);
+        throw new PlatformPluginRegistrationException(errorMsg, e);
       }
 
       // do a test load of the content generator so we can fail now if the class cannot be found
@@ -209,7 +209,7 @@ public class PluginManager implements IPluginManager {
       try {
         tmpObject = objectFactory.getObject(cgInfo.getId(), session);
       } catch (ObjectFactoryException e) {
-        throw new PlatformPluginRegistrationException(errorMsg,e);
+        throw new PlatformPluginRegistrationException(errorMsg, e);
       }
 
       if (!(tmpObject instanceof IContentGenerator)) {
@@ -229,15 +229,16 @@ public class PluginManager implements IPluginManager {
         }
       }
       contentInfoMap.put(cgInfo.getId(), cgInfo);
-      
+
       List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get(cgInfo.getType());
       if (generatorList == null) {
         generatorList = new ArrayList<IContentGeneratorInfo>();
         contentGeneratorInfoByTypeMap.put(cgInfo.getType(), generatorList);
       }
       generatorList.add(cgInfo);
-      
-      PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
+
+      PluginMessageLogger.add(Messages.getString(
+          "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }
   }
 }

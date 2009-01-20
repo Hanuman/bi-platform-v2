@@ -45,7 +45,7 @@ public interface IPlatformPlugin {
   public String getName();
   
   /**
-   * A short description of where this plugin came from, e.g. "FS: biserver/solutions/pluginA"
+   * A short description of where this plugin came from, e.g. "biserver/solutions/pluginA"
    * @return
    */
   public String getSourceDescription();

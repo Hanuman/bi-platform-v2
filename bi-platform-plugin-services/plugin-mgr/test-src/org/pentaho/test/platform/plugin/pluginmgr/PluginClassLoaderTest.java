@@ -1,57 +1,27 @@
-package org.pentaho.test.platform.engine.services;
+package org.pentaho.test.platform.plugin.pluginmgr;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.pentaho.platform.api.engine.IPentahoSystemListener;
-import org.pentaho.platform.api.engine.ISolutionEngine;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
-import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.core.system.SystemStartupSession;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
-import org.pentaho.platform.engine.services.solution.SolutionClassLoader;
-import org.pentaho.platform.engine.services.solution.SolutionEngine;
-
 import junit.framework.TestCase;
 
-public class SolutionClassLoaderTest extends TestCase {
+import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
+
+public class PluginClassLoaderTest extends TestCase {
 
   public void testLoadClass() throws IOException, ClassNotFoundException {
-    
-    // create an object factory
-    StandaloneObjectFactory factory = new StandaloneObjectFactory();
-
-    // specify the objects we will use
-    factory.defineObject( ISolutionEngine.class.getSimpleName(), SolutionEngine.class.getName(), Scope.LOCAL );
-    factory.defineObject( "systemStartupSession", SystemStartupSession.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
-    PentahoSystem.setObjectFactory( factory );
-
-    // create a settings object.
-    SimpleSystemSettings settings = new SimpleSystemSettings();
-    settings.addSetting( "pentaho-system" , "" ); //$NON-NLS-1$ //$NON-NLS-2$
-    PentahoSystem.setSystemSettingsService( settings );
-    
-    // specify the startup listeners
-    List<IPentahoSystemListener> listeners = new ArrayList<IPentahoSystemListener>();
-    PentahoSystem.setSystemListeners( listeners );
-
-    // initialize the system
-    PentahoSystem.init( new StandaloneApplicationContext(".", "") ); //$NON-NLS-1$ //$NON-NLS-2$
-
     // now load a class
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     // test the byte array first
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.TestClassForClassloader" ); //$NON-NLS-1$
-    assertNotNull( "input stream is null", in ); //$NON-NLS-1$
+    assertNotNull( "Could not find class TestClassForClassloader in jar file", in ); //$NON-NLS-1$
     
     byte b[] = toBytes( in );
     String classBytes = new String( b );
@@ -61,7 +31,6 @@ public class SolutionClassLoaderTest extends TestCase {
     Class testClass = loader.loadClass("org.pentaho.test.platform.engine.services.TestClassForClassloader"); //$NON-NLS-1$
     assertNotNull( "class is null", testClass ); //$NON-NLS-1$
     assertEquals( "wrong class", "org.pentaho.test.platform.engine.services.TestClassForClassloader", testClass.getName() ); //$NON-NLS-1$ //$NON-NLS-2$
-
   }
   
   private byte[] toBytes( InputStream in ) throws IOException {
@@ -77,7 +46,7 @@ public class SolutionClassLoaderTest extends TestCase {
   
   public void testLoadXml() throws IOException {
     // now load a xml file
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     InputStream in = loader.getResourceAsStream( "test1.xml" ); //$NON-NLS-1$
     assertNotNull( "input stream is null", in ); //$NON-NLS-1$
@@ -89,7 +58,7 @@ public class SolutionClassLoaderTest extends TestCase {
   
   public void testLoadBadResource() throws IOException {
     // now load a xml file
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     InputStream in = loader.getResourceAsStream( "bogus.xml" ); //$NON-NLS-1$
     assertNull( "input stream should be null", in ); //$NON-NLS-1$
@@ -98,7 +67,7 @@ public class SolutionClassLoaderTest extends TestCase {
   
   public void testLoadBadClass() throws IOException {
     // now load a xml file
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     // now try getting it as a class
     try {
@@ -112,7 +81,7 @@ public class SolutionClassLoaderTest extends TestCase {
   
   public void testLoadProperties() throws IOException {
     // now load a properties file
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.test.properties" ); //$NON-NLS-1$
     assertNotNull( "input stream is null", in ); //$NON-NLS-1$
@@ -125,7 +94,7 @@ public class SolutionClassLoaderTest extends TestCase {
 
   public void testFindXmlResource() throws IOException {
 
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     URL url = loader.getResource( "test1.xml" ); //$NON-NLS-1$
     
@@ -142,7 +111,7 @@ public class SolutionClassLoaderTest extends TestCase {
 
   public void testFindClassResource() throws IOException {
 
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.TestClassForClassloader.class" ); //$NON-NLS-1$
     
@@ -157,7 +126,7 @@ public class SolutionClassLoaderTest extends TestCase {
   public void testFindBadResource() throws IOException {
 
     // now load a properties file
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     URL url = loader.getResource( "bogus.xml" ); //$NON-NLS-1$
     
@@ -167,7 +136,7 @@ public class SolutionClassLoaderTest extends TestCase {
 
   public void testFindResources() throws IOException {
 
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     Enumeration<URL> urls = loader.getResources( "test1.xml" ); //$NON-NLS-1$
     
@@ -190,7 +159,7 @@ public class SolutionClassLoaderTest extends TestCase {
 
   public void testFindBadResources() throws IOException {
 
-    SolutionClassLoader loader = new SolutionClassLoader( "test-jar-lib", this ); //$NON-NLS-1$
+    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
     
     Enumeration<URL> urls = loader.getResources( "bogus.xml" ); //$NON-NLS-1$
     
@@ -206,12 +175,10 @@ public class SolutionClassLoaderTest extends TestCase {
 
   public void testCatalog() throws ClassNotFoundException {
     
-    List<String> jarNames = SolutionClassLoader.listLoadedJars();
+    List<String> jarNames = PluginClassLoader.listLoadedJars();
 
     assertNotNull( jarNames );
     assertEquals( 1, jarNames.size() );
-    assertEquals( "test-jar-lib"+ISolutionRepository.SEPARATOR+"test-jar.jar", jarNames.get(0) ); //$NON-NLS-1$ //$NON-NLS-2$
-        
+    assertTrue("test-jar.jar not found in classloader", StringUtils.contains(jarNames.get(0), "test-jar.jar"));
   }
-    
 }

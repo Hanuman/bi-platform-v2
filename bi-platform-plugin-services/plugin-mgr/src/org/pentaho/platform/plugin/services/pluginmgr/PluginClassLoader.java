@@ -1,22 +1,21 @@
 /*
  * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License, version 2 as published by the Free Software 
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
  * Foundation.
  *
- * You should have received a copy of the GNU General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
+ * You should have received a copy of the GNU Lesser General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
  * or from the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved. 
- * 
  */
-package org.pentaho.platform.engine.services.solution;
+package org.pentaho.platform.plugin.services.pluginmgr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,31 +36,59 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 
-public class SolutionClassLoader extends ClassLoader {
+/**
+ * A custom implementation of {@link ClassLoader} for Pentaho Platform Plugins.
+ * It is used to load plugin classes and aids in retrieving resources by providing
+ * a root directory to search for resources related to plugins.
+ * <p>
+ * Note: {@link PluginClassLoader} will search for jar files in a 'lib' subdirectory
+ * under the pluginDir provided in the constructor.
+ * @author aphillips
+ */
+public class PluginClassLoader extends ClassLoader {
 
-  protected static final Log logger = LogFactory.getLog(SolutionClassLoader.class);
+  protected static final Log logger = LogFactory.getLog(PluginClassLoader.class);
 
   private static final Map<String,byte[]> resourceMap = new HashMap<String,byte[]>();
 
   private static final Map<String,List<String>> loadedFrom = new HashMap<String,List<String>>();
 
-  private String path;
+  private String pluginDir;
   
   private static final List<JarFile> jars  = new ArrayList<JarFile>();
 
-  public SolutionClassLoader(final String inPath, Object parent ) {
+  /**
+   * Creates a class loader for loading plugin classes and discovering resources.
+   * Jars must be located in [pluginDir]/lib.
+   * @param pluginDir
+   * @param parent
+   */
+  public PluginClassLoader(final File pluginDir, Object parent ) {
+    this(pluginDir.getAbsolutePath(), parent);
+  }
+  public PluginClassLoader(final String pluginDir, Object parent ) {
 	  super( parent.getClass().getClassLoader() );
-    path = inPath;
+    this.pluginDir = pluginDir;
+    System.err.println("pluginDir="+pluginDir);
     catalogJars();
   }
-
+  
+  /**
+   * Returns the absolute path to the root directory of the plugin to which this classloader is assigned
+   * @return absolute path to the plugin root
+   */
+  public String getPluginDir() {
+    return pluginDir;
+  }
+  
   private void catalogJars() {
-	  File folder = new File( PentahoSystem.getApplicationContext().getSolutionPath( path ) );
+	  __catalogJars(new File( pluginDir, "lib" ) );
+  }
+  
+  private void __catalogJars(File folder) {
 	  if( folder.exists() && folder.isDirectory() ) {
 		  // get a list of all the JAR files
 		  FilenameFilter filter = new WildcardFileFilter( "*.jar" ); //$NON-NLS-1$
@@ -72,7 +99,7 @@ public class SolutionClassLoader extends ClassLoader {
 					  JarFile jar = new JarFile( file, true );
 					  addJar( jar );
 				  } catch (Exception e) {
-					  Logger.error( getClass().toString(), "Could not load jar from solution: "+file.getAbsolutePath(), e );
+					  Logger.warn( getClass().toString(), "Could not load jar: "+file.getAbsolutePath(), e );
 				  }
 			  }
 		  }
@@ -156,8 +183,8 @@ public class SolutionClassLoader extends ClassLoader {
   }
 */  
   private String getJarLocalName( String jarName ) {
-    String name = jarName.replace('\\', ISolutionRepository.SEPARATOR);
-    int idx = name.indexOf( path );
+    String name = jarName.replace('\\', '/');
+    int idx = name.indexOf( pluginDir + "/lib" );
     return name.substring( idx );
   }
   
@@ -180,15 +207,15 @@ public class SolutionClassLoader extends ClassLoader {
   			      loadedFrom.put( jarKey, classList );
   			    }
   			    classList.add( name );
-  		      System.out.println( "adding class: "+jarKey + ISolutionRepository.SEPARATOR + name );
+  		      System.out.println( "adding class: "+jarKey + '/' + name );
   				  return jar.getInputStream( entry );
   			  }
     	  }
       } catch (Exception ignored) {
         // This situation indicates the resource was found but could not be
         // opened.
-          if (SolutionClassLoader.logger.isTraceEnabled()) {
-          	SolutionClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
+          if (PluginClassLoader.logger.isTraceEnabled()) {
+          	PluginClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
           }
 
         }
@@ -268,8 +295,8 @@ public class SolutionClassLoader extends ClassLoader {
 	  byte[] classBytes = null;
     InputStream in = null;
     try {
-      String key = path + ISolutionRepository.SEPARATOR + name;
-      classBytes = SolutionClassLoader.resourceMap.get(key);
+      String key = pluginDir + "/lib/" + name;
+      classBytes = PluginClassLoader.resourceMap.get(key);
       if (classBytes == null) {
         in = getResourceAsStream( name );
         if( in == null ) {
@@ -283,7 +310,7 @@ public class SolutionClassLoader extends ClassLoader {
           n = in.read( bytes );
         }
         classBytes = bin.toByteArray();
-        SolutionClassLoader.resourceMap.put(key, classBytes);
+        PluginClassLoader.resourceMap.put(key, classBytes);
       }
     } finally {
       if( in != null ) {
