@@ -15,6 +15,7 @@ PentahoSystem which is initialized after Spring
   <bean id="ISolutionRepository" class="org.pentaho.platform.repository.solution.filebased.ExtensionFileBasedSolutionRepository" scope="session" />
   <bean id="IPluginProvider" class="org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider" scope="singleton" />
   <bean id="IPluginManager" class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager" scope="singleton" />
+  <bean id="IPluginResourceLoader" class="org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader" scope="singleton" />
   <bean id="IMenuProvider" class="org.pentaho.test.platform.plugin.pluginmgr.MenuProvider" scope="singleton" />
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
     
