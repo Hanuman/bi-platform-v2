@@ -76,7 +76,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException {
     ClassLoader classLoader = clazz.getClassLoader();
-    if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(clazz)) {
+    if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger
           .warn(
               this,
