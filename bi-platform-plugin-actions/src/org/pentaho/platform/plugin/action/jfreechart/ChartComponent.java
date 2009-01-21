@@ -332,7 +332,7 @@ public class ChartComponent extends ComponentBase {
 
     // Select the right dataset to use based on the chart type
     // Default to category dataset
-    String datasetType = ChartDefinition.CATAGORY_DATASET_STR;
+    String datasetType = ChartDefinition.CATEGORY_DATASET_STR;
     boolean isStacked = false;
     Node datasetTypeNode = chartAttributes.selectSingleNode(ChartDefinition.DATASET_TYPE_NODE_NAME);
     if (datasetTypeNode != null) {
