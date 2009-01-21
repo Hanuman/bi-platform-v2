@@ -289,7 +289,9 @@ public class PluginClassLoader extends ClassLoader {
   @Override
   public java.lang.Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     Class<?> loadedClass = super.loadClass(name, resolve);
-    if (!PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
+    
+    //if the class was loaded by a parent classloader (but not the null system classloader), report a warning
+    if (loadedClass.getClassLoader() != null && !PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
       Logger.warn(this, "Plugin class [" + loadedClass.getName() + "] was not loaded by "
           + PluginClassLoader.class.getSimpleName() + ".  This is most likely due to this class not being found in ["
           + pluginDir + "/lib].  You may have problems locating resources related to this plugin class.");
