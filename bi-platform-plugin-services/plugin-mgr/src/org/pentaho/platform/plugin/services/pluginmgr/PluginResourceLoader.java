@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -77,16 +76,30 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException {
     ClassLoader classLoader = clazz.getClassLoader();
+    if (!PluginClassLoader.class.isAssignableFrom(clazz)) {
+      Logger
+          .warn(
+              this,
+              "Class ["
+                  + clazz.getName()
+                  + "] was not loaded from a "
+                  + PluginClassLoader.class.getSimpleName()
+                  + ".  Is this really a plugin class?  "
+                  + "If "+clazz.getSimpleName()+" is part of your plugin, but will not be loaded with a "
+                  + PluginClassLoader.class.getSimpleName()
+                  + " (such as in a test environment), you might consider using setRootDir() to set an artificial plugin base directory."
+                  + "  Look higher up in the log for warnings from "+PluginClassLoader.class.getSimpleName());
+    }
     InputStream in = null;
 
     File root = getRootDir(classLoader);
     if (root != null) {
       //TODO use jdk ResourceBundle to resolve localized properties
-//      ResourceBundle resourceBundle = ResourceBundle.getBundle(resourcePath);
-      
+      //      ResourceBundle resourceBundle = ResourceBundle.getBundle(resourcePath);
+
       //can we find it on the filesystem?
       File f = new File(root, resourcePath);
-      if(f.exists()) {
+      if (f.exists()) {
         in = new FileInputStream(new File(root, resourcePath));
       }
       //if not on filesystem, ask the classloader
