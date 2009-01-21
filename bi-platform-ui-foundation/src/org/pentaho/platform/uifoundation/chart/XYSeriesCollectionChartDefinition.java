@@ -134,6 +134,10 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
   private float lineWidth = 1.0f;
 
   private boolean markersVisible = false;
+  
+  private Float backgroundAlpha;
+   
+  private Float foregroundAlpha;
 
   // in JFreeChart, the tokens stand for:
   // {0} - the series name
@@ -196,7 +200,15 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
 
     // get the chart title
     setTitle(chartAttributes.selectSingleNode(ChartDefinition.TITLE_NODE_NAME));
+    Node backgroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME);
+    Node foregroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME);
 
+    if(backgroundAlphaNode != null) {
+      setBackgroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME));  
+    }
+    if(foregroundAlphaNode != null) {
+      setForegroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME));  
+    }
     // get the chart subtitles
 
     // A list of <subtitle> nodes should not be allowed to exist as a child of the main XML element (for XML schema to 
@@ -1475,4 +1487,28 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
       setTooltipYFormat(node.getText());
     }
   }
+    
+  public Float getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    public void setBackgroundAlpha(Node backgroundAlphaNode) {
+        if (backgroundAlphaNode != null) {
+            Float backgroundAlphaValue = new Float(backgroundAlphaNode.getText());
+            this.backgroundAlpha = backgroundAlphaValue;
+        }
+
+    }
+
+    public Float getForegroundAlpha() {
+        return foregroundAlpha;
+    }
+
+    public void setForegroundAlpha(Node foregroundAlphaNode) {
+        if (foregroundAlphaNode != null) {
+            Float foregroundAlphaValue = new Float(foregroundAlphaNode.getText());
+            this.foregroundAlpha = foregroundAlphaValue;
+        }
+
+    }
 }

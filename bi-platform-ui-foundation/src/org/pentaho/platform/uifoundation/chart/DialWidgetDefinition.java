@@ -116,7 +116,11 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
   private boolean legendBorderVisible = true;
 
   private Node attributes = null;
-
+  
+  private Float backgroundAlpha;
+  
+  private Float foregroundAlpha;
+  
   //    private IPentahoSession session;
 
   public DialWidgetDefinition(final double value, final double minimum, final double maximum, final boolean rangeLimited) {
@@ -156,7 +160,16 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
 
     // set legend border visible
     setLegendBorderVisible(chartAttributes.selectSingleNode(ChartDefinition.DISPLAY_LEGEND_BORDER_NODE_NAME));
+    // set the alfa layers
+    Node backgroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME);
+    Node foregroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME);
 
+    if(backgroundAlphaNode != null) {
+      setBackgroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME));  
+    }
+    if(foregroundAlphaNode != null) {
+      setForegroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME));  
+    }
     DialWidgetDefinition.createDial(this, chartAttributes, width, height, session);
   }
 
@@ -283,17 +296,37 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
 
     Node titleFontNode = dialNode.selectSingleNode("title-font"); //$NON-NLS-1$
     if (titleFontNode != null) {
-      String titleFontStr = titleFontNode.getText().trim();
-      if (!"".equals(titleFontStr)) { //$NON-NLS-1$
-        widgetDefinition.setTitleFont(new Font(titleFontStr, Font.ITALIC, 24));
+      Node fontNode = titleFontNode.selectSingleNode("font");
+       if(fontNode != null) {
+       String titleFontStr = fontNode.getText().trim();
+       if (!"".equals(titleFontStr)) { //$NON-NLS-1$
+    	 Node titleFontSizeNode = titleFontNode.selectSingleNode("size");
+    	 int size = titleFontSizeNode != null ? Integer.parseInt(titleFontSizeNode.getText()) : 12;
+         widgetDefinition.setTitleFont(new Font(titleFontStr, Font.BOLD, size));
+       }
+      } else {
+        String titleFontStr = titleFontNode.getText().trim();
+        if (!"".equals(titleFontStr)) { //$NON-NLS-1$
+          widgetDefinition.setTitleFont(new Font(titleFontStr, Font.ITALIC, 24));
+        }
       }
     }
 
-    Node valueFontNode = dialNode.selectSingleNode("title-font"); //$NON-NLS-1$
+    Node valueFontNode = dialNode.selectSingleNode("domain-tick-font"); //$NON-NLS-1$
     if (valueFontNode != null) {
-      String fontStr = valueFontNode.getText().trim();
-      if (!"".equals(fontStr)) { //$NON-NLS-1$
-        widgetDefinition.setValueFont(new Font(fontStr, Font.ITALIC, 24));
+      Node fontNode = titleFontNode.selectSingleNode("font");
+      if(fontNode != null) {
+       String fontStr = fontNode.getText().trim();
+       if (!"".equals(fontStr)) { //$NON-NLS-1$
+    	 Node valueFontSizeNode = valueFontNode.selectSingleNode("size");
+    	 int size = valueFontSizeNode != null ? Integer.parseInt(valueFontSizeNode.getText()) : 12;
+         widgetDefinition.setValueFont(new Font(fontStr, Font.BOLD, size));
+       }
+      } else {
+        String fontStr = valueFontNode.getText().trim();
+        if (!"".equals(fontStr)) { //$NON-NLS-1$
+          widgetDefinition.setValueFont(new Font(fontStr, Font.ITALIC, 24));
+        }
       }
     }
 
@@ -794,5 +827,28 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
   public boolean isLegendBorderVisible() {
     return legendBorderVisible;
   }
+  public Float getBackgroundAlpha() {
+		return backgroundAlpha;
+	}
+
+	public void setBackgroundAlpha(Node backgroundAlphaNode) {
+		if (backgroundAlphaNode != null) {
+			Float backgroundAlphaValue = new Float(backgroundAlphaNode.getText());
+			this.backgroundAlpha = backgroundAlphaValue;
+		}
+
+	}
+
+	public Float getForegroundAlpha() {
+		return foregroundAlpha;
+	}
+
+	public void setForegroundAlpha(Node foregroundAlphaNode) {
+		if (foregroundAlphaNode != null) {
+			Float foregroundAlphaValue = new Float(foregroundAlphaNode.getText());
+			this.foregroundAlpha = foregroundAlphaValue;
+		}
+
+	}
 
 }

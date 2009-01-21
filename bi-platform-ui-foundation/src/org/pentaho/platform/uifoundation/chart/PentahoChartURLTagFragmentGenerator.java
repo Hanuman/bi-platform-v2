@@ -25,6 +25,8 @@ import org.jfree.chart.imagemap.StandardURLTagFragmentGenerator;
 import org.jfree.data.general.Dataset;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.pentaho.commons.connection.IPentahoResultSet;
 
 public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentGenerator {
   private static final String SERIES_TAG = "series="; //$NON-NLS-1$
@@ -43,6 +45,8 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
 
   boolean useBaseUrl;
 
+  IPentahoResultSet data;
+
   public PentahoChartURLTagFragmentGenerator(final String urlFragment, final Dataset dataset,
       final String parameterName, final String outerParameterName) {
     super();
@@ -55,7 +59,7 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
     this.useBaseUrl = true;
   }
 
-  public PentahoChartURLTagFragmentGenerator(final String urlFragment, final String urlTarget,
+  public PentahoChartURLTagFragmentGenerator(IPentahoResultSet data,final String urlFragment, final String urlTarget,
       final boolean useBaseUrl, final Dataset dataset, final String parameterName, final String outerParameterName) {
     super();
     this.urlFragment = urlFragment;
@@ -64,6 +68,9 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
     this.outerParameterName = outerParameterName;
     this.urlTarget = urlTarget;
     this.useBaseUrl = useBaseUrl;
+  	this.data = data;
+    if(dataset instanceof TimeTableXYDatasetChartDefinition)
+    	this.data.beforeFirst();
   }
 
   public PentahoChartURLTagFragmentGenerator(final String urlTemplate, final Dataset dataDefinition,
@@ -129,7 +136,17 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
         urlTemplate = TemplateUtil.applyTemplate(urlTemplate, outerParameterName, value);
 
       }
-
+ 	    if(dataset instanceof TimeSeriesCollection || dataset instanceof TimeTableXYDatasetChartDefinition) {
+    	  Object[] rowData = data.next();
+    	  String seriesName = (String) rowData[0];
+    	  value = seriesName;
+    	  if(dataset instanceof TimeSeriesCollection || urlTemplate.indexOf("index.html") == -1)
+    		  urlTemplate = TemplateUtil.applyTemplate(urlTemplate, outerParameterName, value);
+    	  else{	
+    		  urlTemplate = urlTemplate.substring(0,urlTemplate.indexOf("index.html")) + "{PARAMETER}')\"";
+    		  urlTemplate = TemplateUtil.applyTemplate(urlTemplate, "PARAMETER", value);
+    	  }
+      }
       if (!isScript) {
         urlTemplate = urlTemplate + " target=\"" + urlTarget + "\""; //$NON-NLS-1$//$NON-NLS-2$ 
       }

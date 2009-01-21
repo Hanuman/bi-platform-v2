@@ -117,6 +117,10 @@ public class ChartComponent extends ComponentBase {
   private static final int FILE_NAME = 0;
 
   private static final int MAP_NAME = 1;
+	
+	public static final String FOREGROUND_ALPHA = "foreground-alpha"; //$NON-NLS-1$
+
+  public static final String BACKGROUND_ALPHA = "background-alpha"; //$NON-NLS-1$
 
   @Override
   public Log getLogger() {
@@ -453,7 +457,7 @@ public class ChartComponent extends ComponentBase {
             String mapId = fileResults[ChartComponent.MAP_NAME].getName().substring(0,
                 fileResults[ChartComponent.MAP_NAME].getName().indexOf('.'));
             mapString = ImageMapUtilities.getImageMap(mapId, info, new StandardToolTipTagFragmentGenerator(),
-                new PentahoChartURLTagFragmentGenerator(urlTemplate, urlTarget, useBaseUrl, dataDefinition,
+                new PentahoChartURLTagFragmentGenerator(data,urlTemplate, urlTarget, useBaseUrl, dataDefinition,
                     parameterName, outerParameterName));
 
             BufferedWriter out = new BufferedWriter(new FileWriter(fileResults[ChartComponent.MAP_NAME]));

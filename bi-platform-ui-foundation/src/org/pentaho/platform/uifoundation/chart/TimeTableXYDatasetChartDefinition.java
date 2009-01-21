@@ -25,6 +25,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Paint;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -124,6 +126,10 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
   private String lineStyle = ChartDefinition.LINE_STYLE_SOLID_STR;
 
   private float lineWidth = 1.0f;
+  
+  private Float backgroundAlpha;
+  
+  private Float foregroundAlpha;
 
   private boolean markersVisible = false;
 
@@ -194,6 +200,15 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
     // get the chart title
     setTitle(chartAttributes.selectSingleNode(ChartDefinition.TITLE_NODE_NAME));
 
+    Node backgroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME);
+    Node foregroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME);
+
+    if(backgroundAlphaNode != null) {
+      setBackgroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME));  
+    }
+    if(foregroundAlphaNode != null) {
+      setForegroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME));  
+    }
     // get the chart subtitles
 
     // A list of <subtitle> nodes should not be allowed to exist as a child of the main XML element (for XML schema to 
@@ -312,7 +327,8 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
     Object[] rowData = data.next();
     while (rowData != null) {
       seriesName = (String) rowData[0];
-      RegularTimePeriod regularTimePeriod = RegularTimePeriod.createInstance(timePeriodClass, (Date) rowData[1],
+	  Date keyDate = getValidDate(rowData[1]);
+      RegularTimePeriod regularTimePeriod = RegularTimePeriod.createInstance(timePeriodClass, keyDate,
           RegularTimePeriod.DEFAULT_TIME_ZONE);
       add(regularTimePeriod, ((Number) rowData[2]).doubleValue(), seriesName);
       rowData = data.next();
@@ -335,7 +351,8 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
     while (rowData != null) {
       String seriesName = (String) rowData[0];
       for (int column = 1; column < rowData.length - 1; column = column + 2) {
-        RegularTimePeriod regularTimePeriod = RegularTimePeriod.createInstance(timePeriodClass, (Date) rowData[column],
+		Date keyDate = getValidDate(rowData[column]);
+        RegularTimePeriod regularTimePeriod = RegularTimePeriod.createInstance(timePeriodClass, keyDate,
             RegularTimePeriod.DEFAULT_TIME_ZONE);
 
         add(regularTimePeriod, ((Number) rowData[column + 1]).doubleValue(), seriesName);
@@ -348,6 +365,28 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
     }
 
   }
+
+  
+  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+    private Date getValidDate(Object raw) {
+
+        if (raw instanceof String) {
+            try {
+                return formatter.parse((String) raw);
+            } catch (ParseException e) {
+                getLogger().error(
+                    Messages.getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
+                    (String) raw), e);
+                return null;
+            }
+        } else {
+            // This was the original code; if we have an unknown object
+            // it will throw an exception, but would anyway.
+            // It's a small atempt to make MDX queries work here
+            return (Date) raw;
+        }
+    }
 
   public static Class getTimePeriodClass(final String timePeriodStr) {
     Class retClass = Millisecond.class;
@@ -1213,5 +1252,27 @@ public class TimeTableXYDatasetChartDefinition extends TimeTableXYDataset implem
       setTooltipYFormat(node.getText());
     }
   }
+   public Float getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
 
+    public void setBackgroundAlpha(Node backgroundAlphaNode) {
+        if (backgroundAlphaNode != null) {
+            Float backgroundAlphaValue = new Float(backgroundAlphaNode.getText());
+            this.backgroundAlpha = backgroundAlphaValue;
+        }
+
+    }
+    
+    public Float getForegroundAlpha() {
+        return foregroundAlpha;
+    }
+
+    public void setForegroundAlpha(Node foregroundAlphaNode) {
+        if (foregroundAlphaNode != null) {
+            Float foregroundAlphaValue = new Float(foregroundAlphaNode.getText());
+            this.foregroundAlpha = foregroundAlphaValue;
+        }
+
+    }
 }

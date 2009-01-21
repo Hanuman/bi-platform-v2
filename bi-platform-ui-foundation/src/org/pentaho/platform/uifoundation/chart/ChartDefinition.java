@@ -149,6 +149,10 @@ public interface ChartDefinition {
 
   public static final String MARKER_VISIBLE_NODE_NAME = "markers-visible"; //$NON-NLS-1$
 
+  public static final String FOREGROUND_ALPHA_NODE_NAME = "foreground-alpha"; //$NON-NLS-1$
+  
+  public static final String BACKGROUND_ALPHA_NODE_NAME = "background-alpha"; //$NON-NLS-1$
+
   public static final String STACKED_NODE_NAME = "is-stacked"; //$NON-NLS-1$
 
   public static final String LINE_STYLE_SOLID_STR = "solid"; //$NON-NLS-1$
@@ -200,4 +204,9 @@ public interface ChartDefinition {
   public boolean isDisplayLabels();
 
   public String getNoDataMessage();
+    
+  public Float getForegroundAlpha();
+
+  public Float getBackgroundAlpha();
+ 
 }

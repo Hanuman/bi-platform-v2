@@ -147,6 +147,10 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
 
   private double rangeMaximum = ValueAxis.DEFAULT_UPPER_BOUND;
 
+  //ADDED
+  private Float backgroundAlpha;
+  private Float foregroundAlpha;
+
   // line attributes are duplicated in 3 classes:
   // CategoryDatasetChartDefinition.java
   // XYSeriesCollecitonChartDefinition.java
@@ -206,6 +210,18 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
     if (chartAttributes == null) {
       return;
     }
+    	
+	 // set the alfa layers
+    Node backgroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME);
+    Node foregroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME);
+
+    if(backgroundAlphaNode != null) {
+      setBackgroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME));  
+    }
+    if(foregroundAlphaNode != null) {
+      setForegroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME));  
+    }
+
     // get the chart type from the chart node -- this overrides the current
     // chart type
     setChartType(chartAttributes.selectSingleNode(ChartDefinition.TYPE_NODE_NAME));
@@ -1252,5 +1268,30 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
   public String getNoDataMessage() {
     return noDataMessage;
   }
+  
+  //ADDED
+  public Float getBackgroundAlpha() {
+        return backgroundAlpha;
+   }
+
+	public void setBackgroundAlpha(Node backgroundAlphaNode) {
+		if (backgroundAlphaNode != null) {
+			Float backgroundAlphaValue = new Float(backgroundAlphaNode.getText());
+			this.backgroundAlpha = backgroundAlphaValue;
+		}
+
+	}
+
+    public Float getForegroundAlpha() {
+        return foregroundAlpha;
+    }
+
+    public void setForegroundAlpha(Node foregroundAlphaNode) {
+        if (foregroundAlphaNode != null) {
+            Float foregroundAlphaValue = new Float(foregroundAlphaNode.getText());
+            this.foregroundAlpha = foregroundAlphaValue;
+        }
+	}
+
 
 }

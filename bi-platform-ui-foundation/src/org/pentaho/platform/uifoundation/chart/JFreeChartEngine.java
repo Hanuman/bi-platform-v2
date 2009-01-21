@@ -99,6 +99,7 @@ import org.jfree.chart.renderer.xy.XYLine3DRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.chart.renderer.xy.YIntervalRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.PieURLGenerator;
 import org.jfree.chart.urls.StandardCategoryURLGenerator;
@@ -1298,12 +1299,13 @@ public class JFreeChartEngine {
 
     // format legend
     ChartDefinition chartDefinition = (ChartDefinition) dataset;
-    if (chartDefinition.getLegendFont() != null) {
+    if (chartDefinition.getLegendFont() != null &&  chart.getLegend() != null) {
       chart.getLegend().setItemFont(chartDefinition.getLegendFont());
     }
-    if (!chartDefinition.isLegendBorderVisible()) {
+    if (!chartDefinition.isLegendBorderVisible() &&  chart.getLegend() != null) {
       chart.getLegend().setBorder(BlockBorder.NONE);
     }
+	
     return (chart);
   }
 

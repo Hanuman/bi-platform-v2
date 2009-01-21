@@ -124,6 +124,10 @@ public class PieDatasetChartDefinition extends DefaultPieDataset implements Char
 
   private boolean legendBorderVisible = true;
 
+  private Float backgroundAlpha;
+  
+  private Float foregroundAlpha;
+
   /**
    *
    */
@@ -170,6 +174,15 @@ public class PieDatasetChartDefinition extends DefaultPieDataset implements Char
     // get the chart title
     setTitle(chartAttributes.selectSingleNode(ChartDefinition.TITLE_NODE_NAME));
 
+    Node backgroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME);
+    Node foregroundAlphaNode = chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME);
+
+    if(backgroundAlphaNode != null) {
+      setBackgroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.BACKGROUND_ALPHA_NODE_NAME));  
+    }
+    if(foregroundAlphaNode != null) {
+      setForegroundAlpha(chartAttributes.selectSingleNode(ChartDefinition.FOREGROUND_ALPHA_NODE_NAME));  
+    }
     // get the chart subtitles
 
     // A list of <subtitle> nodes should not be allowed to exist as a child of the main XML element (for XML schema to 
@@ -836,5 +849,29 @@ public class PieDatasetChartDefinition extends DefaultPieDataset implements Char
   public String getNoDataMessage() {
     return noDataMessage;
   }
+ 
+  public Float getBackgroundAlpha() {
+		return backgroundAlpha;
+	}
+
+	public void setBackgroundAlpha(Node backgroundAlphaNode) {
+		if (backgroundAlphaNode != null) {
+			Float backgroundAlphaValue = new Float(backgroundAlphaNode.getText());
+			this.backgroundAlpha = backgroundAlphaValue;
+		}
+
+	}
+
+	public Float getForegroundAlpha() {
+		return foregroundAlpha;
+	}
+
+	public void setForegroundAlpha(Node foregroundAlphaNode) {
+		if (foregroundAlphaNode != null) {
+			Float foregroundAlphaValue = new Float(foregroundAlphaNode.getText());
+			this.foregroundAlpha = foregroundAlphaValue;
+		}
+
+	}
 
 }
