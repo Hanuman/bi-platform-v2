@@ -104,7 +104,7 @@ public class ChartHelper {
     // from the parameter provider. Try the parameter provider first, for performance reasons. 
 
     String chartTypeStr = parameterProvider.getStringParameter(ChartDefinition.TYPE_NODE_NAME, null);
-    String datasetType = ChartDefinition.CATAGORY_DATASET_STR;
+    String datasetType = ChartDefinition.CATEGORY_DATASET_STR;
     String definitionPath = solutionName + File.separator + actionPath + File.separator + chartName;
 
     if ((chartTypeStr == null) || (chartTypeStr.length() == 0)) {

@@ -63,7 +63,7 @@ public interface ChartDefinition {
 
   public static final String TIME_SERIES_COLLECTION_STR = "TimeSeriesCollection"; //$NON-NLS-1$
 
-  public static final String CATAGORY_DATASET_STR = "CategoryDataset"; //$NON-NLS-1$
+  public static final String CATEGORY_DATASET_STR = "CategoryDataset"; //$NON-NLS-1$
 
   public static final String DAY_PERIOD_TYPE_STR = "Day"; //$NON-NLS-1$
 
