@@ -26,11 +26,27 @@ import java.io.UnsupportedEncodingException;
 import java.util.ResourceBundle;
 
 /**
- * Finds and returns resources for the plugin related to given class.
+ * This class presents an abstraction layer for accessing resources from within a platform plugin.
+ * The idea is you do not need to know how to absolutely resolve the resources you need.  For example: 
+ * You don't need to know the absolute path if your resources are on a file-system.  All you need to know
+ * in order to obtain a resource is the relative path to the resource.  "Relative" means relative to the base
+ * location of your plugin.  For a filesystem example, let's say that your plugin is installed in 
+ * "/home/user/plugins/myplugin" and you need the file "/home/user/plugins/myplugin/html/my.html", 
+ * you would ask this class for the resource "html/my.html" 
  * 
  * @author aphillips
  */
 public interface IPluginResourceLoader {
+  /**
+   * Gets a plugin-related resource in the form of an array of bytes.  The relevant plugin is inferred from pluginClass.
+   * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
+   * relative paths as it knows where to look for plugin classes and resources.
+   *  
+   * @param pluginClass a class that is part of the plugin package
+   * @param resourcePath the (relative) path to resource
+   * @return a resource as an array of bytes
+   * @throws IOException 
+   */
   public byte[] getResourceAsBytes(Class<? extends Object> pluginClass, String resourcePath) throws IOException;
 
   public String getResourceAsString(Class<? extends Object> pluginClass, String resourcePath)
