@@ -27,6 +27,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
@@ -64,6 +66,20 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return new String(getResourceAsBytes(clazz, resourcePath), LocaleHelper.getSystemEncoding());
   }
 
+  public String getPluginPath(Class<? extends Object> clazz) {
+    File dir = getRootDir( clazz.getClassLoader() );
+    if( dir == null ) {
+      return null;
+    }
+    // get the full path with \ converted to /
+    String path = dir.getAbsolutePath().replace( '\\', ISolutionRepository.SEPARATOR ); 
+    int pos = path.lastIndexOf( ISolutionRepository.SEPARATOR + "system" + ISolutionRepository.SEPARATOR  ); //$NON-NLS-1$
+    if( pos != -1 ) {
+      path = path.substring( pos + 8 );
+    }
+    return path;
+  }
+  
   private File getRootDir(ClassLoader classLoader) {
     if (rootDir != null) {
       return rootDir;

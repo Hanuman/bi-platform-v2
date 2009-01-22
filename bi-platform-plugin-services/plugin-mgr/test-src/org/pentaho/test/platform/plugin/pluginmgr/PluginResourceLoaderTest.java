@@ -1,6 +1,7 @@
 package org.pentaho.test.platform.plugin.pluginmgr;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,5 +44,11 @@ public class PluginResourceLoaderTest {
     assertNotNull("Could not find the properties file embededd in the jar", resLoader.getResourceAsStream(pluginClass, "pluginResourceTest-injar.properties"));
     //find a properties file at the classloader root directory
     assertNotNull("Could not find the properties file on the classloader root dir", resLoader.getResourceAsStream(pluginClass, "pluginResourceTest.properties"));
+  }
+  
+  @Test
+  public void testPluginPath() {
+    String path = resLoader.getPluginPath( pluginClass );
+    assertTrue( "Plugin path is not correct", path.endsWith( "plugin-mgr/test-res" ) ); //$NON-NLS-2$
   }
 }
