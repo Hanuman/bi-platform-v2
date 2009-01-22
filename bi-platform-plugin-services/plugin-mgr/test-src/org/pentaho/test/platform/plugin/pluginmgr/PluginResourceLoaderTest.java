@@ -69,6 +69,6 @@ public class PluginResourceLoaderTest {
   @Test
   public void testPluginPath() {
     String path = resLoader.getPluginPath( pluginClass );
-    assertTrue( "Plugin path is not correct", path.endsWith( "plugin-mgr/test-res" ) ); //$NON-NLS-2$
+    assertTrue( "Plugin path is not correct", path.endsWith( "plugin-mgr/test-res/PluginResourceLoaderTest" ) ); //$NON-NLS-2$
   }
 }
