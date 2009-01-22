@@ -40,6 +40,8 @@ import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
 public class MQLRelationalDataComponent extends SQLLookupRule {
 
@@ -115,6 +117,27 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
           mqlQuery = MQLQueryFactory.getMQLQuery(mql, null, LocaleHelper.getLocale().toString(), cwmSchemaFactory);
         }
 
+        BusinessModel model = mqlQuery.getModel();
+
+        // Read metadata for new timeout/max_rows and set in superclass
+        // Can still be overridden in the action sequence
+        ConceptPropertyInterface timeoutInterface = model.getConcept().getProperty("timeout"); //$NON-NLS-1$
+        if (timeoutInterface != null) {
+          Object tmp = timeoutInterface.getValue();
+          if (tmp instanceof Number) {
+            int timeout = ((Number)tmp).intValue();
+            this.setQueryTimeout(timeout);
+          }
+        }
+        ConceptPropertyInterface maxRowsInterface = model.getConcept().getProperty("max_rows"); //$NON-NLS-1$
+        if (maxRowsInterface != null) {
+          Object tmp = maxRowsInterface.getValue();
+          if (tmp instanceof Number) {
+            int maxRows = ((Number)tmp).intValue();
+            this.setMaxRows(maxRows);
+          }
+        }
+        
         // detect the actual db dialect and apply it to the MQLQuery if different from the XMI dialect
         if (!mqlAction.getForceDbDialect().getBooleanValue(false)) {
           // retrieve a temporary connection to determine if a dialect change is necessary
@@ -274,4 +297,5 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     return metadata;
 
   }
+  
 }
