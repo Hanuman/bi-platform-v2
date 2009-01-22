@@ -73,7 +73,9 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
   protected IPentahoConnection connection;
 
   //Added by Arijit Chatterjee.Takes the value of timeout
-  private static int timeout;
+  private int timeout = -1;
+  private int maxRows = -1; // Add ability to set this as an input
+  private boolean readOnly = false;
 
   @Override
   public abstract boolean validateSystemSettings();
@@ -113,20 +115,14 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       IActionInput query = relationalDbAction.getQuery();
       IActionInput dbUrl = relationalDbAction.getDbUrl();
       IActionInput jndi = relationalDbAction.getJndi();
-      //Added by Arijit Chatterjee
-      IActionInput queryTimeout = relationalDbAction.getQueryTimeout();
+
       IActionInput sharedConnection = relationalDbAction.getSharedConnection();
       if (query == ActionInputConstant.NULL_INPUT) {
 
         error(Messages.getErrorString("SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
         result = false;
       }
-      //Added by Arijit Chatterjee.Sets the value of timeout. Default is 0, if parameter not found.
-      if (queryTimeout == ActionInputConstant.NULL_INPUT) {
-        setQueryTimeout(0);
-      } else {
-        setQueryTimeout(relationalDbAction.getQueryTimeout().getIntValue());
-      }
+      
       if ((jndi == ActionInputConstant.NULL_INPUT) && (dbUrl == ActionInputConstant.NULL_INPUT)
           && (sharedConnection == ActionInputConstant.NULL_INPUT)) {
         error(Messages.getErrorString("SQLBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
@@ -176,6 +172,11 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
       if (actionDefinition instanceof AbstractRelationalDbAction) {
         AbstractRelationalDbAction relationalDbAction = (AbstractRelationalDbAction) actionDefinition;
+        //Added by Arijit Chatterjee
+        IActionInput queryTimeoutInput = relationalDbAction.getQueryTimeout();
+        IActionInput maxRowsInput = relationalDbAction.getMaxRows();
+        IActionInput readOnlyInput = relationalDbAction.getReadOnly();
+
         String baseQuery = getQuery();
         if (baseQuery == null) {
           error(Messages.getErrorString(
@@ -184,6 +185,11 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         }
 
         IPreparedComponent sharedConnection = (IPreparedComponent) relationalDbAction.getSharedConnection().getValue();
+        
+        if (readOnlyInput != ActionInputConstant.NULL_INPUT) {
+          this.setReadOnly(readOnlyInput.getBooleanValue());
+        }
+        
         if (sharedConnection != null) {
           connectionOwner = false;
           IPentahoConnection conn = sharedConnection.shareConnection();
@@ -217,11 +223,16 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         }
 
         // TODO not sure if this should be allowed without connection ownership?
-        int maxRows = relationalDbAction.getMaxRows().getIntValue(-1);
-        if (maxRows >= 0) {
-          connection.setMaxRows(maxRows);
+        // int maxRows = relationalDbAction.getMaxRows().getIntValue(-1);
+        if (maxRowsInput != ActionInputConstant.NULL_INPUT) {
+          this.setMaxRows(maxRowsInput.getIntValue());
         }
 
+        //Added by Arijit Chatterjee.Sets the value of timeout. Default is -1, if parameter not found.
+        if (queryTimeoutInput != ActionInputConstant.NULL_INPUT) {
+          this.setQueryTimeout(queryTimeoutInput.getIntValue());
+        }
+        
         if (relationalDbAction.getPerformTransform().getBooleanValue(false)) {
           runQuery(baseQuery, false); // The side effect of
           // transform rSet here
@@ -501,10 +512,20 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       if ((connection instanceof SQLConnection)) {
         sqlConnection = (SQLConnection) connection;
       }
-      //Added by Arijit Chatterjee passing the timeout value to SQLConnection class
+      // Some of the following Added by Arijit Chatterjee passing the timeout value to SQLConnection class
       if (sqlConnection != null) {
-        sqlConnection.setTimeout(SQLBaseComponent.timeout);
+        if (this.getQueryTimeout() >= 0 ) {
+            sqlConnection.setQueryTimeout(this.getQueryTimeout());
+        }
+        if (this.getMaxRows() >= 0) {
+          sqlConnection.setMaxRows(this.getMaxRows());
+        }
+        if (this.getReadOnly()) {
+          sqlConnection.setReadOnly(true);
+        }
       }
+      
+      
       AbstractRelationalDbAction relationalDbAction = (AbstractRelationalDbAction) getActionDefinition();
       if (live) {
 
@@ -583,6 +604,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
     if (ComponentBase.debug) {
       dumpQuery(query);
     }
+    
     if (preparedParameters.size() > 0) {
       if (!forwardOnlyResultset) {
         resultSet = connection.prepareAndExecuteQuery(query, preparedParameters);
@@ -874,25 +896,42 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
   //Added By Arijit Chatterjee,This method is not used anywhere added for only testing purposes
   public int getQueryTimeout() {
-    preparedParameters.clear();
-    return (SQLBaseComponent.timeout);
+    // removed the destruction of parameters on a get.
+    // preparedParameters.clear();
+    return timeout;
   }
 
   //Added By Arijit Chatterjee.Sets the value of timeout
   public void setQueryTimeout(final int timeInSec) {
-    SQLBaseComponent.timeout = timeInSec;
+    timeout = timeInSec;
   }
 
+  public int getMaxRows() {
+    return this.maxRows;
+  }
+  
+  public void setMaxRows(final int value) {
+    this.maxRows = value;
+  }
+  
   public String getQuery() {
     preparedParameters.clear();
     return ((AbstractRelationalDbAction) getActionDefinition()).getQuery().getStringValue();
   }
+  
+  public void setReadOnly(final boolean value) {
+    this.readOnly = value;
+  }
+  
+  public boolean getReadOnly() {
+    return this.readOnly;
+  }
 
   private void dumpQuery(final String query) {
-    if (SQLBaseComponent.timeout == 0) {
+    if (timeout == 0) {
       debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
     } else {
-      debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY_TIMEOUT", query, "" + SQLBaseComponent.timeout)); //$NON-NLS-1$ //$NON-NLS-2$
+      debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY_TIMEOUT", query, "" + timeout)); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 }

@@ -33,6 +33,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.pentaho.actionsequence.dom.ActionInputConstant;
 import org.pentaho.actionsequence.dom.IActionDefinition;
+import org.pentaho.actionsequence.dom.IActionInput;
 import org.pentaho.actionsequence.dom.IActionOutput;
 import org.pentaho.actionsequence.dom.actions.XQueryAction;
 import org.pentaho.actionsequence.dom.actions.XQueryConnectionAction;
@@ -78,6 +79,8 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
 
   @Override
   public abstract Log getLogger();
+  
+  private int maxRows = -1;
 
   /** string to hold prepared query until execution */
   String preparedQuery = null;
@@ -128,8 +131,19 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
   protected boolean executeAction() {
     boolean result = false;
     IActionDefinition actionDefinition = getActionDefinition();
+    int maxRows = -1;
+    int queryTimeout = -1;
     if (actionDefinition instanceof XQueryAction) {
       XQueryAction xQueryAction = (XQueryAction) actionDefinition;
+
+      // Not implemented yet
+      // IActionInput queryTimeoutInput = xQueryAction.getQueryTimeout();
+
+      IActionInput maxRowsInput = xQueryAction.getMaxRows();
+      if (maxRowsInput != ActionInputConstant.NULL_INPUT) {
+        this.setMaxRows(maxRowsInput.getIntValue());
+      }
+      
       IPreparedComponent sharedConnection = (IPreparedComponent) xQueryAction.getSharedConnection().getValue();
       if (sharedConnection != null) {
         connectionOwner = false;
@@ -313,6 +327,9 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         error(Messages.getErrorString("XQueryBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
         return null;
       }
+      if (this.getMaxRows() >=0) {
+        conn.setMaxRows(this.getMaxRows());
+      }
       return conn;
     } catch (Exception e) {
       error(Messages.getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
@@ -388,6 +405,18 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
     return true;
   }
 
+  public int getMaxRows() {
+    return this.maxRows;
+  }
+  
+  public void setMaxRows(final int value) {
+    if (rSet == null) {
+      this.maxRows = value;
+    } else {
+      throw new UnsupportedOperationException(Messages.getErrorString("XQueryBaseComponent.ERROR_0013_INVALID_ORDER_OF_OPERATION")); //$NON-NLS-1$
+    }
+  }
+  
   /**
    * disposes of the connection
    * this is called by the runtime context

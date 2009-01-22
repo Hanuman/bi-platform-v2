@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.pentaho.commons.connection.ILimitableConnection;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.data.IDatasourceService;
@@ -44,13 +45,13 @@ import org.pentaho.platform.plugin.services.messages.Messages;
  * 
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class SQLConnection implements IPentahoLoggingConnection {
+public class SQLConnection implements IPentahoLoggingConnection, ILimitableConnection {
   Connection nativeConnection;
   //Added by Arijit Chatterjee
   /**
    * The timeout value for the connection (in seconds)
    */
-  private int timeOut = 0; // in seconds
+  private int timeOut = -1; // in seconds
 
   /*
    * private static int connectionCtr = 0;
@@ -69,6 +70,8 @@ public class SQLConnection implements IPentahoLoggingConnection {
   int maxRows = -1;
 
   int fetchSize = -1;
+  
+  private boolean readOnly;
 
   public static final int RESULTSET_SCROLLABLE = ResultSet.TYPE_SCROLL_INSENSITIVE;
 
@@ -105,15 +108,23 @@ public class SQLConnection implements IPentahoLoggingConnection {
   /**
    * Sets the valid of the timeout (in seconds)
    */
-  public void setTimeout(final int timeInSec) {
+  public void setQueryTimeout(final int timeInSec) {
     timeOut = timeInSec;
+  }
+  
+  /**
+   * Sets the connection object to readonly.
+   * @param value
+   */
+  public void setReadOnly(final boolean value) {
+    this.readOnly = value;
   }
 
   //Added by Arijit Chatterjee. gets the value of timeout
   /**
    * Returns the query timeout value (in seconds)
    */
-  public int getTimeout() {
+  public int getQueryTimeout() {
     return this.timeOut;
   }
 
@@ -239,6 +250,12 @@ public class SQLConnection implements IPentahoLoggingConnection {
     closeStatements();
     if (nativeConnection != null) {
       try {
+        if (getReadOnly()) {
+          try {
+            // Reset the readonly on the native connection before closing
+            nativeConnection.setReadOnly(false);
+          } catch (SQLException ignored) {}
+        }
         nativeConnection.close();
       } catch (SQLException e) {
         logger.error(null, e);
@@ -280,8 +297,16 @@ public class SQLConnection implements IPentahoLoggingConnection {
    */
   public IPentahoResultSet executeQuery(final String query, final int scrollType, final int concur)
       throws SQLException, InterruptedException, PentahoSystemException {
+
+    if (this.getReadOnly()) {
+      try {
+        nativeConnection.setReadOnly(true);
+      } catch (Exception ignored) {}
+    }
+    
     // Create a statement for a scrollable resultset.
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
+
     logger.debug("Executing query with timeout value of [" + timeOut + "]"); //$NON-NLS-1$//$NON-NLS-2$
 
     //Added by Arijit Chatterjee. Sets the value of statement.setQueryTimeout() in seconds
@@ -289,20 +314,30 @@ public class SQLConnection implements IPentahoLoggingConnection {
     //So what we're going to do is wrap this in a try/catch and if the timeout was being set to zero
     //well won't do anything.  If it was being set to anything else we'll throw a pentaho exception
     try {
-      stmt.setQueryTimeout(timeOut);
+      if (timeOut >= 0) {
+        stmt.setQueryTimeout(timeOut);
+      }
     } catch (Exception e) {
-      if (timeOut != 0) {
-        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", new Integer(timeOut).toString()), e); //$NON-NLS-1$
+      if (timeOut >= 0) {
+        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", Integer.toString(timeOut)), e); //$NON-NLS-1$
       }
     }
     
     stmts.add(stmt);
+    
     if (fetchSize > 0) {
       stmt.setFetchSize(fetchSize);
     }
-    if (maxRows != -1) {
-      stmt.setMaxRows(maxRows);
+    if (maxRows >= 0 ) {
+      try {
+        stmt.setMaxRows(maxRows);
+      } catch (SQLException ex) {
+        // exception here means either the number was out of bounds or
+        // the driver doesn't support this setter.
+        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0002_ROWLIMIT_NOT_SET", Integer.toString(maxRows)), ex); //$NON-NLS-1$
+      }
     }
+    
     ResultSet resultSet = stmt.executeQuery(query);
     sqlResultSet = new SQLResultSet(resultSet, this);
     // add to list of resultsets for cleanup later.
@@ -317,6 +352,13 @@ public class SQLConnection implements IPentahoLoggingConnection {
 
   public IPentahoResultSet prepareAndExecuteQuery(final String query, final List parameters, final int scrollType,
       final int concur) throws SQLException {
+
+    if (this.getReadOnly()) {
+      try {
+        nativeConnection.setReadOnly(true);
+      } catch (Exception ignored) {}
+    }
+    
     // Create a prepared statement
     PreparedStatement pStmt = nativeConnection.prepareStatement(query, scrollType, concur);
     // add to stmts list for closing when connection closes
@@ -331,6 +373,7 @@ public class SQLConnection implements IPentahoLoggingConnection {
     for (int i = 0; i < parameters.size(); i++) {
       pStmt.setObject(i + 1, parameters.get(i));
     }
+
     ResultSet resultSet = pStmt.executeQuery();
 
     sqlResultSet = new SQLResultSet(resultSet, this);
@@ -456,10 +499,19 @@ public class SQLConnection implements IPentahoLoggingConnection {
   }
 
   /**
-   * @param maxRows
+   * @param maxRows 
    *          The maxRows to set.
    */
   public void setMaxRows(final int maxRows) {
     this.maxRows = maxRows;
   }
+
+  /**
+   * Returns the state of the readonly flag
+   * @return true if the connection is set to readonly
+   */
+  public boolean getReadOnly() {
+    return this.readOnly;
+  }
+  
 }

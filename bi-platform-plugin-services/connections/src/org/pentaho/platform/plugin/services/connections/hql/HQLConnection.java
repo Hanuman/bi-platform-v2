@@ -25,6 +25,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.type.Type;
+import org.pentaho.commons.connection.ILimitableConnection;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.ILogger;
@@ -35,7 +36,7 @@ import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
  * 
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class HQLConnection implements IPentahoLoggingConnection {
+public class HQLConnection implements IPentahoLoggingConnection, ILimitableConnection {
   protected String lastQuery = null;
 
   protected ILogger logger = null;
@@ -43,6 +44,8 @@ public class HQLConnection implements IPentahoLoggingConnection {
   IPentahoResultSet resultSet = null;
 
   File hibernateConfigFile = null;
+  private int timeOut = -1; // in seconds
+  private int maxRows = -1; // in seconds
 
   Configuration hibernateConfig = null;
 
@@ -126,6 +129,12 @@ public class HQLConnection implements IPentahoLoggingConnection {
       // open session
       sess = sf.openSession();
       Query q = sess.createQuery(query);
+      if (timeOut >=0 ) {
+        q.setTimeout(timeOut);
+      }
+      if (maxRows >=0 ) {
+        q.setMaxResults(maxRows);
+      }
       List list = q.list();
       localResultSet = generateResultSet(list, q.getReturnAliases(), q.getReturnTypes());
     } finally {
@@ -188,9 +197,8 @@ public class HQLConnection implements IPentahoLoggingConnection {
    * 
    * @see org.pentaho.connection.IPentahoConnection#setMaxRows(int)
    */
-  public void setMaxRows(final int maxRows) {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException();
+  public void setMaxRows(final int value) {
+    this.maxRows = value;
   }
 
   /*
@@ -203,4 +211,10 @@ public class HQLConnection implements IPentahoLoggingConnection {
     // throw new UnsupportedOperationException();
   }
 
+  public void setQueryTimeout(final int value) {
+    this.timeOut = value;
+  }
+  
+  
+  
 }

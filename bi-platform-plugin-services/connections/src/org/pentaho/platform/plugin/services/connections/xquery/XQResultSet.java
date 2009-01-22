@@ -18,16 +18,21 @@ package org.pentaho.platform.plugin.services.connections.xquery;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.saxon.om.Axis;
 import net.sf.saxon.om.AxisIterator;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.tinytree.TinyNodeImpl;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.Value;
 
 import org.apache.commons.collections.OrderedMap;
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -65,29 +70,57 @@ public class XQResultSet implements IPentahoResultSet {
   Iterator iter = null;
 
   protected String columnTypes[] = null;
+  
+  protected XQConnection connection;
 
+  private List evaluatedList;
+  
   /**
    * @param exp
    * @param dynamicContext
    * @param columnTypes
    * @throws XPathException
    */
-  public XQResultSet(final XQueryExpression exp, final DynamicQueryContext dynamicContext, final String columnTypes[])
+  public XQResultSet(final XQConnection xqConnection, final XQueryExpression exp, final DynamicQueryContext dynamicContext, final String columnTypes[])
       throws XPathException {
     super();
     this.columnTypes = columnTypes;
     this.exp = exp;
     this.dynamicContext = dynamicContext;
+    this.connection = xqConnection;
     init();
   }
 
   protected void init() throws XPathException {
-    iter = this.exp.evaluate(this.dynamicContext).iterator();
-    metaData = new XQMetaData(iter);
-    // reset the iterator for the data
-    iter = this.exp.evaluate(this.dynamicContext).iterator();
+    if (evaluatedList == null) {
+      evaluatedList = evaluate();
+    }
+    if (this.metaData == null) {
+      iter = evaluatedList.iterator();
+      this.metaData = new XQMetaData(connection, iter);
+    }
+    iter = evaluatedList.iterator();
   }
 
+  protected List evaluate() throws XPathException{
+    SequenceIterator sequenceiterator = exp.iterator(dynamicContext);
+    List rtn = new ArrayList(100);
+    int rowCount = 0;
+    int maxRows = (this.connection != null) ? this.connection.getMaxRows() : -1;
+    Item item = null;
+    while ( (item = sequenceiterator.next()) != null ) {
+        if( (item == null) ) {
+            break;
+        }
+        rowCount++;
+        if ( (maxRows >=0) && (rowCount > maxRows) ) {
+          break;
+        }
+        rtn.add(Value.convert(item));
+    }
+    return rtn;
+  }
+  
   /*
    * (non-Javadoc)
    * 

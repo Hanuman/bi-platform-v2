@@ -48,6 +48,8 @@ public class XQConnection implements IPentahoLoggingConnection {
   protected ILogger logger = null;
 
   IPentahoResultSet resultSet = null;
+  
+  int maxRows = -1;
 
   public XQConnection() {
     super();
@@ -121,7 +123,7 @@ public class XQConnection implements IPentahoLoggingConnection {
     XQueryExpression exp = sqc.compileQuery(query);
     DynamicQueryContext dynamicContext = new DynamicQueryContext(config);
     try {
-      resultSet = new XQResultSet(exp, dynamicContext, columnTypes);
+      resultSet = new XQResultSet(this, exp, dynamicContext, columnTypes);
     } catch (XPathException e) {
       if (e.getException() instanceof FileNotFoundException) {
         logger.error(Messages.getString("XQConnection.ERROR_0001_UNABLE_TO_READ", query)); //$NON-NLS-1$
@@ -188,10 +190,13 @@ public class XQConnection implements IPentahoLoggingConnection {
    * @see org.pentaho.connection.IPentahoConnection#setMaxRows(int)
    */
   public void setMaxRows(final int maxRows) {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException();
+    this.maxRows = maxRows;
   }
 
+  public int getMaxRows() {
+    return this.maxRows;
+  }
+  
   /*
    * (non-Javadoc)
    * 

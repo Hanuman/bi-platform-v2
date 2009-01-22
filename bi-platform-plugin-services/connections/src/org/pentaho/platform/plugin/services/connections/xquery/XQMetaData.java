@@ -40,9 +40,12 @@ public class XQMetaData extends AbstractPentahoMetaData {
 
   private Object[][] rowHeaders;
 
+  private XQConnection connection;
+  
   int rowCount = 0;
 
-  public XQMetaData(final Iterator iter) {
+  public XQMetaData(final XQConnection xqConnection, final Iterator iter) {
+    this.connection = xqConnection;
     List headers = new ArrayList();
     while (iter.hasNext()) {
       rowCount++;
