@@ -36,4 +36,10 @@ public interface IPluginResourceLoader {
       throws UnsupportedEncodingException, IOException;
 
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException;
+  
+  /**
+   * Returns the path (within the system solution) to the plugin's root folder
+   * @return
+   */
+  public String getPluginPath(Class<? extends Object> clazz);
 }
