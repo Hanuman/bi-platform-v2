@@ -1,24 +1,37 @@
 package org.pentaho.test.platform.plugin.pluginmgr;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 
-public class PluginClassLoaderTest extends TestCase {
-
-  public void testLoadClass() throws IOException, ClassNotFoundException {
+public class PluginClassLoaderTest {
+  
+  private PluginClassLoader loader;
+  
+  @Before
+  public void init() {
     // now load a class
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
+    loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
+  }
+
+  @Test
+  public void testLoadClass() throws IOException, ClassNotFoundException {
     // test the byte array first
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.TestClassForClassloader" ); //$NON-NLS-1$
     assertNotNull( "Could not find class TestClassForClassloader in jar file", in ); //$NON-NLS-1$
@@ -44,10 +57,8 @@ public class PluginClassLoaderTest extends TestCase {
     return out.toByteArray();
   }
   
+  @Test
   public void testLoadXml() throws IOException {
-    // now load a xml file
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     InputStream in = loader.getResourceAsStream( "test1.xml" ); //$NON-NLS-1$
     assertNotNull( "input stream is null", in ); //$NON-NLS-1$
     
@@ -56,19 +67,14 @@ public class PluginClassLoaderTest extends TestCase {
     assertTrue( "xml is wrong", xml.contains( "<test1>" )); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
+  @Test
   public void testLoadBadResource() throws IOException {
-    // now load a xml file
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     InputStream in = loader.getResourceAsStream( "bogus.xml" ); //$NON-NLS-1$
     assertNull( "input stream should be null", in ); //$NON-NLS-1$
-    
   }
   
+  @Test
   public void testLoadBadClass() throws IOException {
-    // now load a xml file
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     // now try getting it as a class
     try {
       loader.loadClass("bogus"); //$NON-NLS-1$
@@ -76,13 +82,10 @@ public class PluginClassLoaderTest extends TestCase {
     } catch ( ClassNotFoundException e ) {
       assertTrue( "Exception expected", true ); //$NON-NLS-1$
     }
-    
   }
   
-  public void testLoadProperties() throws IOException {
-    // now load a properties file
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
+  @Test
+  public void testLoadProperties_fromJar() throws IOException {
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.test.properties" ); //$NON-NLS-1$
     assertNotNull( "input stream is null", in ); //$NON-NLS-1$
     
@@ -91,11 +94,27 @@ public class PluginClassLoaderTest extends TestCase {
     assertTrue( "property is missing", classBytes.contains( "test_setting=test" )); //$NON-NLS-1$ //$NON-NLS-2$
     
   }
-
-  public void testFindXmlResource() throws IOException {
-
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
+  
+  @Test
+  public void testLoadProperties_fromDir() throws IOException {
+    InputStream in = loader.getResourceAsStream( "resources/plugin-classloader-test-inresourcesdir.properties" ); //$NON-NLS-1$
+    assertNotNull( "input stream is null", in ); //$NON-NLS-1$
     
+    byte b[] = toBytes( in );
+    String classBytes = new String( b );
+    assertTrue( "property is missing", classBytes.contains( "name=" )); //$NON-NLS-1$ //$NON-NLS-2$
+    
+  }
+  
+//  @Test
+//  public void urlTest() throws IOException {
+//    URL url = new URL("file:/home/aaron/workspaces/pentaho/bi-platform-plugin-services/plugin-mgr/test-res/plugin-classloader-test/resources/plugin-classloader-test-inresourcesdir.properties");
+//    System.err.println("trying "+url);
+//    url.openConnection().connect();
+//  }
+
+  @Test
+  public void testFindXmlResource() throws IOException {
     URL url = loader.getResource( "test1.xml" ); //$NON-NLS-1$
     
     assertNotNull( "URL is null", url ); //$NON-NLS-1$
@@ -109,10 +128,8 @@ public class PluginClassLoaderTest extends TestCase {
 
   }
 
+  @Test
   public void testFindClassResource() throws IOException {
-
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     InputStream in = loader.getResourceAsStream( "org.pentaho.test.platform.engine.services.TestClassForClassloader.class" ); //$NON-NLS-1$
     
     assertNotNull( "input stream is null", in ); //$NON-NLS-1$
@@ -122,22 +139,17 @@ public class PluginClassLoaderTest extends TestCase {
     assertTrue( "xml is wrong", xml.contains( "TestClassForClassloader" )); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
-
+  
+  @Test
   public void testFindBadResource() throws IOException {
-
-    // now load a properties file
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     URL url = loader.getResource( "bogus.xml" ); //$NON-NLS-1$
     
     assertNull( "URL should be null", url ); //$NON-NLS-1$
     
   }
 
+  @Test
   public void testFindResources() throws IOException {
-
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     Enumeration<URL> urls = loader.getResources( "test1.xml" ); //$NON-NLS-1$
     
     assertNotNull( "URLS is null",  urls ); //$NON-NLS-1$
@@ -157,10 +169,8 @@ public class PluginClassLoaderTest extends TestCase {
     assertEquals( "Wrong number of URLS", 1, count ); //$NON-NLS-1$
   }
 
+  @Test
   public void testFindBadResources() throws IOException {
-
-    PluginClassLoader loader = new PluginClassLoader( new File("./plugin-mgr/test-res/plugin-classloader-test/"), this ); //$NON-NLS-1$
-    
     Enumeration<URL> urls = loader.getResources( "bogus.xml" ); //$NON-NLS-1$
     
     assertNotNull( "URLS is null",  urls ); //$NON-NLS-1$
@@ -173,6 +183,7 @@ public class PluginClassLoaderTest extends TestCase {
     assertEquals( "Wrong number of URLS", 0, count ); //$NON-NLS-1$
   }
 
+  @Test
   public void testCatalog() throws ClassNotFoundException {
     
     List<String> jarNames = PluginClassLoader.listLoadedJars();

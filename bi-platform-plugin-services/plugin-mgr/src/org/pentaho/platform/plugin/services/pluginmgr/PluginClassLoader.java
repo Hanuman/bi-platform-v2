@@ -124,12 +124,6 @@ public class PluginClassLoader extends ClassLoader {
     jars.add(jar);
   }
 
-  /*
-  public static synchronized void unloadClasses() {
-    resourceMap.clear();
-    jars.clear();
-  }
-  */
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
 
@@ -151,40 +145,6 @@ public class PluginClassLoader extends ClassLoader {
     return jarList;
   }
 
-  /*  
-    public static boolean unloadJar( String jarLocalName ) {
-      List<String> classList = loadedFrom.get( jarLocalName );
-      if( classList == null || classList.size() == 0 ) {
-        // we didn't load any classes from this jar so there is nothing to do
-        return false;
-      }
-      for( String className : classList ) {
-        String key = jarLocalName + ISolutionRepository.SEPARATOR + className;
-        System.out.println( "removing class: "+key );
-        SolutionClassLoader.resourceMap.remove(key);
-      }
-      loadedFrom.remove( jarLocalName );
-      int idx = 0;
-      int jarIdx = -1;
-      for( JarFile jar : jars ) {
-        if( jar.getName().endsWith( jarLocalName ) ) {
-          jarIdx = idx;
-          break;
-        }
-        idx++;
-      }
-      if( jarIdx != -1 ) {
-        JarFile file = jars.remove( jarIdx );
-        try {
-          file.close();
-        } catch (IOException e) {
-          // ignore this, we tried...
-        }
-        file = null;
-      }
-      return true;
-    }
-  */
   private String getJarLocalName(String jarName) {
     String name = jarName.replace('\\', '/');
     int idx = name.indexOf(pluginDir + "/lib");
@@ -223,7 +183,10 @@ public class PluginClassLoader extends ClassLoader {
 
     }
     // Return null to indicate that the resource could not be found (and this is ok) 
-    return null;
+    
+    //if we haven't found the resource in our jars, call super which will eventually call findResource
+    return super.getResourceAsStream(name);
+//    return null;
   }
 
   @Override
@@ -276,12 +239,25 @@ public class PluginClassLoader extends ClassLoader {
       ZipEntry entry = jar.getEntry(entryName);
       if (entry != null) {
         String urlPath = "jar:file:" + jar.getName() + "!/" + name; //$NON-NLS-1$ //$NON-NLS-2$
+        
         URL url = new URL(urlPath);
-        urls.add(url);
-        if (!multiple) {
-          return urls;
+        try {
+//          System.err.println("trying "+url);
+          url.openConnection().connect();
+          urls.add(url);
+        } catch (IOException e) {
         }
       }
+    }
+    
+    //if resource was not found in jars, check the filesystem
+    try {
+      String filePath = new File(pluginDir, name).getAbsolutePath();
+      URL url = new URL("file:" + filePath);
+//      System.err.println("trying "+url);
+      url.openConnection().connect();
+      urls.add(url);
+    } catch (IOException e) {
     }
     return urls;
   }
@@ -289,9 +265,10 @@ public class PluginClassLoader extends ClassLoader {
   @Override
   public java.lang.Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     Class<?> loadedClass = super.loadClass(name, resolve);
-    
+
     //if the class was loaded by a parent classloader (but not the null system classloader), report a warning
-    if (loadedClass.getClassLoader() != null && !PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
+    if (loadedClass.getClassLoader() != null
+        && !PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
       Logger.warn(this, "Plugin class [" + loadedClass.getName() + "] was not loaded by "
           + PluginClassLoader.class.getSimpleName() + ".  This is most likely due to this class not being found in ["
           + pluginDir + "/lib].  You may have problems locating resources related to this plugin class.");
@@ -305,11 +282,18 @@ public class PluginClassLoader extends ClassLoader {
    * @retruns An byte array of the resource, or <code>null</code> if the resource could not be found 
    */
   protected byte[] getResourceAsBytes(final String name) throws IOException {
-
+    byte[] ret = __getResourceAsBytes(name, "");
+    if(ret != null) {
+      return ret;
+    }
+    return __getResourceAsBytes(name, "lib/");
+  }
+  
+  protected byte[] __getResourceAsBytes(final String name, String pathPrefix) throws IOException {
     byte[] classBytes = null;
     InputStream in = null;
     try {
-      String key = pluginDir + "/lib/" + name;
+      String key = pluginDir + "/" + pathPrefix + name;
       classBytes = PluginClassLoader.resourceMap.get(key);
       if (classBytes == null) {
         in = getResourceAsStream(name);
@@ -337,9 +321,5 @@ public class PluginClassLoader extends ClassLoader {
     }
     return classBytes;
   }
-  /*
-    public static void clearResourceCache() {
-  	  SolutionClassLoader.resourceMap.clear();
-    }
-  */
+
 }

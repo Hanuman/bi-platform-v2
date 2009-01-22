@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
@@ -123,11 +124,25 @@ public class PluginResourceLoader implements IPluginResourceLoader {
         in = classLoader.getResourceAsStream(resourcePath);
         if (in == null) {
           String msg = "Cannot find resource defined by path [" + resourcePath + "]";
-          Logger.error(PluginResourceLoader.class.getName(), msg);
+          Logger.warn(PluginResourceLoader.class.getName(), msg);
           throw new FileNotFoundException(msg);
         }
       }
     }
     return in;
+  }
+  
+  protected String getFullResourcePath(Class<?> clazz, String resourcePath) {
+    File root = getRootDir(clazz.getClassLoader());
+    if (root != null) {
+      File f = new File(root, resourcePath);
+      return f.getAbsolutePath();
+    }
+    return null;
+  }
+  
+  public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
+    ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), clazz.getClassLoader());
+    return bundle;
   }
 }

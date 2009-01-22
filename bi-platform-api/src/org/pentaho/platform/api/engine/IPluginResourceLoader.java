@@ -23,6 +23,7 @@ package org.pentaho.platform.api.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ResourceBundle;
 
 /**
  * Finds and returns resources for the plugin related to given class.
@@ -30,12 +31,29 @@ import java.io.UnsupportedEncodingException;
  * @author aphillips
  */
 public interface IPluginResourceLoader {
-  public byte[] getResourceAsBytes(Class<? extends Object> clazz, String resourcePath) throws IOException;
+  public byte[] getResourceAsBytes(Class<? extends Object> pluginClass, String resourcePath) throws IOException;
 
-  public String getResourceAsString(Class<? extends Object> clazz, String resourcePath)
+  public String getResourceAsString(Class<? extends Object> pluginClass, String resourcePath)
       throws UnsupportedEncodingException, IOException;
 
-  public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException;
+  public InputStream getResourceAsStream(Class<?> pluginClass, String resourcePath) throws IOException;
+
+  /**
+   * Retrieves a localized resource bundle for the plugin represented by pluginClass.
+   * baseName is a fully qualified package name or relative path to a bundle name.
+   * For example, a baseName of "resources.messages" might represent:
+   * <ul>
+   * <li>(localized) class messages.class in the resources package
+   * <li>(localized) messages.properties file in the resource package (of a jar)
+   * <li>(localized) messages.properties file in the resources folder at the base of the plugin folder
+   * </ul>
+   * Implementations of {@link IPluginResourceLoader#getResourceBundle(Class, String)} should behave similar to {@link ResourceBundle#getBundle(String)} 
+   * @param pluginClass a class that is part of the plugin package
+   * @param baseName points to a particular resource bundle
+   * @return a {@link ResourceBundle}
+   * @see ResourceBundle
+   */
+  public ResourceBundle getResourceBundle(Class<?> pluginClass, String baseName);
   
   /**
    * Returns the path (within the system solution) to the plugin's root folder

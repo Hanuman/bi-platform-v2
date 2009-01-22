@@ -7,21 +7,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ResourceBundle;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
+import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class PluginResourceLoaderTest {
   
   private PluginResourceLoader resLoader;
   private Class<?> pluginClass;
+  private PluginClassLoader classLoader;
   
   @Before
   public void init() throws ClassNotFoundException {
     resLoader = new PluginResourceLoader();
-    PluginClassLoader classLoader = new PluginClassLoader(new File("./plugin-mgr/test-res"), this);
+    classLoader = new PluginClassLoader(new File("./plugin-mgr/test-res/PluginResourceLoaderTest"), this);
 //    resLoader.setRootDir(new File("./plugin-mgr/test-res"));
     pluginClass = classLoader.loadClass("PluginResLoaderDummyClass");
   }
@@ -36,6 +39,23 @@ public class PluginResourceLoaderTest {
   public void testGetResourceAsStream_FileDNE() throws IOException {
     InputStream in = resLoader.getResourceAsStream(pluginClass, "non-existent-file");
     assertNotNull(in);
+  }
+
+  @Test
+  public void testGetResourceBundleFromInsideJar() {
+    ResourceBundle.getBundle("pluginResourceTest-injar", LocaleHelper.getLocale(), classLoader);
+  }
+  
+  @Test
+  public void testGetResourceBundleFromResourcesDir() {
+    //this properties file lives in the "resources" directory under the plugin root dir
+    
+    //test that retrieving a resource bundle works the same by in the resource loader and the java ResourceBundle api
+    ResourceBundle.getBundle("resources/pluginResourceTest-inresources", LocaleHelper.getLocale(), classLoader);
+    ResourceBundle.getBundle("resources.pluginResourceTest-inresources", LocaleHelper.getLocale(), classLoader);
+    
+    resLoader.getResourceBundle(pluginClass, "resources/pluginResourceTest-inresources");
+    resLoader.getResourceBundle(pluginClass, "resources.pluginResourceTest-inresources");
   }
   
   @Test
