@@ -255,7 +255,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   private String buildDirectoryPath(final String solution, final String path, final String action) {
-    String localDirStr = repositoryName;
+    String localDirStr = "";
+    localDirStr += ISolutionRepository.SEPARATOR;
     if ((solution != null) && (solution.length() > 0)) {
       localDirStr += solution;
       if ((path != null) && (path.length() > 0)) {
@@ -887,7 +888,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
            * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base:
            * /solutions
            */
-          String fromBase = solutionFile.getCanonicalPath();
+          String fromBase = solutionFile.getAbsolutePath();
           String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
               : "/" + solutionFile.getName(); //$NON-NLS-1$
           RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
@@ -1602,7 +1603,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           /*
            * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base: /solutions
            */
-          String fromBase = solutionFile.getCanonicalPath();
+          String fromBase = solutionFile.getAbsolutePath();
           String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
               : "/" + solutionFile.getName(); //$NON-NLS-1$
           RepositoryUpdateHelper updateHelper = new RepositoryUpdateHelper(fromBase, toBase, reposFileStructure, this);
