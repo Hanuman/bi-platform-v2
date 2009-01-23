@@ -74,7 +74,7 @@ public class PluginClassLoader extends ClassLoader {
   public PluginClassLoader(final String pluginDir, Object parent) {
     super(parent.getClass().getClassLoader());
     this.pluginDir = pluginDir.replace('\\', '/');
-    System.err.println("pluginDir=" + pluginDir);
+    logger.trace("pluginDir=" + pluginDir);
     catalogJars();
   }
 
