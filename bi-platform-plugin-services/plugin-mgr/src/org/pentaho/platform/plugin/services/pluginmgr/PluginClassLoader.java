@@ -82,7 +82,7 @@ public class PluginClassLoader extends ClassLoader {
    * Returns the absolute path to the root directory of the plugin to which this classloader is assigned
    * @return absolute path to the plugin root
    */
-  public String getPluginDir() {
+  public String getPluginAbsPath() {
     return pluginDir;
   }
 

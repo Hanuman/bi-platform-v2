@@ -70,7 +70,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
   
-  private String settingsPath = "/settings.xml"; //$NON-NLS-1$
+  private String settingsPath = ISolutionRepository.SEPARATOR + "settings.xml"; //$NON-NLS-1$
 
   public void setSettingsPath(String settingsPath) {
     this.settingsPath = settingsPath;
@@ -115,8 +115,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return new String(bytes, charsetName);
   }
 
-  public String getPluginPath(Class<? extends Object> clazz) {
-    File dir = getRootDir( clazz.getClassLoader() );
+  public String getSystemRelativePluginPath(Class<? extends Object> clazz) {
+    File dir = getPluginDir( clazz.getClassLoader() );
     if( dir == null ) {
       return null;
     }
@@ -129,12 +129,12 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return path;
   }
   
-  private File getRootDir(ClassLoader classLoader) {
+  protected File getPluginDir(ClassLoader classLoader) {
     if (rootDir != null) {
       return rootDir;
     }
     if (classLoader instanceof PluginClassLoader) {
-      return new File(((PluginClassLoader) classLoader).getPluginDir());
+      return new File(((PluginClassLoader) classLoader).getPluginAbsPath());
     }
     return null;
   }
@@ -159,7 +159,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     InputStream in = null;
 
-    File root = getRootDir(classLoader);
+    File root = getPluginDir(classLoader);
     if (root != null) {
 
       //can we find it on the filesystem?
@@ -182,25 +182,16 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return in;
   }
   
-  protected String getFullResourcePath(Class<?> clazz, String resourcePath) {
-    File root = getRootDir(clazz.getClassLoader());
-    if (root != null) {
-      File f = new File(root, resourcePath);
-      return f.getAbsolutePath();
-    }
-    return null;
-  }
-  
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), clazz.getClassLoader());
     return bundle;
   }
 
   public String getPluginSetting(Class<?> pluginClass, String key) {
-    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+settingsPath , key, null );
+    return PentahoSystem.getSystemSetting( getSystemRelativePluginPath(pluginClass)+settingsPath , key, null );
   }
   
   public String getPluginSetting(Class<?> pluginClass, String key, String defaultVal) {
-    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+settingsPath , key, defaultVal );
+    return PentahoSystem.getSystemSetting( getSystemRelativePluginPath(pluginClass)+settingsPath , key, defaultVal );
   }
 }
