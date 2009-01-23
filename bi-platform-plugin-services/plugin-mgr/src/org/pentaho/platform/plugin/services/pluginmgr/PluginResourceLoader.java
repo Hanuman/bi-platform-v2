@@ -55,8 +55,9 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  * <h3>resourcePath</h3> This class requires
  * resource paths to be the relative paths to plugin resources, relative the root directory
  * of the plugin.  A resource path can be specified either using '/' or '.' (or both) in the path, depending
- * on the particular accessor you are using.  See the javadoc for the method you are using to know
- * how to specify your resource.
+ * on the particular method you are using.  It is usually best to specify the path using '/' since
+ * both the filesystem and the classloader can handle this delimiter, whereas '.' will not be handled
+ * correctly if you are trying to load a resource from the filesystem.
  * 
  * <h3>Plugin Settings</h3>: this class backs the plugin settings APIs with the PentahoSystem settings service.
  * See {@link PentahoSystem#getSystemSetting(String, String)} and {@link ISystemSettings}.  System
