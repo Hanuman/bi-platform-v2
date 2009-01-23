@@ -68,6 +68,12 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
+  
+  private String settingsPath = "/settings.xml";
+
+  public void setSettingsPath(String settingsPath) {
+    this.settingsPath = settingsPath;
+  }
 
   /**
    * Force the resource loader to look for resources in this root directory.  
@@ -190,10 +196,10 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
 
   public String getPluginSetting(Class<?> pluginClass, String key) {
-    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+"/settings.xml" , key, null );
+    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+settingsPath , key, null );
   }
   
   public String getPluginSetting(Class<?> pluginClass, String key, String defaultVal) {
-    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+"/settings.xml" , key, defaultVal );
+    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+settingsPath , key, defaultVal );
   }
 }
