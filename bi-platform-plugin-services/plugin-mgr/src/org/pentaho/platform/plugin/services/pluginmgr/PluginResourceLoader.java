@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
@@ -90,9 +89,11 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     return null;
   }
-
+  
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException {
     ClassLoader classLoader = clazz.getClassLoader();
+    
+    //display a warning message if a plugin class is not being loaded by a PluginClassLoader
     if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger
           .warn(
@@ -111,8 +112,6 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
     File root = getRootDir(classLoader);
     if (root != null) {
-      //TODO use jdk ResourceBundle to resolve localized properties
-      //      ResourceBundle resourceBundle = ResourceBundle.getBundle(resourcePath);
 
       //can we find it on the filesystem?
       File f = new File(root, resourcePath);
@@ -124,7 +123,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
         in = classLoader.getResourceAsStream(resourcePath);
         if (in == null) {
           String msg = "Cannot find resource defined by path [" + resourcePath + "]";
-          Logger.warn(PluginResourceLoader.class.getName(), msg);
+          Logger.debug(PluginResourceLoader.class.getName(), msg);
           throw new FileNotFoundException(msg);
         }
       }
