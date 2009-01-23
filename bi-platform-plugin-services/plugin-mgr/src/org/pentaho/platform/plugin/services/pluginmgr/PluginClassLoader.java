@@ -171,7 +171,7 @@ public class PluginClassLoader extends ClassLoader {
             loadedFrom.put(jarKey, classList);
           }
           classList.add(name);
-          System.out.println("adding class: " + jarKey + '/' + name);
+          logger.trace("adding class: " + jarKey + '/' + name);
           return jar.getInputStream(entry);
         }
       }
