@@ -42,7 +42,7 @@ public interface IPluginResourceLoader {
    * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
    * relative paths as it knows where to look for plugin classes and resources.
    *  
-   * @param pluginClass a class that is part of the plugin package
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param resourcePath the (relative) path to a resource
    * @return a resource as an array of bytes or null if the resource is not found
    */
@@ -55,7 +55,7 @@ public interface IPluginResourceLoader {
    * <p>
    * This method defaults the character encoding (how this default is chosen is up to the implementor).
    *  
-   * @param pluginClass a class that is part of the plugin package
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param resourcePath the (relative) path to a resource
    * @return a resource as a {@link String} or null if the resource is not found
    * @exception UnsupportedEncodingException if there is a problem encoding the string
@@ -68,7 +68,7 @@ public interface IPluginResourceLoader {
    * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
    * relative paths as it knows where to look for plugin classes and resources.
    *  
-   * @param pluginClass a class that is part of the plugin package
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param resourcePath the (relative) path to a resource
    * @param charsetName the character set to encode the string
    * @return a resource as a {@link String} or null if the resource is not found
@@ -82,7 +82,7 @@ public interface IPluginResourceLoader {
    * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
    * relative paths as it knows where to look for plugin classes and resources.
    *  
-   * @param pluginClass a class that is part of the plugin package
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param resourcePath the (relative) path to a resource
    * @return a resource as an {@link InputStream} or null if the resource is not found
    */
@@ -98,7 +98,7 @@ public interface IPluginResourceLoader {
    * <li>(localized) messages.properties file in the resources folder at the base of the plugin folder
    * </ul>
    * Implementations of {@link IPluginResourceLoader#getResourceBundle(Class, String)} should behave similar to {@link ResourceBundle#getBundle(String)} 
-   * @param pluginClass a class that is part of the plugin package
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param baseName points to a particular resource bundle
    * @return a {@link ResourceBundle}
    * @see ResourceBundle
@@ -106,8 +106,22 @@ public interface IPluginResourceLoader {
   public ResourceBundle getResourceBundle(Class<?> pluginClass, String baseName);
   
   /**
-   * Returns the path (within the system solution) to the plugin's root folder
-   * @return
+   * Searches for the plugin setting with the specified key.
+   * The method returns <code>null</code> if the setting is not found.
+   *
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
+   * @param key the setting key
+   * @return the plugin setting value or null if setting not found
    */
-  public String getPluginPath(Class<? extends Object> clazz);
+  public String getPluginSetting(Class<?> pluginClass, String key);
+  
+  /**
+   * Searches for the plugin setting with the specified key.
+   *
+   * @param pluginClass a class that is part of the plugin package, used to identify the plugin
+   * @param key the setting key
+   * @param defaultValue the value to return if no value is found for the setting key
+   * @return the plugin setting value or defaultValue if setting not found
+   */
+  public String getPluginSetting(Class<?> pluginClass, String key, String defaultValue);
 }

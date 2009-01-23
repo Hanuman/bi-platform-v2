@@ -73,6 +73,7 @@
         
         <!--  testing dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+    <dependency org="org.jmock" name="jmock-junit4" rev="2.5.1" conf="test->default" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
     <dependency org="org.acegisecurity" name="acegi-security-tests" rev="1.0.6" conf="test->default">

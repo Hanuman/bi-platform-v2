@@ -28,15 +28,40 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 /**
  * The default implementation of the {@link IPluginResourceLoader}.  Obtains resources
  * by searching the root directory of a {@link PluginClassLoader}.  This behavior can
- * be overridden such that the {@link PluginResourceLoader} will search a specified directory
- * instead.  See {@link #setRootDir(File)}
+ * be overridden such that an instance of this class will search a specified directory
+ * instead, bypassing the classloader.  See {@link #setRootDir(File)}  
+ * (this is typically only used in test environments.)
+ * 
+ * <h3>Resource discovery</h3>
+ * {@link PluginResourceLoader} will search the following places for plugin classes:
+ * <ul>
+ * <li> the /lib folder under the plugin's root directory, e.g. "myplugin/lib"
+ * </ul>
+ * {@link PluginResourceLoader} will search for non-class resources in several locations:
+ * <ul>
+ * <li> inside jar files located in the lib directory
+ * <li> from the filesystem relative to the root directory of the plugin
+ * </ul>
+ * 
+ * <h3>resourcePath</h3> This class requires
+ * resource paths to be the relative paths to plugin resources, relative the root directory
+ * of the plugin.  A resource path can be specified either using '/' or '.' (or both) in the path, depending
+ * on the particular accessor you are using.  See the javadoc for the method you are using to know
+ * how to specify your resource.
+ * 
+ * <h3>Plugin Settings</h3>: this class backs the plugin settings APIs with the PentahoSystem settings service.
+ * See {@link PentahoSystem#getSystemSetting(String, String)} and {@link ISystemSettings}.  System
+ * settings are expected in a file name settings.xml in the root of the plugin directory.
+ * 
  * @author aphillips
  *
  */
@@ -162,5 +187,13 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), clazz.getClassLoader());
     return bundle;
+  }
+
+  public String getPluginSetting(Class<?> pluginClass, String key) {
+    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+"/settings.xml" , key, null );
+  }
+  
+  public String getPluginSetting(Class<?> pluginClass, String key, String defaultVal) {
+    return PentahoSystem.getSystemSetting( getPluginPath(pluginClass)+"/settings.xml" , key, defaultVal );
   }
 }

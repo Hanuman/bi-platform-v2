@@ -1,5 +1,6 @@
 package org.pentaho.test.platform.plugin.pluginmgr;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -10,13 +11,23 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ResourceBundle;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.pentaho.platform.api.engine.ISystemSettings;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+@RunWith(JMock.class)
 public class PluginResourceLoaderTest {
+  
+  private Mockery mockery = new Mockery();
+
   
   private PluginResourceLoader resLoader;
   private Class<?> pluginClass;
@@ -42,6 +53,10 @@ public class PluginResourceLoaderTest {
     
     s = resLoader.getResourceAsString(pluginClass, "pluginResourceTest.properties", "UTF-8");
     assertNotNull("Failed to get resource as string", s);
+    
+    //load a resource from a subdirectory
+    in = resLoader.getResourceAsStream(pluginClass, "resources/pluginResourceTest-inresources.properties");
+    assertNotNull("Failed to get resource as stream", in);
   }
   
   @Test
@@ -90,5 +105,28 @@ public class PluginResourceLoaderTest {
   public void testPluginPath() {
     String path = resLoader.getPluginPath( pluginClass );
     assertTrue( "Plugin path is not correct", path.endsWith( "plugin-mgr/test-res/PluginResourceLoaderTest" ) ); //$NON-NLS-2$
+  }
+  
+  @Test
+  public void testGetPluginSettings() {
+    
+    final ISystemSettings mockSettings = mockery.mock(ISystemSettings.class);
+    
+    final String fullPathToSettingsFile = resLoader.getPluginPath(pluginClass)+"/settings.xml";
+    
+    mockery.checking(new Expectations() {{
+      oneOf(mockSettings).getSystemSetting(fullPathToSettingsFile, "testsetting", null); will(returnValue("false"));
+      oneOf(mockSettings).getSystemSetting(fullPathToSettingsFile, "bogussetting", null); will(returnValue(null));
+      oneOf(mockSettings).getSystemSetting(fullPathToSettingsFile, "bogussetting", "true"); will(returnValue("true"));
+    }});
+    
+    PentahoSystem.setSystemSettingsService( mockSettings );
+    
+    
+    assertEquals("Cache value incorrect", "false", resLoader.getPluginSetting(pluginClass, "testsetting"));
+    
+    assertNull("Bogus value should not have been found", resLoader.getPluginSetting(pluginClass, "bogussetting" ));
+    
+    assertEquals("Bogus value should have a default of true", "true", resLoader.getPluginSetting(pluginClass, "bogussetting", "true" ));
   }
 }
