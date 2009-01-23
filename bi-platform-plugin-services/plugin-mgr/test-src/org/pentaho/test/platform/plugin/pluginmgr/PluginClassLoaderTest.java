@@ -192,4 +192,12 @@ public class PluginClassLoaderTest {
     assertEquals( 1, jarNames.size() );
     assertTrue("test-jar.jar not found in classloader", StringUtils.contains(jarNames.get(0), "test-jar.jar"));
   }
+  
+  @Test
+  public void testIsPluginClass() throws ClassNotFoundException {
+    Class testClass = loader.loadClass("org.pentaho.test.platform.engine.services.TestClassForClassloader");
+    assertTrue("Class should have been identified as a plugin class", loader.isPluginClass(testClass));
+    
+    assertFalse("Class should NOT have been identified as a plugin class", loader.isPluginClass(String.class));
+  }
 }
