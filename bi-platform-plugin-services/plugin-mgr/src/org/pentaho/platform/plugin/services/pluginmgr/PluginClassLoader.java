@@ -267,11 +267,7 @@ public class PluginClassLoader extends ClassLoader {
     boolean ret = false;
     for(JarFile jar : jars) {
       Enumeration<JarEntry> entries = jar.entries();
-      while(entries.hasMoreElements()) {
-        System.err.println(entries.nextElement());
-      }
       String searchEntry = clazz.getName().replace('.','/')+".class";
-      System.err.println("search name: "+searchEntry);
       if(jar.getJarEntry(searchEntry) != null) {
         ret = true;
       }
