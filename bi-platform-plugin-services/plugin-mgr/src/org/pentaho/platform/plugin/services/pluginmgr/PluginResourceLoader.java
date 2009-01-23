@@ -69,7 +69,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
   
-  private String settingsPath = "/settings.xml";
+  private String settingsPath = "/settings.xml"; //$NON-NLS-1$
 
   public void setSettingsPath(String settingsPath) {
     this.settingsPath = settingsPath;
