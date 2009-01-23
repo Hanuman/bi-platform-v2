@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,9 +37,7 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
-import org.pentaho.platform.api.engine.IConfiguredPojo;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IStreamingPojo;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 
@@ -63,7 +63,8 @@ public class PojoComponent extends ComponentBase {
   Method runtimeOutputsMethod = null;
   Method loggerMethod = null;
   Method sessionMethod = null;
-  
+  Method configureMethod = null;
+
   public Log getLogger() {
       return LogFactory.getLog(PojoComponent.class);
   }
@@ -112,6 +113,12 @@ public class PojoComponent extends ComponentBase {
     else if( value instanceof IPentahoStreamSource && paramclass.equals( IPentahoStreamSource.class ) ) {
       method.invoke(pojo, new Object[] { value } );
     }
+    else if( value instanceof Date && paramclass.equals( Date.class ) ) {
+      method.invoke(pojo, new Object[] { value } );
+    }
+    else if( value instanceof BigDecimal && paramclass.equals( BigDecimal.class ) ) {
+      method.invoke(pojo, new Object[] { value } );
+    }
     else if( value instanceof IContentItem && paramclass.equals( IContentItem.class ) ) {
       method.invoke(pojo, new Object[] { value } );
     }
@@ -155,12 +162,16 @@ public class PojoComponent extends ComponentBase {
     }
     else if( paramclass.equals( Float.class ) || paramclass.equals( float.class )) {
       method.invoke(pojo, new Object[] { new Float( value ) } );
+    }
+    else if( paramclass.equals( BigDecimal.class ) ) {
+      method.invoke(pojo, new Object[] { new BigDecimal( value ) } );
     } else {
       // TODO handle dates
       throw new GenericSignatureFormatError();
     }
   }
   
+  @SuppressWarnings({"unchecked"})
   @Override
   protected boolean executeAction() throws Throwable {
 
@@ -168,9 +179,11 @@ public class PojoComponent extends ComponentBase {
     Element defnNode = (Element) getComponentDefinition();
 
     // first do the system settings so that component settings and inputs can override them if necessary
-    if( pojo instanceof IConfiguredPojo ) {
-      IConfiguredPojo config = (IConfiguredPojo) pojo;
-      Set<String> settingsPaths = config.getConfigSettingsPaths();
+//    if( pojo instanceof IConfiguredPojo ) {
+    if( getMethods.containsKey("CONFIGSETTINGSPATHS") && configureMethod != null ) { //$NON-NLS-1$
+
+      Method method = getMethods.get( "CONFIGSETTINGSPATHS" ); //$NON-NLS-1$
+      Set<String> settingsPaths = (Set<String>) method.invoke( pojo , new Object[] {} );
       Iterator<String> keys = settingsPaths.iterator();
       Map<String,String> settings = new HashMap<String,String>();
       SystemSettingsParameterProvider params = new SystemSettingsParameterProvider();
@@ -181,7 +194,7 @@ public class PojoComponent extends ComponentBase {
           settings.put( path, value );
         }
       }
-      config.configure( settings );
+      configureMethod.invoke( pojo , new Object[] { settings } );
     }
 
     // set the PentahoSession
@@ -203,7 +216,7 @@ public class PojoComponent extends ComponentBase {
       // something like "report-definition" and we should expect
       // a setter as setReportDefinition, so we will remove the
       // dashes and everything should proceed as expected
-      String name = node.getName().replace("-", "").toUpperCase();
+      String name = node.getName().replace("-", "").toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
       if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) { //$NON-NLS-1$ //$NON-NLS-2$
         String value = node.getText();
         Method method = setMethods.get( name );
@@ -224,7 +237,7 @@ public class PojoComponent extends ComponentBase {
       String name = (String) it.next();
       Object value = getInputValue( name );
       // now that we have the value, we can fix the name
-      name = name.replace("-", "");
+      name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
       Method method = setMethods.get( name.toUpperCase() );
       if( method != null ) {
         callMethod( method, value );
@@ -244,7 +257,7 @@ public class PojoComponent extends ComponentBase {
       while( it.hasNext() ) {
         String name = (String) it.next();
         IActionSequenceResource resource = getResource( name );
-        name = name.replace("-", "");
+        name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
         resourceMap.put(name, resource);
         Method method = setMethods.get( name.toUpperCase() );
         if( method != null ) {
@@ -259,8 +272,8 @@ public class PojoComponent extends ComponentBase {
         } else {
           // BISERVER-2715 we should ignore this as the resource might be meant for another component
         }
+        }
       }
-    }
     
     if ( resourceMap.size() > 0 && resourcesMethod != null ) {
       // call the resources setter
@@ -272,12 +285,15 @@ public class PojoComponent extends ComponentBase {
       runtimeInputsMethod.invoke( pojo , new Object[] { inputMap } );
     }
     
-    if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" ) && pojo instanceof IStreamingPojo) { //$NON-NLS-1$ //$NON-NLS-2$
-      // set the output stream
-      String mimeType = ((IStreamingPojo) pojo).getMimeType();
+    if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" )  //$NON-NLS-1$ //$NON-NLS-2$
+        && getMethods.containsKey( "MIMETYPE" ) ) { //$NON-NLS-1$ 
+      // get the mime-type
+      Method method = getMethods.get( "MIMETYPE" ); //$NON-NLS-1$
+      String mimeType = (String) method.invoke( pojo , new Object[] {} );
       IContentItem contentItem = getOutputContentItem( "outputstream", mimeType ); //$NON-NLS-1$
+      // set the output stream
       OutputStream out = contentItem.getOutputStream( null );
-      Method method = setMethods.get( "OUTPUTSTREAM" ); //$NON-NLS-1$
+      method = setMethods.get( "OUTPUTSTREAM" ); //$NON-NLS-1$
       method.invoke( pojo , new Object[] {out} );
     }
     
@@ -374,6 +390,9 @@ public class PojoComponent extends ComponentBase {
             if( paramTypes.length == 1 && paramTypes[0] == IPentahoSession.class ) {
               sessionMethod = method;
             }
+          }
+          else if( name.equalsIgnoreCase( "configure" ) ) { //$NON-NLS-1$
+            configureMethod = method;
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();

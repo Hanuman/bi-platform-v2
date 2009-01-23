@@ -9,7 +9,7 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IStreamingPojo;
 
 @SuppressWarnings({"all"})
-public class TestPojo2 implements IStreamingPojo {
+public class TestPojo2 {
 
 	protected OutputStream outputStream;
 	protected String input1;
