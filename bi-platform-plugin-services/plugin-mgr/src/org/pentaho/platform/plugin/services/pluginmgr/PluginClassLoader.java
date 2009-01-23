@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -253,7 +254,7 @@ public class PluginClassLoader extends ClassLoader {
     //if resource was not found in jars, check the filesystem
     try {
       String filePath = new File(pluginDir, name).getAbsolutePath();
-      URL url = new URL("file:" + filePath);
+      URL url = new URL("file:" + filePath); //$NON-NLS-1$
 //      System.err.println("trying "+url);
       url.openConnection().connect();
       urls.add(url);
@@ -261,13 +262,30 @@ public class PluginClassLoader extends ClassLoader {
     }
     return urls;
   }
+  
+  public boolean isPluginClass(Class<?> clazz) {
+    boolean ret = false;
+    for(JarFile jar : jars) {
+      Enumeration<JarEntry> entries = jar.entries();
+      while(entries.hasMoreElements()) {
+        System.err.println(entries.nextElement());
+      }
+      String searchEntry = clazz.getName().replace('.','/')+".class";
+      System.err.println("search name: "+searchEntry);
+      if(jar.getJarEntry(searchEntry) != null) {
+        ret = true;
+      }
+    }
+    return ret;
+  }
 
   @Override
   public java.lang.Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     Class<?> loadedClass = super.loadClass(name, resolve);
 
-    //if the class was loaded by a parent classloader (but not the null system classloader), report a warning
-    if (loadedClass.getClassLoader() != null
+    //if a plugin class was loaded by a classloader other than an instance of PluginClassLoader, report a warning
+    if (isPluginClass(loadedClass)
+        && loadedClass.getClassLoader() != null
         && !PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
       Logger.warn(this, "Plugin class [" + loadedClass.getName() + "] was not loaded by "
           + PluginClassLoader.class.getSimpleName() + ".  This is most likely due to this class not being found in ["
