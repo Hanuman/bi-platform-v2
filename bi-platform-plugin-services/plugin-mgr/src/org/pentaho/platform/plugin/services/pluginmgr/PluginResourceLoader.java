@@ -54,16 +54,33 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     this.rootDir = rootDir;
   }
 
-  public byte[] getResourceAsBytes(Class<? extends Object> clazz, String resourcePath) throws IOException {
+  public byte[] getResourceAsBytes(Class<? extends Object> clazz, String resourcePath) {
     InputStream in = getResourceAsStream(clazz, resourcePath);
+    if(in == null) {
+      return null;
+    }
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    out.write(in);
+    try {
+      out.write(in);
+    } catch (IOException e) {
+      Logger.debug(this, "Cannot open stream to resource", e); //$NON-NLS-1$
+      return null;
+    }
     return out.toByteArray();
   }
 
   public String getResourceAsString(Class<? extends Object> clazz, String resourcePath)
-      throws UnsupportedEncodingException, IOException {
-    return new String(getResourceAsBytes(clazz, resourcePath), LocaleHelper.getSystemEncoding());
+      throws UnsupportedEncodingException {
+    return getResourceAsString(clazz, resourcePath, LocaleHelper.getSystemEncoding());
+  }
+  
+  public String getResourceAsString(Class<? extends Object> clazz, String resourcePath, String charsetName)
+  throws UnsupportedEncodingException {
+    byte[] bytes = getResourceAsBytes(clazz, resourcePath);
+    if(bytes == null) {
+      return null;
+    }
+    return new String(bytes, charsetName);
   }
 
   public String getPluginPath(Class<? extends Object> clazz) {
@@ -90,7 +107,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return null;
   }
   
-  public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) throws IOException {
+  public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
     ClassLoader classLoader = clazz.getClassLoader();
     
     //display a warning message if a plugin class is not being loaded by a PluginClassLoader
@@ -116,15 +133,17 @@ public class PluginResourceLoader implements IPluginResourceLoader {
       //can we find it on the filesystem?
       File f = new File(root, resourcePath);
       if (f.exists()) {
-        in = new FileInputStream(new File(root, resourcePath));
+        try {
+          in = new FileInputStream(new File(root, resourcePath));
+        } catch (FileNotFoundException e) {
+          Logger.debug(this, "Cannot open stream to resource", e); //$NON-NLS-1$
+        }
       }
       //if not on filesystem, ask the classloader
       else {
         in = classLoader.getResourceAsStream(resourcePath);
         if (in == null) {
-          String msg = "Cannot find resource defined by path [" + resourcePath + "]";
-          Logger.debug(PluginResourceLoader.class.getName(), msg);
-          throw new FileNotFoundException(msg);
+          Logger.debug(this, "Cannot find resource defined by path [" + resourcePath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
     }
