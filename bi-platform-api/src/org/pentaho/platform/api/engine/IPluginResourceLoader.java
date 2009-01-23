@@ -37,22 +37,57 @@ import java.util.ResourceBundle;
  * @author aphillips
  */
 public interface IPluginResourceLoader {
+  
   /**
    * Gets a plugin-related resource in the form of an array of bytes.  The relevant plugin is inferred from pluginClass.
    * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
    * relative paths as it knows where to look for plugin classes and resources.
    *  
    * @param pluginClass a class that is part of the plugin package
-   * @param resourcePath the (relative) path to resource
-   * @return a resource as an array of bytes
-   * @throws IOException 
+   * @param resourcePath the (relative) path to a resource
+   * @return a resource as an array of bytes or null if the resource is not found
    */
-  public byte[] getResourceAsBytes(Class<? extends Object> pluginClass, String resourcePath) throws IOException;
+  public byte[] getResourceAsBytes(Class<? extends Object> pluginClass, String resourcePath);
 
+  /**
+   * Gets a plugin-related resource in the form of a String.  The relevant plugin is inferred from pluginClass.
+   * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
+   * relative paths as it knows where to look for plugin classes and resources.
+   * <p>
+   * This method defaults the character encoding (how this default is chosen is up to the implementor).
+   *  
+   * @param pluginClass a class that is part of the plugin package
+   * @param resourcePath the (relative) path to a resource
+   * @return a resource as a {@link String} or null if the resource is not found
+   * @exception UnsupportedEncodingException if there is a problem encoding the string
+   */
   public String getResourceAsString(Class<? extends Object> pluginClass, String resourcePath)
-      throws UnsupportedEncodingException, IOException;
+      throws UnsupportedEncodingException;
+  
+  /**
+   * Gets a plugin-related resource in the form of a String.  The relevant plugin is inferred from pluginClass.
+   * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
+   * relative paths as it knows where to look for plugin classes and resources.
+   *  
+   * @param pluginClass a class that is part of the plugin package
+   * @param resourcePath the (relative) path to a resource
+   * @param charsetName the character set to encode the string
+   * @return a resource as a {@link String} or null if the resource is not found
+   * @exception UnsupportedEncodingException if there is a problem encoding the string
+   */
+  public String getResourceAsString(Class<? extends Object> pluginClass, String resourcePath, String charsetName)
+  throws UnsupportedEncodingException;
 
-  public InputStream getResourceAsStream(Class<?> pluginClass, String resourcePath) throws IOException;
+  /**
+   * Gets a plugin-related resource in the form of an InputStream.  The relevant plugin is inferred from pluginClass.
+   * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
+   * relative paths as it knows where to look for plugin classes and resources.
+   *  
+   * @param pluginClass a class that is part of the plugin package
+   * @param resourcePath the (relative) path to a resource
+   * @return a resource as an {@link InputStream} or null if the resource is not found
+   */
+  public InputStream getResourceAsStream(Class<?> pluginClass, String resourcePath);
 
   /**
    * Retrieves a localized resource bundle for the plugin represented by pluginClass.
