@@ -57,6 +57,7 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.request.HttpWebServiceRequestHandler;
+import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.servlet.messages.Messages;
 
 
@@ -171,6 +172,7 @@ public class HttpWebService extends ServletBase {
         HttpWebServiceRequestHandler requestHandler = new HttpWebServiceRequestHandler(userSession, null,
             outputHandler, parameterProvider, null);
 
+        requestHandler.setParameterProvider( IParameterProvider.SCOPE_SESSION , new HttpSessionParameterProvider(userSession));
         requestHandler.setInstanceId(instanceId);
         requestHandler.setProcessId(processId);
         requestHandler.setAction(actionPath, actionName);
