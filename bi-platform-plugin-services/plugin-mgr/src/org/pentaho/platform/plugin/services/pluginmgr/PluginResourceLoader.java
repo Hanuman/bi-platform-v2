@@ -116,7 +116,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
 
   public String getSystemRelativePluginPath(Class<? extends Object> clazz) {
-    File dir = getPluginDir( clazz.getClassLoader() );
+    File dir = getPluginDir( getClassLoader(clazz) );
     if( dir == null ) {
       return null;
     }
@@ -139,8 +139,16 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return null;
   }
   
+  /*
+   * It is important for this method to exist since it provides a way to override the classloader
+   * which is particularly useful in test cases
+   */
+  protected ClassLoader getClassLoader(Class<?> clazz) {
+    return clazz.getClassLoader();
+  }
+  
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
-    ClassLoader classLoader = clazz.getClassLoader();
+    ClassLoader classLoader = getClassLoader(clazz);
     
     //display a warning message if a plugin class is not being loaded by a PluginClassLoader
     if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
@@ -183,7 +191,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
   
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
-    ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), clazz.getClassLoader());
+    ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), getClassLoader(clazz));
     return bundle;
   }
 

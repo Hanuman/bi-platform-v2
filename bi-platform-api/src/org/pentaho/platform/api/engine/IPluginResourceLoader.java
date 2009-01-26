@@ -22,6 +22,7 @@ package org.pentaho.platform.api.engine;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -101,6 +102,7 @@ public interface IPluginResourceLoader {
    * @param pluginClass a class that is part of the plugin package, used to identify the plugin
    * @param baseName points to a particular resource bundle
    * @return a {@link ResourceBundle}
+   * @throws MissingResourceException if resource bundle not found
    * @see ResourceBundle
    */
   public ResourceBundle getResourceBundle(Class<?> pluginClass, String baseName);
