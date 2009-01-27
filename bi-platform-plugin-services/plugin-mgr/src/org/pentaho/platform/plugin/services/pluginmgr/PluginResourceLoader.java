@@ -78,7 +78,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
-  
+
   private String settingsPath = ISolutionRepository.SEPARATOR + "settings.xml"; //$NON-NLS-1$
 
   public void setSettingsPath(String settingsPath) {
@@ -97,7 +97,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   public byte[] getResourceAsBytes(Class<? extends Object> clazz, String resourcePath) {
     InputStream in = getResourceAsStream(clazz, resourcePath);
-    if(in == null) {
+    if (in == null) {
       return null;
     }
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -114,30 +114,30 @@ public class PluginResourceLoader implements IPluginResourceLoader {
       throws UnsupportedEncodingException {
     return getResourceAsString(clazz, resourcePath, LocaleHelper.getSystemEncoding());
   }
-  
+
   public String getResourceAsString(Class<? extends Object> clazz, String resourcePath, String charsetName)
-  throws UnsupportedEncodingException {
+      throws UnsupportedEncodingException {
     byte[] bytes = getResourceAsBytes(clazz, resourcePath);
-    if(bytes == null) {
+    if (bytes == null) {
       return null;
     }
     return new String(bytes, charsetName);
   }
 
   public String getSystemRelativePluginPath(Class<? extends Object> clazz) {
-    File dir = getPluginDir( getClassLoader(clazz) );
-    if( dir == null ) {
+    File dir = getPluginDir(getClassLoader(clazz));
+    if (dir == null) {
       return null;
     }
     // get the full path with \ converted to /
-    String path = dir.getAbsolutePath().replace( '\\', ISolutionRepository.SEPARATOR ); 
-    int pos = path.lastIndexOf( ISolutionRepository.SEPARATOR + "system" + ISolutionRepository.SEPARATOR  ); //$NON-NLS-1$
-    if( pos != -1 ) {
-      path = path.substring( pos + 8 );
+    String path = dir.getAbsolutePath().replace('\\', ISolutionRepository.SEPARATOR);
+    int pos = path.lastIndexOf(ISolutionRepository.SEPARATOR + "system" + ISolutionRepository.SEPARATOR); //$NON-NLS-1$
+    if (pos != -1) {
+      path = path.substring(pos + 8);
     }
     return path;
   }
-  
+
   protected File getPluginDir(ClassLoader classLoader) {
     if (rootDir != null) {
       return rootDir;
@@ -147,18 +147,28 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     return null;
   }
-  
+
   /*
    * It is important for this method to exist since it provides a way to override the classloader
    * which is particularly useful in test cases
    */
-  protected PluginClassLoader getClassLoader(Class<?> clazz) {
-    return (PluginClassLoader)clazz.getClassLoader();
+  protected ClassLoader getClassLoader(Class<?> clazz) {
+    ClassLoader classLoader = clazz.getClassLoader();
+    if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
+      Logger
+          .error(
+              this,
+              "getClassLoader must return an instance of "
+                  + PluginClassLoader.class.getSimpleName()
+                  + ".  If you are running in a unit test environment you may wish to override this method in an abstract subclass of "
+                  + PluginResourceLoader.class.getSimpleName() + ".");
+    }
+    return clazz.getClassLoader();
   }
-  
+
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
     ClassLoader classLoader = getClassLoader(clazz);
-    
+
     //display a warning message if a plugin class is not being loaded by a PluginClassLoader
     if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger
@@ -169,10 +179,12 @@ public class PluginResourceLoader implements IPluginResourceLoader {
                   + "] was not loaded from a "
                   + PluginClassLoader.class.getSimpleName()
                   + ".  Is this really a plugin class?  "
-                  + "If "+clazz.getSimpleName()+" is part of your plugin, but will not be loaded with a "
+                  + "If "
+                  + clazz.getSimpleName()
+                  + " is part of your plugin, but will not be loaded with a "
                   + PluginClassLoader.class.getSimpleName()
                   + " (such as in a test environment), you might consider using setRootDir() to set an artificial plugin base directory."
-                  + "  Look higher up in the log for warnings from "+PluginClassLoader.class.getSimpleName());
+                  + "  Look higher up in the log for warnings from " + PluginClassLoader.class.getSimpleName());
     }
     InputStream in = null;
 
@@ -198,33 +210,34 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     return in;
   }
-  
+
   public List<URL> findResources(Class<?> clazz, String namePattern) {
-    
+
     WildcardFileFilter fileFilter = new WildcardFileFilter(namePattern);
-    Collection<?> files = FileUtils.listFiles(getPluginDir(clazz.getClassLoader()), fileFilter, TrueFileFilter.INSTANCE);
+    Collection<?> files = FileUtils
+        .listFiles(getPluginDir(clazz.getClassLoader()), fileFilter, TrueFileFilter.INSTANCE);
     Iterator<?> fileIter = files.iterator();
     List<URL> urls = new ArrayList<URL>(files.size());
-    while(fileIter.hasNext()) {
+    while (fileIter.hasNext()) {
       try {
-        urls.add(((File)fileIter.next()).toURL());
+        urls.add(((File) fileIter.next()).toURL());
       } catch (MalformedURLException e) {
         Logger.warn(this, "Could not create url", e); //$NON-NLS-1$
       }
     }
     return urls;
   }
-  
+
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), getClassLoader(clazz));
     return bundle;
   }
 
   public String getPluginSetting(Class<?> pluginClass, String key) {
-    return PentahoSystem.getSystemSetting( getSystemRelativePluginPath(pluginClass)+settingsPath , key, null );
+    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(pluginClass) + settingsPath, key, null);
   }
-  
+
   public String getPluginSetting(Class<?> pluginClass, String key, String defaultVal) {
-    return PentahoSystem.getSystemSetting( getSystemRelativePluginPath(pluginClass)+settingsPath , key, defaultVal );
+    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(pluginClass) + settingsPath, key, defaultVal);
   }
 }
