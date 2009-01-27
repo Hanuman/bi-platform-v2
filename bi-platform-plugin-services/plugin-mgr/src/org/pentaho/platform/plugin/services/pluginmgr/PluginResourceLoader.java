@@ -156,7 +156,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     ClassLoader classLoader = clazz.getClassLoader();
     if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger
-          .error(
+          .warn(
               this,
               "getClassLoader must return an instance of "
                   + PluginClassLoader.class.getSimpleName()
