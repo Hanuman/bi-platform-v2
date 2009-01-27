@@ -22,6 +22,8 @@ package org.pentaho.platform.api.engine;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -88,6 +90,17 @@ public interface IPluginResourceLoader {
    * @return a resource as an {@link InputStream} or null if the resource is not found
    */
   public InputStream getResourceAsStream(Class<?> pluginClass, String resourcePath);
+  
+  /**
+   * A searching method, yielding a list of plugin-related resources as URLs.  This method allows 
+   * advanced searching by using the namePattern argument.  namePattern supports
+   * '?' and '*' characters, representing single and multiple wildcard characters respectively.
+   *  
+   * @param pluginClass
+   * @param namePattern  a resource name pattern supporting wildcards
+   * @return a list of URLs to the matching resources
+   */
+  public List<URL> findResources(Class<?> pluginClass, String namePattern);
 
   /**
    * Retrieves a localized resource bundle for the plugin represented by pluginClass.

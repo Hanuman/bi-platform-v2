@@ -24,8 +24,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISystemSettings;
@@ -61,7 +70,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  * 
  * <h3>Plugin Settings</h3>: this class backs the plugin settings APIs with the PentahoSystem settings service.
  * See {@link PentahoSystem#getSystemSetting(String, String)} and {@link ISystemSettings}.  System
- * settings are expected in a file name settings.xml in the root of the plugin directory.
+ * settings are expected in a file named settings.xml in the root of the plugin directory.
  * 
  * @author aphillips
  *
@@ -143,8 +152,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * It is important for this method to exist since it provides a way to override the classloader
    * which is particularly useful in test cases
    */
-  protected ClassLoader getClassLoader(Class<?> clazz) {
-    return clazz.getClassLoader();
+  protected PluginClassLoader getClassLoader(Class<?> clazz) {
+    return (PluginClassLoader)clazz.getClassLoader();
   }
   
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
@@ -188,6 +197,22 @@ public class PluginResourceLoader implements IPluginResourceLoader {
       }
     }
     return in;
+  }
+  
+  public List<URL> findResources(Class<?> clazz, String namePattern) {
+    
+    WildcardFileFilter fileFilter = new WildcardFileFilter(namePattern);
+    Collection<?> files = FileUtils.listFiles(getPluginDir(clazz.getClassLoader()), fileFilter, TrueFileFilter.INSTANCE);
+    Iterator<?> fileIter = files.iterator();
+    List<URL> urls = new ArrayList<URL>(files.size());
+    while(fileIter.hasNext()) {
+      try {
+        urls.add(((File)fileIter.next()).toURL());
+      } catch (MalformedURLException e) {
+        Logger.warn(this, "Could not create url", e); //$NON-NLS-1$
+      }
+    }
+    return urls;
   }
   
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {

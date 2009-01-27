@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.jmock.Expectations;
@@ -128,5 +130,22 @@ public class PluginResourceLoaderTest {
     assertNull("Bogus value should not have been found", resLoader.getPluginSetting(pluginClass, "bogussetting" ));
     
     assertEquals("Bogus value should have a default of true", "true", resLoader.getPluginSetting(pluginClass, "bogussetting", "true" ));
+  }
+  
+  @Test
+  public void testFindResources() {
+    List<URL> urls = resLoader.findResources(pluginClass, "*properties*");
+    boolean propFile1Found = false, propFile2Found = false;
+    for( URL url : urls) {
+      String fileName = url.getPath().substring(1 + url.getPath().lastIndexOf(File.separator));
+      if("pluginResourceTest-inresources.properties".equals(fileName)) {
+        propFile1Found = true;
+      }
+      if("pluginResourceTest.properties".equals(fileName)) {
+        propFile2Found = true;
+      }
+    }
+    assertTrue("pluginResourceTest-inresources.properties was not found", propFile1Found);
+    assertTrue("pluginResourceTest.properties was not found", propFile2Found);
   }
 }
