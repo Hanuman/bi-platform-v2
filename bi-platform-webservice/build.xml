@@ -1,0 +1,104 @@
+<!--===========================================================================
+  This is the build file for the Pentaho BI Platform Engine Core project.
+  
+  This build file will use the common_build.xml file as the default build
+  process and should only override the tasks that need to differ from
+  the common build file.
+  
+  See common_build.xml for more details
+============================================================================-->
+<project name="Webservice BI Server" basedir="." default="jar" 
+	xmlns:ivy="antlib:org.apache.ivy.ant" >
+	
+	<description>
+	  This build file is used to create the Dashboard project
+		and works with the common_build.xml file.
+	</description>
+
+	<!-- Import the common_build.xml file which contains all the default tasks -->	
+	<import file="common_build.xml"/>
+
+    <!--
+      AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
+      THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
+      FOUND IN common_build.xml.
+    --> 
+
+	  <property name="plugin.name"
+	            value="webservices"
+	            description="Name of the plugin" />
+
+	  <property name="resource.dir"
+	            value="resource"
+	            description="Name of the resource directory" />
+
+	  <!--=======================================================================
+		    dist
+		    
+		    Creates a distribution of this project
+		    ====================================================================-->
+	  <target name="dist" depends="jar" description="Creates a distribution">
+
+	  	<!-- delete and re-create the plugin dist folder tree -->
+	    <delete dir="${dist.dir}/${plugin.name}" />
+	    <mkdir dir="${dist.dir}/${plugin.name}" />
+	    <mkdir dir="${dist.dir}/${plugin.name}/lib" />
+	  	
+	  	<!-- copy the plugin jar to the plugin dist lib folder -->
+	    <copy todir="${dist.dir}/${plugin.name}/lib">
+	      <fileset dir="${dist.dir}">
+	        <include name="*.jar" />
+	      </fileset>
+	    </copy>
+	  	
+	  	<!-- Copy the plugin.xml and any other files from the resource dir -->
+	    <copy todir="${dist.dir}/${plugin.name}">
+	      <fileset dir="${resource.dir}">
+	        <include name="**/*" />
+	      </fileset>
+	    </copy>
+
+	  	<!-- copy the runtime jars needed -->
+	    <copy todir="${dist.dir}/${plugin.name}/lib">
+	      <fileset dir="${lib.dir}">
+	        <include name="XmlSchema-*.jar" />
+		    <include name="annogen-*.jar" />
+		    <include name="axiom-api-*.jar" />
+		    <include name="axiom-dom-*.jar" />
+		    <include name="axiom-impl-*.jar" />
+		    <include name="axis2-adb-*.jar" />
+		    <include name="axis2-java2wsdl-*.jar" />
+		    <include name="axis2-kernel-*.jar" />
+		    <include name="backport-util-concurrent-*.jar" />
+		    <include name="geronimo-stax-api_*.jar" />
+		    <include name="httpcore-*.jar" />
+		    <include name="neethi-*.jar" />
+		    <include name="pentaho-webservice-core-*.jar" />
+		    <include name="wsdl4j-*.jar" />
+		    <include name="wstx-asl-*.jar" />
+	      </fileset>
+	    </copy>
+	  	
+	  	
+	  	
+	  	<!-- create a zip file -->
+	    <jar jarfile="${dist.dir}/${plugin.name}.zip"
+	         basedir="${dist.dir}/${plugin.name}"
+	         includes="**/*"
+	         excludes="**/Thumbs.db" />
+
+	  </target>
+
+	  <path id="test.classpath">
+	    <fileset dir="${lib.dir}">
+		      <include name="*.jar" />
+		      <exclude name="pentaho-bi-platform-ee-license*.jar" />
+	    </fileset>
+	    <fileset dir="${testlib.dir}">
+	      <include name="*.jar" />
+	    </fileset>
+	    <dirset dir="${classes.dir}" />
+	    <dirset dir="${testclasses.dir}" />
+	  </path>
+
+</project>
