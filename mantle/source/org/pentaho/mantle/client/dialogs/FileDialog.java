@@ -7,6 +7,7 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.xml.client.Document;
 
 /*
@@ -32,7 +33,10 @@ public class FileDialog{
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
         dialog.hide();
-        FileDialog.lastPath = path;
+        
+        FileDialog.lastPath = "/"+solution+ path;
+        
+        
         for(FileChooserListener listener : listeners){
           listener.fileSelected(solution, path, name, localizedFileName);
         }
