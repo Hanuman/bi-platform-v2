@@ -160,8 +160,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
               this,
               "getClassLoader must return an instance of "
                   + PluginClassLoader.class.getSimpleName()
-                  + ".  If you are running in a unit test environment you may wish to override this method in an abstract subclass of "
-                  + PluginResourceLoader.class.getSimpleName() + ".");
+                  + ".  If you are running in a unit test environment you may wish use a subclass of "
+                  + PluginResourceLoader.class.getSimpleName() + " that overrides this method to return a test classloader.");
     }
     return clazz.getClassLoader();
   }
@@ -215,7 +215,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
     WildcardFileFilter fileFilter = new WildcardFileFilter(namePattern);
     Collection<?> files = FileUtils
-        .listFiles(getPluginDir(clazz.getClassLoader()), fileFilter, TrueFileFilter.INSTANCE);
+        .listFiles(getPluginDir(getClassLoader(clazz)), fileFilter, TrueFileFilter.INSTANCE);
     Iterator<?> fileIter = files.iterator();
     List<URL> urls = new ArrayList<URL>(files.size());
     while (fileIter.hasNext()) {
