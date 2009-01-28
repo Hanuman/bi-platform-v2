@@ -284,8 +284,9 @@ public class PluginClassLoader extends ClassLoader {
         && loadedClass.getClassLoader() != null
         && !PluginClassLoader.class.isAssignableFrom(loadedClass.getClassLoader().getClass())) {
       Logger.warn(this, "Plugin class [" + loadedClass.getName() + "] was not loaded by "
-          + PluginClassLoader.class.getSimpleName() + ".  This is most likely due to this class not being found in ["
-          + pluginDir + "/lib].  You may have problems locating resources related to this plugin class.");
+          + PluginClassLoader.class.getSimpleName() + ".  This class was found by the parent classloader ["
+          + loadedClass.getClassLoader().getClass().getSimpleName()
+          + "].  You will not be able to use this class to find plugin-related resources.");
     }
     return loadedClass;
   }
