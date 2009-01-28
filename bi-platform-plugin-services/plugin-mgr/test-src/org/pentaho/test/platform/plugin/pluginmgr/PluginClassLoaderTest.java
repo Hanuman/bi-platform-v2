@@ -185,8 +185,7 @@ public class PluginClassLoaderTest {
 
   @Test
   public void testCatalog() throws ClassNotFoundException {
-    
-    List<String> jarNames = PluginClassLoader.listLoadedJars();
+    List<String> jarNames = loader.listLoadedJars();
 
     assertNotNull( jarNames );
     assertEquals( 1, jarNames.size() );
