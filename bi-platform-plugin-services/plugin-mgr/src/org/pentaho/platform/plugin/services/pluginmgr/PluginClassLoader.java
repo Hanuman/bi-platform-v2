@@ -51,15 +51,15 @@ import org.pentaho.platform.util.logging.Logger;
  */
 public class PluginClassLoader extends ClassLoader {
 
-  protected static final Log logger = LogFactory.getLog(PluginClassLoader.class);
+  protected final Log logger = LogFactory.getLog(PluginClassLoader.class);
 
-  private static final Map<String, byte[]> resourceMap = new HashMap<String, byte[]>();
+  private final Map<String, byte[]> resourceMap = new HashMap<String, byte[]>();
 
-  private static final Map<String, List<String>> loadedFrom = new HashMap<String, List<String>>();
+  private final Map<String, List<String>> loadedFrom = new HashMap<String, List<String>>();
 
   private String pluginDir;
 
-  private static final List<JarFile> jars = new ArrayList<JarFile>();
+  private final List<JarFile> jars = new ArrayList<JarFile>();
 
   /**
    * Creates a class loader for loading plugin classes and discovering resources.
@@ -108,7 +108,7 @@ public class PluginClassLoader extends ClassLoader {
     }
   }
 
-  public static synchronized void addJar(JarFile jar) {
+  public synchronized void addJar(JarFile jar) {
     String name = jar.getName();
     List<JarFile> jarsToRemove = new ArrayList<JarFile>();
     // remove this from the jar list if it exists
@@ -140,7 +140,7 @@ public class PluginClassLoader extends ClassLoader {
 
   }
 
-  public static List<String> listLoadedJars() {
+  public List<String> listLoadedJars() {
     List<String> jarList = new ArrayList<String>();
     jarList.addAll(loadedFrom.keySet());
     return jarList;
@@ -178,8 +178,8 @@ public class PluginClassLoader extends ClassLoader {
     } catch (Exception ignored) {
       // This situation indicates the resource was found but could not be
       // opened.
-      if (PluginClassLoader.logger.isTraceEnabled()) {
-        PluginClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
+      if (logger.isDebugEnabled()) {
+        logger.debug(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name), ignored); //$NON-NLS-1$
       }
 
     }
@@ -309,7 +309,7 @@ public class PluginClassLoader extends ClassLoader {
     InputStream in = null;
     try {
       String key = pluginDir + "/" + pathPrefix + name;
-      classBytes = PluginClassLoader.resourceMap.get(key);
+      classBytes = resourceMap.get(key);
       if (classBytes == null) {
         in = getResourceAsStream(name);
         if (in == null) {
@@ -323,7 +323,7 @@ public class PluginClassLoader extends ClassLoader {
           n = in.read(bytes);
         }
         classBytes = bin.toByteArray();
-        PluginClassLoader.resourceMap.put(key, classBytes);
+        resourceMap.put(key, classBytes);
       }
     } finally {
       if (in != null) {
