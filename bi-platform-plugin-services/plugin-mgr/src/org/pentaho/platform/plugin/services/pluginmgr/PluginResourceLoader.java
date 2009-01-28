@@ -90,6 +90,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * If null, the resource loader will consult the {@link PluginClassLoader} 
    * for the root directory.
    * @param rootDir  the root directory in which to search for resources
+   * @deprecated instead of setting the root dir, have your application use a subclass of PluginResourceLoader
+   * that returns an appropriately pathed PluginClassLoader from an overriden {@link #getClassLoader(Class)}.
    */
   public void setRootDir(File rootDir) {
     this.rootDir = rootDir;
