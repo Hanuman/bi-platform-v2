@@ -25,9 +25,6 @@
       <default-value/> 
     </productLine>  
     <reportTypeList type="property-map-list"> 
-      <sources> 
-        <request>reportTypeList</request> 
-      </sources>  
       <default-value type="property-map-list"> 
         <property-map> 
           <entry key="reportTypeDesc">Send as PDF</entry>  

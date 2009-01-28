@@ -27,9 +27,6 @@
       <default-value><![CDATA[html]]></default-value> 
     </outputType>  
     <timeIntervalList type="property-map-list">
-      <sources>
-        <request>timeIntervalList</request>
-      </sources>
       <default-value type="property-map-list">
         <property-map>
           <entry key="timeSeriesID">YTD</entry>

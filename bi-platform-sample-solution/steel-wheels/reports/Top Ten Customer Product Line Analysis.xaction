@@ -19,9 +19,6 @@
       <default-value><![CDATA[html]]></default-value> 
     </outputType>  
     <outputTypeList type="property-map-list"> 
-      <sources> 
-        <runtime>outputTypeList</runtime> 
-      </sources>  
       <default-value type="property-map-list"> 
         <property-map> 
           <entry key="report-output-desc">PDF</entry>  

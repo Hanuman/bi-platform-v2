@@ -62,9 +62,6 @@
       </default-value> 
     </REGION_FILTER>  
     <DEPARTMENT_VALUES type="string-list">
-      <sources>
-        <request>DEPARTMENT_VALUES</request>
-      </sources>
       <default-value type="string-list">
         <list-item>Executive Management</list-item>
         <list-item>Finance</list-item>
@@ -76,9 +73,6 @@
       </default-value>
     </DEPARTMENT_VALUES>
     <POSITIONTITLE_FILTER type="string-list"> 
-      <sources>
-        <request>POSITIONTITLE_FILTER</request>
-      </sources>
       <default-value type="string-list"> 
         <list-item>CTO</list-item> 
         <list-item>QA Manager</list-item> 

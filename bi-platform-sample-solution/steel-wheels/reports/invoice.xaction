@@ -38,6 +38,10 @@
           <entry key="report-output-desc">Excel</entry>  
           <entry key="report-output-type-id">xls</entry> 
         </property-map> 
+        <property-map> 
+          <entry key="report-output-desc">Web Page</entry>  
+          <entry key="report-output-type-id">html</entry> 
+        </property-map> 
       </default-value> 
     </output-type-list>  
     <customer_list type="property-map-list"> 

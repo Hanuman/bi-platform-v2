@@ -50,9 +50,6 @@
       <default-value>2005-05-31 23:59:59</default-value> 
     </time_stop>  
     <time_stop_list type="property-map-list"> 
-      <sources> 
-        <request>time_stop_list</request> 
-      </sources>  
       <default-value type="property-map-list"> 
         <property-map> 
           <entry key="TIME_STOP_DESC">Jan 31 2003</entry>  
@@ -187,9 +184,6 @@
       <default-value>2005-01-01</default-value> 
     </time_start>  
     <time_start_list type="property-map-list"> 
-      <sources> 
-        <request>time_start_list</request> 
-      </sources>  
       <default-value type="property-map-list"> 
         <property-map> 
           <entry key="TIME_ID">2003-01-01</entry>  
@@ -318,9 +312,6 @@
       </default-value> 
     </time_start_list>  
     <output-type-list type="property-map-list"> 
-      <sources> 
-        <runtime>output-type-list</runtime> 
-      </sources>  
       <default-value type="property-map-list"> 
         <property-map> 
           <entry key="report-output-desc">PDF</entry>  
