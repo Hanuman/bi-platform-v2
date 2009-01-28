@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -78,11 +80,16 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
+  private PluginClassLoader overrideClassloader;
 
   private String settingsPath = ISolutionRepository.SEPARATOR + "settings.xml"; //$NON-NLS-1$
 
   public void setSettingsPath(String settingsPath) {
     this.settingsPath = settingsPath;
+  }
+  
+  public void setOverrideClassloader(PluginClassLoader pluginClassloader) {
+    this.overrideClassloader = pluginClassloader;
   }
 
   /**
@@ -155,7 +162,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * which is particularly useful in test cases
    */
   protected ClassLoader getClassLoader(Class<?> clazz) {
-    ClassLoader classLoader = clazz.getClassLoader();
+    ClassLoader classLoader = (overrideClassloader != null)?overrideClassloader:clazz.getClassLoader();
+    
     if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger
           .warn(
@@ -231,6 +239,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
 
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
+    
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), getClassLoader(clazz));
     return bundle;
   }
