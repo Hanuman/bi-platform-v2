@@ -292,7 +292,7 @@ public class PojoComponent extends ComponentBase {
       String mimeType = (String) method.invoke( pojo , new Object[] {} );
       IContentItem contentItem = getOutputContentItem( "outputstream", mimeType ); //$NON-NLS-1$
       // set the output stream
-      OutputStream out = contentItem.getOutputStream( null );
+      OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ); //$NON-NLS-1$
       method.invoke( pojo , new Object[] {out} );
     }
