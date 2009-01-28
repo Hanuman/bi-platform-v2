@@ -185,6 +185,8 @@ public class PluginClassLoaderTest {
 
   @Test
   public void testCatalog() throws ClassNotFoundException {
+    loader.loadClass("org.pentaho.test.platform.engine.services.TestClassForClassloader" ); //$NON-NLS-1$
+    
     List<String> jarNames = loader.listLoadedJars();
 
     assertNotNull( jarNames );
