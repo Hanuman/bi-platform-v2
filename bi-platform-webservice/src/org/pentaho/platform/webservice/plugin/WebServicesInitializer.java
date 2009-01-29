@@ -30,13 +30,16 @@ public class WebServicesInitializer extends SimpleContentGenerator implements IP
   @SuppressWarnings({ "deprecation" })
   public void init(IPentahoSession session) {
 
-    Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
+    ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
 
     try {
+      Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
       IWebServiceConfigurator iConfig = new PluginServiceSetup();
       AxisConfig.getInstance( iConfig );
     } catch (Exception e) {
       error( Messages.getErrorString("WebServicesInitializer.ERROR_0001_BAD_INIT"), e ); //$NON-NLS-1$
+    } finally {
+      Thread.currentThread().setContextClassLoader( originalLoader );
     }
   }
   
