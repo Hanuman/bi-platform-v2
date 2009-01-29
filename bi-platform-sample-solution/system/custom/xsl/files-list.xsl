@@ -5,7 +5,6 @@
  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
  xmlns:html="http://www.w3.org/TR/REC-html40"
  xmlns:msg="org.pentaho.platform.web.xsl.messages.Messages"
- xmlns:plugins="org.pentaho.platform.plugin.services.pluginmgr.PluginSettings"
 	xmlns:str_util="http://www.w3.org/2001/10/str-util.xsl"
  exclude-result-prefixes="o x ss html msg str_util">
 
@@ -384,9 +383,11 @@
 			<xsl:with-param name="delimiter">.</xsl:with-param>
 		</xsl:call-template></xsl:variable>
 
-		<xsl:variable name="defaulthandler"><xsl:value-of select="plugins:getContentGeneratorIdForType( $extension )"/></xsl:variable>
-
-		<xsl:variable name="defaulturl"><xsl:value-of select="plugins:getContentGeneratorUrlForType( $extension )"/></xsl:variable>
+		<!--  disabled for now... -->
+		<!-- xsl:variable name="defaulthandler"><xsl:value-of select="plugins:getContentGeneratorIdForType( $extension )"/></xsl:variable>
+		<xsl:variable name="defaulturl"><xsl:value-of select="plugins:getContentGeneratorUrlForType( $extension )"/></xsl:variable -->
+		<xsl:variable name="defaulthandler"></xsl:variable>
+		<xsl:variable name="defaulturl"></xsl:variable>
 
 		<xsl:variable name="url">
 			<xsl:choose>
