@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -173,7 +171,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
                   + ".  If you are running in a unit test environment you may wish use a subclass of "
                   + PluginResourceLoader.class.getSimpleName() + " that overrides this method to return a test classloader.");
     }
-    return clazz.getClassLoader();
+    return classLoader;
   }
 
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
