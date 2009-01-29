@@ -71,6 +71,7 @@ import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleSession;
 import org.pentaho.platform.engine.services.actionsequence.SequenceDefinition;
+import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
@@ -1477,6 +1478,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       HibernateUtil.beginTransaction();
       permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
+    }
+    if(fileName != null && fileName.endsWith(".xmi")) {
+        MetadataPublisher.loadAllMetadata(getSession(), true);
     }
     return res;
   }
