@@ -60,6 +60,7 @@
 	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
 	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
+	<property name="cdf-plugin.dir" value="../../pentaho-cdf/bi-platform-v2-plugin/dist" />
 
 
 	<!-- =================================================================================
@@ -71,7 +72,7 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-resources">
+	<target name="assemble" depends="assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-plugins,install-resources">
 		<chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
 	</target>
 
@@ -363,6 +364,20 @@
 			</fileset>
 		</copy>
 	</target>
+ 
+	<!--====================================================
+			target: install-plugins
+			===================================================== -->
+	<target name="install-plugins">
+	  <install-plugin zipfile="${cdf-plugin.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
+	</target>
+  
+	<macrodef name="install-plugin">
+		<attribute name="zipfile" />
+	  <sequential>
+		<unzip src="@{zipfile}" dest="${stage.dir.server}/pentaho-solutions/system" overwrite="true" />
+	    </sequential>
+	</macrodef>
 
 	<!-- =================================
 	        target: init-pentaho-data
