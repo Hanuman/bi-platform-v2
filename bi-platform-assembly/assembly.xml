@@ -374,6 +374,8 @@
 			===================================================== -->
 	<target name="install-plugins">
 	  <install-plugin zipfile="${cdf-plugin.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
+	  <!-- temporary step to copy the solutions zip to the cdf plugin folder -->
+	  <copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${cdf-plugin.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 	</target>
   
 	<macrodef name="install-plugin">
