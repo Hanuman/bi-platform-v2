@@ -159,11 +159,11 @@ public class PluginResourceLoaderTest {
 
   @Test
   public void testFindResources_allRecursive() {
-    List<URL> urls = resLoader.findResources(pluginClass, "*resources*");
-    boolean propFile1Found = false, propFile2Found = false;
+    List<URL> urls = resLoader.findResources(pluginClass, "templates/*");
     for (URL url : urls) {
-      String fileName = url.getPath().substring(1 + url.getPath().lastIndexOf(File.separator));
-      System.err.println(url);
+      System.err.println(url.getPath());
+      assertTrue("Url does not contain templates dir in path: "+url.getPath(), url.getPath().contains("templates"));
     }
+    assertEquals("Template not found", "test.html", urls.get(0).getPath().substring(urls.get(0).getPath().lastIndexOf('/') + 1));
   }
 }

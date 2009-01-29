@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -221,9 +222,27 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   public List<URL> findResources(Class<?> clazz, String namePattern) {
 
-    WildcardFileFilter fileFilter = new WildcardFileFilter(namePattern);
+    String dirPattern = "", filePattern = "*"; //$NON-NLS-1$ //$NON-NLS-2$
+
+    if(namePattern.contains("/")) { //$NON-NLS-1$
+      String pattern = namePattern.substring(0, namePattern.lastIndexOf('/'));
+      if(pattern.length() > 0) {
+        dirPattern = pattern;
+      }
+      pattern = namePattern.substring(namePattern.lastIndexOf('/')+1, namePattern.length());
+      if(pattern.length() > 0) {
+        filePattern = pattern;
+      }
+    }
+    else {
+      filePattern = namePattern;
+    }
+    
+    IOFileFilter fileFilter = new WildcardFileFilter(filePattern);
+    IOFileFilter dirFilter = TrueFileFilter.INSTANCE;
+
     Collection<?> files = FileUtils
-        .listFiles(getPluginDir(getClassLoader(clazz)), fileFilter, TrueFileFilter.INSTANCE);
+        .listFiles(new File(getPluginDir(getClassLoader(clazz)), dirPattern), fileFilter, dirFilter);
     Iterator<?> fileIter = files.iterator();
     List<URL> urls = new ArrayList<URL>(files.size());
     while (fileIter.hasNext()) {
@@ -235,6 +254,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     return urls;
   }
+
 
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
     
