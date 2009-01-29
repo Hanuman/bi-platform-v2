@@ -33,7 +33,7 @@
 	    
 	    Performs the actual compile
 	    ====================================================================-->
-  <target name="compile.compile" depends="init" description="Performs the actual javac compile">
+  <target name="compile.compile" depends="init" >
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -121,7 +121,7 @@
 	    
 	    Compiles project test source
 	    ====================================================================-->
-  <target name="compile-tests" depends="init-tests" description="Compiles project test source">
+  <target name="compile-tests" depends="init-tests">
     <javac destdir="${testclasses.dir}"
            debug="true"
            optimize="false"
@@ -310,8 +310,7 @@
 	    Generates javadoc source documentation for this project
 	    ====================================================================-->
   <target name="javadoc"
-          depends="javadoc.init, compile"
-          description="Generates javadoc source documentation for this project">
+          depends="javadoc.init, compile">
     <javadoc destdir="${javadoc.dir}/docs/api"
              access="public"
              source="1.5"
