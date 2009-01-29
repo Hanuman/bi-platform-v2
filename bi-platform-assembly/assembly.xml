@@ -356,6 +356,10 @@
 				<include name="**/**" />
 			</fileset>
 		</copy>
+	  
+	    <!-- install CDF samples -->
+	    <unzip src="${cdf-plugin.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${stage.dir.server}/pentaho-solutions" overwrite="true" />
+
 		<!-- copy db specific changes into system -->
 		<mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
 		<copy todir="${stage.dir.server}/pentaho-solutions/system" overwrite="true">
