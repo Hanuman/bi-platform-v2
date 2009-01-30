@@ -83,7 +83,7 @@
 	  	
 	  	
 	  	<!-- create a zip file -->
-	    <zip  zipfile="${dist.dir}/${plugin.name}.zip"
+	    <zip  zipfile="${dist.dir}/${plugin.name}-${project.revision}.zip"
 	         basedir="${stage.dir}"
 	         includes="**/*"
 	         excludes="**/Thumbs.db" />
