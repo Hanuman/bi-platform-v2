@@ -381,7 +381,7 @@
 	  <!-- temporary step to copy the solutions zip to the cdf plugin folder -->
 	  <copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${cdf-plugin.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 	  <!-- webservice -->
-	  <install-plugin zipfile="${webservice-plugin.dir}/pentaho-bi-platform-webservice-${dependency.pentaho-webservice-plugin.revision}.zip"/>
+	  <install-plugin zipfile="${webservice-plugin.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
 	</target>
   
 	<macrodef name="install-plugin">
