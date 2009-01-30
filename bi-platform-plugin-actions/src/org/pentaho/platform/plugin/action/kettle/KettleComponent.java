@@ -64,13 +64,7 @@ import org.pentaho.platform.util.xml.w3c.XmlW3CHelper;
  *    
  *  EXECUTION_LOG_OUTPUT - (execution-log)
  *    [JOB | TRANS] Returns the resultant log
- *    
- *  EXECUTION_LOG_OUTPUT_STYLE - (execution-log-style)
- *    [STANDARD | HTML | HTML-TABLE | HTML-SIMPLE]
- *    Returns the execution log in the specified format
- *    If left out, defaults to STANDARD
- *    Modify style in /webapps/pentaho-style/active/default.css
- *    
+ *  
  *  TRANSFORM_SUCCESS_OUTPUT - (transformation-written)
  *    [Requires MONITORSTEP to be defined]
  *    [TRANS] Returns a "result-set" for all successful rows written (Unless 
@@ -129,8 +123,6 @@ public class KettleComponent extends ComponentBase implements RowListener {
   
   private static final String EXECUTION_LOG_OUTPUT = "kettle-execution-log"; //$NON-NLS-1$
   
-  private static final String EXECUTION_LOG_OUTPUT_STYLE = "kettle-execution-log-style"; //$NON-NLS-1$
-  
   private static final String TRANSFORM_SUCCESS_OUTPUT = "transformation-output-rows"; //$NON-NLS-1$
   
   private static final String TRANSFORM_ERROR_OUTPUT = "transformation-output-error-rows"; //$NON-NLS-1$
@@ -140,14 +132,6 @@ public class KettleComponent extends ComponentBase implements RowListener {
   private static final String TRANSFORM_ERROR_COUNT_OUTPUT = "transformation-output-error-rows-count"; //$NON-NLS-1$
   
   private static final ArrayList<String> outputParams = new ArrayList<String>(Arrays.asList(EXECUTION_STATUS_OUTPUT, EXECUTION_LOG_OUTPUT, TRANSFORM_SUCCESS_OUTPUT, TRANSFORM_ERROR_OUTPUT, TRANSFORM_SUCCESS_COUNT_OUTPUT, TRANSFORM_ERROR_COUNT_OUTPUT));
-  
-  /**
-   * Static strings for HTML/CSS classes in HTML log output
-   */
-  private static final String LOG_CLASS= "kettleLog"; //$NON-NLS-1$
-  private static final String LOG_CLASS_DATETIME = "kettleLogDatetime"; //$NON-NLS-1$
-  private static final String LOG_CLASS_OBJECT = "kettleLogItem"; //$NON-NLS-1$
-  private static final String LOG_CLASS_INFO = "kettleLogInfo"; //$NON-NLS-1$
   
 
   /**
@@ -452,11 +436,6 @@ public class KettleComponent extends ComponentBase implements RowListener {
     }
     
     if(isDefinedOutput(EXECUTION_LOG_OUTPUT)){
-      
-      if(isDefinedInput(KettleComponent.EXECUTION_LOG_OUTPUT_STYLE)){
-        modifyExecutionLog(getInputStringValue(KettleComponent.EXECUTION_LOG_OUTPUT_STYLE));
-      }
-      
       setOutputValue(EXECUTION_LOG_OUTPUT, executionLog);
     }
     
@@ -502,88 +481,87 @@ public class KettleComponent extends ComponentBase implements RowListener {
     Trans trans = null;
     
     try{
-      
-      // Load transformation from transMeta
       if (transMeta != null) {
         try {
           trans = new Trans(transMeta);
-          
-          if (trans == null) {
-            throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0010_BAD_TRANSFORMATION_METADATA")); //$NON-NLS-1$
-          }
         } catch (Exception e) {
           throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0010_BAD_TRANSFORMATION_METADATA"), e); //$NON-NLS-1$
         }
       }
-
-      // OK, we have the transformation, now run it!
-    	if( !customizeTrans( trans, logWriter ) ) {
-    	  throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0028_CUSTOMIZATION_FUNCITON_FAILED")); //$NON-NLS-1$
-    	}
-    	
-      debug(Messages.getString("Kettle.DEBUG_PREPARING_TRANSFORMATION")); //$NON-NLS-1$
-
-      try {
-        trans.prepareExecution(transMeta.getArguments());
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0011_TRANSFORMATION_PREPARATION_FAILED"), e); //$NON-NLS-1$
-      }
-
-      String stepName = null;
-      String outputName = null;
       
-      try {
-        debug(Messages.getString("Kettle.DEBUG_FINDING_STEP_IMPORTER")); //$NON-NLS-1$
+      if (trans == null) {
+        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0010_BAD_TRANSFORMATION_METADATA")); //$NON-NLS-1$
+      }
+      
+      if (trans != null) {
+        // OK, we have the transformation, now run it!
+      	if( !customizeTrans( trans, logWriter ) ) {
+      	  throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0028_CUSTOMIZATION_FUNCITON_FAILED")); //$NON-NLS-1$
+      	}
+      	
+        debug(Messages.getString("Kettle.DEBUG_PREPARING_TRANSFORMATION")); //$NON-NLS-1$
+  
+        try {
+          trans.prepareExecution(transMeta.getArguments());
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0011_TRANSFORMATION_PREPARATION_FAILED"), e); //$NON-NLS-1$
+        }
+  
+        String stepName = null;
+        String outputName = null;
         
-        stepName = getMonitorStepName();
-        outputName = getTransformSuccessOutputName();
+        try {
+          debug(Messages.getString("Kettle.DEBUG_FINDING_STEP_IMPORTER")); //$NON-NLS-1$
+          
+          stepName = getMonitorStepName();
+          outputName = getTransformSuccessOutputName();
+          
+          if(outputName != null){
+            registerAsStepListener(stepName, trans);
+          }
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED"), e); //$NON-NLS-1$
+        }
+  
+        try {
+          debug(Messages.getString("Kettle.DEBUG_STARTING_TRANSFORMATION")); //$NON-NLS-1$
+          trans.startThreads();
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0013_TRANSFORMATION_START_FAILED"), e); //$NON-NLS-1$
+        }
+  
+        try {
+          // It's running in a separate thread to allow monitoring, etc.
+          debug(Messages.getString("Kettle.DEBUG_TRANSFORMATION_RUNNING")); //$NON-NLS-1$
+  
+          trans.waitUntilFinished();
+          trans.endProcessing("end"); //$NON-NLS-1$
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE"), e); //$NON-NLS-1$
+        }
         
-        if(outputName != null){
-          registerAsStepListener(stepName, trans);
+        // Dump the Kettle log...
+        debug(kettleUserAppender.getBuffer().toString());
+        
+        //Build written row output
+        if(results != null){
+          if (outputName != null) {
+            setOutputValue(outputName, results);
+          }
+          if(isDefinedOutput(TRANSFORM_SUCCESS_COUNT_OUTPUT)){
+            setOutputValue(TRANSFORM_SUCCESS_COUNT_OUTPUT, results.getRowCount());
+          }
         }
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0012_ROW_LISTENER_CREATE_FAILED"), e); //$NON-NLS-1$
-      }
-      
-      debug(Messages.getString("Kettle.DEBUG_STARTING_TRANSFORMATION")); //$NON-NLS-1$
-
-      try {
-        trans.startThreads();
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0013_TRANSFORMATION_START_FAILED"), e); //$NON-NLS-1$
-      }
-
-      debug(Messages.getString("Kettle.DEBUG_TRANSFORMATION_RUNNING")); //$NON-NLS-1$
-      
-      try {
-        // It's running in a separate thread to allow monitoring, etc.
-        trans.waitUntilFinished();
-        trans.endProcessing("end"); //$NON-NLS-1$
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE"), e); //$NON-NLS-1$
-      }
-      
-      // Dump the Kettle log...
-      debug(kettleUserAppender.getBuffer().toString());
-      
-      //Build written row output
-      if(results != null){
-        if (outputName != null) {
-          setOutputValue(outputName, results);
-        }
-        if(isDefinedOutput(TRANSFORM_SUCCESS_COUNT_OUTPUT)){
-          setOutputValue(TRANSFORM_SUCCESS_COUNT_OUTPUT, results.getRowCount());
-        }
-      }
-      
-      //Build error row output
-      if(errorResults != null){
-        if(isDefinedOutput(TRANSFORM_ERROR_OUTPUT)){
-          setOutputValue(TRANSFORM_ERROR_OUTPUT, errorResults);
-        }
-        if(isDefinedOutput(TRANSFORM_ERROR_COUNT_OUTPUT)){
-          setOutputValue(TRANSFORM_ERROR_COUNT_OUTPUT, errorResults.getRowCount());
-        }
+        
+        //Build error row output
+        if(errorResults != null){
+          if(isDefinedOutput(TRANSFORM_ERROR_OUTPUT)){
+            setOutputValue(TRANSFORM_ERROR_OUTPUT, errorResults);
+          }
+          if(isDefinedOutput(TRANSFORM_ERROR_COUNT_OUTPUT)){
+            setOutputValue(TRANSFORM_ERROR_COUNT_OUTPUT, errorResults.getRowCount());
+          }
+        }      
       }
     } catch (KettleComponentException e){
       success = false;
@@ -592,6 +570,8 @@ public class KettleComponent extends ComponentBase implements RowListener {
     
     prepareKettleOutput(trans);
 
+    //TODO: 
+    
     return success;
   }
   
@@ -725,47 +705,45 @@ public class KettleComponent extends ComponentBase implements RowListener {
     
     try {
       if (jobMeta != null) {
-        //Load job
         try {
           job = new Job(logWriter, StepLoader.getInstance(), repository, jobMeta);
-          
-          if (job == null) {
-            debug(kettleUserAppender.getBuffer().toString());
-            throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0021_BAD_JOB_METADATA")); //$NON-NLS-1$
-          }
         } catch (Exception e) {
           throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0021_BAD_JOB_METADATA"), e); //$NON-NLS-1$
         }
-      }
-      
-      if (ComponentBase.debug) {
-        debug(Messages.getString("Kettle.DEBUG_STARTING_JOB")); //$NON-NLS-1$
-      }
-      
-      try {
-        job.start();
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0022_JOB_START_FAILED"), e); //$NON-NLS-1$
-      }
 
-      if (ComponentBase.debug) {
-        debug(Messages.getString("Kettle.DEBUG_JOB_RUNNING")); //$NON-NLS-1$
       }
-      
-      try {
-        // It's running in a separate tread to allow monitoring, etc.
-        job.waitUntilFinished(5000000);
-        job.endProcessing("end", job.getResult()); //$NON-NLS-1$
-        if ((job.getErrors() > 0) || (job.getResult().getNrErrors() > 0)) {
-          debug(kettleUserAppender.getBuffer().toString());
-          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE")); //$NON-NLS-1$
+      if (job == null) {
+        debug(kettleUserAppender.getBuffer().toString());
+        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0021_BAD_JOB_METADATA")); //$NON-NLS-1$
+      }
+      if (job != null) {
+        try {
+          if (ComponentBase.debug) {
+            debug(Messages.getString("Kettle.DEBUG_STARTING_JOB")); //$NON-NLS-1$
+          }
+          job.start();
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0022_JOB_START_FAILED"), e); //$NON-NLS-1$
         }
-      } catch (Exception e) {
-        throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE"), e); //$NON-NLS-1$
+
+        try {
+          // It's running in a separate tread to allow monitoring, etc.
+          if (ComponentBase.debug) {
+            debug(Messages.getString("Kettle.DEBUG_JOB_RUNNING")); //$NON-NLS-1$
+          }
+          job.waitUntilFinished(5000000);
+          job.endProcessing("end", job.getResult()); //$NON-NLS-1$
+          if ((job.getErrors() > 0) || (job.getResult().getNrErrors() > 0)) {
+            debug(kettleUserAppender.getBuffer().toString());
+            throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE")); //$NON-NLS-1$
+          }
+        } catch (Exception e) {
+          throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE"), e); //$NON-NLS-1$
+        }
+        
+        // Dump the Kettle log...
+        debug(kettleUserAppender.getBuffer().toString());
       }
-      
-      // Dump the Kettle log...
-      debug(kettleUserAppender.getBuffer().toString());
     } catch (KettleComponentException e) {
       success = false;
       error(Messages.getErrorString("Kettle.ERROR_0008_ERROR_RUNNING", e.toString()), e); //$NON-NLS-1$
@@ -1060,92 +1038,6 @@ public class KettleComponent extends ComponentBase implements RowListener {
       throw new KettleStepException(e);
     }
   }
-  
-  private void modifyExecutionLog(String inputStringValue) {
-    String originalExecutionLog = executionLog;
-    
-    if(inputStringValue.equalsIgnoreCase("HTML-SIMPLE")){ //$NON-NLS-1$
-      //extract lines of log
-      String[] logLines = executionLog.split("\r\n|\r|\n"); //$NON-NLS-1$
-      
-      //clear executionLog to hold new format
-      executionLog = ""; //$NON-NLS-1$
-      
-      for(String line : logLines){
-        executionLog += line + "<br />"; //$NON-NLS-1$
-      }
-    } else if(inputStringValue.equalsIgnoreCase("HTML")){ //$NON-NLS-1$
-      String[] logLines = executionLog.split("\r\n|\r|\n"); //$NON-NLS-1$
-      
-      try{
-        executionLog = "<div class=\"" + KettleComponent.LOG_CLASS + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-        
-        for(String line : logLines){
-          int offsetBegin = 0;
-          int offsetEnd = 0;
-          
-          String finalLine = "<span class=\"" + KettleComponent.LOG_CLASS_DATETIME + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          offsetEnd = line.indexOf(" - ", offsetBegin); //$NON-NLS-1$
-          finalLine += line.substring(offsetBegin, offsetEnd);
-          offsetBegin = offsetEnd;
-          finalLine += "</span>";  //$NON-NLS-1$
-          
-          finalLine += "<span class=\"" + KettleComponent.LOG_CLASS_OBJECT + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          offsetEnd = line.indexOf(" - ", offsetBegin + 3) + 3; //$NON-NLS-1$
-          finalLine += line.substring(offsetBegin, offsetEnd);
-          offsetBegin = offsetEnd;
-          finalLine += "</span>";  //$NON-NLS-1$
-          
-          finalLine += "<span class=\"" + KettleComponent.LOG_CLASS_INFO + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          finalLine += line.substring(offsetBegin, line.length());
-          offsetBegin = offsetEnd;
-          finalLine += "</span>";  //$NON-NLS-1$
-          
-          executionLog += finalLine + "<br />"; //$NON-NLS-1$
-        }
-        
-        executionLog += "</div>"; //$NON-NLS-1$
-      }catch(Exception e){
-        error(Messages.getErrorString("Kettle.ERROR_0029_ERROR_CONVERTING_EXECUTION_LOG", originalExecutionLog), e); //$NON-NLS-1$
-      }
-    } else if(inputStringValue.equalsIgnoreCase("HTML-TABLE")){ //$NON-NLS-1$
-      String[] logLines = executionLog.split("\r\n|\r|\n"); //$NON-NLS-1$
-      
-      try{
-        //clear executionLog to hold new format
-        executionLog = "<table class=\"" + KettleComponent.LOG_CLASS + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-        
-        for(String line : logLines){
-          int offsetBegin = 0;
-          int offsetEnd = 0;
-          
-          String finalLine = "<tr>"; //$NON-NLS-1$
-          
-          finalLine += "<td class=\"" + KettleComponent.LOG_CLASS_DATETIME + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          offsetEnd = line.indexOf(" - ", offsetBegin); //$NON-NLS-1$
-          finalLine += line.substring(offsetBegin, offsetEnd);
-          offsetBegin = offsetEnd;
-          finalLine += "</td>";  //$NON-NLS-1$
-          
-          finalLine += "<td class=\"" + KettleComponent.LOG_CLASS_OBJECT + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          offsetEnd = line.indexOf(" - ", offsetBegin + 3) + 3; //$NON-NLS-1$
-          finalLine += line.substring(offsetBegin, offsetEnd);
-          offsetBegin = offsetEnd;
-          finalLine += "</td>";  //$NON-NLS-1$
-          
-          finalLine += "<td class=\"" + KettleComponent.LOG_CLASS_INFO + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
-          finalLine += line.substring(offsetBegin, line.length());
-          offsetBegin = offsetEnd;
-          finalLine += "</td>";  //$NON-NLS-1$
-          
-          executionLog += finalLine + "<tr />"; //$NON-NLS-1$
-        }
-        
-        executionLog += "</table>"; //$NON-NLS-1$
-      }catch(Exception e){
-        error(Messages.getErrorString("Kettle.ERROR_0029_ERROR_CONVERTING_EXECUTION_LOG", originalExecutionLog), e); //$NON-NLS-1$
-      }
-    }
-  }
+ 
   
 }
