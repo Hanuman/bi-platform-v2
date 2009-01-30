@@ -7,7 +7,7 @@
   
   See common_build.xml for more details
 ============================================================================-->
-<project name="Webservice BI Server" basedir="." default="jar" 
+<project name="Webservice BI Server" basedir="." default="dist" 
 	xmlns:ivy="antlib:org.apache.ivy.ant" >
 	
 	<description>
@@ -38,28 +38,29 @@
 		    Creates a distribution of this project
 		    ====================================================================-->
 	  <target name="dist" depends="jar" description="Creates a distribution">
+	    <property name="stage.dir" value="${bin.dir}/stage"/>
 
 	  	<!-- delete and re-create the plugin dist folder tree -->
-	    <delete dir="${dist.dir}/${plugin.name}" />
-	    <mkdir dir="${dist.dir}/${plugin.name}" />
-	    <mkdir dir="${dist.dir}/${plugin.name}/lib" />
+	    <delete dir="${stage.dir}" />
+	    <mkdir dir="${stage.dir}/${plugin.name}" />
+	    <mkdir dir="${stage.dir}/${plugin.name}/lib" />
 	  	
 	  	<!-- copy the plugin jar to the plugin dist lib folder -->
-	    <copy todir="${dist.dir}/${plugin.name}/lib">
+	    <copy todir="${stage.dir}/${plugin.name}/lib">
 	      <fileset dir="${dist.dir}">
 	        <include name="*.jar" />
 	      </fileset>
 	    </copy>
 	  	
 	  	<!-- Copy the plugin.xml and any other files from the resource dir -->
-	    <copy todir="${dist.dir}/${plugin.name}">
+	    <copy todir="${stage.dir}/${plugin.name}">
 	      <fileset dir="${resource.dir}">
 	        <include name="**/*" />
 	      </fileset>
 	    </copy>
 
 	  	<!-- copy the runtime jars needed -->
-	    <copy todir="${dist.dir}/${plugin.name}/lib">
+	    <copy todir="${stage.dir}/${plugin.name}/lib">
 	      <fileset dir="${lib.dir}">
 	        <include name="XmlSchema-*.jar" />
 		    <include name="annogen-*.jar" />
@@ -82,8 +83,8 @@
 	  	
 	  	
 	  	<!-- create a zip file -->
-	    <jar jarfile="${dist.dir}/${plugin.name}.zip"
-	         basedir="${dist.dir}/${plugin.name}"
+	    <zip  zipfile="${dist.dir}/${plugin.name}.zip"
+	         basedir="${stage.dir}"
 	         includes="**/*"
 	         excludes="**/Thumbs.db" />
 
