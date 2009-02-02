@@ -22,9 +22,6 @@ import javax.swing.table.TableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Node;
-import org.jfree.report.DataFactory;
-import org.jfree.report.ParameterDataRow;
-import org.jfree.report.util.ReportProperties;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.data.IDataComponent;
 import org.pentaho.platform.api.data.IPreparedComponent;
@@ -38,6 +35,9 @@ import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoTableDataFac
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoTableModel;
 import org.pentaho.platform.plugin.action.jfreereport.helper.ReportUtils;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.engine.classic.core.util.ReportProperties;
 
 /**
  * This is step 2 out of 3. This class is a wrapper around an other component,

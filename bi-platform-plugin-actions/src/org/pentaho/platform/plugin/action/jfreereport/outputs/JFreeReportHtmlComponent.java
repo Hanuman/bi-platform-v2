@@ -16,23 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.JFreeReportBoot;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.StreamReportProcessor;
-import org.jfree.report.modules.output.table.html.AllItemsHtmlPrinter;
-import org.jfree.report.modules.output.table.html.HtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.HtmlPrinter;
-import org.jfree.report.modules.output.table.html.StreamHtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.URLRewriter;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultNameGenerator;
-import org.jfree.repository.NameGenerator;
-import org.jfree.repository.file.FileRepository;
-import org.jfree.repository.stream.StreamRepository;
-import org.jfree.util.Configuration;
 import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.repository.IContentLocation;
 import org.pentaho.platform.api.repository.IContentRepository;
@@ -41,6 +24,23 @@ import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportCompone
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoURLRewriter;
 import org.pentaho.platform.plugin.action.jfreereport.repository.ReportContentRepository;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.StreamReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.StreamHtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.URLRewriter;
+import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
+import org.pentaho.reporting.libraries.repository.NameGenerator;
+import org.pentaho.reporting.libraries.repository.file.FileRepository;
+import org.pentaho.reporting.libraries.repository.stream.StreamRepository;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -66,7 +66,7 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
       IContentRepository contentRepository = null;
       try {
@@ -77,7 +77,7 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
 
       String contentHandlerPattern = getInputStringValue(AbstractJFreeReportComponent.REPORTHTML_CONTENTHANDLER);
       if (contentHandlerPattern == null) {
-        final Configuration globalConfig = JFreeReportBoot.getInstance().getGlobalConfig();
+        final Configuration globalConfig = ClassicEngineBoot.getInstance().getGlobalConfig();
         contentHandlerPattern = globalConfig.getConfigProperty("org.pentaho.web.ContentHandler"); //$NON-NLS-1$
       }
 

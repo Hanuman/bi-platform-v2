@@ -37,46 +37,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.base.config.ModifiableConfiguration;
-import org.jfree.io.IOUtils;
-import org.jfree.report.DataFactory;
-import org.jfree.report.JFreeReport;
-import org.jfree.report.JFreeReportBoot;
-import org.jfree.report.ParameterDataRow;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.ResourceBundleFactory;
-import org.jfree.report.ext.modules.java14print.Java14PrintUtil;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.gui.base.PreviewDialog;
-import org.jfree.report.modules.gui.base.ReportController;
-import org.jfree.report.modules.gui.print.PrintUtil;
-import org.jfree.report.modules.output.pageable.base.PageableReportProcessor;
-import org.jfree.report.modules.output.pageable.pdf.PdfOutputProcessor;
-import org.jfree.report.modules.output.table.base.FlowReportProcessor;
-import org.jfree.report.modules.output.table.base.StreamReportProcessor;
-import org.jfree.report.modules.output.table.csv.StreamCSVOutputProcessor;
-import org.jfree.report.modules.output.table.html.AllItemsHtmlPrinter;
-import org.jfree.report.modules.output.table.html.HtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.HtmlPrinter;
-import org.jfree.report.modules.output.table.html.StreamHtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.URLRewriter;
-import org.jfree.report.modules.output.table.rtf.StreamRTFOutputProcessor;
-import org.jfree.report.modules.output.table.xls.FlowExcelOutputProcessor;
-import org.jfree.report.modules.output.xml.XMLProcessor;
-import org.jfree.report.modules.parser.base.ReportGenerator;
-import org.jfree.report.util.ReportProperties;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultNameGenerator;
-import org.jfree.repository.NameGenerator;
-import org.jfree.repository.file.FileRepository;
-import org.jfree.repository.stream.StreamRepository;
-import org.jfree.resourceloader.FactoryParameterKey;
-import org.jfree.resourceloader.ResourceException;
-import org.jfree.resourceloader.ResourceKey;
-import org.jfree.resourceloader.ResourceManager;
 import org.jfree.ui.RefineryUtilities;
-import org.jfree.util.Configuration;
 import org.pentaho.actionsequence.dom.ActionInput;
 import org.pentaho.actionsequence.dom.ActionResource;
 import org.pentaho.actionsequence.dom.IActionInput;
@@ -111,6 +72,45 @@ import org.pentaho.platform.plugin.action.jfreereport.helper.ReportUtils;
 import org.pentaho.platform.plugin.action.jfreereport.repository.ReportContentRepository;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.util.xml.XmlHelper;
+import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ParameterDataRow;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.gui.base.PreviewDialog;
+import org.pentaho.reporting.engine.classic.core.modules.gui.base.ReportController;
+import org.pentaho.reporting.engine.classic.core.modules.gui.print.PrintUtil;
+import org.pentaho.reporting.engine.classic.core.modules.output.pageable.base.PageableReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.pageable.pdf.PdfOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.FlowReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.StreamReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.csv.StreamCSVOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.StreamHtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.URLRewriter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.rtf.StreamRTFOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.xls.FlowExcelOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.xml.XMLProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.parser.base.ReportGenerator;
+import org.pentaho.reporting.engine.classic.core.util.ReportProperties;
+import org.pentaho.reporting.engine.classic.extensions.modules.java14print.Java14PrintUtil;
+import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.config.ModifiableConfiguration;
+import org.pentaho.reporting.libraries.base.util.IOUtils;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
+import org.pentaho.reporting.libraries.repository.NameGenerator;
+import org.pentaho.reporting.libraries.repository.file.FileRepository;
+import org.pentaho.reporting.libraries.repository.stream.StreamRepository;
+import org.pentaho.reporting.libraries.resourceloader.FactoryParameterKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.xml.sax.InputSource;
 
 /**
@@ -300,7 +300,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
   protected boolean executeReportAction() {
     boolean result = false;
     try {
-      JFreeReport report = getReport();
+      MasterReport report = getReport();
       if (report != null) {
         addTempParameterObject(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT, report);
         if (initReportConfigParameters(report) && (initReportInputs(report))) {
@@ -505,7 +505,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return pentahoBaseURL;
   }
 
-  private JFreeReport parseReport(final IActionSequenceResource resource) {
+  private MasterReport parseReport(final IActionSequenceResource resource) {
     try {
       // define the resource url so that PentahoResourceLoader recognizes the path.
       String resourceUrl = PentahoResourceLoader.SOLUTION_SCHEMA_NAME + PentahoResourceLoader.SCHEMA_SEPARATOR
@@ -561,9 +561,9 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
   }
 
-  public JFreeReport getReport() throws Exception {
+  public MasterReport getReport() throws Exception {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
-    JFreeReport report = getReportFromResource();
+    MasterReport report = getReportFromResource();
     if (report == null) {
       report = getReportFromInputParam();
       if (report == null) {
@@ -571,14 +571,14 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       }
     }
     if ((report != null) && jFreeReportAction.getCreatePrivateCopy().getBooleanValue(false)) {
-      report = (JFreeReport) report.clone();
+      report = (MasterReport) report.clone();
     }
     return report;
   }
 
-  private JFreeReport getReportFromResource() throws ResourceException, IOException {
+  private MasterReport getReportFromResource() throws ResourceException, IOException {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
-    JFreeReport report = null;
+    MasterReport report = null;
     Object reportDefinition = jFreeReportAction.getReportDefinition();
     IActionSequenceResource resource = null;
     if (reportDefinition instanceof ActionResource) {
@@ -605,8 +605,8 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return report;
   }
 
-  private JFreeReport getReportFromInputParam() throws ResourceException, UnsupportedEncodingException, IOException {
-    JFreeReport report = null;
+  private MasterReport getReportFromInputParam() throws ResourceException, UnsupportedEncodingException, IOException {
+	  MasterReport report = null;
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
 
     Object reportDefinition = jFreeReportAction.getReportDefinition();
@@ -618,7 +618,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return report;
   }
 
-  protected JFreeReport createReport(final String reportDefinition) throws ResourceException, IOException {
+  protected MasterReport createReport(final String reportDefinition) throws ResourceException, IOException {
     ReportGenerator generator = ReportGenerator.createInstance();
 
     // add the runtime context so that PentahoResourceData class can get access to the solution repo
@@ -642,9 +642,9 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return generator.parseReport(reportDefinitionInputSource, getDefinedResourceURL(url));
   }
 
-  private JFreeReport getReportFromJar() throws Exception {
+  private MasterReport getReportFromJar() throws Exception {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
-    JFreeReport report;
+    MasterReport report;
     org.pentaho.actionsequence.dom.IActionResource reportJar = jFreeReportAction.getReportDefinitionJar().getJar();
     final IActionSequenceResource resource = getResource(reportJar.getName());
     final ClassLoader loader = ReportUtils.createJarLoader(getSession(), resource);
@@ -686,7 +686,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
   }
 
-  private boolean initReportConfigParameters(final JFreeReport report) {
+  private boolean initReportConfigParameters(final MasterReport report) {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
     boolean result = true;
     if (isDefinedInput(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT)) {
@@ -708,7 +708,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  private void setReportConfigParameters(final JFreeReport report,
+  private void setReportConfigParameters(final MasterReport report,
       final JFreeReportAction.StaticReportConfig reportConfig) {
     // We have some configuration parameters in the component definition
     for (int i = 0; i < reportConfig.size(); i++) {
@@ -735,7 +735,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
 
   }
 
-  private void setReportConfigParameters(final JFreeReport report, final Map values) {
+  private void setReportConfigParameters(final MasterReport report, final Map values) {
     Map.Entry ent;
     ModifiableConfiguration config = report.getReportConfiguration();
     Iterator it = values.entrySet().iterator();
@@ -747,7 +747,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
   }
 
-  private void setReportConfigParameters(final JFreeReport report, final IPentahoResultSet values) {
+  private void setReportConfigParameters(final MasterReport report, final IPentahoResultSet values) {
     int rowCount = values.getRowCount();
     int colCount = values.getColumnCount();
     ModifiableConfiguration config = report.getReportConfiguration();
@@ -772,7 +772,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
   }
 
-  private boolean initReportInputs(final JFreeReport report) throws CloneNotSupportedException {
+  private boolean initReportInputs(final MasterReport report) throws CloneNotSupportedException {
 
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
     // Get input parameters, and set them as properties in the report
@@ -861,7 +861,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return fileExtension;
   }
 
-  private boolean generateReport(final JFreeReport report, final PentahoTableDataFactory factory) throws IOException {
+  private boolean generateReport(final MasterReport report, final PentahoTableDataFactory factory) throws IOException {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
 
     boolean result = false;
@@ -913,6 +913,8 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       if (contentItem != null) {
         contentItem.closeOutputStream();
       }
+      // force close the factory
+      factory.finalize();
     } else {
       warn(Messages.getString("JFreeReportAllContentComponent.WARN_NO_PRINTER_GIVEN")); //$NON-NLS-1$
     }
@@ -949,7 +951,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return contentItem;
   }
 
-  private boolean writeReport(final String outputFormat, final JFreeReport report, final OutputStream outputStream,
+  private boolean writeReport(final String outputFormat, final MasterReport report, final OutputStream outputStream,
       final int yieldRate, final String htmlContentHandlerUrlPattern) {
     boolean result = false;
     if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_HTML.equals(outputFormat)) {
@@ -968,7 +970,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  public boolean writeHtml(final JFreeReport report, final OutputStream outputStream, final int yieldRate,
+  public boolean writeHtml(final MasterReport report, final OutputStream outputStream, final int yieldRate,
       String htmlContentHandlerUrlPattern) {
     try {
       IContentRepository contentRepository = null;
@@ -979,7 +981,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       }
 
       if (htmlContentHandlerUrlPattern == null) {
-        final Configuration globalConfig = JFreeReportBoot.getInstance().getGlobalConfig();
+        final Configuration globalConfig = ClassicEngineBoot.getInstance().getGlobalConfig();
         htmlContentHandlerUrlPattern = globalConfig.getConfigProperty("org.pentaho.web.ContentHandler"); //$NON-NLS-1$
       }
 
@@ -1054,10 +1056,10 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
   }
 
-  protected boolean writeXls(final JFreeReport report, final OutputStream outputStream, final int yieldRate) {
+  protected boolean writeXls(final MasterReport report, final OutputStream outputStream, final int yieldRate) {
     boolean result = false;
     try {
-      final FlowExcelOutputProcessor target = new FlowExcelOutputProcessor(report.getConfiguration(), outputStream);
+      final FlowExcelOutputProcessor target = new FlowExcelOutputProcessor(report.getConfiguration(), outputStream, report.getResourceManager());
       final FlowReportProcessor reportProcessor = new FlowReportProcessor(report, target);
 
       if (isDefinedInput(AbstractJFreeReportComponent.WORKBOOK_PARAM)) {
@@ -1076,7 +1078,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  protected boolean writePdf(final JFreeReport report, final OutputStream outputStream, final int yieldRate) {
+  protected boolean writePdf(final MasterReport report, final OutputStream outputStream, final int yieldRate) {
     PageableReportProcessor proc = null;
     boolean result = false;
     try {
@@ -1101,7 +1103,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  public boolean print(final JFreeReport report, final String jobName, final String printerName) {
+  public boolean print(final MasterReport report, final String jobName, final String printerName) {
     boolean result = false;
     if (jobName != null) {
       report.getReportConfiguration().setConfigProperty(PrintUtil.PRINTER_JOB_NAME_KEY, String.valueOf(jobName));
@@ -1127,7 +1129,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  protected boolean writeCsv(final JFreeReport report, final OutputStream outputStream, final int yieldRate) {
+  protected boolean writeCsv(final MasterReport report, final OutputStream outputStream, final int yieldRate) {
     boolean result = false;
     try {
       final StreamCSVOutputProcessor target = new StreamCSVOutputProcessor(report.getConfiguration(), outputStream);
@@ -1145,10 +1147,10 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  protected boolean writeRtf(final JFreeReport report, final OutputStream outputStream, final int yieldRate) {
+  protected boolean writeRtf(final MasterReport report, final OutputStream outputStream, final int yieldRate) {
     boolean result = false;
     try {
-      final StreamRTFOutputProcessor target = new StreamRTFOutputProcessor(report.getConfiguration(), outputStream);
+      final StreamRTFOutputProcessor target = new StreamRTFOutputProcessor(report.getConfiguration(), outputStream, report.getResourceManager());
       final StreamReportProcessor proc = new StreamReportProcessor(report, target);
       if (yieldRate > 0) {
         proc.addReportProgressListener(new YieldReportListener(yieldRate));
@@ -1163,7 +1165,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  protected boolean writeXml(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean writeXml(final MasterReport report, final OutputStream outputStream) {
     boolean result = false;
     try {
       final XMLProcessor processor = new XMLProcessor(report);
@@ -1181,7 +1183,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return result;
   }
 
-  protected boolean writeSwingPreview(final JFreeReport report) {
+  protected boolean writeSwingPreview(final MasterReport report) {
     final ModifiableConfiguration reportConfiguration = report.getReportConfiguration();
 
     final boolean progressBar = getInputBooleanValue(AbstractJFreeReportComponent.REPORTSWING_PROGRESSBAR,
@@ -1218,7 +1220,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     return null;
   }
 
-  private PreviewDialog createDialog(final JFreeReport report) {
+  private PreviewDialog createDialog(final MasterReport report) {
     final boolean modal = getInputBooleanValue(AbstractJFreeReportComponent.REPORTSWING_MODAL, true);
 
     if (isDefinedInput(AbstractJFreeReportComponent.REPORTSWING_PARENTDIALOG)) {

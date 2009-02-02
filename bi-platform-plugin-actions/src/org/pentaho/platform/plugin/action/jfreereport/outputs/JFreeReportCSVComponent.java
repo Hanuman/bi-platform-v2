@@ -15,11 +15,11 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.StreamReportProcessor;
-import org.jfree.report.modules.output.table.csv.StreamCSVOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.StreamReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.csv.StreamCSVOutputProcessor;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -43,7 +43,7 @@ public class JFreeReportCSVComponent extends AbstractGenerateStreamContentCompon
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
       final StreamCSVOutputProcessor target = new StreamCSVOutputProcessor(report.getConfiguration(), outputStream);
       final StreamReportProcessor reportProcessor = new StreamReportProcessor(report, target);

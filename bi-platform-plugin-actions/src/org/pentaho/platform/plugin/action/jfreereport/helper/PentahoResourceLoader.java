@@ -16,13 +16,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jfree.resourceloader.ResourceData;
-import org.jfree.resourceloader.ResourceKey;
-import org.jfree.resourceloader.ResourceKeyCreationException;
-import org.jfree.resourceloader.ResourceLoader;
-import org.jfree.resourceloader.ResourceLoadingException;
-import org.jfree.resourceloader.ResourceManager;
-import org.jfree.resourceloader.loader.LoaderUtils;
+import org.pentaho.reporting.libraries.resourceloader.ResourceData;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoader;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoadingException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import org.pentaho.reporting.libraries.resourceloader.loader.LoaderUtils;
 
 /**
  * This class is implemented to support loading solution files
@@ -143,6 +143,9 @@ public class PentahoResourceLoader implements ResourceLoader {
     } else {
       resource = LoaderUtils.mergePaths((String) parent.getIdentifier(), path);
     }
+    if (!resource.startsWith(getSchema())) {
+        throw new ResourceKeyCreationException("Assertation: Unsupported key type"); //$NON-NLS-1$
+    }
     final Map map;
     if (data != null) {
       map = new HashMap();
@@ -151,6 +154,7 @@ public class PentahoResourceLoader implements ResourceLoader {
     } else {
       map = parent.getFactoryParameters();
     }
+    
     return new ResourceKey(parent.getSchema(), resource, map);
   }
 

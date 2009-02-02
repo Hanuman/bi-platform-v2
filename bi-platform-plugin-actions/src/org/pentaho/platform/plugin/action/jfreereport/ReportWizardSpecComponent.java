@@ -25,7 +25,6 @@ import javax.activation.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.JFreeReport;
 import org.pentaho.actionsequence.dom.actions.JFreeReportAction;
 import org.pentaho.commons.connection.ActivationHelper;
 import org.pentaho.commons.connection.IPentahoConnection;
@@ -41,6 +40,7 @@ import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoTableDataFactory;
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoTableModel;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
 
 /**
  * The report-wizard component generates a report definition from a report-spec
@@ -84,8 +84,8 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
   }
 
   @Override
-  public JFreeReport getReport() throws Exception {
-    JFreeReport report = null;
+  public MasterReport getReport() throws Exception {
+	  MasterReport report = null;
     if (reportSpec != null) {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       ReportGenerationUtility.createJFreeReportXML(reportSpec, outputStream, 0, 0, false, "", 0, 0); //$NON-NLS-1$

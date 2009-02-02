@@ -19,7 +19,7 @@ package org.pentaho.platform.plugin.action.jfreereport;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import org.jfree.report.util.CloseableTableModel;
+import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 
 /**
  * @deprecated This class is no longer used.

@@ -15,21 +15,21 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.FlowReportProcessor;
-import org.jfree.report.modules.output.table.html.AllItemsHtmlPrinter;
-import org.jfree.report.modules.output.table.html.FlowHtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.HtmlPrinter;
-import org.jfree.report.modules.output.table.html.SingleRepositoryURLRewriter;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultNameGenerator;
-import org.jfree.repository.RepositoryUtilities;
-import org.jfree.repository.zipwriter.ZipRepository;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.FlowReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.FlowHtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.SingleRepositoryURLRewriter;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
+import org.pentaho.reporting.libraries.repository.RepositoryUtilities;
+import org.pentaho.reporting.libraries.repository.zip.ZipRepository;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -53,14 +53,14 @@ public class JFreeReportZipHtmlComponent extends AbstractGenerateStreamContentCo
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
       String dataDirectory = getInputStringValue(AbstractJFreeReportComponent.REPORTDIRECTORYHTML_DATADIR);
       if (dataDirectory == null) {
         dataDirectory = "data"; //$NON-NLS-1$
       }
 
-      final ZipRepository zipRepository = new ZipRepository(outputStream);
+      final ZipRepository zipRepository = new ZipRepository();
       final ContentLocation root = zipRepository.getRoot();
       final ContentLocation data = RepositoryUtilities.createLocation(zipRepository, RepositoryUtilities.split(
           dataDirectory, "/"));//$NON-NLS-1$
@@ -79,7 +79,7 @@ public class JFreeReportZipHtmlComponent extends AbstractGenerateStreamContentCo
         sp.addReportProgressListener(new YieldReportListener(yieldRate));
       }
       sp.processReport();
-      zipRepository.close();
+      zipRepository.write(outputStream);
       close();
       return true;
     } catch (ReportProcessingException e) {

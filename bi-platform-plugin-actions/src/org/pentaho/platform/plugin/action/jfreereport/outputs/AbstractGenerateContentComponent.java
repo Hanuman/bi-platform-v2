@@ -21,11 +21,11 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.io.IOUtils;
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ResourceBundleFactory;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoResourceBundleFactory;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
 
 /**
  * The base class for all content generating components. This class adds the report-data to the JFreeReport object. If
@@ -69,10 +69,10 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
     return true;
   }
 
-  protected JFreeReport getReport() {
+  protected MasterReport getReport() {
     final Object maybeJFreeReport = getInputValue(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT);
-    if (maybeJFreeReport instanceof JFreeReport) {
-      return (JFreeReport) maybeJFreeReport;
+    if (maybeJFreeReport instanceof MasterReport) {
+      return (MasterReport) maybeJFreeReport;
     }
     return null;
   }
@@ -84,7 +84,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
 
   @Override
   protected boolean executeAction() throws Throwable {
-    JFreeReport report = getReport();
+	  MasterReport report = getReport();
     if (report == null) {
       warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0043_NO_REPORT_FOR_ACTION")); //$NON-NLS-1$
       return false;
@@ -95,7 +95,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
     final boolean privateCopy = getInputBooleanValue(
         AbstractJFreeReportComponent.REPORTPARAMCOMPONENT_PRIVATEREPORT_OUTPUT, false);
     if (privateCopy && isDefinedOutput(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT)) {
-      report = (JFreeReport) report.clone();
+      report = (MasterReport) report.clone();
     }
 
     // this might be invalid in case the action is contained in a sub-directory.
@@ -130,7 +130,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
     }
   }
 
-  protected abstract boolean performExport(final JFreeReport report) throws IOException;
+  protected abstract boolean performExport(final MasterReport report) throws IOException;
 
   @Override
   public void done() {

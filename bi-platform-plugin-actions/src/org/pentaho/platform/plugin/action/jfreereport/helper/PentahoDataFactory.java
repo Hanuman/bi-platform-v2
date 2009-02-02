@@ -18,47 +18,52 @@ import java.util.Map;
 
 import javax.swing.table.TableModel;
 
-import org.jfree.report.DataRow;
-import org.jfree.report.ReportDataFactoryException;
-import org.jfree.report.modules.misc.datafactory.StaticDataFactory;
+import org.pentaho.reporting.engine.classic.core.DataRow;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.StaticDataFactory;
 
 /**
  * This needs the latest CVS version of JFreeReport (0.8.7-5-cvs)...
- *
+ * 
  * @author Thomas Morgner
  */
 public class PentahoDataFactory extends StaticDataFactory {
-  private ClassLoader classLoader;
+	private ClassLoader classLoader;
 
-  public PentahoDataFactory(final ClassLoader classLoader) {
-    this.classLoader = classLoader;
-  }
+	public PentahoDataFactory(final ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
 
-  @Override
-  public ClassLoader getClassLoader() {
-    return classLoader;
-  }
+	@Override
+	public ClassLoader getClassLoader() {
+		return classLoader;
+	}
 
-  @Override
-  public TableModel queryData(final String string, final DataRow dataRow) throws ReportDataFactoryException {
-    final TableModel tableModel = super.queryData(string, dataRow);
+	@Override
+	public TableModel queryData(final String string, final DataRow dataRow)
+			throws ReportDataFactoryException {
+		final TableModel tableModel = super.queryData(string, dataRow);
 
-    try {
-      final Class cls = tableModel.getClass();
-      final Map map = new HashMap();
-      for (int i = 0; i < dataRow.getColumnCount(); i++) {
-        map.put(dataRow.getColumnName(i), dataRow.get(i));
-      }
-      final Object[] args = { map };
-      final Class[] argt = { Map.class };
-      final Method theMethod = cls.getMethod("setParameters", argt); //$NON-NLS-1$
-      if (theMethod != null) {
-        theMethod.invoke(tableModel, args);
-      }
-    } catch (Exception ignored) {
-      // Method does not exist... ok, ignore it.
-    }
+		try {
+			final Class cls = tableModel.getClass();
+			final Map map = new HashMap();
 
-    return tableModel;
-  }
+			String[] columnNames = dataRow.getColumnNames();
+			for (String columnName : columnNames) {
+				map.put(columnName, dataRow.get(columnName));
+			}
+
+			final Object[] args = { map };
+			final Class[] argt = { Map.class };
+			final Method theMethod = cls.getMethod("setParameters", argt); //$NON-NLS-1$
+			if (theMethod != null) {
+				theMethod.invoke(tableModel, args);
+			}
+		} catch (Exception ignored) {
+			// Method does not exist... ok, ignore it.
+		}
+
+		return tableModel;
+	}
+	
 }

@@ -88,7 +88,8 @@
         <!--  internal dependencies -->
         
         <!--  reporting -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-ext" rev="0.8.9.10" />
+    <dependency org="pentaho-reporting-engine" name="classic-core" rev="${dependency.pentaho-reporting-engine}" changing="true" />
+    <dependency org="pentaho-reporting-engine" name="classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
 
         <!-- metadata -->

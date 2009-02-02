@@ -14,20 +14,20 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 
 import java.io.File;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.FlowReportProcessor;
-import org.jfree.report.modules.output.table.html.AllItemsHtmlPrinter;
-import org.jfree.report.modules.output.table.html.FileSystemURLRewriter;
-import org.jfree.report.modules.output.table.html.FlowHtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.HtmlPrinter;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultNameGenerator;
-import org.jfree.repository.file.FileRepository;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.FlowReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.FileSystemURLRewriter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.FlowHtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
+import org.pentaho.reporting.libraries.repository.file.FileRepository;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -55,7 +55,7 @@ public class JFreeReportDirectoryHtmlComponent extends AbstractGenerateContentCo
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report) {
+  protected boolean performExport(final MasterReport report) {
     try {
       final File targetFile = getInputFileValue(AbstractJFreeReportComponent.REPORTDIRECTORYHTML_TARGETFILE);
       if (targetFile == null) {

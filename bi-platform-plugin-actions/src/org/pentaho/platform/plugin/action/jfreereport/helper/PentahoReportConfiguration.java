@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.jfree.report.util.PropertyLookupParser;
-import org.jfree.util.Configuration;
-import org.jfree.util.DefaultConfiguration;
 import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.reporting.engine.classic.core.util.PropertyLookupParser;
+import org.pentaho.reporting.libraries.base.config.Configuration;
+import org.pentaho.reporting.libraries.base.config.DefaultConfiguration;
 
 /**
  * Creation-Date: 05.07.2007, 19:48:16

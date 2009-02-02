@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentItem;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.LibRepositoryBoot;
-import org.jfree.repository.Repository;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentItem;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.LibRepositoryBoot;
+import org.pentaho.reporting.libraries.repository.Repository;
 
 /**
  * Creation-Date: 05.07.2007, 14:54:08

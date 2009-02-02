@@ -1,11 +1,11 @@
 package org.pentaho.platform.plugin.action.jfreereport.repository;
 
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultMimeRegistry;
-import org.jfree.repository.MimeRegistry;
-import org.jfree.repository.Repository;
 import org.pentaho.platform.api.repository.IContentLocation;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultMimeRegistry;
+import org.pentaho.reporting.libraries.repository.MimeRegistry;
+import org.pentaho.reporting.libraries.repository.Repository;
 
 /**
  * Creation-Date: 05.07.2007, 14:43:40

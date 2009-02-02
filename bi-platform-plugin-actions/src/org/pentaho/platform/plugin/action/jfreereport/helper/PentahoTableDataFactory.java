@@ -17,146 +17,178 @@ import java.util.Iterator;
 
 import javax.swing.table.TableModel;
 
-import org.jfree.report.DataFactory;
-import org.jfree.report.DataRow;
-import org.jfree.report.ReportDataFactoryException;
-import org.jfree.report.util.CloseableTableModel;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.data.IPreparedComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.DataRow;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 
 /**
- * The PentahoTableDataFactory class implements JFreeReport's data factory
- * and manages the TableModels provided to JFreeReport.  The primary
- * difference between this class and JFreeReport's standard TableDataFactory
- * is the "getTableIterator" method, which allows the Platform to clean up and
- * table model resources after their use.  Also, we support Pentaho's
- * IPreparedComponent interface which allows a prepared component to generate 
- * a result set when requested.
+ * The PentahoTableDataFactory class implements JFreeReport's data factory and
+ * manages the TableModels provided to JFreeReport. The primary difference
+ * between this class and JFreeReport's standard TableDataFactory is the
+ * "getTableIterator" method, which allows the Platform to clean up and table
+ * model resources after their use. Also, we support Pentaho's
+ * IPreparedComponent interface which allows a prepared component to generate a
+ * result set when requested.
  * 
  * @author Will Gorman
  */
 public class PentahoTableDataFactory implements DataFactory, Cloneable {
 
-  /** map of tables to keep track of */
-  private HashMap tables;
+	/** map of tables to keep track of */
+	private HashMap tables;
 
-  private HashMap components;
+	private HashMap components;
 
-  /**
-   * default constructor
-   *
-   */
-  public PentahoTableDataFactory() {
-    this.tables = new HashMap();
-    this.components = new HashMap();
-  }
+	/**
+	 * default constructor
+	 * 
+	 */
+	public PentahoTableDataFactory() {
+		this.tables = new HashMap();
+		this.components = new HashMap();
+	}
 
-  /**
-   * constructor with one time call to addTable for convenience.
-   * 
-   * @param name table name
-   * @param tableModel instance of table model
-   */
-  public PentahoTableDataFactory(final String name, final TableModel tableModel) {
-    this();
-    addTable(name, tableModel);
-  }
+	/**
+	 * constructor with one time call to addTable for convenience.
+	 * 
+	 * @param name
+	 *            table name
+	 * @param tableModel
+	 *            instance of table model
+	 */
+	public PentahoTableDataFactory(final String name,
+			final TableModel tableModel) {
+		this();
+		addTable(name, tableModel);
+	}
 
-  /**
-   * add a table to the map
-   * 
-   * @param name table name
-   * @param tableModel instance of table model
-   */
-  public void addTable(final String name, final TableModel tableModel) {
-    tables.put(name, tableModel);
-  }
+	/**
+	 * add a table to the map
+	 * 
+	 * @param name
+	 *            table name
+	 * @param tableModel
+	 *            instance of table model
+	 */
+	public void addTable(final String name, final TableModel tableModel) {
+		tables.put(name, tableModel);
+	}
 
-  /**
-   * add a prepared component to the map
-   * 
-   * @param name prepared component name
-   * @param component instance of prepared component
-   */
-  public void addPreparedComponent(final String name, final IPreparedComponent component) {
-    components.put(name, component);
-  }
+	/**
+	 * add a prepared component to the map
+	 * 
+	 * @param name
+	 *            prepared component name
+	 * @param component
+	 *            instance of prepared component
+	 */
+	public void addPreparedComponent(final String name,
+			final IPreparedComponent component) {
+		components.put(name, component);
+	}
 
-  /**
-   * remove a table from the map
-   * 
-   * @param name table name
-   */
-  public void removeTable(final String name) {
-    tables.remove(name);
-  }
+	/**
+	 * remove a table from the map
+	 * 
+	 * @param name
+	 *            table name
+	 */
+	public void removeTable(final String name) {
+		tables.remove(name);
+	}
 
-  /**
-   * Queries a datasource. The string 'query' defines the name of the query. The
-   * Parameterset given here may contain more data than actually needed.
-   * <p/>
-   * The dataset may change between two calls, do not assume anything!
-   *
-   * @param query the name of the table.
-   * @param parameters are ignored for this factory.
-   * @return the report data or null.
-   */
-  public TableModel queryData(final String query, final DataRow parameters) {
-    TableModel model = (TableModel) tables.get(query);
-    if (model == null) {
-      final IPreparedComponent component = (IPreparedComponent) components.get(query);
-      if (component != null) {
-        final HashMap map = new HashMap();
-        if (parameters != null) {
-          for (int i = 0; i < parameters.getColumnCount(); i++) {
-            map.put(parameters.getColumnName(i), parameters.get(i));
-          }
-        }
-        final IPentahoResultSet rs = component.executePrepared(map);
-        model = new PentahoTableModel(rs);
-      }
-    }
-    return model;
-  }
+	/**
+	 * Queries a datasource. The string 'query' defines the name of the query.
+	 * The Parameterset given here may contain more data than actually needed.
+	 * <p/>
+	 * The dataset may change between two calls, do not assume anything!
+	 * 
+	 * @param query
+	 *            the name of the table.
+	 * @param parameters
+	 *            are ignored for this factory.
+	 * @return the report data or null.
+	 */
+	public TableModel queryData(final String query, final DataRow parameters) {
+		TableModel model = (TableModel) tables.get(query);
+		if (model == null) {
+			final IPreparedComponent component = (IPreparedComponent) components
+					.get(query);
+			if (component != null) {
+				final HashMap map = new HashMap();
+				if (parameters != null) {
+					String[] columnNames = parameters.getColumnNames();
+					for (String columnName : columnNames) {
+						map.put(columnName, parameters.get(columnName));
+					}
+				}
+				final IPentahoResultSet rs = component.executePrepared(map);
+				model = new PentahoTableModel(rs);
+			}
+		}
+		return model;
+	}
 
-  public void open() {
+	public void open() {
 
-  }
+	}
 
-  public void close() {
-    final Iterator iter = tables.values().iterator();
-    while (iter.hasNext()) {
-      final TableModel model = (TableModel) iter.next();
-      if (model instanceof CloseableTableModel) {
-        final CloseableTableModel closeableTableModel = (CloseableTableModel) model;
-        closeableTableModel.close();
-      }
-    }
-    tables.clear();
-  }
+	public void close() {
+		// this gets called too frequently for the old implementation
+		// the reporting engine seems to call this method during each stage
+		// of report generation, breaking our data
+	}
 
-  /**
-   * Derives a freshly initialized report data factory, which is independend of
-   * the original data factory. Opening or Closing one data factory must not
-   * affect the other factories.
-   *
-   * @return
-   */
-  public DataFactory derive() throws ReportDataFactoryException {
-    try {
-      return (DataFactory) clone();
-    } catch (CloneNotSupportedException e) {
-      throw new ReportDataFactoryException(Messages
-          .getErrorString("PentahoTableDataFactory.ERROR_0001_CLONE_SHOULD_NOT_FAIL")); //$NON-NLS-1$
-    }
-  }
+	public void finalize() {
+		// this is the old implementation of 'close'
+		final Iterator iter = tables.values().iterator();
+		while (iter.hasNext()) {
+			final TableModel model = (TableModel) iter.next();
+			if (model instanceof CloseableTableModel) {
+				final CloseableTableModel closeableTableModel = (CloseableTableModel) model;
+				closeableTableModel.close();
+			}
+		}
+		tables.clear();
+	}
+	
+	/**
+	 * Derives a freshly initialized report data factory, which is independend
+	 * of the original data factory. Opening or Closing one data factory must
+	 * not affect the other factories.
+	 * 
+	 * @return
+	 */
+	public DataFactory derive() throws ReportDataFactoryException {
+		try {
+			return (DataFactory) clone();
+		} catch (CloneNotSupportedException e) {
+			throw new ReportDataFactoryException(
+					Messages
+							.getErrorString("PentahoTableDataFactory.ERROR_0001_CLONE_SHOULD_NOT_FAIL")); //$NON-NLS-1$
+		}
+	}
 
-  @Override
-  public Object clone() throws CloneNotSupportedException {
-    final PentahoTableDataFactory dataFactory = (PentahoTableDataFactory) super.clone();
-    dataFactory.tables = (HashMap) tables.clone();
-    return dataFactory;
-  }
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final PentahoTableDataFactory dataFactory = (PentahoTableDataFactory) super
+				.clone();
+		dataFactory.tables = (HashMap) tables.clone();
+		return dataFactory;
+	}
+
+	public String[] getQueryNames() {
+	    String[] queryNames = (String[]) tables.keySet().toArray(new String[tables.size()]);
+	    return queryNames;
+	}
+
+	public boolean isQueryExecutable(String query, DataRow parameters) {
+		boolean queryExecutable = tables.containsKey(query);
+		return queryExecutable;
+	}
 
 }

@@ -16,12 +16,12 @@ import java.awt.GraphicsEnvironment;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.JFreeReport;
 import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
 
 /**
  * Creation-Date: 07.07.2006, 21:01:58
@@ -131,7 +131,7 @@ public class JFreeReportAllContentComponent extends AbstractJFreeReportComponent
     return false;
   }
 
-  protected boolean performExport(final JFreeReport report) {
+  protected boolean performExport(final MasterReport report) {
     return false;
   }
 }

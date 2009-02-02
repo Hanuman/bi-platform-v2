@@ -18,13 +18,14 @@ package org.pentaho.platform.plugin.action.jfreereport.helper;
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
-import org.jfree.report.ResourceBundleFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
+import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
 
 /**
  * The resource-bundle factory is responsible for loading referenced resourcebundles. The default action is to load these bundles using the standard JDK methods. If no bundle-name is given, the default name for the xaction's assigned resource-bundle is used instead.
@@ -60,4 +61,9 @@ public class PentahoResourceBundleFactory implements ResourceBundleFactory {
     }
     return null;
   }
+  
+	public TimeZone getTimeZone() {
+	  return TimeZone.getDefault();
+	}
+  
 }

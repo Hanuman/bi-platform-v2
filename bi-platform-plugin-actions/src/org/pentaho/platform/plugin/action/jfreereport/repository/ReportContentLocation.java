@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.jfree.io.IOUtils;
-import org.jfree.report.util.IntegerCache;
-import org.jfree.repository.ContentCreationException;
-import org.jfree.repository.ContentEntity;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentItem;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.LibRepositoryBoot;
-import org.jfree.repository.Repository;
-import org.jfree.repository.dummy.DummyContentItem;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentLocation;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.util.IntegerCache;
+import org.pentaho.reporting.libraries.repository.ContentCreationException;
+import org.pentaho.reporting.libraries.repository.ContentEntity;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentItem;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.LibRepositoryBoot;
+import org.pentaho.reporting.libraries.repository.Repository;
+import org.pentaho.reporting.libraries.repository.dummy.DummyContentItem;
 
 /**
  * Creation-Date: 05.07.2007, 14:45:06

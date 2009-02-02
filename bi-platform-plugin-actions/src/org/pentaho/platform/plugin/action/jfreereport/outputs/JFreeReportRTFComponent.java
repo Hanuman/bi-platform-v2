@@ -15,11 +15,11 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.StreamReportProcessor;
-import org.jfree.report.modules.output.table.rtf.StreamRTFOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.StreamReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.rtf.StreamRTFOutputProcessor;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -43,9 +43,9 @@ public class JFreeReportRTFComponent extends AbstractGenerateStreamContentCompon
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
-      final StreamRTFOutputProcessor target = new StreamRTFOutputProcessor(report.getConfiguration(), outputStream);
+      final StreamRTFOutputProcessor target = new StreamRTFOutputProcessor(report.getConfiguration(), outputStream, report.getResourceManager());
       final StreamReportProcessor proc = new StreamReportProcessor(report, target);
       final int yieldRate = getYieldRate();
       if (yieldRate > 0) {

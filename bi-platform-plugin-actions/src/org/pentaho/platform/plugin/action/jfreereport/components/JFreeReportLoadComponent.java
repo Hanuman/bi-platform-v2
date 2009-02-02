@@ -23,12 +23,6 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.JFreeReport;
-import org.jfree.report.modules.parser.base.ReportGenerator;
-import org.jfree.resourceloader.FactoryParameterKey;
-import org.jfree.resourceloader.ResourceException;
-import org.jfree.resourceloader.ResourceKey;
-import org.jfree.resourceloader.ResourceManager;
 import org.pentaho.actionsequence.dom.IActionResource;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
@@ -39,6 +33,12 @@ import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoResourceData
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoResourceLoader;
 import org.pentaho.platform.plugin.action.jfreereport.helper.ReportUtils;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.modules.parser.base.ReportGenerator;
+import org.pentaho.reporting.libraries.resourceloader.FactoryParameterKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.xml.sax.InputSource;
 
 /**
@@ -126,8 +126,8 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
 
   }
 
-  private JFreeReport getReportFromResource() throws ResourceException, IOException {
-    JFreeReport report = null;
+  private MasterReport getReportFromResource() throws ResourceException, IOException {
+	  MasterReport report = null;
     if (isDefinedResource(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTDEFN)) {
       final IActionSequenceResource resource = getResource(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTDEFN);
 
@@ -152,8 +152,8 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
     return report;
   }
 
-  private JFreeReport getReportFromInputParam() throws ResourceException, UnsupportedEncodingException, IOException {
-    JFreeReport report = null;
+  private MasterReport getReportFromInputParam() throws ResourceException, UnsupportedEncodingException, IOException {
+	  MasterReport report = null;
 
     if (isDefinedInput(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTDEFN)) {
       IActionParameter o = getInputParameter(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTDEFN);
@@ -181,8 +181,8 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
     return report;
   }
 
-  private JFreeReport getReportFromJar() throws Exception {
-    JFreeReport report;
+  private MasterReport getReportFromJar() throws Exception {
+	  MasterReport report;
     final IActionSequenceResource resource = getResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT);
     final ClassLoader loader = ReportUtils.createJarLoader(getSession(), resource);
     if (loader == null) {
@@ -209,8 +209,8 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
     return report;
   }
 
-  public JFreeReport getReport() throws Exception {
-    JFreeReport report = getReportFromResource();
+  public MasterReport getReport() throws Exception {
+	  MasterReport report = getReportFromResource();
     if (report == null) {
       report = getReportFromInputParam();
       if (report == null) {
@@ -224,7 +224,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
   protected boolean executeAction() throws Throwable {
     boolean result = false;
     try {
-      JFreeReport report = getReport();
+    	MasterReport report = getReport();
       if (report != null) {
         addTempParameterObject(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT, report);
         result = true;
@@ -273,7 +273,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
    * @param resource
    * @return
    */
-  private JFreeReport parseReport(final IActionSequenceResource resource) {
+  private MasterReport parseReport(final IActionSequenceResource resource) {
     try {
       // define the resource url so that PentahoResourceLoader recognizes the path.
       String resourceUrl = PentahoResourceLoader.SOLUTION_SCHEMA_NAME + PentahoResourceLoader.SCHEMA_SEPARATOR

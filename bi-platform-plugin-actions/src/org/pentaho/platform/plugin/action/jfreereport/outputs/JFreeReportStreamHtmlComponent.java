@@ -15,18 +15,18 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.layout.output.YieldReportListener;
-import org.jfree.report.modules.output.table.base.StreamReportProcessor;
-import org.jfree.report.modules.output.table.html.AllItemsHtmlPrinter;
-import org.jfree.report.modules.output.table.html.FileSystemURLRewriter;
-import org.jfree.report.modules.output.table.html.HtmlOutputProcessor;
-import org.jfree.report.modules.output.table.html.HtmlPrinter;
-import org.jfree.report.modules.output.table.html.StreamHtmlOutputProcessor;
-import org.jfree.repository.ContentLocation;
-import org.jfree.repository.DefaultNameGenerator;
-import org.jfree.repository.stream.StreamRepository;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.layout.output.YieldReportListener;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.base.StreamReportProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.FileSystemURLRewriter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlOutputProcessor;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.StreamHtmlOutputProcessor;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
+import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
+import org.pentaho.reporting.libraries.repository.stream.StreamRepository;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -50,7 +50,7 @@ public class JFreeReportStreamHtmlComponent extends AbstractGenerateStreamConten
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
 
       final StreamRepository targetRepository = new StreamRepository(null, outputStream);

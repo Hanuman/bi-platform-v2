@@ -19,10 +19,10 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.JFreeReport;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
 
 /**
  * This sets the report parameters. This is another data preparation step and
@@ -54,17 +54,17 @@ public class JFreeReportParametersComponent extends AbstractJFreeReportComponent
 
   }
 
-  protected JFreeReport getReport() {
+  protected MasterReport getReport() {
     Object maybeReport = getInputValue(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT);
-    if (maybeReport instanceof JFreeReport) {
-      return (JFreeReport) maybeReport;
+    if (maybeReport instanceof MasterReport) {
+      return (MasterReport) maybeReport;
     }
     error(Messages.getString("JFreeReportParametersComponent.ERROR_0033_NO_REPORT_BOUND") + maybeReport); //$NON-NLS-1$
     return null;
   }
 
   private boolean initReportInputs() throws CloneNotSupportedException {
-    JFreeReport report = getReport();
+	  MasterReport report = getReport();
     if (report == null) {
       error(Messages.getString("JFreeReportParametersComponent.ERROR_0034_NO_REPORT_DEFINITION")); //$NON-NLS-1$
       return false;
@@ -73,7 +73,7 @@ public class JFreeReportParametersComponent extends AbstractJFreeReportComponent
     final boolean privateCopy = getInputBooleanValue(
         AbstractJFreeReportComponent.REPORTPARAMCOMPONENT_PRIVATEREPORT_OUTPUT, false);
     if (privateCopy && isDefinedOutput(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT)) {
-      report = (JFreeReport) report.clone();
+      report = (MasterReport) report.clone();
     }
 
     // Get input parameters, and set them as properties in the report

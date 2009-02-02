@@ -16,10 +16,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.modules.output.xml.XMLProcessor;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.modules.output.xml.XMLProcessor;
 
 /**
  * Creation-Date: 07.07.2006, 20:42:17
@@ -43,7 +43,7 @@ public class JFreeReportXmlComponent extends AbstractGenerateStreamContentCompon
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report, final OutputStream outputStream) {
+  protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {
       final XMLProcessor processor = new XMLProcessor(report);
       final OutputStreamWriter writer = new OutputStreamWriter(outputStream);

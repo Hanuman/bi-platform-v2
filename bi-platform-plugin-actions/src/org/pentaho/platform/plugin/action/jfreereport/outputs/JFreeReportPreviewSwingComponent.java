@@ -15,12 +15,12 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 import java.awt.Dialog;
 import java.awt.Frame;
 
-import org.jfree.base.config.ModifiableConfiguration;
-import org.jfree.report.JFreeReport;
-import org.jfree.report.modules.gui.base.PreviewDialog;
-import org.jfree.report.modules.gui.base.ReportController;
 import org.jfree.ui.RefineryUtilities;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.modules.gui.base.PreviewDialog;
+import org.pentaho.reporting.engine.classic.core.modules.gui.base.ReportController;
+import org.pentaho.reporting.libraries.base.config.ModifiableConfiguration;
 
 /**
  * Creation-Date: 07.07.2006, 14:06:43
@@ -38,7 +38,7 @@ public class JFreeReportPreviewSwingComponent extends AbstractGenerateContentCom
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report) {
+  protected boolean performExport(final MasterReport report) {
     final ModifiableConfiguration reportConfiguration = report.getReportConfiguration();
 
     final boolean progressBar = getInputBooleanValue(AbstractJFreeReportComponent.REPORTSWING_PROGRESSBAR,
@@ -77,7 +77,7 @@ public class JFreeReportPreviewSwingComponent extends AbstractGenerateContentCom
     return null;
   }
 
-  private PreviewDialog createDialog(final JFreeReport report) {
+  private PreviewDialog createDialog(final MasterReport report) {
     final boolean modal = getInputBooleanValue(AbstractJFreeReportComponent.REPORTSWING_MODAL, true);
 
     if (isDefinedInput(AbstractJFreeReportComponent.REPORTSWING_PARENTDIALOG)) {

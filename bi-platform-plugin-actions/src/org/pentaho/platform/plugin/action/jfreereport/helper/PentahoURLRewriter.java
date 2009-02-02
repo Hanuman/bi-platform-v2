@@ -3,11 +3,11 @@ package org.pentaho.platform.plugin.action.jfreereport.helper;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-import org.jfree.report.modules.output.table.html.URLRewriteException;
-import org.jfree.report.modules.output.table.html.URLRewriter;
-import org.jfree.repository.ContentEntity;
-import org.jfree.repository.ContentIOException;
-import org.jfree.repository.ContentLocation;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.URLRewriteException;
+import org.pentaho.reporting.engine.classic.core.modules.output.table.html.URLRewriter;
+import org.pentaho.reporting.libraries.repository.ContentEntity;
+import org.pentaho.reporting.libraries.repository.ContentIOException;
+import org.pentaho.reporting.libraries.repository.ContentLocation;
 
 /**
  * Creation-Date: 05.07.2007, 19:16:13

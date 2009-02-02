@@ -14,10 +14,10 @@ package org.pentaho.platform.plugin.action.jfreereport.outputs;
 
 import java.io.OutputStream;
 
-import org.jfree.report.JFreeReport;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
 
 /**
  * Creation-Date: 07.07.2006, 20:50:22
@@ -59,7 +59,7 @@ public abstract class AbstractGenerateStreamContentComponent extends AbstractGen
   protected abstract String getExtension();
 
   @Override
-  protected final boolean performExport(final JFreeReport report) {
+  protected final boolean performExport(final MasterReport report) {
     OutputStream outputStream = createOutputStream();
     if (outputStream == null) {
       // We could not get an output stream for the content
@@ -76,7 +76,7 @@ public abstract class AbstractGenerateStreamContentComponent extends AbstractGen
     }
   }
 
-  protected abstract boolean performExport(final JFreeReport report, final OutputStream outputStream);
+  protected abstract boolean performExport(final MasterReport report, final OutputStream outputStream);
 
   protected OutputStream createOutputStream() {
     // Try to get the output from the action-sequence document.

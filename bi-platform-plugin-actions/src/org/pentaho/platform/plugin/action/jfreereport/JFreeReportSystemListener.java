@@ -15,12 +15,12 @@
  */
 package org.pentaho.platform.plugin.action.jfreereport;
 
-import org.jfree.report.JFreeReportBoot;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoReportConfiguration;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
+import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 
 public class JFreeReportSystemListener implements IPentahoSystemListener {
   public JFreeReportSystemListener() {
@@ -28,9 +28,9 @@ public class JFreeReportSystemListener implements IPentahoSystemListener {
 
   public boolean startup(final IPentahoSession session) {
     try {
-      synchronized (JFreeReportBoot.class) {
-        JFreeReportBoot.setUserConfig(new PentahoReportConfiguration());
-        JFreeReportBoot.getInstance().start();
+      synchronized (ClassicEngineBoot.class) {
+        ClassicEngineBoot.setUserConfig(new PentahoReportConfiguration());
+        ClassicEngineBoot.getInstance().start();
       }
     } catch (Exception ex) {
       Logger.warn(JFreeReportSystemListener.class.getName(), Messages

@@ -20,13 +20,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Node;
-import org.jfree.base.config.ModifiableConfiguration;
-import org.jfree.report.JFreeReport;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.plugin.action.jfreereport.AbstractJFreeReportComponent;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.libraries.base.config.ModifiableConfiguration;
 
 /**
  * @deprecated
@@ -54,8 +54,8 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
     boolean result = true;
     if (isDefinedInput(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT)) {
       Object maybeReport = getInputValue(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT);
-      if (maybeReport instanceof JFreeReport) {
-        JFreeReport report = (JFreeReport) maybeReport;
+      if (maybeReport instanceof MasterReport) {
+    	  MasterReport report = (MasterReport) maybeReport;
         // We should have our report object at this point.
         if (isDefinedInput(JFreeReportConfigParameterComponent.REPORT_CONFIG_INPUT_PARAM)) {
           // It's coming in as an input parameter
@@ -92,7 +92,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
     return true;
   }
 
-  private void setReportConfigParameters(final JFreeReport report, final List configNodes) {
+  private void setReportConfigParameters(final MasterReport report, final List configNodes) {
     // We have some configuration parameters in the component definition
     String parmName = null;
     String parmValue = null;
@@ -119,7 +119,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
 
   }
 
-  private void setReportConfigParameters(final JFreeReport report, final Map values) {
+  private void setReportConfigParameters(final MasterReport report, final Map values) {
     Map.Entry ent;
     ModifiableConfiguration config = report.getReportConfiguration();
     Iterator it = values.entrySet().iterator();
@@ -131,7 +131,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
     }
   }
 
-  private void setReportConfigParameters(final JFreeReport report, final IPentahoResultSet values) {
+  private void setReportConfigParameters(final MasterReport report, final IPentahoResultSet values) {
     int rowCount = values.getRowCount();
     int colCount = values.getColumnCount();
     ModifiableConfiguration config = report.getReportConfiguration();

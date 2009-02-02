@@ -17,11 +17,11 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportProcessingException;
-import org.jfree.report.ext.modules.java14print.Java14PrintUtil;
-import org.jfree.report.modules.gui.print.PrintUtil;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
+import org.pentaho.reporting.engine.classic.core.modules.gui.print.PrintUtil;
+import org.pentaho.reporting.engine.classic.extensions.modules.java14print.Java14PrintUtil;
 
 /**
  * Creation-Date: 07.07.2006, 20:06:56
@@ -49,7 +49,7 @@ public class JFreeReportPrintComponent extends AbstractGenerateContentComponent 
   }
 
   @Override
-  protected boolean performExport(final JFreeReport report) {
+  protected boolean performExport(final MasterReport report) {
     final String printerName = getInputStringValue(StandardSettings.PRINTER_NAME);
     final Object jobName = getActionTitle();
 
