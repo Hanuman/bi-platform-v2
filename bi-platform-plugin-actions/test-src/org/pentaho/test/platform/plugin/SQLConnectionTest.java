@@ -27,7 +27,7 @@ public class SQLConnectionTest extends BaseTestCase {
     
   }
   
-  public void testSQLConnection() {
+/*  public void testSQLConnection() {
     SimpleParameterProvider parameters = new SimpleParameterProvider();
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Bubble", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
@@ -36,12 +36,12 @@ public class SQLConnectionTest extends BaseTestCase {
           Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
   
-
+*/
 
   public static void main(String[] args) {
-    SQLConnectionTest test = new SQLConnectionTest();
+//    SQLConnectionTest test = new SQLConnectionTest();
     try {
-      test.testSQLConnection();
+//      test.testSQLConnection();
     } finally {
         BaseTest.shutdown();
     }
