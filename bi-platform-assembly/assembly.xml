@@ -61,7 +61,7 @@
 	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
 	<property name="cdf-plugin.dir" value="../../pentaho-cdf/bi-platform-v2-plugin/dist" />
-	<property name="dependency.pentaho-cdf-plugin.revision" value="${project.revision}" />
+	<property name="dependency.pentaho-cdf-plugin.revision" value="2.1-SNAPSHOT" />
 	<property name="webservice-plugin.dir" value="../../bi-platform-webservice/dist" />
 	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
 
