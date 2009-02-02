@@ -101,5 +101,20 @@
 	    <dirset dir="${classes.dir}" />
 	    <dirset dir="${testclasses.dir}" />
 	  </path>
+  
+  <!--=======================================================================
+	    publish-pentaho-nojar (override)
+	    
+	    Publishes the jar and plugin zip package to the Maven repository
+	    ====================================================================-->
+  <target name="publish-pentaho-nojar"
+          depends="install-antcontrib,create-pom,ivy.deliver">
+    <ant antfile="common_build.xml" target="publish-pentaho-nojar" />
+
+    <antcall target="maven-publish-artifact">
+      <param name="publish.pomFile" value="package-ivy.xml" />
+      <param name="publish.file" value="${dist.dir}/${plugin.name}-${project.revision}.zip" />
+    </antcall>
+  </target>
 
 </project>
