@@ -62,7 +62,6 @@
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
 	<property name="cdf-plugin.dir" value="../../pentaho-cdf/bi-platform-v2-plugin/dist" />
 	<property name="dependency.pentaho-cdf-plugin.revision" value="2.1-SNAPSHOT" />
-	<property name="webservice-plugin.dir" value="../../bi-platform-webservice/dist" />
 	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
 
 
@@ -381,7 +380,7 @@
 	  <!-- temporary step to copy the solutions zip to the cdf plugin folder -->
 	  <copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${cdf-plugin.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 	  <!-- webservice -->
-	  <install-plugin zipfile="${webservice-plugin.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
+	  <install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
 	</target>
   
 	<macrodef name="install-plugin">
