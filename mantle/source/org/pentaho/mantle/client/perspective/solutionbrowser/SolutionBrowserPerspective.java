@@ -1220,14 +1220,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void loadPropertiesDialog() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.GENERAL);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.GENERAL);
     dialog.showTab(FilePropertiesDialog.Tabs.GENERAL);
     dialog.center();
   }
 
   public void shareFile() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.PERMISSION);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.PERMISSION);
     dialog.showTab(FilePropertiesDialog.Tabs.PERMISSION);
     dialog.center();
   }

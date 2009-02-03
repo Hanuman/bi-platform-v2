@@ -25,7 +25,9 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileTypeEnabledOptions;
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
@@ -44,11 +46,12 @@ public class FilePropertiesDialog extends PromptDialogBox {
   private SubscriptionsPanel subscriptionsTab;
 
   private FileItem fileItem;
+  private FileTypeEnabledOptions options;
   private boolean isAdministrator = false;
   private Tabs defaultTab = Tabs.GENERAL;
   private int tabApplyCounter = 0;
 
-  public FilePropertiesDialog(FileItem fileItem, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
+  public FilePropertiesDialog(FileItem fileItem, FileTypeEnabledOptions options, final boolean isAdministrator, final TabPanel propertyTabs, final IDialogCallback callback, Tabs defaultTab) {
     super(Messages.getString("properties"), Messages.getString("ok"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setContent(propertyTabs);
 
@@ -73,6 +76,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
       }
     });
     this.fileItem = fileItem;
+    this.options = options;
     this.propertyTabs = propertyTabs;
     this.propertyTabs.setStyleName("gwt-Dialog-TabPanel"); //$NON-NLS-1$
     this.propertyTabs.getTabBar().setStyleName("gwt-Dialog-TabBar"); //$NON-NLS-1$
@@ -124,7 +128,7 @@ public class FilePropertiesDialog extends PromptDialogBox {
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
-        if (isAdministrator && !fileInfo.isDirectory()) {
+        if (isAdministrator && !fileInfo.isDirectory() && options != null && options.isCommandEnabled(COMMAND.SCHEDULE_NEW)) {
           propertyTabs.remove(subscriptionsTab);
           propertyTabs.add(subscriptionsTab, new TabWidget(Messages.getString("advanced"), Messages.getString("advanced"), null, propertyTabs, //$NON-NLS-1$ //$NON-NLS-2$
               subscriptionsTab));

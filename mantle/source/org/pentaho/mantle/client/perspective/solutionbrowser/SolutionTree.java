@@ -486,7 +486,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
     FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null, null,
         null, null, false, null);
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, null, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
   }
 
