@@ -57,6 +57,8 @@ public class GenericServlet extends ServletBase {
 	    
 	    PentahoSystem.systemEntryPoint();
 
+      // BISERVER-2767 - grabbing the current class loader so we can replace it at the end
+      ClassLoader origContextClassloader = Thread.currentThread().getContextClassLoader();
 	    try {
 	      InputStream in = request.getInputStream();
 	    	String servletPath = request.getServletPath();
@@ -180,8 +182,8 @@ public class GenericServlet extends ServletBase {
 	    } catch ( Exception e ) {
 	    	error( Messages.getErrorString( "GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString() ), e ); //$NON-NLS-1$
 	    } finally {
-	      // reset the classloader of the current thread
-	      Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
+        // reset the classloader of the current thread
+        Thread.currentThread().setContextClassLoader( origContextClassloader );
 	      PentahoSystem.systemExitPoint();
 	    }
 	  }
