@@ -3,6 +3,7 @@ package org.pentaho.mantle.client.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.gwt.widgets.client.dialogs.GlassPane;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
@@ -28,7 +29,16 @@ public class FileDialog{
   }
   
   public void show(){
-    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, doc, false, true, title, okText);
+    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, doc, false, true, title, okText){
+
+      @Override
+      public void hide() {
+        super.hide();
+        GlassPane.getInstance().hide();
+      }
+      
+      
+    };
     dialog.addFileChooserListener(new FileChooserListener() {
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
@@ -45,6 +55,7 @@ public class FileDialog{
       public void fileSelectionChanged(String solution, String path, String name) {
       }
     });
+    GlassPane.getInstance().show();
     dialog.center();
   }
   

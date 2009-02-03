@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pentaho.gwt.widgets.client.dialogs.GlassPane;
+import org.pentaho.gwt.widgets.client.dialogs.GlassPaneNativeListener;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
-import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
-import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
@@ -67,10 +67,10 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
-import org.pentaho.ui.xul.XulOverlay;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -90,7 +90,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.core.client.JavaScriptObject;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -313,9 +312,17 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;)(callback, title, okText);      
     }
     
+    $wnd.addGlassPaneListener = function(callback) { 
+      mantle.@org.pentaho.mantle.client.MantleApplication::addGlassPaneListener(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
+    }
+    
     
   }-*/;
 
+  public void addGlassPaneListener(JavaScriptObject obj){
+    GlassPane.getInstance().addGlassPaneListener(new GlassPaneNativeListener(obj));
+  }
+  
   public void loadAndApplyUserSettings() {
     AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
 
