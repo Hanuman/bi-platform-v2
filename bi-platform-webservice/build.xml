@@ -32,6 +32,9 @@
 	            value="resource"
 	            description="Name of the resource directory" />
 
+      <property name="plugin.artifact.id" value="${plugin.name}"/>
+      <property name="plugin.zipfile" value="${plugin.name}-${project.revision}.zip"/>
+  
 	  <!--=======================================================================
 		    dist
 		    
@@ -83,7 +86,7 @@
 	  	
 	  	
 	  	<!-- create a zip file -->
-	    <zip  zipfile="${dist.dir}/${plugin.name}-${project.revision}.zip"
+	    <zip  zipfile="${dist.dir}/${plugin.zipfile}"
 	         basedir="${stage.dir}"
 	         includes="**/*"
 	         excludes="**/Thumbs.db" />
@@ -112,10 +115,11 @@
     <ant antfile="common_build.xml" target="publish-pentaho-nojar" />
     
     <ivy:makepom ivyfile="package-ivy.xml" pomfile="package-pom.xml" />
+    <replace file="package-pom.xml" token="jar" value="zip" />
 
     <antcall target="maven-publish-artifact">
       <param name="publish.pomFile" value="package-pom.xml" />
-      <param name="publish.file" value="${dist.dir}/${plugin.name}-${project.revision}.zip" />
+      <param name="publish.file" value="${dist.dir}/${plugin.zipfile}" />
     </antcall>
   </target>
 
