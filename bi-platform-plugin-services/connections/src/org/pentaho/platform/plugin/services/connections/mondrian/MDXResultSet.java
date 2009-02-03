@@ -20,6 +20,7 @@ import mondrian.olap.Axis;
 import mondrian.olap.Connection;
 import mondrian.olap.Result;
 
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
@@ -31,7 +32,7 @@ import org.pentaho.commons.connection.memory.MemoryResultSet;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class MDXResultSet implements IPentahoResultSet {
+public class MDXResultSet implements IPentahoResultSet, IPeekable {
   private static final int columnAxis = 0;
 
   private static final int rowAxis = 1;
@@ -48,9 +49,7 @@ public class MDXResultSet implements IPentahoResultSet {
 
   MDXMetaData mdxMetaData = null;
 
-  protected Object currentRow[];
-
-  protected boolean keepCurrent = false;
+  protected Object peekRow[];
 
   /**
    * @param result
@@ -85,10 +84,14 @@ public class MDXResultSet implements IPentahoResultSet {
     return mdxMetaData;
   }
 
-  public void rewindNext() {
-    keepCurrent = true;
-  }
+  public Object[] peek() {
 
+    if( peekRow == null ) {
+      peekRow = next();
+    }
+    return peekRow;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -96,11 +99,12 @@ public class MDXResultSet implements IPentahoResultSet {
    */
   public Object[] next() {
 
-    if (keepCurrent && (currentRow != null)) {
-      keepCurrent = false;
-      return currentRow;
+    if (peekRow != null) {
+      Object row[] = peekRow;
+      peekRow = null;
+      return row;
     }
-    currentRow = null;
+    Object currentRow[] = null;
 
     if (rowIndex < rowCount) {
       currentRow = new Object[columnCount];

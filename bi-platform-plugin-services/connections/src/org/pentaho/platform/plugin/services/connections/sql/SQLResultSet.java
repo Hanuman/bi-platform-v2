@@ -20,6 +20,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
@@ -31,7 +32,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
  * 
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class SQLResultSet implements IPentahoResultSet {
+public class SQLResultSet implements IPentahoResultSet, IPeekable {
   ResultSet nativeResultSet = null;
 
   SQLConnection connection;
@@ -42,9 +43,7 @@ public class SQLResultSet implements IPentahoResultSet {
 
   private int columnCount = SQLResultSet.COUNT_NEVER_OBTAINED;
 
-  protected Object currentRow[];
-
-  protected boolean keepCurrent = false;
+  protected Object peekRow[];
 
   private static final Log log = LogFactory.getLog(SQLResultSet.class);
 
@@ -82,10 +81,14 @@ public class SQLResultSet implements IPentahoResultSet {
     return metadata;
   }
 
-  public void rewindNext() {
-    keepCurrent = true;
-  }
+  public Object[] peek() {
 
+    if( peekRow == null ) {
+      peekRow = next();
+    }
+    return peekRow;
+  }
+  
   /**
    * (non-Javadoc)
    * 
@@ -94,14 +97,15 @@ public class SQLResultSet implements IPentahoResultSet {
    * @throws SQLResultSetException
    */
   public Object[] next() {
-    if (keepCurrent && (currentRow != null)) {
-      keepCurrent = false;
-      return currentRow;
+    if (peekRow != null) {
+      Object row[] = peekRow;
+      peekRow = null;
+      return row;
     }
     try {
       int columns = nativeResultSet.getMetaData().getColumnCount();
       if (nativeResultSet.next()) {
-        currentRow = new Object[columns];
+        Object currentRow[] = new Object[columns];
         for (int column = 0; column < columns; column++) {
           currentRow[column] = nativeResultSet.getObject(column + 1);
         }

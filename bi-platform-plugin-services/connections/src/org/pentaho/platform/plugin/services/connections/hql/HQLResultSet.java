@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.type.Type;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
@@ -32,7 +33,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class HQLResultSet implements IPentahoResultSet {
+public class HQLResultSet implements IPentahoResultSet, IPeekable {
 
   private static final int COUNT_NEVER_OBTAINED = -2;
 
@@ -46,9 +47,7 @@ public class HQLResultSet implements IPentahoResultSet {
 
   private List nativeResultSet = null;
 
-  protected Object currentRow[];
-
-  protected boolean keepCurrent = false;
+  protected Object peekRow[];
 
   private int index = 0;
 
@@ -81,6 +80,14 @@ public class HQLResultSet implements IPentahoResultSet {
     return metadata;
   }
 
+  public Object[] peek() {
+
+    if( peekRow == null ) {
+      peekRow = next();
+    }
+    return peekRow;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -88,30 +95,26 @@ public class HQLResultSet implements IPentahoResultSet {
    *      more rows
    */
   public Object[] next() {
-    if (keepCurrent && (currentRow != null)) {
-      keepCurrent = false;
-      return currentRow;
+    if (peekRow != null) {
+      Object row[] = peekRow;
+      peekRow = null;
+      return row;
     }
     try {
       if (index < nativeResultSet.size()) {
         Object row = nativeResultSet.get(index++);
         if (row instanceof Object[]) {
-          currentRow = (Object[]) row;
-          return currentRow;
+          return (Object[]) row;
         } else {
-          currentRow = new Object[1];
-          currentRow[0] = row;
-          return currentRow;
+          Object[] newRow = new Object[1];
+          newRow[0] = row;
+          return newRow;
         }
       }
     } catch (Exception e) {
       HQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
     }
     return null;
-  }
-
-  public void rewindNext() {
-    keepCurrent = true;
   }
 
   public void closeConnection() {
