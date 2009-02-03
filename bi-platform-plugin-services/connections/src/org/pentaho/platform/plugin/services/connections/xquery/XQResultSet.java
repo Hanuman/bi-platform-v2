@@ -38,6 +38,7 @@ import org.apache.commons.collections.OrderedMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
@@ -49,7 +50,7 @@ import org.pentaho.commons.connection.memory.MemoryResultSet;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class XQResultSet implements IPentahoResultSet {
+public class XQResultSet implements IPentahoResultSet, IPeekable {
 
   protected static final Log logger = LogFactory.getLog(XQResultSet.class);
 
@@ -63,9 +64,7 @@ public class XQResultSet implements IPentahoResultSet {
 
   protected static final String EMPTY_STR = ""; //$NON-NLS-1$
 
-  protected Object currentRow[];
-
-  protected boolean keepCurrent = false;
+  protected Object peekRow[];
 
   Iterator iter = null;
 
@@ -130,19 +129,24 @@ public class XQResultSet implements IPentahoResultSet {
     return metaData;
   }
 
-  public void rewindNext() {
-    keepCurrent = true;
-  }
+  public Object[] peek() {
 
+    if( peekRow == null ) {
+      peekRow = next();
+    }
+    return peekRow;
+  }
+  
   /*
    * (non-Javadoc)
    * 
    * @see org.pentaho.connection.IPentahoResultSet#next()
    */
   public Object[] next() {
-    if (keepCurrent && (currentRow != null)) {
-      keepCurrent = false;
-      return currentRow;
+    if (peekRow != null) {
+      Object row[] = peekRow;
+      peekRow = null;
+      return row;
     }
 
     // Create a map of the headers and assign empty string to them
@@ -156,7 +160,7 @@ public class XQResultSet implements IPentahoResultSet {
       decodeNode(o, resultList);
     }
     // get the values
-    currentRow = new Object[resultList.size()];
+    Object currentRow[] = new Object[resultList.size()];
     Iterator keyIter = resultList.keySet().iterator();
     int i = 0;
     while (keyIter.hasNext()) {
@@ -332,6 +336,9 @@ public class XQResultSet implements IPentahoResultSet {
    * NOTE: calling this will move the cursor to the top of the result stack
    */
   public Object[] getDataColumn(final int column) {
+    if( column >= getColumnCount() ) {
+      return null;
+    }
     beforeFirst(); // go to top just in case we called this after some
     // next()s
     Object[] result = new Object[getRowCount()];

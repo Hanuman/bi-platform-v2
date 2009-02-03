@@ -23,12 +23,13 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 
-public class JavaScriptResultSet extends ScriptableObject implements IPentahoResultSet {
+public class JavaScriptResultSet extends ScriptableObject implements IPentahoResultSet, IPeekable {
   /**
    * 
    */
@@ -38,9 +39,7 @@ public class JavaScriptResultSet extends ScriptableObject implements IPentahoRes
 
   private MemoryResultSet writeableResults;
 
-  protected Object currentRow[];
-
-  protected boolean keepCurrent = false;
+  protected Object peekRow[];
 
   // private IPentahoMetaData metaData;
   // private List rows;
@@ -282,20 +281,21 @@ public class JavaScriptResultSet extends ScriptableObject implements IPentahoRes
     return results.getMetaData();
   }
 
-  public void rewindNext() {
-    keepCurrent = true;
-  }
+  public Object[] peek() {
 
-  public Object[] next() {
-    if (keepCurrent && (currentRow != null)) {
-      keepCurrent = false;
-      return currentRow;
+    if( peekRow == null ) {
+      peekRow = next();
     }
-    currentRow = results.next();
-    return currentRow;
-    /*
-     * if( iterator == null ) { iterator = rows.iterator(); } if( iterator.hasNext() ) { return (Object[]) iterator.next(); } else { return null; }
-     */
+    return peekRow;
+  }
+  
+  public Object[] next() {
+    if (peekRow != null) {
+      Object row[] = peekRow;
+      peekRow = null;
+      return row;
+    }
+    return results.next();
   }
 
   public void close() {

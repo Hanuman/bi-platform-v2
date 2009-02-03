@@ -1,6 +1,19 @@
-package org.pentaho.test.platform.plugin.services.connections.javascript;
-
-
+/*
+ * Copyright 2005 - 2009 Pentaho Corporation.  All rights reserved. 
+ * This software was developed by Pentaho Corporation and is provided under the terms 
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
+ * this file except in compliance with the license. If you need a copy of the license, 
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * the license for the specific language governing your rights and limitations.
+ *
+ * Created Feb 3, 2009
+ * @author jdixon
+ */
+ package org.pentaho.test.platform.plugin.services.connections.xquery;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,17 +22,21 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
+import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.plugin.services.connections.javascript.JavaScriptResultSet;
+import org.pentaho.platform.plugin.services.connections.xquery.XQConnection;
+import org.pentaho.platform.plugin.services.connections.xquery.XQResultSet;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 @SuppressWarnings({"all"})
-public class JavaScriptResultSetTest extends BaseTest {
+public class XQueryTest extends BaseTest {
   private static final String SOLUTION_PATH = "connections/test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
   private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
@@ -35,53 +52,196 @@ public class JavaScriptResultSetTest extends BaseTest {
     }
     
   }
-  
-//  public void testRSCompareOK() {
-//    startTest();
-//    IRuntimeContext context = run("samples", "rules", "ResultSetTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-//    IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
-//    assertNotNull(rtn);
-//    String compareResult = rtn.getStringValue();
-//    assertEquals(compareResult, "No Mismatches"); //$NON-NLS-1$
-//    finishTest();
-//  }
-  
-//  public void testRSCompareNotOK1() {
-//    startTest();
-//    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//    assertEquals( Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus() ); //$NON-NLS-1$
-//    finishTest();
-//  }
-  
-//  public void testRSCompareNotOK2() {
-//    startTest();
-//    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE);
-//
-//    finishTest();
-//  }
-  
-  public void testRSCompareNotOK3()
-  {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL);
 
-    finishTest();
+  public void testQuery1() throws Exception {
     
+    XQConnection connection = new XQConnection();
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
+    
+    assertTrue( "result set is wrong type", data instanceof XQResultSet );
+    
+    assertFalse( "Should not be scrollable", data.isScrollable() );
+    
+    assertEquals( "row count is wrong", 4, data.getRowCount() );
+    assertEquals( "column count is wrong", 4, data.getColumnCount() );
+    assertEquals( "column header is wrong", "title", data.getMetaData().getColumnHeaders()[0][0] );
+    assertEquals( "column header is wrong", "author", data.getMetaData().getColumnHeaders()[0][1] );
+    assertEquals( "column header is wrong", "year", data.getMetaData().getColumnHeaders()[0][2] );
+    assertEquals( "column header is wrong", "price", data.getMetaData().getColumnHeaders()[0][3] );
+    
+    // these don't do much but they should not cause errors
+    data.close();
+    data.closeConnection();
   }
   
-  public void testRSCompareNotOK4()
-  {
-    startTest();
-    IRuntimeContext context = run("samples", "rules", "ResultSetCompareTest_error4.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertEquals(context.getStatus(), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL);
+  public void testGetDataRow() throws Exception {
+    XQConnection connection = new XQConnection();
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
 
-    finishTest();
+    Object row[] = data.getDataRow( 1 );
+    assertEquals( "Harry Potter", row[0] );
+    assertEquals( "J K. Rowling", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "29.99", row[3] );
     
+    row = data.getDataRow( 3 );
+    assertEquals( "Learning XML", row[0] );
+    assertEquals( "Erik T. Ray", row[1] );
+    assertEquals( "2003", row[2] );
+    assertEquals( "39.95", row[3] );
+    
+    row = data.getDataRow( 99 );
+    assertNull( row );
   }
+  
+  public void testGetDataColumn() throws Exception {
+    XQConnection connection = new XQConnection();
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
 
+    Object col[] = data.getDataColumn( 2 );
+    assertEquals( "row count is wrong", 4, col.length );
+    
+    assertEquals( "2005", col[0] );
+    assertEquals( "2005", col[1] );
+    assertEquals( "2003", col[2] );
+    assertEquals( "2003", col[3] );
+    
+    col = data.getDataColumn( 99 );
+    assertNull( col );
+  }
+  
+  public void testRowLimit() throws Exception {
+    
+    XQConnection connection = new XQConnection();
+    connection.setMaxRows( 2 );
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
+    
+    assertTrue( "result set is wrong type", data instanceof XQResultSet );
+    
+    assertEquals( "row count is wrong", 2, data.getRowCount() );
+    assertEquals( "column header is wrong", "title", data.getMetaData().getColumnHeaders()[0][0] );
+    assertEquals( "column header is wrong", "author", data.getMetaData().getColumnHeaders()[0][1] );
+    assertEquals( "column header is wrong", "year", data.getMetaData().getColumnHeaders()[0][2] );
+    assertEquals( "column header is wrong", "price", data.getMetaData().getColumnHeaders()[0][3] );
+    
+    Object row[] = data.next();
+    assertEquals( "Everyday Italian", row[0] );
+    assertEquals( "Giada De Laurentiis", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "30.00", row[3] );
+
+    row = data.next();
+    assertEquals( "Harry Potter", row[0] );
+    assertEquals( "J K. Rowling", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "29.99", row[3] );
+
+    row = data.next();
+    assertNull( row );
+  }
+  
+  public void testValueAt() throws Exception {
+    
+    XQConnection connection = new XQConnection();
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
+    
+    assertEquals( "2005", data.getValueAt(0, 2) );
+    assertEquals( "Everyday Italian", data.getValueAt(0, 0) );
+
+    assertEquals( "J K. Rowling", data.getValueAt(1, 1) );
+    assertEquals( "29.99", data.getValueAt(1, 3) );
+
+    assertNull( data.getValueAt(-1, -1) );
+    assertNull( data.getValueAt(99, 0) );
+    assertNull( data.getValueAt(0, 99) );
+  }
+  
+  public void testPeek() throws Exception {
+    
+    XQConnection connection = new XQConnection();
+    IPentahoResultSet data = connection.executeQuery( "doc(\""+SOLUTION_PATH+"/xquery/books.xml\")/bookstore/book" );
+    assertNotNull( "result set is null", data );
+    
+    assertTrue( "result set is wrong type", data instanceof XQResultSet );
+    
+    assertEquals( "row count is wrong", 4, data.getRowCount() );
+    assertEquals( "column header is wrong", "title", data.getMetaData().getColumnHeaders()[0][0] );
+    assertEquals( "column header is wrong", "author", data.getMetaData().getColumnHeaders()[0][1] );
+    assertEquals( "column header is wrong", "year", data.getMetaData().getColumnHeaders()[0][2] );
+    assertEquals( "column header is wrong", "price", data.getMetaData().getColumnHeaders()[0][3] );
+    
+    assertTrue( "result set is not peekable", data instanceof IPeekable );
+    
+    IPeekable peekable = (IPeekable) data;
+    
+    Object row[] = peekable.peek();
+    assertEquals( "Everyday Italian", row[0] );
+    assertEquals( "Giada De Laurentiis", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "30.00", row[3] );
+
+    row = peekable.peek();
+    assertEquals( "Everyday Italian", row[0] );
+
+    row = peekable.peek();
+    assertEquals( "Everyday Italian", row[0] );
+
+    row = peekable.peek();
+    assertEquals( "Everyday Italian", row[0] );
+
+    row = data.next();
+    assertEquals( "Everyday Italian", row[0] );
+    assertEquals( "Giada De Laurentiis", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "30.00", row[3] );
+
+    row = peekable.peek();
+    assertEquals( "Harry Potter", row[0] );
+    assertEquals( "J K. Rowling", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "29.99", row[3] );
+    
+    row = peekable.peek();
+    assertEquals( "Harry Potter", row[0] );
+    assertEquals( "J K. Rowling", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "29.99", row[3] );
+    
+    row = data.next();
+    assertEquals( "Harry Potter", row[0] );
+    assertEquals( "J K. Rowling", row[1] );
+    assertEquals( "2005", row[2] );
+    assertEquals( "29.99", row[3] );
+    
+    row = peekable.peek();
+    assertNotNull( row );
+    
+    row = data.next();
+    assertNotNull( row );
+
+    row = peekable.peek();
+    assertNotNull( row );
+
+    row = data.next();
+    assertNotNull( row );
+
+    row = peekable.peek();
+    assertNull( row );
+
+    row = data.next();
+    assertNull( row );
+
+    row = peekable.peek();
+    assertNull( row );
+
+  }
+  
+/*
   public void testAddRow() {
     
     MemoryMetaData metadata = new MemoryMetaData( new String[][] { { "col1", "col2" } }, null );
@@ -323,7 +483,7 @@ public class JavaScriptResultSetTest extends BaseTest {
 //    
 //  }  
   public static void main(String[] args) {
-    JavaScriptResultSetTest test = new JavaScriptResultSetTest();
+    XQueryTest test = new XQueryTest();
     try {
       test.setUp();
 //      test.testRSCompareOK();
@@ -337,4 +497,5 @@ public class JavaScriptResultSetTest extends BaseTest {
       BaseTest.shutdown();
     }
   }
+  */
 }
