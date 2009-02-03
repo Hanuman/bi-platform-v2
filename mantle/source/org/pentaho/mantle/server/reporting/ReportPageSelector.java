@@ -16,9 +16,9 @@
  */
 package org.pentaho.mantle.server.reporting;
 
-import org.jfree.report.layout.output.LogicalPageKey;
-import org.jfree.report.layout.output.PhysicalPageKey;
-import org.jfree.report.modules.output.pageable.base.PageFlowSelector;
+import org.pentaho.reporting.engine.classic.core.layout.output.LogicalPageKey;
+import org.pentaho.reporting.engine.classic.core.layout.output.PhysicalPageKey;
+import org.pentaho.reporting.engine.classic.core.modules.output.pageable.base.PageFlowSelector;
 
 public class ReportPageSelector implements PageFlowSelector {
 

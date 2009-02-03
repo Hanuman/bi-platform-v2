@@ -40,8 +40,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.JFreeReport;
-import org.jfree.report.layout.output.ReportProcessor;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
@@ -109,11 +107,12 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.refactor.UserFilesComponent;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.layout.output.ReportProcessor;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MantleServlet extends RemoteServiceServlet implements MantleService {
@@ -617,7 +616,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     ReportProcessor proc = null;
     try {
       System.out.println("getLogicalReportPage: " + reportDefinitionPath + " Page: " + logicalPage); //$NON-NLS-1$ //$NON-NLS-2$
-      JFreeReport report = ReportCreator.createReport(reportDefinitionPath, getPentahoSession());
+      MasterReport report = ReportCreator.createReport(reportDefinitionPath, getPentahoSession());
       report.getReportConfiguration().setConfigProperty("org.jfree.report.modules.output.table.html.BodyFragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
       ReportContainer outReportContainer = new ReportContainer();

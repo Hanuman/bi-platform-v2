@@ -20,12 +20,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jfree.resourceloader.ResourceData;
-import org.jfree.resourceloader.ResourceKey;
-import org.jfree.resourceloader.ResourceKeyCreationException;
-import org.jfree.resourceloader.ResourceLoader;
-import org.jfree.resourceloader.ResourceLoadingException;
-import org.jfree.resourceloader.ResourceManager;
+import org.pentaho.reporting.libraries.resourceloader.ResourceData;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoader;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoadingException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 
 /**
  * This class is implemented to support loading solution files

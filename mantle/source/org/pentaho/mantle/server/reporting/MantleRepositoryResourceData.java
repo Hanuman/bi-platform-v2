@@ -19,13 +19,13 @@ package org.pentaho.mantle.server.reporting;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.jfree.resourceloader.FactoryParameterKey;
-import org.jfree.resourceloader.ResourceData;
-import org.jfree.resourceloader.ResourceKey;
-import org.jfree.resourceloader.ResourceLoadingException;
-import org.jfree.resourceloader.ResourceManager;
-import org.jfree.resourceloader.loader.AbstractResourceData;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.reporting.libraries.resourceloader.FactoryParameterKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceData;
+import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
+import org.pentaho.reporting.libraries.resourceloader.ResourceLoadingException;
+import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
+import org.pentaho.reporting.libraries.resourceloader.loader.AbstractResourceData;
 
 /**
  * This class is implemented to support loading solution files from the pentaho repository into JFreeReport
