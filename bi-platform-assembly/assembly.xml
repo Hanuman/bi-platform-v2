@@ -60,8 +60,7 @@
 	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
 	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
-	<property name="cdf-plugin.dir" value="../../pentaho-cdf/bi-platform-v2-plugin/dist" />
-	<property name="dependency.pentaho-cdf-plugin.revision" value="2.1-SNAPSHOT" />
+	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
 	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
 
 
@@ -360,7 +359,7 @@
 		</copy>
 	  
 	    <!-- install CDF samples -->
-	    <unzip src="${cdf-plugin.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${stage.dir.server}/pentaho-solutions" overwrite="true" />
+	    <unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${stage.dir.server}/pentaho-solutions" overwrite="true" />
 
 		<!-- copy db specific changes into system -->
 		<mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
@@ -376,9 +375,9 @@
 			===================================================== -->
   <target name="install-plugins">
       <!-- CDF -->
-	  <install-plugin zipfile="${cdf-plugin.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
+	  <install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 	  <!-- temporary step to copy the solutions zip to the cdf plugin folder -->
-	  <copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${cdf-plugin.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"/>
+	  <copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 	  <!-- webservice -->
 	  <install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
 	</target>

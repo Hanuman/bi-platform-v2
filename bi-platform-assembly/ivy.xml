@@ -72,6 +72,9 @@
     <dependency org="pentaho" name="pentaho-open-admin-console-package" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-bi-platform-sample-data" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="webservices" rev="${dependency.pentaho-webservice-plugin.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-cdf" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-cdf-samples" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-cdf-solution" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
     
     <exclude org="javax.servlet" module="servlet-api"/>
     
