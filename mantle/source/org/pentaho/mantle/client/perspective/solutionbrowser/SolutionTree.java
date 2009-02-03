@@ -130,7 +130,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
           }
         };
         t.schedule(250);
-        event.cancelBubble(true);
+        super.onBrowserEvent(event);
+        //event.cancelBubble(true);
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
       } else {
