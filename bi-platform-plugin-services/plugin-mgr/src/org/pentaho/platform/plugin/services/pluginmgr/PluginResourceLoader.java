@@ -41,6 +41,7 @@ import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
@@ -79,6 +80,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 public class PluginResourceLoader implements IPluginResourceLoader {
 
   private File rootDir = null;
+
   private PluginClassLoader overrideClassloader;
 
   private String settingsPath = ISolutionRepository.SEPARATOR + "settings.xml"; //$NON-NLS-1$
@@ -86,7 +88,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   public void setSettingsPath(String settingsPath) {
     this.settingsPath = settingsPath;
   }
-  
+
   public void setOverrideClassloader(PluginClassLoader pluginClassloader) {
     this.overrideClassloader = pluginClassloader;
   }
@@ -161,16 +163,11 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * which is particularly useful in test cases
    */
   protected ClassLoader getClassLoader(Class<?> clazz) {
-    ClassLoader classLoader = (overrideClassloader != null)?overrideClassloader:clazz.getClassLoader();
-    
+    ClassLoader classLoader = (overrideClassloader != null) ? overrideClassloader : clazz.getClassLoader();
+
     if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
-      Logger
-          .warn(
-              this,
-              "getClassLoader must return an instance of "
-                  + PluginClassLoader.class.getSimpleName()
-                  + ".  If you are running in a unit test environment you may wish use a subclass of "
-                  + PluginResourceLoader.class.getSimpleName() + " that overrides this method to return a test classloader.");
+      Logger.warn(this, Messages.getString(
+          "PluginResourceLoader.WARN_CLASS_LOADED_OUTSIDE_OF_PLUGIN_ENV", clazz.getName(), PluginClassLoader.class.getSimpleName(), this.getClass().getSimpleName())); //$NON-NLS-1$
     }
     return classLoader;
   }
@@ -178,23 +175,6 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
     ClassLoader classLoader = getClassLoader(clazz);
 
-    //display a warning message if a plugin class is not being loaded by a PluginClassLoader
-    if (rootDir == null && !PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
-      Logger
-          .warn(
-              this,
-              "Class ["
-                  + clazz.getName()
-                  + "] was not loaded from a "
-                  + PluginClassLoader.class.getSimpleName()
-                  + ".  Is this really a plugin class?  "
-                  + "If "
-                  + clazz.getSimpleName()
-                  + " is part of your plugin, but will not be loaded with a "
-                  + PluginClassLoader.class.getSimpleName()
-                  + " (such as in a test environment), you might consider using setRootDir() to set an artificial plugin base directory."
-                  + "  Look higher up in the log for warnings from " + PluginClassLoader.class.getSimpleName());
-    }
     InputStream in = null;
 
     File root = getPluginDir(classLoader);
@@ -224,25 +204,24 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
     String dirPattern = "", filePattern = "*"; //$NON-NLS-1$ //$NON-NLS-2$
 
-    if(namePattern.contains("/")) { //$NON-NLS-1$
+    if (namePattern.contains("/")) { //$NON-NLS-1$
       String pattern = namePattern.substring(0, namePattern.lastIndexOf('/'));
-      if(pattern.length() > 0) {
+      if (pattern.length() > 0) {
         dirPattern = pattern;
       }
-      pattern = namePattern.substring(namePattern.lastIndexOf('/')+1, namePattern.length());
-      if(pattern.length() > 0) {
+      pattern = namePattern.substring(namePattern.lastIndexOf('/') + 1, namePattern.length());
+      if (pattern.length() > 0) {
         filePattern = pattern;
       }
-    }
-    else {
+    } else {
       filePattern = namePattern;
     }
-    
+
     IOFileFilter fileFilter = new WildcardFileFilter(filePattern);
     IOFileFilter dirFilter = TrueFileFilter.INSTANCE;
 
-    Collection<?> files = FileUtils
-        .listFiles(new File(getPluginDir(getClassLoader(clazz)), dirPattern), fileFilter, dirFilter);
+    Collection<?> files = FileUtils.listFiles(new File(getPluginDir(getClassLoader(clazz)), dirPattern), fileFilter,
+        dirFilter);
     Iterator<?> fileIter = files.iterator();
     List<URL> urls = new ArrayList<URL>(files.size());
     while (fileIter.hasNext()) {
@@ -255,9 +234,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return urls;
   }
 
-
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
-    
+
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), getClassLoader(clazz));
     return bundle;
   }
