@@ -42,15 +42,25 @@ public class MDXMetaData extends AbstractPentahoMetaData {
 
   Result nativeResultSet = null;
 
+  private boolean useExtendedColumnNames = false;
+
   /**
    * @param connection
    */
-  public MDXMetaData(final Result nativeResultSet) {
+  public MDXMetaData(final Result nativeResultSet, boolean useExtendedColumnNames) {
     super();
+    this.useExtendedColumnNames=useExtendedColumnNames;
     this.nativeResultSet = nativeResultSet;
     columnHeaders = createColumnHeaders();
     rowHeaders = createRowHeaders();
     columnNames = createColumnNames();
+  }
+
+  /**
+   * @param connection
+   */
+  public MDXMetaData(final Result nativeResultSet) {
+    this(nativeResultSet, false);
   }
 
   private Object[][] createColumnHeaders() {
@@ -104,6 +114,12 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     String[] colNames = null;
 
     if (nativeResultSet != null) {
+      
+      // HACK for BISERVER-2640; need backward compatibility to old format of column
+      // names, yet with the old format cross joins will have problems (BISERVER-1266).
+      
+      if (useExtendedColumnNames){
+    	
       colNames = new String[this.rowHeaders[0].length];
 
       // Flatten out the column headers into one column-name
@@ -111,6 +127,23 @@ public class MDXMetaData extends AbstractPentahoMetaData {
       {
         Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
         colNames[i] = "["+member.getDimension().getName()+"].["+member.getHierarchy().getName()+"].["+member.getLevel().getName()+"]";
+      }
+      }else{
+        colNames = new String[getColumnCount()];
+
+        // Flatten out the column headers into one column-name
+        for (int i = 0; i < colNames.length; ++i) {
+          List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_ROW].getPositions();
+          if (i < ((List) positions.get(0)).size()) {
+            Member member = (Member) ((List) positions.get(0)).get(i);
+            Hierarchy hierarchy = member.getHierarchy();
+            colNames[i] = hierarchy.getCaption();
+          } else {
+            colNames[i] = ((Member) ((List) positions.get(0)).get(((List) positions.get(0)).size() - 1)).getHierarchy()
+                .getName()
+                + "{" + i + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+          }
+        }
       }
     }
 
@@ -151,5 +184,4 @@ public class MDXMetaData extends AbstractPentahoMetaData {
   public Object[][] getRowHeaders() {
     return rowHeaders;
   }
-
 }

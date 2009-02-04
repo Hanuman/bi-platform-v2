@@ -52,9 +52,17 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
   protected Object peekRow[];
 
   /**
-   * @param result
+   * @param useExtendedColumnNames if true, columnNames will follow the format: 
+   * "[dimension_name].[hierarchy_name].[level_name]"
+   * otherwise the format for column names will be: 
+   * "hierarchy_name{column_number}"
+   * 
+   * Implemented as a flag to allow reports prior to platform version 2.1
+   * (Liberty) to continue to execute as expected with the short column names, 
+   * but if the developer sets the extendedColumnNames flag to true, can overcome the
+   * bug in BISERVER-1266. 
    */
-  public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection) {
+  public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection, boolean useExtendedColumnNames) {
     super();
 
     this.nativeResultSet = nativeResultSet;
@@ -72,7 +80,14 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
       rowCount = axis[MDXResultSet.rowAxis].getPositions().size();
     }
 
-    mdxMetaData = new MDXMetaData(this.nativeResultSet);
+    mdxMetaData = new MDXMetaData(this.nativeResultSet, useExtendedColumnNames);
+  }
+  
+  /**
+   * @param result
+   */
+  public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection) {
+    this(nativeResultSet, nativeConnection, false);
   }
 
   /*

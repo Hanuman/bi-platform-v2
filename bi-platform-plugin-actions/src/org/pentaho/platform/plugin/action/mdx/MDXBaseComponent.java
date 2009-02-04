@@ -37,6 +37,7 @@ import org.pentaho.platform.engine.services.runtime.MapParameterResolver;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 
 public abstract class MDXBaseComponent extends ComponentBase implements IDataComponent, IPreparedComponent {
 
@@ -464,6 +465,15 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
         if (localConnection == null) {
           error(Messages.getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
           return null;
+        }
+      }
+      
+      if (localConnection instanceof MDXConnection){
+        MDXConnection mdxConn = (MDXConnection)localConnection;
+        if (connAction != null){
+          if ((connAction.getExtendedColumnNames() != ActionInputConstant.NULL_INPUT)){
+            mdxConn.setUseExtendedColumnNames(connAction.getExtendedColumnNames().getBooleanValue());
+          }
         }
       }
       return localConnection;
