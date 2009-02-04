@@ -109,6 +109,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   protected static final String PROPERTIES_SUFFIX = ".properties"; //$NON-NLS-1$
 
+  protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
   /*
    * matches 0 or 1 "/" followed by any non-"/" followed by either an end of string or (a "/" followed by 0 or more of anything).
    */
@@ -119,6 +120,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   private static final Pattern SYSTEM_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_PATH);
 
   private static final Pattern SYSTEM_TMP_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_TMP_PATH);
+  
 
   protected ThreadLocal session = new ThreadLocal();
 
@@ -842,5 +844,37 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
     return localizedName;
   }
+  
+  protected String buildDirectoryPath(final String solution, final String path, final String action) {
+    String localDirStr = EMPTY_STRING;
+    localDirStr += ISolutionRepository.SEPARATOR;
+    if ((solution != null) && (solution.length() > 0)) {
+      localDirStr += solution;
+      if ((path != null) && (path.length() > 0)) {
+        localDirStr += ISolutionRepository.SEPARATOR;
+        localDirStr += path;
+      }
+    }
+    if ((action != null) && (action.length() > 0)) {
+      String seperator = new String() + ISolutionRepository.SEPARATOR;
+      if (!localDirStr.endsWith(seperator)) {
+        localDirStr += ISolutionRepository.SEPARATOR;
+      }
+      localDirStr += action;
+    }
+    return localDirStr;
+  }
 
+  protected String buildDirectoryPath(final String repositoryName, final String path) {
+    String seperator = null;
+    seperator += ISolutionRepository.SEPARATOR;
+    int initialStartingPoint = path.indexOf(repositoryName.replaceAll(seperator, EMPTY_STRING));
+    if(initialStartingPoint >=0) {
+      int start = path.indexOf(ISolutionRepository.SEPARATOR, initialStartingPoint);
+      if(start >= 0) {
+        return path.substring(start + 1, path.length());    
+      }
+    }
+    return path;
+  }
 }

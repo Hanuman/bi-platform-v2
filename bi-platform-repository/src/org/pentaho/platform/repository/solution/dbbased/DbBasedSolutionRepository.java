@@ -254,10 +254,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       putRepositoryObjectInCache(localDirStr + getLocale().toString(), repository);
     }
   }
-
-  private String buildDirectoryPath(final String solution, final String path, final String action) {
-    String localDirStr = "";
-    localDirStr += ISolutionRepository.SEPARATOR;
+  
+  @Override
+  protected String buildDirectoryPath(final String solution, final String path, final String action) {
+    String localDirStr = repositoryName;
     if ((solution != null) && (solution.length() > 0)) {
       localDirStr += solution;
       if ((path != null) && (path.length() > 0)) {
@@ -1097,7 +1097,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if (path == null) {
       return getRootFolder();
     } else if (SolutionRepositoryBase.isSystemPath(path)) {
-      return super.getFileByPath(path);
+      return super.getFileByPath(super.buildDirectoryPath(repositoryName, path));
     } else {
       String fullPath = path.replace('\\', ISolutionRepository.SEPARATOR); // use our file seperator
       if ((repositoryName != null) && !fullPath.startsWith(repositoryName)) {
@@ -1125,7 +1125,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         }
         return rtn;
       } else {
-        return super.getFileByPath(path);
+          return super.getFileByPath(super.buildDirectoryPath(repositoryName, path));
       }
     }
   }
