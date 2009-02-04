@@ -45,7 +45,7 @@
           depends="install-antcontrib"
           description="cleans, resolves, publishes and generates javadoc for all platform projects serially">
     <sequential>
-      <property name="bi.javadoc.list"
+      <property name="project.list"
                 value="bi-platform-api,
 			  											bi-platform-util,
 			  											bi-platform-engine-core,
@@ -62,8 +62,9 @@
 			  											bi-platform-web-servlet,
 			  											bi-platform-web-portlet,
 			  	                                        bi-platform-security-userroledao,
-	  	  												mantle" />
-      <for list="${bi.javadoc.list}" param="module" trim="true">
+	  	  												mantle,
+        												bi-platform-webservice" />
+      <for list="${project.list}" param="module" trim="true">
         <sequential>
           <ant antfile="build.xml" dir="../@{module}">
             <target name="clean-all" />
