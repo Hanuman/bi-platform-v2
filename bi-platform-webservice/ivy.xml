@@ -62,7 +62,7 @@
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" transitive="false"/>
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" transitive="false"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-webservice-core"     rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-webservice-core"     rev="${dependency.pentaho-webservice-core.revision}" changing="true"/>
 
 		<!--  external test dependencies -->
         <dependency org="junit"               name="junit"               rev="4.4"   conf="test->default"/>
