@@ -322,6 +322,8 @@ Button = function(label, container){
 }
 
 window.onresize = function(){
+	document.getElementById("buttonRelativeDiv").style.top="0px";
+	document.getElementById("buttonRelativeDiv").style.top="1px";
   if(window.selectedButton){
      window.selectedButton.onmouseout();
   }
