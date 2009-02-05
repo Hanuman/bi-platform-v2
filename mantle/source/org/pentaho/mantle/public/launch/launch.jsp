@@ -76,7 +76,7 @@ A:hover {
 }
 
 .ql_container {
-  width: 564px;
+  width: 620px;
   margin-bottom: 50px;
 }
 
