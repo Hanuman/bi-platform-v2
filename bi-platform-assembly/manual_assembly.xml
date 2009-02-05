@@ -32,10 +32,12 @@
     <property name="bi.platform.web.dir" value="../bi-platform-web" />
     <property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
 	<property name="bi.platform.web.portlet.dir" value="../bi-platform-web-portlet" />
-  <property name="bi.platform.security.userroledao.dir" value="../bi-platform-security-userroledao" />
+    <property name="bi.platform.security.userroledao.dir" value="../bi-platform-security-userroledao" />
 	<property name="productId" value="biserver-manual" />
 	<property name="releaseType" value="ce" />
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
+	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
+	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
     	
     	
 	<!-- ========================================================================
