@@ -62,8 +62,7 @@
 			  											bi-platform-web-servlet,
 			  											bi-platform-web-portlet,
 			  	                                        bi-platform-security-userroledao,
-	  	  												mantle,
-        												bi-platform-webservice" />
+	  	  												mantle" />
       <for list="${project.list}" param="module" trim="true">
         <sequential>
           <ant antfile="build.xml" dir="../@{module}">
