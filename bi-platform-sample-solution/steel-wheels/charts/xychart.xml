@@ -57,6 +57,7 @@
 	<domain-label-rotation-dir></domain-label-rotation-dir>
     <domain-minimum>700</domain-minimum>
 	<domain-maximum>1900</domain-maximum>
+	<tooltip-x-format>0</tooltip-x-format>
 	
 	<!--  Y-Axis properties -->
 	<range-title>Sales</range-title>
@@ -75,7 +76,7 @@
     </range-tick-font>
 	<range-minimum>25000</range-minimum>
 	<range-maximum>400000</range-maximum>
-	
+	<tooltip-y-format>0</tooltip-y-format>
 	<!-- Specify is the chart legend should be shown -->
 	<include-legend>true</include-legend>
     <legend-font>

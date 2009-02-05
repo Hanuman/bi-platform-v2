@@ -59,7 +59,7 @@
 	</domain-tick-font>	
 	<domain-label-rotation>.7</domain-label-rotation>
 	<domain-label-rotation-dir></domain-label-rotation-dir>
-
+	<tooltip-x-format>DD-MMM</tooltip-x-format>
 	
 	<!--  Y-Axis properties -->
 	<range-title>Sales</range-title>
@@ -76,7 +76,7 @@
 	  <is-bold>false</is-bold>
 	  <is-italic>false</is-italic>	
     </range-tick-font>
-	
+	<tooltip-y-format>0.0</tooltip-y-format>
 	<!-- Specify is the chart legend should be shown -->
 	<include-legend>true</include-legend>
     <legend-font>
