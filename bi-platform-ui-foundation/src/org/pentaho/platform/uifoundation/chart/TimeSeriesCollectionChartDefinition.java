@@ -147,9 +147,9 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
   // {2} - the preformatted y-value
   private String tooltipContent = "{1}, {2}"; //$NON-NLS-1$
 
-  private String tooltipYFormat = "0"; //$NON-NLS-1$
+  private String tooltipYFormat = "0.0"; //$NON-NLS-1$
 
-  private String tooltipXFormat = "0"; //$NON-NLS-1$
+  private String tooltipXFormat = "DD-MMM"; //$NON-NLS-1$
 
   // Other stuff
   private IPentahoSession session;
