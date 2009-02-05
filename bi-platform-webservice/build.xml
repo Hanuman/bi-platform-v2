@@ -122,5 +122,18 @@
       <param name="publish.file" value="${dist.dir}/${plugin.zipfile}" />
     </antcall>
   </target>
+  
+  <!--=======================================================================
+	    publish-local-nojar (override)
+	    
+	    Publishes jar and gwt zip package locally
+	    ====================================================================-->
+  <target name="publish-local-nojar" depends="install-ivy">
+    <ant antfile="common_build.xml" target="publish-local-nojar" />
+    <ivy:resolve file="package-ivy.xml" />
+    <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
+      <artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
+    </ivy:publish>
+  </target>
 
 </project>
