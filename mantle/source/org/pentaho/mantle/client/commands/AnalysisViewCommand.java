@@ -71,30 +71,34 @@ public class AnalysisViewCommand implements Command {
 
     analysisDialog.setValidatorCallback(validatorCallback);
     analysisDialog.setCallback(callback);
-
-    final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
-    if (openAnalysisView != null) {
-      String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
-      Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
-      PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      dialog.setCallback(new IDialogCallback() {
-
-        public void cancelPressed() {
-          // TODO Auto-generated method stub
-          
-        }
-
-        public void okPressed() {
-          navigatorPerspective.getContentTabPanel().remove(openAnalysisView);
-          analysisDialog.center();
-        }
-        
-      });
-      dialog.center();
-      dialog.show();
-
-    } else {
-      analysisDialog.center();
-    }
+    //
+    // Commented out analysis view check, JPivot now supports multiple views
+    // in a single session.  Leaving the code here during testing phase.
+    //
+    
+//    final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
+//    if (openAnalysisView != null) {
+//      String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
+//      Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
+//      PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//      dialog.setCallback(new IDialogCallback() {
+//
+//        public void cancelPressed() {
+//          // TODO Auto-generated method stub
+//          
+//        }
+//
+//        public void okPressed() {
+//          navigatorPerspective.getContentTabPanel().remove(openAnalysisView);
+//          analysisDialog.center();
+//        }
+//        
+//      });
+//      dialog.center();
+//      dialog.show();
+//
+//    } else {
+    analysisDialog.center();
+//    }
   }
 }

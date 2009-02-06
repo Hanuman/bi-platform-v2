@@ -500,33 +500,37 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void openFile(final FileCommand.COMMAND mode) {
     String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) { //$NON-NLS-1$
-      if (mode == FileCommand.COMMAND.RUN) {
-        final Widget openAnalysisView = getOpenAnalysisView();
-        if (openAnalysisView != null && name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
-          String actionName = getTabForWidget(openAnalysisView).getText();
-          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
-          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          dialog.setCallback(new IDialogCallback() {
-
-            public void cancelPressed() {
-              // do nothing
-            }
-
-            public void okPressed() {
-              contentTabPanel.remove(openAnalysisView);
-              executeActionSequence(mode);
-            }
-
-          });
-          dialog.center();
-          dialog.show();
-          return;
-        } else {
-          executeActionSequence(mode);
-        }
-      } else {
-        executeActionSequence(mode);
-      }
+      //
+      // Commented out analysis view check, JPivot now supports multiple views
+      // in a single session.  Leaving the code here during testing phase.
+      //
+//      if (mode == FileCommand.COMMAND.RUN) {
+//        final Widget openAnalysisView = getOpenAnalysisView();
+//        if (openAnalysisView != null && name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
+//          String actionName = getTabForWidget(openAnalysisView).getText();
+//          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
+//          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//          dialog.setCallback(new IDialogCallback() {
+//
+//            public void cancelPressed() {
+//              // do nothing
+//            }
+//
+//            public void okPressed() {
+//              contentTabPanel.remove(openAnalysisView);
+//              executeActionSequence(mode);
+//            }
+//
+//          });
+//          dialog.center();
+//          dialog.show();
+//          return;
+//        } else {
+//          executeActionSequence(mode);
+//        }
+//      } else {
+      executeActionSequence(mode);
+//      }
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
       if (mode == FileCommand.COMMAND.NEWWINDOW) {
         Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
