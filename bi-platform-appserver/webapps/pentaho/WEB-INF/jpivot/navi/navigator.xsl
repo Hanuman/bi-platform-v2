@@ -6,6 +6,7 @@
 <xsl:param name="context"/>
 <xsl:param name="renderId"/>
 <xsl:param name="token"/>
+<xsl:param name="pivotId"/>
 
 <xsl:include href="../../wcf/controls.xsl"/>
 

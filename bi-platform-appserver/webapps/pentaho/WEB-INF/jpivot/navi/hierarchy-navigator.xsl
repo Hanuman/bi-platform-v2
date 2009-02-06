@@ -58,7 +58,7 @@
         <xsl:text> </xsl:text>
         <xsl:choose>
           <xsl:when test="@id">
-            <a href="?{$token}&amp;{@id}=x">
+            <a href="?pivotId={$pivotId}&amp;{$token}&amp;{@id}=x">
               <xsl:value-of select="@name"/>
             </a>
           </xsl:when>

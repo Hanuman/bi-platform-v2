@@ -83,6 +83,12 @@ static int pid = 0;
 		}
 	}
 
+	// this allows navigation renderer to have access to the pivotId, which it uses
+	// in an href link back to itself.
+	Map map = new HashMap();
+	map.put("pivotId", pivotId);
+	request.setAttribute("com.tonbeller.wcf.component.RendererParameters", map);
+	
 	int saveResult = 0;
 	String saveMessage = "";
 	String queryId = "query"+pivotId; //$NON-NLS-1$
