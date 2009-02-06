@@ -1479,8 +1479,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       HibernateUtil.beginTransaction();
       permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
     }
-    if(fileName != null && fileName.endsWith(".xmi")) {
-        MetadataPublisher.loadAllMetadata(getSession(), true);
+    if( (res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && 
+            (fileName != null) && 
+            (fileName.toLowerCase().endsWith(".xmi")) ) {
+        MetadataPublisher.loadMetadata(path, getSession(), true);
     }
     return res;
   }
