@@ -22,26 +22,19 @@ public interface IContentGeneratorInfo {
 
 	public String getDescription();
 
-	public void setDescription(String description);
-
 	public String getId();
-
-	public void setId(String id);
 
 	public String getUrl();
 
-	public void setUrl(String url);
-
 	public String getTitle();
 
-	public void setTitle(String title);
-	
 	public IFileInfoGenerator getFileInfoGenerator( );
 
   public String getType();
 
   public String getFileInfoGeneratorClassname();
 
+  //FIXME remove this!!!
   public void setFileInfoGenerator(IFileInfoGenerator fileInfoGenerator);
 
   public String getClassname();

@@ -23,6 +23,9 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+
 public class PluginMessageLogger {
   private static ThreadLocal<List<String>> messages = new ThreadLocal<List<String>>() {
     protected List<String> initialValue() {
@@ -40,6 +43,16 @@ public class PluginMessageLogger {
 
   public static List<String> getAll() {
     return messages.get();
+  }
+
+  public static int count(final String messagePrefix) {
+    return CollectionUtils.countMatches(messages.get(), new Predicate() {
+
+      public boolean evaluate(Object object) {
+        return ((String) object).startsWith(messagePrefix);
+      }
+
+    });
   }
 
 }

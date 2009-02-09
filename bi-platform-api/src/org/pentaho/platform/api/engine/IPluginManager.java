@@ -73,30 +73,22 @@ public interface IPluginManager {
 	 * org.pentaho.ui.xul.IMenuCustomization objects
 	 * @return List of IMenuCustomization objects
 	 */
-	public List getMenuCustomizations();
+	@SuppressWarnings("unchecked")
+  public List getMenuCustomizations();
 	
 	 /**
    * Causes the plug-in manager object to re-register all of the plug-ins that
-   * it knows about, typically calling {@link #registerPlugin(IPlatformPlugin, IPentahoSession)}
-   * for each plug-in it discovers.
+   * it knows about.  A {@link IPluginProvider} may be invoked to discover plugins
+   * from various sources.
    * @param session the current session
    * @return true if no errors were encountered
    */
 	public boolean reload(IPentahoSession session);
 
 	/**
-	 * Returns a map of the XUL overlays that are defined by all the plug-ins. The overlays are
-	 * XML fragments. The keys to the map are ids that the plug-ins define.
+	 * Returns a list of the XUL overlays that are defined by all the plug-ins. The overlays are
+	 * XML fragments.
 	 * @return List of XML XUL overlays
 	 */
 	public List<XulOverlay> getOverlays();
-
-	/**
-	 * Registers a plugin with the platform and exposes the bits that compose the plugin to the various utility methods
-	 * of the plugin manager
-	 * @param plugin the platform plugin
-	 * @param comments
-	 * @throws PlatformPluginRegistrationException if there was a problem registering this plugin
-	 */
-	public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session ) throws PlatformPluginRegistrationException;
 }

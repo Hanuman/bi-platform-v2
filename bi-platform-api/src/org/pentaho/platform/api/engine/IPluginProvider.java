@@ -35,16 +35,9 @@ public interface IPluginProvider {
   /**
    * Returns a list of {@link IPlatformPlugin}s defined by this plugin provider.  These plugins have not been
    * initialized or registered within the platform at this point.
-   * @return a list of platform plugins
-   */
-  public List<IPlatformPlugin> getPlugins();
-
-  /**
-   * Force the plugin provider to renew its list of {@link IPlatformPlugin}s.  A call to {@link #getPlugins()}s
-   * after a {@link #reload(IPentahoSession, List)} may result in a different set of {@link IPlatformPlugin}s.  
    * @param session the current session
-   * @param comments
+   * @return a list of platform plugins
+   * @throws PlatformPluginRegistrationException if there is a problem looking for plugins
    */
-  public void reload(IPentahoSession session, List<String> comments);
-
+  public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException;
 }

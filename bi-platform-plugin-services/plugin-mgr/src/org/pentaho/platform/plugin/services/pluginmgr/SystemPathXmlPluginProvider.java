@@ -23,6 +23,7 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOCase;
@@ -35,6 +36,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
@@ -57,50 +59,59 @@ import org.pentaho.ui.xul.util.MenuCustomization;
  */
 public class SystemPathXmlPluginProvider implements IPluginProvider {
 
-  protected List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
+  public static final String ERROR_0001_FAILED_TO_PROCESS_PLUGIN = "SystemPathXmlPluginProvider.ERROR_0001_FAILED_TO_PROCESS_PLUGIN"; //$NON-NLS-1$
 
-  public synchronized void reload(IPentahoSession session, List<String> comments) {
-    plugins.clear();
+  /**
+   * Gets the list of plugins that this provider class has discovered.
+   * 
+   * @return a copy of plugin list, so we don't have to worry about modification (which is
+   * not allowed) and thread safety issues like iterating over the list while being modified.  
+   * This approach is OK for now since the number of plugins should be relatively small.
+   * @throws PlatformPluginRegistrationException 
+   * 
+   * @see Collections#synchronizedList(List)
+   * @see IPluginProvider#getPlugins()
+   * @throws PlatformPluginRegistrationException if there is a problem preventing the impl from looking for plugins
+   */
+  public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+    List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
 
-    load(session);
-  }
-
-  public synchronized boolean load(IPentahoSession session) {
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, session);
     if (repo == null) {
-      PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
-      Logger.error(getClass().toString(), Messages.getErrorString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
-      return false;
+      throw new PlatformPluginRegistrationException(Messages
+          .getErrorString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
     }
     // look in each of the system setting folders looking for plugin.xml files
     String systemPath = PentahoSystem.getApplicationContext().getSolutionPath("system"); //$NON-NLS-1$
-    // TODO convert this to VFS?
     File systemDir = new File(systemPath);
     if (!systemDir.exists() || !systemDir.isDirectory()) {
-      PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
-      Logger
-          .error(getClass().toString(), Messages.getErrorString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
-      return false;
+      throw new PlatformPluginRegistrationException(Messages
+          .getErrorString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
     }
     File kids[] = systemDir.listFiles();
-    boolean result = true;
     // look at each child to see if it is a folder
     for (File kid : kids) {
       if (kid.isDirectory()) {
-        result &= processDirectory(kid, repo, session);
+        try {
+          processDirectory(plugins, kid, repo, session);
+        } catch (Throwable t) {
+          String msg = Messages.getErrorString(ERROR_0001_FAILED_TO_PROCESS_PLUGIN, kid.getAbsolutePath());
+          Logger.error(getClass().toString(), msg, t);
+          PluginMessageLogger.add(msg);
+        }
       }
     }
 
-    return result;
+    return Collections.unmodifiableList(plugins);
   }
 
-  protected boolean processDirectory(File folder, ISolutionRepository repo, IPentahoSession session) {
+  protected void processDirectory(List<IPlatformPlugin> plugins, File folder, ISolutionRepository repo,
+      IPentahoSession session) throws PlatformPluginRegistrationException {
     // see if there is a plugin.xml file
     FilenameFilter filter = new NameFileFilter("plugin.xml", IOCase.SENSITIVE); //$NON-NLS-1$
     File kids[] = folder.listFiles(filter);
     if (kids == null || kids.length == 0) {
-      // nothing to do here
-      return true;
+      return;
     }
     boolean hasLib = false;
     filter = new NameFileFilter("lib", IOCase.SENSITIVE); //$NON-NLS-1$
@@ -113,24 +124,19 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     String path = "system" + ISolutionRepository.SEPARATOR + folder.getName() + ISolutionRepository.SEPARATOR + "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
     try {
       Document doc = repo.getResourceAsDocument(path);
-      // we have a plugin.xml document
       if (doc == null) {
-        PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
-        Logger.error(getClass().toString(), Messages.getErrorString(
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
             "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
-        return false;
       }
-      return processPluginSettings(doc, session, folder.getName(), repo, hasLib);
+      plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
     } catch (Exception e) {
-      Logger.error(getClass().toString(), Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
     }
-    return false;
-
   }
 
-  protected boolean processPluginSettings(Document doc, IPentahoSession session, String folder,
-      ISolutionRepository repo, boolean hasLib) {
+  protected PlatformPlugin createPlugin(Document doc, IPentahoSession session, String folder, ISolutionRepository repo,
+      boolean hasLib) {
     boolean result = true;
 
     PlatformPlugin plugin = new PlatformPlugin();
@@ -140,18 +146,12 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     result &= processContentTypes(plugin, doc, session);
     result &= processContentGenerators(plugin, doc, session, folder, repo, hasLib);
     result &= processOverlays(plugin, doc, session);
+    
+    //TODO: report on the number of each thing provided by the plugin here
 
     plugin.setSourceDescription(folder);
 
-    plugins.add(plugin);
-
-    if (result) {
-      PluginMessageLogger.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", folder)); //$NON-NLS-1$
-    } else {
-      PluginMessageLogger.add(Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", folder)); //$NON-NLS-1$
-    }
-
-    return result;
+    return plugin;
   }
 
   protected boolean processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {
@@ -159,7 +159,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     if (node != null) {
       String name = node.attributeValue("title"); //$NON-NLS-1$
       plugin.setName(name);
-      PluginMessageLogger.add(Messages.getString("PluginManager.USER_UPDATING_PLUGIN", name, folder)); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
       return true;
     }
     return false;
@@ -268,8 +268,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         plugin.addContentInfo(contentInfo);
         PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
       } else {
-        PluginMessageLogger
-            .add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
       }
     }
 
@@ -302,10 +301,12 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
                 className, fileInfoClassName, session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
-            PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+            PluginMessageLogger.add(Messages.getString(
+                "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
           }
         } else {
-          PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+          PluginMessageLogger
+              .add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
         }
       } catch (Exception e) {
         PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
@@ -318,8 +319,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
       String description, String type, String url, String scopeStr, String className, String fileInfoClassName,
-      IPentahoSession session, String location) throws ClassNotFoundException,
-      InstantiationException, IllegalAccessException {
+      IPentahoSession session, String location) throws ClassNotFoundException, InstantiationException,
+      IllegalAccessException {
 
     ContentGeneratorInfo info = new ContentGeneratorInfo();
     info.setId(id);
@@ -334,7 +335,4 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     return info;
   }
 
-  public List<IPlatformPlugin> getPlugins() {
-    return plugins;
-  }
 }

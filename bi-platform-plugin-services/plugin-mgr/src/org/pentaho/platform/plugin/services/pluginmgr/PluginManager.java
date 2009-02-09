@@ -18,6 +18,7 @@
 package org.pentaho.platform.plugin.services.pluginmgr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,31 +47,35 @@ import org.pentaho.ui.xul.XulOverlay;
 
 public class PluginManager implements IPluginManager {
 
-  protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = new HashMap<String, List<IContentGeneratorInfo>>();
-
-  protected Map<String, IContentGeneratorInfo> contentInfoMap = new HashMap<String, IContentGeneratorInfo>();
-
-  protected Map<String, IContentInfo> contentTypeByExtension = new HashMap<String, IContentInfo>();
-
-  protected Map<String, ClassLoader> classLoaderMap = new HashMap<String, ClassLoader>();
-
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
-  public IPentahoObjectFactory getObjectFactory() {
-    return objectFactory;
-  }
+  protected List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
+
+  /* indexes and cached collections */
+
+  protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections
+      .synchronizedMap(new HashMap<String, List<IContentGeneratorInfo>>());
+
+  protected Map<String, IContentGeneratorInfo> contentInfoMap = Collections
+      .synchronizedMap(new HashMap<String, IContentGeneratorInfo>());
+
+  protected Map<String, IContentInfo> contentTypeByExtension = Collections
+      .synchronizedMap(new HashMap<String, IContentInfo>());
+
+  protected Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
+
+  protected List<XulOverlay> overlaysCache = Collections.synchronizedList(new ArrayList<XulOverlay>());
+
+  protected List<IMenuCustomization> menuCustomizationsCache = Collections
+      .synchronizedList(new ArrayList<IMenuCustomization>());
 
   public Set<String> getContentTypes() {
-    return contentGeneratorInfoByTypeMap.keySet();
+    //map.keySet returns a set backed by the map, so we cannot allow modification of the set
+    return Collections.unmodifiableSet(contentGeneratorInfoByTypeMap.keySet());
   }
 
   public List<XulOverlay> getOverlays() {
-    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
-    List<XulOverlay> list = new ArrayList<XulOverlay>();
-    for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
-      list.addAll(plugin.getOverlays());
-    }
-    return list;
+    return Collections.unmodifiableList(overlaysCache);
   }
 
   public IContentInfo getContentInfoFromExtension(String extension, IPentahoSession session) {
@@ -78,7 +83,7 @@ public class PluginManager implements IPluginManager {
   }
 
   public List<IContentGeneratorInfo> getContentGeneratorInfoForType(String type, IPentahoSession session) {
-    return contentGeneratorInfoByTypeMap.get(type);
+    return Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
   }
 
   public IContentGenerator getContentGenerator(String id, IPentahoSession session) throws ObjectFactoryException {
@@ -143,51 +148,77 @@ public class PluginManager implements IPluginManager {
   }
 
   public List<IMenuCustomization> getMenuCustomizations() {
-    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
-    List<IMenuCustomization> list = new ArrayList<IMenuCustomization>();
-    for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
-      list.addAll(plugin.getMenuCustomizations());
-    }
-    return list;
+    return Collections.unmodifiableList(menuCustomizationsCache);
   }
 
-  public synchronized boolean reload(IPentahoSession session) {
-    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, null);
-    pluginProvider.getPlugins().clear();
-    boolean anyErrors = !((SystemPathXmlPluginProvider) pluginProvider).load(session);
+  public boolean reload(IPentahoSession session) {
+    boolean anyErrors = false;
+    IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, session);
+    try {
+      synchronized (plugins) {
+        plugins.clear();
+        plugins.addAll(pluginProvider.getPlugins(session));
+      }
+    } catch (PlatformPluginRegistrationException e1) {
+      String msg = Messages.getErrorString("PluginManager.ERROR_0012_PLUGIN_DISCOVERY_FAILED"); //$NON-NLS-1$
+      Logger.error(getClass().toString(), msg, e1);
+      PluginMessageLogger.add(msg);
+      anyErrors = true;
+    }
 
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     objectFactory.init(null, null);
 
-    for (IPlatformPlugin plugin : pluginProvider.getPlugins()) {
-      try {
-        registerPlugin(plugin, session);
-      } catch (PlatformPluginRegistrationException e) {
-        // this has been logged already
-        anyErrors = true;
-        String msg = Messages.getString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN", plugin.getName()); //$NON-NLS-1$
-        Logger.error(getClass().toString(), msg, e);
-        PluginMessageLogger.add(msg);
+    synchronized (plugins) {
+      for (IPlatformPlugin plugin : plugins) {
+        try {
+          registerPlugin(plugin, session);
+        } catch (PlatformPluginRegistrationException e) {
+          // this has been logged already
+          anyErrors = true;
+          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN", plugin.getName()); //$NON-NLS-1$
+          Logger.error(getClass().toString(), msg, e);
+          PluginMessageLogger.add(msg);
+        }
       }
     }
     return !anyErrors;
   }
 
-  public void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
+  @SuppressWarnings("unchecked")
+  protected void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
       throws PlatformPluginRegistrationException {
 
+    //index content types
     for (IContentInfo info : plugin.getContentInfos()) {
       contentTypeByExtension.put(info.getExtension(), info);
     }
 
+    ClassLoader loader = setPluginClassLoader(plugin);
+
+    registerContentGenerators(plugin, loader, session);
+
+    //cache overlays
+    overlaysCache.addAll(plugin.getOverlays());
+
+    //cache menu customizations
+    menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
+  }
+
+  protected ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
     ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
     if (loader == null) {
-      String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath( "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription() );
+      String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath(
+          "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription()); //$NON-NLS-1$
       loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }
+    return loader;
+  }
 
+  protected void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session)
+      throws PlatformPluginRegistrationException {
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
       String errorMsg = Messages.getString(
@@ -195,7 +226,7 @@ public class PluginManager implements IPluginManager {
 
       //test load the content generator
       try {
-        Class clazz = loader.loadClass(cgInfo.getClassname());
+        Class<?> clazz = loader.loadClass(cgInfo.getClassname());
         Scope scope = Scope.valueOf(cgInfo.getScope().toUpperCase());
         objectFactory.defineObject(clazz.getSimpleName(), cgInfo.getClassname(), scope, loader);
         objectFactory.defineObject(cgInfo.getId(), cgInfo.getClassname(), scope, loader);
@@ -240,5 +271,10 @@ public class PluginManager implements IPluginManager {
       PluginMessageLogger.add(Messages.getString(
           "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }
+
+  }
+
+  public IPentahoObjectFactory getObjectFactory() {
+    return objectFactory;
   }
 }
