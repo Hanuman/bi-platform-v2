@@ -62,6 +62,8 @@ import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
+import org.pentaho.platform.api.engine.IFileInfo;
+import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
@@ -469,21 +471,26 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     solutionFileInfo.path = path;
     solutionFileInfo.name = fileName;
 
-    // Find file Type
+    // Get Localized name
+    if (!solutionFile.isDirectory()) {
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title"); //$NON-NLS-1$
+    }
+    if (StringUtils.isEmpty(solutionFileInfo.localizedName)) {
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name"); //$NON-NLS-1$
+    }
+    
+    // Find file Type, if plugin, also get the title
     int lastDot = -1;
     if (solutionFile.isDirectory()) {
       solutionFileInfo.type = SolutionFileInfo.Type.FOLDER;
     } else if ((lastDot = fileName.lastIndexOf('.')) > -1 && !fileName.startsWith(".")) { //$NON-NLS-1$
-      String extension = fileName.substring(lastDot);
+      String extension = fileName.substring(lastDot + 1);
 
       // Check to see if its a plug-in
       boolean isPlugin = false;
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginManager != null) {
         Set<String> types = pluginManager.getContentTypes();
-        for (String type : types) {
-          System.out.println(type);
-        }
         isPlugin = types != null && types.contains(extension);
       }
 
@@ -492,7 +499,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType(extension, getPentahoSession());
         solutionFileInfo.type = SolutionFileInfo.Type.PLUGIN;
         solutionFileInfo.pluginTypeName = info.getDescription();
-
+        
+        // get the title for the plugin file
+        IFileInfoGenerator fig = info.getFileInfoGenerator();
+        if (fig != null) {
+          IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(), solutionFile.getFileName(), solutionFile.getData());
+          solutionFileInfo.localizedName = fileInfo.getTitle();
+        }
       } else if (fileName.endsWith("waqr.xaction")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
       } else if (fileName.endsWith("analysisview.xaction")) { //$NON-NLS-1$
@@ -502,14 +515,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       } else {
         solutionFileInfo.type = SolutionFileInfo.Type.XACTION;
       }
-    }
-
-    // Get Localized name
-    if (!solutionFile.isDirectory()) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title"); //$NON-NLS-1$
-    }
-    if (StringUtils.isEmpty(solutionFileInfo.localizedName)) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name"); //$NON-NLS-1$
     }
 
     if (solutionFile.getData() == null) {

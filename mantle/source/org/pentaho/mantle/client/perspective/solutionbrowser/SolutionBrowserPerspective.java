@@ -1728,7 +1728,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       enabledOptionsList.add(pluginMenu);
 
       // check for another one
-      pluginSetting = "plugin-file-type-" + (++index); //$NON-NLS-1$
+      pluginSetting = "plugin-content-type-" + (++index); //$NON-NLS-1$
     }
     
     FileTypeEnabledOptions waqrMenu = new FileTypeEnabledOptions(FileItem.WAQR_VIEW_SUFFIX);
