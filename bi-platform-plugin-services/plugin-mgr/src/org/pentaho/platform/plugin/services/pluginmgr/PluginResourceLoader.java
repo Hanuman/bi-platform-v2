@@ -47,10 +47,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 
 /**
  * The default implementation of the {@link IPluginResourceLoader}.  Obtains resources
- * by searching the root directory of a {@link PluginClassLoader}.  This behavior can
- * be overridden such that an instance of this class will search a specified directory
- * instead, bypassing the classloader.  See {@link #setRootDir(File)}  
- * (this is typically only used in test environments.)
+ * by searching the root directory of a {@link PluginClassLoader}.
  * 
  * <h3>Resource discovery</h3>
  * {@link PluginResourceLoader} will search the following places for plugin classes:
@@ -70,7 +67,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  * both the filesystem and the classloader can handle this delimiter, whereas '.' will not be handled
  * correctly if you are trying to load a resource from the filesystem.
  * 
- * <h3>Plugin Settings</h3>: this class backs the plugin settings APIs with the PentahoSystem settings service.
+ * <h3>Plugin Settings</h3>This class backs the plugin settings APIs with the PentahoSystem settings service.
  * See {@link PentahoSystem#getSystemSetting(String, String)} and {@link ISystemSettings}.  System
  * settings are expected in a file named settings.xml in the root of the plugin directory.
  * 
@@ -99,7 +96,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * for the root directory.
    * @param rootDir  the root directory in which to search for resources
    * @deprecated instead of setting the root dir, have your application use a subclass of PluginResourceLoader
-   * that returns an appropriately pathed PluginClassLoader from an overriden {@link #getClassLoader(Class)}.
+   * that returns an appropriately pathed PluginClassLoader from an overridden {@link #getClassLoader(Class)}.
    */
   public void setRootDir(File rootDir) {
     this.rootDir = rootDir;

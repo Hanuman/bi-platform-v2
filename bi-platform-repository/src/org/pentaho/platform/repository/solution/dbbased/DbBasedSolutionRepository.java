@@ -398,8 +398,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
     try {
 
-      IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType(extension, getSession());
-      IFileInfoGenerator fig = info.getFileInfoGenerator();
+      IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, getSession());
       if (fig != null) {
         fig.setLogger(this);
         ContentType contentType = fig.getContentType();

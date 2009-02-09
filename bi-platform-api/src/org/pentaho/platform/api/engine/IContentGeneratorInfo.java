@@ -28,14 +28,9 @@ public interface IContentGeneratorInfo {
 
 	public String getTitle();
 
-	public IFileInfoGenerator getFileInfoGenerator( );
-
   public String getType();
 
   public String getFileInfoGeneratorClassname();
-
-  //FIXME remove this!!!
-  public void setFileInfoGenerator(IFileInfoGenerator fileInfoGenerator);
 
   public String getClassname();
 

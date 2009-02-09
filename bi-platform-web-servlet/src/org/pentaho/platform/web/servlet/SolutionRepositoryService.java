@@ -56,6 +56,7 @@ import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -65,6 +66,7 @@ import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.util.StringUtil;
+import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
@@ -88,7 +90,9 @@ public class SolutionRepositoryService extends ServletBase {
    * contains instance of a sax parser factory. Use getSAXParserFactory() method to get a copy of the factory.
    */
   private static final ThreadLocal<SAXParserFactory> SAX_FACTORY = new ThreadLocal<SAXParserFactory>();
+
   private static final String RESPONSE_DOCUMENT_ENCODING = "UTF-8";
+
   private static final String RESPONSE_DOCUMENT_VERSION_NUM = "1.0";
 
   @Override
@@ -101,7 +105,8 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
+      IOException {
     PentahoSystem.systemEntryPoint();
     OutputStream outputStream = response.getOutputStream();
     try {
@@ -177,9 +182,11 @@ public class SolutionRepositoryService extends ServletBase {
     return filters.toArray(new String[] {});
   }
 
-  protected void dispatch(final HttpServletRequest request, final HttpServletResponse response, final String component, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSOAP) throws IOException, SolutionRepositoryServiceException, PentahoAccessControlException,
-      ParserConfigurationException, TransformerConfigurationException, TransformerException, TransformerFactoryConfigurationError {
+  protected void dispatch(final HttpServletRequest request, final HttpServletResponse response, final String component,
+      final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSOAP)
+      throws IOException, SolutionRepositoryServiceException, PentahoAccessControlException,
+      ParserConfigurationException, TransformerConfigurationException, TransformerException,
+      TransformerFactoryConfigurationError {
 
     IParameterProvider parameterProvider = new HttpRequestParameterProvider(request);
     if ("getSolutionRepositoryDoc".equals(component)) { //$NON-NLS-1$
@@ -210,7 +217,8 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
+      IOException {
     doGet(request, response);
   }
 
@@ -228,8 +236,8 @@ public class SolutionRepositoryService extends ServletBase {
    * @return Success of the delete operation is returned
    * @throws IOException
    */
-  public static boolean delete(final IPentahoSession userSession, final String solution, final String path, final String name)
-      throws IOException {
+  public static boolean delete(final IPentahoSession userSession, final String solution, final String path,
+      final String name) throws IOException {
 
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String fullPath = ActionInfo.buildSolutionPath(solution, path, name);
@@ -254,22 +262,23 @@ public class SolutionRepositoryService extends ServletBase {
    * @return true if success
    * @throws IOException
    */
-  public static boolean createFolder(IPentahoSession userSession, String solution, String path, String name, String desc) throws IOException {
+  public static boolean createFolder(IPentahoSession userSession, String solution, String path, String name, String desc)
+      throws IOException {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     if (solution == null) {
       solution = "";
     }
-    
+
     // verify that the name does not contain a path separator before creating the folder
     if (name == null || name.indexOf("/") >= 0 || name.indexOf("\\") >= 0 || //$NON-NLS-1$ //$NON-NLS-2$
         name.indexOf(ISolutionRepository.SEPARATOR) >= 0) {
       return false;
     }
-    
+
     String parentFolderPath = ActionInfo.buildSolutionPath(solution, path, "" + ISolutionRepository.SEPARATOR);
     ISolutionFile parentSolutionFile = repository.getFileByPath(parentFolderPath);
-    if (parentSolutionFile != null && parentSolutionFile.isDirectory() && 
-        repository.hasAccess(parentSolutionFile, IPentahoAclEntry.PERM_CREATE)) {
+    if (parentSolutionFile != null && parentSolutionFile.isDirectory()
+        && repository.hasAccess(parentSolutionFile, IPentahoAclEntry.PERM_CREATE)) {
       File parent = new File(PentahoSystem.getApplicationContext().getSolutionPath(parentFolderPath));
       File newFolder = new File(parent, name);
       if (newFolder.exists()) {
@@ -277,21 +286,21 @@ public class SolutionRepositoryService extends ServletBase {
         return false;
       }
       repository.createFolder(newFolder);
-      
+
       // create the index file content
-      String defaultIndex = "<index><name>" + name + "</name><description>" + (desc!=null?desc:name) //$NON-NLS-1$
+      String defaultIndex = "<index><name>" + name + "</name><description>" + (desc != null ? desc : name) //$NON-NLS-1$
           + "</description><icon>reporting.png</icon><visible>true</visible><display-type>list</display-type></index>"; //$NON-NLS-1$
 
       // add the index file to the repository
       String indexPath = ActionInfo.buildSolutionPath(solution, path, name);
       String baseURL = PentahoSystem.getApplicationContext().getSolutionPath("");
-      repository.addSolutionFile(baseURL, indexPath, ISolutionRepository.INDEX_FILENAME, defaultIndex.getBytes(), false);
+      repository
+          .addSolutionFile(baseURL, indexPath, ISolutionRepository.INDEX_FILENAME, defaultIndex.getBytes(), false);
       return true;
     }
     return false;
   }
-  
-  
+
   private boolean acceptFilter(String name, String[] filters) {
     if (filters == null || filters.length == 0) {
       return true;
@@ -308,8 +317,8 @@ public class SolutionRepositoryService extends ServletBase {
     return isAdministrator || repository.hasAccess(file, IPentahoAclEntry.PERM_EXECUTE);
   }
 
-  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository, Element parentElement,
-      ISolutionFile parentFile, String[] filters) {
+  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository,
+      Element parentElement, ISolutionFile parentFile, String[] filters) {
     ISolutionFile children[] = parentFile.listFiles();
     for (ISolutionFile childSolutionFile : children) {
       if (!accept(isAdministrator, repository, childSolutionFile)) {
@@ -336,7 +345,8 @@ public class SolutionRepositoryService extends ServletBase {
         parentElement.appendChild(child);
         try {
           String localizedName = repository.getLocalizedFileProperty(childSolutionFile, "name");
-          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+          child
+              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
@@ -384,7 +394,8 @@ public class SolutionRepositoryService extends ServletBase {
           try {
             // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
             // and we should no longer be looking at 'visible' because it was never actually used!
-            String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile, "documentation/result-type")) ? "false" : "true";
+            String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile,
+                "documentation/result-type")) ? "false" : "true";
             child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
           } catch (Exception e) {
             child.setAttribute("visible", "true"); //$NON-NLS-1$
@@ -413,31 +424,33 @@ public class SolutionRepositoryService extends ServletBase {
             }
           } else if (isPlugin) {
             // must be a plugin - make it look like a URL
-            IContentGeneratorInfo info = pluginManager.getDefaultContentGeneratorInfoForType(extension, session);
-            if (info != null) {
-              IFileInfoGenerator fig = info.getFileInfoGenerator();
-              if (fig != null) {
-                fig.setLogger(this);
-                // get the file info object for this file
-                fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name, childSolutionFile.getData());
-                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
-                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-                String solution = childSolutionFile.getSolutionPath();
-                String path = ""; //$NON-NLS-1$
-                int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
-                if (pos != -1) {
-                  path = solution.substring(pos + 1);
-                  solution = solution.substring(0, pos);
-                }
-                String url;
-                if (!fileUrl.equals("")) { //$NON-NLS-1$
-                  url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                } else {
-                  url = PentahoSystem.getApplicationContext().getBaseUrl()
-                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
-                child.setAttribute("url", url); //$NON-NLS-1$
+            try {
+            IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, session);
+              fig.setLogger(this);
+              // get the file info object for this file
+              fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name,
+                  childSolutionFile.getData());
+              String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+              String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
+              String solution = childSolutionFile.getSolutionPath();
+              String path = ""; //$NON-NLS-1$
+              int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+              if (pos != -1) {
+                path = solution.substring(pos + 1);
+                solution = solution.substring(0, pos);
               }
+              String url;
+              if (!fileUrl.equals("")) { //$NON-NLS-1$
+                url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
+                    + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              } else {
+                url = PentahoSystem.getApplicationContext().getBaseUrl()
+                    + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+              }
+              child.setAttribute("url", url); //$NON-NLS-1$
+            }
+            catch(PlatformPluginRegistrationException e) {
+              Logger.warn(this, e.getMessage(), e);
             }
           }
         }
@@ -452,7 +465,8 @@ public class SolutionRepositoryService extends ServletBase {
           } else {
             localizedName = repository.getLocalizedFileProperty(childSolutionFile, "title");
           }
-          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+          child
+              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
@@ -464,7 +478,8 @@ public class SolutionRepositoryService extends ServletBase {
             if (url_description == null && description == null) {
               child.setAttribute("description", name);
             } else {
-              child.setAttribute("description", url_description == null || "".equals(url_description) ? description : url_description);
+              child.setAttribute("description", url_description == null || "".equals(url_description) ? description
+                  : url_description);
             }
           } else if (name.endsWith(".xaction")) {
             String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
@@ -486,7 +501,8 @@ public class SolutionRepositoryService extends ServletBase {
     }
   }
 
-  public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
+  public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters)
+      throws ParserConfigurationException {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     ISolutionFile rootFile = repository.getRootFolder();
     org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -498,8 +514,9 @@ public class SolutionRepositoryService extends ServletBase {
     return document;
   }
 
-  private void getAcl(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSOAP)
-      throws SolutionRepositoryServiceException, IOException {
+  private void getAcl(final IParameterProvider parameterProvider, final OutputStream outputStream,
+      final IPentahoSession userSession, final boolean wrapWithSOAP) throws SolutionRepositoryServiceException,
+      IOException {
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
     String path = parameterProvider.getStringParameter("path", null); //$NON-NLS-1$
     String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$
@@ -517,8 +534,9 @@ public class SolutionRepositoryService extends ServletBase {
     // ouch, i hate instanceof
     if (solutionFile instanceof IAclSolutionFile) {
       Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getPermissions((solutionFile));
-      String processingInstruction = XmlHelper.createXmlProcessingInstruction(SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM,
-          SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING);
+      String processingInstruction = XmlHelper
+          .createXmlProcessingInstruction(SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM,
+              SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING);
       strXml = processingInstruction + getAclAsXml(filePermissions);
     } else {
       strXml = "<acl notsupported='true'/>"; //$NON-NLS-1$
@@ -530,24 +548,29 @@ public class SolutionRepositoryService extends ServletBase {
   // turn acl into an XML representation, and return the document.
   // probably belongs in the SecurityHelper class, but does this class still exist?
   String getAclAsXml(final Map<IPermissionRecipient, IPermissionMask> filePermissions) {
-    StringBuffer sb = new StringBuffer(XmlHelper.createXmlProcessingInstruction(SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM,
-        SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING));
+    StringBuffer sb = new StringBuffer(XmlHelper.createXmlProcessingInstruction(
+        SolutionRepositoryService.RESPONSE_DOCUMENT_VERSION_NUM, SolutionRepositoryService.RESPONSE_DOCUMENT_ENCODING));
 
     sb.append("<acl>");
     for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
       IPermissionRecipient permRecipient = filePerm.getKey();
       if (permRecipient instanceof SimpleRole) {
-        sb.append("<entry role='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask() + "'/>");
+        sb
+            .append("<entry role='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask()
+                + "'/>");
       } else {
         // entry belongs to a user
-        sb.append("<entry user='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask() + "'/>");
+        sb
+            .append("<entry user='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask()
+                + "'/>");
       }
     }
     sb.append("</acl>");
     return sb.toString();
   }
 
-  Map<IPermissionRecipient, IPermissionMask> createAclFromXml(final String strXml) throws ParserConfigurationException, SAXException, IOException {
+  Map<IPermissionRecipient, IPermissionMask> createAclFromXml(final String strXml) throws ParserConfigurationException,
+      SAXException, IOException {
     SAXParser parser = SolutionRepositoryService.getSAXParserFactory().newSAXParser();
     Map<IPermissionRecipient, IPermissionMask> m = new HashMap<IPermissionRecipient, IPermissionMask>();
 
@@ -569,7 +592,8 @@ public class SolutionRepositoryService extends ServletBase {
     }
 
     @Override
-    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+        throws SAXException {
       if (qName.equalsIgnoreCase("entry")) {
         String permissions = attributes.getValue("", "permissions");
         IPermissionRecipient permRecipient = null;
@@ -584,8 +608,9 @@ public class SolutionRepositoryService extends ServletBase {
     }
   }
 
-  private void setAcl(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSOAP)
-      throws SolutionRepositoryServiceException, IOException, PentahoAccessControlException {
+  private void setAcl(final IParameterProvider parameterProvider, final OutputStream outputStream,
+      final IPentahoSession userSession, final boolean wrapWithSOAP) throws SolutionRepositoryServiceException,
+      IOException, PentahoAccessControlException {
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ 
     String path = parameterProvider.getStringParameter("path", null); //$NON-NLS-1$ 
     String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$

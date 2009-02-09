@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
@@ -88,7 +89,7 @@ public class PluginManager implements IPluginManager {
 
   public IContentGenerator getContentGenerator(String id, IPentahoSession session) throws ObjectFactoryException {
     IContentGeneratorInfo info = getContentGeneratorInfo(id, session);
-    if (info == null) {
+    if (info == null) {  //not sure why this is here ??
       return null;
     }
     return objectFactory.get(IContentGenerator.class, id, session);
@@ -253,8 +254,7 @@ public class PluginManager implements IPluginManager {
 
         try {
           Class<?> clazz = loader.loadClass(cgInfo.getFileInfoGeneratorClassname());
-          IFileInfoGenerator fileInfoGenerator = (IFileInfoGenerator) clazz.newInstance();
-          cgInfo.setFileInfoGenerator(fileInfoGenerator);
+          clazz.newInstance();
         } catch (Exception e) {
           throw new PlatformPluginRegistrationException(errorMsg, e);
         }
@@ -276,5 +276,22 @@ public class PluginManager implements IPluginManager {
 
   public IPentahoObjectFactory getObjectFactory() {
     return objectFactory;
+  }
+
+  public IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
+      throws PlatformPluginRegistrationException {
+    IContentGeneratorInfo info = getDefaultContentGeneratorInfoForType(type, session);
+    if (info != null) {
+      String fileInfoClassName = info.getFileInfoGeneratorClassname();
+      if (!StringUtils.isEmpty(fileInfoClassName)) {
+        try {
+          return (IFileInfoGenerator) Class.forName(fileInfoClassName).newInstance();
+        } catch (Exception e) {
+          throw new PlatformPluginRegistrationException(Messages.getErrorString(
+              "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", fileInfoClassName, type), e); //$NON-NLS-1$
+        }
+      }
+    }
+    return null;
   }
 }

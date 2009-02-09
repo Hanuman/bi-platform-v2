@@ -158,9 +158,9 @@ public class ContentGeneratorTest extends BaseTest {
     assertEquals("Test Generator 1", contentGeneratorInfo.getTitle()); //$NON-NLS-1$
     assertEquals("", contentGeneratorInfo.getUrl()); //$NON-NLS-1$
 
-    IFileInfoGenerator fileInfoGenerator = contentGeneratorInfo.getFileInfoGenerator();
-    assertNotNull(fileInfoGenerator);
-    assertTrue(fileInfoGenerator instanceof FileInfoGenerator);
+//    IFileInfoGenerator fileInfoGenerator = contentGeneratorInfo.getFileInfoGenerator();
+//    assertNotNull(fileInfoGenerator);
+//    assertTrue(fileInfoGenerator instanceof FileInfoGenerator);
 
     finishTest();
   }
