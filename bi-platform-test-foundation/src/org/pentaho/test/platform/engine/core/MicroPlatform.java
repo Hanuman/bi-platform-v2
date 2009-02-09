@@ -24,7 +24,8 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 
 /**
- * A self-contained and very easy to configure platform initializer.
+ * A self-contained and very easy to configure platform initializer which requires
+ * zero sidecar files.  Yes, that means no xml of any kind.
  * Use it in your tests like this:
  * <pre>
  * &#064;Before
