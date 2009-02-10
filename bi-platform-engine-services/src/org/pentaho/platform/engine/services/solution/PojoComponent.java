@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,7 +56,7 @@ public class PojoComponent extends ComponentBase {
   protected Object pojo;
   
   Map<String, Method> getMethods = new HashMap<String, Method>();
-  Map<String, Method> setMethods = new HashMap<String, Method>();
+  Map<String, List<Method>> setMethods = new HashMap<String, List<Method>>();
   Method executeMethod = null;
   Method validateMethod = null;
   Method doneMethod = null;
@@ -80,95 +82,167 @@ public class PojoComponent extends ComponentBase {
     }
   }
 
-  protected void callMethod( Method method, Object value ) throws Throwable {
+  protected void callMethod( List<Method> methods, Object value ) throws Throwable {
     if( value instanceof String ) {
-      callMethodWithString( method, value.toString() );
+      callMethodWithString( methods, value.toString() );
       return;
     }
-    Class<?> paramClasses[] = method.getParameterTypes();
-    if( paramClasses.length != 1 ) {
-      // we don't know how to handle this
-      throw new GenericSignatureFormatError();
-    }
-    Class<?> paramclass = paramClasses[0];
-    // do some type safety. this would be the point to do automatic type conversions
-    if( value instanceof IPentahoResultSet && paramclass.equals( IPentahoResultSet.class )) {
-      method.invoke(pojo, new Object[] { (IPentahoResultSet) value } );
-    }
-    else if( value instanceof java.lang.Boolean && ( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof java.lang.Integer && ( paramclass.equals( Integer.class ) || paramclass.equals( int.class ) ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof java.lang.Long && ( paramclass.equals( Long.class ) || paramclass.equals( long.class ) ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof java.lang.Double && ( paramclass.equals( Double.class ) || paramclass.equals( double.class ) ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof java.lang.Float && ( paramclass.equals( Float.class ) || paramclass.equals( float.class ) ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof IPentahoStreamSource && paramclass.equals( IPentahoStreamSource.class ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof Date && paramclass.equals( Date.class ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof BigDecimal && paramclass.equals( BigDecimal.class ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof IContentItem && paramclass.equals( IContentItem.class ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( value instanceof IContentItem && paramclass.equals( String.class ) ) {
-      method.invoke(pojo, new Object[] { value.toString() } );
-    }
-    else if( paramclass.equals( IPentahoSession.class ) ) {
-      method.invoke(pojo, new Object[] { (IPentahoSession) value } );
-    }
-    else if( paramclass.equals( Log.class ) ) {
-      method.invoke(pojo, new Object[] { (Log) value } );
-    }
-    else {
-      // just try it I guess
-      method.invoke(pojo, new Object[] { value.toString() } );
+    
+    boolean done = false;
+    
+    forEachMethod:
+    for(Method method : methods){
+      Class<?> paramClasses[] = method.getParameterTypes();
+      if( paramClasses.length != 1 ) {
+        // we don't know how to handle this
+        throw new GenericSignatureFormatError();
+      }
+      Class<?> paramclass = paramClasses[0];
+      // do some type safety. this would be the point to do automatic type conversions
+      if( value instanceof IPentahoResultSet && paramclass.equals( IPentahoResultSet.class )) {
+        done = true;
+        method.invoke(pojo, new Object[] { (IPentahoResultSet) value } );
+        break forEachMethod;
+      }
+      else if( value instanceof java.lang.Boolean && ( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof java.lang.Integer && ( paramclass.equals( Integer.class ) || paramclass.equals( int.class ) ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof java.lang.Long && ( paramclass.equals( Long.class ) || paramclass.equals( long.class ) ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof java.lang.Double && ( paramclass.equals( Double.class ) || paramclass.equals( double.class ) ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof java.lang.Float && ( paramclass.equals( Float.class ) || paramclass.equals( float.class ) ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof IPentahoStreamSource && paramclass.equals( IPentahoStreamSource.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof Date && paramclass.equals( Date.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof BigDecimal && paramclass.equals( BigDecimal.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof IContentItem && paramclass.equals( IContentItem.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break forEachMethod;
+      }
+      else if( value instanceof IContentItem && paramclass.equals( String.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value.toString() } );
+        break forEachMethod;
+      }
+      else if( paramclass.equals( IPentahoSession.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { (IPentahoSession) value } );
+        break forEachMethod;
+      }
+      else if( paramclass.equals( Log.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { (Log) value } );
+        break forEachMethod;
+      }
     }
     
+    if(!done) {
+      // Try invoking the first instance with what we have
+      try{
+        methods.get(0).invoke(pojo, new Object[] {value});
+      } catch(Exception ex){
+        throw new IllegalArgumentException("No implementation of method \"" + Method.class.getName() + "\" takes a String"); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    }    
   }
   
-  protected void callMethodWithString( Method method, String value ) throws Throwable {
-    Class<?> paramClasses[] = method.getParameterTypes();
-    if( paramClasses.length != 1 ) {
-      // we don't know how to handle this
+  protected void callMethodWithString( List<Method> methodList, String value ) throws Throwable {
+    boolean done = false;    
+    
+    //Search ALL instances of a given method for an implementation
+    //that takes a single string
+    stringSearch:
+    for(Method method : methodList){
+      Class<?> paramClasses[] = method.getParameterTypes();
+      if( paramClasses.length != 1 ) {
+        // we don't know how to handle this
+        throw new GenericSignatureFormatError();
+      }
+
+      Class<?> paramclass = paramClasses[0];
+      if( paramclass.equals( String.class ) ) {
+        done = true;
+        method.invoke(pojo, new Object[] { value } );
+        break stringSearch;
+      }      
+    }
+  
+  
+    if(!done){
+      conversionSearch:
+      for(Method method : methodList){
+        Class<?> paramClasses[] = method.getParameterTypes();
+        if( paramClasses.length != 1 ) {
+          // we don't know how to handle this
+          throw new GenericSignatureFormatError();
+        }
+
+        Class<?> paramclass = paramClasses[0];
+        if( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) {
+          done = true;
+          method.invoke(pojo, new Object[] { new Boolean( value ) } );
+          break conversionSearch;
+        }
+        else if( paramclass.equals( Integer.class ) || paramclass.equals( int.class )) {
+          done = true;
+          method.invoke(pojo, new Object[] { new Integer( value ) } );
+          break conversionSearch;
+        }
+        else if( paramclass.equals( Long.class ) || paramclass.equals( long.class )) {
+          done = true;
+          method.invoke(pojo, new Object[] { new Long( value ) } );
+          break conversionSearch;
+        }
+        else if( paramclass.equals( Double.class ) || paramclass.equals( double.class )) {
+          done = true;
+          method.invoke(pojo, new Object[] { new Double( value ) } );
+          break conversionSearch;
+        }
+        else if( paramclass.equals( Float.class ) || paramclass.equals( float.class )) {
+          done = true;
+          method.invoke(pojo, new Object[] { new Float( value ) } );
+          break conversionSearch;
+        }
+        else if( paramclass.equals( BigDecimal.class ) ) {
+          done = true;
+          method.invoke(pojo, new Object[] { new BigDecimal( value ) } );
+          break conversionSearch;
+        }
+      }   
+    }
+    if(!done){
       throw new GenericSignatureFormatError();
-    }
-    Class<?> paramclass = paramClasses[0];
-    if( paramclass.equals( String.class ) ) {
-      method.invoke(pojo, new Object[] { value } );
-    }
-    else if( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) {
-      method.invoke(pojo, new Object[] { new Boolean( value ) } );
-    }
-    else if( paramclass.equals( Integer.class ) || paramclass.equals( int.class )) {
-      method.invoke(pojo, new Object[] { new Integer( value ) } );
-    }
-    else if( paramclass.equals( Long.class ) || paramclass.equals( long.class )) {
-      method.invoke(pojo, new Object[] { new Long( value ) } );
-    }
-    else if( paramclass.equals( Double.class ) || paramclass.equals( double.class )) {
-      method.invoke(pojo, new Object[] { new Double( value ) } );
-    }
-    else if( paramclass.equals( Float.class ) || paramclass.equals( float.class )) {
-      method.invoke(pojo, new Object[] { new Float( value ) } );
-    }
-    else if( paramclass.equals( BigDecimal.class ) ) {
-      method.invoke(pojo, new Object[] { new BigDecimal( value ) } );
-    } else {
-      // TODO handle dates
-      throw new GenericSignatureFormatError();
-    }
+    } 
   }
   
   @SuppressWarnings({"unchecked"})
@@ -199,12 +273,12 @@ public class PojoComponent extends ComponentBase {
 
     // set the PentahoSession
     if( sessionMethod != null ) {
-      callMethod( sessionMethod, getSession() );
+      callMethod( Arrays.asList(new Method[]{sessionMethod}), getSession() );
     }
     
     // set the logger
     if( loggerMethod != null ) {
-      callMethod( loggerMethod, getLogger() );
+      callMethod( Arrays.asList(new Method[]{loggerMethod}), getLogger() );
     }
     
     Map<String,Object> inputMap = new HashMap<String,Object>();
@@ -219,7 +293,7 @@ public class PojoComponent extends ComponentBase {
       String name = node.getName().replace("-", "").toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
       if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) { //$NON-NLS-1$ //$NON-NLS-2$
         String value = node.getText();
-        Method method = setMethods.get( name );
+        List<Method> method = setMethods.get( name );
         if( method != null ) {
           callMethodWithString( method, value );
         } 
@@ -238,9 +312,9 @@ public class PojoComponent extends ComponentBase {
       Object value = getInputValue( name );
       // now that we have the value, we can fix the name
       name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
-      Method method = setMethods.get( name.toUpperCase() );
-      if( method != null ) {
-        callMethod( method, value );
+      List<Method> methods = setMethods.get( name.toUpperCase() );
+      if( methods != null ) {
+        callMethod( methods, value );
       } 
       else if( runtimeInputsMethod != null ) {
         inputMap.put(name, value);
@@ -259,15 +333,20 @@ public class PojoComponent extends ComponentBase {
         IActionSequenceResource resource = getResource( name );
         name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
         resourceMap.put(name, resource);
-        Method method = setMethods.get( name.toUpperCase() );
-        if( method != null ) {
-          Class<?>[] paramTypes = method.getParameterTypes();
-          if( paramTypes.length == 1 && paramTypes[0] == InputStream.class ) {
-            InputStream in = getRuntimeContext().getResourceInputStream( resource );
-            method.invoke(pojo, new Object[] { in } );
-          }
-          else if( paramTypes.length == 1 && paramTypes[0] == IActionSequenceResource.class ) {
-            method.invoke(pojo, new Object[] { resource } );
+        List<Method> methods = setMethods.get( name.toUpperCase() );
+        if( methods != null ) {
+          forEachResourceMethod:
+          for(Method method : methods){
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if( paramTypes.length == 1 && paramTypes[0] == InputStream.class ) {
+              InputStream in = getRuntimeContext().getResourceInputStream( resource );
+              method.invoke(pojo, new Object[] { in } );
+              break forEachResourceMethod;
+            }
+            else if( paramTypes.length == 1 && paramTypes[0] == IActionSequenceResource.class ) {
+              method.invoke(pojo, new Object[] { resource } );
+              break forEachResourceMethod;
+            }
           }
         } else {
           // BISERVER-2715 we should ignore this as the resource might be meant for another component
@@ -288,13 +367,14 @@ public class PojoComponent extends ComponentBase {
     if( getOutputNames().contains( "outputstream" ) && setMethods.containsKey( "OUTPUTSTREAM" )  //$NON-NLS-1$ //$NON-NLS-2$
         && getMethods.containsKey( "MIMETYPE" ) ) { //$NON-NLS-1$ 
       // get the mime-type
+      //Get the first method to match
       Method method = getMethods.get( "MIMETYPE" ); //$NON-NLS-1$
       String mimeType = (String) method.invoke( pojo , new Object[] {} );
       IContentItem contentItem = getOutputContentItem( "outputstream", mimeType ); //$NON-NLS-1$
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
-      method = setMethods.get( "OUTPUTSTREAM" ); //$NON-NLS-1$
-      method.invoke( pojo , new Object[] {out} );
+      method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
+      method.invoke(pojo, new Object[] {out});
     }
     
     if( validateMethod != null ) {
@@ -371,6 +451,7 @@ public class PojoComponent extends ComponentBase {
         // create a method map
         for( Method method : methods ) {
           String name = method.getName();
+          
           Class<?>[] paramTypes = method.getParameterTypes();
           if( name.equals( "getOutputs" ) ) { //$NON-NLS-1$
             runtimeOutputsMethod = method;
@@ -396,11 +477,16 @@ public class PojoComponent extends ComponentBase {
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            setMethods.put( name , method );
+            if(!setMethods.containsKey(name)){
+              setMethods.put(name, new ArrayList<Method>());
+            }
+            
+            setMethods.get(name).add(method);
           }
           else if( name.startsWith( "get" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            getMethods.put( name , method );
+            
+            getMethods.put(name, method );
           }
           else if( name.equalsIgnoreCase( "execute" ) ) { //$NON-NLS-1$
             executeMethod = method;
