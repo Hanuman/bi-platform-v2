@@ -84,7 +84,8 @@ public class PluginManager implements IPluginManager {
   }
 
   public List<IContentGeneratorInfo> getContentGeneratorInfoForType(String type, IPentahoSession session) {
-    return Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
+    List<IContentGeneratorInfo> cgInfos = contentGeneratorInfoByTypeMap.get(type);
+    return (cgInfos == null)?null:Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
   }
 
   public IContentGenerator getContentGenerator(String id, IPentahoSession session) throws ObjectFactoryException {
@@ -190,6 +191,8 @@ public class PluginManager implements IPluginManager {
   @SuppressWarnings("unchecked")
   protected void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
       throws PlatformPluginRegistrationException {
+		//FIXME: shouldn't we treat the registration of a plugin as an atomic operation
+		//with rollback if something is broken?
 
     //index content types
     for (IContentInfo info : plugin.getContentInfos()) {
