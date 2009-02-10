@@ -54,5 +54,14 @@ public class PluginMessageLogger {
 
     });
   }
+  
+  public static String prettyPrint() {
+    StringBuilder builder = new StringBuilder();
+    for(String msg : messages.get()) {
+      builder.append(msg);
+      builder.append('\n');
+    }
+    return builder.toString();
+  }
 
 }
