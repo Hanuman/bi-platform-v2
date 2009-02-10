@@ -44,8 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
-import org.pentaho.platform.api.engine.ICacheManager;
-import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -66,7 +64,6 @@ import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.util.StringUtil;
-import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
@@ -450,7 +447,7 @@ public class SolutionRepositoryService extends ServletBase {
               child.setAttribute("url", url); //$NON-NLS-1$
             }
             catch(PlatformPluginRegistrationException e) {
-              Logger.warn(this, e.getMessage(), e);
+              logger.warn(e.getMessage(), e);
             }
           }
         }
