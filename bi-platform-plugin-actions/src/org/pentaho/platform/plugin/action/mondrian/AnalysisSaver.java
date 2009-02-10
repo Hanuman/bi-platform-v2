@@ -85,7 +85,7 @@ public class AnalysisSaver extends PentahoMessenger {
       // Update the document with the stuff we passed in on the props
       document = AnalysisSaver.updateDocument(document, props);
       fileName = fileName.endsWith(AnalysisSaver.SUFFIX) ? fileName : fileName + AnalysisSaver.SUFFIX;
-      result = solutionRepository.publish(baseUrl, path, fileName, document.asXML().getBytes(), overwrite);
+      result = solutionRepository.publish(baseUrl, path, fileName, document.asXML().getBytes(document.getXMLEncoding()), overwrite);
 
       // Now save the resource files
       ActionInfo actionInfo = ActionInfo.parseActionString(originalActionReference);
