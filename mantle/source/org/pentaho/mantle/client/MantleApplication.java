@@ -308,8 +308,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }
     
     
-    $wnd.openFileDialog = function(callback,title, okText) { 
-      mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;)(callback, title, okText);      
+    $wnd.openFileDialog = function(callback,title, okText, fileTypes) { 
+      mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(callback, title, okText, fileTypes);      
     }
     
     $wnd.addGlassPaneListener = function(callback) { 
@@ -676,8 +676,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     this.solutionBrowserPerspective.setCurrentTabSaveEnabled(enable);
   }
   
-  public void showOpenFileDialog(final JavaScriptObject obj, String title, String okText){
-    FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), title, okText);
+  public void showOpenFileDialog(final JavaScriptObject obj, String title, String okText, String fileTypes){
+    FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), title, okText, fileTypes.split(","));
     dialog.addFileChooserListener(new FileChooserListener(){
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
