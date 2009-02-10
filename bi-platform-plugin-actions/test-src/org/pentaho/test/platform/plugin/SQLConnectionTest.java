@@ -37,6 +37,9 @@ public class SQLConnectionTest extends BaseTestCase {
   }
   
 */
+    public void testDummyTest() {
+      //have to have at least one test method to make JUnit happy
+    }
 
   public static void main(String[] args) {
 //    SQLConnectionTest test = new SQLConnectionTest();
