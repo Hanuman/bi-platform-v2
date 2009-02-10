@@ -71,6 +71,7 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISchedule;
@@ -104,6 +105,7 @@ import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.pentaho.platform.util.VersionHelper;
 import org.pentaho.platform.util.VersionInfo;
+import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
@@ -501,10 +503,17 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         solutionFileInfo.pluginTypeName = info.getDescription();
         
         // get the title for the plugin file
-        IFileInfoGenerator fig = info.getFileInfoGenerator();
-        if (fig != null) {
-          IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(), solutionFile.getFileName(), solutionFile.getData());
-          solutionFileInfo.localizedName = fileInfo.getTitle();
+        
+        IFileInfoGenerator fig;
+        try {
+          fig = pluginManager.getFileInfoGeneratorForType(extension, getPentahoSession());
+
+          if (fig != null) {
+            IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(), solutionFile.getFileName(), solutionFile.getData());
+            solutionFileInfo.localizedName = fileInfo.getTitle();
+          }
+        } catch (PlatformPluginRegistrationException e) {
+          logger.warn(e.getMessage(), e);
         }
       } else if (fileName.endsWith("waqr.xaction")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
