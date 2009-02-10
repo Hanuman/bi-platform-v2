@@ -255,8 +255,10 @@ public class PluginManager implements IPluginManager {
         try {
           Class<?> clazz = loader.loadClass(cgInfo.getFileInfoGeneratorClassname());
           clazz.newInstance();
+          objectFactory.defineObject(cgInfo.getType(), cgInfo.getFileInfoGeneratorClassname(), Scope.LOCAL, loader);
         } catch (Exception e) {
-          throw new PlatformPluginRegistrationException(errorMsg, e);
+          throw new PlatformPluginRegistrationException(Messages.getErrorString(
+              "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", cgInfo.getFileInfoGeneratorClassname(), cgInfo.getType()), e); //$NON-NLS-1$
         }
       }
       contentInfoMap.put(cgInfo.getId(), cgInfo);
@@ -285,8 +287,8 @@ public class PluginManager implements IPluginManager {
       String fileInfoClassName = info.getFileInfoGeneratorClassname();
       if (!StringUtils.isEmpty(fileInfoClassName)) {
         try {
-          return (IFileInfoGenerator) Class.forName(fileInfoClassName).newInstance();
-        } catch (Exception e) {
+          return objectFactory.get(IFileInfoGenerator.class, type, session);
+        } catch (ObjectFactoryException e) {
           throw new PlatformPluginRegistrationException(Messages.getErrorString(
               "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", fileInfoClassName, type), e); //$NON-NLS-1$
         }
