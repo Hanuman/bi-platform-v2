@@ -1,5 +1,7 @@
 package org.pentaho.test.platform.plugin.pluginmgr;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.ui.xul.XulOverlay;
 
+@SuppressWarnings("nls")
 public class ContentGeneratorTest extends BaseTest {
   private static final String SOLUTION_PATH = "plugin-mgr/test-res/solution4-content-gen"; //$NON-NLS-1$
 
@@ -37,6 +40,7 @@ public class ContentGeneratorTest extends BaseTest {
     }
   }
 
+  
   public void testContentGenerators() throws Exception {
     startTest();
 
@@ -51,7 +55,10 @@ public class ContentGeneratorTest extends BaseTest {
     boolean result = _pluginManager.reload(session);
     assertFalse("Plugin update should fail", result); //$NON-NLS-1$
 
-    assertEquals("Wrong number of messages created", 15, PluginMessageLogger.getAll().size()); //$NON-NLS-1$
+    System.err.println(PluginMessageLogger.prettyPrint());
+    
+    assertEquals("Plugin 1 should have failed to load and produced a warning", 1, PluginMessageLogger
+        .count("PluginManager.ERROR_0011"));
 
     // check that the content types are ok
     Set<String> types = _pluginManager.getContentTypes();
@@ -212,44 +219,4 @@ public class ContentGeneratorTest extends BaseTest {
 
     finishTest();
   }
-
-  public void testOverlays() throws Exception {
-    startTest();
-
-    IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$
-    IPluginManager pluginSettings = PentahoSystem.get(IPluginManager.class, session);
-    assertNotNull(pluginSettings);
-
-    boolean result = pluginSettings.reload(session);
-    assertFalse("Plugin update should fail", result); //$NON-NLS-1$
-
-    IContentInfo contentInfo = pluginSettings.getContentInfoFromExtension("test-type-1", session); //$NON-NLS-1$
-    assertNotNull(contentInfo);
-
-    List<XulOverlay> overlays = pluginSettings.getOverlays();
-
-    assertNotNull("Overlays is null", overlays); //$NON-NLS-1$
-    assertEquals("Wrong number of overlays", 2, overlays.size()); //$NON-NLS-1$
-    XulOverlay overlay = overlays.get(0);
-    assertEquals("Wrong overlay id", "overlay1", overlay.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-    assertEquals("Wrong overlay resource uri", "uri1", overlay.getResourceBundleUri()); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node1") != -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node2") != -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node3") == -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node4") == -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertNull("Overlay URI should be null", overlay.getOverlayUri()); //$NON-NLS-1$
-
-    overlay = overlays.get(1);
-
-    assertEquals("Wrong overlay id", "overlay2", overlay.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-    assertEquals("Wrong overlay resource uri", "uri2", overlay.getResourceBundleUri()); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node1") == -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node2") == -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node3") != -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node4") != -1); //$NON-NLS-1$ //$NON-NLS-2$
-    assertNull("Overlay URI should be null", overlay.getOverlayUri()); //$NON-NLS-1$
-
-    finishTest();
-  }
-
 }

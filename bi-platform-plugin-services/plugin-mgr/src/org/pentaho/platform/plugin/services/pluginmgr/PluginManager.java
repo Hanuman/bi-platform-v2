@@ -176,11 +176,11 @@ public class PluginManager implements IPluginManager {
       for (IPlatformPlugin plugin : plugins) {
         try {
           registerPlugin(plugin, session);
-        } catch (PlatformPluginRegistrationException e) {
+        } catch (Throwable t) {
           // this has been logged already
           anyErrors = true;
           String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN", plugin.getName()); //$NON-NLS-1$
-          Logger.error(getClass().toString(), msg, e);
+          Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
         }
       }
@@ -247,9 +247,9 @@ public class PluginManager implements IPluginManager {
         throw new PlatformPluginRegistrationException(errorMsg, e);
       }
 
-      if (!(tmpObject instanceof IContentGenerator)) {
-        throw new PlatformPluginRegistrationException(errorMsg);
-      }
+      //try to cast it to make sure it's the correct type, we want an exception to be thrown if not
+      @SuppressWarnings("unused")
+      IContentGenerator cg = (IContentGenerator)tmpObject;
 
       //create the file info generator
       if (cgInfo.getFileInfoGeneratorClassname() != null) {
