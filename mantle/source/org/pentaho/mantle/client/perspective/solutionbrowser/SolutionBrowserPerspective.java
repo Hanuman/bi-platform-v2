@@ -555,7 +555,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             } else {
               showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, url);
             }
-            return;
           }
         } else {
           if (url != null && !"".equals(url)) { //$NON-NLS-1$
@@ -568,21 +567,28 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             } else {
               showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
             }
-            return;
           }          
         }
-      }
+      } else {
       
-      // see if this file has a URL
-      String url = selectedFileItem.getURL();
-      if (url != null && !"".equals(url)) { //$NON-NLS-1$
-        // we have a URL so open it in a new tab
-        if (mode == FileCommand.COMMAND.NEWWINDOW) {
-          Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-          showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        // see if this file has a URL
+        String url = selectedFileItem.getURL();
+        if (url != null && !"".equals(url)) { //$NON-NLS-1$
+          // we have a URL so open it in a new tab
+          if (mode == FileCommand.COMMAND.NEWWINDOW) {
+            Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+          } else {
+            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+          }
         }
       }
+
+      // Store representation of file in the frame for reference later when save is called
+      SolutionFileInfo fileInfo = new SolutionFileInfo();
+      fileInfo.setName(selectedFileItem.getName());
+      fileInfo.setSolution(selectedFileItem.getSolution());
+      fileInfo.setPath(selectedFileItem.getPath());
+      this.getCurrentFrame().setFileInfo(fileInfo);
     }
   }
 
@@ -735,9 +741,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             return;
           }
         }
-        showNewURLTab(
-            Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), editUrl); //$NON-NLS-1$ //$NON-NLS-2$
-
+        
+        
+        if (GWT.isScript()) {
+          showNewURLTab(
+              Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), editUrl); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            // we have a URL so open it in a new tab
+            String updateUrl = "/MantleService?passthru=" + editUrl; //$NON-NLS-1$
+            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+        }
+        
+        
+        
         // Store representation of file in the frame for reference later when save is called
         SolutionFileInfo fileInfo = new SolutionFileInfo();
         fileInfo.setName(selectedFileItem.getName());
