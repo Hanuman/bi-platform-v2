@@ -159,6 +159,9 @@ public class PluginManager implements IPluginManager {
     try {
       synchronized (plugins) {
         plugins.clear();
+        //the plugin may fail to load at this point without an exception thrown if the provider
+        //is capable of discovering the plugin fine but there are structural problems with the plugin.
+        //In this case a warning should be logged by the provider.
         plugins.addAll(pluginProvider.getPlugins(session));
       }
     } catch (PlatformPluginRegistrationException e1) {
@@ -179,7 +182,7 @@ public class PluginManager implements IPluginManager {
         } catch (Throwable t) {
           // this has been logged already
           anyErrors = true;
-          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_LOAD_PLUGIN", plugin.getName()); //$NON-NLS-1$
+          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_REGISTER_PLUGIN", plugin.getName()); //$NON-NLS-1$
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
         }

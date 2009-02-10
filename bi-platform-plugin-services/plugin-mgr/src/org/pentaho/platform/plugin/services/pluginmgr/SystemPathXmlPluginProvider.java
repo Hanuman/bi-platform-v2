@@ -95,6 +95,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         try {
           processDirectory(plugins, kid, repo, session);
         } catch (Throwable t) {
+          //don't throw an exception.  we need to continue to process any remaining good plugins
           String msg = Messages.getErrorString(ERROR_0001_FAILED_TO_PROCESS_PLUGIN, kid.getAbsolutePath());
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
