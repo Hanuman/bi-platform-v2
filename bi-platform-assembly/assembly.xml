@@ -62,6 +62,13 @@
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
 	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
 	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
+	<property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
+	<property name="system.solution.dir" value="${solution.dir.server}/system" />
+	<property name="bi-developers.solution.dir" value="${solution.dir.server}/bi-developers" />
+	<property name="cdf-samples.parent.dir" location="${solution.dir.server}"/>
+	<property name="cdf-samples.solution.dir" value="${cdf-samples.parent.dir}/cdf-samples" />
+	<property name="bi-developers.visible" value="true" description="Should the bi-developers samples be visible" />
+	<property name="cdf-samples.visible" value="true" description="Should the CDF samples be visible" />
 
 
 	<!-- =================================================================================
@@ -347,6 +354,24 @@
 	</target>
 
 	<!--====================================================
+          macrodef: set-solution-visibility          
+          
+          Sets the visible attribute for a pentaho solution
+          directory.
+        ==================================================-->
+	<macrodef name="set-solution-visibility">
+		<attribute name="dir" />
+		<attribute name="visible" default="true" />
+		<sequential>
+			<!-- Set the visible value of the specified directory -->
+			<!--  ... replace <visible>...</visible> with <visible>@{visible}</visible> -->
+			<echo message="Setting visibility=@{visible} for directory [@{dir}]..." />
+			<replaceregexp file="@{dir}/index.xml" match="&lt;visible&gt;.*&lt;/visible&gt;" replace="&lt;visible&gt;@{visible}&lt;/visible&gt;" />
+		</sequential>
+	</macrodef>
+
+
+	<!--====================================================
 			target: init-tomcat-solutions
 			===================================================== -->
 
@@ -359,7 +384,14 @@
 		</copy>
 	  
 	    <!-- install CDF samples -->
-	    <unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${stage.dir.server}/pentaho-solutions" overwrite="true" />
+		<unzip 
+			src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" 
+			dest="${cdf-samples.parent.dir}" 
+			overwrite="true" />
+
+		<!-- Set the visible value of the sample dirs -->
+		<set-solution-visibility dir="${bi-developers.solution.dir}" visible="${bi-developers.visible}" />
+		<set-solution-visibility dir="${cdf-samples.solution.dir}" visible="${cdf-samples.visible}" />
 
 		<!-- copy db specific changes into system -->
 		<mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
@@ -473,11 +505,8 @@
 			<move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">			  
 			  	<fileset dir="${unified.javadoc.src}"/>
 		  	</move>
-		  	<zip destfile="bi-server-ce-${project.revision}-all-sources.zip"
-       			 basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
-			<tar destfile="bi-server-ce-${project.revision}-all-sources.tar.gz"
-       			 basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources"
-       			 compression="gzip" />       			 
+			<zip destfile="bi-server-ce-${project.revision}-all-sources.zip" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
+			<tar destfile="bi-server-ce-${project.revision}-all-sources.tar.gz" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" compression="gzip" />
        	    <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
 		</sequential>
 	</target>
@@ -515,8 +544,7 @@
 				<delete dir="${basedir}/temp"/>
 			</then>
 			<else>
-				<fail
-					message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
+					<fail message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
 			</else>
 		</if>
 	</sequential>
