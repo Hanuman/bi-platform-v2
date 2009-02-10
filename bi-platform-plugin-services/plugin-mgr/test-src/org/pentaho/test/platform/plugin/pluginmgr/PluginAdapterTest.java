@@ -33,7 +33,8 @@ public class PluginAdapterTest extends BaseTest {
 	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
 
 	    String str = PentahoSystem.publish( session, "org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"); //$NON-NLS-1$
-	    assertTrue( str.indexOf( "Updating plugin") > 0 ); //$NON-NLS-1$
+	    System.err.println(str);
+	    assertTrue( str.indexOf( "Discovered plugin") > 0 ); //$NON-NLS-1$
 	    finishTest();
 	  }
 
@@ -54,7 +55,7 @@ public class PluginAdapterTest extends BaseTest {
   	    assertNotSame( "!PluginAdapter.USER_REFRESH_PLUGINS!", publisher.getName() ); //$NON-NLS-1$
   	    
   	    String str = publisher.publish(session, ILogger.DEBUG);
-  	    assertTrue( str.indexOf( "Updating plugin") > 0 ); //$NON-NLS-1$
+  	    assertTrue( str.indexOf( "Discovered plugin") > 0 ); //$NON-NLS-1$
   	    finishTest();
   	  }
 
