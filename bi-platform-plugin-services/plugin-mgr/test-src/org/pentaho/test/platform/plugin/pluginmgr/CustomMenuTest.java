@@ -10,11 +10,13 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
+import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
 import org.pentaho.ui.xul.IMenuCustomization.ItemType;
 
+@SuppressWarnings("nls")
 public class CustomMenuTest extends BaseTest {
   private static final String SOLUTION_PATH = "plugin-mgr/test-res/solution3-menus"; //$NON-NLS-1$
   private static final String ALT_SOLUTION_PATH = "test-res/solution3-menus"; //$NON-NLS-1$
@@ -38,8 +40,14 @@ public class CustomMenuTest extends BaseTest {
 	    assertNotNull( pluginManager );
 	    
 	    PluginMessageLogger.clear();
-	    boolean result = pluginManager.reload(session);
-	    assertFalse( "Plugin update should fail", result ); //$NON-NLS-1$
+	    pluginManager.reload(session);
+	    
+	    System.err.println(PluginMessageLogger.prettyPrint());
+	    
+	    assertEquals("A plugin should have failed to load and produced a warning", 1, PluginMessageLogger
+	        .count("SystemPathXmlPluginProvider.ERROR_0001"));
+
+	    
 	    List<?> customs = pluginManager.getMenuCustomizations();
 	    assertEquals( "Wrong number of menu items created", 3, customs.size() ); //$NON-NLS-1$
 	    
@@ -56,9 +64,6 @@ public class CustomMenuTest extends BaseTest {
 	    String target = Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
 
-	    target = Messages.getString("PluginManager.USER_UPDATING_PLUGIN", "Plugin 1", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
-
 	    target = Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", "item1", "Test 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
 
@@ -68,21 +73,9 @@ public class CustomMenuTest extends BaseTest {
 	    target = Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", "item3", "Test 2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
 
-	    target = Messages.getString("PluginManager.USER_PLUGIN_REFRESH_OK", "plugin1"); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
-
-	    target = Messages.getString("PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", "system/plugin3-bad-plugin-xml/plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
-	    
-	    target = Messages.getString("PluginManager.USER_UPDATING_PLUGIN", "Plugin 4", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
-
 	    target = Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", "bad-item-1", "Bad 1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
 	    
-	    target = Messages.getString("PluginManager.USER_PLUGIN_REFRESH_BAD", "plugin4-bad-menu-type"); //$NON-NLS-1$ //$NON-NLS-2$
-	    assertTrue( PluginMessageLogger.getAll().contains( target ) );
-
 	    
 	    finishTest();
 	  }
