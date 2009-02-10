@@ -1477,7 +1477,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
     } else {
       int selectedTabIndex = contentTabPanel.getTabBar().getSelectedTab();
-      if(selectedTabIndex > 0) {
+      if(selectedTabIndex >= 0) {
         tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTabIndex);  
       }
       
