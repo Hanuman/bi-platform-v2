@@ -4918,7 +4918,7 @@
         <CWMRDB:Table xmi.idref="a1133"/>
       </CWM:Description.modelElement>
     </CWM:Description>
-    <CWM:Description body="mm-dd-yyyy" name="mask" type="String" xmi.id="a1136">
+    <CWM:Description body="MM-dd-yyyy" name="mask" type="String" xmi.id="a1136">
       <CWM:Description.modelElement>
         <CWM:Class xmi.idref="a1"/>
       </CWM:Description.modelElement>
