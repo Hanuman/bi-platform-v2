@@ -322,8 +322,10 @@ Button = function(label, container){
 }
 
 window.onresize = function(){
-	document.getElementById("buttonRelativeDiv").style.top="0px";
-	document.getElementById("buttonRelativeDiv").style.top="1px";
+  document.getElementById("launchPanel").style.height="99%";
+  document.getElementById("launchPanel").style.height="100%";
+  document.getElementById("launchPanel").style.width="99%";
+  document.getElementById("launchPanel").style.width="100%";
   if(window.selectedButton){
      window.selectedButton.onmouseout();
   }
