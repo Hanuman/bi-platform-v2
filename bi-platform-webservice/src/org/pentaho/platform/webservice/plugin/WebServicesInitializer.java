@@ -11,6 +11,14 @@ import org.pentaho.platform.webservice.plugin.messages.Messages;
 import org.pentaho.webservice.core.AxisConfig;
 import org.pentaho.webservice.core.IWebServiceConfigurator;
 
+/**
+ * TODO BISERVER-2803 - this class acts as a plugin initializer.  We need to introduce plugin 
+ * lifecycle support to the platform plugin framework and hook this in as an initializer.  This class is
+ * currently configured as a content generator as a workaround to not having an initialize event.
+ * It just so happens that content generators are test-loaded when the plugin is registered,
+ * and this class depends on that behavior, however this is not actually a content generator at all.
+ *   -ADP
+ */
 public class WebServicesInitializer extends SimpleContentGenerator implements IPentahoInitializer {
 
   private static final long serialVersionUID = 227084738820361822L;
