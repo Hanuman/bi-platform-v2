@@ -140,7 +140,7 @@
       <src path="security/test-src" />
       <src path="versionchecker/test-src" />
       <src path="plugin-mgr/test-src" />
-      <src path="webservices/src" />
+      <src path="webservices/test-src" />
     </javac>
   </target>
 
