@@ -186,6 +186,9 @@ public class SolutionHelper {
       //New code. Since the SubActionComponent is being instantiated below to return feedback
       //it is necesary to configure the baseUrl to include the ViewAction.
       String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
+      if( baseUrl == null ) {
+        baseUrl = "void"; //$NON-NLS-1$
+      }
       Object actionUrlComponent = parameters.get(StandardSettings.ACTION_URL_COMPONENT);
       if ((actionUrlComponent != null) && (actionUrlComponent.toString().length() > 0)) {
         baseUrl += actionUrlComponent.toString();

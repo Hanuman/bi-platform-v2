@@ -101,9 +101,11 @@ public class MessageFormatter implements IMessageFormatter {
         messageBuffer.append((String) messageIterator.next()).append("<br/>"); //$NON-NLS-1$
       }
       messageBuffer.append("</td></tr></table><p>"); //$NON-NLS-1$
-      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
-      messageBuffer
-          .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
+      if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
+        IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
+        messageBuffer
+            .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
+      }
       messageBuffer.append("</body></html>"); //$NON-NLS-1$
     } else {
       // TODO support other mime types
