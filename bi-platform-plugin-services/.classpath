@@ -13,6 +13,8 @@
 	<classpathentry kind="src" path="versionchecker/src"/>
 	<classpathentry kind="src" path="security/src"/>
 	<classpathentry kind="src" path="connections/test-src"/>
+	<classpathentry kind="src" path="webservices/src"/>
+	<classpathentry kind="src" path="webservices/test-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-core"/>
