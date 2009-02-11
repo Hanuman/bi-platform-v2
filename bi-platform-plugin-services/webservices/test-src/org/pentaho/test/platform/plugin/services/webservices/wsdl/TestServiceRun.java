@@ -1,4 +1,4 @@
-package org.pentaho.test.plugin.services.webservices.wsdl;
+package org.pentaho.test.platform.plugin.services.webservices.wsdl;
 
 import junit.framework.TestCase;
 

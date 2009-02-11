@@ -5,7 +5,7 @@
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
  */
-        package org.pentaho.test.plugin.services.webservices.wsdl;
+        package org.pentaho.test.platform.plugin.services.webservices.wsdl;
 
         
 
@@ -182,12 +182,12 @@
                     /**
                      * Auto generated method signature
                      * 
-                     * @see org.pentaho.test.plugin.services.webservices.TestService#throwsError2
+                     * @see org.pentaho.test.platform.plugin.services.webservices.TestService#throwsError2
                      */
 
                     
 
-                            public  org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response throwsError2(
+                            public  org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response throwsError2(
 
                             )
                         
@@ -238,11 +238,11 @@
                 
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.class,
+                                             org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response)object;
+                                        return (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -298,12 +298,12 @@
                     /**
                      * Auto generated method signature
                      * 
-                     * @see org.pentaho.test.plugin.services.webservices.TestService#getString
+                     * @see org.pentaho.test.platform.plugin.services.webservices.TestService#getString
                      */
 
                     
 
-                            public  org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse getString(
+                            public  org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse getString(
 
                             )
                         
@@ -354,11 +354,11 @@
                 
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.class,
+                                             org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse)object;
+                                        return (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -414,16 +414,16 @@
                     /**
                      * Auto generated method signature
                      * 
-                     * @see org.pentaho.test.plugin.services.webservices.TestService#getDetails
+                     * @see org.pentaho.test.platform.plugin.services.webservices.TestService#getDetails
                      * @param getDetails
                     
                      */
 
                     
 
-                            public  org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse getDetails(
+                            public  org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse getDetails(
 
-                            org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails getDetails)
+                            org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails getDetails)
                         
 
                     throws java.rmi.RemoteException
@@ -473,11 +473,11 @@
                 
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.class,
+                                             org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse)object;
+                                        return (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -536,7 +536,7 @@
                   * 
                   */
                 public void  setString(
-                 org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString setString
+                 org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString setString
 
                 ) throws java.rmi.RemoteException
                 
@@ -3815,12 +3815,12 @@
         }
            
           
-            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.MY_QNAME,
+                             return param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3829,12 +3829,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.MY_QNAME,
+                             return param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3843,12 +3843,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.MY_QNAME,
+                             return param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3857,12 +3857,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.MY_QNAME,
+                             return param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3871,12 +3871,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString.MY_QNAME,
+                             return param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3886,14 +3886,14 @@
             }
         
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3907,14 +3907,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3944,37 +3944,37 @@
 
         try {
         
-                if (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.class.equals(type)){
+                if (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.class.equals(type)){
                 
-                           return org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.ThrowsError2Response.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.class.equals(type)){
+                if (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.class.equals(type)){
                 
-                           return org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetStringResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.class.equals(type)){
+                if (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.class.equals(type)){
                 
-                           return org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetails.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.class.equals(type)){
+                if (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.class.equals(type)){
                 
-                           return org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.GetDetailsResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString.class.equals(type)){
+                if (org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString.class.equals(type)){
                 
-                           return org.pentaho.test.plugin.services.webservices.wsdl.TestServiceStub.SetString.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return org.pentaho.test.platform.plugin.services.webservices.wsdl.TestServiceStub.SetString.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }

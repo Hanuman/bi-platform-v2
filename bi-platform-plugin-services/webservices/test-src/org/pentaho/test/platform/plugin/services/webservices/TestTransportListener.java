@@ -1,4 +1,4 @@
-package org.pentaho.test.plugin.services.webservices;
+package org.pentaho.test.platform.plugin.services.webservices;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;

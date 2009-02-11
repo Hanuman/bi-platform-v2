@@ -1,4 +1,4 @@
-package org.pentaho.test.plugin.services.webservices;
+package org.pentaho.test.platform.plugin.services.webservices;
 
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
