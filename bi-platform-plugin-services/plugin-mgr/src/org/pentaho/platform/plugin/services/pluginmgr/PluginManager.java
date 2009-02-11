@@ -222,6 +222,8 @@ public class PluginManager implements IPluginManager {
 
     //cache menu customizations
     menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
+    
+    PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
   }
 
   protected ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {

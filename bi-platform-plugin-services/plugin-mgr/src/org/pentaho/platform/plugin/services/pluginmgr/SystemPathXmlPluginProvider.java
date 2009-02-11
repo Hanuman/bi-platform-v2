@@ -64,12 +64,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
   /**
    * Gets the list of plugins that this provider class has discovered.
    * 
-   * @return a copy of plugin list, so we don't have to worry about modification (which is
-   * not allowed) and thread safety issues like iterating over the list while being modified.  
-   * This approach is OK for now since the number of plugins should be relatively small.
-   * @throws PlatformPluginRegistrationException 
-   * 
-   * @see Collections#synchronizedList(List)
+   * @return an read-only list of plugins
    * @see IPluginProvider#getPlugins()
    * @throws PlatformPluginRegistrationException if there is a problem preventing the impl from looking for plugins
    */
@@ -131,6 +126,9 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       }
       plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
     } catch (Exception e) {
+      if (e instanceof PlatformPluginRegistrationException) {
+        throw (PlatformPluginRegistrationException) e;
+      }
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
     }
@@ -138,38 +136,38 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   protected PlatformPlugin createPlugin(Document doc, IPentahoSession session, String folder, ISolutionRepository repo,
       boolean hasLib) {
-    boolean result = true;
-
     PlatformPlugin plugin = new PlatformPlugin();
 
-    result &= processPluginInfo(plugin, doc, folder, session);
-    result &= processMenuItems(plugin, doc, session);
-    result &= processContentTypes(plugin, doc, session);
-    result &= processContentGenerators(plugin, doc, session, folder, repo, hasLib);
-    result &= processOverlays(plugin, doc, session);
-    
-    //TODO: report on the number of each thing provided by the plugin here
+    processPluginInfo(plugin, doc, folder, session);
+    processMenuItems(plugin, doc, session);
+    processContentTypes(plugin, doc, session);
+    processContentGenerators(plugin, doc, session, folder, repo, hasLib);
+    processOverlays(plugin, doc, session);
+
+    String msg = Messages.getString("SystemPathXmlPluginProvider.PLUGIN_PROVIDES",  //$NON-NLS-1$
+        Integer.toString(plugin.getMenuCustomizations().size()),
+        Integer.toString(plugin.getContentInfos().size()), 
+        Integer.toString(plugin.getContentGenerators().size()), 
+        Integer.toString(plugin.getOverlays().size())
+        );
+    PluginMessageLogger.add(msg);
 
     plugin.setSourceDescription(folder);
 
     return plugin;
   }
 
-  protected boolean processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {
+  protected void processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {
     Element node = (Element) doc.selectSingleNode("/plugin"); //$NON-NLS-1$
     if (node != null) {
       String name = node.attributeValue("title"); //$NON-NLS-1$
       plugin.setName(name);
       PluginMessageLogger.add(Messages.getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
-      return true;
     }
-    return false;
   }
 
-  protected boolean processMenuItems(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+  protected void processMenuItems(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for menu system customizations
-    boolean result = false;
-
     List<?> nodes = doc.selectNodes("//menu-item"); //$NON-NLS-1$
     for (Object obj : nodes) {
       Element node = (Element) obj;
@@ -199,21 +197,16 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         } else {
           PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label)); //$NON-NLS-1$
         }
-        result = true;
       } catch (Exception e) {
         PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label)); //$NON-NLS-1$
         Logger.error(getClass().toString(), Messages.getErrorString(
             "PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label), e); //$NON-NLS-1$
       }
     }
-
-    return result;
   }
 
-  protected boolean processOverlays(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+  protected void processOverlays(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for content types
-    boolean result = true;
-
     List<?> nodes = doc.selectNodes("//overlays/overlay"); //$NON-NLS-1$
     for (Object obj : nodes) {
       Element node = (Element) obj;
@@ -228,14 +221,10 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         plugin.addOverlay(overlay);
       }
     }
-
-    return result;
   }
 
-  protected boolean processContentTypes(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+  protected void processContentTypes(PlatformPlugin plugin, Document doc, IPentahoSession session) {
     // look for content types
-    boolean result = true;
-
     List<?> nodes = doc.selectNodes("//content-type"); //$NON-NLS-1$
     for (Object obj : nodes) {
       Element node = (Element) obj;
@@ -272,15 +261,11 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
       }
     }
-
-    return result;
   }
 
-  protected boolean processContentGenerators(PlatformPlugin plugin, Document doc, IPentahoSession session,
-      String folder, ISolutionRepository repo, boolean hasLib) {
+  protected void processContentGenerators(PlatformPlugin plugin, Document doc, IPentahoSession session, String folder,
+      ISolutionRepository repo, boolean hasLib) {
     // look for content generators
-    boolean result = true;
-
     List<?> nodes = doc.selectNodes("//content-generator"); //$NON-NLS-1$
     for (Object obj : nodes) {
       Element node = (Element) obj;
@@ -315,7 +300,6 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
             "PluginManager.ERROR_0006_CANNOT_CREATE_CONTENT_GENERATOR_FACTORY", folder), e); //$NON-NLS-1$
       }
     }
-    return result;
   }
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
