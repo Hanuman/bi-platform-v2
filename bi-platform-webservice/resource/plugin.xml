@@ -9,17 +9,17 @@
         <title>Web services discovery page</title>
     </content-generator>
     
-    <content-generator scope="session" id="ws-services" type="ws-services" >
+    <content-generator scope="local" id="ws-services" type="ws-services" >
         <classname>org.pentaho.platform.webservice.content.ListServices</classname>
         <title>Web services discovery page</title>
     </content-generator>
     
-    <content-generator scope="session" id="ws-run" type="ws-run" >
+    <content-generator scope="local" id="ws-run" type="ws-run" >
         <classname>org.pentaho.webservice.core.content.RunService</classname>
         <title>Web services execution</title>
     </content-generator>
     
-    <content-generator scope="session" id="ws-wsdl" type="ws-wsdl" >
+    <content-generator scope="local" id="ws-wsdl" type="ws-wsdl" >
         <classname>org.pentaho.webservice.core.content.ServiceWsdl</classname>
         <title>Web services execution</title>
     </content-generator>
