@@ -404,7 +404,7 @@ function loader(){
 <body onLoad="loader()">
 
 <div style="margin: 0px; padding: 0px; width: 100%; height: 100%;">
-<table style="width: 100%; height: 100%;" class="launchPanel"
+<table style="width: 100%; height: 100%;" class="launchPanel" id="launchPanel"
   cellpadding="0" cellspacing="0">
   <tr>
     <td style="vertical-align: middle;" align="center">
