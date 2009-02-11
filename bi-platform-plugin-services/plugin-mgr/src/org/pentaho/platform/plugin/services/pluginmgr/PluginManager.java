@@ -153,12 +153,26 @@ public class PluginManager implements IPluginManager {
     return Collections.unmodifiableList(menuCustomizationsCache);
   }
 
+  /**
+   * Clears all the lists and maps in preparation for
+   * reloading the state from the plugin provider.
+   */
+  protected void clearCaches() {
+    plugins.clear();
+    overlaysCache.clear();
+    menuCustomizationsCache.clear();
+    classLoaderMap.clear();
+    contentInfoMap.clear();
+    contentGeneratorInfoByTypeMap.clear();
+    contentTypeByExtension.clear();
+  }
+  
   public boolean reload(IPentahoSession session) {
     boolean anyErrors = false;
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, session);
     try {
       synchronized (plugins) {
-        plugins.clear();
+        this.clearCaches();
         //the plugin may fail to load at this point without an exception thrown if the provider
         //is capable of discovering the plugin fine but there are structural problems with the plugin.
         //In this case a warning should be logged by the provider.
@@ -170,9 +184,6 @@ public class PluginManager implements IPluginManager {
       PluginMessageLogger.add(msg);
       anyErrors = true;
     }
-
-    contentGeneratorInfoByTypeMap.clear();
-    contentTypeByExtension.clear();
     objectFactory.init(null, null);
 
     synchronized (plugins) {

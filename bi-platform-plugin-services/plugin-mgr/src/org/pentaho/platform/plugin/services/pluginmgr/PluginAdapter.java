@@ -59,15 +59,20 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 
 	public String publish(IPentahoSession session, int loggingLevel) {
 		// from IPentahoPublisher
-		PluginMessageLogger.clear();
-		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
-		if( pluginManager == null ) {
-			// we cannot continue without the PluginSettings
-			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
-			return Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED"); //$NON-NLS-1$
-		}
-    pluginManager.reload(session);
-		return PluginMessageLogger.getAll().toString();
+	  try {
+  		PluginMessageLogger.clear();
+  		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
+  		if( pluginManager == null ) {
+  			// we cannot continue without the PluginSettings
+  			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
+  			return Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED"); //$NON-NLS-1$
+  		}
+      pluginManager.reload(session);
+  		String rtn = PluginMessageLogger.getAll().toString();
+  		return rtn;
+	  } finally {
+      PluginMessageLogger.clear();
+	  }
 	}
 	
 }
