@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices;
+package org.pentaho.platform.plugin.services.webservices;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 

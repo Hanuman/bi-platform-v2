@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices;
+package org.pentaho.platform.plugin.services.webservices;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoBase;
-import org.pentaho.plugin.services.webservices.messages.Messages;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 
 /**

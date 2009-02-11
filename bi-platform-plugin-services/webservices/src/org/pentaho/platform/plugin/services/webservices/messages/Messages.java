@@ -7,7 +7,7 @@
  * @author James Dixon
  * 
  */
-package org.pentaho.plugin.services.webservices.messages;
+package org.pentaho.platform.plugin.services.webservices.messages;
 
 import java.util.Collections;
 import java.util.HashMap;

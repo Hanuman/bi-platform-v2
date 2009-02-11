@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices.content;
+package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
 import java.util.Collection;
@@ -11,10 +11,10 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.messages.LocaleHelper;
-import org.pentaho.plugin.services.webservices.IWebServiceConfigurator;
-import org.pentaho.plugin.services.webservices.IWebServiceWrapper;
-import org.pentaho.plugin.services.webservices.messages.Messages;
 
 /**
  * A content generator for listing web services and providing links to their WSDL URLs

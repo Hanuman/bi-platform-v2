@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices.content;
+package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
 
@@ -6,7 +6,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.plugin.services.webservices.messages.Messages;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 
 /**

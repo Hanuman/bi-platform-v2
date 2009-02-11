@@ -1,12 +1,12 @@
-package org.pentaho.plugin.services.webservices;
+package org.pentaho.platform.plugin.services.webservices;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
-import org.pentaho.plugin.services.webservices.messages.Messages;
 
 
 /**

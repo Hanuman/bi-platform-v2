@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices.content;
+package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
 
@@ -19,9 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
-import org.pentaho.plugin.services.webservices.AxisServletHooks;
-import org.pentaho.plugin.services.webservices.SessionHandler;
-import org.pentaho.plugin.services.webservices.messages.Messages;
+import org.pentaho.platform.plugin.services.webservices.AxisServletHooks;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**
  * Executes an operation of a web service. This class requires that a HttpServletRequest,

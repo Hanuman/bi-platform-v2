@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices.content;
+package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
 
@@ -22,8 +22,8 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
-import org.pentaho.plugin.services.webservices.AxisConfig;
-import org.pentaho.plugin.services.webservices.messages.Messages;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**
  * The base content generator for all of the webservices content generators.

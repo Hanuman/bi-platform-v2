@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices.content;
+package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
 

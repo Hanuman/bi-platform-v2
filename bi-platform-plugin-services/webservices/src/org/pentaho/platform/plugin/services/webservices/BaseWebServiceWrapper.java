@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices;
+package org.pentaho.platform.plugin.services.webservices;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +12,7 @@ import javax.wsdl.xml.WSDLReader;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
-import org.pentaho.plugin.services.webservices.content.WebServiceConst;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 import org.xml.sax.InputSource;
 
 import com.ibm.wsdl.factory.WSDLFactoryImpl;

@@ -1,4 +1,4 @@
-package org.pentaho.plugin.services.webservices;
+package org.pentaho.platform.plugin.services.webservices;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfigurator;
