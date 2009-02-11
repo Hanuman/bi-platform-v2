@@ -67,11 +67,6 @@
 	try {
 	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
 
-
-%><%! 
-static int pid = 0;
-%>
-<%
 	String pivotId = null;
 	if (request.getParameter("pivotId") != null) {
 		pivotId = request.getParameter("pivotId");
@@ -1294,7 +1289,7 @@ static int pid = 0;
 			}	
 			%>
 		<%-- render navigator --%>
-		<div id="navi01div"><wcf:render ref="<%=naviId%>"
+		<div id="<%=naviId%>div"><wcf:render ref="<%=naviId%>"
 			xslUri="/WEB-INF/jpivot/navi/navigator.xsl" xslCache="true" /></div>
 
 <%	if (_mdxEdit.isVisible()) { %>
