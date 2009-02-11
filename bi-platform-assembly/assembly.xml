@@ -30,6 +30,7 @@
 
 	<property name="productId" value="biserver" />
 	<property name="releaseType" value="ce" />
+	<property name="impl.vendor" value="Pentaho Corporation" />
 
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
 	<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
