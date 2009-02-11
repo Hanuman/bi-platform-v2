@@ -52,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.pentaho.actionsequence.dom.actions.ActionFactory;
+import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionCompleteListener;
@@ -242,8 +243,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
     //Proposed fix for bug BISERVER-238 by Ezequiel Cuellar
     //Added a default value of DefaultParameterForm.xsl when getting the value of default-parameter-xsl
-    ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
-    String defaultParameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", null); //$NON-NLS-1$
+    String defaultParameterXsl = PentahoSystem.getSystemSetting("default-parameter-xsl", null); //$NON-NLS-1$
     if ((defaultParameterXsl != null) && (defaultParameterXsl.length() > 0)) {
       setParameterXsl(defaultParameterXsl);
     }
@@ -995,6 +995,8 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
   public int executeSequence(final IActionSequence sequence, final IActionCompleteListener doneListener,
       final IExecutionListener execListener, final boolean async) {
     String loopParamName = sequence.getLoopParameter();
+    
+    boolean peekOnly = false;
     Object loopList;
     IActionParameter loopParm = null;
 
@@ -1002,6 +1004,11 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       loopList = new ArrayList<Integer>();
       ((ArrayList) loopList).add(new Integer(0));
     } else {
+      // temp hack
+      if(loopParamName.startsWith("~~") ) {
+        peekOnly = true;
+        loopParamName = loopParamName.substring( 2 );
+      }
       loopParm = getLoopParameter(loopParamName);
       loopList = loopParm.getValue();
 
@@ -1022,7 +1029,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         return status;
       }
     } else if (loopList instanceof IPentahoResultSet) {
-      executeLoop(loopParm, (IPentahoResultSet) loopList, sequence, doneListener, execListener, async);
+      executeLoop(loopParm, (IPentahoResultSet) loopList, sequence, doneListener, execListener, async, peekOnly);
       if (status != IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
         return status;
       }
@@ -1033,7 +1040,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
   private void executeLoop(final IActionParameter loopParm, final IPentahoResultSet loopSet,
       final IActionSequence sequence, final IActionCompleteListener doneListener,
-      final IExecutionListener execListener, final boolean async) {
+      final IExecutionListener execListener, final boolean async, boolean peekOnly) {
 
     // execute the actions
     int loopCount = 0;
@@ -1045,7 +1052,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     if (loopSet.isScrollable()) {
       loopSet.beforeFirst();
     }    
-    Object row[] = loopSet.next();
+    Object row[] = peekOnly ? ((IPeekable) loopSet).peek() : loopSet.next();
     Object headerSet[][] = loopSet.getMetaData().getColumnHeaders();
     // TODO handle OLAP result sets
     Object headers[] = headerSet[0];
@@ -1096,7 +1103,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       if (status != IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
         return;
       }
-      row = loopSet.next();
+      row = peekOnly ? ((IPeekable) loopSet).peek() : loopSet.next();
     }
 
     status = IRuntimeContext.RUNTIME_STATUS_SUCCESS;
