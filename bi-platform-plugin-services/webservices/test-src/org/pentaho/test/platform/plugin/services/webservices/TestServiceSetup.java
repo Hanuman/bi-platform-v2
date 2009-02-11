@@ -39,7 +39,7 @@ public class TestServiceSetup extends BaseServiceSetup {
 
     WebServiceConst.baseUrl = "http://testhost:8080/testcontext/"; //$NON-NLS-1$
     try {
-      File f = new File( "test-src/solution/system/"+WebServiceConst.AXIS_CONFIG_FILE); //$NON-NLS-1$
+      File f = new File( "webservices/test-src/solution/system/"+WebServiceConst.AXIS_CONFIG_FILE); //$NON-NLS-1$
       return new FileInputStream( f );
     } catch (Exception e) {
       // TODO log this
