@@ -309,6 +309,30 @@ table.buttonCtrl
 	cursor:pointer;
 }
 
+td.smallButtonCtrlCenterNormal {
+  background-image: url(../images/btn_sm_middle.png);
+}
+
+td.smallButtonCtrlCenterHover {
+  background-image: url(../images/btn_sm_middle_over.png);
+}
+
+td.smallButtonCtrlCenterDisabled {
+  background-image: url(../images/btn_sm_middle_disabled.png);
+}
+
+td.largeButtonCtrlCenterNormal {
+  background-image: url(../images/button_middle.png);
+}
+
+td.largeButtonCtrlCenterHover {
+  background-image: url(../images/button_middle_over.png);
+}
+
+td.largeButtonCtrlCenterDisabled {
+  background-image: url(../images/button_middle_disabled.png);
+}
+
 .normalLargeButtonTxt
 {
 	font: normal .8em Tahoma,  Arial, Helvetica, sans-serif;

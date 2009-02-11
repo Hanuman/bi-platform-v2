@@ -25,6 +25,7 @@ ButtonCtrl = function( btnLabel, btnSize )
 
 	if ( undefined != btnSize && btnSize == ButtonCtrl.SMALL )
 	{
+		this.btnSize = ButtonCtrl.SMALL
 		this.btnImgBaseName = "btn_sm_";
 		this.hoverClassName = "hoverSmallButtonTxt";
 		this.normalClassName = "normalSmallButtonTxt";
@@ -32,6 +33,7 @@ ButtonCtrl = function( btnLabel, btnSize )
 	}
 	else
 	{
+		this.btnSize = ButtonCtrl.LARGE
 		this.btnImgBaseName = "button_";
 		this.hoverClassName = "hoverLargeButtonTxt";
 		this.normalClassName = "normalLargeButtonTxt";
@@ -79,11 +81,17 @@ ButtonCtrl = function( btnLabel, btnSize )
     td.appendChild(div);
 	td.noWrap = "true";
 	div.className = this.normalClassName;
-	td.style.backgroundImage = "url('images/" + this.btnImgBaseName + "middle.png')";
-    td.style.backgroundRepeat = "repeat-x"; 
+	if (this.btnSize == ButtonCtrl.SMALL) {
+        td.className = "smallButtonCtrlCenterNormal";
+    } else {
+        td.className = "largeButtonCtrlCenterNormal";
+    }
+
+
+    td.style.backgroundRepeat = "repeat-x";
     td.style.verticalAlign = "top";
 	this.labelTd = td;
-	
+
 	tr.appendChild( td );
 	this.centerTd = td;	
 	
@@ -148,9 +156,15 @@ ButtonCtrl.prototype.setStateToHover = function()
 {
 	var base = UIUtil.getImageFolderPath()  + this.btnImgBaseName;
 	this.leftImg.src = base + "left_over.png";
-	this.centerTd.style.backgroundImage = "url('" + base + "middle_over.png')";
+
+	if (this.btnSize == ButtonCtrl.SMALL) {
+        this.centerTd.className = "smallButtonCtrlCenterHover";
+    } else {
+        this.centerTd.className = "largeButtonCtrlCenterHover";
+    }
+
 	this.rightImg.src = base + "right_over.png";
-	
+
 	this.centerTd.firstChild.className = this.hoverClassName;
 }
 /*private*/
@@ -158,7 +172,13 @@ ButtonCtrl.prototype.setStateToNormal = function()
 {
 	var base = UIUtil.getImageFolderPath() + this.btnImgBaseName;
 	this.leftImg.src = base + "left.png";
-	this.centerTd.style.backgroundImage = "url('" + base + "middle.png')";
+
+	if (this.btnSize == ButtonCtrl.SMALL) {
+        this.centerTd.className = "smallButtonCtrlCenterNormal";
+    } else {
+        this.centerTd.className = "largeButtonCtrlCenterNormal";
+    }
+
 	this.rightImg.src =  base + "right.png";
 	
 	this.centerTd.firstChild.className = this.normalClassName;
@@ -168,7 +188,13 @@ ButtonCtrl.prototype.setStateToDisabled = function()
 {
 	var base = UIUtil.getImageFolderPath() + this.btnImgBaseName;
 	this.leftImg.src = base + "left_disabled.png";
-	this.centerTd.style.backgroundImage = "url('" + base + "middle_disabled.png')";
+
+	if (this.btnSize == ButtonCtrl.SMALL) {
+        this.centerTd.className = "smallButtonCtrlCenterDisabled";
+    } else {
+        this.centerTd.className = "largeButtonCtrlCenterDisabled";
+    }
+
 	this.rightImg.src =  base + "right_disabled.png";
 	
 	this.centerTd.firstChild.className = this.disabledClassName;

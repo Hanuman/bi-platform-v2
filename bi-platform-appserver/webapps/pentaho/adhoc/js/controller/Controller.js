@@ -1641,21 +1641,21 @@ Controller.prototype.handlePreview = function()
 
     var form = document.forms['previewForm'];
     form.acceptCharset = "UTF-8";
-    
+
     // open a new mantle tab with empty named iframe
     // submission target is the iframe name
     form.elements['reportXml'].value = xml;
     form.elements['outputType'].value = outputType;
     form.elements['forceAttachment'].value = "false";
     form.elements['templatePath'].value = templatePath;
-  
-    
+
+
     if (window.parent != null && window.parent.mantle_initialized == true) {
       // open preview tab for waqr
           var url = "";
           if(form.action.indexOf('http') == -1){
                 //IE does not have the hostname
-                url += "http://"+window. location.host+form.action;
+                url += window.location.protocol+"//"+window.location.host+form.action;
           } else {
                 //Mozilla
                 url = form.action;
