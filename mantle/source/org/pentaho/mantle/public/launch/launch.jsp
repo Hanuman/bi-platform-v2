@@ -322,13 +322,18 @@ Button = function(label, container){
 }
 
 window.onresize = function(){
-  document.getElementById("launchPanel").style.height="99%";
-  document.getElementById("launchPanel").style.height="100%";
-  document.getElementById("launchPanel").style.width="99%";
-  document.getElementById("launchPanel").style.width="100%";
   if(window.selectedButton){
      window.selectedButton.onmouseout();
   }
+  
+  // IE Specific fix for Albolutely positioned items not positioning properly while the browser is resizing
+  if(document.all){
+	  document.getElementById("launchPanel").style.height="99%";
+	  document.getElementById("launchPanel").style.height="100%";
+	  document.getElementById("launchPanel").style.width="99%";
+	  document.getElementById("launchPanel").style.width="100%";
+  }
+
 }
 
 function loader(){
