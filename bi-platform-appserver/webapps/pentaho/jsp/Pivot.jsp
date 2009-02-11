@@ -135,8 +135,8 @@ static int pid = 0;
 	boolean chartChange = false;
 	boolean showGrid = true;
 	
-	if( session.getAttribute( "save-message-"+pivotId ) != null ) {
-		saveMessage = ((String) session.getAttribute("save-message-"+pivotId));
+	if( session.getAttribute( "save-message-01") != null ) {
+		saveMessage = ((String) session.getAttribute("save-message-01"));
 	}
 	
 	if( session.getAttribute( "pivot-"+PivotViewComponent.SHOWGRID+"-"+pivotId ) != null ) {
@@ -632,14 +632,14 @@ static int pid = 0;
 					break;
 				case 0:
 				  	saveMessage="";
-				  	session.setAttribute( "save-message-"+pivotId, saveMessage); //$NON-NLS-1$
+				  	session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
 				  	break;
 			}	
 	    } catch (Throwable e){
 		  saveResult = ISolutionRepository.FILE_ADD_FAILED;
 	      saveMessage = e.getMessage();
 	    }
-		session.setAttribute( "save-message-"+pivotId, saveMessage); //$NON-NLS-1$
+		session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
 
 	  } 	
 	}
@@ -778,7 +778,7 @@ static int pid = 0;
 				var newActionPath = encodeURI( controller.getActionPath() );
 				var newActionTitle = encodeURI( controller.getActionTitle()!=null?controller.getActionTitle():controller.getActionName() );
 				document.location.href='<%= pageName %>?save-action=saveAs&save-path='+newSolution
-				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionTitle;
+				+'/'+newActionPath+'&save-file='+newActionName+'&save-title='+newActionTitle + '&pivotId=<%=pivotId%>';
 			});
 			cursor_clear();
 			if (saveMessage != null && "" != saveMessage) {
@@ -810,7 +810,7 @@ static int pid = 0;
 			var newActionPath = encodeURI( "<%= actionInfo.getPath() %>" );
 			var title = encodeURI( "<%= actionTitle %>" );
 			document.location.href='<%= pageName %>?save-action=saveAs&save-path='+newSolution
-			+'/'+newActionPath+'&save-file='+newActionName+'&save-title=' + title;
+			+'/'+newActionPath+'&save-file='+newActionName+'&save-title=' + title + '&pivotId=<%=pivotId%>';
 			cursor_clear();
 		}
 
@@ -1269,7 +1269,7 @@ static int pid = 0;
 		  break;
 		case 0:
 		  saveMessage="";
-		  session.setAttribute( "save-message-"+pivotId, saveMessage); //$NON-NLS-1$
+		  session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
 		  break;
 	}	
     %>
