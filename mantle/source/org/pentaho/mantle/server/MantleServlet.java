@@ -40,6 +40,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.DocumentException;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
@@ -92,6 +93,7 @@ import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.pentaho.platform.engine.services.SolutionURIResolver;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
@@ -105,9 +107,9 @@ import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.platform.scheduler.SchedulerHelper;
 import org.pentaho.platform.util.VersionHelper;
 import org.pentaho.platform.util.VersionInfo;
-import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
+import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.refactor.UserFilesComponent;
@@ -509,7 +511,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
           fig = pluginManager.getFileInfoGeneratorForType(extension, getPentahoSession());
 
           if (fig != null) {
-            IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(), solutionFile.getFileName(), solutionFile.getData());
+            fig.setLogger(getPentahoSession());
+            IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(),
+                solutionFile.getFileName(), solutionFile.getData());
             solutionFileInfo.localizedName = fileInfo.getTitle();
           }
         } catch (PlatformPluginRegistrationException e) {
