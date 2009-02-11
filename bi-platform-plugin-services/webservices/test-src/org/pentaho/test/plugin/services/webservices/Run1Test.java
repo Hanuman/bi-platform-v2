@@ -18,9 +18,9 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.content.RunService;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
-import org.pentaho.plugin.services.webservices.content.RunService;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;

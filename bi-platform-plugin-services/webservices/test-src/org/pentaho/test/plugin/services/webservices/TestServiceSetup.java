@@ -9,9 +9,9 @@ import java.util.List;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.plugin.webservices.BaseServiceSetup;
-import org.pentaho.platform.plugin.webservices.IWebServiceWrapper;
-import org.pentaho.plugin.services.webservices.content.WebServiceConst;
+import org.pentaho.platform.plugin.services.webservices.BaseServiceSetup;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 
 
 public class TestServiceSetup extends BaseServiceSetup {

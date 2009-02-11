@@ -12,10 +12,10 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.content.ListServices;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
-import org.pentaho.plugin.services.webservices.content.ListServices;
-import org.pentaho.plugin.services.webservices.content.WebServiceConst;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class ListServicesTest extends BaseTest {

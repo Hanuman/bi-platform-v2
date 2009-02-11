@@ -4,11 +4,11 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.description.AxisService;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.webservices.AxisConfig;
-import org.pentaho.platform.plugin.webservices.IWebServiceConfigurator;
-import org.pentaho.platform.plugin.webservices.IWebServiceWrapper;
-import org.pentaho.platform.plugin.webservices.SessionHandler;
-import org.pentaho.plugin.services.webservices.content.WebServiceConst;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 
 
 public class BaseClassesTest extends TestCase {

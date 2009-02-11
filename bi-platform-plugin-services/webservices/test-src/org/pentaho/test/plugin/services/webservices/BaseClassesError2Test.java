@@ -2,7 +2,7 @@ package org.pentaho.test.plugin.services.webservices;
 
 import junit.framework.TestCase;
 
-import org.pentaho.platform.plugin.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
 
 public class BaseClassesError2Test extends TestCase {
   

@@ -2,7 +2,7 @@ package org.pentaho.test.plugin.services.webservices;
 
 import java.util.ArrayList;
 
-import org.pentaho.platform.plugin.webservices.BaseWebServiceWrapper;
+import org.pentaho.platform.plugin.services.webservices.BaseWebServiceWrapper;
 
 
 public class TestService2Wrapper extends BaseWebServiceWrapper {
