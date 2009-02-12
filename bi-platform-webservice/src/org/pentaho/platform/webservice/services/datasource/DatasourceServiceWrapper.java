@@ -2,8 +2,8 @@ package org.pentaho.platform.webservice.services.datasource;
 
 import java.util.ArrayList;
 
+import org.pentaho.platform.plugin.services.webservices.BaseWebServiceWrapper;
 import org.pentaho.platform.webservice.plugin.messages.Messages;
-import org.pentaho.webservice.core.BaseWebServiceWrapper;
 
 /**
  * A wrapper for the datasource web service. Defines the datasource bean, the

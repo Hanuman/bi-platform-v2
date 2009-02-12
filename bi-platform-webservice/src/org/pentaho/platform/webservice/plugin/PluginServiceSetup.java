@@ -10,11 +10,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.webservices.BaseServiceSetup;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 import org.pentaho.platform.webservice.plugin.messages.Messages;
 import org.pentaho.platform.webservice.services.datasource.DatasourceServiceWrapper;
-import org.pentaho.webservice.core.BaseServiceSetup;
-import org.pentaho.webservice.core.IWebServiceWrapper;
-import org.pentaho.webservice.core.content.WebServiceConst;
 
 /**
  * The web services setup objects for the BI server webservices plugin.

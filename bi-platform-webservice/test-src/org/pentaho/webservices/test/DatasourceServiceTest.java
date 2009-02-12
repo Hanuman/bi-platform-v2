@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
 import org.pentaho.platform.webservice.services.datasource.DatasourceService;
 import org.pentaho.platform.webservice.services.datasource.WSDataSource;
 import org.pentaho.test.platform.engine.core.BaseTest;
-import org.pentaho.webservice.core.SessionHandler;
 
 public class DatasourceServiceTest extends BaseTest {
 

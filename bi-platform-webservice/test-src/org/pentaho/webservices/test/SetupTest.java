@@ -18,9 +18,9 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
 import org.pentaho.platform.webservice.plugin.WebServicesInitializer;
-import org.pentaho.webservice.core.AxisConfig;
-import org.pentaho.webservice.core.IWebServiceConfigurator;
 
 @SuppressWarnings({"all"})
 public class SetupTest extends TestCase {

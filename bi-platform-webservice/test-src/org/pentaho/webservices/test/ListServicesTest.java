@@ -25,11 +25,11 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
+import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.webservice.content.ListServices;
 import org.pentaho.platform.webservice.plugin.WebServicesInitializer;
 import org.pentaho.platform.webservice.plugin.messages.Messages;
-import org.pentaho.webservice.core.content.WebServiceConst;
 
 @SuppressWarnings({"all"})
 public class ListServicesTest extends TestCase {

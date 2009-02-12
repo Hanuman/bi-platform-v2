@@ -7,7 +7,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
-public class ListServices extends org.pentaho.webservice.core.content.ListServices {
+public class ListServices extends org.pentaho.platform.plugin.services.webservices.content.ListServices {
 
   private static final long serialVersionUID = 6592498636085258801L;
 

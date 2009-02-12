@@ -3,9 +3,9 @@ package org.pentaho.webservices.test;
 import java.io.File;
 
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
 import org.pentaho.platform.webservice.plugin.WebServicesInitializer;
 import org.pentaho.test.platform.engine.core.BaseTest;
-import org.pentaho.webservice.core.AxisConfig;
 
 public class BadInitialize1Test extends BaseTest {
 

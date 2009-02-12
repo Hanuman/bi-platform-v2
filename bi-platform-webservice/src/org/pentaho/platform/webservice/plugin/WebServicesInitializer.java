@@ -7,9 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
+import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
 import org.pentaho.platform.webservice.plugin.messages.Messages;
-import org.pentaho.webservice.core.AxisConfig;
-import org.pentaho.webservice.core.IWebServiceConfigurator;
 
 /**
  * TODO BISERVER-2803 - this class acts as a plugin initializer.  We need to introduce plugin 
@@ -35,7 +35,6 @@ public class WebServicesInitializer extends SimpleContentGenerator implements IP
    * 2) Adds PluginServiceSetup to the factory
    * 3) Causes the webservices system to initialize using PluginServiceSetup
    */
-  @SuppressWarnings({ "deprecation" })
   public void init(IPentahoSession session) {
 
     ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
