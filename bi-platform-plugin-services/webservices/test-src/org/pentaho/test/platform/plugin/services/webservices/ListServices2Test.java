@@ -27,7 +27,7 @@ public class ListServices2Test extends TestCase {
 		  
 	    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 	    
-	    TestServiceSetup2 setup = new TestServiceSetup2();
+	    StubServiceSetup2 setup = new StubServiceSetup2();
 	    setup.setSession(session);
 	    AxisConfig.getInstance( setup );
 	    

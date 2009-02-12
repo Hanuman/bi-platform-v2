@@ -7,18 +7,18 @@ public class TestServiceRun extends TestCase {
   public static void main( String args[] ) throws Exception {
     
 
-    TestServiceStub.ComplexType complex = new TestServiceStub.ComplexType();
+    ServiceStub.ComplexType complex = new ServiceStub.ComplexType();
     complex.setName( "fred" ); //$NON-NLS-1$
     
-    TestServiceStub.GetDetails getDetails = new TestServiceStub.GetDetails();
+    ServiceStub.GetDetails getDetails = new ServiceStub.GetDetails();
     
     getDetails.setObject( complex );
     
-    TestServiceStub stub = new TestServiceStub();
+    ServiceStub stub = new ServiceStub();
     
-    TestServiceStub.GetDetailsResponse response = stub.getDetails(getDetails);
+    ServiceStub.GetDetailsResponse response = stub.getDetails(getDetails);
     
-    TestServiceStub.ComplexType returnValue = response.get_return();
+    ServiceStub.ComplexType returnValue = response.get_return();
     assertNotNull( returnValue );
     
     

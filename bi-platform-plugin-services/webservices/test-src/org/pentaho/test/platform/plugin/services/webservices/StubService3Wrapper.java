@@ -5,22 +5,18 @@ import java.util.ArrayList;
 import org.pentaho.platform.plugin.services.webservices.BaseWebServiceWrapper;
 
 
-public class TestService2Wrapper extends BaseWebServiceWrapper {
-
-  public TestService2Wrapper() {
-    setEnabled( false );
-  }
+public class StubService3Wrapper extends BaseWebServiceWrapper {
 
   public Class getServiceClass() {
-    return TestService2.class;
+    return StubService3.class;
   }
 
   public String getTitle() {
-    return null;
+    return "test title 3"; //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return null;
+    return "test description 3"; //$NON-NLS-1$
   }
 
   @Override

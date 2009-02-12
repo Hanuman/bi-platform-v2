@@ -1,6 +1,6 @@
 package org.pentaho.test.platform.plugin.services.webservices;
 
-public class TestService {
+public class StubService {
 
   public static String str;
   public static boolean getStringCalled = false;
@@ -10,7 +10,7 @@ public class TestService {
   
   public void setString( String str ) {
     setStringCalled = true;
-    TestService.str = str;
+    StubService.str = str;
   }
   
   public ComplexType getDetails( ComplexType object ) {

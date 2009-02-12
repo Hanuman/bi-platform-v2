@@ -8,7 +8,7 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
 
-public class TestTransportListener implements TransportListener {
+public class StubTransportListener implements TransportListener {
 
   public void destroy() {
     System.out.println( "TestTransportListener.destroy" ); //$NON-NLS-1$

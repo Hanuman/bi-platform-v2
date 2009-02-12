@@ -31,17 +31,17 @@ public class WsdlPageTest extends TestCase {
 		  
 	    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 	    
-	    TestServiceSetup setup = new TestServiceSetup();
+	    StubServiceSetup setup = new StubServiceSetup();
 	    setup.setSession(session);
 	    AxisConfig config =  AxisConfig.getInstance( setup );
 	    
 	    TransportInDescription tIn = new TransportInDescription( "http" ); //$NON-NLS-1$
-	    TestTransportListener receiver = new TestTransportListener();
+	    StubTransportListener receiver = new StubTransportListener();
 	    tIn.setReceiver(receiver);
 	    config.getAxisConfigurator().getAxisConfiguration().addTransportIn(tIn);
 	    
 	    TransportOutDescription tOut = new TransportOutDescription( "http" ); //$NON-NLS-1$
-	    TestTransportSender sender = new TestTransportSender();
+	    StubTransportSender sender = new StubTransportSender();
 	    tOut.setSender(sender);
 	    config.getAxisConfigurator().getAxisConfiguration().addTransportOut(tOut);
 
@@ -106,7 +106,7 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 	      
-	      TestServiceSetup setup = new TestServiceSetup();
+	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
 	      AxisConfig.getInstance( setup );
 	      
@@ -146,7 +146,7 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 	      
-	      TestServiceSetup setup = new TestServiceSetup();
+	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
 	      AxisConfig.getInstance( setup );
 	      
@@ -188,7 +188,7 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 	      
-	      TestServiceSetup setup = new TestServiceSetup();
+	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
 	      AxisConfig.getInstance( setup );
 	      

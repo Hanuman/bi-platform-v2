@@ -8,7 +8,7 @@ public class BaseClassesError2Test extends TestCase {
   
   public void testBadInit4() {
     
-    AxisConfig config = AxisConfig.getInstance( new TestServiceSetup3() );
+    AxisConfig config = AxisConfig.getInstance( new StubServiceSetup3() );
     assertNull( config );
   }
   

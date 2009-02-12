@@ -11,7 +11,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 
-public class TestTransportSender implements TransportSender {
+public class StubTransportSender implements TransportSender {
 
   public static String transportOutStr = null;
   
@@ -59,7 +59,7 @@ public class TestTransportSender implements TransportSender {
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     TransportUtils.writeMessage( msgContext, out);
-    TestTransportSender.transportOutStr = new String( out.toByteArray() );
+    StubTransportSender.transportOutStr = new String( out.toByteArray() );
     System.out.println( "TestTransportSender.invoke " ); //$NON-NLS-1$
     return null;
   }

@@ -2,7 +2,7 @@ package org.pentaho.test.platform.plugin.services.webservices;
 
 import java.io.InputStream;
 
-public class TestServiceSetup3 extends TestServiceSetup {
+public class StubServiceSetup3 extends StubServiceSetup {
   
   private static final long serialVersionUID = 8896012990660910100L;
 

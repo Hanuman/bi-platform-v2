@@ -5,24 +5,27 @@ import java.util.ArrayList;
 import org.pentaho.platform.plugin.services.webservices.BaseWebServiceWrapper;
 
 
-public class TestServiceWrapper extends BaseWebServiceWrapper {
+public class StubService2Wrapper extends BaseWebServiceWrapper {
+
+  public StubService2Wrapper() {
+    setEnabled( false );
+  }
 
   public Class getServiceClass() {
-    return TestService.class;
+    return StubService2.class;
   }
 
   public String getTitle() {
-    return "test title"; //$NON-NLS-1$
+    return null;
   }
 
   public String getDescription() {
-    return "test description"; //$NON-NLS-1$
+    return null;
   }
-  
+
   @Override
   protected ArrayList<Class> getExtraClasses() {
-    ArrayList<Class> extraClasses = new ArrayList<Class>();
-    extraClasses.add( ComplexType.class );
-    return extraClasses;
+    return null;
   }
+
 }

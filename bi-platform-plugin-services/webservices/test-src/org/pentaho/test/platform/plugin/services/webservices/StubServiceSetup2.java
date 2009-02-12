@@ -1,6 +1,6 @@
 package org.pentaho.test.platform.plugin.services.webservices;
 
-public class TestServiceSetup2 extends TestServiceSetup {
+public class StubServiceSetup2 extends StubServiceSetup {
   
   private static final long serialVersionUID = 6759030360309754573L;
 

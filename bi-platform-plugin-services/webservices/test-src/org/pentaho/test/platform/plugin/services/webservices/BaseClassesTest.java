@@ -17,7 +17,7 @@ public class BaseClassesTest extends TestCase {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
     
-    TestServiceSetup setup = new TestServiceSetup();
+    StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
     AxisConfig config = AxisConfig.getInstance( setup );
     assertNotNull( "AxisConfig is null", config ); //$NON-NLS-1$

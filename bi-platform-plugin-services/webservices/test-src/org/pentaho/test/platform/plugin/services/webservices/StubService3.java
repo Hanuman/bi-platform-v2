@@ -1,11 +1,11 @@
 package org.pentaho.test.platform.plugin.services.webservices;
 
-public class TestService3 {
+public class StubService3 {
 
   public static String str;
   
   public void setString( String str ) {
-    TestService3.str = str;
+    StubService3.str = str;
   }
   
   public String getString() {

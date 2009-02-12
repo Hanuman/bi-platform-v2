@@ -14,15 +14,15 @@ import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
 import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 
 
-public class TestServiceSetup extends BaseServiceSetup {
+public class StubServiceSetup extends BaseServiceSetup {
 
   private static final long serialVersionUID = 3383802441135983726L;
 
-  protected static TestServiceSetup instance = null;
+  protected static StubServiceSetup instance = null;
   
-  private static final Log logger = LogFactory.getLog(TestServiceSetup.class);
+  private static final Log logger = LogFactory.getLog(StubServiceSetup.class);
 
-  public TestServiceSetup() {
+  public StubServiceSetup() {
     super();
   }
   
@@ -60,9 +60,9 @@ public class TestServiceSetup extends BaseServiceSetup {
   @Override
   protected List<IWebServiceWrapper> getWebServiceWrappers() {
     List<IWebServiceWrapper> wrappers = new ArrayList<IWebServiceWrapper>();
-    wrappers.add( new TestServiceWrapper() );
-    wrappers.add( new TestService2Wrapper() );
-    wrappers.add( new TestService3Wrapper() );
+    wrappers.add( new StubServiceWrapper() );
+    wrappers.add( new StubService2Wrapper() );
+    wrappers.add( new StubService3Wrapper() );
     return wrappers;
   }
   

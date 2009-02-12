@@ -36,7 +36,7 @@ public class Run1Test extends TestCase {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
     
-    TestServiceSetup setup = new TestServiceSetup();
+    StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
     AxisConfig config =  AxisConfig.getInstance( setup );
 
@@ -47,12 +47,12 @@ public class Run1Test extends TestCase {
     assertEquals( "Transport is wrong", "http", config.getTransportOut() ); //$NON-NLS-1$ //$NON-NLS-2$
 */
     TransportInDescription tIn = new TransportInDescription( "http" ); //$NON-NLS-1$
-    TestTransportListener receiver = new TestTransportListener();
+    StubTransportListener receiver = new StubTransportListener();
     tIn.setReceiver(receiver);
     config.getAxisConfigurator().getAxisConfiguration().addTransportIn(tIn);
     
     TransportOutDescription tOut = new TransportOutDescription( "http" ); //$NON-NLS-1$
-    TestTransportSender sender = new TestTransportSender();
+    StubTransportSender sender = new StubTransportSender();
     tOut.setSender(sender);
     config.getAxisConfigurator().getAxisConfiguration().addTransportOut(tOut);
 
@@ -109,12 +109,12 @@ public class Run1Test extends TestCase {
         contentItem = outputHandler.getOutputContentItem( "response", "content", "", null, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         assertEquals( "content type is wrong", "text/xml", contentItem.getMimeType() ); //$NON-NLS-1$ //$NON-NLS-2$
         
-        TestTransportSender.transportOutStr = null;
-        TestService.getStringCalled = false;
+        StubTransportSender.transportOutStr = null;
+        StubService.getStringCalled = false;
           contentGenerator.createContent();
 
-          assertTrue( TestService.getStringCalled );
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.getStringCalled );
+          String content = StubTransportSender.transportOutStr;
           assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
@@ -172,12 +172,12 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
 
       try {
-        TestService.setStringCalled = false;
-        TestTransportSender.transportOutStr = null;
+        StubService.setStringCalled = false;
+        StubTransportSender.transportOutStr = null;
           contentGenerator.createContent();
-          assertTrue( TestService.setStringCalled );
-          assertEquals( "testinput", TestService.str ); //$NON-NLS-1$
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.setStringCalled );
+          assertEquals( "testinput", StubService.str ); //$NON-NLS-1$
+          String content = StubTransportSender.transportOutStr;
         System.out.println( content );
       } catch (Exception e) {
         e.printStackTrace();
@@ -232,11 +232,11 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httprequest" , request ); //$NON-NLS-1$
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
       try {
-        TestService.throwsError1Called = false;
-        TestTransportSender.transportOutStr = null;
+        StubService.throwsError1Called = false;
+        StubTransportSender.transportOutStr = null;
           contentGenerator.createContent();
-          assertTrue( TestService.throwsError1Called );
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.throwsError1Called );
+          String content = StubTransportSender.transportOutStr;
           assertEquals( "Content should be empty", null, content ); //$NON-NLS-1$
         System.out.println( content );
       } catch (Exception e) {
@@ -293,11 +293,11 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
 
       try {
-        TestService.throwsError2Called = false;
-        TestTransportSender.transportOutStr = null;
+        StubService.throwsError2Called = false;
+        StubTransportSender.transportOutStr = null;
           contentGenerator.createContent();
-          assertTrue( TestService.throwsError2Called );
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.throwsError2Called );
+          String content = StubTransportSender.transportOutStr;
           
           assertTrue( "results are wrong", content.indexOf( "soapenv:Fault" ) > 0 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "results are wrong", content.indexOf( "test error 2" ) > 0 ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -356,9 +356,9 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
 
       try {
-        TestTransportSender.transportOutStr = null;
+        StubTransportSender.transportOutStr = null;
           contentGenerator.createContent();
-          String content = TestTransportSender.transportOutStr;
+          String content = StubTransportSender.transportOutStr;
           System.out.println( content );
           
           assertTrue( "results are wrong", content.indexOf( "soapenv:Fault" ) > 0 ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -421,12 +421,12 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
       
       try {
-        TestTransportSender.transportOutStr = null;
-        TestService.getStringCalled = false;
+        StubTransportSender.transportOutStr = null;
+        StubService.getStringCalled = false;
           contentGenerator.createContent();
 
-          assertTrue( TestService.getStringCalled );
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.getStringCalled );
+          String content = StubTransportSender.transportOutStr;
           assertEquals( "result are wrong", "<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body><ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse></soapenv:Body></soapenv:Envelope>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
@@ -487,12 +487,12 @@ public class Run1Test extends TestCase {
       pathParams.setParameter( "httpresponse" , response ); //$NON-NLS-1$
       
       try {
-        TestTransportSender.transportOutStr = null;
-        TestService.getStringCalled = false;
+        StubTransportSender.transportOutStr = null;
+        StubService.getStringCalled = false;
           contentGenerator.createContent();
 
-          assertTrue( TestService.getStringCalled );
-          String content = TestTransportSender.transportOutStr;
+          assertTrue( StubService.getStringCalled );
+          String content = StubTransportSender.transportOutStr;
           assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
