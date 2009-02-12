@@ -3,7 +3,8 @@
   <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
   <configurations>
     <conf name="default" />
-    <conf name="test" visibility="private" />
+    <conf name="runtime" />
+    <conf name="test" extends="runtime" visibility="private" />
     <conf name="source" />    
   </configurations>
   
@@ -40,40 +41,26 @@
       <exclude org="commons-collections" name="commons-collections" />
       <exclude org="dom4j" name="dom4j" />
     </dependency>
-    <dependency org="rhino" name="js" rev="1.7R1" />
-    <dependency org="javax.jcr" name="jcr" rev="1.0" />
-
-    <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
     
-    <dependency org="javax.activation" name="activation" rev="1.1" />     
-    <dependency org="annogen" name="annogen" rev="0.1.0" />     
-
-    <dependency org="org.apache.ws.commons.axiom" name="axiom-api" rev="1.2.7" transitive="false"/>
-    <dependency org="org.apache.ws.commons.axiom" name="axiom-dom" rev="1.2.7" transitive="false"/>
-    <dependency org="org.apache.ws.commons.axiom" name="axiom-impl" rev="1.2.7" transitive="false"/>
-
     <dependency org="org.apache.axis2" name="axis2-adb" rev="1.4.1" transitive="false"/>
     <dependency org="org.apache.axis2" name="axis2-codegen" rev="1.4.1" transitive="false"/>
     <dependency org="org.apache.axis2" name="axis2-java2wsdl" rev="1.4.1" transitive="false"/>
     <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/>
-
-    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" />
+    
+    <dependency org="org.apache.ws.commons.axiom" name="axiom-api" rev="1.2.7" transitive="false"/>
+    <dependency org="org.apache.ws.commons.axiom" name="axiom-dom" rev="1.2.7" transitive="false"/>
+    <dependency org="org.apache.ws.commons.axiom" name="axiom-impl" rev="1.2.7" transitive="false"/>
+    
+    <dependency org="javax.jcr" name="jcr" rev="1.0" />
 
     <!-- rev 1.0.1 would be better -->
     <dependency org="org.apache.geronimo.specs" name="geronimo-stax-api_1.0_spec" rev="1.0" />
     
-    <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.0-beta3" transitive="false"/>
-
-    <!-- rev 2.0.4 would be better -->
-    <dependency org="org.apache.ws.commons.neethi" name="neethi" rev="2.0.1" transitive="false"/>
-    
-    <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
     <dependency org="wsdl4j" name="wsdl4j" rev="1.6.2" transitive="false"/>
-    <dependency org="woodstox" name="wstx-asl" rev="3.2.4" transitive="false"/>
-    <dependency org="org.apache.ws.commons.schema" name="XmlSchema" rev="1.4.2" transitive="false"/>
 
-        <!--  internal dependencies -->
-        
+    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1"/>       
+    
+    <!--  internal dependencies -->
         <!-- olap -->
     <dependency org="pentaho" name="mondrian" rev="3.0.4">
         <exclude org="commons-dbcp" name="commons-dbcp"/>
@@ -82,13 +69,11 @@
     </dependency>
 		
         <!-- platform -->
-    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
-      changing="true" />
+    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-xul-html" rev="${dependency.pentaho-xul.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
-    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"
-      changing="true" />
+    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
       
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
@@ -99,8 +84,18 @@
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation" rev="${project.revision}" changing="true" />
     
     <!--  runtime dependencies -->
-    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
-    <dependency org="net.sf.saxon" name="saxon-dom" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-dom" rev="8.5.1" conf="runtime->default"/>
+    <dependency org="rhino" name="js" rev="1.7R1" />
+    <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" conf="runtime->default"/>
+    <dependency org="javax.activation" name="activation" rev="1.1" conf="runtime->default"/>     
+    <dependency org="annogen" name="annogen" rev="0.1.0" conf="runtime->default"/>   
+    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" conf="runtime->default"/>
+    <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.0-beta3" transitive="false" conf="runtime->default"/>
+    <!-- rev 2.0.4 would be better -->
+    <dependency org="org.apache.ws.commons.neethi" name="neethi" rev="2.0.1" transitive="false" conf="runtime->default"/>  
+    <dependency org="javax.servlet" name="servlet-api" rev="2.4" conf="runtime->default"/>  
+    <dependency org="woodstox" name="wstx-asl" rev="3.2.4" transitive="false" conf="runtime->default"/>
+    <dependency org="org.apache.ws.commons.schema" name="XmlSchema" rev="1.4.2" transitive="false" conf="runtime->default"/>
         
         <!--  testing dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
