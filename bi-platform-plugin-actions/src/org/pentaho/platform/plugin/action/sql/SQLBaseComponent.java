@@ -600,6 +600,14 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
   public IPentahoResultSet doQuery(final SQLConnection sqlConnection, final String query, boolean forwardOnlyResultset)
       throws Exception {
+    //
+    // At this point, 'connection' and 'sqlConnection' should be pointers to
+    // the same object iff the 'connection' is a subclass of pentaho's SQLConnection.
+    // It is possible that the sqlConnection will be null, but the connection
+    // won't be if someone is using their own implementation of the SQLConnection from
+    // the factory.
+    //
+    
     IPentahoResultSet resultSet = null;
     if (ComponentBase.debug) {
       dumpQuery(query);
@@ -612,6 +620,8 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         if (sqlConnection != null) {
           resultSet = sqlConnection.prepareAndExecuteQuery(query, preparedParameters,
               SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+        } else {
+          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE"));
         }
       }
     } else {
@@ -621,6 +631,8 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         if (sqlConnection != null) {
           resultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY,
               SQLConnection.CONCUR_READONLY);
+        } else {
+          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE"));
         }
       }
     }

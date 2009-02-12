@@ -47,11 +47,6 @@ import org.pentaho.platform.plugin.services.messages.Messages;
  */
 public class SQLConnection implements IPentahoLoggingConnection, ILimitableConnection {
   Connection nativeConnection;
-  //Added by Arijit Chatterjee
-  /**
-   * The timeout value for the connection (in seconds)
-   */
-  private int timeOut = -1; // in seconds
 
   /*
    * private static int connectionCtr = 0;
@@ -67,9 +62,11 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
 
   ILogger logger = null;
 
-  int maxRows = -1;
+  private int timeOut = -1; // in seconds
 
-  int fetchSize = -1;
+  private int maxRows = -1;
+
+  private int fetchSize = -1;
   
   private boolean readOnly;
 
@@ -307,36 +304,9 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     // Create a statement for a scrollable resultset.
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
 
-    logger.debug("Executing query with timeout value of [" + timeOut + "]"); //$NON-NLS-1$//$NON-NLS-2$
-
-    //Added by Arijit Chatterjee. Sets the value of statement.setQueryTimeout() in seconds
-    //The setQueryTimeout introduced a bug where some drivers don't support setting the timeout
-    //So what we're going to do is wrap this in a try/catch and if the timeout was being set to zero
-    //well won't do anything.  If it was being set to anything else we'll throw a pentaho exception
-    try {
-      if (timeOut >= 0) {
-        stmt.setQueryTimeout(timeOut);
-      }
-    } catch (Exception e) {
-      if (timeOut >= 0) {
-        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", Integer.toString(timeOut)), e); //$NON-NLS-1$
-      }
-    }
-    
     stmts.add(stmt);
     
-    if (fetchSize > 0) {
-      stmt.setFetchSize(fetchSize);
-    }
-    if (maxRows >= 0 ) {
-      try {
-        stmt.setMaxRows(maxRows);
-      } catch (SQLException ex) {
-        // exception here means either the number was out of bounds or
-        // the driver doesn't support this setter.
-        throw new PentahoSystemException(Messages.getErrorString("SQLConnection.ERROR_0002_ROWLIMIT_NOT_SET", Integer.toString(maxRows)), ex); //$NON-NLS-1$
-      }
-    }
+    setStatementLimitations(stmt);
     
     ResultSet resultSet = stmt.executeQuery(query);
     sqlResultSet = new SQLResultSet(resultSet, this);
@@ -348,6 +318,57 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
 
   public IPentahoResultSet prepareAndExecuteQuery(final String query, final List parameters) throws SQLException {
     return prepareAndExecuteQuery(query, parameters, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+  }
+
+  /**
+   * The purpose of this method is to set limitations such as fetchSize
+   * and maxrows on the provided statement. If the JDBC driver does not
+   * support the setting and throws an Exception, we will re-throw iff
+   * the limit was explicitly set.
+   * @param stmt Either a Statement or PreparedStatement
+   * @throws SQLException, UnsupportedOperationException
+   */
+  protected void setStatementLimitations(Statement stmt) throws SQLException {
+
+    if (this.getFetchSize() >= 0) {
+    try {
+        stmt.setFetchSize(this.getFetchSize());
+      } catch (Exception ex) {
+        if (ex instanceof SQLException) {
+          throw (SQLException)ex;
+        } else {
+          // exception here means either the number was out of bounds or
+          // the driver doesn't support this setter.
+          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0003_FETCHSIZE_NOT_SET", Integer.toString(this.getFetchSize())), ex); //$NON-NLS-1$
+      }
+      }
+    }
+    
+    if (this.getMaxRows() >= 0 ) {
+      try {
+        stmt.setMaxRows(this.getMaxRows());
+      } catch (Exception ex) {
+        if (ex instanceof SQLException) {
+          throw (SQLException)ex;
+        } else {
+        // exception here means either the number was out of bounds or
+        // the driver doesn't support this setter.
+          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0002_ROWLIMIT_NOT_SET", Integer.toString(this.getMaxRows())), ex); //$NON-NLS-1$
+        }
+      }
+    }
+    
+    if (this.getQueryTimeout() >= 0) {
+      try {
+          stmt.setQueryTimeout(this.getQueryTimeout());
+      } catch (Exception e) {
+        if (e instanceof SQLException) {
+          throw (SQLException)e;
+        } else {
+          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", Integer.toString(this.getQueryTimeout())), e); //$NON-NLS-1$
+        }
+      }
+  }
   }
 
   public IPentahoResultSet prepareAndExecuteQuery(final String query, final List parameters, final int scrollType,
@@ -363,12 +384,8 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     PreparedStatement pStmt = nativeConnection.prepareStatement(query, scrollType, concur);
     // add to stmts list for closing when connection closes
     stmts.add(pStmt);
-    if (fetchSize > 0) {
-      pStmt.setFetchSize(fetchSize);
-    }
-    if (maxRows != -1) {
-      pStmt.setMaxRows(maxRows);
-    }
+    
+    setStatementLimitations(pStmt);
 
     for (int i = 0; i < parameters.size(); i++) {
       pStmt.setObject(i + 1, parameters.get(i));
@@ -456,14 +473,11 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     // Create a statement for a scrollable resultset.
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
 
-    //Added by Arijit Chatterjee. Sets the value of timeout for the stmt object of class Statement (in seconds)
-    if (stmt != null) {
-      logger.debug("Setting the query timeout to [" + timeOut + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-      stmt.setQueryTimeout(timeOut);
-    }
-
     // add to stmts list for closing when connection closes
     stmts.add(stmt);
+    
+    setStatementLimitations(stmt);
+    
     int result = stmt.executeUpdate(query);
     lastQuery = query;
     return result;
