@@ -42,7 +42,7 @@
     </dependency>
     <dependency org="rhino" name="js" rev="1.7R1" />
     <dependency org="javax.jcr" name="jcr" rev="1.0" />
-    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
+
     <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
     
     <dependency org="javax.activation" name="activation" rev="1.1" />     
@@ -97,6 +97,10 @@
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation" rev="${project.revision}" changing="true" />
+    
+    <!--  runtime dependencies -->
+    <dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
+    <dependency org="net.sf.saxon" name="saxon-dom" rev="8.5.1" />
         
         <!--  testing dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />

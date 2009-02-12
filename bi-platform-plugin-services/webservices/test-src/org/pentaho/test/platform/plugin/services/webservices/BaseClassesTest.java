@@ -28,26 +28,26 @@ public class BaseClassesTest extends TestCase {
     
     axisConfigurator.setSession( session );
     
-    AxisService service = config.getConfigurationContext().getAxisConfiguration().getService( "TestService" ); //$NON-NLS-1$
+    AxisService service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
     assertNotNull( "test service is missing", service ); //$NON-NLS-1$
     
-    IWebServiceWrapper wrapper = axisConfigurator.getServiceWrapper( "TestService" ); //$NON-NLS-1$
+    IWebServiceWrapper wrapper = axisConfigurator.getServiceWrapper( "StubService" ); //$NON-NLS-1$
     assertNotNull( "wrapper is null", wrapper ); //$NON-NLS-1$
 
     assertEquals( service, wrapper.getService() );
     config.reset();
     
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "TestService" ); //$NON-NLS-1$
+    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
     assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
     
     axisConfigurator.unloadServices();
     
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "TestService" ); //$NON-NLS-1$
+    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
     assertNull( "test service is still there", service ); //$NON-NLS-1$
     
     axisConfigurator.reloadServices();
 
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "TestService" ); //$NON-NLS-1$
+    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
     assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
 
     axisConfigurator.cleanup();
