@@ -1,6 +1,6 @@
 
 /**
- * TestServiceStub.java
+ * StubServiceStub.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
@@ -10,7 +10,7 @@
         
 
         /*
-        *  TestServiceStub java implementation
+        *  StubServiceStub java implementation
         */
 
         @SuppressWarnings({"all"})
@@ -38,7 +38,7 @@
     private void populateAxisService() throws org.apache.axis2.AxisFault {
 
      //creating the Service with a unique name
-     _service = new org.apache.axis2.description.AxisService("TestService" + getUniqueSuffix());
+     _service = new org.apache.axis2.description.AxisService("StubService" + getUniqueSuffix());
      addAnonymousOperations();
 
         //creating the operations
@@ -156,7 +156,7 @@
      */
     public ServiceStub(org.apache.axis2.context.ConfigurationContext configurationContext) throws org.apache.axis2.AxisFault {
         
-                    this(configurationContext,"http://testhost:8080/testcontext/content/ws-run/TestService" );
+                    this(configurationContext,"http://testhost:8080/testcontext/content/ws-run/StubService" );
                 
     }
 
@@ -165,7 +165,7 @@
      */
     public ServiceStub() throws org.apache.axis2.AxisFault {
         
-                    this("http://testhost:8080/testcontext/content/ws-run/TestService" );
+                    this("http://testhost:8080/testcontext/content/ws-run/StubService" );
                 
     }
 
@@ -664,7 +664,7 @@
         }
         return false;
     }
-     //http://testhost:8080/testcontext/content/ws-run/TestService
+     //http://testhost:8080/testcontext/content/ws-run/StubService
         public static class ComplexType
         implements org.apache.axis2.databinding.ADBBean{
         /* This type was generated from the piece of schema that had
