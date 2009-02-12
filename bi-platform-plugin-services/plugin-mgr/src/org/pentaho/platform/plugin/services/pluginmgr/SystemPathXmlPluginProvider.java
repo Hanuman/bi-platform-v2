@@ -118,19 +118,19 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     // we have found a plugin.xml file
     // get the file from the repository
     String path = "system" + ISolutionRepository.SEPARATOR + folder.getName() + ISolutionRepository.SEPARATOR + "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+    Document doc = null;
     try {
-      Document doc = repo.getResourceAsDocument(path);
-      if (doc == null) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
-            "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
+      doc = repo.getResourceAsDocument(path);
+      if (doc != null) {
+        plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
       }
-      plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
     } catch (Exception e) {
-      if (e instanceof PlatformPluginRegistrationException) {
-        throw (PlatformPluginRegistrationException) e;
-      }
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
+    }
+    if (doc == null) {
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+            "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
     }
   }
 
