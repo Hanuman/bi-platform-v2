@@ -43,7 +43,7 @@ public class WebServicesInitializer extends SimpleContentGenerator implements IP
       Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
       IWebServiceConfigurator iConfig = new PluginServiceSetup();
       AxisConfig.getInstance( iConfig );
-    } catch (Exception e) {
+    } catch (Throwable e) {
       error( Messages.getErrorString("WebServicesInitializer.ERROR_0001_BAD_INIT"), e ); //$NON-NLS-1$
     } finally {
       Thread.currentThread().setContextClassLoader( originalLoader );
