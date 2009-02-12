@@ -1,12 +1,12 @@
 package org.pentaho.test.platform.plugin.services.webservices.wsdl;
 
+import java.rmi.RemoteException;
+
 import junit.framework.TestCase;
 
 public class TestServiceRun extends TestCase {
 
-  public static void main( String args[] ) throws Exception {
-    
-
+  public void testServiceRun() throws RemoteException {
     ServiceStub.ComplexType complex = new ServiceStub.ComplexType();
     complex.setName( "fred" ); //$NON-NLS-1$
     
@@ -20,8 +20,6 @@ public class TestServiceRun extends TestCase {
     
     ServiceStub.ComplexType returnValue = response.get_return();
     assertNotNull( returnValue );
-    
-    
   }
   
 }
