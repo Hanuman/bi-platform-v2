@@ -60,7 +60,7 @@ public class WsdlPageTest extends TestCase {
         SimpleParameterProvider requestParams = new SimpleParameterProvider();
         parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
         SimpleParameterProvider pathParams = new SimpleParameterProvider();
-        pathParams.setParameter( "path" , "/TestService");  //$NON-NLS-1$//$NON-NLS-2$
+        pathParams.setParameter( "path" , "/StubService");  //$NON-NLS-1$//$NON-NLS-2$
         parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
 	        SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
 	    	List<String> messages = new ArrayList<String>();
@@ -89,13 +89,13 @@ public class WsdlPageTest extends TestCase {
           assertTrue( "urn:setString", content.indexOf( "urn:setString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "urn:getString", content.indexOf( "urn:getString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "urn:getStringResponse", content.indexOf( "urn:getStringResponse" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
-          assertTrue( "TestServiceSoap11Binding", content.indexOf( "TestServiceSoap11Binding" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "StubServiceSoap11Binding", content.indexOf( "StubServiceSoap11Binding" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "<wsdl:operation name=\"setString\">", content.indexOf( "<wsdl:operation name=\"setString\">" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
-          assertTrue( "<wsdl:binding name=\"TestServiceHttpBinding\"", content.indexOf( "<wsdl:binding name=\"TestServiceHttpBinding\"" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "<wsdl:binding name=\"StubServiceHttpBinding\"", content.indexOf( "<wsdl:binding name=\"StubServiceHttpBinding\"" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "<wsdl:operation name=\"getString\">", content.indexOf( "<wsdl:operation name=\"getString\">" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
-          assertTrue( "TestServiceSoap12Binding", content.indexOf( "TestServiceSoap12Binding" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
-          assertTrue( "<wsdl:service name=\"TestService\">", content.indexOf( "<wsdl:service name=\"TestService\">" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
-          assertTrue( "http://testhost:8080/testcontext/content/ws-run/TestService", content.indexOf( "http://testhost:8080/testcontext/content/ws-run/TestService" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "StubServiceSoap12Binding", content.indexOf( "StubServiceSoap12Binding" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "<wsdl:service name=\"StubService\">", content.indexOf( "<wsdl:service name=\"StubService\">" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "http://testhost:8080/testcontext/content/ws-run/StubService", content.indexOf( "http://testhost:8080/testcontext/content/ws-run/StubService" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
 
 	    	} catch (Exception e) {
 	    		assertTrue( "Exception occurred", false ); //$NON-NLS-1$
