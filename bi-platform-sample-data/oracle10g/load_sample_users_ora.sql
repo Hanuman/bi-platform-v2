@@ -1,15 +1,11 @@
--- This script populates the repository with sample users with their respective roles
 
-USE hibernate;
+conn hibuser/password;
 
---  Create default users
+INSERT INTO USERS (username, password, enabled) VALUES('joe','cGFzc3dvcmQ=',1);
+INSERT INTO USERS (username, password, enabled) VALUES('pat','cGFzc3dvcmQ=',1);
+INSERT INTO USERS (username, password, enabled) VALUES('suzy','cGFzc3dvcmQ=',1);
+INSERT INTO USERS (username, password, enabled) VALUES('tiffany','cGFzc3dvcmQ=',1);
 
-INSERT INTO USERS VALUES('joe','cGFzc3dvcmQ=',TRUE,'');
-INSERT INTO USERS VALUES('pat','cGFzc3dvcmQ=',TRUE,'');
-INSERT INTO USERS VALUES('suzy','cGFzc3dvcmQ=',TRUE,'');
-INSERT INTO USERS VALUES('tiffany','cGFzc3dvcmQ=',TRUE,'');
-
---  Create default roles
 INSERT INTO AUTHORITIES VALUES('Admin','Super User');
 INSERT INTO AUTHORITIES VALUES('Anonymous','User has not logged in');
 INSERT INTO AUTHORITIES VALUES('Authenticated','User has logged in');
