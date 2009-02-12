@@ -49,7 +49,7 @@ public class ListServicesTest extends BaseTest {
 	      setup.setSession(session);
 	      AxisConfig config =  AxisConfig.getInstance( setup );
 
-	     config.getConfigurationContext().getAxisConfiguration().getService( "TestService3" ).setActive( false ); //$NON-NLS-1$
+	     config.getConfigurationContext().getAxisConfiguration().getService( "StubService3" ).setActive( false ); //$NON-NLS-1$
 
 
 //	    AxisConfig config = AxisConfig.getInstance();
@@ -80,7 +80,7 @@ public class ListServicesTest extends BaseTest {
 	        	String content = new String( out.toByteArray() );
           System.out.println( content );
           assertTrue( "WSDL URL is missing", content.indexOf( WebServiceConst.getWsdlUrl() ) != -1 ); //$NON-NLS-1$
-          assertTrue( "Test Service URL is missing", content.indexOf( WebServiceConst.getWsdlUrl()+"/TestService" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+          assertTrue( "Test Service URL is missing", content.indexOf( WebServiceConst.getWsdlUrl()+"/StubService" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "setString is missing", content.indexOf( "setString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
           assertTrue( "getString is missing", content.indexOf( "getString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
 
