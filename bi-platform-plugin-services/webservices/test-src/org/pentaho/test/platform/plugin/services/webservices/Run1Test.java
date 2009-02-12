@@ -1,17 +1,18 @@
 package org.pentaho.test.platform.plugin.services.webservices;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.junit.Test;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
@@ -27,11 +28,12 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockServletConfig;
 import com.mockrunner.mock.web.MockServletContext;
 
-public class Run1Test extends TestCase {
+public class Run1Test {
 
   public Run1Test() {
   }
 
+  @Test
   public void testRunGet1() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -71,7 +73,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService/getString");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService/getString");  //$NON-NLS-1$//$NON-NLS-2$
       pathParams.setParameter( "remoteaddr" , "http:test");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
@@ -94,8 +96,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "GET" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService/getString" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService/getString" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService/getString" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService/getString" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       
       pathParams.setParameter( "httprequest" , request ); //$NON-NLS-1$
@@ -115,7 +117,7 @@ public class Run1Test extends TestCase {
 
           assertTrue( StubService.getStringCalled );
           String content = StubTransportSender.transportOutStr;
-          assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
+          assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://webservices.services.plugin.platform.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
       } catch (Exception e) {
@@ -124,6 +126,7 @@ public class Run1Test extends TestCase {
       }
   }
 
+  @Test
   public void testRunGet2() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -141,7 +144,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService/setString?str=testinput");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService/setString?str=testinput");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
       List<String> messages = new ArrayList<String>();
@@ -163,8 +166,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "GET" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService/setString" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService/getString" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService/setString" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService/getString" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       request.setQueryString("str=testinput"); //$NON-NLS-1$
       
@@ -186,6 +189,7 @@ public class Run1Test extends TestCase {
       
   }
 
+  @Test
   public void testRunGet3() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -203,7 +207,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService/throwsError1");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService/throwsError1");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
       List<String> messages = new ArrayList<String>();
@@ -225,8 +229,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "GET" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService/throwsError1" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService/throwsError1" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService/throwsError1" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService/throwsError1" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       
       pathParams.setParameter( "httprequest" , request ); //$NON-NLS-1$
@@ -246,6 +250,7 @@ public class Run1Test extends TestCase {
       
   }
 
+  @Test
   public void testRunGet4() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -263,7 +268,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService/throwsError2");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService/throwsError2");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
       List<String> messages = new ArrayList<String>();
@@ -285,8 +290,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "GET" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService/throwsError2" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService/throwsError2" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService/throwsError2" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService/throwsError2" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       
       pathParams.setParameter( "httprequest" , request ); //$NON-NLS-1$
@@ -309,6 +314,7 @@ public class Run1Test extends TestCase {
       }
   }
 
+  @Test
   public void testRunGet5() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -326,7 +332,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService/bogus");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService/bogus");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
       List<String> messages = new ArrayList<String>();
@@ -348,8 +354,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "GET" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService/bogus" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService/bogus" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService/bogus" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService/bogus" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       
       pathParams.setParameter( "httprequest" , request ); //$NON-NLS-1$
@@ -370,6 +376,7 @@ public class Run1Test extends TestCase {
       }
   }
 
+  @Test
   public void testRunPost1() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -387,7 +394,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService");  //$NON-NLS-1$//$NON-NLS-2$
       pathParams.setParameter( "remoteaddr" , "http:test");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
@@ -410,8 +417,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "POST" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       request.setContentType( "application/soap+xml; charset=UTF-8; action=\"urn:getString\"" ); //$NON-NLS-1$
       String xml = "<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body><ns2:getString xmlns:ns2=\"http://webservice.pentaho.com\"></ns2:getString></soapenv:Body></soapenv:Envelope>"; //$NON-NLS-1$
@@ -427,7 +434,7 @@ public class Run1Test extends TestCase {
 
           assertTrue( StubService.getStringCalled );
           String content = StubTransportSender.transportOutStr;
-          assertEquals( "result are wrong", "<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body><ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse></soapenv:Body></soapenv:Envelope>", content );  //$NON-NLS-1$//$NON-NLS-2$
+          assertEquals( "result are wrong", "<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body><ns:getStringResponse xmlns:ns=\"http://webservices.services.plugin.platform.test.pentaho.org\"><return>test result</return></ns:getStringResponse></soapenv:Body></soapenv:Envelope>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
       } catch (Exception e) {
@@ -436,6 +443,7 @@ public class Run1Test extends TestCase {
       }
   }
 
+  @Test
   public void testRunPut1() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -453,7 +461,7 @@ public class Run1Test extends TestCase {
       SimpleParameterProvider requestParams = new SimpleParameterProvider();
       parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
       SimpleParameterProvider pathParams = new SimpleParameterProvider();
-      pathParams.setParameter( "path" , "/TestService");  //$NON-NLS-1$//$NON-NLS-2$
+      pathParams.setParameter( "path" , "/StubService");  //$NON-NLS-1$//$NON-NLS-2$
       pathParams.setParameter( "remoteaddr" , "http:test");  //$NON-NLS-1$//$NON-NLS-2$
       parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
         SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
@@ -476,8 +484,8 @@ public class Run1Test extends TestCase {
       pathParams.setParameter("servletconfig", servletConfig); //$NON-NLS-1$
 
       request.setMethod( "PUT" ); //$NON-NLS-1$
-      request.setRequestURI( "/pentaho/content/ws-run/TestService" ); //$NON-NLS-1$
-      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/TestService" ); //$NON-NLS-1$
+      request.setRequestURI( "/pentaho/content/ws-run/StubService" ); //$NON-NLS-1$
+      request.setRequestURL( "http://localhost:8080/pentaho/content/ws-run/StubService" ); //$NON-NLS-1$
       request.setRemoteAddr( "127.0.0.1" ); //$NON-NLS-1$
       request.setContentType( "application/soap+xml; charset=UTF-8; action=\"urn:getString\"" ); //$NON-NLS-1$
       String xml = "<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body><ns2:getString xmlns:ns2=\"http://webservice.pentaho.com\"></ns2:getString></soapenv:Body></soapenv:Envelope>"; //$NON-NLS-1$
@@ -493,7 +501,7 @@ public class Run1Test extends TestCase {
 
           assertTrue( StubService.getStringCalled );
           String content = StubTransportSender.transportOutStr;
-          assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://core.webservice.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
+          assertEquals( "result are wrong", "<ns:getStringResponse xmlns:ns=\"http://webservices.services.plugin.platform.test.pentaho.org\"><return>test result</return></ns:getStringResponse>", content );  //$NON-NLS-1$//$NON-NLS-2$
         System.out.println( content );
         
       } catch (Exception e) {
