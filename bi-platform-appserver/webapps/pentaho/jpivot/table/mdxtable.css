@@ -232,3 +232,7 @@ div.table-message {
 .content_body {
 	padding: 0px;
 }
+
+.mdxtable{
+  border: 1px solid grey;
+}

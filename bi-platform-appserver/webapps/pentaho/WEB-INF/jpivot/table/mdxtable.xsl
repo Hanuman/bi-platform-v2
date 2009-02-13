@@ -18,7 +18,7 @@
   <xsl:if test="@message">
     <div class="table-message"><xsl:value-of select="@message"/></div>
   </xsl:if>
-  <table border="0" cellspacing="1" cellpadding="2" id="{$renderId}">
+  <table border="0" cellspacing="1" cellpadding="2" id="{$renderId}" class="mdxtable">
     <xsl:apply-templates select="head"/>
     <xsl:apply-templates select="body"/>
   </table>
