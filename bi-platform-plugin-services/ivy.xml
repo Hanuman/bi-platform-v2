@@ -2,7 +2,8 @@
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
   <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
   <configurations>
-    <conf name="default" />
+  <!-- the default config includes all of runtime for now until we can straighten out BISERVER-2805 -->
+    <conf name="default" extends="runtime"/>
     <conf name="runtime" />
     <conf name="test" extends="runtime" visibility="private" />
     <conf name="source" />    

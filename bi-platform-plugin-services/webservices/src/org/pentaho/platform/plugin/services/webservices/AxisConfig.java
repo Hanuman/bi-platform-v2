@@ -95,8 +95,6 @@ public class AxisConfig  {
    */
   public void init( ) throws AxisFault {
     
-    Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
-
     configContext = ConfigurationContextFactory.createConfigurationContext( axisConfigurator );
     configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
 
