@@ -86,37 +86,34 @@ public class NewScheduleDialog extends AbstractWizardDialog {
       
     };
     ScheduleType scheduleType = scheduleEditorWizardPanel.getScheduleType();
-    if (scheduleType == ScheduleType.SECONDS ||   // Simple Trigger Types
-        scheduleType == ScheduleType.MINUTES ||
-        scheduleType == ScheduleType.HOURS ||
-        (scheduleType == ScheduleType.DAILY && scheduleEditorWizardPanel.getRepeatCount() != -1)) {
-      String triggerName = scheduleEditorWizardPanel.getTriggerName();
-      String triggerGroup = scheduleEditorWizardPanel.getTriggerGroup();
-      String description = scheduleEditorWizardPanel.getDescription();
-      Date startDate = scheduleEditorWizardPanel.getStartDate();
-      Date endDate = scheduleEditorWizardPanel.getEndDate();
-      String startTime = scheduleEditorWizardPanel.getStartTime();
-      int startHour = getStartHour(startTime);
-      int startMin = getStartMin(startTime);
-      Date startDateTime = new Date(startDate.getYear(), startDate.getMonth(), startDate.getDay(), startHour, startMin );
-      int repeatCount = scheduleEditorWizardPanel.getRepeatCount();
-      int repeatInterval = Integer.parseInt(scheduleEditorWizardPanel.getRepeatInterval()) * 1000;
-     
+    String triggerName = scheduleEditorWizardPanel.getTriggerName();
+    String triggerGroup = scheduleEditorWizardPanel.getTriggerGroup();
+    String description = scheduleEditorWizardPanel.getDescription();
+    String cronExpression = scheduleEditorWizardPanel.getCronString();
+    Date startDate = scheduleEditorWizardPanel.getStartDate();
+    Date endDate = scheduleEditorWizardPanel.getEndDate();
+    String startTime = scheduleEditorWizardPanel.getStartTime();
+    int startHour = getStartHour(startTime);
+    int startMin = getStartMin(startTime);
+    int startYear = startDate.getYear();
+    int startMonth = startDate.getMonth();
+    int startDay = startDate.getDay();
+    Date startDateTime = new Date(startYear, startMonth, startDay, startHour, startMin );
+    int repeatCount = scheduleEditorWizardPanel.getRepeatCount();
+    int repeatInterval = 0;
+    try {
+      repeatInterval = Integer.parseInt(scheduleEditorWizardPanel.getRepeatInterval()) * 1000;
+    } catch (Exception e) {
+      // There must have been no repeat interval
+      repeatInterval = 0;
+    }
+
+    if (scheduleType == ScheduleType.RUN_ONCE) { // Run once types
+      MantleServiceCache.getService().createSimpleTriggerJob(triggerName, triggerGroup, description, startDateTime, null, 0, 0, solutionName, path, actionName, scheduleCallback);
+    } else if (cronExpression == null) { // Simple Trigger Types   
       MantleServiceCache.getService().createSimpleTriggerJob(triggerName, triggerGroup, description, startDateTime, endDate, repeatCount, repeatInterval, solutionName, path, actionName, scheduleCallback);
-    } else if (scheduleType != ScheduleType.RUN_ONCE) { // CRON Trigger Types
-      String cronExpression = scheduleEditorWizardPanel.getCronString();
-      String triggerName = scheduleEditorWizardPanel.getTriggerName();
-      String triggerGroup = scheduleEditorWizardPanel.getTriggerGroup();
-      String description = scheduleEditorWizardPanel.getDescription();
-      
+    } else {  // Cron jobs     
       MantleServiceCache.getService().createCronJob(solutionName, path, actionName, triggerName, triggerGroup, description, cronExpression, scheduleCallback);
-    } else {  // Run once types
-      String triggerName = scheduleEditorWizardPanel.getTriggerName();
-      String triggerGroup = scheduleEditorWizardPanel.getTriggerGroup();
-      String description = scheduleEditorWizardPanel.getDescription();
-      Date startDate = scheduleEditorWizardPanel.getStartDate();
-      
-      MantleServiceCache.getService().createSimpleTriggerJob(triggerName, triggerGroup, description, startDate, null, 0, 0, solutionName, path, actionName, scheduleCallback);
     }
 
     return getDone();
