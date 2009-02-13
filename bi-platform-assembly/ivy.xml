@@ -24,6 +24,8 @@
 		<dependency org="mysql" name="mysql-connector-java" rev="5.0.8" />
 		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
+<!-- Pentaho Reporting Plugin -->
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="0.8.11-SNAPSHOT" />
 
 <!-- BIRT -->
 		<dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
@@ -79,6 +81,8 @@
     <dependency org="pentaho" name="pentaho-cdf-solution" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
     
     <exclude org="javax.servlet" module="servlet-api"/>
+    
+    
     
   </dependencies>
     
