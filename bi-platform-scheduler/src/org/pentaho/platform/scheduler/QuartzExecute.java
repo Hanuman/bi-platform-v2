@@ -109,17 +109,22 @@ public class QuartzExecute extends PentahoBase implements Job {
       String solutionName = dataMap.getString("solution"); //$NON-NLS-1$
       String actionPath = dataMap.getString("path"); //$NON-NLS-1$
       String actionName = dataMap.getString("action"); //$NON-NLS-1$
+
       String instanceId = null;
       String processId = this.getClass().getName();
+      
       IPentahoSession userSession = null;
+
       if (solutionName == null) {
         error(Messages.getErrorString("QuartzExecute.ERROR_0001_SOLUTION_NAME_MISSING")); //$NON-NLS-1$
         return;
       }
+
       if (actionPath == null) {
         error(Messages.getErrorString("QuartzExecute.ERROR_0002_ACTION_PATH_MISSING")); //$NON-NLS-1$
         return;
       }
+
       if (actionName == null) {
         error(Messages.getErrorString("QuartzExecute.ERROR_0003_ACTION_NAME_MISSING")); //$NON-NLS-1$
         return;
@@ -142,20 +147,19 @@ public class QuartzExecute extends PentahoBase implements Job {
         // session.setAuthenticated(userName);
         outputHandler = backgroundExecutionHandler.getContentOutputHandler(location, fileName, solutionName,
             userSession, parameterProvider);
-
-      } else {
-        outputHandler = new SimpleOutputHandler((OutputStream) null, false);
-        // Check to see if the user was authenticated (via the portal) in the JobSchedulerComponent
-        String userName = dataMap.getString("username"); //$NON-NLS-1$
-        if (userName != null) {
-          // Well, we got a valid user name - let's try to use the
-          // background execute component to establish the user
-          userSession = backgroundExecutionHandler.getEffectiveUserSession(userName);
         } else {
-          // User wasn't authenticated when the job was scheduled - use default behavior from old...
-          userSession = executeSession;
+          outputHandler = new SimpleOutputHandler((OutputStream) null, false);
+          // Check to see if the user was authenticated (via the portal) in the JobSchedulerComponent
+          String userName = dataMap.getString("username"); //$NON-NLS-1$
+          if (userName != null) {
+            // Well, we got a valid user name - let's try to use the
+            // background execute component to establish the user
+            userSession = backgroundExecutionHandler.getEffectiveUserSession(userName);
+          } else {
+            // User wasn't authenticated when the job was scheduled - use default behavior from old...
+            userSession = executeSession;
+          }
         }
-      }
 
       BaseRequestHandler requestHandler = new BaseRequestHandler(userSession, null, outputHandler, parameterProvider,
           null);
@@ -207,6 +211,10 @@ public class QuartzExecute extends PentahoBase implements Job {
       } finally {
         if (rt != null) {
           rt.dispose();
+        }
+        // Destroy the session: it was only created to execute this job.
+        if (executeSession != null) {
+          executeSession.destroy();
         }
       }
       if (QuartzExecute.debug) {

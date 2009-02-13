@@ -25,8 +25,9 @@ import java.util.Collection;
 
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISessionContainer;
 
-public interface IRuntimeRepository extends ILogger {
+public interface IRuntimeRepository extends ILogger, ISessionContainer {
 
   /**
    * Loads a runtimeElement by it's ID.
@@ -73,12 +74,6 @@ public interface IRuntimeRepository extends ILogger {
    * @return The new Runtime element
    */
   public IRuntimeElement newRuntimeElement(String parentId, String parentType, String solutionId, boolean transientOnly);
-
-  /**
-   * @param sess
-   *            The IPentahoSession to set
-   */
-  public void setSession(IPentahoSession sess);
 
   public boolean usesHibernate();
 

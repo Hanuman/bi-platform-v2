@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISessionContainer;
 
 /**
  * The ContentRepository is responsible for all the DAO calls used to get
@@ -35,7 +36,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
  *
  */
 
-public interface IContentRepository {
+public interface IContentRepository extends ISessionContainer {
 
   /**
    * Creates a new Content Location. A content location is analogous to a

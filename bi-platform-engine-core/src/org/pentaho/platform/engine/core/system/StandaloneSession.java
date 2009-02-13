@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.ISessionContainer;
 
 public class StandaloneSession extends BaseSession {
 
@@ -79,6 +80,21 @@ public class StandaloneSession extends BaseSession {
     Object result = getAttribute(attributeName);
     attributes.remove(attributeName);
     return result;
+  }
+  
+  public void destroy() {
+    // Clear out references to this session in attributes.
+    // See BISERVER-2639 for details
+    for (Object o : attributes.values()) {
+      if (o instanceof ISessionContainer) {
+        ISessionContainer c = ((ISessionContainer) o);
+        // XXX: should synchronized check if the session is actually /this/ session
+        c.setSession(null);
+      }
+    }
+
+    attributes = null;
+    super.destroy();
   }
 
 }

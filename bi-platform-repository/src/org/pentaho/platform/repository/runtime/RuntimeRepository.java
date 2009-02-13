@@ -70,8 +70,10 @@ public class RuntimeRepository extends PentahoBase implements IRuntimeRepository
 
   public void setSession(final IPentahoSession sess) {
     RuntimeRepository.threadSession.set(sess);
-    genLogIdFromSession(RuntimeRepository.getUserSession());
-    HibernateUtil.beginTransaction();
+    if (sess != null) {
+      genLogIdFromSession(sess);
+      HibernateUtil.beginTransaction();
+    }
   }
 
   public void init(final IPentahoSession sess) {

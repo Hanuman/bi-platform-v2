@@ -48,6 +48,7 @@ import org.pentaho.platform.api.engine.IDocumentResourceLoader;
 import org.pentaho.platform.api.engine.IFileFilter;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISessionContainer;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -65,7 +66,7 @@ import org.pentaho.platform.util.web.HttpUtil;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
-public abstract class SolutionRepositoryBase extends PentahoMessenger implements ISolutionRepository, IPentahoInitializer {
+public abstract class SolutionRepositoryBase extends PentahoMessenger implements ISolutionRepository, IPentahoInitializer, ISessionContainer {
   private static final long serialVersionUID = 6367444546398801343L;
 
   private IDocumentResourceLoader loader;
@@ -120,7 +121,6 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   private static final Pattern SYSTEM_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_PATH);
 
   private static final Pattern SYSTEM_TMP_PATH_PATTERN = Pattern.compile(SolutionRepositoryBase.RE_SYSTEM_TMP_PATH);
-  
 
   protected ThreadLocal session = new ThreadLocal();
 
@@ -159,7 +159,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return (IPentahoSession) threadSession;
   }
 
-  private void setSession(final IPentahoSession inSession) {
+  public void setSession(final IPentahoSession inSession) {
     session.set(inSession);
   }
 
@@ -844,7 +844,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
     return localizedName;
   }
-  
+
   protected String buildDirectoryPath(final String solution, final String path, final String action) {
     String localDirStr = EMPTY_STRING;
     localDirStr += ISolutionRepository.SEPARATOR;
