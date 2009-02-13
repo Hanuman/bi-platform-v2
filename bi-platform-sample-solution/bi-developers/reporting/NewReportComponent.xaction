@@ -18,6 +18,25 @@
 				<request>outputType</request>
 			</sources>
 		</outputType>
+        <outputTypeList type="property-map-list"> 
+          <sources> 
+            <runtime>outputTypeList</runtime> 
+          </sources>  
+          <default-value type="property-map-list"> 
+            <property-map> 
+              <entry key="report-output-desc">PDF</entry>  
+              <entry key="report-output-type-id">application/pdf</entry> 
+            </property-map>  
+            <property-map> 
+              <entry key="report-output-desc">Excel</entry>  
+              <entry key="report-output-type-id">application/vnd.ms-excel</entry> 
+            </property-map>  
+            <property-map> 
+              <entry key="report-output-desc">Web Page</entry>  
+              <entry key="report-output-type-id">text/html</entry> 
+            </property-map> 
+          </default-value> 
+        </outputTypeList> 
 	</inputs>
 
 	<outputs>
@@ -38,6 +57,24 @@
 	</resources>
 
 	<actions>
+	
+    <action-definition> 
+      <component-name>SecureFilterComponent</component-name>
+      <action-type>Prompt for Product Line and Report Format</action-type>
+      <action-inputs> 
+        <outputTypeList type="property-map-list"/>  
+        <outputType type="string"/>  
+      </action-inputs>
+      <component-definition> 
+        <selections> 
+          <outputType style="radio"> 
+            <title>Select Report Format</title>  
+            <filter value-col-name="report-output-type-id" display-col-name="report-output-desc">outputTypeList</filter> 
+          </outputType> 
+        </selections> 
+      </component-definition> 
+    </action-definition>
+    	
 		<action-definition> 
 			<component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
 			<action-inputs>
