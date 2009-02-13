@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IRuntimeContext;
@@ -66,6 +67,7 @@ public class MessageFormatter implements IMessageFormatter {
     while (messageIterator.hasNext()) {
       String message = (String) messageIterator.next();
       if (message.indexOf(errorStart) == 0) {
+        message = StringEscapeUtils.escapeHtml(message);  // Escape this to prevent CSS (PPP-1595)
         return message;
       }
     }
@@ -98,13 +100,13 @@ public class MessageFormatter implements IMessageFormatter {
       }
       messageIterator = messages.iterator();
       while (messageIterator.hasNext()) {
-        messageBuffer.append((String) messageIterator.next()).append("<br/>"); //$NON-NLS-1$
+        messageBuffer.append(StringEscapeUtils.escapeHtml((String) messageIterator.next())).append("<br/>"); //$NON-NLS-1$
       }
       messageBuffer.append("</td></tr></table><p>"); //$NON-NLS-1$
       if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
-        IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
-        messageBuffer
-            .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
+      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
+      messageBuffer
+          .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
       }
       messageBuffer.append("</body></html>"); //$NON-NLS-1$
     } else {

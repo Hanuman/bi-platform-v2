@@ -15,6 +15,7 @@
   <dependencies defaultconf="default->default">
     
         <!--  external dependencies -->
+    <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
     <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
     <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1">
       <exclude org="xml-apis" />
