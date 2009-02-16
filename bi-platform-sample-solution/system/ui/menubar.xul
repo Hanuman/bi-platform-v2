@@ -9,34 +9,34 @@
       <menupopup id="file-submenu-classic">
 		<menu id="file-new-menu" label="New">
 		  <menupopup id="file-new-submenu-classic">
-	        <menuitem id="new-report-menuitem" label="New Report" command="javascript:popPage('/pentaho/adhoc/waqr.html')"/>
-	        <menuitem id="new-pivot-menuitem" label="New Analysis View" command="javascript:popPage('/pentaho/NewAnalysisView')"/>
+	        <menuitem id="new-report-menuitem" label="New Report" command="javascript:popPage('adhoc/waqr.html')"/>
+	        <menuitem id="new-pivot-menuitem" label="New Analysis View" command="javascript:popPage('NewAnalysisView')"/>
           </menupopup>
         </menu>
-	    <menuitem id="home-menu-menuitem" label="User Console" command="/pentaho/Home"/>
-	    <menuitem id="home-menu-menuitem" label="{home}" command="/pentaho/PreviousHome"/>
-	    <menuitem id="home-menu-menuitem" label="{logout}" command="/pentaho/Logout"/>
+	    <menuitem id="home-menu-menuitem" label="User Console" command="Home"/>
+	    <menuitem id="home-menu-menuitem" label="{home}" command="PreviousHome"/>
+	    <menuitem id="home-menu-menuitem" label="{logout}" command="Logout"/>
       </menupopup>
    	</menu>
    	
     <menu id="navigate-menu" label="{view}">
       <menupopup id="view-submenu-classic">
-	    <menuitem id="navigate-menuitem" label="Browser" command="/pentaho/Navigate"/>
-	    <menuitem id="usercontent-menuitem" label="Workspace" command="/pentaho/UserContent"/>
-	    <menuitem id="usercontent-test" label="Refresh" command="javascript:popPage('/pentaho/Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.solution.SolutionPublisher')"/>
+	    <menuitem id="navigate-menuitem" label="Browser" command="Navigate"/>
+	    <menuitem id="usercontent-menuitem" label="Workspace" command="UserContent"/>
+	    <menuitem id="usercontent-test" label="Refresh" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.solution.SolutionPublisher')"/>
       </menupopup>
     </menu>
 
     <menu id="tools-menu" label="Tools">
       <menupopup id="tools-submenu-classic">
-	    <menuitem id="admin-menuitem"  label="{admin}" command="/pentaho/Admin"/>
+	    <menuitem id="admin-menuitem"  label="{admin}" command="Admin"/>
 		<menu id="tools-refresh" label="Refresh">
 		  <menupopup id="tools-refresh-submenu-classic">
-	        <menuitem id="usercontent-test" label="Repository Cache" command="javascript:popPage('/pentaho/Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.solution.SolutionPublisher')"/>
-	        <menuitem id="usercontent-test" label="System Settings" command="javascript:popPage('/pentaho/Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.core.system.SettingsPublisher')"/>
-	        <menuitem id="usercontent-test" label="Reporting Metadata" command="javascript:popPage('/pentaho/Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.metadata.MetadataPublisher')"/>
-	        <menuitem id="usercontent-test" label="Global Variables" command="javascript:popPage('/pentaho/Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.core.system.GlobalListsPublisher')"/>
-	        <menuitem id="usercontent-test" label="Mondrian Schema Cache" command="javascript:popPage('/pentaho/ViewAction?solution=admin&amp;path=&amp;action=clear_mondrian_schema_cache.xaction')"/>
+	        <menuitem id="usercontent-test" label="Repository Cache" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.solution.SolutionPublisher')"/>
+	        <menuitem id="usercontent-test" label="System Settings" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.core.system.SettingsPublisher')"/>
+	        <menuitem id="usercontent-test" label="Reporting Metadata" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.services.metadata.MetadataPublisher')"/>
+	        <menuitem id="usercontent-test" label="Global Variables" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.engine.core.system.GlobalListsPublisher')"/>
+	        <menuitem id="usercontent-test" label="Mondrian Schema Cache" command="javascript:popPage('ViewAction?solution=admin&amp;path=&amp;action=clear_mondrian_schema_cache.xaction')"/>
           </menupopup>
         </menu>
       </menupopup>
