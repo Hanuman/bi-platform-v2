@@ -69,7 +69,7 @@ A:hover {
 
 .launchPanel {
   background-color: white;
-  background-image: url(/pentaho/mantle/launch/images/quicklaunch_bg.png);
+  background-image: url(mantle/launch/images/quicklaunch_bg.png);
   background-repeat: no-repeat;
   background-position: center;
   height: 100%;
@@ -89,7 +89,7 @@ A:hover {
 
 .ql_icon_bar_middle {
   background-image:
-    url(/pentaho/mantle/launch/images/ql_icon_bar_middle.png);
+    url(mantle/launch/images/ql_icon_bar_middle.png);
   background-repeat: repeat-x;
   width: 100%;
   height: 199px;
@@ -116,7 +116,7 @@ A:hover {
 }
 
 .ql_btn_middle {
-  background-image: url(/pentaho/mantle/launch/images/ql_btn_middle.png);
+  background-image: url(mantle/launch/images/ql_btn_middle.png);
   background-repeat: repeat-x;
   width: 100%;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -141,7 +141,7 @@ A:hover {
 
 .ql_btn_middle_hover {
   background-image:
-    url(/pentaho/mantle/launch/images/ql_btn_middle_hover.png);
+    url(mantle/launch/images/ql_btn_middle_hover.png);
   background-repeat: repeat-x;
   width: 100%;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -195,21 +195,21 @@ A:hover {
 }
 
 .btn_left {
-  background-image: url("/pentaho/mantle/launch/images/ql_btn_left.png");
+  background-image: url("mantle/launch/images/ql_btn_left.png");
   background-repeat: no-repeat;
   height: 56px;
   width: 22px;
 }
 
 .btn_right {
-  background-image: url("/pentaho/mantle/launch/images/ql_btn_right.png");
+  background-image: url("mantle/launch/images/ql_btn_right.png");
   background-repeat: no-repeat;
   height: 56px;
   width: 22px;
 }
 
 .btn_center {
-  background-image: url(/pentaho/mantle/launch/images/ql_btn_middle.png);
+  background-image: url(mantle/launch/images/ql_btn_middle.png);
   background-repeat: repeat-x;
   width: 100%;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -224,7 +224,7 @@ A:hover {
 
 .btn_left_hover {
   background-image:
-    url("/pentaho/mantle/launch/images/ql_btn_left_hover.png");
+    url("mantle/launch/images/ql_btn_left_hover.png");
   background-repeat: no-repeat;
   height: 56px;
   width: 22px;
@@ -232,7 +232,7 @@ A:hover {
 
 .btn_right_hover {
   background-image:
-    url("/pentaho/mantle/launch/images/ql_btn_right_hover.png");
+    url("mantle/launch/images/ql_btn_right_hover.png");
   background-repeat: no-repeat;
   height: 56px;
   width: 22px;
@@ -240,7 +240,7 @@ A:hover {
 
 .btn_center_hover {
   background-image:
-    url(/pentaho/mantle/launch/images/ql_btn_middle_hover.png);
+    url(mantle/launch/images/ql_btn_middle_hover.png);
   background-repeat: repeat-x;
   width: 100%;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -281,7 +281,7 @@ Button = function(label, container){
 
     var left_td = document.createElement("td");
     left_td.className="btn_left";
-    left_td.innerHTML = "<img src='/pentaho/mantle/launch/images/ql_spacer.png'/ width='22' height='1'/><br/>";
+    left_td.innerHTML = "<img src='mantle/launch/images/ql_spacer.png'/ width='22' height='1'/><br/>";
     tr.appendChild(left_td);
 
     var center_td = document.createElement("td");
@@ -293,7 +293,7 @@ Button = function(label, container){
     tr.appendChild(center_td);
 
     var right_td = document.createElement("td");
-    right_td.innerHTML = "<img src='/pentaho/mantle/launch/images/ql_spacer.png'/ width='22' height='1'/><br/>";
+    right_td.innerHTML = "<img src='mantle/launch/images/ql_spacer.png'/ width='22' height='1'/><br/>";
     right_td.className="btn_right";
     tr.appendChild(right_td);
     tbody.appendChild(tr);
@@ -418,12 +418,12 @@ function loader(){
       cellspacing="0" class="ql_container">
       <tr>
         <td colspan="3" align="center"><img
-          src="/pentaho/mantle/launch/images/ql_logo.png" alt="Pentaho.com"
+          src="mantle/launch/images/ql_logo.png" alt="Pentaho.com"
           class="ql_logo" /></td>
       </tr>
       <tr>
         <td class="ql_icon_bar_left"><img
-          src="/pentaho/mantle/launch/images/ql_icon_bar_left.png" width="41"
+          src="mantle/launch/images/ql_icon_bar_left.png" width="41"
           height="147" /></td>
         <td class="ql_icon_bar_middle" >
                 
@@ -433,12 +433,12 @@ function loader(){
                       height="100%">
                       <tr>
                         <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
-                          src="/pentaho/mantle/launch/images/btn_ql_newreport.png"
+                          src="mantle/launch/images/btn_ql_newreport.png"
                           class="ql_new_report" /></td>
                         <td align="center" valign="top">&nbsp;</td>
                         <td align="center" valign="top"
                           onClick="window.parent.openAnalysis()"><img
-                          src="/pentaho/mantle/launch/images/btn_ql_newanalysis.png"
+                          src="mantle/launch/images/btn_ql_newanalysis.png"
                           class="ql_new_analysis" /></td>
                         <td align="center" valign="top">&nbsp;</td>
 <% if (pluginButton) { %>
@@ -449,18 +449,18 @@ function loader(){
 <% } else { %>
                         <td align="center" valign="top"
                           onClick="window.parent.openManage()"><img
-                          src="/pentaho/mantle/launch/images/btn_ql_manage.png"
+                          src="mantle/launch/images/btn_ql_manage.png"
                           class="ql_manage" /></td>
 <% } %>
                       </tr>
                       <tr>
                         <td id="launch_new_report" height="100%"><!--  container for New Report Button -->
                         </td>
-                        <td><img src="/pentaho/mantle/launch/images/ql_spacer.png"
+                        <td><img src="mantle/launch/images/ql_spacer.png"
                           class="ql_spacer" /></td>
                         <td id="launch_new_analysis"><!--  container for New Analysis Button -->
                         </td>
-                        <td><img src="/pentaho/mantle/launch/images/ql_spacer.png"
+                        <td><img src="mantle/launch/images/ql_spacer.png"
                           class="ql_spacer" /></td>
                         <td id="manage_content"><!--  container for manage content Button -->
                         </td>
@@ -470,7 +470,7 @@ function loader(){
                     </div>
         </td>
         <td class="ql_icon_bar_right"><img
-          src="/pentaho/mantle/launch/images/ql_icon_bar_right.png"
+          src="mantle/launch/images/ql_icon_bar_right.png"
           width="41" height="147" /></td>
       </tr>
     </table>

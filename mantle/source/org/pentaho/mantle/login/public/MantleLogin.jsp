@@ -273,7 +273,7 @@
     </center> 
   </body>
 
-  <script language='javascript' src='/pentaho/mantleLogin/mantleLogin.nocache.js'></script>
+  <script language='javascript' src='mantleLogin/mantleLogin.nocache.js'></script>
 
 </html>
 <%!

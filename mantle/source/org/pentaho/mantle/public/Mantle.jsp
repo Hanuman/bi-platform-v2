@@ -1,12 +1,9 @@
-<%@ page import="com.pentaho.security.*" %>
-<%@ page import="org.pentaho.core.util.*" %>
-
 <html>
 	<head>
 		<title>Pentaho User Console</title>
 		<meta name="gwt:property" content="locale=<%=request.getLocale()%>">
 		<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
-		<link rel='stylesheet' href='/pentaho/mantle/MantleStyle.css'/>
+		<link rel='stylesheet' href='mantle/MantleStyle.css'/>
 		<!--[if lt IE 7.]>
 			<script defer type="text/javascript" src="pngfix.js"></script>
 		<![endif]-->
@@ -31,6 +28,6 @@
 
 	</body>
 
-	<script language='javascript' src='/pentaho/mantle/mantle.nocache.js'></script>
+	<script language='javascript' src='mantle/mantle.nocache.js'></script>
 
 </html>
