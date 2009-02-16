@@ -330,12 +330,12 @@ function doSubscribed(id, actionUrl, displayUrl ) {
 		form.elements['_PENTAHO_ADDITIONAL_PARAMS_'].value = submitUrl;
 	
 		if( action == 'run' ) {
-			form.action = '/pentaho/ViewAction';
+			form.action = 'ViewAction';
 			form.elements['subscribe'].value='run';
 		} else if( action == 'archive' ) {
 			target = '_blank';
 			options = 'toolbar=no,menubar=no,width=500,height=150,status=no';
-			form.action='/pentaho/ViewAction';
+			form.action='ViewAction';
 			form.elements['subscribe'].value='archive';
 		} else if( action == 'edit' ) {
 			form.action = displayUrl;
@@ -378,7 +378,7 @@ function doSubscribedArchive( id, actionUrl ) {
 			// change this URL to point to another machine if required...
 			// ----------------------------------------------------------
 	
-			submitUrl += '/pentaho/ViewAction?subscribe=archived';
+			submitUrl += 'ViewAction?subscribe=archived';
 		}
 		else 
 		if( action == 'delete' ) {
@@ -398,7 +398,7 @@ function doSubscribedArchive( id, actionUrl ) {
 		var form = document.forms['save_form_'+id];
 		form.elements['_PENTAHO_ADDITIONAL_PARAMS_'].value = submitUrl; // Clear out old postdata
 		var action= document.getElementById('subscription-archive-action'+id).value;
-		var formAction = '/pentaho/ViewAction';
+		var formAction = 'ViewAction';
 		var target='REPORTWINDOW';
 
 		if( action == 'view' ) {

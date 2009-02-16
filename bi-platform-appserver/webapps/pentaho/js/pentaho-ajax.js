@@ -4,6 +4,8 @@ var COMPLETE = 4;
 var STATUS_OK = 200;
 var STATUS_UNAUTHORIZED = 401;
 var STATUS_NOT_FOUND = 404;
+var base = '';
+
 /**
  * @param solution String name of the solution containing the action sequence definition being called
  * @param path String path to the action sequence definition being called
@@ -28,10 +30,8 @@ var STATUS_NOT_FOUND = 404;
  * @throws Error when unable to create an XMLHttpRequest object
  */
 function pentahoAction( solution, path, action, params, func ) {
-
 	// execute an Action Sequence on the server
-	var url = "/pentaho/ViewAction";
-	
+	var url = "ViewAction";
 	// create the URL we need
 	var query = "wrapper=false&solution="+solution+"&path="+path+"&action="+action;
 	// add any parameters provided
@@ -43,7 +43,6 @@ function pentahoAction( solution, path, action, params, func ) {
 	}
 	// submit this as a post
 	return pentahoPost( url, query, func );
-
 }    
 /**
  * @param component String
@@ -68,10 +67,10 @@ function pentahoAction( solution, path, action, params, func ) {
  * @throws Error when unable to create an XMLHttpRequest object
  */
 function pentahoService( component, params, func, mimeType ) {
-
 	// execute a web service on the server
 	// create the URL we need
-	var url = "/pentaho/ServiceAction";
+	var url = "ServiceAction";
+	
 	var query = "ajax=true&";
 	if( component ) {
 		query += "component="+component+"&";

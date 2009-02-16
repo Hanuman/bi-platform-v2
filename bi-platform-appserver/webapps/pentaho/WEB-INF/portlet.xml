@@ -292,7 +292,7 @@
 			<preference>
 				<name>drill-url</name>
 				<value>
-					/pentaho/Pivot?solution=samples&amp;path=analysis&amp;action=query1.xaction&amp;region=.[{REGION}]&amp;department=.[{DEPARTMENT}]&amp;position=.[{POSITION}]
+					Pivot?solution=samples&amp;path=analysis&amp;action=query1.xaction&amp;region=.[{REGION}]&amp;department=.[{DEPARTMENT}]&amp;position=.[{POSITION}]
 				</value>
 			</preference>
 			<preference>
@@ -332,7 +332,7 @@
 			<preference>
 				<name>drill-url</name>
 				<value>
-					/pentaho/Pivot?solution=samples&amp;path=analysis&amp;action=query1.xaction&amp;position=.[{POSITIONTITLE}]
+					Pivot?solution=samples&amp;path=analysis&amp;action=query1.xaction&amp;position=.[{POSITIONTITLE}]
 				</value>
 			</preference>
 		</portlet-preferences>
