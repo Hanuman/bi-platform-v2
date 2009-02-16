@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Pentaho Web Services">
     <menu-items>
-        <menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="/pentaho/content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/>
+        <menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/>
     </menu-items>
 
     <content-generator scope="global" id="" type="ws-init" >
