@@ -203,7 +203,7 @@
     
      <expression name="URLCreateExpression" class="org.jfree.report.function.TextFormatExpression">
        <properties>
-         <property name="pattern">/pentaho/Pivot?solution=bi-developers&amp;path=analysis&amp;action=query1.xaction&amp;position=.[{0}]</property>
+         <property name="pattern">Pivot?solution=bi-developers&amp;path=analysis&amp;action=query1.xaction&amp;position=.[{0}]</property>
          <property name="field[0]">POSITIONTITLE</property>
          <property name="urlEncodeValues">true</property>
        </properties>
