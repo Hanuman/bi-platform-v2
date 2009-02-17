@@ -20,7 +20,6 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 
 /**
  * Executes the Open Document command.
