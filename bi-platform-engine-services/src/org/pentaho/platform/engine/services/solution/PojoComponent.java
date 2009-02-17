@@ -90,7 +90,6 @@ public class PojoComponent extends ComponentBase {
     
     boolean done = false;
     
-    forEachMethod:
     for(Method method : methods){
       Class<?> paramClasses[] = method.getParameterTypes();
       if( paramClasses.length != 1 ) {
@@ -102,67 +101,67 @@ public class PojoComponent extends ComponentBase {
       if( value instanceof IPentahoResultSet && paramclass.equals( IPentahoResultSet.class )) {
         done = true;
         method.invoke(pojo, new Object[] { (IPentahoResultSet) value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof java.lang.Boolean && ( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof java.lang.Integer && ( paramclass.equals( Integer.class ) || paramclass.equals( int.class ) ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof java.lang.Long && ( paramclass.equals( Long.class ) || paramclass.equals( long.class ) ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof java.lang.Double && ( paramclass.equals( Double.class ) || paramclass.equals( double.class ) ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof java.lang.Float && ( paramclass.equals( Float.class ) || paramclass.equals( float.class ) ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof IPentahoStreamSource && paramclass.equals( IPentahoStreamSource.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof Date && paramclass.equals( Date.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof BigDecimal && paramclass.equals( BigDecimal.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof IContentItem && paramclass.equals( IContentItem.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break forEachMethod;
+        break;
       }
       else if( value instanceof IContentItem && paramclass.equals( String.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value.toString() } );
-        break forEachMethod;
+        break;
       }
       else if( paramclass.equals( IPentahoSession.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { (IPentahoSession) value } );
-        break forEachMethod;
+        break;
       }
       else if( paramclass.equals( Log.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { (Log) value } );
-        break forEachMethod;
+        break;
       }
     }
     
@@ -181,7 +180,6 @@ public class PojoComponent extends ComponentBase {
     
     //Search ALL instances of a given method for an implementation
     //that takes a single string
-    stringSearch:
     for(Method method : methodList){
       Class<?> paramClasses[] = method.getParameterTypes();
       if( paramClasses.length != 1 ) {
@@ -193,13 +191,12 @@ public class PojoComponent extends ComponentBase {
       if( paramclass.equals( String.class ) ) {
         done = true;
         method.invoke(pojo, new Object[] { value } );
-        break stringSearch;
+        break;
       }      
     }
   
   
     if(!done){
-      conversionSearch:
       for(Method method : methodList){
         Class<?> paramClasses[] = method.getParameterTypes();
         if( paramClasses.length != 1 ) {
@@ -211,32 +208,32 @@ public class PojoComponent extends ComponentBase {
         if( paramclass.equals( Boolean.class ) || paramclass.equals( boolean.class ) ) {
           done = true;
           method.invoke(pojo, new Object[] { new Boolean( value ) } );
-          break conversionSearch;
+          break;
         }
         else if( paramclass.equals( Integer.class ) || paramclass.equals( int.class )) {
           done = true;
           method.invoke(pojo, new Object[] { new Integer( value ) } );
-          break conversionSearch;
+          break;
         }
         else if( paramclass.equals( Long.class ) || paramclass.equals( long.class )) {
           done = true;
           method.invoke(pojo, new Object[] { new Long( value ) } );
-          break conversionSearch;
+          break;
         }
         else if( paramclass.equals( Double.class ) || paramclass.equals( double.class )) {
           done = true;
           method.invoke(pojo, new Object[] { new Double( value ) } );
-          break conversionSearch;
+          break;
         }
         else if( paramclass.equals( Float.class ) || paramclass.equals( float.class )) {
           done = true;
           method.invoke(pojo, new Object[] { new Float( value ) } );
-          break conversionSearch;
+          break;
         }
         else if( paramclass.equals( BigDecimal.class ) ) {
           done = true;
           method.invoke(pojo, new Object[] { new BigDecimal( value ) } );
-          break conversionSearch;
+          break;
         }
       }   
     }
@@ -335,17 +332,16 @@ public class PojoComponent extends ComponentBase {
         resourceMap.put(name, resource);
         List<Method> methods = setMethods.get( name.toUpperCase() );
         if( methods != null ) {
-          forEachResourceMethod:
           for(Method method : methods){
             Class<?>[] paramTypes = method.getParameterTypes();
             if( paramTypes.length == 1 && paramTypes[0] == InputStream.class ) {
               InputStream in = getRuntimeContext().getResourceInputStream( resource );
               method.invoke(pojo, new Object[] { in } );
-              break forEachResourceMethod;
+              break;
             }
             else if( paramTypes.length == 1 && paramTypes[0] == IActionSequenceResource.class ) {
               method.invoke(pojo, new Object[] { resource } );
-              break forEachResourceMethod;
+              break;
             }
           }
         } else {
