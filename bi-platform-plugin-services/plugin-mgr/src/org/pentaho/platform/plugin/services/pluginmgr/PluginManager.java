@@ -37,6 +37,7 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.PluginComponentException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
@@ -70,6 +71,8 @@ public class PluginManager implements IPluginManager {
   protected List<IMenuCustomization> menuCustomizationsCache = Collections
       .synchronizedList(new ArrayList<IMenuCustomization>());
 
+  protected Map<String, String> pluginComponentMap = Collections.synchronizedMap(new HashMap<String, String>());
+  
   public Set<String> getContentTypes() {
     //map.keySet returns a set backed by the map, so we cannot allow modification of the set
     return Collections.unmodifiableSet(contentGeneratorInfoByTypeMap.keySet());
@@ -165,6 +168,7 @@ public class PluginManager implements IPluginManager {
     contentInfoMap.clear();
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
+    pluginComponentMap.clear();
   }
   
   public boolean reload(IPentahoSession session) {
@@ -315,4 +319,32 @@ public class PluginManager implements IPluginManager {
     }
     return null;
   }
+  
+  public Object getRegisteredObject(String componentClassName) throws PluginComponentException {
+    assert(componentClassName != null);
+    String className = pluginComponentMap.get(componentClassName);
+    if (className != null) {
+      Object componentOrPojo = null;
+      Class componentOrPojoClass = null;
+      try {
+        //
+        // TODO - Get the class here
+        componentOrPojoClass = Class.forName(className);
+        componentOrPojo = componentOrPojoClass.newInstance();
+        return componentOrPojo;
+      } catch (Throwable ex) { // Catching throwable on purpose
+        throw new PluginComponentException(ex);
+      }
+    } else {
+      Logger.warn(getClass().toString(), Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
+      return null;
+    }
+  }
+  
+  public boolean isObjectRegistered(String componentClassName) {
+    assert(componentClassName != null);
+    return pluginComponentMap.containsKey(componentClassName);
+  }
+
+   
 }

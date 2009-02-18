@@ -71,6 +71,7 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IParameterResolver;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISelectionMapper;
 import org.pentaho.platform.api.engine.ISolutionActionDefinition;
@@ -95,6 +96,7 @@ import org.pentaho.platform.engine.services.actionsequence.ActionParameter;
 import org.pentaho.platform.engine.services.actionsequence.ActionParameterSource;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceParameterMgr;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.engine.services.solution.PojoComponent;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -188,6 +190,8 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
   private ICreateFeedbackParameterCallback createFeedbackParameterCallback;
   
+  private IPluginManager pluginManager;
+  
   static {
     RuntimeContext.getComponentClassMap();
   }
@@ -248,6 +252,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       setParameterXsl(defaultParameterXsl);
     }
 
+    // Gets the plugin manager if it's there.
+    pluginManager = PentahoSystem.get(IPluginManager.class, session);
+
+    
   }
 
   private IRuntimeElement createChild(boolean persisted) {
@@ -775,18 +783,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
     // try to create an instance of the component class specified in the
     // action document
-    String componentClassName = actionDefinition.getComponentName().trim();
-
-    String mappedClassName = (String) RuntimeContext.getComponentClassMap().get(componentClassName);
-    if (mappedClassName != null) {
-      if (mappedClassName.charAt(0) == '!') {
-        // this is deprecated, log a warning
-        mappedClassName = mappedClassName.substring(1);
-        warn(Messages.getString("RuntimeContext.WARN_DEPRECATED_COMPONENT_CLASS", componentClassName, mappedClassName)); //$NON-NLS-1$
-        audit(MessageTypes.DEPRECATION_WARNING, componentClassName, mappedClassName, 0);
-      }
-      componentClassName = mappedClassName;
-    }
+    
+    String shortName = actionDefinition.getComponentName().trim();
+    
+    String componentClassName = RuntimeContext.getComponentClassName(shortName, this);
 
     Element componentDefinition = (Element) actionDefinition.getComponentSection();
     setCurrentComponent(componentClassName);
@@ -800,7 +800,8 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        */
 
       IComponent component = null;
-      Class componentClass;
+      Class componentClass = null;
+      Object componentTmp = null;
       /*
        Class[] paramClasses = new Class[] { String.class, String.class, String.class, Node.class, IRuntimeContext.class, IPentahoSession.class, int.class, List.class };
        Integer logLevel = new Integer(getLoggingLevel());
@@ -811,8 +812,25 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        component = (IComponent) componentConstructor.newInstance(paramArgs);
        */
 
-      componentClass = Class.forName(componentClassName);
-      component = (IComponent) componentClass.newInstance();
+      // Explicitly using the short name instead of the fully layed out class name
+      if ( (pluginManager != null) && (pluginManager.isObjectRegistered(shortName)) ) {
+        componentTmp = pluginManager.getRegisteredObject(shortName);
+      }
+      
+      // Ok - the plugin didn't load - try the old route
+      if (componentTmp == null) {
+        componentClass = Class.forName(componentClassName);
+        componentTmp = componentClass.newInstance();
+      }
+      
+      if (componentTmp instanceof IComponent) {
+        component = (IComponent)componentTmp;
+      } else {
+        // Try this out...
+        PojoComponent pc = new PojoComponent();
+        component = pc;
+      }
+      
       component.setInstanceId(currentInstanceId);
       component.setActionName(getActionName());
       component.setProcessId(currentProcessId);
@@ -828,6 +846,14 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
             new ActionSequenceParameterMgr(this, currentSession)));
       }
 
+      if (! (componentTmp instanceof IComponent) ) {
+        // actionDefinition has a pojo in the node - we
+        // auto-created the pojoComponent object. Inject the class
+        // name into it's new inputs.
+        ActionParameter ap = new ActionParameter("class", "object", componentTmp, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+        this.getParameterManager().addToCurrentInputs("class", ap); //$NON-NLS-1$
+      }
+      
       // create a map of the top level component definition nodes and their text
       Map<String, String> componentDefinitionMap = new HashMap<String, String>();
       List elements = componentDefinition.elements();

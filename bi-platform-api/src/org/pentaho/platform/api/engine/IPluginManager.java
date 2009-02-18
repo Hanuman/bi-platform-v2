@@ -103,4 +103,24 @@ public interface IPluginManager {
    */
   public IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
       throws PlatformPluginRegistrationException;
+  
+  /**
+   * If any plugins have registered to provide either BI Component subclasses,
+   * this method will return a new instance of the component or object to be wrapped
+   * by the pojo component.
+   * @param className cannot be null
+   * @return Object
+   * @throws PluginComponentException
+   */
+  public Object getRegisteredObject(String className) throws PluginComponentException;
+
+  /**
+   * Returns true if the plugin manager has an implementation of
+   * the component
+   * @param className Cannot be null
+   * @return boolean
+   */
+  public boolean isObjectRegistered(String className);
+  
+  
 }

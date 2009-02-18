@@ -3,13 +3,19 @@ package org.pentaho.test.platform.plugin.pluginmgr;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Map;
 
+import org.dom4j.Node;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.actionsequence.dom.IActionDefinition;
+import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IRuntimeContext;
+import org.pentaho.platform.api.engine.PluginComponentException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -18,6 +24,7 @@ import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
+import org.pentaho.test.platform.engine.core.MockComponent;
 import org.pentaho.ui.xul.XulOverlay;
 
 @SuppressWarnings("nls")
@@ -43,6 +50,57 @@ public class PluginManagerTest {
         .getContentGeneratorInfo("test1", session));
   }
 
+  
+  private class TestComponentPluginManager extends PluginManager {
+    TestComponentPluginManager() {
+      super();
+      this.reload(new StandaloneSession());
+      pluginComponentMap.put("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent");
+      pluginComponentMap.put("TestPojo", "java.lang.String");
+      pluginComponentMap.put("TestClassNotFoundComponent", "org.pentaho.test.NotThere");
+    }
+  }
+  
+  @Test
+  public void testComponentMethods() {
+    StandaloneSession session = new StandaloneSession();
+    IPluginManager pluginManager = new TestComponentPluginManager();
+    
+    assertTrue(pluginManager.isObjectRegistered("TestMockComponent"));
+    assertTrue(pluginManager.isObjectRegistered("TestPojo"));
+    
+    assertFalse(pluginManager.isObjectRegistered("IDoNotExist"));
+
+    try {
+      Object obj = pluginManager.getRegisteredObject("TestMockComponent");
+      assertTrue(obj instanceof IComponent);
+    } catch (PluginComponentException ex) {
+      assertFalse("Exception was not expected", true);
+    }
+
+    try {
+      Object pojo = pluginManager.getRegisteredObject("TestPojo");
+      assertTrue(pojo instanceof String);
+    } catch (PluginComponentException ex) {
+      assertFalse("Exception was not expected", true);
+    }
+    
+    try {
+      Object bogus = pluginManager.getRegisteredObject("IDoNotExist");
+      assertNull(bogus);
+    } catch (PluginComponentException ex) {
+      assertFalse("Exception was not expected", true);
+    }
+    
+    try {
+      Object bogus = pluginManager.getRegisteredObject("TestClassNotFoundComponent");
+      assertFalse("Exception was not expected", true);
+    } catch (PluginComponentException ex) {
+      assertTrue("Exception was expected", true);
+    }
+    
+  }
+  
   @Test
   public void testGetOverlays() throws Exception {
     IPentahoSession session = new StandaloneSession("test user"); //$NON-NLS-1$

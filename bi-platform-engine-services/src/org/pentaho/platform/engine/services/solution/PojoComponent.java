@@ -42,7 +42,7 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
-
+import org.pentaho.platform.engine.services.messages.Messages;
 /**
  * This class interfaces with a plain old Java object and makes it
  * available as a component within the Pentaho platform
@@ -473,11 +473,15 @@ public class PojoComponent extends ComponentBase {
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            if(!setMethods.containsKey(name)){
-              setMethods.put(name, new ArrayList<Method>());
-            }
+            if (name.equals("CLASS")) {
+              warn(Messages.getString("PojoComponent.CANNOT_USE_SETCLASS"));
+            } else {
+              if(!setMethods.containsKey(name)){
+                setMethods.put(name, new ArrayList<Method>());
+              }
             
-            setMethods.get(name).add(method);
+              setMethods.get(name).add(method);
+            }
           }
           else if( name.startsWith( "get" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
