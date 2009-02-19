@@ -59,8 +59,6 @@ import org.pentaho.ui.xul.util.MenuCustomization;
  */
 public class SystemPathXmlPluginProvider implements IPluginProvider {
 
-  public static final String ERROR_0001_FAILED_TO_PROCESS_PLUGIN = "SystemPathXmlPluginProvider.ERROR_0001_FAILED_TO_PROCESS_PLUGIN"; //$NON-NLS-1$
-
   /**
    * Gets the list of plugins that this provider class has discovered.
    * 
@@ -91,7 +89,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
           processDirectory(plugins, kid, repo, session);
         } catch (Throwable t) {
           //don't throw an exception.  we need to continue to process any remaining good plugins
-          String msg = Messages.getErrorString(ERROR_0001_FAILED_TO_PROCESS_PLUGIN, kid.getAbsolutePath());
+          String msg = Messages.getErrorString(
+              "SystemPathXmlPluginProvider.ERROR_0001_FAILED_TO_PROCESS_PLUGIN", kid.getAbsolutePath()); //$NON-NLS-1$
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
         }
@@ -129,8 +128,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
     }
     if (doc == null) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
-            "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
     }
   }
 
@@ -143,18 +142,28 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     processContentTypes(plugin, doc, session);
     processContentGenerators(plugin, doc, session, folder, repo, hasLib);
     processOverlays(plugin, doc, session);
+    processLifecycleListeners(plugin, doc, session);
 
-    String msg = Messages.getString("SystemPathXmlPluginProvider.PLUGIN_PROVIDES",  //$NON-NLS-1$
-        Integer.toString(plugin.getMenuCustomizations().size()),
-        Integer.toString(plugin.getContentInfos().size()), 
-        Integer.toString(plugin.getContentGenerators().size()), 
-        Integer.toString(plugin.getOverlays().size())
-        );
+    String msg = Messages.getString(
+        "SystemPathXmlPluginProvider.PLUGIN_PROVIDES", //$NON-NLS-1$
+        Integer.toString(plugin.getMenuCustomizations().size()), Integer.toString(plugin.getContentInfos().size()),
+        Integer.toString(plugin.getContentGenerators().size()), Integer.toString(plugin.getOverlays().size()));
+    PluginMessageLogger.add(msg);
+    String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1";  //$NON-NLS-1$//$NON-NLS-2$
+    msg = Messages.getString("SystemPathXmlPluginProvider.PLUGIN_PROVIDES_2", listenerCount); //$NON-NLS-1$
     PluginMessageLogger.add(msg);
 
     plugin.setSourceDescription(folder);
 
     return plugin;
+  }
+
+  protected void processLifecycleListeners(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+    Element node = (Element) doc.selectSingleNode("//lifecycle-listener"); //$NON-NLS-1$
+    if (node != null) {
+      String classname = node.attributeValue("classname"); //$NON-NLS-1$
+      plugin.setLifecycleListenerClassname(classname);
+    }
   }
 
   protected void processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {

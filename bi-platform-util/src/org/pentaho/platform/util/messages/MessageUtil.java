@@ -131,6 +131,14 @@ public class MessageUtil {
       return '!' + key + '!';
     }
   }
+  
+  public static String getString(final ResourceBundle bundle, final String key, final String... params) {
+    try {
+      return MessageFormat.format(bundle.getString(key), (Object[])params);
+    } catch (Exception e) {
+      return '!' + key + '!';
+    }
+  }
 
   public static String getErrorString(final ResourceBundle bundle, final String key, final String param1,
       final String param2, final String param3, final String param4) {

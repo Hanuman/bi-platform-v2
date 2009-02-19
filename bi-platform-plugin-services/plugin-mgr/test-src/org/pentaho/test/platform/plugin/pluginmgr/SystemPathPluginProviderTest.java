@@ -78,4 +78,33 @@ public class SystemPathPluginProviderTest {
     }
 
   }
+  
+  @Test
+  public void testLifecycleListenerRetrieval() throws PlatformPluginRegistrationException {
+    MicroPlatform miniPlatform = new MicroPlatform("plugin-mgr/test-res/SystemPathPluginProviderTest/");
+    miniPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
+
+    miniPlatform.init();
+
+    SystemPathXmlPluginProvider provider = new SystemPathXmlPluginProvider();
+    StandaloneSession testSession = new StandaloneSession();
+
+    PluginMessageLogger.clear();
+
+    List<IPlatformPlugin> plugins = provider.getPlugins(testSession);
+    
+    //first make sure Plugin 1 was loaded, otherwise our check for lifcycle class will never happen
+    assertTrue("plugin1 was not found", CollectionUtils.exists(plugins, new PluginMatcherPredicate("Plugin 1")));
+    
+    for(IPlatformPlugin plugin : plugins) {
+      if(plugin.getName().equals("Plugin 1")) {
+        assertEquals("org.pentaho.test.platform.plugin.pluginmgr.FooInitializer", plugin.getLifecycleListenerClassname());
+      }
+      if(plugin.getName().equals("Plugin 2")) {
+        //no listener defined to for Plugin 2
+        assertNull(plugin.getLifecycleListenerClassname());
+      }
+    }
+
+  }
 }

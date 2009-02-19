@@ -36,7 +36,7 @@ import org.pentaho.ui.xul.XulOverlay;
  * 
  * @author jdixon
  */
-public interface IPlatformPlugin {
+public interface IPlatformPlugin extends IPluginLifecycleListener {
 
   /**
    * Returns the name of this plug-in 
@@ -72,5 +72,38 @@ public interface IPlatformPlugin {
    * Returns a list of menu overlays for this plug-in
    * @return
    */
+  @SuppressWarnings("unchecked")
   public List getMenuCustomizations();
+
+  /**
+   * Returns the fully qualified name of the lifecycle listener class
+   * defined by this plugin.  The class must be a {@link IPluginLifecycleListener}.
+   * @return lifecycle listener class name
+   */
+  public String getLifecycleListenerClassname();
+  
+  /**
+   * Registers a lifecycle listener with this plugin.  This listener will be notified
+   * when lifecycle events occur on this plugin.
+   * @param listener a lifecycle listener
+   */
+  public void addLifecycleListener(IPluginLifecycleListener listener);
+  
+  /*
+   * (non-Javadoc)
+   * @see org.pentaho.platform.api.engine.IPluginLifecycleListener#init()
+   */
+  public void init() throws PluginLifecycleException;
+
+  /*
+   * (non-Javadoc)
+   * @see org.pentaho.platform.api.engine.IPluginLifecycleListener#loaded()
+   */
+  public void loaded() throws PluginLifecycleException;
+
+  /*
+   * (non-Javadoc)
+   * @see org.pentaho.platform.api.engine.IPluginLifecycleListener#unLoaded()
+   */
+  public void unLoaded() throws PluginLifecycleException;
 }

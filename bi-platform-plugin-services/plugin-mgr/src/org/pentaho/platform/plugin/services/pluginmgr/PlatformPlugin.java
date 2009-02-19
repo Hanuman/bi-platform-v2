@@ -25,36 +25,49 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
+import org.pentaho.platform.api.engine.IPluginLifecycleListener;
+import org.pentaho.platform.api.engine.PluginLifecycleException;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
+
 /**
  * Default bean implementation of {@link IPlatformPlugin}
  */
 public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private List<IContentGeneratorInfo> contentGenerators = new ArrayList<IContentGeneratorInfo>();
-  
+
   private List<IContentInfo> contentInfos = new ArrayList<IContentInfo>();
-  
+
   private List<XulOverlay> overlays = new ArrayList<XulOverlay>();
-  
+
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
-  
-  private List menuOverlays = new ArrayList(); 
-  
+
+  @SuppressWarnings("unchecked")
+  private List menuOverlays = new ArrayList();
+
   private String name;
-  
+
   private String sourceDescription;
-  
-  public PlatformPlugin( ) {
-  }
-  
-  public void init( IPentahoSession session ) {
-    for( IPentahoInitializer initializer : initializers ) {
+
+  private String lifecycleListenerClassname;
+
+  private IPluginLifecycleListener lifecycleListener;
+
+  public void init(IPentahoSession session) {
+    for (IPentahoInitializer initializer : initializers) {
       initializer.init(session);
     }
   }
-  
+
+  public String getLifecycleListenerClassname() {
+    return lifecycleListenerClassname;
+  }
+
+  public void setLifecycleListenerClassname(String lifecycleListenerClassname) {
+    this.lifecycleListenerClassname = lifecycleListenerClassname;
+  }
+
   public List<IContentGeneratorInfo> getContentGenerators() {
     return contentGenerators;
   }
@@ -75,48 +88,49 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
    * Sets the name for this plug-in
    * @param name
    */
-  public void setName( String name ) {
+  public void setName(String name) {
     this.name = name;
   }
-  
+
   /**
    * Adds an initializer to this plug-in
    * @param initializer
    */
-  public void addInitializer( IPentahoInitializer initializer ) {
-    initializers.add( initializer );
+  public void addInitializer(IPentahoInitializer initializer) {
+    initializers.add(initializer);
   }
-  
+
   /**
    * Adds a content generator to this plug-in
    * @param contentGenerator
    */
-  public void addContentGenerator( IContentGeneratorInfo contentGenerator ) {
+  public void addContentGenerator(IContentGeneratorInfo contentGenerator) {
     contentGenerators.add(contentGenerator);
   }
-  
+
   /**
    * Adds a content info type to this plug-in
    * @param contentInfo
    */
-  public void addContentInfo( IContentInfo contentInfo ) {
-    contentInfos.add( contentInfo );
+  public void addContentInfo(IContentInfo contentInfo) {
+    contentInfos.add(contentInfo);
   }
-  
+
   /**
    * Adds an overlay to this plug-in
    * @param overlay
    */
-  public void addOverlay( XulOverlay overlay ) {
-    overlays.add( overlay );
+  public void addOverlay(XulOverlay overlay) {
+    overlays.add(overlay);
   }
-  
-  public List getMenuCustomizations() {
+
+  public List<?> getMenuCustomizations() {
     return menuOverlays;
   }
 
-  public void addMenuCustomization( IMenuCustomization customization ) {
-    menuOverlays.add( customization );
+  @SuppressWarnings("unchecked")
+  public void addMenuCustomization(IMenuCustomization customization) {
+    menuOverlays.add(customization);
   }
 
   public String getSourceDescription() {
@@ -126,5 +140,26 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   public void setSourceDescription(String sourceDescription) {
     this.sourceDescription = sourceDescription;
   }
-  
+
+  public void init() throws PluginLifecycleException {
+    if (lifecycleListener != null) {
+      lifecycleListener.init();
+    }
+  }
+
+  public void loaded() throws PluginLifecycleException {
+    if (lifecycleListener != null) {
+      lifecycleListener.loaded();
+    }
+  }
+
+  public void unLoaded() throws PluginLifecycleException {
+    if (lifecycleListener != null) {
+      lifecycleListener.unLoaded();
+    }
+  }
+
+  public void addLifecycleListener(IPluginLifecycleListener listener) {
+    this.lifecycleListener = listener;
+  }
 }

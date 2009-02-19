@@ -33,11 +33,13 @@ import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
+import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginComponentException;
+import org.pentaho.platform.api.engine.PluginLifecycleException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
@@ -88,12 +90,12 @@ public class PluginManager implements IPluginManager {
 
   public List<IContentGeneratorInfo> getContentGeneratorInfoForType(String type, IPentahoSession session) {
     List<IContentGeneratorInfo> cgInfos = contentGeneratorInfoByTypeMap.get(type);
-    return (cgInfos == null)?null:Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
+    return (cgInfos == null) ? null : Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
   }
 
   public IContentGenerator getContentGenerator(String id, IPentahoSession session) throws ObjectFactoryException {
     IContentGeneratorInfo info = getContentGeneratorInfo(id, session);
-    if (info == null) {  //not sure why this is here ??
+    if (info == null) { //not sure why this is here ??
       return null;
     }
     return objectFactory.get(IContentGenerator.class, id, session);
@@ -159,9 +161,9 @@ public class PluginManager implements IPluginManager {
   /**
    * Clears all the lists and maps in preparation for
    * reloading the state from the plugin provider.
+   * Fires the plugin unloaded event for each known plugin.
    */
-  protected void clearCaches() {
-    plugins.clear();
+  protected void unloadPlugins() {
     overlaysCache.clear();
     menuCustomizationsCache.clear();
     classLoaderMap.clear();
@@ -169,17 +171,32 @@ public class PluginManager implements IPluginManager {
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     pluginComponentMap.clear();
+    for (IPlatformPlugin plugin : plugins) {
+      try {
+        plugin.unLoaded();
+      } catch (Throwable t) {
+        //we do not want any type of exception to leak out and cause a problem here
+        //A plugin unload should not adversely affect anything downstream, it should
+        //log an error and otherwise fail silently
+        String msg = Messages.getErrorString("PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getName()); //$NON-NLS-1$
+        Logger.error(getClass().toString(), msg, t);
+        PluginMessageLogger.add(msg);
+      }
+    }
+    plugins.clear();
   }
-  
+
   public boolean reload(IPentahoSession session) {
+
     boolean anyErrors = false;
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, session);
     try {
       synchronized (plugins) {
-        this.clearCaches();
-        //the plugin may fail to load at this point without an exception thrown if the provider
-        //is capable of discovering the plugin fine but there are structural problems with the plugin.
-        //In this case a warning should be logged by the provider.
+        this.unloadPlugins();
+        //the plugin may fail to load during getPlugins without an exception thrown if the provider
+        //is capable of discovering the plugin fine but there are structural problems with the plugin
+        //itself. In this case a warning should be logged by the provider, but, again, no exception 
+        //is expected.
         plugins.addAll(pluginProvider.getPlugins(session));
       }
     } catch (PlatformPluginRegistrationException e1) {
@@ -205,19 +222,47 @@ public class PluginManager implements IPluginManager {
     }
     return !anyErrors;
   }
+  
+  /**
+   * Gets the plugin ready to handle lifecycle events. 
+   */
+  protected static void bootStrapPlugin(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
+    Object listener = null;
+    try {
+      if (!StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) {
+        listener = loader.loadClass(plugin.getLifecycleListenerClassname()).newInstance();
+      }
+    } catch (Throwable t) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0017_COULD_NOT_LOAD_PLUGIN_LIFECYCLE_LISTENER", plugin.getName(), plugin //$NON-NLS-1$
+              .getLifecycleListenerClassname()), t);
+    }
+
+    if (listener != null) {
+      if (!IPluginLifecycleListener.class.isAssignableFrom(listener.getClass())) {
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+            "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getName(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
+      }
+      plugin.addLifecycleListener((IPluginLifecycleListener) listener);
+    }
+  }
 
   @SuppressWarnings("unchecked")
   protected void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
-      throws PlatformPluginRegistrationException {
-		//FIXME: shouldn't we treat the registration of a plugin as an atomic operation
-		//with rollback if something is broken?
+      throws PlatformPluginRegistrationException, PluginLifecycleException {
+    //FIXME: shouldn't we treat the registration of a plugin as an atomic operation
+    //with rollback if something is broken?
+
+    ClassLoader loader = setPluginClassLoader(plugin);
+
+    bootStrapPlugin(plugin, loader);
+
+    plugin.init();
 
     //index content types
     for (IContentInfo info : plugin.getContentInfos()) {
       contentTypeByExtension.put(info.getExtension(), info);
     }
-
-    ClassLoader loader = setPluginClassLoader(plugin);
 
     registerContentGenerators(plugin, loader, session);
 
@@ -226,8 +271,17 @@ public class PluginManager implements IPluginManager {
 
     //cache menu customizations
     menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
-    
+
     PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
+    try {
+      plugin.loaded();
+    } catch (Throwable t) {
+      //The plugin has already been loaded, so there is really no logical response to any type
+      //of failure here except to log an error and otherwise fail silently
+      String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getName()); //$NON-NLS-1$
+      Logger.error(getClass().toString(), msg, t);
+      PluginMessageLogger.add(msg);
+    }
   }
 
   protected ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
@@ -269,7 +323,7 @@ public class PluginManager implements IPluginManager {
 
       //try to cast it to make sure it's the correct type, we want an exception to be thrown if not
       @SuppressWarnings("unused")
-      IContentGenerator cg = (IContentGenerator)tmpObject;
+      IContentGenerator cg = (IContentGenerator) tmpObject;
 
       //create the file info generator
       if (cgInfo.getFileInfoGeneratorClassname() != null) {
@@ -280,8 +334,10 @@ public class PluginManager implements IPluginManager {
           clazz.newInstance();
           objectFactory.defineObject(cgInfo.getType(), cgInfo.getFileInfoGeneratorClassname(), Scope.LOCAL, loader);
         } catch (Exception e) {
-          throw new PlatformPluginRegistrationException(Messages.getErrorString(
-              "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", cgInfo.getFileInfoGeneratorClassname(), cgInfo.getType()), e); //$NON-NLS-1$
+          throw new PlatformPluginRegistrationException(
+              Messages
+                  .getErrorString(
+                      "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", cgInfo.getFileInfoGeneratorClassname(), cgInfo.getType()), e); //$NON-NLS-1$
         }
       }
       contentInfoMap.put(cgInfo.getId(), cgInfo);
@@ -325,7 +381,7 @@ public class PluginManager implements IPluginManager {
     String className = pluginComponentMap.get(componentClassName);
     if (className != null) {
       Object componentOrPojo = null;
-      Class componentOrPojoClass = null;
+      Class<?> componentOrPojoClass = null;
       try {
         //
         // TODO - Get the class here

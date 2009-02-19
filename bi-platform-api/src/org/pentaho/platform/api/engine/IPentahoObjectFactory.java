@@ -91,8 +91,7 @@ public interface IPentahoObjectFactory {
    * @param key  the object identifier, typically the interface name
    * @return  the type of object associated with key
    */
-  @SuppressWarnings("unchecked")
-  public Class getImplementingClass(String key);
+  public Class<?> getImplementingClass(String key);
 
   /**
    * Initialize the factory with optional configuration file and runtime context.

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
- * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
+ * Copyright 2009 Pentaho Corporation.  All rights reserved. 
  * 
  */
 package org.pentaho.test.platform.engine.core;
@@ -20,8 +20,6 @@ package org.pentaho.test.platform.engine.core;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 
 /**
  * A self-contained and very easy to configure platform initializer which requires
@@ -48,7 +46,8 @@ public class MicroPlatform {
 
   private String solutionPath;
 
-  private StandaloneObjectFactory factory = new StandaloneObjectFactory();
+  private SimpleObjectFactory factory = new SimpleObjectFactory();
+  
 
   public MicroPlatform(String solutionPath) {
     this.solutionPath = solutionPath;
@@ -68,7 +67,7 @@ public class MicroPlatform {
   }
 
   public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass) {
-    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
+    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName());
     return this;
   }
 }
