@@ -16,7 +16,6 @@
 	<classpathentry kind="src" path="webservices/src"/>
 	<classpathentry kind="src" path="webservices/test-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=file%3A.%2Fivysettings.xml&amp;buildPropertyFiles=build.properties&amp;acceptedTypes=jar&amp;sourceTypes=source&amp;javadocTypes=javadoc&amp;sourceSuffixes=-source%2C-sources%2C-src&amp;javadocSuffixes=-javadoc%2C-javadocs%2C-doc%2C-docs&amp;doRetrieve=false&amp;retrievePattern=lib%2F%5Bconf%5D%2F%5Bartifact%5D.%5Bext%5D&amp;alphaOrder=true"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-security"/>
@@ -25,5 +24,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-test-foundation"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-ui-foundation"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-util"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=file%3A.%2Fivysettings.xml&amp;buildPropertyFiles=build.properties&amp;acceptedTypes=jar&amp;sourceTypes=source&amp;javadocTypes=javadoc&amp;sourceSuffixes=-source%2C-sources%2C-src&amp;javadocSuffixes=-javadoc%2C-javadocs%2C-doc%2C-docs&amp;doRetrieve=false&amp;retrievePattern=lib%2F%5Bconf%5D%2F%5Bartifact%5D.%5Bext%5D&amp;alphaOrder=true"/>
 	<classpathentry kind="output" path="eclipse-bin"/>
 </classpath>
