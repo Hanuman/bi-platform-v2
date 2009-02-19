@@ -93,6 +93,53 @@ public class PojoComponentTest extends BaseTest {
 	        finishTest();
 	  }
 
+    public void testSimplePojoInputFormat2() {
+      // test the alternate action definition format
+      startTest();
+        ISolutionEngine solutionEngine = ServiceTestHelper.getSolutionEngine();
+        try {
+            String xactionStr = ServiceTestHelper.getXAction( SOLUTION_PATH, "test/pojo/pojo1-alternate.xaction" );
+            PojoComponentTest.doneCalled = false;
+            PojoComponentTest.setSessionCalled = false;
+            PojoComponentTest.setLoggerCalled = false;
+            TestPojo1.int1 = 0;
+            TestPojo1.int2 = null;
+            SimpleParameterProvider inputs = new SimpleParameterProvider();
+            inputs.setParameter( "int2", new Integer( 22 ) );
+            inputs.setParameter( "bool2", new Boolean( true ) );
+            inputs.setParameter( "long2", new Long( 99 ) );
+            inputs.setParameter( "bigdecimal", new BigDecimal( "77.7" ) );
+            inputs.setParameter( "float2", new Float( 44.4 ) );
+            inputs.setParameter( "double2", new Double( 66.6 ) );
+            Map providers = new HashMap();
+            providers.put( IParameterProvider.SCOPE_REQUEST, inputs);
+            IRuntimeContext runtimeContext = solutionEngine.execute( 
+                xactionStr, "test1a.xaction", "empty action sequence test", false, true, null, false, providers, null, null, new SimpleUrlFactory(""), new ArrayList()); //$NON-NLS-1$ //$NON-NLS-2$
+            assertNotNull( "RuntimeContext is null", runtimeContext );
+            IActionParameter param = runtimeContext.getOutputParameter( "output1" );
+            assertNotNull( "param is null", param );
+            assertEquals( "setting is wrong", "value1", TestPojo1.setting1 );
+            assertEquals( "setting is wrong", "value2", TestPojo1.setting2 );
+            assertEquals( "setting is wrong", null, TestPojo1.setting3 );
+            assertEquals( "param is wrong", "abcdeabcde", param.getValue()  );
+            assertEquals( "setInt2 failed", new Integer(22), TestPojo1.int2 );
+            assertEquals( "setBoolean2 failed", new Boolean(true), TestPojo1.bool2 );
+            assertEquals( "setLong2 failed", new Long(99), TestPojo1.long2 );
+            assertEquals( "setBigDecimal failed", new BigDecimal("77.7"), TestPojo1.bigDecimal );
+            assertEquals( "setFloat2 failed", "44.4", TestPojo1.float2.toString() );
+            assertEquals( "setDouble2 failed", "66.6", TestPojo1.double2.toString() );
+            assertTrue( "done() was not called", PojoComponentTest.doneCalled );
+            assertTrue( "setSession() was not called", PojoComponentTest.setSessionCalled );
+            assertTrue( "setLogger() was not called", PojoComponentTest.setLoggerCalled );
+            assertEquals( "Action sequence execution failed", runtimeContext.getStatus(), IRuntimeContext.RUNTIME_STATUS_SUCCESS );
+        } catch (Exception e) {
+          // we should not get here
+          e.printStackTrace();
+          assertTrue( e.getMessage(), false );
+        }
+        finishTest();
+  }
+
 	  public void testSimplePojoSettings() {
 	      startTest();
 	        ISolutionEngine solutionEngine = ServiceTestHelper.getSolutionEngine();

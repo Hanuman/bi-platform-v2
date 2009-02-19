@@ -436,18 +436,25 @@ public class PojoComponent extends ComponentBase {
   protected boolean validateAction() {
         
     boolean ok = false;
-    if( isDefinedInput( "class" ) ) { //$NON-NLS-1$
+    if( pojo == null && isDefinedInput( "class" ) ) { //$NON-NLS-1$
       String className = getInputStringValue( "class" ); //$NON-NLS-1$
       // try to load the class
       try {
         // TODO support loading classes from the solution repository
         Class<?> aClass = getClass().getClassLoader().loadClass(className);
         pojo = aClass.newInstance();
+      } catch (Exception ex) {
+        error( "Could not load object class" , ex); //$NON-NLS-1$
+        return false;
+      }
+    }
+    if( pojo != null ) {
+      // By the time we get here, we've got our class
+      try {
         Method methods[] = pojo.getClass().getMethods();
         // create a method map
         for( Method method : methods ) {
           String name = method.getName();
-          
           Class<?>[] paramTypes = method.getParameterTypes();
           if( name.equals( "getOutputs" ) ) { //$NON-NLS-1$
             runtimeOutputsMethod = method;
@@ -473,8 +480,8 @@ public class PojoComponent extends ComponentBase {
           }
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
-            if (name.equals("CLASS")) {
-              warn(Messages.getString("PojoComponent.CANNOT_USE_SETCLASS"));
+            if (name.equals("CLASS")) { //$NON-NLS-1$
+              warn(Messages.getString("PojoComponent.CANNOT_USE_SETCLASS")); //$NON-NLS-1$
             } else {
               if(!setMethods.containsKey(name)){
                 setMethods.put(name, new ArrayList<Method>());
@@ -500,8 +507,8 @@ public class PojoComponent extends ComponentBase {
         }
 
         ok = true;
-      } catch (Throwable e) {
-        error( "Could not load object class" , e); //$NON-NLS-1$
+      } catch (Throwable ex) {
+        error( "Could not load object class" , ex); //$NON-NLS-1$
       }
     }
     
@@ -512,6 +519,10 @@ public class PojoComponent extends ComponentBase {
   protected boolean validateSystemSettings() {
     // nothing to do here, the pojo must do this during its init
     return true;
+  }
+
+  public void setPojo(Object pojo) {
+    this.pojo = pojo;
   }
 
 }

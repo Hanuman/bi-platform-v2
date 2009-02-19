@@ -76,7 +76,6 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISelectionMapper;
 import org.pentaho.platform.api.engine.ISolutionActionDefinition;
 import org.pentaho.platform.api.engine.ISolutionEngine;
-import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.engine.InvalidParameterException;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
@@ -253,8 +252,9 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
 
     // Gets the plugin manager if it's there.
-    pluginManager = PentahoSystem.get(IPluginManager.class, session);
-
+    if( PentahoSystem.getObjectFactory().objectDefined(IPluginManager.class.getSimpleName()) ) {
+      pluginManager = PentahoSystem.get(IPluginManager.class, session);
+    }
     
   }
 
@@ -822,12 +822,12 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         componentClass = Class.forName(componentClassName);
         componentTmp = componentClass.newInstance();
       }
-      
       if (componentTmp instanceof IComponent) {
         component = (IComponent)componentTmp;
       } else {
         // Try this out...
         PojoComponent pc = new PojoComponent();
+        pc.setPojo(componentTmp);
         component = pc;
       }
       
@@ -846,14 +846,6 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
             new ActionSequenceParameterMgr(this, currentSession)));
       }
 
-      if (! (componentTmp instanceof IComponent) ) {
-        // actionDefinition has a pojo in the node - we
-        // auto-created the pojoComponent object. Inject the class
-        // name into it's new inputs.
-        ActionParameter ap = new ActionParameter("class", "object", componentTmp, null, null); //$NON-NLS-1$ //$NON-NLS-2$
-        this.getParameterManager().addToCurrentInputs("class", ap); //$NON-NLS-1$
-      }
-      
       // create a map of the top level component definition nodes and their text
       Map<String, String> componentDefinitionMap = new HashMap<String, String>();
       List elements = componentDefinition.elements();
