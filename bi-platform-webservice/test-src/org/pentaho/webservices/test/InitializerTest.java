@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
+import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -68,15 +69,9 @@ public class InitializerTest extends TestCase {
   
       WebServicesInitializer initializer = new WebServicesInitializer();
       
-      assertTrue( "WebServicesInitializer is wrong type", initializer instanceof IPentahoInitializer ); //$NON-NLS-1$
+      assertTrue( "WebServicesInitializer is wrong type", initializer instanceof IPluginLifecycleListener ); //$NON-NLS-1$
       
-      initializer.createContent( null );
-      
-      initializer.getMimeType();
-      
-      assertNotNull( "logger is null", initializer.getLogger() ); //$NON-NLS-1$
-      
-      initializer.init(session);
+      initializer.loaded();
     
       AxisConfig config = AxisConfig.getInstance( );
 

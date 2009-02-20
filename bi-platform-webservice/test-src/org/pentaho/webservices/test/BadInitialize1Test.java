@@ -36,7 +36,7 @@ public class BadInitialize1Test extends BaseTest {
   
       WebServicesInitializer initializer = new WebServicesInitializer();
       
-      initializer.init(session);
+      initializer.loaded();
     
       AxisConfig config = AxisConfig.getInstance( );
 

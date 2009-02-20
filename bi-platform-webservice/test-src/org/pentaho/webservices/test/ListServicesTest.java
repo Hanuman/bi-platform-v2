@@ -75,7 +75,7 @@ public class ListServicesTest extends TestCase {
 	    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 
       WebServicesInitializer initializer = new WebServicesInitializer();
-      initializer.init(session);
+      initializer.loaded();
     
 	    ListServices contentGenerator = new ListServices();
       assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$

@@ -65,7 +65,7 @@ public class SetupTest extends TestCase {
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
     
     WebServicesInitializer initializer = new WebServicesInitializer();
-    initializer.init(session);
+    initializer.loaded();
   
     AxisConfig config = AxisConfig.getInstance( );
     assertNotNull( "AxisConfig is null", config ); //$NON-NLS-1$
