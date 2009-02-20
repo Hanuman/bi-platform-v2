@@ -813,9 +813,8 @@
 		<!-- Include appropriate third party jars -->
 		<zipfileset dir="${build.third-party.dir}" prefix="lib">
 			<excludesfile name="excludejars-noportal.jboss" />
-			<exclude name="gnu-regexp.jar" />
-			<exclude name="dom4j.jar" />
-			<exclude name="quartz*.jar" />
+			<exclude name="**/licenses/*" />
+			<exclude name="**/quartz-oracle-1.5.2.jar" />
 		</zipfileset>
 		<zipfileset dir="${build.jars.dir}" prefix="lib" />
 		
