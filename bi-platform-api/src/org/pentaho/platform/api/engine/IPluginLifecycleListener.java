@@ -20,26 +20,26 @@ package org.pentaho.platform.api.engine;
 
 /**
  * This interface provides entry points to the plugin manager
- * for plugin loading, and unloading.
+ * for plugin loading, and unloading.  In other words, a plugin
+ * can respond to it's state with respect to the plugin manager.
  * 
  * @author mbatchel
- *
  */
-
 public interface IPluginLifecycleListener {
   
   
   /**
-   * Called before any content generators, components, etc.
-   * have been figured out.
-   * @throws PluginLifecycleException
+   * Called just prior to the plugin being registered
+   * with the platform.  Note: This event does *not*
+   * precede the detection of the plugin by any {@link IPluginProvider}s
+   * @throws PluginLifecycleException if an error occurred
    */
   public void init() throws PluginLifecycleException;
   
   /**
-   * Called after the plugin xml has been processed and all
-   * content generators, components, etc. have been loaded.
-   * @throws PluginLifecycleException
+   * Called after the plugin has been registered with the platform, 
+   * i.e. all content generators, components, etc. have been loaded.
+   * @throws PluginLifecycleException if an error occurred
    */
   public void loaded() throws PluginLifecycleException;
   
@@ -47,7 +47,7 @@ public interface IPluginLifecycleListener {
    * Called when the plugin needs to be unloaded. This
    * method should release all resources and return things
    * to a pre-loaded state.
-   * @throws PluginLifecycleException
+   * @throws PluginLifecycleException if an error occurred
    */
   public void unLoaded() throws PluginLifecycleException;
   
