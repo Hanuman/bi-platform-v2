@@ -453,11 +453,6 @@ public class PentahoSystem {
   }
   
   @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IVersionHelper getVersionHelper(final IPentahoSession session) {
-    return (IVersionHelper)PentahoSystem.getObject(session, "IVersionHelper"); //$NON-NLS-1$
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
   public static IUITemplater getUITemplater(final IPentahoSession session) {
       try {
       return (IUITemplater)pentahoObjectFactory.getObject( "IUITemplater", session ); //$NON-NLS-1$
@@ -466,16 +461,6 @@ public class PentahoSystem {
       return null;
         }
         }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IXMLComponent getUserFilesComponent(final IPentahoSession session) {
-    try {
-      return (IXMLComponent)pentahoObjectFactory.getObject( "IUserFilesComponent", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-    }
-  }
 
   //TODO: is this method needed?  See if we can use the factory directly and delete this method.
   public static IContentOutputHandler getOutputDestinationFromContentRef(final String contentTag,
@@ -788,16 +773,6 @@ public class PentahoSystem {
       }
 
   @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IAclPublisher getAclPublisher(final IPentahoSession session) {
-    try {
-      return (IAclPublisher)pentahoObjectFactory.getObject( PentahoSystem.ACL_PUBLISHER, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-      }
-    }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
   public static IAclVoter getAclVoter(final IPentahoSession session) {
     try {
       return (IAclVoter)pentahoObjectFactory.getObject( PentahoSystem.ACL_VOTER, session );
@@ -827,16 +802,6 @@ public class PentahoSystem {
     }
   }
 
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IUserSettingService getUserSettingService(final IPentahoSession session) {
-    try {
-      return (IUserSettingService)pentahoObjectFactory.getObject( PentahoSystem.USERSETTING_SERVICE, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-    }
-  }  
-  
   @Deprecated  //use PentahoSystem.get(...) to retrieve pentaho system objects
   public static Object createObject(final String className, final ILogger logger) {
 
@@ -1022,16 +987,6 @@ public class PentahoSystem {
     while (iter.hasNext()) {
       ILogoutListener listener = (ILogoutListener) iter.next();
       listener.onLogout(session);
-    }
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IScheduler getScheduler(IPentahoSession session) {
-    try {
-      return (IScheduler)pentahoObjectFactory.getObject( PentahoSystem.SCHEDULER, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
     }
   }
 
