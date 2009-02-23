@@ -479,7 +479,8 @@ public class PentahoSystem {
   public static <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) {
     try {
       if(!pentahoObjectFactory.objectDefined(key)) {
-        //this may not be a failure case. do not log an error
+        //this may not be a failure case, but we should log a warning in case the object is truly required
+        Logger.warn( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.WARN_OBJECT_NOT_CONFIGURED", key)); //$NON-NLS-1$
         return null;
       }
       return pentahoObjectFactory.get( interfaceClass, key, session );
