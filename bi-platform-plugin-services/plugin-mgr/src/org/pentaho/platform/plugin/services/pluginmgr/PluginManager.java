@@ -51,30 +51,30 @@ import org.pentaho.ui.xul.XulOverlay;
 
 public class PluginManager implements IPluginManager {
 
-  protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
+  private StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
-  protected List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
+  private List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
 
   /* indexes and cached collections */
 
-  protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections
+  private Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections
       .synchronizedMap(new HashMap<String, List<IContentGeneratorInfo>>());
 
-  protected Map<String, IContentGeneratorInfo> contentInfoMap = Collections
+  private Map<String, IContentGeneratorInfo> contentInfoMap = Collections
       .synchronizedMap(new HashMap<String, IContentGeneratorInfo>());
 
-  protected Map<String, IContentInfo> contentTypeByExtension = Collections
+  private Map<String, IContentInfo> contentTypeByExtension = Collections
       .synchronizedMap(new HashMap<String, IContentInfo>());
 
-  protected Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
+  private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
 
-  protected List<XulOverlay> overlaysCache = Collections.synchronizedList(new ArrayList<XulOverlay>());
+  private List<XulOverlay> overlaysCache = Collections.synchronizedList(new ArrayList<XulOverlay>());
 
-  protected List<IMenuCustomization> menuCustomizationsCache = Collections
+  private List<IMenuCustomization> menuCustomizationsCache = Collections
       .synchronizedList(new ArrayList<IMenuCustomization>());
 
-  protected Map<String, String> pluginComponentMap = Collections.synchronizedMap(new HashMap<String, String>());
-  
+  private Map<String, String> pluginComponentMap = Collections.synchronizedMap(new HashMap<String, String>());
+
   public Set<String> getContentTypes() {
     //map.keySet returns a set backed by the map, so we cannot allow modification of the set
     return Collections.unmodifiableSet(contentGeneratorInfoByTypeMap.keySet());
@@ -163,7 +163,7 @@ public class PluginManager implements IPluginManager {
    * reloading the state from the plugin provider.
    * Fires the plugin unloaded event for each known plugin.
    */
-  protected void unloadPlugins() {
+  private void unloadPlugins() {
     overlaysCache.clear();
     menuCustomizationsCache.clear();
     classLoaderMap.clear();
@@ -171,6 +171,8 @@ public class PluginManager implements IPluginManager {
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     pluginComponentMap.clear();
+    //we do not need to synchronize here since unloadPlugins 
+    //is called within the synchronized block in reload
     for (IPlatformPlugin plugin : plugins) {
       try {
         plugin.unLoaded();
@@ -178,7 +180,8 @@ public class PluginManager implements IPluginManager {
         //we do not want any type of exception to leak out and cause a problem here
         //A plugin unload should not adversely affect anything downstream, it should
         //log an error and otherwise fail silently
-        String msg = Messages.getErrorString("PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getName()); //$NON-NLS-1$
+        String msg = Messages.getErrorString(
+            "PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getName()); //$NON-NLS-1$
         Logger.error(getClass().toString(), msg, t);
         PluginMessageLogger.add(msg);
       }
@@ -186,7 +189,7 @@ public class PluginManager implements IPluginManager {
     plugins.clear();
   }
 
-  public boolean reload(IPentahoSession session) {
+  public final boolean reload(IPentahoSession session) {
 
     boolean anyErrors = false;
     IPluginProvider pluginProvider = PentahoSystem.get(IPluginProvider.class, session);
@@ -222,11 +225,12 @@ public class PluginManager implements IPluginManager {
     }
     return !anyErrors;
   }
-  
+
   /**
    * Gets the plugin ready to handle lifecycle events. 
    */
-  protected static void bootStrapPlugin(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
+  private static void bootStrapPlugin(IPlatformPlugin plugin, ClassLoader loader)
+      throws PlatformPluginRegistrationException {
     Object listener = null;
     try {
       if (!StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) {
@@ -240,15 +244,17 @@ public class PluginManager implements IPluginManager {
 
     if (listener != null) {
       if (!IPluginLifecycleListener.class.isAssignableFrom(listener.getClass())) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
-            "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getName(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
+        throw new PlatformPluginRegistrationException(
+            Messages
+                .getErrorString(
+                    "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getName(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
       }
       plugin.addLifecycleListener((IPluginLifecycleListener) listener);
     }
   }
 
   @SuppressWarnings("unchecked")
-  protected void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
+  private void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
       throws PlatformPluginRegistrationException, PluginLifecycleException {
     //FIXME: shouldn't we treat the registration of a plugin as an atomic operation
     //with rollback if something is broken?
@@ -284,7 +290,7 @@ public class PluginManager implements IPluginManager {
     }
   }
 
-  protected ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
+  private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
     ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
     if (loader == null) {
       String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath(
@@ -295,7 +301,7 @@ public class PluginManager implements IPluginManager {
     return loader;
   }
 
-  protected void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session)
+  private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session)
       throws PlatformPluginRegistrationException {
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
@@ -375,9 +381,9 @@ public class PluginManager implements IPluginManager {
     }
     return null;
   }
-  
+
   public Object getRegisteredObject(String componentClassName) throws PluginComponentException {
-    assert(componentClassName != null);
+    assert (componentClassName != null);
     String className = pluginComponentMap.get(componentClassName);
     if (className != null) {
       Object componentOrPojo = null;
@@ -396,11 +402,10 @@ public class PluginManager implements IPluginManager {
       return null;
     }
   }
-  
+
   public boolean isObjectRegistered(String componentClassName) {
-    assert(componentClassName != null);
+    assert (componentClassName != null);
     return pluginComponentMap.containsKey(componentClassName);
   }
 
-   
 }
