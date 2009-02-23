@@ -170,7 +170,7 @@ public class PojoComponent extends ComponentBase {
       try{
         methods.get(0).invoke(pojo, new Object[] {value});
       } catch(Exception ex){
-        throw new IllegalArgumentException("No implementation of method \"" + Method.class.getName() + "\" takes a String"); //$NON-NLS-1$ //$NON-NLS-2$
+        throw new IllegalArgumentException("No implementation of method \"" + Method.class.getName() + "\" takes a " + value.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }    
   }
