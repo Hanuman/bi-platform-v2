@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IParameterSetter;
@@ -321,18 +322,18 @@ public class SubscriptionHelper {
           if (runtime == null) {
             // we need an error message...
             StringBuffer buffer = new StringBuffer();
-            PentahoSystem.getMessageFormatter(session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
+            PentahoSystem.get(IMessageFormatter.class, session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
             outputStream.write(buffer.toString().getBytes());
             contentItem.closeOutputStream();
           } else if (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
             StringBuffer buffer = new StringBuffer();
-            PentahoSystem.getMessageFormatter(session).formatSuccessMessage("text/html", runtime, buffer, false); //$NON-NLS-1$
+            PentahoSystem.get(IMessageFormatter.class, session).formatSuccessMessage("text/html", runtime, buffer, false); //$NON-NLS-1$
             outputStream.write(buffer.toString().getBytes());
             contentItem.closeOutputStream();
           } else {
             // we need an error message...
             StringBuffer buffer = new StringBuffer();
-            PentahoSystem.getMessageFormatter(session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
+            PentahoSystem.get(IMessageFormatter.class, session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
             outputStream.write(buffer.toString().getBytes());
             contentItem.closeOutputStream();
           }

@@ -28,6 +28,7 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -183,14 +184,14 @@ public class QuartzExecute extends PentahoBase implements Job {
             try {
               if ((rt != null) && (rt.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
                 StringBuffer buffer = new StringBuffer();
-                PentahoSystem.getMessageFormatter(userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
+                PentahoSystem.get(IMessageFormatter.class, userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
                 OutputStream os = outputContentItem.getOutputStream(actionName);
                 os.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
                 os.close();
               } else {
                 // we need an error message...
                 StringBuffer buffer = new StringBuffer();
-                PentahoSystem.getMessageFormatter(userSession).formatFailureMessage(
+                PentahoSystem.get(IMessageFormatter.class, userSession).formatFailureMessage(
                     "text/html", rt, buffer, requestHandler.getMessages()); //$NON-NLS-1$
                 OutputStream os = outputContentItem.getOutputStream(actionName);
                 os.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));

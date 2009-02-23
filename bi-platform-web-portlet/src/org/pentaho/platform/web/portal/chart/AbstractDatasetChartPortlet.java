@@ -29,6 +29,7 @@ import javax.portlet.RenderResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -112,7 +113,7 @@ public abstract class AbstractDatasetChartPortlet extends ViewPortlet {
 
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
-        PentahoSystem.getMessageFormatter(userSession)
+        PentahoSystem.get(IMessageFormatter.class, userSession)
             .formatErrorMessage(
                 "text/html", Messages.getString("AbstractDatasetChartPortlet.ERROR_0002.COULD_NOT_CREATE"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();

@@ -13,7 +13,8 @@
 	org.pentaho.platform.util.messages.LocaleHelper,
 	org.pentaho.platform.api.ui.INavigationComponent,
 	org.pentaho.platform.api.repository.ISolutionRepository,
-  org.pentaho.platform.web.http.PentahoHttpSessionHelper"
+  org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+  org.pentaho.platform.api.engine.IMessageFormatter"
 	 %><%/*
  * Copyright 2006 Pentaho Corporation.  All rights reserved. 
  * This software was developed by Pentaho Corporation and is provided under the terms 
@@ -88,7 +89,7 @@
 	String content = navigate.getContent( "text/html" ); //$NON-NLS-1$
 	if( content == null ) {
 		StringBuffer buffer = new StringBuffer();
-		PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getErrorString( "NAVIGATE.ERROR_0001_NAVIGATE_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+		PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "NAVIGATE.ERROR_0001_NAVIGATE_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 		content = buffer.toString();
 	}
 

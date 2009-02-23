@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUITemplater;
 import org.pentaho.platform.api.repository.SubscriptionAdminException;
@@ -73,7 +74,7 @@ public class SubscriptionAdminServlet extends ServletBase {
         response.setHeader("Expires", "0");
         if (content == null) {
           StringBuffer buffer = new StringBuffer();
-          PentahoSystem.getMessageFormatter(userSession).formatErrorMessage("text/html", "ERROR", messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+          PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage("text/html", "ERROR", messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
           content = buffer.toString();
         }
 

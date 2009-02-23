@@ -12,7 +12,8 @@
   	 org.pentaho.platform.util.messages.LocaleHelper,
   	 org.apache.commons.lang.StringUtils,
   	 org.pentaho.platform.web.jsp.messages.Messages,
-     org.pentaho.platform.web.http.PentahoHttpSessionHelper"
+     org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+     org.pentaho.platform.api.engine.IMessageFormatter"
 	 %><%
  /*
  * Copyright 2006 Pentaho Corporation.  All rights reserved. 
@@ -53,7 +54,7 @@
 	if ( "text/html".equals( mimeType ) ) {
 		if( content == null ) {
 			StringBuffer buffer = new StringBuffer();
-			PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 			content = buffer.toString();
 		}
 	

@@ -10,7 +10,8 @@
 	org.pentaho.platform.api.engine.IPentahoSession,
 	org.pentaho.platform.web.http.WebTemplateHelper,
 	org.pentaho.platform.util.messages.LocaleHelper,
-  org.pentaho.platform.web.http.PentahoHttpSessionHelper"
+  org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+  org.pentaho.platform.api.engine.IMessageFormatter"
 	 %><%
  /*
  * Copyright 2006 Pentaho Corporation.  All rights reserved. 
@@ -56,7 +57,7 @@
 	}
 	if( content == null ) {
 		StringBuffer buffer = new StringBuffer();
-		PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", "Could not create inbox task display", messages, buffer ); //$NON-NLS-1$
+		PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", "Could not create inbox task display", messages, buffer ); //$NON-NLS-1$
 		content = buffer.toString();
 	} else {
 		out.print( content );

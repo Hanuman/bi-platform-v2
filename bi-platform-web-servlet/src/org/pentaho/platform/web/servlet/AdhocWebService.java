@@ -66,6 +66,7 @@ import org.pentaho.jfreereport.wizard.utility.report.ReportSpecUtility;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
@@ -1705,7 +1706,7 @@ public class AdhocWebService extends ServletBase {
     {
       msgList.add( e.getClass().getName() );
     }
-    PentahoSystem.getMessageFormatter(PentahoHttpSessionHelper.getPentahoSession(request)).formatErrorMessage( "text/html", Messages.getString( "AdhocWebService.HEADER_ERROR_PAGE"),//$NON-NLS-1$//$NON-NLS-2$
+    PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatErrorMessage( "text/html", Messages.getString( "AdhocWebService.HEADER_ERROR_PAGE"),//$NON-NLS-1$//$NON-NLS-2$
         msgList, b );
     
     return b.toString();

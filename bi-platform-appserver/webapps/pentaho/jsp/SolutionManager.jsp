@@ -11,7 +11,8 @@ import="org.pentaho.platform.engine.core.system.PentahoSystem,
 	org.pentaho.platform.web.refactor.SolutionManagerUIComponent,
 	org.pentaho.platform.web.jsp.messages.Messages,
 	java.io.IOException,
-  org.pentaho.platform.web.http.PentahoHttpSessionHelper"%><%
+  org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+  org.pentaho.platform.api.engine.IMessageFormatter"%><%
 
 /*
  * Copyright 2006 Pentaho Corporation.  All rights reserved. 
@@ -46,7 +47,7 @@ import="org.pentaho.platform.engine.core.system.PentahoSystem,
 	String content = manager.getContent( "text/xml" ); //$NON-NLS-1$
 	if( content == null ) {
 		StringBuffer buffer = new StringBuffer();
-		PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getErrorString( "SOLUTION_MANAGER.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+		PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "SOLUTION_MANAGER.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 		content = buffer.toString();
 	}
 

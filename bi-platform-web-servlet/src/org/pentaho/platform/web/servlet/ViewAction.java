@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.actionsequence.dom.IActionDefinition;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -151,11 +152,11 @@ public class ViewAction extends ServletBase {
         StringBuffer buffer = new StringBuffer();
         if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
           boolean doWrapper = !("false".equals(request.getParameter("wrapper"))); //$NON-NLS-1$ //$NON-NLS-2$
-          PentahoSystem.getMessageFormatter(PentahoHttpSessionHelper.getPentahoSession(request)).formatSuccessMessage(
+          PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatSuccessMessage(
               "text/html", runtime, buffer, doMessages(request), doWrapper); //$NON-NLS-1$
         } else {
           // we need an error message...
-          PentahoSystem.getMessageFormatter(PentahoHttpSessionHelper.getPentahoSession(request)).formatFailureMessage(
+          PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatFailureMessage(
               "text/html", runtime, buffer, requestHandler.getMessages()); //$NON-NLS-1$
         }
         outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));

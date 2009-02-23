@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.ui.IUIComponent;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -83,7 +84,7 @@ public class UIServlet extends ServletBase {
     if (componentName == null) {
       response.setContentType("text/html"); //$NON-NLS-1$
       StringBuffer buffer = new StringBuffer();
-      PentahoSystem.getMessageFormatter(userSession)
+      PentahoSystem.get(IMessageFormatter.class, userSession)
           .formatErrorMessage(
               "text/html", Messages.getString("UIServlet.ACTION_FAILED"), Messages.getErrorString("UIServlet.ERROR_0001_COMPONENT_NOT_SPECIFIED"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
@@ -98,7 +99,7 @@ public class UIServlet extends ServletBase {
       if (component == null) {
         response.setContentType("text/html"); //$NON-NLS-1$
         StringBuffer buffer = new StringBuffer();
-        PentahoSystem.getMessageFormatter(userSession)
+        PentahoSystem.get(IMessageFormatter.class, userSession)
             .formatErrorMessage(
                 "text/html", Messages.getString("UIServlet.ACTION_FAILED"), Messages.getErrorString("UIServlet.ERROR_0002_COMPONENT_INVALID"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));

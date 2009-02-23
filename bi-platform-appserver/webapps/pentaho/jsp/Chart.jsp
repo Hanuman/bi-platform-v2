@@ -1,4 +1,5 @@
-<%@ page language="java" 
+
+<%@page import="org.pentaho.platform.api.engine.IMessageFormatter"%><%@ page language="java" 
 	import="java.util.ArrayList,
 	org.pentaho.platform.util.web.SimpleUrlFactory,
     org.pentaho.platform.web.jsp.messages.Messages,
@@ -65,7 +66,7 @@
 			content = barChart.getContent( "text/html" ); //$NON-NLS-1$
 			if( content == null ) {
 				StringBuffer buffer = new StringBuffer();		
-				PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getErrorString( "CHART.DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "CHART.DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 				content = buffer.toString();
 			}
 		

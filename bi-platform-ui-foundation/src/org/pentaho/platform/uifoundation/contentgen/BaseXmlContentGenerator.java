@@ -20,6 +20,7 @@ package org.pentaho.platform.uifoundation.contentgen;
 
 import java.io.OutputStream;
 
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IUITemplater;
@@ -52,7 +53,7 @@ public abstract class BaseXmlContentGenerator extends BaseContentGenerator {
 
 		if( content == null ) {
 			StringBuffer buffer = new StringBuffer();
-			PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getErrorString( "UI.ERROR_0001_CONTENT_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "UI.ERROR_0001_CONTENT_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 			content = buffer.toString();
 		}
 

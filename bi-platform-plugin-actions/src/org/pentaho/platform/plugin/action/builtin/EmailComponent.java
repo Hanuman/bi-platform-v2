@@ -46,6 +46,7 @@ import org.pentaho.actionsequence.dom.IActionInput;
 import org.pentaho.actionsequence.dom.actions.EmailAction;
 import org.pentaho.actionsequence.dom.actions.EmailAttachment;
 import org.pentaho.commons.connection.ActivationHelper;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -100,7 +101,7 @@ public class EmailComponent extends ComponentBase {
         OutputStream feedbackStream = getFeedbackOutputStream();
         StringBuffer messageBuffer = new StringBuffer();
         PentahoSystem
-            .getMessageFormatter(getSession())
+            .get(IMessageFormatter.class, getSession())
             .formatErrorMessage(
                 "text/html", Messages.getString("Email.USER_COULD_NOT_SEND_EMAIL"), Messages.getString("Email.USER_SETTINGS_HELP"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         try {

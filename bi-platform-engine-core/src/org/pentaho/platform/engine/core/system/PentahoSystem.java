@@ -899,15 +899,15 @@ public class PentahoSystem {
     }
   }
 
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IMessageFormatter getMessageFormatter(IPentahoSession session) {
-    try {
-      return (IMessageFormatter)pentahoObjectFactory.getObject( PentahoSystem.MESSAGE_FORMATTER, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-    }
-  }
+//  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
+//  public static IMessageFormatter getMessageFormatter(IPentahoSession session) {
+//    try {
+//      return (IMessageFormatter)pentahoObjectFactory.getObject( PentahoSystem.MESSAGE_FORMATTER, session );
+//    } catch (ObjectFactoryException e) {
+//      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
+//      return null;
+//    }
+//  }
   
   /**
    * Gets the factory that will create and manage Pentaho system objects.

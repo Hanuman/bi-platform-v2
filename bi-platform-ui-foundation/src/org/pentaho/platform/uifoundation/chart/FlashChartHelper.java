@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -106,7 +107,7 @@ public class FlashChartHelper {
       }
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
-        PentahoSystem.getMessageFormatter(userSession).formatErrorMessage(
+        PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
             "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;
@@ -182,7 +183,7 @@ public class FlashChartHelper {
 
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
-        PentahoSystem.getMessageFormatter(userSession).formatErrorMessage(
+        PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
             "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;

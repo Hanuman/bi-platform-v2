@@ -17,7 +17,8 @@
 	org.pentaho.commons.connection.IPentahoResultSet,
 	org.pentaho.commons.connection.PentahoDataTransmuter,
 	org.pentaho.platform.engine.services.connection.PentahoConnectionFactory,
-  org.pentaho.platform.web.http.PentahoHttpSessionHelper"
+  org.pentaho.platform.web.http.PentahoHttpSessionHelper,
+  org.pentaho.platform.api.engine.IMessageFormatter"
 	 %><%
 /*
  * Copyright 2006 Pentaho Corporation.  All rights reserved. 
@@ -65,7 +66,7 @@
 			content = pieChart.getContent( "text/html" ); //$NON-NLS-1$
 			if( content == null ) {
 				StringBuffer buffer = new StringBuffer();
-				PentahoSystem.getMessageFormatter(userSession).formatErrorMessage( "text/html", Messages.getString("PIECHART.DISPLAY_ERROR"), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getString("PIECHART.DISPLAY_ERROR"), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 				content = buffer.toString();
 			}
 		
