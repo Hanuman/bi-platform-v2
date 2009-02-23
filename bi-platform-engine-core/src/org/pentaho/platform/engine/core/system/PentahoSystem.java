@@ -711,16 +711,6 @@ public class PentahoSystem {
     return PentahoSystem.applicationContext;
   }
 
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static ISolutionRepository getSolutionRepository(final IPentahoSession session) {
-    try {
-      return (ISolutionRepository)pentahoObjectFactory.getObject( "ISolutionRepository", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-    }
-  }
-
   @Deprecated  //use PentahoSystem.get(...) to retrieve pentaho system objects
   public static Object createObject(final String className, final ILogger logger) {
 

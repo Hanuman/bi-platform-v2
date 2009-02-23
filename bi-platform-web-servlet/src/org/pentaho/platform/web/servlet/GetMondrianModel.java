@@ -73,7 +73,7 @@ public class GetMondrianModel extends ServletBase {
     }
 
     // Open the input and output streams
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(PentahoHttpSessionHelper.getPentahoSession(request));
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, PentahoHttpSessionHelper.getPentahoSession(request));
     if (repository != null) {
       String mimeType = "text/xml"; //$NON-NLS-1$
       response.setContentType(mimeType);

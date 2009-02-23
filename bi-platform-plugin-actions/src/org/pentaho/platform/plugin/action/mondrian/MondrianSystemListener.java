@@ -52,7 +52,7 @@ public class MondrianSystemListener implements IPentahoSystemListener {
     String mondrianPropsFilename = "system" + File.separator + "mondrian" + File.separator + "mondrian.properties"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     InputStream is = null;
     try {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       if (repository.resourceExists(mondrianPropsFilename)) {
         is = repository.getResourceInputStream(mondrianPropsFilename, false);
         MondrianProperties.instance().load(is);

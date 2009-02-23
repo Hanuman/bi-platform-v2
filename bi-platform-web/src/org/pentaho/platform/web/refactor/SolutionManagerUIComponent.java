@@ -61,14 +61,14 @@ public class SolutionManagerUIComponent extends XmlComponent {
   }
 
   public Document doGetSolutionStructure() {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     Document doc = repository.getSolutionStructure(ISolutionRepository.ACTION_ADMIN);
     return doc;
   }
 
   public Document doFileUpload() {
     String baseUrl = PentahoSystem.getApplicationContext().getSolutionPath(SolutionManagerUIComponent.EMPTY_STR);
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     String path = this.getParameter(SolutionManagerUIComponent.PATH_STR, null);
     IParameterProvider request = (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST);

@@ -147,7 +147,7 @@ public class ReportUtils {
       // if that fails, we dont have to waste our time on copying the stuff ..
       final URL url = tempFile.toURL();
 
-      final ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(session);
+      final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
       final InputStream in = solutionRepository.getResourceInputStream(resource, true);
       final OutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile));
       IOUtils.getInstance().copyStreams(in, out);

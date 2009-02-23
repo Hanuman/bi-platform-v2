@@ -161,7 +161,7 @@ public class SubscriptionHelper {
       }
     }
 
-    ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
     ActionInfo contentInfo = ActionInfo.parseActionString(actionReference);
     IActionSequence actionSequence = solutionRepository.getActionSequence(contentInfo.getSolutionName(), contentInfo
         .getPath(), contentInfo.getActionName(), PentahoSystem.loggingLevel, ISolutionRepository.ACTION_SUBSCRIBE);

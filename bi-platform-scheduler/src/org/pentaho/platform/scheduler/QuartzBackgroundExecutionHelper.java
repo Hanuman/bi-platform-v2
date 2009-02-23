@@ -262,7 +262,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       Object inputValue = parameterProvider.getParameter(inputName);
       data.put(inputName, inputValue);
     }
-    ISolutionRepository repo = PentahoSystem.getSolutionRepository(userSession);
+    ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, userSession);
     ActionInfo actionInfo = ActionInfo.parseActionString( actionSeqPath );
     IActionSequence action = repo.getActionSequence( actionInfo.getSolutionName(),
         actionInfo.getPath(), actionInfo.getActionName(),

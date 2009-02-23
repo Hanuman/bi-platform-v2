@@ -33,6 +33,7 @@ import org.dom4j.Node;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -113,7 +114,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // configure solution repository VFS service 
     SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem
-        .getSolutionRepository(PentahoHttpSessionHelper.getPentahoSession(request)));
+        .get(ISolutionRepository.class, PentahoHttpSessionHelper.getPentahoSession(request)));
     super.doPost(request, response);
   }
 

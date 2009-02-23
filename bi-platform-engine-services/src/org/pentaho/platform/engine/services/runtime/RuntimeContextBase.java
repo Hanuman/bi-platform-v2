@@ -674,7 +674,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
     // Note - If the override wants to remove an existing "known" plugin, 
     // simply adding an empty value will cause the "known" plugin to be removed.
     //
-    ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(new StandaloneSession("system"));
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, new StandaloneSession("system"));
     if (solutionRepository == null) {
       // this is ok
       return knownComponents;
@@ -1456,7 +1456,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
     if (isEmbeddedResource(actionResource)) {
       return (new ByteArrayInputStream(getEmbeddedResource(actionResource).getBytes()));
     }
-    return PentahoSystem.getSolutionRepository(session).getResourceInputStream(actionResource, true);
+    return PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream(actionResource, true);
   }
 
   public Reader getResourceReader(final IActionSequenceResource actionResource) throws IOException {
@@ -1467,14 +1467,14 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
       }
       return (new InputStreamReader(new ByteArrayInputStream(getEmbeddedResource(actionResource).getBytes())));
     }
-    return PentahoSystem.getSolutionRepository(session).getResourceReader(actionResource);
+    return PentahoSystem.get(ISolutionRepository.class, session).getResourceReader(actionResource);
   }
 
   public String getResourceAsString(final IActionSequenceResource actionResource) throws IOException {
     if (isEmbeddedResource(actionResource)) {
       return (getEmbeddedResource(actionResource));
     }
-    return PentahoSystem.getSolutionRepository(session).getResourceAsString(actionResource);
+    return PentahoSystem.get(ISolutionRepository.class, session).getResourceAsString(actionResource);
   }
 
   public Document getResourceAsDocument(final IActionSequenceResource actionResource) throws IOException {
@@ -1486,13 +1486,13 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
         return null;
       }
     }
-    return PentahoSystem.getSolutionRepository(session).getResourceAsDocument(actionResource);
+    return PentahoSystem.get(ISolutionRepository.class, session).getResourceAsDocument(actionResource);
   }
 
   public IPentahoStreamSource getResourceDataSource(final IActionSequenceResource actionResource)
       throws FileNotFoundException {
     //TODO Provide a datasource wrapper for string and xml
-    return PentahoSystem.getSolutionRepository(session).getResourceDataSource(actionResource);
+    return PentahoSystem.get(ISolutionRepository.class, session).getResourceDataSource(actionResource);
   }
 
   private boolean isEmbeddedResource(final IActionSequenceResource actionResource) {

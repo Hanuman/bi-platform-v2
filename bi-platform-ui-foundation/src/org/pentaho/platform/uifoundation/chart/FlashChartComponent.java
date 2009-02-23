@@ -36,6 +36,7 @@ import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
@@ -101,7 +102,7 @@ public class FlashChartComponent extends AbstractChartComponent {
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         chartDefinition);
     try {
-      Document dataActionDocument = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(resource);
+      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
       if (dataActionDocument == null) {
         return false;
       }
@@ -119,7 +120,7 @@ public class FlashChartComponent extends AbstractChartComponent {
               "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
               templatePath);
           try {
-            Document templateDocument = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(
+            Document templateDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(
                 templateResource);
             chartTemplate = templateDocument.getRootElement();
           } catch (Exception e) {

@@ -275,7 +275,7 @@ public class UserFilesComponent extends XmlComponent {
         while (it.hasNext()) {
           Element node = (Element) it.next();
           String actionRef = node.selectSingleNode("actionRef").getText(); //$NON-NLS-1$
-          ISolutionRepository repo = PentahoSystem.getSolutionRepository(getSession());
+          ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
           ActionInfo actionInfo = ActionInfo.parseActionString(actionRef);
           IActionSequence action = repo.getActionSequence(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName(), repo
               .getLoggingLevel(), ISolutionRepository.ACTION_EXECUTE);

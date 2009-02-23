@@ -32,7 +32,7 @@
 
 	String content = ""; //$NON-NLS-1$
 	
-	ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(userSession);
+	ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 	
 	if( solutionRepository instanceof DbBasedSolutionRepository ) { 
 		content = ((DbBasedSolutionRepository)solutionRepository).resetSolutionFromFileSystem(userSession);

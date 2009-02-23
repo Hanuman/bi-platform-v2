@@ -46,6 +46,7 @@ import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -171,7 +172,7 @@ public class WidgetGridComponent extends XmlComponent {
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         widgetGridDataDefinition);
     try {
-      Document dataActionDocument = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(resource);
+      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
       if (dataActionDocument == null) {
         return false;
       }
@@ -240,7 +241,7 @@ public class WidgetGridComponent extends XmlComponent {
         definitionPath);
     Document dialDefinition = null;
     try {
-      dialDefinition = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(resource);
+      dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
     } catch (IOException e) {
     }
 

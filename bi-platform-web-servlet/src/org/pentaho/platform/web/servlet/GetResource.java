@@ -90,7 +90,7 @@ public class GetResource extends ServletBase {
       return;
     }
     
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     InputStream in = repository.getResourceInputStream(resourcePath, true);
     if (in == null) {
       error(Messages.getErrorString("GetResource.ERROR_0003_RESOURCE_MISSING", resourcePath)); //$NON-NLS-1$

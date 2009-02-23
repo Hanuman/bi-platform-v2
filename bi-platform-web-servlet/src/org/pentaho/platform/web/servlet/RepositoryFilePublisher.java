@@ -113,7 +113,7 @@ public class RepositoryFilePublisher extends ServletBase {
   protected int doPublish(final List<FileItem> fileItems, final String publishPath, final String publishKey,
       final String jndiName, final String jdbcDriver, final String jdbcUrl, final String jdbcUserId,
       final String jdbcPassword, final boolean overwrite, final IPentahoSession pentahoSession) {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(pentahoSession);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, pentahoSession);
     int status = ISolutionRepository.FILE_ADD_SUCCESSFUL;
 
     String cleanPublishPath = publishPath;

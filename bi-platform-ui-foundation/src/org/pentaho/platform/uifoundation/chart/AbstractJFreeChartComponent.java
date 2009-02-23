@@ -33,6 +33,7 @@ import org.jfree.data.general.Dataset;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -167,7 +168,7 @@ public abstract class AbstractJFreeChartComponent extends AbstractChartComponent
   public static Document getResourceAsDocument(final IPentahoSession userSession,
       final IActionSequenceResource actionResource) throws IOException  {
     // TODO support locales here
-    byte[] xmlBytes = PentahoSystem.getSolutionRepository(userSession).getResourceAsBytes(actionResource, false);
+    byte[] xmlBytes = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsBytes(actionResource, false);
     Document document = null;
     if (xmlBytes == null) {
       return null;

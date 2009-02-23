@@ -1410,7 +1410,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       currentContent.add(((SubscribeContent) contentList.get(i)).getActionReference());
     }
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
     String actionSequences[] = repository.getAllActionSequences();
     Arrays.sort(actionSequences, new SolutionCompare()); // Put these babies in order
     ele = DocumentHelper.createElement("listContent"); //$NON-NLS-1$
@@ -1688,7 +1688,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
    * @param string
    */
   private int saveFileItem(FileItem fi, String password) {
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getSession() );
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession() );
     int status = ISolutionRepository.FILE_ADD_SUCCESSFUL;
     
     if ( checkPublisherKey(PublisherUtil.getPasswordKey(password)) ) {

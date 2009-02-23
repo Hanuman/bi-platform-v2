@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -48,7 +49,7 @@ public class PMDSystemListener implements IPentahoSystemListener {
 
         InputStream xmiInputStream = null;
         try {
-          xmiInputStream = PentahoSystem.getSolutionRepository(session).getResourceInputStream(
+          xmiInputStream = PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream(
               "system/metadata/PentahoCWM.xml", false); //$NON-NLS-1$        
           CWM.getRepositoryInstance(props, xmiInputStream);
         } catch (Throwable t) {

@@ -465,7 +465,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     String res = null;
     InputStream in = null;
     try {
-      in = PentahoSystem.getSolutionRepository(pentahoSession).getResourceInputStream(relPath, true);
+      in = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getResourceInputStream(relPath, true);
       in.mark(Integer.MAX_VALUE);
       try {
         // Read the encoding from the XML file - see BISERVER-895
@@ -544,7 +544,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
   protected boolean hasAccess(final MondrianCatalog cat, final CatalogPermission perm,
       final IPentahoSession pentahoSession) {
 
-    if (!PentahoSystem.getSolutionRepository(pentahoSession).supportsAccessControls()) {
+    if (!PentahoSystem.get(ISolutionRepository.class, pentahoSession).supportsAccessControls()) {
       return true;
     }
 
@@ -559,13 +559,13 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 
     String relPath = getSolutionRepositoryRelativePath(cat.getDefinition(), pentahoSession);
 
-    ISolutionFile solutionFile = PentahoSystem.getSolutionRepository(pentahoSession).getFileByPath(relPath);
+    ISolutionFile solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getFileByPath(relPath);
 
     if (null == solutionFile) {
 
       // try to get parent folder
       relPath = relPath.substring(0, relPath.lastIndexOf("/")); //$NON-NLS-1$
-      solutionFile = PentahoSystem.getSolutionRepository(pentahoSession).getFileByPath(relPath);
+      solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getFileByPath(relPath);
       if (null == solutionFile) {
         // file not found
         throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0010_PATH_NOT_FOUND", cat.getDefinition())); //$NON-NLS-1$
@@ -578,12 +578,12 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
       throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0011_REPOSITORY_ERROR", cat.getDefinition())); //$NON-NLS-1$
     }
 
-    return PentahoSystem.getSolutionRepository(pentahoSession).hasAccess(new SimpleSession(pentahoSession),
+    return PentahoSystem.get(ISolutionRepository.class, pentahoSession).hasAccess(new SimpleSession(pentahoSession),
         solutionFile, mappedPerm.getMask());
   }
 
   protected String getSolutionRepositoryRelativePath(final String path, final IPentahoSession pentahoSession) {
-    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.getSolutionRepository(pentahoSession));
+    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, pentahoSession));
 
     try {
       FileSystemManager fsManager = VFS.getManager();

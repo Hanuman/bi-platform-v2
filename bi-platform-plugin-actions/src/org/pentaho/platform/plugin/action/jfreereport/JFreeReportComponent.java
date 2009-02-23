@@ -59,6 +59,7 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentLocation;
 import org.pentaho.platform.api.repository.IContentRepository;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.jfreereport.components.JFreeReportValidateParametersComponent;
 import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoDataFactory;
@@ -528,7 +529,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
 
       // Add the solution repository so that the PentahoResourceData class has access to the solution repository
       helperObjects.put(new FactoryParameterKey(PentahoResourceData.PENTAHO_SOLUTION_REPOSITORY_KEY), PentahoSystem
-          .getSolutionRepository(getRuntimeContext().getSession()));
+          .get(ISolutionRepository.class, getRuntimeContext().getSession()));
 
       Iterator it = getInputNames().iterator();
       while (it.hasNext()) {

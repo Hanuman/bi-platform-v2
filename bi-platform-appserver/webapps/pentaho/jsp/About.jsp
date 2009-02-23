@@ -1,6 +1,7 @@
 <%@ page language="java"
 	import="org.pentaho.platform.engine.core.system.PentahoSystem,
 			org.pentaho.platform.api.engine.IPentahoSession,
+			org.pentaho.platform.api.repository.ISolutionRepository,
 	        org.pentaho.platform.web.jsp.messages.Messages,
 			org.pentaho.platform.api.engine.IUITemplater,
 			org.pentaho.platform.web.http.WebTemplateHelper,
@@ -54,7 +55,7 @@
   		    templateName = "system/custom/template-dialog.html"; //$NON-NLS-1$
   		  }
 	   		ActionResource resource = new ActionResource( "", IActionResource.SOLUTION_FILE_RESOURCE, "text/xml", templateName ); //$NON-NLS-1$ //$NON-NLS-2$
-    			template = PentahoSystem.getSolutionRepository(userSession).getResourceAsString( resource );
+    			template = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsString( resource );
     		} catch (Throwable t) {
     		  // TODO we need to do something here, like log at the very least!
     		  // catching Throwable is likely not optimal either.

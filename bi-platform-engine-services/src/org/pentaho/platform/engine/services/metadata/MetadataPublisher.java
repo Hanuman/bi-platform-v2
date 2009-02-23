@@ -98,7 +98,7 @@ public class MetadataPublisher extends BasePublisher {
   }
 
   public static int loadAllMetadata(final IPentahoSession session, final boolean forceLoad) {
-    ISolutionRepository repo = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, session);
     Document doc = repo.getSolutions(ISolutionRepository.ACTION_EXECUTE);
     List nodes = doc.selectNodes("/repository/file[@type='FILE.FOLDER']"); //$NON-NLS-1$
     String solution;
@@ -120,7 +120,7 @@ public class MetadataPublisher extends BasePublisher {
     InputStream xmiInputStream;
     resourceName = solution + "/" + XMI_FILENAME; //$NON-NLS-1$
     xmiInputStream = null;
-    ISolutionRepository repo = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, session);
     if (repo.resourceExists(resourceName)) {
       try {
         // try to delete the old one...

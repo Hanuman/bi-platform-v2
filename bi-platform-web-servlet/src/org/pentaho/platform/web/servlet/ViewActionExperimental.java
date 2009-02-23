@@ -179,7 +179,7 @@ public class ViewActionExperimental extends ServletBase {
       IPentahoSession userSession = getPentahoSession(request);
       if (!doBackgroundExecution(request, response, userSession)) {
         OutputStream outputStream = getOutputStream(response, doMessages(request));
-//        ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+//        ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 //        String solutionName = request.getParameter("solution"); //$NON-NLS-1$
  //       String actionPath = request.getParameter("path"); //$NON-NLS-1$
 //        String actionName = request.getParameter("action"); //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class ViewActionExperimental extends ServletBase {
   // TODO: Test Code Only!!! DM - returns an actionsequence as a string
   private String getActionSequence(IPentahoSession session) {
     try {
-      return (PentahoSystem.getSolutionRepository(session).getResourceAsString("test/metadata/EmbeddedReport.xaction")); //$NON-NLS-1$
+      return (PentahoSystem.get(ISolutionRepository.class, session).getResourceAsString("test/metadata/EmbeddedReport.xaction")); //$NON-NLS-1$
     } catch (Throwable t) {
     }
     return (""); //$NON-NLS-1$

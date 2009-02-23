@@ -46,6 +46,7 @@ import org.pentaho.platform.api.engine.ISolutionActionDefinition;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.InvalidParameterException;
 import org.pentaho.platform.api.repository.IRuntimeElement;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionParameter;
@@ -253,7 +254,7 @@ public class RuntimeContext_new extends RuntimeContextBase implements IRuntimeCo
 	    List defList = sequence.getActionDefinitionsAndSequences();
 
 	    Object listItem;
-	    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.getSolutionRepository( getSession() ));
+	    SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, getSession() ));
 	    for (Iterator actIt = defList.iterator(); actIt.hasNext();) {
 	      listItem = actIt.next();
 

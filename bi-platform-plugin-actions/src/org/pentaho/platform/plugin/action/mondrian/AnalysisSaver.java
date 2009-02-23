@@ -71,7 +71,7 @@ public class AnalysisSaver extends PentahoMessenger {
     try {
       AnalysisSaver.logger = LogFactory.getLog(AnalysisSaver.class);
       String baseUrl = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
-      ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
 
       // We will (at this point in time) always have an original action sequence to start from...
       String originalActionReference = (String) props.get("actionreference"); //$NON-NLS-1$

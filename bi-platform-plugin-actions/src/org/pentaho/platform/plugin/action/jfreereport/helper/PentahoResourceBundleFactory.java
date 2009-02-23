@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -42,7 +43,7 @@ public class PentahoResourceBundleFactory implements ResourceBundleFactory {
   public PentahoResourceBundleFactory(final String inPath, final String inBaseName, final IPentahoSession inSession) {
     path = inPath;
     baseName = inBaseName;
-    loader = PentahoSystem.getSolutionRepository(inSession).getClassLoader(path);
+    loader = PentahoSystem.get(ISolutionRepository.class, inSession).getClassLoader(path);
   }
 
   public Locale getLocale() {

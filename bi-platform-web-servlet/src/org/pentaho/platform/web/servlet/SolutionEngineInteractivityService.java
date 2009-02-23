@@ -215,7 +215,7 @@ public class SolutionEngineInteractivityService extends ServletBase {
     try {
       IPentahoSession userSession = getPentahoSession(request);
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
       String solutionName = request.getParameter("solution"); //$NON-NLS-1$
       String actionPath = request.getParameter("path"); //$NON-NLS-1$
       String actionName = request.getParameter("action"); //$NON-NLS-1$

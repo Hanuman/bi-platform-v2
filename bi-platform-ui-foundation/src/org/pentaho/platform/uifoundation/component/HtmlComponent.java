@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.platform.uifoundation.messages.Messages;
@@ -87,7 +88,7 @@ public class HtmlComponent extends BaseUIComponent {
     IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/html", solutionPath); //$NON-NLS-1$ //$NON-NLS-2$
     try {
-      return PentahoSystem.getSolutionRepository(getSession()).getResourceAsString(resource);
+      return PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsString(resource);
     } catch (Exception e) {
       if (errorMessage != null) {
         return errorMessage;

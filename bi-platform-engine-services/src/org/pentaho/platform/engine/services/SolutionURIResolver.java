@@ -48,7 +48,7 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
   public SolutionURIResolver(final IPentahoSession session) {
     super();
     this.session = session;
-    repository = PentahoSystem.getSolutionRepository(session);
+    repository = PentahoSystem.get(ISolutionRepository.class, session);
   }
 
   public SolutionURIResolver(final ISolutionRepository repository) {

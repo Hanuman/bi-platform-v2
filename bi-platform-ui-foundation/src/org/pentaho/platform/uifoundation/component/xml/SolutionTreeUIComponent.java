@@ -59,7 +59,7 @@ public class SolutionTreeUIComponent extends XmlComponent implements ISolutionFi
   public Document getXmlContent() {
     if (SecurityHelper.isPentahoAdministrator(session)) {
       try {
-        ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+        ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
         return repository.getSolutionTree(ISolutionRepository.ACTION_ADMIN, this);
       } catch (Exception e) {
         Document document = DocumentHelper.createDocument();

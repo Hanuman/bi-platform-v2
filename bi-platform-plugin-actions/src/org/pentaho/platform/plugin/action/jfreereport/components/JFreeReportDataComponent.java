@@ -137,7 +137,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
     PentahoTableDataFactory factory = null;
     if (isDefinedResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT)) {
       final IActionSequenceResource resource = getResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT);
-      final ISolutionRepository solutionRepository = PentahoSystem.getSolutionRepository(getSession());
+      final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, getSession());
       final InputStream in;
       try {
         in = solutionRepository.getResourceInputStream(resource, true);

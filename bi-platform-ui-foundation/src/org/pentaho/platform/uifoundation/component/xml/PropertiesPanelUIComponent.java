@@ -156,7 +156,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     this.session = session;
     setXsl("text/html", "PropertiesPanel.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
     setXslProperty("baseUrl", urlFactory.getDisplayUrlBuilder().getUrl()); //$NON-NLS-1$ 
-    repository = PentahoSystem.getSolutionRepository(session);
+    repository = PentahoSystem.get(ISolutionRepository.class, session);
     if (!repository.supportsAccessControls()) {
       error(Messages.getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
     }

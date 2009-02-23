@@ -83,7 +83,7 @@ public class LoadDBRepositoryUIComponent extends XmlComponent {
     Element result = root.addElement(LoadDBRepositoryUIComponent.RESULT);
     boolean usingDbRepository = true;
     try {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       if (!(repository instanceof DbBasedSolutionRepository)) {
         usingDbRepository = false;
         repository = new DbBasedSolutionRepository();

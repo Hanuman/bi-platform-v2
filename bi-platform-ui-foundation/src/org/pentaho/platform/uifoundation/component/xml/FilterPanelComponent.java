@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.ui.UIException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -109,7 +110,7 @@ public class FilterPanelComponent extends XmlComponent {
           definitionPath);
       Document filterDocument = null;
       try {
-        filterDocument = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(resource);
+        filterDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
       } catch (IOException e) {
         // TODO sbarkdull localize
         FilterPanelComponent.logger.error(Messages.getString("FilterPanelComponent.ERROR_0002_CREATE_XML"), e); //$NON-NLS-1$

@@ -105,7 +105,7 @@ public class GetImage extends ServletBase {
       //        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       //        return;
       //      }
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(userSession);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
       //    Open the file and output streams
       InputStream in = repository.getResourceInputStream(location, true);

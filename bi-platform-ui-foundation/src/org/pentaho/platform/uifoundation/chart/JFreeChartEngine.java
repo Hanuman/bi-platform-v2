@@ -1704,7 +1704,7 @@ public class JFreeChartEngine {
    */
   public static Image getImage(final String imageName, final IPentahoSession session) {
     Image image = null;
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     try {
       InputStream is = repository.getResourceInputStream(imageName, true);
       image = ImageIO.read(is);

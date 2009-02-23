@@ -34,6 +34,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
@@ -192,7 +193,7 @@ public class DashboardWidgetComponent extends XmlComponent {
           definitionPath);
       Document dialDefinition = null;
       try {
-        dialDefinition = PentahoSystem.getSolutionRepository(getSession()).getResourceAsDocument(resource);
+        dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
       } catch (IOException e) {
         error(Messages.getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath), e); //$NON-NLS-1$
       }

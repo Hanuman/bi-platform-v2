@@ -113,7 +113,7 @@ public class InputFormComponent extends XmlComponent {
   @Override
   public Document getXmlContent() {
 
-    ISolutionRepository repository = PentahoSystem.getSolutionRepository(getSession());
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
 
     IActionSequence actionSequence = repository.getActionSequence(solution, path, actionName, getLoggingLevel(),
         ISolutionRepository.ACTION_EXECUTE);

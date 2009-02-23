@@ -304,7 +304,7 @@ public class AnalysisViewService extends ServletBase {
       
       String xaction = generateXAction(session, title, description, model, jndi, jdbc, cube);
       
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       String baseUrl = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
       int xactionSaveStatus = repository.publish(baseUrl, path, xactionFilename,
           xaction.getBytes(), overwrite);
@@ -370,7 +370,7 @@ public class AnalysisViewService extends ServletBase {
     InputStream is = null;
     
     try {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(session);
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       if (repository.resourceExists(analysisViewTemplate)) {
         is = repository.getResourceInputStream(analysisViewTemplate, false);
         SAXReader reader = new SAXReader();

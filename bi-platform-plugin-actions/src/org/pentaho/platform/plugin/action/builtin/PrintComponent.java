@@ -143,7 +143,7 @@ public class PrintComponent extends ComponentBase {
 
     // Check for a valid printFileName or printFile Resource
     if (printFileName != null) {
-      ISolutionRepository repository = PentahoSystem.getSolutionRepository(getSession());
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
       try {
         inStream = repository.getResourceInputStream(printFileName, true);
       } catch (FileNotFoundException e) {
