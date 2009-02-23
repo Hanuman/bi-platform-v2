@@ -158,7 +158,7 @@ public class SecurityHelper {
    * @return true if the user is considered a Pentaho administrator
    */
   public static boolean isPentahoAdministrator(final IPentahoSession session) {
-    IAclVoter voter = PentahoSystem.getAclVoter(session);
+    IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
     return voter.isPentahoAdministrator(session);
   }
 
@@ -170,7 +170,7 @@ public class SecurityHelper {
    * @return true if the user is granted the specified role.
    */
   public static boolean isGranted(final IPentahoSession session, final GrantedAuthority role) {
-    IAclVoter voter = PentahoSystem.getAclVoter(session);
+    IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
     return voter.isGranted(session, role);
   }
 
@@ -188,7 +188,7 @@ public class SecurityHelper {
   }
 
   public static boolean hasAccess(final IAclHolder aHolder, final int actionOperation, final IPentahoSession session) {
-    IAclVoter voter = PentahoSystem.getAclVoter(session);
+    IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
     int aclMask = -1;
 
     switch (actionOperation) {
@@ -241,7 +241,7 @@ public class SecurityHelper {
         return true;
       }
     }
-    IAclVoter voter = PentahoSystem.getAclVoter(session);
+    IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
     int aclMask = -1;
     switch (actionOperation) {
       case ISolutionRepository.ACTION_EXECUTE: {

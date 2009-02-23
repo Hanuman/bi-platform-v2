@@ -41,7 +41,7 @@ public class NavigationContentGenerator extends BaseXmlContentGenerator {
 			solution = null;
 		}
 
-		INavigationComponent navigate = PentahoSystem.getNavigationComponent(userSession);
+		INavigationComponent navigate = PentahoSystem.get(INavigationComponent.class, userSession);
 		navigate.setHrefUrl(baseUrl);
 		navigate.setOnClick("");
 		navigate.setSolutionParamName("solution");

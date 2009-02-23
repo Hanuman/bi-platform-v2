@@ -177,7 +177,7 @@ public abstract class AbstractChartComponent extends XmlComponent {
     // create an instance of the solution engine to execute the specified
     // action
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(getSession());
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, getSession());
     solutionEngine.setLoggingLevel(ILogger.DEBUG);
     solutionEngine.init(getSession());
 

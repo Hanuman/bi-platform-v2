@@ -204,7 +204,7 @@ public class SequenceDefinition implements ISequenceDefinition {
         return null;
       }
       String script = condition.getText();
-      IConditionalExecution ce = PentahoSystem.getConditionalExecutionHandler(null);
+      IConditionalExecution ce = PentahoSystem.get(IConditionalExecution.class, null);
       ce.setScript(script);
       return ce;
     } catch (Exception ex) {

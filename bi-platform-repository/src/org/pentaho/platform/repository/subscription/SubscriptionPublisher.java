@@ -63,7 +63,7 @@ public class SubscriptionPublisher extends BasePublisher {
     Element root = DocumentHelper.createElement("importContentResults"); //$NON-NLS-1$
     document.add(root);
     try {
-      ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+      ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
       File file = new File(publishSrcPath);
       if ( !file.canRead() ) {
         throw new FileNotFoundException( "SubscriptionPublisher.publish() requires the file \""

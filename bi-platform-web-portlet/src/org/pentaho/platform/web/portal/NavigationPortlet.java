@@ -94,7 +94,7 @@ public class NavigationPortlet extends ViewPortlet {
     String onClick = ""; //$NON-NLS-1$
     ArrayList messages = new ArrayList();
 
-    INavigationComponent navigate = PentahoSystem.getNavigationComponent(userSession);
+    INavigationComponent navigate = PentahoSystem.get(INavigationComponent.class, userSession);
     navigate.setHrefUrl(hrefUrl);
     navigate.setOnClick(onClick);
     navigate.setSolutionParamName(SOLUTION);

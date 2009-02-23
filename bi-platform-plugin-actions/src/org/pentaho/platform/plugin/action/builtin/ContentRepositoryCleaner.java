@@ -67,7 +67,7 @@ public class ContentRepositoryCleaner extends ComponentBase {
     Date agedDate = new Date(calendar.getTimeInMillis());
     // get the content repository and tell it to remove the items older than
     // agedDate
-    IContentRepository contentRepository = PentahoSystem.getContentRepository(getSession());
+    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getSession());
     int deleteCount = contentRepository.deleteContentOlderThanDate(agedDate);
     // return the number of files deleted
     setOutputValue(ContentRepositoryCleaner.DELETE_COUNT, Integer.toString(deleteCount));

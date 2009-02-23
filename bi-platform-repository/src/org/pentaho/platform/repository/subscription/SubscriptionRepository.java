@@ -65,7 +65,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
 
   private static final Log logger = LogFactory.getLog(SubscriptionRepository.class);
 
-  private static final ISubscriptionScheduler subscriptionScheduler = PentahoSystem.getSubscriptionScheduler(null);
+  private static final ISubscriptionScheduler subscriptionScheduler = PentahoSystem.get(ISubscriptionScheduler.class, null);
 
   public Log getLogger() {
     return SubscriptionRepository.logger;
@@ -985,7 +985,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
   }
 
   public IContentItem getContentItem(final String subscriptionName, final IPentahoSession session) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -1014,7 +1014,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       final boolean allowCreate) {
 
     // get an output stream to hand to the caller
-    IContentRepository contentRepository = PentahoSystem.getContentRepository(session);
+    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, session);
     if (contentRepository == null) {
       // error(
       // Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")

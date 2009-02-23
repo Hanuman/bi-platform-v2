@@ -89,7 +89,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     if (permissionRecipient instanceof SimpleSession) {
       SimpleSession simpleSession = (SimpleSession) permissionRecipient;
       session = simpleSession.getSession();
-      IAclVoter voter = PentahoSystem.getAclVoter(session);
+      IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
       int aclMask = permissionMask.getMask();
       if (aclMask == IPentahoAclEntry.PERM_ADMINISTRATION) {
         isPermitted = voter.isPentahoAdministrator(session);

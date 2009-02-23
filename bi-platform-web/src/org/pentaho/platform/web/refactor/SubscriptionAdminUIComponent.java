@@ -226,9 +226,9 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
    */
   public SubscriptionAdminUIComponent(final IPentahoUrlFactory urlFactory, final List messages) throws SubscriptionAdminException {
     super(urlFactory, messages, null);
-    scheduler = PentahoSystem.getSubscriptionScheduler(this.getSession());
+    scheduler = PentahoSystem.get(ISubscriptionScheduler.class, this.getSession());
 
-    subscriptionRepository = PentahoSystem.getSubscriptionRepository(getSession());
+    subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
     if (subscriptionRepository == null) {
       error(Messages.getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED")); //$NON-NLS-1$
       throw (new SubscriptionAdminException(Messages.getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED"))); //$NON-NLS-1$
@@ -458,7 +458,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
    */
   private void doListSchedules(Element root) throws Exception {
     root = root.addElement(SubscriptionAdminUIComponent.ACTION_SCHEDULE_SHOW_LIST);
-    ISubscriptionScheduler subScheduler = PentahoSystem.getSubscriptionScheduler(this.getSession());
+    ISubscriptionScheduler subScheduler = PentahoSystem.get(ISubscriptionScheduler.class, this.getSession());
 
     List schedList = subscriptionRepository.getSchedules();
     Map jobMap = subScheduler.getScheduledJobMap();
@@ -669,7 +669,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
    */
   private void doGetSchedulerStatus(Element root) {
     root = root.addElement(SubscriptionAdminUIComponent.NODE_SCHEDULER_STATUS);
-    ISubscriptionScheduler subScheduler = PentahoSystem.getSubscriptionScheduler(this.getSession());
+    ISubscriptionScheduler subScheduler = PentahoSystem.get(ISubscriptionScheduler.class, this.getSession());
     int schedulerState = IScheduledJob.STATE_ERROR;
     try {
       schedulerState = subScheduler.getSchedulerState();
@@ -767,7 +767,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     Element root = document.getRootElement();
     root.add(getReturnURL());
 
-    ISubscriptionScheduler subScheduler = PentahoSystem.getSubscriptionScheduler(this.getSession());
+    ISubscriptionScheduler subScheduler = PentahoSystem.get(ISubscriptionScheduler.class, this.getSession());
     IScheduledJob schedJob;
     try {
       schedJob = subScheduler.getScheduledJob(sched.getScheduleReference());

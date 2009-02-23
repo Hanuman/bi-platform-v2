@@ -270,7 +270,7 @@ public class UserFilesComponent extends XmlComponent {
 
       List subscriptionList = doc.selectNodes("listSubscriptions/subscriptions/subscription"); //$NON-NLS-1$
       if (subscriptionList != null) {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getSession());
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
         Iterator it = subscriptionList.iterator();
         while (it.hasNext()) {
           Element node = (Element) it.next();

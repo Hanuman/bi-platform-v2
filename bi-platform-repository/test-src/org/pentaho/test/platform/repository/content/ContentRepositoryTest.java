@@ -124,7 +124,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
   private IContentLocation createContentLocation(IPentahoSession sess, String path, String folderName,
       String folderDesc, String solnId) {
     // IContentRepository repo = ContentRepository.getInstance(sess);
-    IContentRepository repo = PentahoSystem.getContentRepository(sess);
+    IContentRepository repo = PentahoSystem.get(IContentRepository.class, sess);
     // Check to see if it's there first...
     IContentLocation contLoc = repo.getContentLocationByPath(path);
     if (contLoc != null) {
@@ -151,7 +151,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
       String itemExtension, String mimeType, StringBuffer theContent, String actionName) {
     // IContentRepository repo = ContentRepository.getInstance(sess);
 
-    IContentRepository repo = PentahoSystem.getContentRepository(sess);
+    IContentRepository repo = PentahoSystem.get(IContentRepository.class, sess);
 
     try {
       IContentLocation contLoc = repo.getContentLocationByPath(contPath);

@@ -68,7 +68,7 @@ public class ActionFilterDefinition extends FilterDefinition {
     String actionName = XmlDom4JHelper.getNodeText("data-action", node); //$NON-NLS-1$
     String listSource = XmlDom4JHelper.getNodeText("data-output", node); //$NON-NLS-1$
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(ILogger.DEBUG);
     solutionEngine.init(session);
 

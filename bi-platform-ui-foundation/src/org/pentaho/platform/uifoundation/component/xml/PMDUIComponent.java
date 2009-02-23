@@ -145,8 +145,7 @@ public class PMDUIComponent extends XmlComponent {
       return;
     }
 
-    CwmSchemaFactoryInterface cwmSchemaFactory = (CwmSchemaFactoryInterface) PentahoSystem.getObject(getSession(),
-        "ICwmSchemaFactory"); //$NON-NLS-1$
+    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
 
     SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
@@ -208,8 +207,7 @@ public class PMDUIComponent extends XmlComponent {
       t.printStackTrace();
       return doc;
     }
-    CwmSchemaFactoryInterface cwmSchemaFactory = (CwmSchemaFactoryInterface) PentahoSystem.getObject(getSession(),
-        "ICwmSchemaFactory"); //$NON-NLS-1$
+    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
     SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
     String locale = LocaleHelper.getLocale().toString();
@@ -333,8 +331,7 @@ public class PMDUIComponent extends XmlComponent {
       error(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName), t); //$NON-NLS-1$
       return doc;
     }
-    CwmSchemaFactoryInterface cwmSchemaFactory = (CwmSchemaFactoryInterface) PentahoSystem.getObject(getSession(),
-        "ICwmSchemaFactory"); //$NON-NLS-1$
+    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
     SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
     String locale = LocaleHelper.getLocale().toString();

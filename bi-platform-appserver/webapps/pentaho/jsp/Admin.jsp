@@ -87,7 +87,7 @@
 		String navigateUrl = PentahoSystem.getApplicationContext().getBaseUrl() + "/Navigate?";
 		SimpleUrlFactory urlFactory = new SimpleUrlFactory( navigateUrl );
 		ArrayList messages = new ArrayList();
-		INavigationComponent navigate = PentahoSystem.getNavigationComponent(userSession);
+		INavigationComponent navigate = PentahoSystem.get(INavigationComponent.class, userSession);
 		navigate.setHrefUrl(PentahoSystem.getApplicationContext().getBaseUrl());
 		navigate.setOnClick("");
 		navigate.setSolutionParamName("solution");

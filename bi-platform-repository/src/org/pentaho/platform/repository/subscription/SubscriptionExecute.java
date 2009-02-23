@@ -92,7 +92,7 @@ public class SubscriptionExecute extends PentahoBase {
       String sessionId = "scheduler-" + UUIDUtil.getUUIDAsString(); //$NON-NLS-1$
       StandaloneSession scheduleSession = new StandaloneSession(scheduleReference, sessionId);
 
-      ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(scheduleSession);
+      ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, scheduleSession);
       ISchedule sched = subscriptionRepository.getScheduleByScheduleReference(scheduleReference);
       if (sched == null) {
         error(Messages.getErrorString("SubscriptionExecute.ERROR_0001_UNABLE_TO_GET_SCHEDULE", scheduleReference)); //$NON-NLS-1$

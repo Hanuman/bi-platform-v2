@@ -141,7 +141,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
         this.setMimeType(inMimeType);
       }
       // We need to create one now because someone is asking for it.
-      IContentRepository contentRepository = PentahoSystem.getContentRepository(userSession);
+      IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, userSession);
       if (contentRepository == null) {
         getLogger().error(Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
         return null;

@@ -62,6 +62,7 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
+import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 
 public class SubscriptionHelper {
 
@@ -70,7 +71,7 @@ public class SubscriptionHelper {
   public static void editSubscription(final String subscriptionName, final IPentahoSession session,
       final SimpleUrlFactory urlFactory, final OutputStream outputStream) {
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -92,7 +93,7 @@ public class SubscriptionHelper {
     ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
     String defaultParameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", "DefaultParameterForm.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    SolutionEngine solutionEngine = (SolutionEngine) PentahoSystem.getSolutionEngineInstance(session);
+    SolutionEngine solutionEngine = (SolutionEngine) PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
     solutionEngine.init(session);
     solutionEngine.setParameterXsl(defaultParameterXsl);
@@ -150,7 +151,7 @@ public class SubscriptionHelper {
     String subscriptionName = (String) parameterProvider.getParameter("subscribe-name"); //$NON-NLS-1$
 
     String destination = parameterProvider.getStringParameter("destination", null); //$NON-NLS-1$
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(userSession);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, userSession);
 
     if (!editing) {
       boolean isUniqueName = subscriptionRepository.checkUniqueSubscriptionName(subscriptionName,
@@ -256,7 +257,7 @@ public class SubscriptionHelper {
    }
    */
   public static String deleteSubscription(final String subscriptionId, final IPentahoSession userSession) {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(userSession);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, userSession);
 
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionId, userSession);
     if (subscription == null) {
@@ -274,7 +275,7 @@ public class SubscriptionHelper {
   public static void runSubscription(final String subscriptionName, final IPentahoSession session,
       final IParameterProvider sessionParameters, final SimpleUrlFactory urlFactory, final IOutputHandler outputHandler) {
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -286,7 +287,7 @@ public class SubscriptionHelper {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider(contentParameters);
     parameterProvider.setParameters(subscriptionParameters);
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
     solutionEngine.init(session);
 
@@ -350,7 +351,7 @@ public class SubscriptionHelper {
   public static void getArchived(final String subscriptionName, final String fileId, final IPentahoSession session,
       final IOutputHandler outputHandler) {
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -396,7 +397,7 @@ public class SubscriptionHelper {
   public static String getSubscriptionParameters(final String subscriptionName, final IParameterSetter parameters,
       final IPentahoSession session) {
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -440,7 +441,7 @@ public class SubscriptionHelper {
   public static String deleteSubscriptionArchive(final String subscriptionName, final String fileId,
       final IPentahoSession session) {
 
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -458,7 +459,7 @@ public class SubscriptionHelper {
 
   public static String createSubscriptionArchive(final String subscriptionName, final IPentahoSession session,
       final SimpleUrlFactory urlFactory, final IParameterProvider sessionParameters) throws BackgroundExecutionException {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(session);
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
@@ -486,7 +487,7 @@ public class SubscriptionHelper {
 		String path = ActionInfo.buildSolutionPath(contentInfo.getSolutionName(), contentInfo.getPath(), actionName );
     parameterProvider.setParameter( StandardSettings.ACTIONS_REF, path );
     // MB - Old code talked directly to quartz classes.
-    IBackgroundExecution be = (IBackgroundExecution)PentahoSystem.getObject( session, "BackgroundSubscriptionExecution" );
+    IBackgroundExecution be = PentahoSystem.get(IBackgroundExecution.class, "BackgroundSubscriptionExecution", session); //$NON-NLS-1$
     return be.backgroundExecuteAction(session, parameterProvider);
   }
 

@@ -47,7 +47,7 @@ public class ServiceTestHelper {
 	}
 
 	public static ISolutionEngine getSolutionEngine( IPentahoSession session ) {
-        ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+        ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
         solutionEngine.setLoggingLevel(ILogger.ERROR);
         solutionEngine.init(session);
         return solutionEngine;

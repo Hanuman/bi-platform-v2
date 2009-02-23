@@ -107,7 +107,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
       name = scheduleNames[ii] + "-repeat"; //$NON-NLS-1$
       System.out.println( "deleting: " + name ); //$NON-NLS-1$
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( name ); //$NON-NLS-1$
         if ( null != schedule ) {
           SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, schedule );
@@ -122,7 +122,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
       name = scheduleNames[ii] + "-cron"; //$NON-NLS-1$
       System.out.println( "deleting: " + name ); //$NON-NLS-1$
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( name );
         if ( null != schedule ) {
           SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, schedule );
@@ -143,7 +143,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
     for ( int ii=0; ii<scheduleNames.length; ++ii ) {
       name = scheduleNames[ii] + "-cron";
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         System.out.println( "editing: " + name ); //$NON-NLS-1$
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( scheduleNames[ii] + "-cron" ); //$NON-NLS-1$
         ISchedule s = SubscriptionRepositoryHelper.editScheduleAndContent(subscriptionRepository, schedule.getId(),
@@ -158,7 +158,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
       endDate = incrementYear( now, 1 );
       name = scheduleNames[ii] + "-repeat";
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         System.out.println("editing: " + name ); //$NON-NLS-1$
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( scheduleNames[ii]+"-repeat" ); //$NON-NLS-1$
         ISchedule s = SubscriptionRepositoryHelper.editScheduleAndContent(subscriptionRepository, schedule.getId(),
@@ -197,7 +197,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
     for ( int jj=0; jj<2; ++jj ) {
       for ( int ii=0; ii<scheduleNames.length; ++ii ) {
         try {
-          ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+          ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
           name = scheduleNames[ii] + "-repeat";
           System.out.println( msg[jj] + name );
           ISchedule s = SubscriptionRepositoryHelper.addScheduleAndContent(subscriptionRepository,
@@ -219,7 +219,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
     for ( int jj=0; jj<2; ++jj ) {
         for ( int ii=0; ii<scheduleNames.length; ++ii ) {
           try {
-            ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+            ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
             name = scheduleNames[ii] + "-cron";
             System.out.println( msg[jj] + name );
             ISchedule s = SubscriptionRepositoryHelper.addScheduleAndContent(subscriptionRepository,
@@ -238,7 +238,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
    * and verify that the content list is clean up.
    */
   public void verifyContentList() {
-    ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+    ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
     List<ISubscribeContent> endContentList = subscriptionRepository.getAllContent();
     PentahoSystem.systemExitPoint();
     // lists are both detached, and modification of lists should not effect persistent store
@@ -270,7 +270,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
     String name = scheduleNames[ii] + "-cron"; //$NON-NLS-1$
     System.out.println( "deleting: " + name ); //$NON-NLS-1$
     try {
-      subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+      subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
       ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( name ); //$NON-NLS-1$
       if ( null != schedule ) {
         SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, schedule );
@@ -283,7 +283,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
     
     // we have now removed our last schedule, so associated content should be clean up. Let's see...
 
-    subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+    subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
     endContentList = subscriptionRepository.getAllContent();
     PentahoSystem.systemExitPoint();
     actionRefEndSet = new HashSet<String>();
@@ -318,7 +318,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
       name = scheduleNames[ii] + "-cron"; //$NON-NLS-1$
       System.out.println( "deleting: " + name ); //$NON-NLS-1$
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( name );
         if ( null != schedule ) {
           SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, schedule );
@@ -332,7 +332,7 @@ public class SubscriptionRepositoryHelperTest extends BaseTest {
       name = scheduleNames[ii]+"-repeat"; //$NON-NLS-1$
       System.out.println( "deleting: " + name ); //$NON-NLS-1$
       try {
-        ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository( session );
+        ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session );
         ISchedule schedule = subscriptionRepository.getScheduleByScheduleReference( name );
         if ( null != schedule ) {
           SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, schedule );

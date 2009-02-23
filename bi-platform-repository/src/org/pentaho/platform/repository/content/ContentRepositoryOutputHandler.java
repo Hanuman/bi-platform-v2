@@ -39,7 +39,7 @@ public class ContentRepositoryOutputHandler extends BaseOutputHandler {
 
     String contentRef = getContentRef();
     // get an output stream to hand to the caller
-    IContentRepository contentRepository = PentahoSystem.getContentRepository(getSession());
+    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getSession());
     if (contentRepository == null) {
       Logger.error(this.getClass().getName(), Messages
           .getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$

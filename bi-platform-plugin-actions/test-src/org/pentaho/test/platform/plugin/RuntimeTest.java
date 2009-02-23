@@ -44,7 +44,7 @@ public class RuntimeTest extends BaseTest {
     outputHandler.setOutputPreference(IOutputHandler.OUTPUT_TYPE_PARAMETERS);
     StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(getLoggingLevel());
     solutionEngine.init(session);
     solutionEngine.setForcePrompt(true);

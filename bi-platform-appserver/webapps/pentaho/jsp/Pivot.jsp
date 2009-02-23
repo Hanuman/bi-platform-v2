@@ -1389,7 +1389,7 @@
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		SimpleOutputHandler outputHandler = new SimpleOutputHandler( outputStream, true );
-		ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance( userSession );
+		ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, userSession );
 		solutionEngine.init( userSession );
 		IRuntimeContext context = null;
 		ArrayList messages = new ArrayList();

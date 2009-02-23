@@ -38,11 +38,9 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IApplicationContext;
-import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IConditionalExecution;
 import org.pentaho.platform.api.engine.IContentOutputHandler;
@@ -56,7 +54,6 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.api.engine.IScheduler;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ISubscriptionScheduler;
@@ -70,9 +67,6 @@ import org.pentaho.platform.api.repository.IRuntimeRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.ui.INavigationComponent;
-import org.pentaho.platform.api.ui.IXMLComponent;
-import org.pentaho.platform.api.usersettings.IUserSettingService;
-import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -175,8 +169,6 @@ public class PentahoSystem {
 
   private static final String USERSETTING_SERVICE = "IUserSettingService"; //$NON-NLS-1$
   
-  private static final String ACL_PUBLISHER = "IAclPublisher"; //$NON-NLS-1$
-
   private static final String ACL_VOTER = "IAclVoter"; //$NON-NLS-1$
 
   private static final String CACHE_MANAGER = "ICacheManager"; //$NON-NLS-1$
@@ -452,16 +444,6 @@ public class PentahoSystem {
     return ((PentahoSystem.initializedStatus & errorToCheck) == errorToCheck);
   }
   
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IUITemplater getUITemplater(final IPentahoSession session) {
-      try {
-      return (IUITemplater)pentahoObjectFactory.getObject( "IUITemplater", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-        }
-        }
-
   //TODO: is this method needed?  See if we can use the factory directly and delete this method.
   public static IContentOutputHandler getOutputDestinationFromContentRef(final String contentTag,
       final IPentahoSession session) {
@@ -484,40 +466,37 @@ public class PentahoSystem {
   }
 
   /**
-   * Please use {@link PentahoSystem#get(Class, IPentahoSession)} or {@link PentahoSystem#get(Class, String, IPentahoSession)} instead.
-   * @deprecated
-   */
-  public static Object getObject(final IPentahoSession session, final String objectName) {
-    try {
-      return pentahoObjectFactory.getObject( objectName, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-    return null;
-      }
-    }
-
-  //TODO: remove this wrapper method and investigate use of exceptions from pentaho object factory
-  /**
    * A convenience method for retrieving Pentaho system objects from the object factory.
+   * Looks up an object by using the name of the <code>interfaceClass</code> as the object key in 
+   * {@link PentahoSystem#get(Class, String, IPentahoSession)}.
    */
   public static <T> T get(Class<T> interfaceClass, final IPentahoSession session) {
-    try {
-      return pentahoObjectFactory.get( interfaceClass, session );
-    } catch (ObjectFactoryException e) {
-      Logger.warn( PentahoSystem.class.getName(), e.getMessage(), e);
-      return null;
-    }
+    return get(interfaceClass, interfaceClass.getSimpleName(), session);
   }
   
-  //TODO: remove this wrapper method and investigate use of exceptions from pentaho object factory
   /**
    * A convenience method for retrieving Pentaho system objects from the object factory.
+   * Returns an instance of a configured object of the Pentaho system.  This method will
+   * return <code>null</code> if the object could not be retrieved for any reason.  If
+   * the object is defined but for some reason can not be retrieved, an error message
+   * will be logged.
+   * 
+   * @return An instance of the requested object or <code>null</code> if either the object
+   * was not configured or it was configured but there was a problem retrieving it.
+   * 
+   * @see IPentahoObjectFactory#get(Class, String, IPentahoSession)
    */
   public static <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) {
     try {
+      if(!pentahoObjectFactory.objectDefined(key)) {
+        //this may not be a failure case. do not log an error
+        return null;
+      }
       return pentahoObjectFactory.get( interfaceClass, key, session );
     } catch (ObjectFactoryException e) {
-      Logger.warn( PentahoSystem.class.getName(), e.getMessage(), e);
+      //something went wrong, we need to log this
+      Logger.error( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.ERROR_0026_COULD_NOT_RETRIEVE_CONFIGURED_OBJECT", key), e); //$NON-NLS-1$
+      //for backwards compatibility: callers expect a null return even in an error case
       return null;
     }
   }
@@ -570,7 +549,7 @@ public class PentahoSystem {
 	
 	        String instanceId = null;
 	
-	        ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+	        ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
 	        solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
 	        solutionEngine.init(session);
 	
@@ -654,7 +633,7 @@ public class PentahoSystem {
   
           String instanceId = null;
   
-          ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+          ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
           solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
           solutionEngine.init(session);
   
@@ -733,72 +712,12 @@ public class PentahoSystem {
   }
 
   @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static ISolutionEngine getSolutionEngineInstance(final IPentahoSession session) {
-    try {
-      return (ISolutionEngine)pentahoObjectFactory.getObject( "ISolutionEngine", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-      }
-      }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IContentRepository getContentRepository(final IPentahoSession session) {
-      try {
-      return (IContentRepository)pentahoObjectFactory.getObject( "IContentRepository", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-    }
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
   public static ISolutionRepository getSolutionRepository(final IPentahoSession session) {
     try {
       return (ISolutionRepository)pentahoObjectFactory.getObject( "ISolutionRepository", session ); //$NON-NLS-1$
     } catch (ObjectFactoryException e) {
       Logger.error( PentahoSystem.class.getName(), e.getMessage() );
         return null;
-    }
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IRuntimeRepository getRuntimeRepository(final IPentahoSession session) {
-    try {
-      return (IRuntimeRepository)pentahoObjectFactory.getObject( "IRuntimeRepository", session ); //$NON-NLS-1$
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-        return null;
-      }
-      }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IAclVoter getAclVoter(final IPentahoSession session) {
-    try {
-      return (IAclVoter)pentahoObjectFactory.getObject( PentahoSystem.ACL_VOTER, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-    return null;
-  }
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static ISubscriptionRepository getSubscriptionRepository(final IPentahoSession session) {
-    try {
-      return (ISubscriptionRepository)pentahoObjectFactory.getObject( PentahoSystem.SUBSCRIPTION_REPOSITORY, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-  }
-  }
-
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static ISubscriptionScheduler getSubscriptionScheduler( final IPentahoSession session ) {
-    try {
-     return (ISubscriptionScheduler)pentahoObjectFactory.getObject( PentahoSystem.SUBSCRIPTION_SCHEDULER, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
     }
   }
 
@@ -991,16 +910,6 @@ public class PentahoSystem {
   }
 
   @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static IConditionalExecution getConditionalExecutionHandler(IPentahoSession session) {
-    try {
-      return (IConditionalExecution)pentahoObjectFactory.getObject( PentahoSystem.CONDITIONAL_EXECUTION, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-    }
-  }
-  
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
   public static IMessageFormatter getMessageFormatter(IPentahoSession session) {
     try {
       return (IMessageFormatter)pentahoObjectFactory.getObject( PentahoSystem.MESSAGE_FORMATTER, session );
@@ -1010,17 +919,6 @@ public class PentahoSystem {
     }
   }
   
-  @Deprecated  //remove this wrapper method and use PentahoSystem.get(...)
-  public static INavigationComponent getNavigationComponent(IPentahoSession session) {
-    try {
-      return (INavigationComponent)pentahoObjectFactory.getObject( PentahoSystem.NAVIGATION_COMPONENT, session );
-    } catch (ObjectFactoryException e) {
-      Logger.error( PentahoSystem.class.getName(), e.getMessage() );
-      return null;
-    }
-  }
-  
-
   /**
    * Gets the factory that will create and manage Pentaho system objects.
    * 

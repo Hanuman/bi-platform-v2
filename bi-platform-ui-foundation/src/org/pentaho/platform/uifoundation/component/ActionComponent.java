@@ -97,7 +97,7 @@ public class ActionComponent extends BaseUIComponent {
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     outputHandler.setOutputPreference(outputPreference);
 
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(getSession());
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, getSession());
     solutionEngine.setLoggingLevel(getLoggingLevel());
     solutionEngine.init(userSession);
 

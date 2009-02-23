@@ -46,7 +46,7 @@ public class SubscriptionResultSet extends MemoryResultSet {
       actionRef = solution + "/" + path + "/" + action; //$NON-NLS-1$ //$NON-NLS-2$
     }
     setMetaData(Subscription.getMetadata(parameterNames));
-    subscriptionRepository = PentahoSystem.getSubscriptionRepository(userSession);
+    subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, userSession);
 
     setRows(subscriptionRepository.getSubscriptionsForSchedule(scheduleId));
   }

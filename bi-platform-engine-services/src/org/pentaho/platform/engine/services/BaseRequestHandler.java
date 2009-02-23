@@ -142,7 +142,7 @@ public class BaseRequestHandler implements IActionRequestHandler, IActionComplet
   public IRuntimeContext handleActionRequest(final int timeout, final int timeoutType) {
 
     // Get the solution engine
-    ISolutionEngine solutionEngine = PentahoSystem.getSolutionEngineInstance(session);
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setCreateFeedbackParameterCallback(createFeedbackParameterCallback);
     if (solutionEngine == null) {
       Logger.error(this, Messages.getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE")); //$NON-NLS-1$

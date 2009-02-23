@@ -73,7 +73,7 @@ public class GetContent extends ServletBase {
         return;
       }
 
-      IContentRepository contentRepos = PentahoSystem.getContentRepository(userSession);
+      IContentRepository contentRepos = PentahoSystem.get(IContentRepository.class, userSession);
       if (contentRepos == null) {
         returnError(response, Messages.getString("GetContent.ERROR_0002_CONTENT_REPOS_UNAVAILABLE")); //$NON-NLS-1$
         return;

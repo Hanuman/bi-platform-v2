@@ -233,7 +233,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
 
   private IRuntimeElement createChild(boolean persisted) {
     try {
-      IRuntimeRepository runtimeRepository = PentahoSystem.getRuntimeRepository(session);
+      IRuntimeRepository runtimeRepository = PentahoSystem.get(IRuntimeRepository.class, session);
       // the runtime repository is optional
       if (runtimeRepository == null) {
         return null;
@@ -1387,7 +1387,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
     String location = locObj.toString();
 
     // get an output stream to hand to the caller
-    IContentRepository contentRepository = PentahoSystem.getContentRepository(session);
+    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, session);
     if (contentRepository == null) {
       error(Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
       return null;
@@ -1670,7 +1670,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
         } else {
           subscriptionsNode.addAttribute("valid-session", "true"); //$NON-NLS-1$//$NON-NLS-2$
           String contentId = getSolutionName() + "/" + getSolutionPath() + "/" + getActionName(); //$NON-NLS-1$//$NON-NLS-2$
-          ISubscriptionRepository subscriptionRepository = PentahoSystem.getSubscriptionRepository(getSession());
+          ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
           if (subscriptionRepository != null) {
             try {
               subscriptionRepository.addSubscriptionsToDocument(getSession().getName(), contentId, subscriptionsNode,

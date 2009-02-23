@@ -633,8 +633,7 @@ public class AdhocWebService extends ServletBase {
       }
     }
     MetadataPublisher.loadAllMetadata(userSession, false);
-    CwmSchemaFactoryInterface cwmSchemaFactory = (CwmSchemaFactoryInterface) PentahoSystem.getObject(userSession,
-        "ICwmSchemaFactory"); //$NON-NLS-1$
+    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", userSession); //$NON-NLS-1$
 
     MQLQuery mql = MQLQueryFactory.getMQLQuery(mqlNode.asXML(), null, LocaleHelper.getLocale().toString(), cwmSchemaFactory);
 

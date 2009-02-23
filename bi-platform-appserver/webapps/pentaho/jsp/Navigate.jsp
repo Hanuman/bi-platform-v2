@@ -53,7 +53,7 @@
 	}
 	boolean allowBackNavigation = solution != null;
 
-	INavigationComponent navigate = PentahoSystem.getNavigationComponent(userSession);
+	INavigationComponent navigate = PentahoSystem.get(INavigationComponent.class, userSession);
 	navigate.setHrefUrl(hrefUrl);
 	navigate.setOnClick(onClick);
 	navigate.setSolutionParamName("solution");

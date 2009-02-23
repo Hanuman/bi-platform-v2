@@ -175,7 +175,7 @@ public class SubscriptionUserCleanup extends ServletBase {
       IPentahoSession pentahoSession;
 
       pentahoSession = getPentahoSession(request);
-      repository = PentahoSystem.getSubscriptionRepository(pentahoSession);
+      repository = PentahoSystem.get(ISubscriptionRepository.class, pentahoSession);
       if (repository == null) {
         soap = SubscriptionUserCleanup.generateSOAPMessage(SubscriptionUserCleanup.SERVICE_FAILURE, Messages.getErrorString("ManageUsers.ERROR_0006_REPOSITORY_ERROR")); //$NON-NLS-1$                
       } else {

@@ -70,7 +70,7 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
     try {
       IContentRepository contentRepository = null;
       try {
-        contentRepository = PentahoSystem.getContentRepository(getSession());
+        contentRepository = PentahoSystem.get(IContentRepository.class, getSession());
       } catch (Throwable t) {
         debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS"), t); //$NON-NLS-1$
       }
