@@ -57,10 +57,6 @@ public class SimpleObjectFactory implements IPentahoObjectFactory {
     }
   }
 
-  public Object getObject(String key, IPentahoSession session) throws ObjectFactoryException {
-    throw new UnsupportedOperationException();
-  }
-
   public void init(String configFile, Object context) {
   }
 
