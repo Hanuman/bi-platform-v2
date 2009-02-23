@@ -212,8 +212,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
     private javax.sql.DataSource getDataSource(String dsName) {
       try {
 
-        IDatasourceService datasourceSvc = (IDatasourceService) PentahoSystem.getObjectFactory().getObject(
-            "IDatasourceService", null); //$NON-NLS-1$
+        IDatasourceService datasourceSvc = PentahoSystem.getObjectFactory().get(IDatasourceService.class, null);
 
         javax.sql.DataSource datasource = datasourceSvc.getDataSource(dsName);
 
@@ -242,8 +241,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
     String resolvedDatasource = datasource;
     IDatasourceService datasourceService;
     try {
-      datasourceService = (IDatasourceService) PentahoSystem.getObjectFactory().getObject(
-          IDatasourceService.IDATASOURCE_SERVICE, null);
+      datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class, null);
       resolvedDatasource = datasourceService.getDSBoundName(datasource);
     } catch (ObjectFactoryException e) {
       // this should be a runtime exception anyway

@@ -70,7 +70,7 @@ public class StandaloneSpringPentahoObjectFactoryTest extends TestCase {
     
     assertEquals( SystemStartupSession.class, factory.getImplementingClass( "systemStartupSession" ) );
     
-    Object obj = factory.getObject("systemStartupSession", session);
+    Object obj = factory.get(Object.class, "systemStartupSession", session);
     assertNotNull( obj );
 
     assertTrue( obj instanceof IPentahoSession );

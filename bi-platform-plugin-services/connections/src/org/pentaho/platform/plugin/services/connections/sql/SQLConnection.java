@@ -177,7 +177,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     // bump();
     // myCtr = connectionCtr;
     try {
-      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+      IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       DataSource dataSource = datasourceService.getDataSource(jndiName);      
       if (dataSource != null) {
         nativeConnection = dataSource.getConnection();
@@ -195,7 +195,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName), e); //$NON-NLS-1$
       // clear datasource cache
       try {
-      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+      IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       datasourceService.clearDataSource(jndiName);
       } catch(ObjectFactoryException objface) {
     	  logger.error(Messages.getErrorString("ConnectFactory.ERROR_0002_UNABLE_TO_FACTORY_OBJECT=Unable to factory object", jndiName), e); //$NON-NLS-1$

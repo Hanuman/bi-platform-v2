@@ -438,7 +438,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
             connectStr = jdbcStr + "; Catalog=" + catalog; //$NON-NLS-1$
           } else if (jndiStr != null) {
 
-            IDatasourceService datasourceService = (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+            IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
             if (datasourceService.getDataSource(jndiStr) == null) {
               error(Messages.getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
               return null;

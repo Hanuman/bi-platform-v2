@@ -130,7 +130,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
     if (reportSpec.getIsMDX()) {
       // did this ever work??
       String connectStr = "";
-      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+      IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       String dsName = datasourceService.getDSBoundName(jndiName);
       if (dsName != null) {
         connectStr = "dataSource=" + dsName + "; Catalog=mondrian"; //$NON-NLS-1$ //$NON-NLS-2$

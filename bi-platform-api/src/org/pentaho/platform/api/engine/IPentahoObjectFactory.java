@@ -74,12 +74,6 @@ public interface IPentahoObjectFactory {
   public <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) throws ObjectFactoryException;
 
   /**
-   * Deprecated.  Please use {@link #get(Class, IPentahoSession)} or {@link #get(Class, String, IPentahoSession)}
-   * @deprecated
-   */
-  public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException;
-
-  /**
    * Checks if the implementation for the given interface is defined.
    * @param key  the object identifier, typically the interface name
    * @return true if the object is defined

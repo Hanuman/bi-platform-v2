@@ -163,7 +163,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
       String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name());
       
       if (dataSourceName != null) {
-        IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+        IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
         DataSource dataSourceImpl = datasourceService.getDataSource(dataSourceName);      
         if (dataSourceImpl != null) {
           properties.remove(RolapConnectionProperties.DataSource.name());

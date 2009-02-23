@@ -148,7 +148,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     // Note: we use the unbound JNDI name here, the PentahoXmlaServlet and PivotViewComponent resolve the JNDI name
 
     try {
-      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);    	
+      IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);    	
       datasourceService.getDataSource(jndiName);
     } catch (ObjectFactoryException objface) {
       	MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$      	

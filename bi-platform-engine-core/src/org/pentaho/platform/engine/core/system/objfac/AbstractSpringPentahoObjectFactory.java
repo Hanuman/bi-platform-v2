@@ -72,12 +72,12 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     return (T) retreiveObject(key, session);
   }
 
-  /**
-   * @see IPentahoObjectFactory#getObject(String, IPentahoSession)
-   */
-  public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException {
-    return retreiveObject(key, session);
-  }
+//  /**
+//   * @see IPentahoObjectFactory#getObject(String, IPentahoSession)
+//   */
+//  public Object getObject(String key, final IPentahoSession session) throws ObjectFactoryException {
+//    return retreiveObject(key, session);
+//  }
 
   protected Object instanceClass(String key) throws ObjectFactoryException {
     Object object = null;

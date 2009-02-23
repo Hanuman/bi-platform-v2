@@ -57,10 +57,6 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     }
   }
 
-  public Object getObject(String key, IPentahoSession session) throws ObjectFactoryException {
-    return retreiveObject(key, session);
-  }
-
   public void init(String arg0, Object arg1) {
     creators = new HashMap<String,ObjectCreator>();
   }

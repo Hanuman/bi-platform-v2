@@ -64,7 +64,7 @@ public class StandaloneObjectFactoryTest extends TestCase {
     factory.defineObject( Object1.class.getSimpleName(), Object1.class.getName(), Scope.GLOBAL); 
     factory.defineObject( "bogus2", "bogus", Scope.GLOBAL); //$NON-NLS-1$ //$NON-NLS-2$ 
 
-    Object1 obj = (Object1) factory.getObject(Object1.class.getSimpleName(), session1);
+    Object1 obj = factory.get(Object1.class, session1);
     assertNotNull( obj );
     
     assertEquals( Object1.class.getName(), factory.getImplementingClass( Object1.class.getSimpleName() ).getName() );

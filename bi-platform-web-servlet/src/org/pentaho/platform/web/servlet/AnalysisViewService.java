@@ -254,7 +254,7 @@ public class AnalysisViewService extends ServletBase {
         // by default, this datasource should be unbound.  we still support fully qualified JNDI names
         // specified in the datasources.xml
    	    try {
-    	IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);
+    	IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
         jndi = datasourceService.getDSUnboundName(datasource.getJndi());    	
         } catch (ObjectFactoryException objface) {
 		      Logger.error("AnalysisViewService",Messages.getErrorString("AnalysisViewService.ERROR_0001_UNABLE_TO_FACTORY_OBJECT", jndi), objface); //$NON-NLS-1$

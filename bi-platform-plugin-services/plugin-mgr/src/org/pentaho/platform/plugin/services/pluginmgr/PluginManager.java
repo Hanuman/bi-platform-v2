@@ -316,7 +316,7 @@ public class PluginManager implements IPluginManager {
       // this tests class loading and cast class issues
       Object tmpObject;
       try {
-        tmpObject = objectFactory.getObject(cgInfo.getId(), session);
+        tmpObject = objectFactory.get(Object.class, cgInfo.getId(), session);
       } catch (ObjectFactoryException e) {
         throw new PlatformPluginRegistrationException(errorMsg, e);
       }

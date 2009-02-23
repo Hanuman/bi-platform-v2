@@ -59,7 +59,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     if(newDatasource != null) {
       if (getDatasource(newDatasource.getName()) == null) {
         try {
-          IPasswordService passwordService = (IPasswordService) PentahoSystem.getObjectFactory().getObject(IPasswordService.IPASSWORD_SERVICE, null);
+          IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);
           newDatasource.setPassword(passwordService.encrypt(newDatasource.getPassword()));
           session.save(newDatasource);
         } catch(ObjectFactoryException objface) {
@@ -119,7 +119,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       IDatasource pentahoDatasource = (IDatasource) session.get(Datasource.class, jndiName);
       if(pentahoDatasource != null) {
         datasource = clone(pentahoDatasource);
-        IPasswordService passwordService = (IPasswordService) PentahoSystem.getObjectFactory().getObject(IPasswordService.IPASSWORD_SERVICE, null);
+        IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);
         datasource.setPassword(passwordService.decrypt(datasource.getPassword()));
       }
       return datasource;
@@ -144,7 +144,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       List<IDatasource> datasourceList = new ArrayList<IDatasource>();
       for(IDatasource pentahoDatasource: pentahoDatasourceList) {
         IDatasource datasource = clone(pentahoDatasource);
-        IPasswordService passwordService = (IPasswordService) PentahoSystem.getObjectFactory().getObject(IPasswordService.IPASSWORD_SERVICE, null);
+        IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);
         datasource.setPassword(passwordService.decrypt(datasource.getPassword()));
         datasourceList.add(datasource);        
       }
@@ -166,7 +166,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     if(datasource != null) {
       if (getDatasource(datasource.getName()) != null) {
         try {
-          IPasswordService passwordService = (IPasswordService) PentahoSystem.getObjectFactory().getObject(IPasswordService.IPASSWORD_SERVICE, null);          // Store the new encrypted password in the datasource object
+          IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);          // Store the new encrypted password in the datasource object
           datasource.setPassword(passwordService.encrypt(datasource.getPassword()));
           session.update(datasource);
         } catch(ObjectFactoryException objface) {
@@ -194,7 +194,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
   }
   
   private IDatasource clone (IDatasource datasource) throws ObjectFactoryException {
-      IDatasource returnDatasource = (IDatasource) PentahoSystem.getObjectFactory().getObject("IDatasource", null);
+      IDatasource returnDatasource = PentahoSystem.getObjectFactory().get(IDatasource.class, null);
       returnDatasource.setDriverClass(datasource.getDriverClass());
       returnDatasource.setIdleConn(datasource.getIdleConn());
       returnDatasource.setMaxActConn(datasource.getMaxActConn());

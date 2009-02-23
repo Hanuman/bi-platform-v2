@@ -777,7 +777,7 @@ public class JasperReportsComponent extends ComponentBase {
       String jndiUrl = reportAction.getJndi().getStringValue();
       Connection conn = null;
       if (jndiUrl != null) {
-      	IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);    	  
+      	IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);    	  
         DataSource ds = datasourceService.getDataSource(jndiUrl);
         return ds.getConnection();
       } else {

@@ -627,7 +627,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    
 	    // verify JNDI
 	    try {
-     	  IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,null);	    	
+     	  IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);	    	
      	  datasourceService.getDSBoundName(jndiName);
 	    } catch (ObjectFactoryException objface) {
 	      Logger.error("MondrianCatalogHelper",Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$

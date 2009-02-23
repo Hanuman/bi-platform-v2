@@ -474,6 +474,7 @@ public class PentahoSystem {
    * @return An instance of the requested object or <code>null</code> if either the object
    * was not configured or it was configured but there was a problem retrieving it.
    * 
+   * @see PentahoSystem#getObjectFactory()
    * @see IPentahoObjectFactory#get(Class, String, IPentahoSession)
    */
   public static <T> T get(Class<T> interfaceClass, String key, final IPentahoSession session) {

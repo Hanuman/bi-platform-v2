@@ -132,7 +132,7 @@ public class QuartzSystemListener implements IPentahoSystemListener {
     if (!useNewDatasourceService) {
       return new JndiDatasourceService();
     } else {
-      IDatasourceService datasourceService =  (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE,session);
+      IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class,session);
       return datasourceService;
     }
   }
