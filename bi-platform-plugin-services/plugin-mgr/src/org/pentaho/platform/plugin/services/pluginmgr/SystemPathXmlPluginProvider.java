@@ -143,16 +143,17 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     processContentGenerators(plugin, doc, session, folder, repo, hasLib);
     processOverlays(plugin, doc, session);
     processLifecycleListeners(plugin, doc, session);
+    
+    String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1";  //$NON-NLS-1$//$NON-NLS-2$
 
     String msg = Messages.getString(
         "SystemPathXmlPluginProvider.PLUGIN_PROVIDES", //$NON-NLS-1$
         Integer.toString(plugin.getMenuCustomizations().size()), Integer.toString(plugin.getContentInfos().size()),
-        Integer.toString(plugin.getContentGenerators().size()), Integer.toString(plugin.getOverlays().size()));
+        Integer.toString(plugin.getContentGenerators().size()), Integer.toString(plugin.getOverlays().size()),
+        listenerCount
+        );
     PluginMessageLogger.add(msg);
-    String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1";  //$NON-NLS-1$//$NON-NLS-2$
-    msg = Messages.getString("SystemPathXmlPluginProvider.PLUGIN_PROVIDES_2", listenerCount); //$NON-NLS-1$
-    PluginMessageLogger.add(msg);
-
+    
     plugin.setSourceDescription(folder);
 
     return plugin;

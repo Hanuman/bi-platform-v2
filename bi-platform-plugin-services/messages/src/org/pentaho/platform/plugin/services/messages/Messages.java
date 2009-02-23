@@ -94,6 +94,10 @@ public class Messages {
       final String param4) {
     return MessageUtil.getString(Messages.getBundle(), key, param1, param2, param3, param4);
   }
+  
+  public static String getString(final String key, final String... params) {
+    return MessageUtil.getString(Messages.getBundle(), key, params);
+  }
 
   public static String getErrorString(final String key) {
     return MessageUtil.formatErrorMessage(key, Messages.getString(key));
