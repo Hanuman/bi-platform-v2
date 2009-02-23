@@ -26,6 +26,8 @@ package org.pentaho.platform.api.engine;
  */
 public class PlatformPluginRegistrationException extends Exception {
 
+  private static final long serialVersionUID = 1791609786938478691L;
+  
   public PlatformPluginRegistrationException(String message, Throwable cause) {
     super(message, cause);
   }
