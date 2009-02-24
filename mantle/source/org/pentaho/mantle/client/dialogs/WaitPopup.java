@@ -16,6 +16,7 @@
  */
 package org.pentaho.mantle.client.dialogs;
 
+import org.pentaho.gwt.widgets.client.dialogs.GlassPane;
 import org.pentaho.mantle.client.messages.Messages;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -72,6 +73,13 @@ public class WaitPopup extends SimplePanel{
   public void setVisible(boolean visible) {
     super.setVisible(visible);
     pageBackground.setVisible(visible);
+    
+    // Notify listeners that this wait dialog is shown (hide pdfs, flash, etc.)
+    if(visible){
+      GlassPane.getInstance().show();
+    } else {
+      GlassPane.getInstance().hide();
+    }
   }
   
   
