@@ -467,7 +467,7 @@ A:hover {
 					href="http://www.pentaho.com/products/enterprise" target="_blank">Consider
 				the Pentaho Enterprise Edition</a>: Save time, resources, money and
 				mitigate risk. <br />
-				&#169; 2005-2008 Pentaho Corporation. All rights reserved.</td>
+				&#169; 2005-2009 Pentaho Corporation. All rights reserved.</td>
 			</tr>
 		</table>
 		</td>
