@@ -612,6 +612,8 @@
 			switch (saveResult) {
 				case ISolutionRepository.FILE_ADD_SUCCESSFUL: 
 					saveMessage = Messages.getString("UI.USER_SAVE_SUCCESS");
+					// only set the session attribute on success, it's the only path that requires it
+					session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
 					break;
 				case ISolutionRepository.FILE_EXISTS:
 					// Shouldn't ever get here, since we pass overwrite=true;
@@ -627,16 +629,13 @@
 					break;
 				case 0:
 				  	saveMessage="";
-				  	session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
 				  	break;
 			}	
 	    } catch (Throwable e){
 		  saveResult = ISolutionRepository.FILE_ADD_FAILED;
 	      saveMessage = e.getMessage();
 	    }
-		session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
-
-	  } 	
+	  }
 	}
  
   if( query != null ) { 
