@@ -3,7 +3,7 @@
   contentType="text/html;" 
   import="org.pentaho.platform.util.messages.LocaleHelper" %><%
 	response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
-%><html>
+%><%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %><html>
 <head>
   <title>JPivot is busy ...</title>
   <meta http-equiv="refresh" content="1; URL=<c:out value="${requestSynchronizer.resultURI}"/>">
