@@ -640,7 +640,7 @@
 	}
  
   if( query != null ) { 
-    IDatasourceService datasourceService = (IDatasourceService) PentahoSystem.getObjectFactory().getObject(IDatasourceService.IDATASOURCE_SERVICE, null);
+    IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class, null);
     DataSource currDataSource = null; 
     try {
       currDataSource = datasourceService.getDataSource(dataSource);
