@@ -12,7 +12,7 @@ cd data
 start start_hypersonic.bat
 cd ..\tomcat\bin
 set CATALINA_HOME=%PENTAHO_PATH%tomcat
-set CATALINA_OPTS=-Xms256m -Xmx1024m -XX:MaxPermSize=256m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000
+set CATALINA_OPTS=-Xms256m -Xmx768m -XX:MaxPermSize=256m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000
 call startup
 endlocal
 :quit
