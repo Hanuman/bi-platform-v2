@@ -271,8 +271,8 @@ public class PluginManagerTest {
     //FIXME: getContentTypes returns the list of types configured by content generators, not the list
     //of types defined by IContentInfo's.  Is this really what we want?  If a type has no content
     //generator configured, then it is invisible through this API.
-//    assertTrue("test10type1 should be registered", types.contains("test10type1-ext"));
-//    assertTrue("test10type2 should be registered", types.contains("test10type2-ext"));
+    assertTrue("test10type1 should be registered", types.contains("test10type1-ext"));
+    assertTrue("test10type2 should be registered", types.contains("test10type2-ext"));
     
     IContentInfo contentInfo = pluginManager.getContentInfoFromExtension("test10type1-ext", session);
     assertNotNull("type should be registered for extension test10type1-ext", contentInfo);
@@ -395,6 +395,11 @@ public class PluginManagerTest {
       type.addOperation(new PluginOperation("test10type1-oper2-id", "test10type1-oper2-cmd"));
       
       p.addContentInfo(type);
+      
+      type = new ContentInfo();
+      type.setExtension("test10type2-ext");
+      p.addContentInfo(type);
+      
       return Arrays.asList((IPlatformPlugin) p);
     }
   }

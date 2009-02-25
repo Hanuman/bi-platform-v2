@@ -75,7 +75,7 @@ public class PluginManager implements IPluginManager {
 
   public Set<String> getContentTypes() {
     //map.keySet returns a set backed by the map, so we cannot allow modification of the set
-    return Collections.unmodifiableSet(contentGeneratorInfoByTypeMap.keySet());
+    return Collections.unmodifiableSet(contentTypeByExtension.keySet());
   }
 
   public List<XulOverlay> getOverlays() {
