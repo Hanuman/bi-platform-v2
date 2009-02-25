@@ -58,7 +58,9 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     }
   }
 
-  public void init(String arg0, Object arg1) { }
+  public void init(String arg0, Object arg1) { 
+    creators.clear();
+  }
 
   public boolean objectDefined(String key) {
     return creators.get(key) != null;
@@ -197,9 +199,5 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
       }
       return instance;
     }
-  }
-
-  public void clearDefinitions() {
-    creators.clear();
   }
 }

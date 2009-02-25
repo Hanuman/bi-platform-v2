@@ -169,7 +169,7 @@ public class PluginManager implements IPluginManager {
     contentInfoMap.clear();
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
-    objectFactory.clearDefinitions();
+    objectFactory.init(null, null);
     //we do not need to synchronize here since unloadPlugins 
     //is called within the synchronized block in reload
     for (IPlatformPlugin plugin : plugins) {
