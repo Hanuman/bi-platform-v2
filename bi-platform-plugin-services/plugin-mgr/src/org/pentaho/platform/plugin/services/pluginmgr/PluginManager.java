@@ -373,7 +373,7 @@ public class PluginManager implements IPluginManager {
       generatorList.add(cgInfo);
 
       PluginMessageLogger.add(Messages.getString(
-          "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
+          "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getName())); //$NON-NLS-1$
     }
   }
 

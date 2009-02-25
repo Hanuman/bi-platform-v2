@@ -1,6 +1,9 @@
 package org.pentaho.test.platform.plugin.pluginmgr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
@@ -109,35 +113,72 @@ public class SystemPathPluginProviderTest {
   @Test
   public void testLoadBeanDefinition() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
-    
+
     List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
 
-    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils.find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
+    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils
+        .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
-    
+
     Collection<BeanDefinition> beans = plugin.getBeans();
-    
+
     assertEquals("FooComponent was not loaded", 1, CollectionUtils.countMatches(beans, new Predicate() {
       public boolean evaluate(Object object) {
-        BeanDefinition bean = (BeanDefinition)object;
-        return bean.beanId.equals("FooComponent") && bean.classname.equals("org.pentaho.test.platform.plugin.pluginmgr.FooComponent");
+        BeanDefinition bean = (BeanDefinition) object;
+        return bean.beanId.equals("FooComponent")
+            && bean.classname.equals("org.pentaho.test.platform.plugin.pluginmgr.FooComponent");
       }
     }));
     assertEquals("genericBean was not loaded", 1, CollectionUtils.countMatches(beans, new Predicate() {
       public boolean evaluate(Object object) {
-        BeanDefinition bean = (BeanDefinition)object;
+        BeanDefinition bean = (BeanDefinition) object;
         return bean.beanId.equals("genericBean") && bean.classname.equals("java.lang.Object");
       }
     }));
   }
-  
+
   @Test
   public void testLoadLifeCycleListener() throws PlatformPluginRegistrationException {
     List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
-    
-    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils.find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
+
+    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils
+        .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
-    
+
     assertEquals("org.pentaho.test.platform.plugin.pluginmgr.FooInitializer", plugin.getLifecycleListenerClassname());
+  }
+
+  @Test
+  public void testLoadContentGenerators() throws PlatformPluginRegistrationException {
+    microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
+    List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
+    
+    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils.find(plugins, new PluginNameMatcherPredicate("content-generator-plugin"));
+    assertNotNull("content-generator-plugin should have been found", plugin);
+    
+    List<IContentInfo> contentTypes = plugin.getContentInfos();
+    
+    Object contentType = CollectionUtils.find(contentTypes, new Predicate() {
+      public boolean evaluate(Object object) {
+        IContentInfo type = (IContentInfo)object;
+        return type.getTitle().equals("Good Test Type");
+      }
+    });
+    assertNotNull("\"Good Test Type\" should have been loaded", contentType);
+    assertNotNull("\"Good Test Type\" extension definition is incorrect", ((IContentInfo)contentType).getExtension().equals("good-content-type"));
+    
+    assertEquals("\"Test Type Missing type\" should not have been loaded", 0, CollectionUtils.countMatches(contentTypes, new Predicate() {
+      public boolean evaluate(Object object) {
+        IContentInfo contentType = (IContentInfo)object;
+        return contentType.getTitle().equals("Test Type Missing type");
+      }
+    }));
+    
+    assertEquals("\"test-type-missing-title\" should not have been loaded", 0, CollectionUtils.countMatches(contentTypes, new Predicate() {
+      public boolean evaluate(Object object) {
+        IContentInfo contentType = (IContentInfo)object;
+        return contentType.getExtension().equals("test-type-missing-title");
+      }
+    }));
   }
 }

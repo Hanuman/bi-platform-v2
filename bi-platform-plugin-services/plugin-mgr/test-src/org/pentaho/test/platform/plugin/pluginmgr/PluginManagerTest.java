@@ -8,19 +8,28 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IComponent;
+import org.pentaho.platform.api.engine.IContentGenerator;
+import org.pentaho.platform.api.engine.IContentGeneratorInfo;
+import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
+import org.pentaho.platform.engine.core.solution.ContentInfo;
+import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
@@ -213,6 +222,76 @@ public class PluginManagerTest {
     assertNotNull("TestClassForClassloader bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("TestClassForClassloader"));
   }
   
+  @Test
+  public void test9_ContentGenerationRegistration() throws ObjectFactoryException {
+    microPlatform.define(IPluginProvider.class, Tst9PluginProvider.class).init();
+    
+    PluginMessageLogger.clear();
+    
+    pluginManager.reload(session);
+
+    System.err.println(PluginMessageLogger.prettyPrint());
+
+    //lookup cg infos by id
+    assertNotNull("Should be able to get cg for test9id", pluginManager.getContentGeneratorInfo("test9id", session));
+    assertNotNull("Should be able to get cg for test9bid", pluginManager.getContentGeneratorInfo("test9bid", session));
+
+    
+    
+    //see if we have the expected number of cg's that support the test content type
+    List<IContentGeneratorInfo> cgInfos = pluginManager.getContentGeneratorInfoForType("test9type", session);
+    assertEquals("There should be 2 content generators that support the test9type", 2, cgInfos.size());
+    
+    //see if we can get a content generator instance by id
+    assertNotNull("Could not get content generator test9 by id", pluginManager.getContentGenerator("test9id", session));    
+    assertNotNull("Could not get content generator test9b by id", pluginManager.getContentGenerator("test9bid", session));    
+    
+    //see if we can access the content generator by type
+    IContentGenerator contentGenerator = pluginManager.getContentGeneratorForType("test9type", session);
+    assertNotNull("Should have gotten an instance of a cg for content type", contentGenerator);
+    assertTrue(contentGenerator instanceof ContentGenerator1);
+    
+    //see if we can lookup content generator ids by content type
+    assertEquals("test9id", pluginManager.getContentGeneratorIdForType("test9type", session));
+    
+    //see if we can lookup content generator titles by content type
+    assertEquals("Test Generator 9", pluginManager.getContentGeneratorTitleForType("test9type", session));
+
+    //see if we can lookup content generator urls by content type
+    assertEquals("/test9url", pluginManager.getContentGeneratorUrlForType("test9type", session));
+  }
+  
+  @Test
+  public void test10_ContentTypeRegistration() {
+    microPlatform.define(IPluginProvider.class, Tst10PluginProvider.class).init();
+    
+    pluginManager.reload(session);
+
+    Set<String> types = pluginManager.getContentTypes();
+    //FIXME: getContentTypes returns the list of types configured by content generators, not the list
+    //of types defined by IContentInfo's.  Is this really what we want?  If a type has no content
+    //generator configured, then it is invisible through this API.
+//    assertTrue("test10type1 should be registered", types.contains("test10type1-ext"));
+//    assertTrue("test10type2 should be registered", types.contains("test10type2-ext"));
+    
+    IContentInfo contentInfo = pluginManager.getContentInfoFromExtension("test10type1-ext", session);
+    assertNotNull("type should be registered for extension test10type1-ext", contentInfo);
+    assertEquals("test10type1-mimeType", contentInfo.getMimeType());
+    assertEquals("test10type1-title", contentInfo.getTitle());
+    assertEquals("test10type1-description", contentInfo.getDescription());
+    assertEquals("test10type1-ext", contentInfo.getExtension());
+    assertEquals("test10type1-url", contentInfo.getIconUrl());
+    
+    List<IPluginOperation> ops = contentInfo.getOperations();
+    assertNotNull("Operations are null", ops);
+    assertEquals("Wrong number of ops", 2, ops.size());
+
+    assertEquals("Operation name is wrong", "test10type1-oper1-id", ops.get(0).getId());
+    assertEquals("Operation command is wrong", "test10type1-oper1-cmd", ops.get(0).getCommand());
+
+    assertEquals("Operation name is wrong", "test10type1-oper2-id", ops.get(1).getId());
+    assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
+  }
 
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
@@ -269,6 +348,53 @@ public class PluginManagerTest {
       p.setName("test6Plugin");
       p.addBean(new BeanDefinition("bean1", "java.lang.String"));
       p.addBean(new BeanDefinition("bean1", "java.lang.Object"));
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst9PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test9Plugin");
+      
+      ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
+      cg1.setDescription("test 9 plugin description");
+      cg1.setId("test9id");
+      cg1.setType("test9type");
+      cg1.setTitle("Test Generator 9");
+      cg1.setUrl("/test9url");
+      cg1.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
+      cg1.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+      p.addContentGenerator(cg1);
+      
+      ContentGeneratorInfo cg2 = new ContentGeneratorInfo();
+      cg2.setDescription("test 9b plugin description");
+      cg2.setId("test9bid");
+      cg2.setType("test9type");
+      cg2.setTitle("Test Generator 9b");
+      cg2.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
+      cg2.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+      p.addContentGenerator(cg2);
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst10PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test10Plugin");
+      
+      ContentInfo type = new ContentInfo();
+      type.setDescription("test10type1-description");
+      type.setExtension("test10type1-ext");
+      type.setMimeType("test10type1-mimeType");
+      type.setTitle("test10type1-title");
+      type.setIconUrl("test10type1-url");
+      
+      type.addOperation(new PluginOperation("test10type1-oper1-id", "test10type1-oper1-cmd"));
+      type.addOperation(new PluginOperation("test10type1-oper2-id", "test10type1-oper2-cmd"));
+      
+      p.addContentInfo(type);
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
