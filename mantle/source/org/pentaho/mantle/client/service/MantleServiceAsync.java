@@ -102,6 +102,9 @@ public interface MantleServiceAsync {
   
   // user settings
   public void getUserSettings(AsyncCallback<List<IUserSetting>> callback);
+  // generic user setting getter/setters
+  public void setUserSetting(String settingName, String settingValue, AsyncCallback<Void> callback);
+  public void getUserSetting(String settingName, AsyncCallback<IUserSetting> callback);
   public void addBookmark(Bookmark bookmark, AsyncCallback<Void> callback);
   public void deleteBookmark(Bookmark bookmark, AsyncCallback<Void> callback);
   public void getBookmarks(AsyncCallback<List<Bookmark>> callback);

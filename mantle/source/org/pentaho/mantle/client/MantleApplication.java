@@ -62,6 +62,7 @@ import org.pentaho.mantle.client.perspective.plugin.PluginPerspective;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -343,6 +344,9 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
             } else if (IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES.equals(setting.getSettingName())) {
               boolean showLocalizedFileNames = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
               solutionBrowserPerspective.setUseLocalizedFileNames(showLocalizedFileNames);
+            } else if (IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS.equals(setting.getSettingName())) {
+              boolean useDescriptions = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
+              solutionBrowserPerspective.setUseDescriptions(useDescriptions);
             } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
               boolean showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
               solutionBrowserPerspective.setShowHiddenFiles(showHiddenFiles);
@@ -598,12 +602,12 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     MantleServiceCache.getService().isAdministrator(callback);
   }
 
-  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, Widget panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
-    if(panel != null){
-      selectedTabURL = panel.getUrl();
-      saveEnabled = panel.isSaveEnabled();
+    if(panel != null && panel instanceof IReloadableTabPanel){
+      selectedTabURL = ((ReloadableIFrameTabPanel)panel).getUrl();
+      saveEnabled = ((ReloadableIFrameTabPanel)panel).isSaveEnabled();
     }
 
     final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
@@ -621,13 +625,15 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     saveMenuItem.setEnabled(saveEnabled && isEnabled);
     saveAsMenuItem.setEnabled(saveEnabled && isEnabled);
     
-    if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
-      if(panel != null) {
-        main.applyOverlays(panel.getOverlayIds());  
-      }
-    } else if(SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)){
-      if(panel != null) {
-        main.removeOverlays(panel.getOverlayIds());  
+    if (panel instanceof ReloadableIFrameTabPanel) {
+      if(SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
+        if(panel != null) {
+          main.applyOverlays(((ReloadableIFrameTabPanel)panel).getOverlayIds());  
+        }
+      } else if(SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)){
+        if(panel != null) {
+          main.removeOverlays(((ReloadableIFrameTabPanel)panel).getOverlayIds());  
+        }
       }
     }
   }

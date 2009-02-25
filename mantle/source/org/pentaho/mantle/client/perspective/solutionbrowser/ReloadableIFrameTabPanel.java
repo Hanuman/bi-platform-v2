@@ -40,6 +40,11 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   protected boolean saveEnabled, editContentEnabled, editContentSelected ;
   
   private Set<String> overlayIds;
+  
+  public ReloadableIFrameTabPanel() {
+    frame = new CustomFrame(""+System.currentTimeMillis(), "about:blank");
+  }
+  
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
     frame = new CustomFrame(""+System.currentTimeMillis(), url); //$NON-NLS-1$

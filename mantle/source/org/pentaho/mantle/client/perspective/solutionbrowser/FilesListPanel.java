@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
+import org.pentaho.gwt.widgets.client.utils.StringUtils;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.FilesToolbar;
 
 import com.google.gwt.user.client.DOM;
@@ -107,7 +108,13 @@ public class FilesListPanel extends FlowPanel {
           if (plugin != null) {
             icon = plugin.getFileIcon();
           }
-          final FileItem fileLabel = new FileItem(name, fileElement.getAttribute("localized-name"), solutionTree.showLocalizedFileNames, solution, path, //$NON-NLS-1$
+          String localizedName = fileElement.getAttribute("localized-name");
+          String description = fileElement.getAttribute("description");
+          String tooltip = localizedName;
+          if (solutionTree.isUseDescriptionsForTooltip() && !StringUtils.isEmpty(description)) {
+            tooltip = description;
+          }
+          final FileItem fileLabel = new FileItem(name, localizedName, tooltip, solution, path, //$NON-NLS-1$
               lastModifiedDateStr, url, perspective, perspective.getEnabledOptions(name), toolbar.getSupportsACLs(), icon);
           // BISERVER-2317:  Request for more IDs for Mantle UI elements
           // set element id as the filename

@@ -16,6 +16,8 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
+import com.google.gwt.user.client.ui.Widget;
+
 public interface SolutionBrowserListener {
   
   // would like to let the listeners know (where possible):
@@ -24,5 +26,5 @@ public interface SolutionBrowserListener {
   public enum EventType {
     UNDEFINED, OPEN, SELECT, DESELECT, CLOSE
   }
-  public void solutionBrowserEvent(EventType type, IReloadableTabPanel panel, FileItem selectedFileItem);
+  public void solutionBrowserEvent(EventType type, Widget panel, FileItem selectedFileItem);
 }

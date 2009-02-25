@@ -37,6 +37,7 @@ import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 import org.pentaho.ui.xul.XulOverlay;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface MantleService extends RemoteService {
@@ -101,7 +102,11 @@ public interface MantleService extends RemoteService {
   // For New Analysis View
   public HashMap<String,List<String>> getMondrianCatalogs();  
   
+  // user settings
   public List<IUserSetting> getUserSettings();
+  // generic user settings
+  public void setUserSetting(String settingName, String settingValue) throws SimpleMessageException;
+  public IUserSetting getUserSetting(String settingName) throws SimpleMessageException;
   public void addBookmark(Bookmark bookmark) throws SimpleMessageException;
   public void deleteBookmark(Bookmark bookmark) throws SimpleMessageException;
   public List<Bookmark> getBookmarks() throws SimpleMessageException;

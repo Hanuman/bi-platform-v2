@@ -19,9 +19,6 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -97,14 +94,14 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
 
   FileSelectionListenerCollection fileSelectionListenerCollection = new FileSelectionListenerCollection();
 
-  public FileItem(String name, String localizedName, boolean useLocalizedName, 
+  public FileItem(String name, String localizedName, String tooltip,
       String solution, String path, String lastModifiedDateStr, String url, 
       IFileItemCallback fileItemCallback, FileTypeEnabledOptions options,
       boolean supportsACLs, String fileIconStr) {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
-    fileLabel.setTitle(localizedName);
+    fileLabel.setTitle(tooltip);
     setStyleName("fileLabel"); //$NON-NLS-1$
     ElementUtils.preventTextSelection(fileLabel.getElement());
 

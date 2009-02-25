@@ -30,8 +30,8 @@ body{
 }
 
 .reportParameterDisclosurePanel {
-  background-color: LightCyan;
-  border-bottom:1px solid black; 
+  background-color: #d8d8d8;
+  border-bottom:1px solid #848484; 
   text-decoration:none;
   cursor: pointer;
   cursor: hand;
@@ -834,9 +834,8 @@ gwt-TabPanelBottom {
   border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
 }
 
-
 .gwt-SuggestBoxPopup {
-  background-color: #FEF9CE;
+  background-color: white;
   border-bottom: 1px solid black;
   border-right: 1px solid black;
 }
@@ -849,8 +848,8 @@ gwt-TabPanelBottom {
 
 .gwt-SuggestBoxPopup .item-selected {
   color: white;
-  background-color: #87944c;
-  border: 1px solid #87944c;
+  background-color: #d0d0d0;
+  border: 1px solid #d0d0d0;
   padding: 2px 2px 2px 2px;
   cursor: pointer;
   cursor: hand;

@@ -19,26 +19,30 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.reporting;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
+import org.pentaho.gwt.widgets.client.toolbar.ToolbarButton;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReportView extends VerticalPanel {
+public class ReportView extends ReloadableIFrameTabPanel {
 
   HTML htmlReportContent = new HTML();
   ScrollPanel htmlScroller = new ScrollPanel(htmlReportContent);
@@ -166,26 +170,23 @@ public class ReportView extends VerticalPanel {
 
     });
 
-    Image nextPageButton = new Image();
-    MantleImages.images.forwardButton().applyTo(nextPageButton);
-    nextPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
-    nextPageButton.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
+    Image nextPageImage = new Image();
+    MantleImages.images.forwardButton().applyTo(nextPageImage);
+    ToolbarButton nextPageButton = new ToolbarButton(nextPageImage);
+    nextPageButton.setCommand(new Command() {
+      public void execute() {
         errorLabel.setText(""); //$NON-NLS-1$
         if (logicalPage < reportContainer.getNumPages() - 1) {
           logicalPage++;
           fetchLogicalPage();
         }
       }
-
     });
-    Image lastPageButton = new Image();
-    MantleImages.images.forwardToLastPage().applyTo(lastPageButton);
-    lastPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
-    lastPageButton.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
+    Image lastPageImage = new Image();
+    MantleImages.images.forwardToLastPage().applyTo(lastPageImage);
+    ToolbarButton lastPageButton = new ToolbarButton(lastPageImage);
+    lastPageButton.setCommand(new Command() {
+      public void execute() {
         errorLabel.setText(""); //$NON-NLS-1$
         logicalPage = reportContainer.getNumPages() - 1;
         fetchLogicalPage();
@@ -193,12 +194,11 @@ public class ReportView extends VerticalPanel {
 
     });
 
-    Image previousPageButton = new Image();
-    MantleImages.images.backButton().applyTo(previousPageButton);
-    previousPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
-    previousPageButton.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
+    Image previousPageImage = new Image();
+    MantleImages.images.backButton().applyTo(previousPageImage);
+    ToolbarButton previousPageButton = new ToolbarButton(previousPageImage);
+    previousPageButton.setCommand(new Command() {
+      public void execute() {
         errorLabel.setText(""); //$NON-NLS-1$
         if (logicalPage > 0) {
           logicalPage--;
@@ -207,35 +207,31 @@ public class ReportView extends VerticalPanel {
       }
 
     });
-    Image firstPageButton = new Image();
-    MantleImages.images.backToFirstPage().applyTo(firstPageButton);
-    firstPageButton.setStyleName("reportPageControl"); //$NON-NLS-1$
-    firstPageButton.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
-        errorLabel.setText(""); //$NON-NLS-1$
+    
+    Image firstPageImage = new Image();
+    MantleImages.images.backToFirstPage().applyTo(firstPageImage);
+    ToolbarButton firstPageButton = new ToolbarButton(firstPageImage);
+    firstPageButton.setCommand(new Command() {
+      public void execute() {
+      errorLabel.setText(""); //$NON-NLS-1$
         logicalPage = 0;
         fetchLogicalPage();
       }
-
     });
 
-    FlexTable pageControlTable = new FlexTable();
-    pageControlTable.setWidget(0, 0, firstPageButton);
-    pageControlTable.setWidget(0, 1, previousPageButton);
-    pageControlTable.setWidget(0, 2, new Label(Messages.getString("page"))); //$NON-NLS-1$
-    pageControlTable.setWidget(0, 3, pageField);
-    pageControlTable.setWidget(0, 4, new Label(Messages.getString("of") + " " + reportContainer.getNumPages())); //$NON-NLS-1$ //$NON-NLS-2$
-    pageControlTable.setWidget(0, 5, nextPageButton);
-    pageControlTable.setWidget(0, 6, lastPageButton);
-    pageControlTable.setWidget(0, 7, errorLabel);
+    Toolbar pageControlToolbar = new Toolbar();
+    pageControlToolbar.add(firstPageButton);
+    pageControlToolbar.add(previousPageButton);
+    pageControlToolbar.add(new Label(Messages.getString("page")));
+    SimplePanel pageFieldWrapper = new SimplePanel();
+    pageFieldWrapper.setWidget(pageField);
+    pageControlToolbar.add(pageFieldWrapper);
+    pageControlToolbar.add(new Label(Messages.getString("of") + " " + reportContainer.getNumPages())); //$NON-NLS-1$ //$NON-NLS-2$
+    pageControlToolbar.add(nextPageButton);
+    pageControlToolbar.add(lastPageButton);
+    pageControlToolbar.add(errorLabel);
 
-    HorizontalPanel pageControlPanel = new HorizontalPanel();
-    pageControlPanel.setWidth("100%"); //$NON-NLS-1$
-    pageControlPanel.setStyleName("pageControlPanel"); //$NON-NLS-1$
-    pageControlPanel.add(pageControlTable);
-
-    return pageControlPanel;
+    return pageControlToolbar;
   }
 
 }

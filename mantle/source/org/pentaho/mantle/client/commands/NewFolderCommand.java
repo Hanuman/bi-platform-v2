@@ -54,7 +54,7 @@ public class NewFolderCommand implements Command {
   public void execute() {
     if (solutionTree != null) {
       FileTreeItem selectedTreeItem = (FileTreeItem) solutionTree.getSelectedItem();
-      final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), solutionTree.isShowLocalizedFileNames(),
+      final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(),
           solutionTree.getSolution(), path, null, null, null, null, false, null);
       path = solutionTree.getPath().substring(0, solutionTree.getPath().lastIndexOf("/")); //$NON-NLS-1$
       repoPath = selectedItem.getPath() + "/" + selectedItem.getName(); //$NON-NLS-1$

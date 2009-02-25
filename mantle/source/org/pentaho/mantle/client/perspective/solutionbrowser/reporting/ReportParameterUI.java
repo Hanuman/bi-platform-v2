@@ -31,12 +31,14 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 //import com.google.gwt.widgetideas.client.SliderBar;
 
@@ -71,7 +73,6 @@ public class ReportParameterUI extends HorizontalPanel {
         // now call the real callback
         callback.submitReportParameters();
       }
-
     };
 
     for (final ReportParameter parameter : reportParameters) {
@@ -288,6 +289,31 @@ public class ReportParameterUI extends HorizontalPanel {
 //      submitCallbacks.add(myCallback);
 //      return slider;
     } else if (parameter.getPromptType() == ReportParameter.SELECTION_TYPE_TEXTBOX) {
+      // if the parameter has no choices, it is probably a plain parameter
+      if (parameter.getChoices() == null || parameter.getChoices().size() == 0) {
+        final TextBox box = new TextBox();
+        if (parameter.getDefaultValue() != null) {
+          box.setText(parameter.getDefaultValue().toString());
+        } else if (parameter.getValue() != null) {
+          box.setText(parameter.getValue().toString());
+        }
+        IParameterSubmissionCallback myCallback = new IParameterSubmissionCallback() {
+          public void submitReportParameters() {
+            parameter.clearSelections();
+            String value = box.getText();
+            if (parameter.getParameterType() == ReportParameter.DATE) {
+              parameter.getDateValues().add(new Date(value));
+            } else if (parameter.getParameterType() == ReportParameter.STRING) {
+              parameter.getStringValues().add(value);
+            } else if (parameter.getParameterType() == ReportParameter.NUMBER) {
+              parameter.getNumberValues().add(new Integer(value));
+            }
+          }
+        };
+        submitCallbacks.add(myCallback);
+        return box;
+      }
+      // if the parameter has choices...
       MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
       for (final Object choiceKey : parameter.getChoices().keySet()) {
         final String choiceValue = parameter.getChoices().get(choiceKey).toString();
@@ -299,6 +325,7 @@ public class ReportParameterUI extends HorizontalPanel {
       } else if (parameter.getValue() != null) {
         box.setText(parameter.getValue().toString());
       }
+    
       IParameterSubmissionCallback myCallback = new IParameterSubmissionCallback() {
         public void submitReportParameters() {
           parameter.clearSelections();

@@ -31,6 +31,7 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
+import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
@@ -72,7 +73,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
@@ -97,6 +97,7 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionBrowserPerspective extends HorizontalPanel implements IPerspective, IFileItemCallback, IWorkspaceCallback {
+
   private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
   private static PopupPanel popupMenu = new PopupPanel(true);
 
@@ -192,11 +193,33 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
   };
 
+  Command UseDescriptionCommand = new Command() {
+    public void execute() {
+      setUseDescriptions(!solutionTree.useDescriptionsForTooltip);
+      // update view menu
+      installViewMenu(perspectiveCallback);
+
+      // update setting
+      AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+        public void onFailure(Throwable caught) {
+        }
+
+        public void onSuccess(Void result) {
+        }
+
+      };
+      MantleServiceCache.getService().setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS, ""+solutionTree.useDescriptionsForTooltip, callback);
+    }
+  };
+  
+  
   // menu items
   CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand); //$NON-NLS-1$
   CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand); //$NON-NLS-1$
   CheckBoxMenuItem showLocalizedFileNamesMenuItem = new CheckBoxMenuItem(Messages.getString("showLocalizedFileNames"), ToggleLocalizedNamesCommand); //$NON-NLS-1$
   CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand(this)); //$NON-NLS-1$
+  CheckBoxMenuItem useDescriptionsMenuItem = new CheckBoxMenuItem(Messages.getString("useDescriptionsForTooltips"), UseDescriptionCommand); //$NON-NLS-1$
 
   TreeListener treeListener = new TreeListener() {
 
@@ -232,14 +255,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.DESELECT, previousIndex);
         fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.SELECT, tabIndex);
         if (previousIndex != tabIndex) {
-          ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
-
-          NamedFrame frame = tabPanel.getFrame();
-
+          Widget tabPanel = contentTabPanel.getWidget(tabIndex);
           Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$ //$NON-NLS-2$
 
-          frame.setVisible(true);
-          refreshIfPDF(tabPanel);
+          if (tabPanel instanceof ReloadableIFrameTabPanel) {
+            NamedFrame frame = ((ReloadableIFrameTabPanel)tabPanel).getFrame();
+            frame.setVisible(true);
+            refreshIfPDF(((ReloadableIFrameTabPanel)tabPanel));
+          }
         }
         for (int i = 0; i < tabIndex; i++) {
           hideFrame(i);
@@ -390,8 +413,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       // There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
       selectedTab = contentTabPanel.getTabBar().getSelectedTab();
       if (selectedTab > -1) {
-        ReloadableIFrameTabPanel tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTab);
-        refreshIfPDF(tabPanel);
+        Widget tabContent = contentTabPanel.getWidget(selectedTab);
+        if (tabContent instanceof ReloadableIFrameTabPanel) {
+          refreshIfPDF((ReloadableIFrameTabPanel)tabContent);
+        }
       }
 
     }
@@ -488,9 +513,28 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
       public void onSuccess(ReportContainer reportContainer) {
         Widget tabContent = new ReportView(reportKey, reportContainer);
-        contentTabPanel.add(tabContent, new TabWidget(selectedFileItem.getName(), selectedFileItem.getLocalizedName(), SolutionBrowserPerspective.this,
-            contentTabPanel, tabContent));
+        TabWidget tabWidget = new TabWidget(selectedFileItem.getName(), selectedFileItem.getLocalizedName(), SolutionBrowserPerspective.this,
+            contentTabPanel, tabContent);
+        contentTabPanel.add(tabContent, tabWidget);
+        contentTabMap.put(tabContent, tabWidget);
         contentTabPanel.selectTab(contentTabPanel.getWidgetCount() - 1);
+
+        final List<com.google.gwt.dom.client.Element> parentList = new ArrayList<com.google.gwt.dom.client.Element>();
+        com.google.gwt.dom.client.Element parent = tabContent.getElement();
+        while (parent != contentTabPanel.getElement()) {
+          parentList.add(parent);
+          parent = parent.getParentElement();
+        }
+        Collections.reverse(parentList);
+        for (int i = 1; i < parentList.size(); i++) {
+          parentList.get(i).getStyle().setProperty("height", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        showLaunchOrContent();
+
+        // update state to workspace state flag
+        showWorkspaceMenuItem.setChecked(false);
+        // fire
+        fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
       }
     };
     MantleServiceCache.getService().getLogicalReportPage(null, reportKey, 0, callback);
@@ -537,7 +581,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       } else {
         showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
       }
-    } else if (name.endsWith(".prc")) { //$NON-NLS-1$
+    } else if (name.endsWith(".prpt")) { //$NON-NLS-1$
       // open jfreereport!!
       openNewHTMLReport(mode);
     } else {
@@ -631,7 +675,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       return;
     }
 
-    selectedFileItem = new FileItem(name, localizedFileName, true, pathSegments.get(0), repoPath, "", null, null, null, false, null); //$NON-NLS-1$
+    selectedFileItem = new FileItem(name, localizedFileName, localizedFileName, pathSegments.get(0), repoPath, "", null, null, null, false, null); //$NON-NLS-1$
 
     // TODO: Create a more dynamic filter interface
     if (openMethod == OPEN_METHOD.SCHEDULE) {
@@ -1039,10 +1083,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           if (!path.endsWith("/")) { //$NON-NLS-1$
             path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc"); //$NON-NLS-1$
+          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc&filter=*.prpt"); //$NON-NLS-1$
         } else {
           builder = new RequestBuilder(RequestBuilder.GET,
-              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password"); //$NON-NLS-1$
+              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password&filter=*.prpt"); //$NON-NLS-1$
         }
 
         RequestCallback callback = new RequestCallback() {
@@ -1266,6 +1310,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     installViewMenu(perspectiveCallback);
   }
 
+  public void setUseDescriptions(boolean showDescriptions) {
+    solutionTree.setUseDescriptionsForTooltip(showDescriptions);
+    solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
+
+    // update view menu
+    installViewMenu(perspectiveCallback);
+  }  
+  
   public void installBookmarkGroups(final Map<String, List<Bookmark>> groupMap) {
     favoritesGroupMenuBar.clearItems();
     for (final String groupName : groupMap.keySet()) {
@@ -1322,27 +1374,18 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void installViewMenu(IPerspectiveCallback perspectiveCallback) {
     List<UIObject> viewMenuItems = new ArrayList<UIObject>();
 
-    if (solutionTree.showLocalizedFileNames) {
-      showLocalizedFileNamesMenuItem.setChecked(true);
-    } else {
-      showLocalizedFileNamesMenuItem.setChecked(false);
-    }
-    if (solutionTree.showHiddenFiles) {
-      showHiddenFilesMenuItem.setChecked(true);
-    } else {
-      showHiddenFilesMenuItem.setChecked(false);
-    }
-    if (showSolutionBrowser) {
-      showSolutionBrowserMenuItem.setChecked(true);
-    } else {
-      showSolutionBrowserMenuItem.setChecked(false);
-    }
+    showLocalizedFileNamesMenuItem.setChecked(solutionTree.showLocalizedFileNames);
+    showHiddenFilesMenuItem.setChecked(solutionTree.showHiddenFiles);
+    showSolutionBrowserMenuItem.setChecked(showSolutionBrowser);
+    useDescriptionsMenuItem.setChecked(solutionTree.useDescriptionsForTooltip);
 
     if (explorerMode) {
       // viewMenuItems.add(showLocalizedFileNamesMenuItem);
       viewMenuItems.add(showSolutionBrowserMenuItem);
       viewMenuItems.add(showWorkspaceMenuItem);
       // viewMenuItems.add(showHiddenFilesMenuItem);
+      viewMenuItems.add(new MenuItemSeparator());
+      viewMenuItems.add(useDescriptionsMenuItem);
       if (MantleApplication.showAdvancedFeatures) {
         favoritesGroupMenuBar.setTitle(Messages.getString("favoriteGroups")); //$NON-NLS-1$
         viewMenuItems.add(favoritesGroupMenuBar);
@@ -1472,13 +1515,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     // does this take parameters? or should it simply return the state
 
     // Get a reference to the current tab
-    ReloadableIFrameTabPanel tabPanel = null;
+    Widget tabPanel = null;
     if (tabIndex >= 0 && contentTabPanel.getWidgetCount() > tabIndex) {
-      tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex);
+      tabPanel = contentTabPanel.getWidget(tabIndex);
     } else {
       int selectedTabIndex = contentTabPanel.getTabBar().getSelectedTab();
       if(selectedTabIndex >= 0) {
-        tabPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(selectedTabIndex);  
+        tabPanel = contentTabPanel.getWidget(selectedTabIndex);  
       }
       
     }

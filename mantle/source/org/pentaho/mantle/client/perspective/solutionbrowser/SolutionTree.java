@@ -28,6 +28,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.StringUtils;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -68,7 +69,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   Document solutionDocument;
   boolean isAdministrator = false;
   boolean createRootNode = false;
-
+  boolean useDescriptionsForTooltip = false;
+  
   SolutionBrowserPerspective solutionBrowserPerspective;
   FocusPanel focusable = new FocusPanel();
 
@@ -325,15 +327,24 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       if (isVisible || showHiddenFiles) {
         String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
         String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
+        String description = childElement.getAttribute("description"); //$NON-NLS-1$
         FileTreeItem childTreeItem = new FileTreeItem();
         killAllTextSelection(childTreeItem.getElement());
         childTreeItem.setURL(childElement.getAttribute("url")); //$NON-NLS-1$
         if (showLocalizedFileNames) {
           childTreeItem.setText(localizedName);
-          childTreeItem.setTitle(fileName);
+          if (isUseDescriptionsForTooltip() && !StringUtils.isEmpty(description)) {
+            childTreeItem.setTitle(description);
+          } else {
+            childTreeItem.setTitle(fileName);
+          }
         } else {
           childTreeItem.setText(fileName);
-          childTreeItem.setTitle(localizedName);
+          if (isUseDescriptionsForTooltip() && !StringUtils.isEmpty(description)) {
+            childTreeItem.setTitle(description);
+          } else {
+            childTreeItem.setTitle(localizedName);
+          }
         }
         childTreeItem.setFileName(fileName);
         if (parentTreeItem == null && isDirectory) {
@@ -484,7 +495,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // brings up permission dialog
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
-    FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null, null,
+    FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path, null, null,
         null, null, false, null);
     FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, null, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
@@ -537,7 +548,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // delete folder
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
-    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), showLocalizedFileNames, getSolution(), path, null,
+    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path, null,
         null, null, null, false, null);
     String repoPath = selectedItem.getPath();
     // if a solution folder is selected then the solution-name/path are the same, we can't allow that
@@ -613,6 +624,18 @@ public class SolutionTree extends Tree implements IFileItemCallback {
 
   public boolean isShowLocalizedFileNames() {
     return showLocalizedFileNames;
+  }
+
+  
+  public boolean isUseDescriptionsForTooltip()
+  {
+    return useDescriptionsForTooltip;
+  }
+
+  public void setUseDescriptionsForTooltip(boolean useDescriptionsForTooltip)
+  {
+    this.useDescriptionsForTooltip = useDescriptionsForTooltip;
+    buildSolutionTree(solutionDocument);
   }
 
   public boolean isAdministrator() {

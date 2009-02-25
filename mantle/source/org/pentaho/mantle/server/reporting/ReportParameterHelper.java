@@ -4,26 +4,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.jfree.report.JFreeReport;
-import org.jfree.report.ReportDataFactoryException;
-import org.jfree.report.parameters.DefaultParameterContext;
-import org.jfree.report.parameters.DefaultParameterDefinition;
-import org.jfree.report.parameters.DefaultReportParameterValidator;
-import org.jfree.report.parameters.ListParameter;
-import org.jfree.report.parameters.ParameterContext;
-import org.jfree.report.parameters.ParameterDefinitionEntry;
-import org.jfree.report.parameters.ParameterValues;
-import org.jfree.report.parameters.PlainParameter;
-import org.jfree.report.parameters.ValidationResult;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
+import org.pentaho.reporting.engine.classic.core.AttributeNames;
+import org.pentaho.reporting.engine.classic.core.MasterReport;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
+import org.pentaho.reporting.engine.classic.core.parameters.DefaultParameterContext;
+import org.pentaho.reporting.engine.classic.core.parameters.DefaultParameterDefinition;
+import org.pentaho.reporting.engine.classic.core.parameters.DefaultReportParameterValidator;
+import org.pentaho.reporting.engine.classic.core.parameters.ListParameter;
+import org.pentaho.reporting.engine.classic.core.parameters.ParameterContext;
+import org.pentaho.reporting.engine.classic.core.parameters.ParameterDefinitionEntry;
+import org.pentaho.reporting.engine.classic.core.parameters.ParameterValues;
+import org.pentaho.reporting.engine.classic.core.parameters.PlainParameter;
+import org.pentaho.reporting.engine.classic.core.parameters.ValidationResult;
 
 public class ReportParameterHelper {
   
-  public static final String parameterNamespace = "http://reporting.pentaho.org/namespaces/attributes/parameters";
-  public static final String parameterSelectionTypeAttribute = "selection-type";
+  private static final String parameterNamespace = AttributeNames.Core.NAMESPACE;
+  private static final String parameterSelectionTypeAttribute = "parameter-render-type";
   
-  public void processReportParameters(JFreeReport report, List<ReportParameter> inReportParameters, ReportContainer reportContainer)
+  public void processReportParameters(MasterReport report, List<ReportParameter> inReportParameters, ReportContainer reportContainer)
       throws ReportDataFactoryException {
     // insert parameter handling
     // report.setProperty("REGION", new String[] {"Southern"});
@@ -37,6 +38,10 @@ public class ReportParameterHelper {
         reportContainer.getReportParameters().add(reportParameter);
       } else if (parameterDefinition instanceof PlainParameter) {
         // simple parameter, single selection
+        PlainParameter plainParameter = (PlainParameter) parameterDefinition;
+        // process plain parameter, apply input report parameters to report if possible
+        ReportParameter reportParameter = processPlainParameter(plainParameter, parameterContext, inReportParameters, report);
+        reportContainer.getReportParameters().add(reportParameter);
       }
     }
     if (report.getParameterDefinition() instanceof DefaultParameterDefinition) {
@@ -48,8 +53,40 @@ public class ReportParameterHelper {
     System.out.println("Prompt Needed: " + reportContainer.isPromptNeeded());
   }
 
+  private ReportParameter processPlainParameter(PlainParameter plainParameter, ParameterContext parameterContext, List<ReportParameter> inReportParameters,
+      MasterReport report) throws ReportDataFactoryException {
+    ReportParameter reportParameter = null;
+
+    if (inReportParameters != null) {
+      for (ReportParameter inReportParameter : inReportParameters) {
+        if (inReportParameter.getName().equals(plainParameter.getName())) {
+          reportParameter = inReportParameter;
+          System.out.println("Received Parameter: " + plainParameter.getName() + " = " + inReportParameter.getValue());
+          report.getParameterValues().put(plainParameter.getName(), inReportParameter.getValue());
+          break;
+        }
+      }
+    }
+    if (reportParameter == null) {
+      reportParameter = new ReportParameter();
+      if (Number.class.isAssignableFrom(plainParameter.getValueType())) {
+        reportParameter.setDefaultNumberValue((Number) plainParameter.getDefaultValue(parameterContext));
+      } else if (plainParameter.getValueType().isAssignableFrom(String.class)) {
+        reportParameter.setDefaultStringValue((String) plainParameter.getDefaultValue(parameterContext));
+      } else if (plainParameter.getValueType().isAssignableFrom(Date.class)) {
+        reportParameter.setDefaultDateValue((Date) plainParameter.getDefaultValue(parameterContext));
+      }
+      reportParameter.setName(plainParameter.getName());
+      reportParameter.setMultiSelect(false);
+      reportParameter.setParameterType(getParameterType(plainParameter));
+      reportParameter.setPromptType(getPromptType(plainParameter, parameterContext));
+    }
+    
+    return reportParameter;
+  }
+  
   private ReportParameter processListParameter(ListParameter listParameter, ParameterContext parameterContext, List<ReportParameter> inReportParameters,
-      JFreeReport report) throws ReportDataFactoryException {
+      MasterReport report) throws ReportDataFactoryException {
     ReportParameter reportParameter = null;
     if (inReportParameters != null) {
       for (ReportParameter inReportParameter : inReportParameters) {
@@ -60,10 +97,10 @@ public class ReportParameterHelper {
             for (int i = 0; i < values.length; i++) {
               System.out.println("Received Parameter[" + i + "]: " + listParameter.getName() + " = " + values[i]);
             }
-            report.setProperty(listParameter.getName(), inReportParameter.getValues().toArray(new String[] {}));
+            report.getParameterValues().put(listParameter.getName(), inReportParameter.getValues().toArray(new String[] {}));
           } else {
             System.out.println("Received Parameter: " + listParameter.getName() + " = " + inReportParameter.getValue());
-            report.setProperty(listParameter.getName(), inReportParameter.getValue());
+            report.getParameterValues().put(listParameter.getName(), inReportParameter.getValue());
           }
           break;
         }

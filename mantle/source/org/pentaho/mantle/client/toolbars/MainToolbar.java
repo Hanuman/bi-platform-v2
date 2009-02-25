@@ -33,12 +33,13 @@ import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author mdamour
@@ -170,16 +171,16 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     showBrowserToggleButton.setEnabled(true);
   }
   
-  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, IReloadableTabPanel panel, FileItem selectedFileItem) {
+  public void solutionBrowserEvent(SolutionBrowserListener.EventType type, Widget panel, FileItem selectedFileItem) {
     toggleBrowserButton();
     toggleWorkspaceButton();
     
     String selectedTabURL = null;
     boolean saveEnabled = false;
     
-    if(panel != null){
-      selectedTabURL = panel.getUrl();
-      saveEnabled = panel.isSaveEnabled();
+    if(panel != null && panel instanceof ReloadableIFrameTabPanel){
+      selectedTabURL = ((ReloadableIFrameTabPanel)panel).getUrl();
+      saveEnabled = ((ReloadableIFrameTabPanel)panel).isSaveEnabled();
     }
     
     printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
