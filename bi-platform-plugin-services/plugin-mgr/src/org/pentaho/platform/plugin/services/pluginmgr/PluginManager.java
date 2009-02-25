@@ -309,7 +309,11 @@ public class PluginManager implements IPluginManager {
     ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
     if (loader == null) {
       String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath(
-          "system" + ISolutionRepository.SEPARATOR + plugin.getSourceDescription()); //$NON-NLS-1$
+          "system/" + plugin.getSourceDescription()); //$NON-NLS-1$
+      //need to scrub out duplicate file delimeters otherwise we will 
+      //not be able to locate resources in jars.  This classloader ultimately
+      //needs to be made less fragile
+      pluginDir = pluginDir.replace("//", "/");  //$NON-NLS-1$ //$NON-NLS-2$
       loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }

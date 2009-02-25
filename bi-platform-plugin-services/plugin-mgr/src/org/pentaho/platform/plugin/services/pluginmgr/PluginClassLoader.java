@@ -179,9 +179,7 @@ public class PluginClassLoader extends ClassLoader {
     } catch (Exception ignored) {
       // This situation indicates the resource was found but could not be
       // opened.
-      if (logger.isDebugEnabled()) {
-        logger.debug(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name), ignored); //$NON-NLS-1$
-      }
+      logger.warn(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name), ignored); //$NON-NLS-1$
 
     }
     //if we haven't found the resource in our jars, call super which will eventually call findResource

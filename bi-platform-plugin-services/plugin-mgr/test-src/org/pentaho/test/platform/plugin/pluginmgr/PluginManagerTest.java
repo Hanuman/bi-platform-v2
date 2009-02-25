@@ -42,7 +42,7 @@ public class PluginManagerTest {
     //setup the most common platform config for these tests. Some tests may choose 
     //to override some of these settings locally or not init the platform at all
     //if they are true unit tests
-    microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
+    microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest");
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
     
@@ -52,7 +52,7 @@ public class PluginManagerTest {
   }
 
   @Test
-  public void test1_Reload() {
+  public void INTEGRATION_test1_Reload() {
     microPlatform.init();
 
     pluginManager.reload(session);
@@ -94,7 +94,7 @@ public class PluginManagerTest {
   }
 
   @Test
-  public void test4_GetOverlays() throws Exception {
+  public void INTEGRATION_test4_GetOverlays() throws Exception {
     microPlatform.init();
 
     PluginMessageLogger.clear();
@@ -188,6 +188,31 @@ public class PluginManagerTest {
     //TODO: we should be able to test that the plugin was not loaded, indicated by bean1 not being registered, but
     //we cannot until plugin registration becomes transactional
   }
+  
+  @Test
+  public void test8_getBeanFromPluginClassloader() throws PluginBeanException {
+    microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
+    
+    //reload should register the beans
+    pluginManager.reload(new StandaloneSession());
+    
+    assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
+  }
+  
+  @Test
+  public void INTEGRATION_getBeanFromPluginClassloader() throws PluginBeanException {
+    microPlatform.init();
+
+    //reload should register the beans
+    pluginManager.reload(new StandaloneSession());
+
+    assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
+    assertTrue("TestClassForClassloader should have been registered", pluginManager.isBeanRegistered("TestClassForClassloader"));
+    assertNotNull("TestClassForClassloader bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("TestClassForClassloader"));
+  }
+  
 
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
@@ -228,9 +253,12 @@ public class PluginManagerTest {
   public static class Tst5PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
+      //need to set source description - classloader needs it
+      p.setSourceDescription("good-plugin1");
       p.addBean(new BeanDefinition("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent"));
       p.addBean(new BeanDefinition("TestPojo", "java.lang.String"));
       p.addBean(new BeanDefinition("TestClassNotFoundComponent", "org.pentaho.test.NotThere"));
+      p.addBean(new BeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }

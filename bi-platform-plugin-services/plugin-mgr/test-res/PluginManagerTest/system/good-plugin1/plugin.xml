@@ -30,4 +30,7 @@
     <overlay>
     </overlay>
   </overlays>
+  
+  <bean id="TestClassForClassloader" class="org.pentaho.test.platform.engine.services.TestClassForClassloader"/>
+  <bean id="PluginOnlyClass" class="org.pentaho.nowhere.PluginOnlyClass"/>
 </plugin>
