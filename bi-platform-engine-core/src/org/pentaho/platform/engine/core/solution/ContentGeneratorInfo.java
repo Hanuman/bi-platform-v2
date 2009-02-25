@@ -39,8 +39,6 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 	
 	private String classname;
 	
-	private String scope;
-	
 	public String getDescription() {
 		return description;
 	}
@@ -104,14 +102,4 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
   public void setClassname(String classname) {
     this.classname = classname;
   }
-
-  public String getScope() {
-    return scope;
-  }
-
-  public void setScope(String scope) {
-    this.scope = scope;
-  }
-
-
 }

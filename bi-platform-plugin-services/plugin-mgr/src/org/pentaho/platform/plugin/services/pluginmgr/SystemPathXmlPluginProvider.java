@@ -294,7 +294,6 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       // create an IMenuCustomization object 
       String className = XmlDom4JHelper.getNodeText("classname", node, null); //$NON-NLS-1$
       String fileInfoClassName = XmlDom4JHelper.getNodeText("fileinfo-classname", node, null); //$NON-NLS-1$
-      String scope = node.attributeValue("scope"); //$NON-NLS-1$
       String id = node.attributeValue("id"); //$NON-NLS-1$
       String type = node.attributeValue("type"); //$NON-NLS-1$
       String url = node.attributeValue("url"); //$NON-NLS-1$
@@ -302,10 +301,9 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       String description = XmlDom4JHelper.getNodeText("description", node, ""); //$NON-NLS-1$ //$NON-NLS-2$
       try {
 
-        if (id != null && type != null && scope != null && className != null && title != null) {
+        if (id != null && type != null && className != null && title != null) {
           try {
-            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, scope,
-                className, fileInfoClassName, session, folder);
+            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, className, fileInfoClassName, session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
             PluginMessageLogger.add(Messages.getString(
@@ -324,7 +322,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
   }
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
-      String description, String type, String url, String scopeStr, String className, String fileInfoClassName,
+      String description, String type, String url, String className, String fileInfoClassName,
       IPentahoSession session, String location) throws ClassNotFoundException, InstantiationException,
       IllegalAccessException {
 
@@ -336,7 +334,6 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     info.setType(type);
     info.setFileInfoGeneratorClassname(fileInfoClassName);
     info.setClassname(className);
-    info.setScope(scopeStr);
 
     return info;
   }

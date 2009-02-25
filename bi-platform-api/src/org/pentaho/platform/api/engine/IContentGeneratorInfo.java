@@ -33,6 +33,4 @@ public interface IContentGeneratorInfo {
   public String getFileInfoGeneratorClassname();
 
   public String getClassname();
-
-  public String getScope();
 }

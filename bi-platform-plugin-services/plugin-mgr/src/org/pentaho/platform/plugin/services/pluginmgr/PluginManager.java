@@ -41,7 +41,6 @@ import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
-import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
@@ -330,9 +329,8 @@ public class PluginManager implements IPluginManager {
       //test load the content generator
       try {
         Class<?> clazz = loader.loadClass(cgInfo.getClassname());
-        Scope scope = Scope.valueOf(cgInfo.getScope().toUpperCase());
-        objectFactory.defineObject(clazz.getSimpleName(), cgInfo.getClassname(), scope, loader);
-        objectFactory.defineObject(cgInfo.getId(), cgInfo.getClassname(), scope, loader);
+        objectFactory.defineObject(clazz.getSimpleName(), cgInfo.getClassname(), Scope.LOCAL, loader);
+        objectFactory.defineObject(cgInfo.getId(), cgInfo.getClassname(), Scope.LOCAL, loader);
       } catch (Exception e) {
         throw new PlatformPluginRegistrationException(errorMsg, e);
       }
