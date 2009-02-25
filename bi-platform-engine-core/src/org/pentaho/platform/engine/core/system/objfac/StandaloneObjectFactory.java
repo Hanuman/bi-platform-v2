@@ -21,6 +21,7 @@
  */
 package org.pentaho.platform.engine.core.system.objfac;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
 
   public static enum Scope { GLOBAL, SESSION, REQUEST, THREAD, LOCAL };
   
-  private Map<String,ObjectCreator> creators = new HashMap<String,ObjectCreator>();
+  private Map<String,ObjectCreator> creators = Collections.synchronizedMap(new HashMap<String,ObjectCreator>());
   
   public <T> T get(Class<T> interfaceClass, IPentahoSession session) throws ObjectFactoryException {
     return get(interfaceClass, interfaceClass.getSimpleName(), session);
@@ -57,9 +58,7 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     }
   }
 
-  public void init(String arg0, Object arg1) {
-    creators = new HashMap<String,ObjectCreator>();
-  }
+  public void init(String arg0, Object arg1) { }
 
   public boolean objectDefined(String key) {
     return creators.get(key) != null;
@@ -200,4 +199,7 @@ public class StandaloneObjectFactory implements IPentahoObjectFactory {
     }
   }
 
+  public void clearDefinitions() {
+    creators.clear();
+  }
 }

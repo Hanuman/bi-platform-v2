@@ -38,8 +38,9 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
-import org.pentaho.platform.api.engine.PluginComponentException;
+import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
@@ -72,8 +73,6 @@ public class PluginManager implements IPluginManager {
 
   private List<IMenuCustomization> menuCustomizationsCache = Collections
       .synchronizedList(new ArrayList<IMenuCustomization>());
-
-  private Map<String, String> pluginComponentMap = Collections.synchronizedMap(new HashMap<String, String>());
 
   public Set<String> getContentTypes() {
     //map.keySet returns a set backed by the map, so we cannot allow modification of the set
@@ -170,7 +169,7 @@ public class PluginManager implements IPluginManager {
     contentInfoMap.clear();
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
-    pluginComponentMap.clear();
+    objectFactory.clearDefinitions();
     //we do not need to synchronize here since unloadPlugins 
     //is called within the synchronized block in reload
     for (IPlatformPlugin plugin : plugins) {
@@ -256,8 +255,8 @@ public class PluginManager implements IPluginManager {
   @SuppressWarnings("unchecked")
   private void registerPlugin(IPlatformPlugin plugin, IPentahoSession session)
       throws PlatformPluginRegistrationException, PluginLifecycleException {
-    //FIXME: shouldn't we treat the registration of a plugin as an atomic operation
-    //with rollback if something is broken?
+    //TODO: we should treat the registration of a plugin as an atomic operation
+    //with rollback if something is broken
 
     ClassLoader loader = setPluginClassLoader(plugin);
 
@@ -278,6 +277,8 @@ public class PluginManager implements IPluginManager {
     //cache menu customizations
     menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
 
+    registerBeans(plugin, loader, session);
+
     PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
     try {
       plugin.loaded();
@@ -287,6 +288,20 @@ public class PluginManager implements IPluginManager {
       String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getName()); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, t);
       PluginMessageLogger.add(msg);
+    }
+  }
+
+  private void registerBeans(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session) throws PlatformPluginRegistrationException {
+    //we do not have to synchronize on the bean set here because the
+    //map that backs the set is never modified after the plugin has 
+    //been made available to the plugin manager
+    for(BeanDefinition def : plugin.getBeans()) {
+      if (objectFactory.objectDefined(def.beanId)) {
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+            "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", def.beanId, plugin.getName())); //$NON-NLS-1$
+      }
+      //right now we support only prototype scope for beans
+      objectFactory.defineObject(def.beanId, def.classname, Scope.LOCAL, loader);
     }
   }
 
@@ -358,7 +373,6 @@ public class PluginManager implements IPluginManager {
       PluginMessageLogger.add(Messages.getString(
           "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getSourceDescription())); //$NON-NLS-1$
     }
-
   }
 
   public IPentahoObjectFactory getObjectFactory() {
@@ -382,30 +396,28 @@ public class PluginManager implements IPluginManager {
     return null;
   }
 
-  public Object getRegisteredObject(String componentClassName) throws PluginComponentException {
-    assert (componentClassName != null);
-    String className = pluginComponentMap.get(componentClassName);
-    if (className != null) {
-      Object componentOrPojo = null;
-      Class<?> componentOrPojoClass = null;
+  public Object getBean(String beanId) throws PluginBeanException {
+    assert (beanId != null);
+    if (objectFactory.objectDefined(beanId)) {
+      Object bean = null;
       try {
-        //
-        // TODO - Get the class here
-        componentOrPojoClass = Class.forName(className);
-        componentOrPojo = componentOrPojoClass.newInstance();
-        return componentOrPojo;
+        //TODO: should we allow session scoped beans?, if so we need to pass in the session
+        //It looks ugly to pass Object.class to the object factory.  This is the way it must
+        //be unless we want to support null interfaceClass in which case the factory will not 
+        //cast the resultant object.
+        bean = objectFactory.get(Object.class, beanId, null);
+        return bean;
       } catch (Throwable ex) { // Catching throwable on purpose
-        throw new PluginComponentException(ex);
+        throw new PluginBeanException(ex);
       }
     } else {
-      Logger.warn(getClass().toString(), Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
-      return null;
+      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
     }
   }
 
-  public boolean isObjectRegistered(String componentClassName) {
-    assert (componentClassName != null);
-    return pluginComponentMap.containsKey(componentClassName);
+  public boolean isBeanRegistered(String beanId) {
+    assert (beanId != null);
+    return objectFactory.objectDefined(beanId);
   }
 
 }

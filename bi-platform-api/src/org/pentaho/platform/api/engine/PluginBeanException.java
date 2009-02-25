@@ -18,25 +18,23 @@
 
 package org.pentaho.platform.api.engine;
 
-import org.pentaho.platform.api.util.PentahoCheckedChainedException;
-
-public class PluginComponentException extends PentahoCheckedChainedException {
+public class PluginBeanException extends Exception {
 
   private static final long serialVersionUID = 994L;
 
-  public PluginComponentException() {
+  public PluginBeanException() {
     super();
   }
 
-  public PluginComponentException(final String message) {
+  public PluginBeanException(final String message) {
     super(message);
   }
 
-  public PluginComponentException(final String message, final Throwable reas) {
+  public PluginBeanException(final String message, final Throwable reas) {
     super(message, reas);
   }
 
-  public PluginComponentException(final Throwable reas) {
+  public PluginBeanException(final Throwable reas) {
     super(reas);
   }
   

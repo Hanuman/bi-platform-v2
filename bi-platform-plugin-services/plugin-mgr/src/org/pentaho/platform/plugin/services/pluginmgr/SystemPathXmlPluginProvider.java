@@ -37,6 +37,7 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
@@ -142,28 +143,38 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     processContentTypes(plugin, doc, session);
     processContentGenerators(plugin, doc, session, folder, repo, hasLib);
     processOverlays(plugin, doc, session);
-    processLifecycleListeners(plugin, doc, session);
-    
-    String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1";  //$NON-NLS-1$//$NON-NLS-2$
+    processLifecycleListeners(plugin, doc);
+    processBeans(plugin, doc);
+
+    String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1"; //$NON-NLS-1$//$NON-NLS-2$
 
     String msg = Messages.getString(
         "SystemPathXmlPluginProvider.PLUGIN_PROVIDES", //$NON-NLS-1$
         Integer.toString(plugin.getMenuCustomizations().size()), Integer.toString(plugin.getContentInfos().size()),
         Integer.toString(plugin.getContentGenerators().size()), Integer.toString(plugin.getOverlays().size()),
-        listenerCount
-        );
+        listenerCount);
     PluginMessageLogger.add(msg);
-    
+
     plugin.setSourceDescription(folder);
 
     return plugin;
   }
 
-  protected void processLifecycleListeners(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+  protected void processLifecycleListeners(PlatformPlugin plugin, Document doc) {
     Element node = (Element) doc.selectSingleNode("//lifecycle-listener"); //$NON-NLS-1$
     if (node != null) {
-      String classname = node.attributeValue("classname"); //$NON-NLS-1$
+      String classname = node.attributeValue("class"); //$NON-NLS-1$
       plugin.setLifecycleListenerClassname(classname);
+    }
+  }
+
+  protected void processBeans(PlatformPlugin plugin, Document doc) {
+    List<?> nodes = doc.selectNodes("//bean"); //$NON-NLS-1$
+    for (Object obj : nodes) {
+      Element node = (Element) obj;
+      if (node != null) {
+        plugin.addBean(new BeanDefinition(node.attributeValue("id"), node.attributeValue("class"))); //$NON-NLS-1$ //$NON-NLS-2$
+      }
     }
   }
 

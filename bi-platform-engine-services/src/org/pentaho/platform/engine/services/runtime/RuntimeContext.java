@@ -813,8 +813,8 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        */
 
       // Explicitly using the short name instead of the fully layed out class name
-      if ( (pluginManager != null) && (pluginManager.isObjectRegistered(shortName)) ) {
-        componentTmp = pluginManager.getRegisteredObject(shortName);
+      if ( (pluginManager != null) && (pluginManager.isBeanRegistered(shortName)) ) {
+        componentTmp = pluginManager.getBean(shortName);
       }
       
       // Ok - the plugin didn't load - try the old route

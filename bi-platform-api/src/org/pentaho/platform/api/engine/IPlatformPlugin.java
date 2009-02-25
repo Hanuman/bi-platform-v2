@@ -20,6 +20,7 @@
 
 package org.pentaho.platform.api.engine;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.pentaho.ui.xul.XulOverlay;
@@ -69,12 +70,17 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
   public List<IContentInfo> getContentInfos();
   
   /**
+   * Returns a list of bean configurations for this plugin-in
+   */
+  public Collection<BeanDefinition> getBeans();
+  
+  /**
    * Returns a list of menu overlays for this plug-in
    * @return
    */
   @SuppressWarnings("unchecked")
   public List getMenuCustomizations();
-
+  
   /**
    * Returns the fully qualified name of the lifecycle listener class
    * defined by this plugin.  The class must be a {@link IPluginLifecycleListener}.
@@ -106,4 +112,19 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    * @see org.pentaho.platform.api.engine.IPluginLifecycleListener#unLoaded()
    */
   public void unLoaded() throws PluginLifecycleException;
+  
+  /**
+   * A simple struct that holds a plugin bean definition
+   */
+  public static class BeanDefinition {
+    
+    public BeanDefinition() { }
+    public BeanDefinition(String beanId, String classname) { 
+      this.beanId = beanId;
+      this.classname = classname;
+    }
+    
+    public String beanId;
+    public String classname;
+  }
 }

@@ -26,9 +26,12 @@ import java.util.Set;
 import org.pentaho.ui.xul.XulOverlay;
 
 /**
- * A plugin has the following components:
- * * a registered content type
- * * a content generator
+ * The contract API between the platform and platform plugins.  The plugin
+ * manager provides the ability to load and register plugins as well as utility methods
+ * for getting particular extension implementations from the set of registered plugins. 
+ * For more information on platform plugins, visit the wiki link below.
+ * 
+ * @see <a href="http://wiki.pentaho.com/display/ServerDoc2x/BI+Platform+Plugins+in+V2">BI Platform Plugins</a>
  * @author jamesdixon
  */
 public interface IPluginManager {
@@ -105,22 +108,19 @@ public interface IPluginManager {
       throws PlatformPluginRegistrationException;
   
   /**
-   * If any plugins have registered to provide either BI Component subclasses,
-   * this method will return a new instance of the component or object to be wrapped
-   * by the pojo component.
-   * @param className cannot be null
-   * @return Object
-   * @throws PluginComponentException
+   * If any plugins have registered a bean by id beanId, this method will return a new instance 
+   * of the object.
+   * @param beanId a unique identifier for a particular bean (cannot be null)
+   * @return an instance of the bean registered under beanId
+   * @throws PluginBeanException if there was a problem retrieving the bean instance
    */
-  public Object getRegisteredObject(String className) throws PluginComponentException;
+  public Object getBean(String beanId) throws PluginBeanException;
 
   /**
-   * Returns true if the plugin manager has an implementation of
-   * the component
-   * @param className Cannot be null
-   * @return boolean
+   * Returns true if a bean with id beanId has been registered with the plugin manager,
+   * i.e. you can get a bean instance by calling {@link #getBean(String)}
+   * @param beanId Cannot be null
+   * @return true if the bean is registered
    */
-  public boolean isObjectRegistered(String className);
-  
-  
+  public boolean isBeanRegistered(String beanId);
 }

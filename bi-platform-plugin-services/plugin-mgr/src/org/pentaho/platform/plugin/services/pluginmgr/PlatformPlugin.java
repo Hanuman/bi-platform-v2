@@ -18,6 +18,8 @@
 package org.pentaho.platform.plugin.services.pluginmgr;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
@@ -40,6 +42,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   private List<IContentInfo> contentInfos = new ArrayList<IContentInfo>();
 
   private List<XulOverlay> overlays = new ArrayList<XulOverlay>();
+  
+  private Collection<BeanDefinition> beanDefinitions = new ArrayList<BeanDefinition>();
 
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
 
@@ -140,6 +144,14 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   public void setSourceDescription(String sourceDescription) {
     this.sourceDescription = sourceDescription;
   }
+  
+  public Collection<BeanDefinition> getBeans() {
+    return Collections.unmodifiableCollection(beanDefinitions);
+  }
+  
+  public void addBean(BeanDefinition beanDefinition) {
+    beanDefinitions.add(beanDefinition);
+  }
 
   public void init() throws PluginLifecycleException {
     if (lifecycleListener != null) {
@@ -162,4 +174,5 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   public void addLifecycleListener(IPluginLifecycleListener listener) {
     this.lifecycleListener = listener;
   }
+
 }
