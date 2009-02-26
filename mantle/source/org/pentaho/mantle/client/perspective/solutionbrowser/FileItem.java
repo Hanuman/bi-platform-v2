@@ -20,6 +20,7 @@
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.FrameUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
@@ -34,10 +35,12 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
@@ -80,7 +83,51 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   
   // by creating a single popupMenu, we're reducing total # of widgets used
   // and we can be sure to hide any existing ones by calling hide
-  static PopupPanel popupMenu = new PopupPanel(true);
+  static PopupPanel popupMenu = new PopupPanel(true){
+
+    @Override
+    public void hide() {
+      super.hide();
+
+      ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+      if(iframeTab == null || iframeTab.getFrame() == null){
+        return;
+      }
+      Frame currentFrame = iframeTab.getFrame();
+      FrameUtils.setEmbedVisibility(currentFrame, true);
+    }
+
+    @Override
+    public void show() {
+
+      super.show();
+      ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+      if(iframeTab == null || iframeTab.getFrame() == null){
+        return;
+      }
+      Frame currentFrame = iframeTab.getFrame();
+      if(ElementUtils.elementsOverlap(this.getElement(), 
+          currentFrame.getElement())){
+        FrameUtils.setEmbedVisibility(currentFrame, false);
+      }
+    }
+    
+  };
+  static{
+    popupMenu.addPopupListener(new PopupListener(){
+
+      public void onPopupClosed(PopupPanel arg0, boolean arg1) {
+
+        ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+        if(iframeTab == null || iframeTab.getFrame() == null){
+          return;
+        }
+        Frame currentFrame = iframeTab.getFrame();
+        FrameUtils.setEmbedVisibility(currentFrame, true);
+      }
+      
+    });
+  }
   Label fileLabel = new Label();
   IFileItemCallback fileItemCallback;
   String name;
