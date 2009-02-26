@@ -422,4 +422,11 @@ public class PluginManager implements IPluginManager {
     return objectFactory.objectDefined(beanId);
   }
 
+  public void unloadAllPlugins() {
+    synchronized (plugins) {
+      this.unloadPlugins();
+    }
+  }
+
+  
 }

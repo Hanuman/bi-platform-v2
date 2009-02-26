@@ -123,4 +123,11 @@ public interface IPluginManager {
    * @return true if the bean is registered
    */
   public boolean isBeanRegistered(String beanId);
+  
+  /**
+   * Unloads all the plugins. Called when the context shuts down.
+   */
+  public void unloadAllPlugins();
+  
+  
 }

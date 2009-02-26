@@ -44,7 +44,8 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 	}
 
 	public void shutdown() {
-		// nothing to do here
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, null);
+    pluginManager.unloadAllPlugins();
 	}
 	
 	public String getDescription() {
