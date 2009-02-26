@@ -1083,10 +1083,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           if (!path.endsWith("/")) { //$NON-NLS-1$
             path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc&filter=*.prpt"); //$NON-NLS-1$
+          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc&filter=*.xaction, *.url, *.prpt"); //$NON-NLS-1$
         } else {
           builder = new RequestBuilder(RequestBuilder.GET,
-              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password&filter=*.prpt"); //$NON-NLS-1$
+              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password&filter=*.xaction, *.url, *.prpt"); //$NON-NLS-1$
         }
 
         RequestCallback callback = new RequestCallback() {
