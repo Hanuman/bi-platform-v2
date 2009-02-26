@@ -6,17 +6,17 @@
         <menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/>
     </menu-items>
 
-    <content-generator scope="local" id="ws-services" type="ws-services" >
+    <content-generator id="ws-services" type="ws-services" >
         <classname>org.pentaho.platform.webservice.content.ListServices</classname>
         <title>Web services discovery page</title>
     </content-generator>
     
-    <content-generator scope="local" id="ws-run" type="ws-run" >
+    <content-generator id="ws-run" type="ws-run" >
         <classname>org.pentaho.platform.plugin.services.webservices.content.RunService</classname>
         <title>Web services execution</title>
     </content-generator>
     
-    <content-generator scope="local" id="ws-wsdl" type="ws-wsdl" >
+    <content-generator id="ws-wsdl" type="ws-wsdl" >
         <classname>org.pentaho.platform.plugin.services.webservices.content.ServiceWsdl</classname>
         <title>Web services execution</title>
     </content-generator>
