@@ -364,36 +364,37 @@ public class SolutionRepositoryService extends ServletBase {
         continue;
       }
 
-      if (acceptFilter(name, filters)) { //$NON-NLS-1$
-        int lastPoint = name.lastIndexOf('.');
-        String extension = ""; //$NON-NLS-1$
-        if (lastPoint != -1) {
-          // ignore anything with no extension
-          extension = name.substring(lastPoint + 1).toLowerCase();
-        }
+      int lastPoint = name.lastIndexOf('.');
+      String extension = ""; //$NON-NLS-1$
+      if (lastPoint != -1) {
+        // ignore anything with no extension
+        extension = name.substring(lastPoint + 1).toLowerCase();
+      }
 
-        // xaction and URL support are built in
-        boolean addFile = "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
-        boolean isPlugin = false;
-        // see if there is a plugin for this file type
-        IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
-        if (pluginManager != null) {
-          Set<String> types = pluginManager.getContentTypes();
-          isPlugin = types != null && types.contains(extension);
-          addFile |= isPlugin;
-        }
+      // xaction and URL support are built in
+      boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
+      boolean isPlugin = false;
+      // see if there is a plugin for this file type
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
+      if (pluginManager != null) {
+        Set<String> types = pluginManager.getContentTypes();
+        isPlugin = types != null && types.contains(extension);
+        addFile |= isPlugin;
+      }
+
+      if (addFile) { //$NON-NLS-1$
 
         Element child = parentElement.getOwnerDocument().createElement("file");
         parentElement.appendChild(child);
         IFileInfo fileInfo = null;
 
-        if (addFile) {
           try {
-            // the visibility flag for action-sequences is controlled by /action-sequence/documentation/result-type
-            // and we should no longer be looking at 'visible' because it was never actually used!
-            String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile,
-                "documentation/result-type")) ? "false" : "true";
-            child.setAttribute("visible", visible == null || "".equals(visible) ? "true" : visible);
+            // the visibility flag for action-sequences is controlled by
+            // /action-sequence/documentation/result-type
+            // and we should no longer be looking at 'visible' because it was
+            // never actually used!
+            String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile, "documentation/result-type")) ? "false" : "true";
+            child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");
           } catch (Exception e) {
             child.setAttribute("visible", "true"); //$NON-NLS-1$
           }
@@ -422,35 +423,33 @@ public class SolutionRepositoryService extends ServletBase {
           } else if (isPlugin) {
             // must be a plugin - make it look like a URL
             try {
-            IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, session);
-              fig.setLogger(this);
-              // get the file info object for this file
-              fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name,
-                  childSolutionFile.getData());
-              String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
-              String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-              String solution = childSolutionFile.getSolutionPath();
-              String path = ""; //$NON-NLS-1$
-              int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
-              if (pos != -1) {
-                path = solution.substring(pos + 1);
-                solution = solution.substring(0, pos);
-              }
-              String url;
-              if (!fileUrl.equals("")) { //$NON-NLS-1$
-                url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
-                    + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              } else {
-                url = PentahoSystem.getApplicationContext().getBaseUrl()
-                    + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-              }
-              child.setAttribute("url", url); //$NON-NLS-1$
-            }
-            catch(PlatformPluginRegistrationException e) {
+              IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, session);
+              if (fig != null) {
+                fig.setLogger(this);
+                // get the file info object for this file
+                fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name, childSolutionFile.getData());
+                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
+                String solution = childSolutionFile.getSolutionPath();
+                String path = ""; //$NON-NLS-1$
+                int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+                if (pos != -1) {
+                  path = solution.substring(pos + 1);
+                  solution = solution.substring(0, pos);
+                }
+                String url;
+                if (!fileUrl.equals("")) { //$NON-NLS-1$
+                  url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                } else {
+                  url = PentahoSystem.getApplicationContext().getBaseUrl()
+                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                child.setAttribute("url", url); //$NON-NLS-1$
+                }
+            } catch (PlatformPluginRegistrationException e) {
               logger.warn(e.getMessage(), e);
             }
           }
-        }
 
         // localization
         try {
@@ -462,8 +461,7 @@ public class SolutionRepositoryService extends ServletBase {
           } else {
             localizedName = repository.getLocalizedFileProperty(childSolutionFile, "title");
           }
-          child
-              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
@@ -475,8 +473,7 @@ public class SolutionRepositoryService extends ServletBase {
             if (url_description == null && description == null) {
               child.setAttribute("description", name);
             } else {
-              child.setAttribute("description", url_description == null || "".equals(url_description) ? description
-                  : url_description);
+              child.setAttribute("description", url_description == null || "".equals(url_description) ? description : url_description);
             }
           } else if (name.endsWith(".xaction")) {
             String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
@@ -497,7 +494,7 @@ public class SolutionRepositoryService extends ServletBase {
       }
     }
   }
-
+  
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters)
       throws ParserConfigurationException {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
