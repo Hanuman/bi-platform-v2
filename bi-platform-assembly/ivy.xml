@@ -21,7 +21,7 @@
 		<dependency org="pentaho-reporting-engine" name="legacy-charts" rev="0.8.11-SNAPSHOT" />
 		<dependency org="pentaho-reporting-engine" name="legacy-functions" rev="0.8.11-SNAPSHOT" />
 		<dependency org="hsqldb" name="hsqldb" rev="1.8.0" />
-		<dependency org="mysql" name="mysql-connector-java" rev="5.0.8" />
+		<dependency org="mysql" name="mysql-connector-java" rev="5.0.7" />
 		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
 <!-- Pentaho Reporting Plugin -->
