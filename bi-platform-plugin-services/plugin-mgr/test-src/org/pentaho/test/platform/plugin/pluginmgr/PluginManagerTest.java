@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,7 @@ public class PluginManagerTest {
     //setup the most common platform config for these tests. Some tests may choose 
     //to override some of these settings locally or not init the platform at all
     //if they are true unit tests
-    microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest");
+    microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
     
@@ -200,10 +201,36 @@ public class PluginManagerTest {
   
   @Test
   public void test8_getBeanFromPluginClassloader() throws PluginBeanException {
-    microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
+    microPlatform.define(IPluginProvider.class, Tst8PluginProvider.class).init();
     
     //reload should register the beans
     pluginManager.reload(new StandaloneSession());
+    
+    try {
+      Class.forName("org.pentaho.nowhere.PluginOnlyClass");
+      fail("PluginOnlyClass needs to be available only through the plugin lib dir in order for this test to be valid");
+    } catch (ClassNotFoundException e) { }
+    
+    assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
+  }
+  
+  @Test
+  public void test8b_getBeanFromPluginClassloader_altSolutionPath() throws PluginBeanException {
+    //This test is to validate a bug that had existed where a solution path ending in '/' was causing
+    //the PluginClassLoader to not be able to open plugin jars, thus you would get ClassNotFound exceptions
+    //when accessing plugin classes.
+    MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
+    mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
+    mp.define(IPluginProvider.class, Tst8PluginProvider.class).init();
+    
+    //reload should register the beans
+    pluginManager.reload(new StandaloneSession());
+    
+    try {
+      Class.forName("org.pentaho.nowhere.PluginOnlyClass");
+      fail("PluginOnlyClass needs to be available only through the plugin lib dir in order for this test to be valid");
+    } catch (ClassNotFoundException e) { }
     
     assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
     assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
@@ -292,7 +319,7 @@ public class PluginManagerTest {
     assertEquals("Operation name is wrong", "test10type1-oper2-id", ops.get(1).getId());
     assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
   }
-
+  
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
 
@@ -337,7 +364,6 @@ public class PluginManagerTest {
       p.addBean(new BeanDefinition("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent"));
       p.addBean(new BeanDefinition("TestPojo", "java.lang.String"));
       p.addBean(new BeanDefinition("TestClassNotFoundComponent", "org.pentaho.test.NotThere"));
-      p.addBean(new BeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
@@ -348,6 +374,16 @@ public class PluginManagerTest {
       p.setName("test6Plugin");
       p.addBean(new BeanDefinition("bean1", "java.lang.String"));
       p.addBean(new BeanDefinition("bean1", "java.lang.Object"));
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst8PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      //need to set source description - classloader needs it
+      p.setSourceDescription("good-plugin1");
+      p.addBean(new BeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }

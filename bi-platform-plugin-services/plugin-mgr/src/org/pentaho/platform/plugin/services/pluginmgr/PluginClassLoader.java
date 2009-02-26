@@ -158,7 +158,6 @@ public class PluginClassLoader extends ClassLoader {
    */
   @Override
   public InputStream getResourceAsStream(final String name) {
-    try {
       String entryName = prepareEntryName(name);
       for (JarFile jar : jars) {
         ZipEntry entry = jar.getEntry(entryName);
@@ -173,15 +172,14 @@ public class PluginClassLoader extends ClassLoader {
           if(logger.isTraceEnabled()) {
             logger.trace("adding class: " + jarKey + '/' + name); //$NON-NLS-1$
           }
-          return jar.getInputStream(entry);
+          try {
+            return jar.getInputStream(entry);
+          } catch (IOException e) {
+            logger.warn(Messages.getString("PluginClassLoader.WARN_CLASS_NOT_REGISTERED", entryName), e); //$NON-NLS-1$
+            return null;
+          }
         }
       }
-    } catch (Exception ignored) {
-      // This situation indicates the resource was found but could not be
-      // opened.
-      logger.warn(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name), ignored); //$NON-NLS-1$
-
-    }
     //if we haven't found the resource in our jars, call super which will eventually call findResource
     return super.getResourceAsStream(name);
   }
