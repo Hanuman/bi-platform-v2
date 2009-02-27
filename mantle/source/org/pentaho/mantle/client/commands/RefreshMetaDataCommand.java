@@ -20,28 +20,32 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class RefreshMetaDataCommand implements Command {
+public class RefreshMetaDataCommand extends AbstractCommand {
 
   public RefreshMetaDataCommand() {
   }
 
-  public void execute() {
-    AsyncCallback callback = new AsyncCallback() {
+  protected void performOperation() {
+    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("refreshReportingMetadataFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("error"), Messages.getString("refreshReportingMetadataFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
-      public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshReportingMetadataSuccess"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+      public void onSuccess(Void result) {
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("info"), Messages.getString("refreshReportingMetadataSuccess"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
     };
     MantleServiceCache.getService().refreshMetadata(callback);
   }
 
+  protected void performOperation(final boolean feedback) {
+    // do nothing
+  }
 }

@@ -20,16 +20,15 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ExecuteGlobalActionsCommand implements Command {
+public class ExecuteGlobalActionsCommand extends AbstractCommand {
 
   public ExecuteGlobalActionsCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
     AsyncCallback callback = new AsyncCallback() {
 
       public void onFailure(Throwable caught) {
@@ -37,11 +36,15 @@ public class ExecuteGlobalActionsCommand implements Command {
       }
 
       public void onSuccess(Object result) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("globalActionsExecutedSuccessfully"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("info"), Messages.getString("globalActionsExecutedSuccessfully"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
     };
     MantleServiceCache.getService().executeGlobalActions(callback);
   }
 
+  protected void performOperation(final boolean feedback) {
+    // do nothing
+  }
 }

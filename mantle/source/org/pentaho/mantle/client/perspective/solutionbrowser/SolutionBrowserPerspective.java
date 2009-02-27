@@ -1012,20 +1012,43 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
       public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
-
-          public void onFailure(Throwable caught) {
-
-          }
-
-          public void onSuccess(Boolean result) {
-            executeActionSequence(mode);
-          }
-
-        });
+        doLogin(mode);
       }
     };
     MantleServiceCache.getService().isAuthenticated(callback);
+  }
+
+  /**
+   * Display the login screen and and validate the credentials supplied by the user
+   * if the credentials are correct, the execute method is being invoked other wise
+   * error dialog is being display. On clicking ok button on the dialog box, login
+   * screen is displayed again and process is repeated until the user click cancel 
+   * or user is successfully authenticated
+   *  */
+  private void doLogin(final FileCommand.COMMAND mode) {
+    MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
+
+      public void onFailure(Throwable caught) {
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        dialogBox.setCallback(new IDialogCallback() {
+          public void cancelPressed() {
+            // do nothing
+          }
+
+          public void okPressed() {
+            doLogin(mode);
+          }
+          
+        });
+        dialogBox.center();
+      }
+
+      public void onSuccess(Object result) {
+        executeActionSequence(mode);
+      }
+
+    });
   }
 
   void showScheduleDialog(final SolutionFileInfo fileInfo) {

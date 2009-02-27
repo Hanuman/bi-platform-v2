@@ -22,10 +22,9 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class RefreshRepositoryCommand implements Command {
+public class RefreshRepositoryCommand extends AbstractCommand {
 
   SolutionBrowserPerspective navigatorPerspective;
 
@@ -33,12 +32,13 @@ public class RefreshRepositoryCommand implements Command {
     this.navigatorPerspective = navigatorPerspective;
   }
 
-  public void execute(final boolean feedback) {
+  protected void performOperation(final boolean feedback) {
     AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
         WaitPopup.getInstance().setVisible(false);
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
@@ -53,6 +53,10 @@ public class RefreshRepositoryCommand implements Command {
     };
     WaitPopup.getInstance().setVisible(true);
     MantleServiceCache.getService().refreshRepository(callback);
+  }
+
+  protected void performOperation() {
+    // do nothing
   }
 
   public void execute() {
