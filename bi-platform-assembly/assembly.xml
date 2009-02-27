@@ -44,7 +44,7 @@
 	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
 	<property name="stage.data.dir" value="${stage.dir.server}/data" />
 	<property name="admin-console.name" value="administration-console" />
-	<property name="admin-console.dir" value="${stage.dir.server}/administration-console" />
+	<property name="admin-console.dir" value="${stage.dir}/administration-console" />
 
 	<!-- default relative project paths -->
 	<property name="bi.platform.assembly.dir" value="." />
@@ -346,7 +346,7 @@
      =================================================================== -->
 	<target name="install-management-console">
 		<!-- Explode the Open Admin Console -->
-		<unzip dest="${stage.dir.server}">
+		<unzip dest="${stage.dir}">
 			<fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
 		</unzip>
 
