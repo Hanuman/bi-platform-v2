@@ -86,8 +86,13 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     this.settingsPath = settingsPath;
   }
 
+  @Deprecated
   public void setOverrideClassloader(PluginClassLoader pluginClassloader) {
     this.overrideClassloader = pluginClassloader;
+  }
+  
+  protected PluginClassLoader getOverrideClassloader() {
+    return overrideClassloader;
   }
 
   /**
@@ -160,7 +165,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
    * which is particularly useful in test cases
    */
   protected ClassLoader getClassLoader(Class<?> clazz) {
-    ClassLoader classLoader = (overrideClassloader != null) ? overrideClassloader : clazz.getClassLoader();
+    PluginClassLoader _overrideClassloader = getOverrideClassloader();
+    ClassLoader classLoader = (_overrideClassloader != null) ? _overrideClassloader : clazz.getClassLoader();
 
     if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
       Logger.warn(this, Messages.getString(
