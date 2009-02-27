@@ -51,13 +51,13 @@ public class MicroPlatform {
 
   public MicroPlatform(String solutionPath) {
     this.solutionPath = solutionPath;
+    PentahoSystem.setObjectFactory(factory);
   }
 
   public void init() {
     PentahoSystem.setSystemSettingsService(settings);
 
       StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
-      PentahoSystem.setObjectFactory(factory);
       PentahoSystem.init(applicationContext);
   }
 
@@ -70,4 +70,5 @@ public class MicroPlatform {
     factory.defineObject(interfaceClass.getSimpleName(), implClass.getName());
     return this;
   }
+  
 }
