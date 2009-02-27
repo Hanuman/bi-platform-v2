@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <name>chartbeans_mql.xaction</name>
+  <title>chartbeans_mql.xaction</title>
+  <version>1</version>
+  <logging-level>debug</logging-level>
+  <documentation>
+    <author>Curtis Boyden</author>  
+    <description>Generate a chart through ChartBeans from an MQL statement.</description>  
+    <help>Pass in an MQL statement that returns a table of three columns. The first column is the series, the second is the category and the thrid is the data.</help>
+    <result-type>rule</result-type>  
+  </documentation>
+
+  <inputs>
+    <query type="string"> 
+      <sources> 
+        <request>query</request> 
+      </sources>  
+      <default-value/> 
+    </query> 
+    <chart-model type="string">
+      <sources>
+        <request>chart-model</request>
+      </sources>
+    </chart-model>
+    <chart-width type="integer">
+      <sources>
+        <request>chart-width</request>
+      </sources>
+    </chart-width>
+    <chart-height type="integer">
+      <sources>
+        <request>chart-height</request>
+      </sources>
+    </chart-height>
+  </inputs>
+
+  <outputs>
+    <outputstream type="content"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </outputstream> 
+  </outputs>
+
+  <resources/>
+
+  <actions> 
+  
+    <action-definition>
+      <action-inputs>
+        <query />
+      </action-inputs>
+      <action-outputs>
+        <rule-result type="result-set" mapping="chartdata"/>
+      </action-outputs>
+      <component-name>MQLRelationalDataComponent</component-name>
+      <action-type>rule</action-type>
+      <component-definition>
+        <live>true</live>
+        <display-names>false</display-names>
+      </component-definition>
+    </action-definition>
+
+    <action-definition>
+      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <action-inputs> 
+        <chart-model type="string"/>
+        <chartdata type="result-set" />
+        <chart-width type="integer"/>
+        <chart-height type="integer"/>
+      </action-inputs>
+      <action-outputs>
+        <outputstream/>
+      </action-outputs>
+      <component-definition> 
+        <class>org.pentaho.platform.plugin.action.chartbeans.ChartComponent</class> 
+      </component-definition>
+      <action-name>Test the test POJO</action-name>  
+      <logging-level>DEBUG</logging-level> 
+    </action-definition>
+    
+  </actions> 
+</action-sequence>
