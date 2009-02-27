@@ -95,17 +95,17 @@
 
 	<target name="package-zip">
 		<zip destfile="${dist.dir}/${package.basename}.zip">
-			<zipfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}" />
+			<zipfileset dir="${stage.dir}" />
 		</zip>
 	</target>
 
 	<target name="package-targz">
 		<tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}" mode="755">
+			<tarfileset dir="${stage.dir}"  mode="755">
 				<include name="**/*.sh" />
 				<exclude name="jre/" />
 			</tarfileset>
-			<tarfileset dir="${stage.dir.server}" prefix="${productId}-${releaseType}">
+			<tarfileset dir="${stage.dir}">
 				<exclude name="**/*.sh" />
 				<exclude name="jre/" />
 			</tarfileset>
