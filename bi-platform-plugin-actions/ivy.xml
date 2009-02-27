@@ -87,6 +87,9 @@
 
         <!--  internal dependencies -->
         
+        <!--  charting  -->
+    <dependency org="pentaho-charting" name="pentaho-charting" rev="${dependency.pentaho-chartbeans.revision}" changing="true" />
+        
         <!--  reporting -->
     <dependency org="pentaho-reporting-engine" name="classic-core" rev="${dependency.pentaho-reporting-engine}" changing="true" />
     <dependency org="pentaho-reporting-engine" name="classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
