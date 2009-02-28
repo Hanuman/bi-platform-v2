@@ -19,6 +19,7 @@ package org.pentaho.test.platform.engine.core;
 
 import java.util.HashMap;
 
+import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
@@ -42,9 +43,13 @@ public class SimpleObjectFactory implements IPentahoObjectFactory {
     String classname = classnamesMap.get(key);
     try {
       Class implClass = Class.forName(classname);
-      return (T) implClass.newInstance();
-    } catch (Throwable t) {
-      throw new ObjectFactoryException("Could not create instance for class " + classname, t);
+      T t = (T) implClass.newInstance();
+      if (t instanceof IPentahoInitializer) {
+        ((IPentahoInitializer) t).init(session);
+      }
+      return t;
+    } catch (Throwable th) {
+      throw new ObjectFactoryException("Could not create instance for class " + classname, th);
     }
   }
 
