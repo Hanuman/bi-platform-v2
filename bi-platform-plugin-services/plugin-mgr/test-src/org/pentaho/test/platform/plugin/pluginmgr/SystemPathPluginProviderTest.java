@@ -139,6 +139,7 @@ public class SystemPathPluginProviderTest {
 
   @Test
   public void testLoadLifeCycleListener() throws PlatformPluginRegistrationException {
+    microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
     List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
 
     IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils
