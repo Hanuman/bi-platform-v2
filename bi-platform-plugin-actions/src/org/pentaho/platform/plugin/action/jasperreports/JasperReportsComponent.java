@@ -263,7 +263,7 @@ public class JasperReportsComponent extends ComponentBase {
       String imageUrl = PentahoSystem.getApplicationContext().getBaseUrl() + getStringSetting(IMAGE_URL);
       StringBuffer tempImgPath = new StringBuffer().append(PentahoSystem.getApplicationContext().getSolutionPath(getStringSetting(IMAGE_DIR)));
 
-      if (! (tempImgPath.charAt(tempImgPath.length()) == File.separatorChar)) {
+      if (! (tempImgPath.charAt(tempImgPath.length() - 1) == File.separatorChar)) {
         tempImgPath.append(File.separator);
       }
       
