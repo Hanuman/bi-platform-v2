@@ -1,5 +1,6 @@
 package org.pentaho.platform.plugin.action.chartbeans;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,8 +8,11 @@ import java.sql.SQLException;
 
 import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
+import org.pentaho.chart.ChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
+import org.pentaho.chart.core.ChartDocument;
 import org.pentaho.chart.model.ChartModel;
+import org.pentaho.chart.model.ChartModel.ChartTheme;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.plugin.ChartPluginFactory;
 import org.pentaho.chart.plugin.ChartProcessingException;
@@ -16,6 +20,7 @@ import org.pentaho.chart.plugin.IChartPlugin;
 import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 
 public class ChartComponent {
@@ -85,7 +90,34 @@ public class ChartComponent {
       
       ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel);
       
-      InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType(), null);
+      //Temp - need to fix actual Theme serialization through Json
+      chartModel.setTheme(ChartTheme.THEME1);
+      
+      ChartThemeFactory chartThemeFactory = new ChartThemeFactory() {
+        public ChartDocument getThemeDocument(ChartTheme theme) {
+          ChartDocument themeDocument = null;
+          File themeFile = null;
+          if (theme != null) {
+            switch (theme) {
+              case THEME1:
+                themeFile = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml"));
+                break;
+              default:
+                themeFile = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml"));
+                break;
+            }
+            try {
+              themeDocument = org.pentaho.chart.ChartFactory.getChartDocument(themeFile.toURL(), true);
+            } catch (Exception e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          }
+          return themeDocument;
+        }
+      };
+      
+      InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType(), chartThemeFactory);
 
       int val = 0;
       
