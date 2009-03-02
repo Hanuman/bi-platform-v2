@@ -150,42 +150,42 @@
 	    
 	    Compiles and runs all the tests for the project
 	    ====================================================================-->
-  <target name="test" depends="compile,compile-tests" description="Compiles and runs unit tests">
+  <target name="test" depends="compile,compile-tests, init-test-reports" description="Compiles and runs unit tests">
 
-    <junit dir="cache" printsummary="yes" haltonfailure="${junit.haltonfailure}">
+    <junit fork="yes" failureProperty="test.failed" haltonfailure="${junit.haltonfailure}" printsummary="yes">
+      <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
       <classpath refid="test.classpath" />
-      <formatter type="plain" />
-      <batchtest fork="yes" todir="${testbin.dir}">
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${testreports.xml.dir}">
         <fileset dir="cache/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="connections/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="outputs/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="security/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="versionchecker/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="plugin-mgr/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="webservices/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
       </batchtest>
     </junit>
+    <junitreport todir="${testreports.html.dir}">
+    	<fileset dir="${testreports.xml.dir}">
+    		<include name="TEST-*.xml"/>
+    	</fileset>
+    <report format="frames" todir="${testreports.html.dir}"/>
+    </junitreport>
   </target>
 
 
@@ -218,31 +218,24 @@
       <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
       <batchtest todir="${testreports.xml.dir}" unless="testcase">
         <fileset dir="cache/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="connections/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="outputs/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="security/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="versionchecker/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="plugin-mgr/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="webservices/test-src" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
       </batchtest>
