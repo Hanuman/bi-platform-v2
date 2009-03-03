@@ -23,13 +23,13 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jfree.report.util.CloseableTableModel;
+import org.pentaho.commons.connection.IMultiDimensionalMetaData;
+import org.pentaho.commons.connection.IMultiDimensionalResultSet;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
-import org.pentaho.platform.plugin.services.connections.mondrian.MDXMetaData;
-import org.pentaho.platform.plugin.services.connections.mondrian.MDXResultSet;
-import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 
 // import org.jfree.report.modules.misc.tablemodel.TypeMapper;
 
@@ -129,8 +129,8 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
 
     if (rowHeaders != null) {
       if (columnNumber < rowHeaders[0].length) {
-        if (resultSet instanceof MDXResultSet) {
-          return ((MDXMetaData) resultSet.getMetaData()).getColumnName(columnNumber);
+        if (resultSet instanceof IMultiDimensionalResultSet) {
+          return ((IMultiDimensionalMetaData) resultSet.getMetaData()).getRowHeaderNames()[columnNumber];
         }
       } else {
         columnNumber -= rowHeaders[0].length;
