@@ -90,9 +90,6 @@ public class ChartComponent {
       
       ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel);
       
-      //Temp - need to fix actual Theme serialization through Json
-      chartModel.setTheme(ChartTheme.THEME1);
-      
       ChartThemeFactory chartThemeFactory = new ChartThemeFactory() {
         public ChartDocument getThemeDocument(ChartTheme theme) {
           ChartDocument themeDocument = null;
