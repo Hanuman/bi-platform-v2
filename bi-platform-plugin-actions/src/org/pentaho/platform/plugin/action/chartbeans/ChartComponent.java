@@ -51,6 +51,8 @@ public class ChartComponent {
   
   protected String serializedChartModel = null;
   
+  protected ChartModel chartModel = null;
+  
   //Initialize ChartBeans engine
   {
     synchronized (ChartBoot.getInstance()) {
@@ -87,8 +89,6 @@ public class ChartComponent {
     Object[][] data = processChartData(resultSet);
     
     try{
-      
-      ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel);
       
       ChartThemeFactory chartThemeFactory = new ChartThemeFactory() {
         public ChartDocument getThemeDocument(ChartTheme theme) {
@@ -197,6 +197,15 @@ public class ChartComponent {
     if((seriesColumn < 0) || (categoryColumn < 0) || (valueColumn < 0)){
       return false;
     }
+    
+    if(chartModel == null){
+      if(serializedChartModel != null){
+        chartModel = ChartSerializer.deSerialize(serializedChartModel);
+      } else {
+        // No chart model is available
+        return false;
+      }
+    }
 
     return true;
   }
@@ -245,6 +254,10 @@ public class ChartComponent {
   
   public void setChartModel(String serializedChartModel) {
     this.serializedChartModel = serializedChartModel;
+  }
+  
+  public void setChartModel(ChartModel chartModel){
+    this.chartModel = chartModel;
   }
   
   public void setChartWidth(int chartWidth){
