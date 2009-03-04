@@ -23,13 +23,13 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.report.util.CloseableTableModel;
 import org.pentaho.commons.connection.IMultiDimensionalMetaData;
 import org.pentaho.commons.connection.IMultiDimensionalResultSet;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
 
 // import org.jfree.report.modules.misc.tablemodel.TypeMapper;
 
