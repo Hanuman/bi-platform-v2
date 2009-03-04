@@ -94,8 +94,8 @@
     <dependency org="pentaho-charting" name="pentaho-charting" rev="${dependency.pentaho-chartbeans.revision}" changing="true" />
         
         <!--  reporting -->
-    <dependency org="pentaho-reporting-engine" name="classic-core" rev="${dependency.pentaho-reporting-engine}" changing="true" />
-    <dependency org="pentaho-reporting-engine" name="classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core" rev="${dependency.pentaho-reporting-engine}" changing="true" />
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
     <dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
 
         <!-- metadata -->
