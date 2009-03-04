@@ -1,0 +1,9 @@
+<module>
+    <source path="">
+    <include name="**/ChartDataDefinition*"/>
+    <exclude name="**/ChartBean*"/>
+    <exclude name="**/ChartBoot*"/>
+    <exclude name="**/ChartCom*"/>
+    <exclude name="**/ChartGener*"/>
+    </source>
+</module>
