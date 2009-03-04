@@ -89,9 +89,9 @@ public class OpenFlashChartComponent extends ComponentBase {
 
   private static final String BY_ROW_PROP = "by-row"; //$NON-NLS-1$
 
-  private static final int DEFAULT_WIDTH = 300;
+  private static final String DEFAULT_WIDTH = "100%";
 
-  private static final int DEFAULT_HEIGHT = 300;
+  private static final String DEFAULT_HEIGHT = "100%";
 
   protected String template = null;
 
@@ -141,24 +141,24 @@ public class OpenFlashChartComponent extends ComponentBase {
 
     // chart width
     
-    Integer chartWidth = null;
+    String chartWidth = null;
     String inputWidth = getInputStringValue(CHART_WIDTH);
 
     if (inputWidth == null) {
-      chartWidth = new Integer(DEFAULT_WIDTH);
+      chartWidth = DEFAULT_WIDTH;
     } else {
-      chartWidth = Integer.valueOf(inputWidth);
+      chartWidth = inputWidth;
     }
 
     // chart height
     
-    Integer chartHeight = null;
+    String chartHeight = null;
     String inputHeight = getInputStringValue(CHART_HEIGHT);
 
     if (null == inputHeight) {
-      chartHeight = new Integer(DEFAULT_HEIGHT);
+      chartHeight = DEFAULT_HEIGHT;
     } else {
-      chartHeight = Integer.valueOf(inputHeight);
+      chartHeight = inputHeight;
     }
 
     // swf file location
@@ -238,8 +238,8 @@ public class OpenFlashChartComponent extends ComponentBase {
     Properties props = new Properties();
     props.setProperty("chartId", chartId); //$NON-NLS-1$
     props.setProperty("dataFunction", "getData" + chartId); //$NON-NLS-1$ //$NON-NLS-2$
-    props.setProperty("chart-width", chartWidth.toString()); //$NON-NLS-1$
-    props.setProperty("chart-height", chartHeight.toString()); //$NON-NLS-1$
+    props.setProperty("chart-width", chartWidth); //$NON-NLS-1$
+    props.setProperty("chart-height", chartHeight); //$NON-NLS-1$
     props.setProperty("ofc-url", ofcURL); //$NON-NLS-1$
     props.setProperty("ofc-libname", ofclibname); //$NON-NLS-1$
     props.setProperty("chartJson", chartJson.replaceAll("\"", "\\\\\"")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
