@@ -78,6 +78,10 @@ public class LineChartFactory extends AbstractChartFactory {
       lc.setOn_click(baseURLTemplate);
     }
     
+    if (alpha != null) {
+      lc.setAlpha(alpha);
+    }
+    
     return lc;
   }
 

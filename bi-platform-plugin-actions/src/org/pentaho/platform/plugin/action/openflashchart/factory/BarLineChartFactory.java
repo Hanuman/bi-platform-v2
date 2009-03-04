@@ -242,6 +242,7 @@ public class BarLineChartFactory extends BarChartFactory {
     } else {
       return getVerticalBarChartFromColumn(col);
     }
+    
   }
 
 }

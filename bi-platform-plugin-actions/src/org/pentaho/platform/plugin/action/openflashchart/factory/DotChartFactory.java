@@ -63,6 +63,11 @@ public class DotChartFactory extends AbstractChartFactory {
       }
 
       sc.addPoint(x.doubleValue(), y.doubleValue());
+      
+      if (alpha != null) {
+        sc.setAlpha(alpha);
+      }
+      
       e = sc;
       e.setText(text);
       elements.add(e);

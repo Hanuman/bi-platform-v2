@@ -54,7 +54,9 @@ public class PieChartFactory extends AbstractChartFactory {
     pc.setColours(colors);
     pc.setStartAngle(startAngle);
     pc.setAnimate(animate);
-
+    if (alpha != null) {
+      pc.setAlpha(alpha);
+    }
     return pc;
   }
 

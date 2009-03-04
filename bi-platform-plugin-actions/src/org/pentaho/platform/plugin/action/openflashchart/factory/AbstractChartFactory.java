@@ -60,6 +60,8 @@ public abstract class AbstractChartFactory implements IChartFactory {
   private static final String URL_TEMPLATE_NODE_LOC = "url-template"; //$NON-NLS-1$
   private static final String TOOLTIP_NODE_LOC = "tooltip"; //$NON-NLS-1$
   private static final String ORIENTATION_NODE_LOC = "orientation"; //$NON-NLS-1$
+  private static final String ALPHA_NODE_LOC = "alpha"; //$NON-NLS-1$
+  
   
   // font related elements 
   private static final String FONT_FAMILY_NODE_LOC = "font-family"; //$NON-NLS-1$
@@ -145,12 +147,18 @@ public abstract class AbstractChartFactory implements IChartFactory {
   protected String orientation;
   protected String baseURLTemplate;
   protected String tooltipText;
+  protected Float alpha;
   
   protected abstract void createElements();
   protected void setupStyles() {
     Node temp = chartNode.selectSingleNode(TOOLTIP_NODE_LOC);
     if (getValue(temp) != null) {
       tooltipText = getValue(temp);
+    }
+    
+    temp = chartNode.selectSingleNode(ALPHA_NODE_LOC);
+    if (getValue(temp) != null) {
+      alpha = Float.parseFloat(getValue(temp));
     }
   }
   

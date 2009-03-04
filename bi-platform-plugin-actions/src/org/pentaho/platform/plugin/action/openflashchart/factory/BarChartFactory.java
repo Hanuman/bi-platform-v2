@@ -233,6 +233,10 @@ public class BarChartFactory extends AbstractChartFactory {
         bc.setOn_click(baseURLTemplate);
       }
 
+      if (alpha != null) {
+        bc.setAlpha(alpha);
+      }
+      
       return bc;
     }
   }

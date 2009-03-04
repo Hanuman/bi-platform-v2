@@ -82,6 +82,11 @@ public class BubbleChartFactory extends AbstractChartFactory {
         sc.setTooltip(MessageFormat.format(content, text, 
             NumberFormat.getInstance().format(x), NumberFormat.getInstance().format(y), zstr));
       } 
+      
+      if (alpha != null) {
+        sc.setAlpha(alpha);
+      }
+      
       e = sc;
       e.setText(text);
       elements.add(e);

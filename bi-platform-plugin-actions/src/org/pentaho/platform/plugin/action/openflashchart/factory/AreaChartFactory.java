@@ -57,6 +57,9 @@ public class AreaChartFactory extends LineChartFactory {
     if (null != baseURLTemplate) {
       ac.setOn_click(baseURLTemplate);
     }
+    if (alpha != null) {
+      ac.setAlpha(alpha);
+    }
     
     return ac;
   }
