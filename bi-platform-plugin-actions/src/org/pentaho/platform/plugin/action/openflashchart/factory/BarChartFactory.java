@@ -176,6 +176,10 @@ public class BarChartFactory extends AbstractChartFactory {
       if (null != baseURLTemplate) {
         sbc.setOn_click(baseURLTemplate);
       }
+      
+      if (alpha != null) {
+        sbc.setAlpha(alpha);
+      }
     }
 
     StackKey key = new StackKey();
@@ -258,6 +262,10 @@ public class BarChartFactory extends AbstractChartFactory {
     // set the onclick event to the base url template
     if (null != baseURLTemplate) {
       hbc.setOn_click(baseURLTemplate);
+    }
+    
+    if (alpha != null) {
+      hbc.setAlpha(alpha);
     }
     
     return hbc;
