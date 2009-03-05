@@ -33,6 +33,21 @@
         <request>chart-height</request>
       </sources>
     </chart-height>
+    <series-column>
+      <sources>
+        <request>series-column</request>
+      </sources>
+    </series-column>
+    <category-column>
+      <sources>
+        <request>category-column</request>
+      </sources>
+    </category-column>
+    <value-column>
+      <sources>
+        <request>value-column</request>
+      </sources>
+    </value-column>
   </inputs>
 
   <outputs>
@@ -69,6 +84,9 @@
         <chartdata type="result-set" />
         <chart-width type="integer"/>
         <chart-height type="integer"/>
+        <series-column type="string"/>
+        <category-column type="string"/>
+        <value-column type="string"/>
       </action-inputs>
       <action-outputs>
         <outputstream/>
