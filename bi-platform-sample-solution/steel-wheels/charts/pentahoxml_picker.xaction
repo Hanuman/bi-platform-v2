@@ -52,6 +52,18 @@
         <property-map> 
           <entry key="Display">Area</entry>  
           <entry key="chart_type">area</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="Display">Bar-Line</entry>  
+          <entry key="chart_type">barline</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="Display">XY</entry>  
+          <entry key="chart_type">dotchart</entry> 
+        </property-map>  
+        <property-map> 
+          <entry key="Display">Bubble</entry>  
+          <entry key="chart_type">bubble</entry> 
         </property-map> 
       </default-value> 
     </chart_type_FILTER>  
@@ -138,7 +150,25 @@
         <location>flash_areachart.xml</location>  
         <mime-type>text/xml</mime-type> 
       </solution-file> 
-    </area> 
+    </area>  
+    <barline> 
+      <solution-file> 
+        <location>flash_barlinechart.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </barline>  
+    <dot> 
+      <solution-file> 
+        <location>flash_dotchart.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </dot>  
+    <bubble> 
+      <solution-file> 
+        <location>flash_bubblechart.xml</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </bubble> 
   </resources>
   
   <actions> 
@@ -353,6 +383,140 @@ ORDER BY
         </action-inputs>
         <action-resources> 
           <chart-attributes type="resource" mapping="barchart_sketch"/> 
+        </action-resources>
+        <action-outputs> 
+          <html_fragment type="string"/>  
+          <content_url type="string"/> 
+        </action-outputs>
+        <component-definition/> 
+      </action-definition>
+ 
+    </actions>
+  
+    <actions> 
+      <condition><![CDATA[chart_type == 'barline']]></condition>  
+      <action-definition> 
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Get Chart Data</action-type>
+        <action-outputs> 
+          <query-result type="result-set" mapping="query_result2"/> 
+        </action-outputs>
+        <component-definition> 
+          <jndi><![CDATA[SampleData]]></jndi>  
+          <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE) AS COST,
+     SUM(ORDERFACT.QUANTITYORDERED*PRODUCTS.BUYPRICE)/SUM(ORDERFACT.TOTALPRICE)*100 AS MARGIN
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC]]></query>  
+          <live><![CDATA[true]]></live> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>OpenFlashChartComponent</component-name>
+        <action-type>Open Flash Chart</action-type>
+        <action-inputs> 
+          <chart-data type="string" mapping="query_result2"/>  
+          <height type="string" mapping="chart_height"/>  
+          <width type="string" mapping="chart_width"/> 
+        </action-inputs>
+        <action-resources> 
+          <chart-attributes type="resource" mapping="barline"/> 
+        </action-resources>
+        <action-outputs> 
+          <html_fragment type="string"/>  
+          <content_url type="string"/> 
+        </action-outputs>
+        <component-definition/> 
+      </action-definition>
+ 
+    </actions>
+  
+    <actions> 
+      <condition><![CDATA[chart_type=='dotchart']]></condition>  
+      <action-definition> 
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Get Chart Data</action-type>
+        <action-outputs> 
+          <query-result type="result-set" mapping="query_result3"/> 
+        </action-outputs>
+        <component-definition> 
+          <jndi><![CDATA[SampleData]]></jndi>  
+          <live><![CDATA[true]]></live>  
+          <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM(ORDERFACT.QUANTITYORDERED) AS QUANTITY,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC]]></query> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>OpenFlashChartComponent</component-name>
+        <action-type>Open Flash Chart</action-type>
+        <action-inputs> 
+          <chart-data type="string" mapping="query_result3"/>  
+          <height type="string" mapping="chart_height"/>  
+          <width type="string" mapping="chart_width"/> 
+        </action-inputs>
+        <action-resources> 
+          <chart-attributes type="resource" mapping="dot"/> 
+        </action-resources>
+        <action-outputs> 
+          <html_fragment type="string"/>  
+          <content_url type="string"/> 
+        </action-outputs>
+        <component-definition/> 
+      </action-definition>
+ 
+    </actions>
+  
+    <actions> 
+      <condition><![CDATA[chart_type== 'bubble']]></condition>  
+      <action-definition> 
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Get Chart Data</action-type>
+        <action-outputs> 
+          <query-result type="result-set" mapping="query_result4"/> 
+        </action-outputs>
+        <component-definition> 
+          <jndi><![CDATA[SampleData]]></jndi>  
+          <live><![CDATA[true]]></live>  
+          <query><![CDATA[SELECT
+     PRODUCTS.PRODUCTLINE AS LINE,
+     SUM (PRODUCTS.QUANTITYINSTOCK) AS ONHAND,
+     SUM(ORDERFACT.QUANTITYORDERED) AS QUANTITY,
+     SUM(ORDERFACT.TOTALPRICE) AS TOTAL
+FROM
+     PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
+GROUP BY
+     PRODUCTS.PRODUCTLINE
+ORDER BY
+     PRODUCTS.PRODUCTLINE ASC]]></query>
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>OpenFlashChartComponent</component-name>
+        <action-type>Open Flash Chart</action-type>
+        <action-inputs> 
+          <chart-data type="string" mapping="query_result4"/>  
+          <height type="string" mapping="chart_height"/>  
+          <width type="string" mapping="chart_width"/> 
+        </action-inputs>
+        <action-resources> 
+          <chart-attributes type="resource" mapping="bubble"/> 
         </action-resources>
         <action-outputs> 
           <html_fragment type="string"/>  
