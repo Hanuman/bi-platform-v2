@@ -75,24 +75,32 @@ public class ChartBeansGeneratorUtil {
     return result;
   }
   
+  public static void createChart(IPentahoSession userSession, String serializedChartDataDefinition, String serializedChartModel, int chartWidth, int chartHeight, OutputStream out) throws IOException{
+    ChartBeansGeneratorUtil.internalCreateChart(serializedChartDataDefinition, null, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, out);
+  }
+  
   public static void createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight, IPentahoSession userSession, OutputStream out) throws IOException{
     String serializedChartModel = ChartSerializer.serialize(chartModel);
     
-    ChartBeansGeneratorUtil.internalCreateChart(mqlQueryString, serializedChartModel, chartWidth, chartHeight, userSession, out);
+    ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, out);
   }
 
   public static void createChart(String mqlQueryString, String serializedChartModel, int chartWidth, int chartHeight, IPentahoSession userSession, OutputStream out) throws IOException{
-    ChartBeansGeneratorUtil.internalCreateChart(mqlQueryString, serializedChartModel, chartWidth, chartHeight, userSession, out);
+    ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, out);
+  }
+  
+  public static InputStream createChart(IPentahoSession userSession, String serializedChartDataDefinition, String serializedChartModel, int chartWidth, int chartHeight) throws IOException{
+    return ChartBeansGeneratorUtil.internalCreateChart(serializedChartDataDefinition, null, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, null);
   }
   
   public static InputStream createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight, IPentahoSession userSession) throws IOException{
     String serializedChartModel = ChartSerializer.serialize(chartModel);
     
-    return ChartBeansGeneratorUtil.internalCreateChart(mqlQueryString, serializedChartModel, chartWidth, chartHeight, userSession, null);
+    return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, null);
   }
   
   public static InputStream createChart(String mqlQueryString, String serializedChartModel, int chartWidth, int chartHeight, IPentahoSession userSession) throws IOException{
-    return ChartBeansGeneratorUtil.internalCreateChart(mqlQueryString, serializedChartModel, chartWidth, chartHeight, userSession, null);
+    return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel, chartWidth, chartHeight, userSession, null);
   }
   
   /**
@@ -108,7 +116,7 @@ public class ChartBeansGeneratorUtil {
    * @return
    * @throws IOException
    */
-  protected static InputStream internalCreateChart(String mqlQueryString, String serializedChartModel, int chartWidth, int chartHeight, IPentahoSession userSession, OutputStream outputStream) throws IOException{
+  protected static InputStream internalCreateChart(String serializedChartDataDefinition, String mqlQueryString, String seriesColumn, String categoryColumn, String valueColumn, String serializedChartModel, int chartWidth, int chartHeight, IPentahoSession userSession, OutputStream outputStream) throws IOException{
     InputStream result = null;
     ByteArrayOutputStream resultOutputStream = null;
     OutputStream out = null;
@@ -123,14 +131,59 @@ public class ChartBeansGeneratorUtil {
     } else {
       out = outputStream;
     }
-
+    
     // Setup parameters to be passed to the xaction
     Map<String, Object> params = new HashMap<String, Object>();
-    params.put("query", mqlQueryString); //$NON-NLS-1$
+    
     params.put("chart-model", serializedChartModel); //$NON-NLS-1$
     params.put("chart-width", chartWidth); //$NON-NLS-1$
     params.put("chart-height", chartHeight); //$NON-NLS-1$
-
+    
+    // Chart data definition takes precedence over individual parts
+    if(serializedChartDataDefinition != null){
+      // De-serialize the chartDataDefintion and extract relevant parts
+      ChartDataDefinition chartDataDefinition = ChartSerializer.deSerializeDataDefinition(serializedChartDataDefinition);
+      
+      if(chartDataDefinition.getQuery() != null){
+        params.put("query", chartDataDefinition.getQuery()); //$NON-NLS-1$
+      }
+      
+      if(chartDataDefinition.getDomainColumn() != null){
+        params.put("series-column", chartDataDefinition.getDomainColumn()); //$NON-NLS-1$
+      }
+      
+      if(chartDataDefinition.getCategoryColumn() != null){
+        params.put("category-column", chartDataDefinition.getCategoryColumn()); //$NON-NLS-1$
+      }
+      
+      if(chartDataDefinition.getRangeColumn() != null){
+        params.put("value-column", chartDataDefinition.getRangeColumn()); //$NON-NLS-1$
+      }
+    }
+  
+    // Setup remaining data portion of chart
+    if(!params.containsKey("query")){ //$NON-NLS-1$
+      params.put("query", mqlQueryString); //$NON-NLS-1$
+    }
+    
+    if(!params.containsKey("series-column")){ //$NON-NLS-1$
+      if(seriesColumn != null){
+        params.put("series-column", seriesColumn); //$NON-NLS-1$
+      }
+    }
+    
+    if(!params.containsKey("category-column")){ //$NON-NLS-1$
+      if(categoryColumn != null){
+        params.put("category-column", categoryColumn); //$NON-NLS-1$
+      }
+    }
+    
+    if(!params.containsKey("value-column")){ //$NON-NLS-1$
+      if(valueColumn != null){
+        params.put("value-column", valueColumn); //$NON-NLS-1$
+      }
+    }
+  
     SolutionHelper.execute("XAction", userSession, "system/chartbeans/chartbeans_mql.xaction", params, out, true); //$NON-NLS-1$ //$NON-NLS-2$
     
     if(out instanceof BufferedOutputStream){
