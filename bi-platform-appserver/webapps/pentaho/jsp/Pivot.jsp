@@ -1005,7 +1005,9 @@
 	  	String wrappedChartVisible = "#{" + chartId + ".visible}";
 	  	String wrappedChartFormVisible = "#{" + chartFormId + ".visible}";
 	  	String wrappedPrintFormVisible = "#{" + printFormId + ".visible}";
-			
+	  	String printExcel = "./Print?cube=" + pivotId + "&type=0";
+	  	String printPdf = "./Print?cube=" + pivotId + "&type=1";	
+	  	
  %> <wcf:toolbar id="<%=toolbarId%>"
 			bundle="com.tonbeller.jpivot.toolbar.resources">
 			<% if( options == null ) {
@@ -1052,9 +1054,9 @@
 				tooltip="toolb.print.config" img="print-config"
 				model="<%=wrappedPrintFormVisible%>" />
 			<wcf:imgbutton id="printpdf" tooltip="toolb.print" img="print"
-				href="<%= "./Print?cube=" + pivotId + "&type=1" %>" />
+				href="<%= printPdf %>" />
 			<wcf:imgbutton id="printxls" tooltip="toolb.excel" img="excel"
-				href="<%= "./Print?cube=" + pivotId + "&type=0" %>" />
+				href="<%= printExcel %>" />
 			<% } else {
 		Iterator iterator = options.iterator();
 		while( iterator.hasNext() ) {
@@ -1130,11 +1132,11 @@
 			<%  } else
 		if( "print-pdf".equals( optionName ) ) { %>
 			<wcf:imgbutton id="printpdf" tooltip="toolb.print" img="print"
-				href="<%= "./Print?cube=" + pivotId + "&type=1" %>" />
+				href="<%= printPdf %>" />
 			<%  } else
 		if( "excel".equals( optionName ) ) { %>
 			<wcf:imgbutton id="printxls" tooltip="toolb.excel" img="excel"
-				href="<%= "./Print?cube=" + pivotId + "&type=0" %>" />
+				href="<%= printExcel %>" />
 			<%  } 
 
 	}
