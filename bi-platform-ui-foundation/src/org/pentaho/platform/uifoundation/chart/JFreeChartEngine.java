@@ -68,6 +68,7 @@ import org.jfree.chart.labels.PieToolTipGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieToolTipGenerator;
+import org.jfree.chart.labels.StandardXYSeriesLabelGenerator;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.labels.StandardXYZToolTipGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -90,7 +91,8 @@ import org.jfree.chart.renderer.category.LineRenderer3D;
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer3D;
-import org.jfree.chart.renderer.xy.StackedXYAreaRenderer;
+import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
+import org.jfree.chart.renderer.xy.StackedXYAreaRenderer2;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
@@ -99,7 +101,6 @@ import org.jfree.chart.renderer.xy.XYLine3DRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.chart.renderer.xy.YIntervalRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.PieURLGenerator;
 import org.jfree.chart.urls.StandardCategoryURLGenerator;
@@ -302,7 +303,7 @@ public class JFreeChartEngine {
     domainAxis.setAutoRangeStickyZero(chartDefinition.isDomainStickyZero());
     ValueAxis rangeAxis = new NumberAxis(rangeAxisLabel);
 
-    XYItemRenderer renderer = null;
+    AbstractXYItemRenderer renderer = null;
     switch (chartDefinition.getChartType()) {
       case LINE_CHART_TYPE:
         renderer = chartDefinition.isThreeD() ? new XYLine3DRenderer() : new XYLineAndShapeRenderer(true, false);
@@ -329,6 +330,11 @@ public class JFreeChartEngine {
       default:
         break;
     }
+    
+    if(renderer != null && legend) {
+      renderer.setLegendItemURLGenerator( new StandardXYSeriesLabelGenerator());
+    }
+    
     if (tooltips) {
       XYToolTipGenerator generator = new StandardXYToolTipGenerator(chartDefinition.getTooltipContent(),
           new DecimalFormat(chartDefinition.getTooltipXFormat()),
@@ -439,7 +445,7 @@ public class JFreeChartEngine {
     XYItemRenderer renderer = null;
     switch (chartDefinition.getChartType()) {
       case AREA_CHART_TYPE:
-        renderer = chartDefinition.isStacked() ? new StackedXYAreaRenderer() : new XYAreaRenderer();
+        renderer = chartDefinition.isStacked() ? new StackedXYAreaRenderer2() : new XYAreaRenderer();
         break;
       default:
         break;
