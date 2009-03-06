@@ -26,6 +26,9 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 public class ChartComponent {
   protected static final String DEFAULT_CHART_PLUGIN = "org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin"; //$NON-NLS-1$
   
+  protected static final int DEFAULT_CHART_WIDTH = 400;
+  protected static final int DEFAULT_CHART_HEIGHT = 300;
+  
   protected String seriesColumnName = null;
   protected int seriesColumn = -1;
   
@@ -43,9 +46,9 @@ public class ChartComponent {
   
   protected String outputType = "image-png"; //$NON-NLS-1$
   
-  protected int chartWidth = 400;
+  protected int chartWidth = -1;
 
-  protected int chartHeight = 400;
+  protected int chartHeight = -1;
   
   protected OutputStream outputStream = null;
   
@@ -169,28 +172,27 @@ public class ChartComponent {
     
     //Default to the first three columns if no others are explicitly specified
     //Resolve column name to column ordinal if present
-    if(seriesColumnName == null){
+    if((seriesColumnName != null) && (!seriesColumnName.equals(""))){ //$NON-NLS-1$
+      seriesColumn = resultSet.getMetaData().getColumnIndex(seriesColumnName);
+    } else { 
       if(seriesColumn < 0){
         seriesColumn = 0;
       }
-    } else {
-      seriesColumn = resultSet.getMetaData().getColumnIndex(seriesColumnName);
     }
     
-    if(categoryColumnName == null){
+    if((categoryColumnName != null) && (!categoryColumnName.equals(""))){ //$NON-NLS-1$
+      categoryColumn = resultSet.getMetaData().getColumnIndex(categoryColumnName);
+    } else {
       if(categoryColumn < 0){
         categoryColumn = 1;
       }
-    } else {
-      categoryColumn = resultSet.getMetaData().getColumnIndex(categoryColumnName);
     }
-    
-    if(valueColumnName == null){
+    if((valueColumnName != null) && (!valueColumnName.equals(""))){ //$NON-NLS-1$
+      valueColumn = resultSet.getMetaData().getColumnIndex(valueColumnName); 
+    } else {
       if(valueColumn < 0){
         valueColumn = 2;
       }
-    } else {
-      valueColumn = resultSet.getMetaData().getColumnIndex(valueColumnName);
     }
     
     //Verify that ALL columns are valid
@@ -205,6 +207,14 @@ public class ChartComponent {
         // No chart model is available
         return false;
       }
+    }
+    
+    if(chartWidth <= 0){
+      chartWidth = DEFAULT_CHART_WIDTH;
+    }
+    
+    if(chartHeight <= 0){
+      chartHeight = DEFAULT_CHART_HEIGHT;
     }
 
     return true;
