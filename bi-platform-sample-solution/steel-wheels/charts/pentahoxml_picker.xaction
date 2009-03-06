@@ -67,12 +67,6 @@
         </property-map> 
       </default-value> 
     </chart_type_FILTER>  
-    <component_name type="string"> 
-      <sources> 
-        <request>component_name</request> 
-      </sources>  
-      <default-value><![CDATA[ChartComponent]]></default-value> 
-    </component_name>  
     <chart_width type="string"> 
       <sources> 
         <request>chart_width</request> 
