@@ -12,6 +12,8 @@ import org.pentaho.chart.ChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
 import org.pentaho.chart.core.ChartDocument;
 import org.pentaho.chart.model.ChartModel;
+import org.pentaho.chart.model.DialPlot;
+import org.pentaho.chart.model.PiePlot;
 import org.pentaho.chart.model.ChartModel.ChartTheme;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.plugin.ChartPluginFactory;
@@ -172,32 +174,39 @@ public class ChartComponent {
     
     //Default to the first three columns if no others are explicitly specified
     //Resolve column name to column ordinal if present
-    if((seriesColumnName != null) && (!seriesColumnName.equals(""))){ //$NON-NLS-1$
-      seriesColumn = resultSet.getMetaData().getColumnIndex(seriesColumnName);
+    if(seriesColumnName != null){
+      //Leave it at -1 if it is specified as blank (The charting engine will handle this properly)
+      if(!seriesColumnName.equals("")){ //$NON-NLS-1$
+        seriesColumn = resultSet.getMetaData().getColumnIndex(seriesColumnName);
+      }
     } else { 
+      //Set default ordering as no ordinal has been defined
       if(seriesColumn < 0){
         seriesColumn = 0;
       }
     }
     
-    if((categoryColumnName != null) && (!categoryColumnName.equals(""))){ //$NON-NLS-1$
-      categoryColumn = resultSet.getMetaData().getColumnIndex(categoryColumnName);
+    if(categoryColumnName != null){
+      //Leave it at -1 if it is specified as blank (The charting engine will handle this properly)
+      if(!categoryColumnName.equals("")){ //$NON-NLS-1$
+        categoryColumn = resultSet.getMetaData().getColumnIndex(categoryColumnName);
+      }
     } else {
+    //Set default ordering as no ordinal has been defined
       if(categoryColumn < 0){
         categoryColumn = 1;
       }
     }
-    if((valueColumnName != null) && (!valueColumnName.equals(""))){ //$NON-NLS-1$
-      valueColumn = resultSet.getMetaData().getColumnIndex(valueColumnName); 
+    if(valueColumnName != null){
+      //Leave it at -1 if it is specified as blank (The charting engine will handle this properly)
+      if(!valueColumnName.equals("")){ //$NON-NLS-1$
+        valueColumn = resultSet.getMetaData().getColumnIndex(valueColumnName);
+      }
     } else {
+    //Set default ordering as no ordinal has been defined
       if(valueColumn < 0){
         valueColumn = 2;
       }
-    }
-    
-    //Verify that ALL columns are valid
-    if((seriesColumn < 0) || (categoryColumn < 0) || (valueColumn < 0)){
-      return false;
     }
     
     if(chartModel == null){
@@ -205,6 +214,21 @@ public class ChartComponent {
         chartModel = ChartSerializer.deSerialize(serializedChartModel);
       } else {
         // No chart model is available
+        return false;
+      }
+    }
+    
+    //Verify that all columns required for a given chart type are present
+    if(chartModel.getPlot() instanceof DialPlot){
+      if(valueColumn < 0){
+        return false;
+      }
+    } else if(chartModel.getPlot() instanceof PiePlot){
+      if((seriesColumn < 0) || (valueColumn < 0)){
+        return false;
+      }
+    } else {
+      if((seriesColumn < 0) || (categoryColumn < 0) || (valueColumn < 0)){
         return false;
       }
     }
