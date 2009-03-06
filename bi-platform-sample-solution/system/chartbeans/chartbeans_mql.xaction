@@ -16,7 +16,6 @@
       <sources> 
         <request>query</request> 
       </sources>  
-      <default-value/> 
     </query> 
     <chart-model type="string">
       <sources>
@@ -27,26 +26,31 @@
       <sources>
         <request>chart-width</request>
       </sources>
+      <default-value>-1</default-value> 
     </chart-width>
     <chart-height type="integer">
       <sources>
         <request>chart-height</request>
       </sources>
+      <default-value>-1</default-value>
     </chart-height>
-    <series-column>
+    <series-column type="string">
       <sources>
         <request>series-column</request>
       </sources>
+      <default-value/> 
     </series-column>
-    <category-column>
+    <category-column type="string">
       <sources>
         <request>category-column</request>
       </sources>
+      <default-value/> 
     </category-column>
-    <value-column>
+    <value-column type="string">
       <sources>
         <request>value-column</request>
       </sources>
+      <default-value/>
     </value-column>
   </inputs>
 
