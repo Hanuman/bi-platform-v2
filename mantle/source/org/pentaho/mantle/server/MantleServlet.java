@@ -591,6 +591,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+    }
     try {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
       if (repository.supportsAccessControls()) {
@@ -1036,6 +1039,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @see org.pentaho.mantle.client.service.MantleService#setSubscriptions(java.lang.String, boolean, java.util.List)
    */
   public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules) {
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new RuntimeException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+    }
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     if (enabled) {
@@ -1125,6 +1131,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
   
   public void addBookmark(Bookmark bookmark) throws SimpleMessageException {
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+    }
     try {
       IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
       List<Bookmark> bookmarks = getBookmarks();
@@ -1138,6 +1147,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void deleteBookmark(Bookmark bookmark) throws SimpleMessageException {
+    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+    }
     try {
       IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
       List<Bookmark> bookmarks = getBookmarks();
