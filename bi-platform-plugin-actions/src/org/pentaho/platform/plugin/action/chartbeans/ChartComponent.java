@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
-import org.pentaho.chart.ChartThemeFactory;
+import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
 import org.pentaho.chart.core.ChartDocument;
 import org.pentaho.chart.model.ChartModel;
+import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.DialPlot;
 import org.pentaho.chart.model.PiePlot;
-import org.pentaho.chart.model.ChartModel.ChartTheme;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.plugin.ChartPluginFactory;
 import org.pentaho.chart.plugin.ChartProcessingException;
@@ -95,31 +97,22 @@ public class ChartComponent {
     
     try{
       
-      ChartThemeFactory chartThemeFactory = new ChartThemeFactory() {
-        public ChartDocument getThemeDocument(ChartTheme theme) {
-          ChartDocument themeDocument = null;
-          File themeFile = null;
-          if (theme != null) {
-            switch (theme) {
-              case THEME1:
-                themeFile = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml"));
-                break;
-              default:
-                themeFile = new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml"));
-                break;
-            }
-            try {
-              themeDocument = org.pentaho.chart.ChartFactory.getChartDocument(themeFile.toURL(), true);
-            } catch (Exception e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            }
-          }
-          return themeDocument;
+      AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
+        protected List<File> getThemeFiles() {
+          ArrayList<File> themeFiles = new ArrayList<File>();
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml")));
+          return themeFiles;
         }
       };
       
-      InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType(), chartThemeFactory);
+      
+      Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
+      if (chartTheme != null) {
+        chartTheme.applyTo(chartModel);
+      }
+      
+      InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
 
       int val = 0;
       
