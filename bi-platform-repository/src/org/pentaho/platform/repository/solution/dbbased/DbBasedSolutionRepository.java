@@ -47,7 +47,6 @@ import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionSequence;
-import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -356,7 +355,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
     boolean addFile = "xaction".equals(extension); //$NON-NLS-1$
-    IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getSession());
     if (pluginManager != null) {
       Set<String> types = pluginManager.getContentTypes();
       addFile |= types != null && types.contains(extension);
