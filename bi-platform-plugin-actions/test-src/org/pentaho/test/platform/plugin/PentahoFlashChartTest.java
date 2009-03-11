@@ -13,7 +13,8 @@
  * See the GNU Lesser General Public License for more details.
  *
  * Copyright 2009 Pentaho Corporation.  All rights reserved.
- */
+ *
+*/
 package org.pentaho.test.platform.plugin;
 
 import java.util.ArrayList;

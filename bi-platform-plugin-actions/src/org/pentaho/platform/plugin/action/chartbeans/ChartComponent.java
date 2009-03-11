@@ -1,3 +1,20 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
+ *
+*/
 package org.pentaho.platform.plugin.action.chartbeans;
 
 import java.io.File;
@@ -103,14 +120,14 @@ public class ChartComponent {
           themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml")));
           themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml")));
           return themeFiles;
-        }
+            }
       };
       
       
       Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
       if (chartTheme != null) {
         chartTheme.applyTo(chartModel);
-      }
+          }
       
       InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
 
@@ -210,7 +227,7 @@ public class ChartComponent {
         return false;
       }
     }
-    
+
     //Verify that all columns required for a given chart type are present
     if(chartModel.getPlot() instanceof DialPlot){
       if(valueColumn < 0){
