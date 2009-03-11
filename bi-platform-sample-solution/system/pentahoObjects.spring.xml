@@ -22,7 +22,7 @@ PentahoSystem which is initialized after Spring
   <!-- Uncomment the following line to use a filesystem/db-based repository with meta information stored in a db  -->
   <bean id="ISolutionRepository" class="org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository" scope="session" />
   <bean id="IContentRepository" class="org.pentaho.platform.repository.content.ContentRepository" scope="session" />
-  <!-- Per Marc don't create a RuntimeRepository "we don't need it in the current implmentation of the BI platform -->
+  <!-- runtime repositories are not used in the current implmentation of the BI platform -->
   <!-- <bean id="IRuntimeRepository" class="org.pentaho.platform.repository.runtime.RuntimeRepository" scope="session" /> -->
   <bean id="IAuditEntry" class="org.pentaho.platform.engine.services.audit.AuditFileEntry" scope="singleton" />
   <bean id="IUITemplater" class="org.pentaho.platform.web.http.WebTemplateHelper" scope="singleton" />
