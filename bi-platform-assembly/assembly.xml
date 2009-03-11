@@ -66,10 +66,7 @@
 	<property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
 	<property name="system.solution.dir" value="${solution.dir.server}/system" />
 	<property name="bi-developers.solution.dir" value="${solution.dir.server}/bi-developers" />
-	<property name="cdf-samples.parent.dir" location="${solution.dir.server}" />
-	<property name="cdf-samples.solution.dir" value="${cdf-samples.parent.dir}/cdf-samples" />
 	<property name="bi-developers.visible" value="true" description="Should the bi-developers samples be visible" />
-	<property name="cdf-samples.visible" value="true" description="Should the CDF samples be visible" />
 
 
 	<!-- =================================================================================
@@ -385,11 +382,11 @@
 		</copy>
 
 		<!-- install CDF samples -->
-		<unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${cdf-samples.parent.dir}" overwrite="true" />
+		<!-- note, cdf samples now exist within the bi-developers folder, and the zip reflects that  -->
+		<unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 
 		<!-- Set the visible value of the sample dirs -->
 		<set-solution-visibility dir="${bi-developers.solution.dir}" visible="${bi-developers.visible}" />
-		<set-solution-visibility dir="${cdf-samples.solution.dir}" visible="${cdf-samples.visible}" />
 
 		<!-- copy db specific changes into system -->
 		<mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
@@ -406,8 +403,10 @@
 	<target name="install-plugins">
 		<!-- CDF -->
 		<install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip" />
-		<!-- temporary step to copy the solutions zip to the cdf plugin folder -->
-		<copy todir="${stage.dir.server}/pentaho-solutions/system/pentaho-cdf" file="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" />
+
+		<!-- install CDF solution -->
+		<unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
+		
 		<!-- webservice -->
 		<install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip" />
 	</target>
