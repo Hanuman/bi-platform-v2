@@ -13,16 +13,16 @@
 	    <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
     </publications>  
   
-  <dependencies defaultconf="default->default">
+  <dependencies defaultconf="default-ext->default">
     
         <!--  external dependencies -->
-    <dependency org="commons-lang"        name="commons-lang"        rev="2.2" conf="default-ext->default"/>
-    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" conf="default-ext->default"/>
-    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" conf="default-ext->default">
+    <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
+    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false"/>
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1">
       <exclude org="xml-apis" />
       <exclude org="xerces" />
     </dependency>
-    <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="default-ext->default">
+    <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga">
       <!--
         include these jars, needed for unit tests. child projects may choose to exclude these, if deploying to an app
         server, etc. <exclude org="net.sf.ehcache" name="ehcache" /> <exclude org="asm" name="asm" /> <exclude org="asm"
@@ -32,29 +32,29 @@
       <exclude org="commons-collections" />
       <exclude org="dom4j" name="dom4j" />
     </dependency>
-    <dependency org="rhino" name="js" rev="1.7R1" conf="default-ext->default"/>
+    <dependency org="rhino" name="js" rev="1.7R1"/>
         
         <!--  external test dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" conf="test->default" />        
 
         <!--  external dependencies hosted by pentaho (not in ibiblio) -->
-    <dependency org="org.netbeans" name="jmi" rev="200507110943" conf="default-ext->default"/>
-    <dependency org="org.netbeans" name="mdrapi" rev="200507110943" conf="default-ext->default"/>
+    <dependency org="org.netbeans" name="jmi" rev="200507110943"/>
+    <dependency org="org.netbeans" name="mdrapi" rev="200507110943"/>
         
         <!--  internal dependencies -->
-    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" conf="default-ext->default"/>
+    <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true"/>
     
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true"  conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true"  conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"  conf="default->default"/>
     
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" conf="default-ext->default"/>
-    <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" conf="default-ext->default"/>
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}"/>
+    <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}"/>
     
-    <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" conf="default-ext->default"/>
-    <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" conf="default-ext->default"/>
+    <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
         
         <!--  internal test dependencies -->
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
