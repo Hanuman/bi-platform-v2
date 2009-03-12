@@ -4,7 +4,8 @@
     <info organisation="${ivy.artifact.group}" module="pentaho-webservice-biserver" revision="${project.revision}" />
     
     <configurations>
-    	<conf name="default"/>
+    	<conf name="default" extends="default-ext"/>
+    	<conf name="default-ext"/>
     	<conf name="test" visibility="private"/>
     </configurations>
     
@@ -12,7 +13,7 @@
     	<!-- artifact name="pentaho-dashboards" type="jar"  conf="default" ext="jar"/ -->
     </publications>
     
-    <dependencies defaultconf="default->default">
+    <dependencies defaultconf="default-ext->default">
     
         <!--  external dependencies -->
 	    <dependency org="javax.activation" name="activation" rev="1.1" />     
@@ -52,17 +53,22 @@
 	        <exclude org="javax.servlet" name="jsp-api"/>
 	        <exclude org="javax.servlet" name="servlet-api"/>
 	    </dependency>
+      
+          <!-- dependency org="org.apache.axis2" name="axis2-adb" rev="1.4.1" transitive="false"/>
+          <dependency org="org.apache.axis2" name="axis2-codegen" rev="1.4.1" transitive="false"/>
+          <dependency org="org.apache.axis2" name="axis2-java2wsdl" rev="1.4.1" transitive="false"/>
+          <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/-->
     
 		<!-- platform -->
 	    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" transitive="false"/>
 
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" transitive="false"/>
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" transitive="false"/>
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" transitive="false"/>
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" transitive="false"/>
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true" transitive="false"/>
-    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" transitive="false"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true" conf="default->default"/>
 
 		<!--  external test dependencies -->
         <dependency org="junit"               name="junit"               rev="4.4"   conf="test->default"/>
