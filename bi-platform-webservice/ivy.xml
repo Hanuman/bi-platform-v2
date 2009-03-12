@@ -54,11 +54,6 @@
 	        <exclude org="javax.servlet" name="servlet-api"/>
 	    </dependency>
       
-          <!-- dependency org="org.apache.axis2" name="axis2-adb" rev="1.4.1" transitive="false"/>
-          <dependency org="org.apache.axis2" name="axis2-codegen" rev="1.4.1" transitive="false"/>
-          <dependency org="org.apache.axis2" name="axis2-java2wsdl" rev="1.4.1" transitive="false"/>
-          <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/-->
-    
 		<!-- platform -->
 	    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" transitive="false"/>
 
