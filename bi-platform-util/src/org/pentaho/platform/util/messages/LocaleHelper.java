@@ -16,9 +16,12 @@
  */
 package org.pentaho.platform.util.messages;
 
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import org.pentaho.platform.util.logging.Logger;
 
 public class LocaleHelper {
 
@@ -45,6 +48,7 @@ public class LocaleHelper {
   private static String textDirection = LocaleHelper.LEFT_TO_RIGHT;
 
   public static void setDefaultLocale(final Locale newLocale) {
+
     LocaleHelper.defaultLocale = newLocale;
   }
 
@@ -67,6 +71,15 @@ public class LocaleHelper {
   }
 
   public static void setSystemEncoding(final String encoding) {
+
+    Charset platformCharset = Charset.forName(encoding);
+    Charset defaultCharset = Charset.defaultCharset();
+
+    if (platformCharset.compareTo(defaultCharset) != 0) {
+      Logger.warn(LocaleHelper.class.getName(), Messages.getString("LocaleHelper.WARN_CHARSETS_DONT_MATCH",
+          platformCharset.name(), defaultCharset.name()));
+    }
+
     LocaleHelper.encoding = encoding;
   }
 
@@ -153,45 +166,40 @@ public class LocaleHelper {
   public static NumberFormat getCurrencyFormat() {
     return NumberFormat.getCurrencyInstance(LocaleHelper.getLocale());
   }
-  
-  public static String getClosestLocale( String locale, String locales[] ) {
-	    // see if this locale is supported
-	  if( locales == null || locales.length == 0 ) {
-		  return locale;
-	  }
-	  if( locale == null || locale.length() == 0 ) {
-		  return locales[ 0 ];
-	  }
-	  String localeLanguage = locale.substring(0, 2);
-	  String localeCountry = (locale.length() > 4) ? locale.substring(0, 5) : localeLanguage;
-	    int looseMatch = -1;
-	    int closeMatch = -1;
-	    int exactMatch = -1;
-	    for( int idx=0; idx<locales.length; idx++ ) {
-	    	if( locales[idx].equals( locale ) ) {
-	    		exactMatch = idx;
-	    		break;
-	    	}
-	    	else if( locales[idx].length() > 1 && locales[idx].substring(0, 2).equals( localeLanguage ) ) {
-	    		looseMatch = idx;
-	    	}
-	    	else if( locales[idx].length() > 4 && locales[idx].substring(0, 5).equals( localeCountry ) ) {
-	    		closeMatch = idx;
-	    	}
-	    }
-	    if( exactMatch != -1 ) {
-	    	// do nothing we have an exact match
-	    }
-	    else if( closeMatch != - 1) {
-	    	locale = locales[ closeMatch ];
-	    }
-	    else if( looseMatch != - 1) {
-	    	locale = locales[ looseMatch ];
-	    }
-	    else {
-	    	// no locale is close , just go with the first?
-	    	locale = locales[ 0 ];
-	    }
-	    return locale;
-}
+
+  public static String getClosestLocale(String locale, String locales[]) {
+    // see if this locale is supported
+    if (locales == null || locales.length == 0) {
+      return locale;
+    }
+    if (locale == null || locale.length() == 0) {
+      return locales[0];
+    }
+    String localeLanguage = locale.substring(0, 2);
+    String localeCountry = (locale.length() > 4) ? locale.substring(0, 5) : localeLanguage;
+    int looseMatch = -1;
+    int closeMatch = -1;
+    int exactMatch = -1;
+    for (int idx = 0; idx < locales.length; idx++) {
+      if (locales[idx].equals(locale)) {
+        exactMatch = idx;
+        break;
+      } else if (locales[idx].length() > 1 && locales[idx].substring(0, 2).equals(localeLanguage)) {
+        looseMatch = idx;
+      } else if (locales[idx].length() > 4 && locales[idx].substring(0, 5).equals(localeCountry)) {
+        closeMatch = idx;
+      }
+    }
+    if (exactMatch != -1) {
+      // do nothing we have an exact match
+    } else if (closeMatch != -1) {
+      locale = locales[closeMatch];
+    } else if (looseMatch != -1) {
+      locale = locales[looseMatch];
+    } else {
+      // no locale is close , just go with the first?
+      locale = locales[0];
+    }
+    return locale;
+  }
 }

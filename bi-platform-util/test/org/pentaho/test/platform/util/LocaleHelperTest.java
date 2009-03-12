@@ -132,9 +132,15 @@ public class LocaleHelperTest extends TestCase {
 
   }
   
+  public void testEncoding() {
+    LocaleHelper.setSystemEncoding("Shift_JIS");
+  }
+  
   public static void main(final String[] args) {
     LocaleHelperTest test = new LocaleHelperTest();
+    System.err.println("hi!!");
     test.testLocaleHelper();
+    test.testEncoding();
     try {
 
     } finally {
