@@ -4,7 +4,8 @@
   <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-security-userroledao" revision="${project.revision}" />
 
   <configurations>
-    <conf name="default" />
+    <conf name="default" extends="default-ext"/>
+    <conf name="default-ext"/>
     <conf name="test" visibility="private" />
   </configurations>
 
@@ -12,7 +13,7 @@
     <artifact name="pentaho-bi-platform-security-userroledao" type="jar" conf="default" ext="jar" />
   </publications>
 
-  <dependencies defaultconf="default->default">
+  <dependencies defaultconf="default-ext->default">
 
     <!-- external dependencies -->
     <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
@@ -41,9 +42,9 @@
 
     <!-- internal dependencies -->
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}"
-      changing="true" />
+      changing="true" conf="default->default"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}"
-      changing="true" />
+      changing="true" conf="default->default"/>
 
   </dependencies>
 
