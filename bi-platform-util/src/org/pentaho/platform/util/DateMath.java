@@ -64,8 +64,8 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  * <pre>
  *       0:ME -1:DS       00:00:00.000 of the day before the last day of the current month
  *       0:MS  0:WE       23:59:59.999 the last day of the first week of the month
- *       0:ME             23:59:59.999 of the last day of teh current month
- *       5:Y              the current monty, day and time 5 years in the future
+ *       0:ME             23:59:59.999 of the last day of the current month
+ *       5:Y              the current month, day and time 5 years in the future
  *       5:YS             00:00:00.000 of the first day of the years 5 years in the future
  * </pre>
  */
