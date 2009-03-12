@@ -2,7 +2,8 @@
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
   <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-ui-foundation" revision="${project.revision}" />
   <configurations>
-    <conf name="default" />
+    <conf name="default" extends="default-ext"/>
+    <conf name="default-ext"/>
     <conf name="test" visibility="private" />
     <conf name="source" />    
   </configurations>
@@ -12,7 +13,7 @@
     <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
   </publications>  
   
-  <dependencies defaultconf="default->default">
+  <dependencies defaultconf="default-ext->default">
     
         <!--  external dependencies -->
     <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
@@ -25,12 +26,12 @@
     </dependency>
 
         <!--  internal dependencies -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" conf="default->default"/>
     
     <dependency org="${ivy.artifact.group}" name="pentaho-metadata"                    rev="${dependency.pentaho-metadata.revision}" changing="true" />
   </dependencies>
