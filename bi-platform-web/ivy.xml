@@ -4,7 +4,8 @@
     <info organisation="${ivy.artifact.group}" module="pentaho-bi-platform-web" revision="${project.revision}"/>
     
     <configurations>
-    	<conf name="default"/>
+        <conf name="default" extends="default-ext"/>
+        <conf name="default-ext"/>
     	<conf name="test" visibility="private"/>
     	<conf name="source" />    	
     </configurations>
@@ -14,7 +15,7 @@
 	    <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
    </publications>    
     
-    <dependencies defaultconf="default->default">
+    <dependencies defaultconf="default-ext->default">
         <!--  external dependencies -->
         <dependency org="javax.activation"  name="activation"	        rev="1.0.2"/>        
         <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
@@ -37,21 +38,22 @@
     	<dependency org="pentaho" name="pentaho-xul-core" 					 rev="${dependency.pentaho-xul.revision}" changing="true" />
     	<dependency org="pentaho" name="pentaho-xul-html" 					 rev="${dependency.pentaho-xul.revision}" changing="true" />
         
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true"/>        
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true"/>        
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true"/>        
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation"   rev="${project.revision}" changing="true"/>        
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-scheduler"       rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" conf="default->default"/>    
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" conf="default->default"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" conf="default->default"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" conf="default->default"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" conf="default->default"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" conf="default->default"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true" conf="default->default"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation"   rev="${project.revision}" changing="true" conf="default->default"/>        
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-scheduler"       rev="${project.revision}" changing="true" conf="default->default"/>
         
         <!--  testing dependencies -->        
         <dependency org="junit"      name="junit"               rev="4.4" conf="test->default"/>
         <dependency org="hsqldb"              name="hsqldb"              rev="1.8.0.7" conf="test->default"/>
         <dependency org="pentaho"    name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>
         <dependency org="com.mockrunner" name="mockrunner-servlet" rev="0.3.7" conf="test->default"/>
+        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" conf="test->default" transitive="false"/>
     </dependencies>
     
 </ivy-module>
