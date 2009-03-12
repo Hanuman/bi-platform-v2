@@ -15,25 +15,25 @@
 	    <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>    	
     </publications>
     
-    <dependencies defaultconf="default->default">
+    <dependencies defaultconf="default-ext->default">
     
         <!--  external dependencies -->
-        <dependency org="commons-collections" name="commons-collections" rev="3.2" conf="default-ext->default"/>
-        <dependency org="commons-lang"        name="commons-lang"        rev="2.2" conf="default-ext->default"/>
-        <dependency org="commons-io"          name="commons-io"          rev="1.4" conf="default-ext->default"/>
-        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false" conf="default-ext->default"/>
-        <dependency org="dom4j"               name="dom4j"               rev="1.6.1" transitive="false" conf="default-ext->default"/>
-		<dependency org="org.springframework" name="spring"              rev="2.0"   transitive="false" conf="default-ext->default"/>
-		<dependency org="jaxen"               name="jaxen"               rev="1.1"   transitive="false" conf="default-ext->default"/>
+        <dependency org="commons-collections" name="commons-collections" rev="3.2"/>
+        <dependency org="commons-lang"        name="commons-lang"        rev="2.2"/>
+        <dependency org="commons-io"          name="commons-io"          rev="1.4"/>
+        <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
+        <dependency org="dom4j"               name="dom4j"               rev="1.6.1" transitive="false"/>
+		<dependency org="org.springframework" name="spring"              rev="2.0"   transitive="false"/>
+		<dependency org="jaxen"               name="jaxen"               rev="1.1"   transitive="false"/>
 
 		<!--  external test dependencies -->
         <dependency org="junit"               name="junit"               rev="4.4"   conf="test->default"/>
         
         <!--  internal dependencies -->
-        <dependency org="pentaho" name="pentaho-connections"      rev="${dependency.pentaho-connections.revision}" conf="default-ext->default" changing="true"/>
+        <dependency org="pentaho" name="pentaho-connections"      rev="${dependency.pentaho-connections.revision}" changing="true"/>
         
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"  rev="${project.revision}" changing="true"/>    
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true"/>
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"  rev="${project.revision}" changing="true" conf="default->default"/>    
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" conf="default->default"/>
     </dependencies>
     
 </ivy-module>
