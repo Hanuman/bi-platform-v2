@@ -1393,6 +1393,9 @@ public class AdhocWebService extends ServletBase {
   private void deleteWaqrReport(final IParameterProvider parameterProvider, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+      throw new AdhocWebServiceException("This feature is disabled.");
+    }
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     // NOTE: sbarkdull, shouldn't have to place the "/" on the front of the path segments.
     String solution = "/" + parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ //$NON-NLS-2$
