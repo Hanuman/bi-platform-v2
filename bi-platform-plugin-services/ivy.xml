@@ -3,7 +3,8 @@
   <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
   <configurations>
   <!-- the default config includes all of runtime for now until we can straighten out BISERVER-2805 -->
-    <conf name="default" extends="runtime"/>
+    <conf name="default" extends="runtime,default-ext"/>
+    <conf name="default-ext"/>
     <conf name="runtime" />
     <conf name="test" extends="runtime" visibility="private" />
     <conf name="source" />    
@@ -14,12 +15,13 @@
     <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
    </publications>  
   
-  <dependencies defaultconf="default->default">  
+  <dependencies defaultconf="default-ext->default">  
         
         <!--  external apache dependencies -->
     <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
     <dependency org="commons-collections" name="commons-collections" rev="3.2" />
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" transitive="false" />
+    <dependency org="commons-io" name="commons-io" rev="1.4" />
     <dependency org="batik" name="batik-awt-util" rev="1.6" />
     <dependency org="batik" name="batik-dom" rev="1.6" />
     <dependency org="batik" name="batik-svggen" rev="1.6" />
@@ -61,6 +63,11 @@
 
     <dependency org="net.sf.saxon" name="saxon" rev="8.5.1"/>       
     
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1">
+      <exclude org="xml-apis" />
+      <exclude org="xerces" />
+    </dependency>
+    
     <!--  internal dependencies -->
         <!-- olap -->
     <dependency org="pentaho" name="mondrian" rev="3.0.4">
@@ -76,13 +83,13 @@
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
       
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation" rev="${project.revision}" changing="true" />
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-ui-foundation" rev="${project.revision}" changing="true" conf="default->default"/>
     
     <!--  runtime dependencies -->
     <dependency org="net.sf.saxon" name="saxon-dom" rev="8.5.1" conf="runtime->default"/>
