@@ -120,13 +120,12 @@ public interface IPluginManager {
   public void unloadAllPlugins();
 
   /**
-   * 
-   * @param extension
-   * @param session
-   * @param file
-   * @param in
-   * @return
-   * @throws PlatformPluginRegistrationException
+   * Retrieves meta information for the given solution file.
+   * @param extension used to identify the appropriate plugin that handles this type of content
+   * @param session the current session
+   * @param file the solution file we want to know something about
+   * @param in the content of the solution file as an {@link InputStream}
+   * @return meta information about the solution file
    */
   public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in);
   
