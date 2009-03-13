@@ -497,6 +497,7 @@ public class PluginManager implements IPluginManager {
         fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, str);
       }
     } catch (Exception e) {
+      //we don't care if an error occurred, we'll just return null and the caller will handle it
     }
     return fileInfo;
   }
