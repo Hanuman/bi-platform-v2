@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -43,9 +42,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
-import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
@@ -54,7 +51,6 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
-import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -340,45 +336,13 @@ if( !addFile ) {
       else if( pluginManager != null ) {
         String fullPath = solutionId+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
         try {
-            IFileInfo fileInfo = getFileInfo( solutionId, path, fileName, extension, pluginManager );
+            IFileInfo fileInfo = getFileInfo( solutionId, path, fileName, extension, pluginManager, ACTION_EXECUTE );
               addToRepository( fileInfo, solutionId, path, fileName, parentNode, element);
         } catch (Exception e) {
           error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
         }
       }
 
-}
-
-protected IFileInfo getFileInfo( final String solution, final String path, final String fileName, final String extension, IPluginManager pluginManager ) {
-  IFileInfo fileInfo = null;
-  String fullPath = solution+ISolutionRepository.SEPARATOR+((StringUtil.isEmpty(path)) ? "" : path+ISolutionRepository.SEPARATOR )+fileName; //$NON-NLS-1$
-try {
-  
-      IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, getSession());
-      if( fig != null ) {
-        fig.setLogger( this );
-        ContentType contentType = fig.getContentType();
-        if( contentType == ContentType.INPUTSTREAM ) {
-              InputStream in = getResourceInputStream( fullPath, true);
-              fileInfo = fig.getFileInfo(solution, path, fileName, in);
-        }
-        else if( contentType == ContentType.DOM4JDOC ) {
-              Document doc = getSolutionDocument( fullPath );
-              fileInfo = fig.getFileInfo(solution, path, fileName, doc );
-        }
-        else if( contentType == ContentType.BYTES ) {
-              byte bytes[] = getResourceAsBytes( fullPath, true );
-              fileInfo = fig.getFileInfo(solution, path, fileName, bytes );
-        }
-        else if( contentType == ContentType.STRING ) {
-              String str = getResourceAsString( fullPath );
-              fileInfo = fig.getFileInfo(solution, path, fileName, str );
-        }
-      }
-} catch (Exception e) {
-  error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
-}
-return fileInfo;
 }
 
 private void addToRepository( final IFileInfo info, final String solution, final String path, final String fileName, final Element parentNode, final File file) {

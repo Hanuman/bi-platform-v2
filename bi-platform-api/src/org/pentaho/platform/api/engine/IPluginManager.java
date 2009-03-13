@@ -119,7 +119,16 @@ public interface IPluginManager {
    */
   public void unloadAllPlugins();
 
-  public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in) throws PlatformPluginRegistrationException;
+  /**
+   * 
+   * @param extension
+   * @param session
+   * @param file
+   * @param in
+   * @return
+   * @throws PlatformPluginRegistrationException
+   */
+  public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in);
   
   
 }

@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +47,6 @@ import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IFileInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -59,7 +57,6 @@ import org.pentaho.platform.api.engine.ISolutionAttributeContributor;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
-import org.pentaho.platform.api.engine.IFileInfoGenerator.ContentType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.repository.RepositoryException;
@@ -388,37 +385,6 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
 
-  }
-
-  protected IFileInfo getFileInfo(final String solution, final String path, final String fileName,
-      final String extension, IPluginManager pluginManager, final int actionOperation) {
-    IFileInfo fileInfo = null;
-    String fullPath = solution + ISolutionRepository.SEPARATOR
-        + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
-    try {
-
-      IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, getSession());
-      if (fig != null) {
-        fig.setLogger(this);
-        ContentType contentType = fig.getContentType();
-        if (contentType == ContentType.INPUTSTREAM) {
-          InputStream in = getResourceInputStream(fullPath, true);
-          fileInfo = fig.getFileInfo(solution, path, fileName, in);
-        } else if (contentType == ContentType.DOM4JDOC) {
-          Document doc = getSolutionDocument(fullPath, actionOperation);
-          fileInfo = fig.getFileInfo(solution, path, fileName, doc);
-        } else if (contentType == ContentType.BYTES) {
-          byte bytes[] = getResourceAsBytes(fullPath, true);
-          fileInfo = fig.getFileInfo(solution, path, fileName, bytes);
-        } else if (contentType == ContentType.STRING) {
-          String str = getResourceAsString(fullPath);
-          fileInfo = fig.getFileInfo(solution, path, fileName, str);
-        }
-      }
-    } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
-    }
-    return fileInfo;
   }
 
   private void addToRepository(final IFileInfo info, final String solution, final String path, final String fileName,

@@ -46,8 +46,10 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IDocumentResourceLoader;
 import org.pentaho.platform.api.engine.IFileFilter;
+import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISessionContainer;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
@@ -61,6 +63,7 @@ import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResourc
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.repository.solution.filebased.FileSolutionFile;
+import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.HttpUtil;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -493,6 +496,23 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return document;
   }
 
+  protected IFileInfo getFileInfo(final String solution, final String path, final String fileName,
+      final String extension, IPluginManager pluginManager, final int actionOperation) {
+    IFileInfo fileInfo = null;
+    String fullPath = solution + ISolutionRepository.SEPARATOR
+        + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
+    try {
+      ISolutionFile file = getFileByPath(fullPath);
+      if (hasAccess(file, actionOperation)) {
+        InputStream in = getResourceInputStream(fullPath, true);
+        fileInfo = pluginManager.getFileInfo(extension, getSession(), file, in);
+      }
+    } catch (Exception e) {
+      error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
+    }
+    return fileInfo;
+  }
+  
   public Document getSolutions(final int actionOperation) {
     return getSolutions(null, null, actionOperation, false);
   }

@@ -444,8 +444,6 @@ public class SolutionRepositoryService extends ServletBase {
             child.setAttribute("url", url); //$NON-NLS-1$
           } catch (FileNotFoundException e) {
             logger.warn(e.getMessage(), e);
-          } catch (PlatformPluginRegistrationException e) {
-            logger.warn(e.getMessage(), e);
           } catch (Throwable t) {
             t.printStackTrace();
           }
