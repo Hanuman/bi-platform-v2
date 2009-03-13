@@ -55,7 +55,7 @@
         <!--  internal dependencies -->
 		<dependency org="org.pentaho" name="pentaho-vfs"                     rev="1.0"          changing="true"/>
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-metadata" rev="2.2.0"/>
+        <dependency org="pentaho" name="pentaho-metadata"                rev="${dependency.pentaho-metadata.revision}" changing="true" />
         
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" conf="default->default"/>    
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" conf="default->default"/>
