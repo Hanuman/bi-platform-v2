@@ -31,10 +31,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
+import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
@@ -49,6 +51,7 @@ public class SystemPathPluginProviderTest {
   @Before
   public void init() {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/SystemPathPluginProviderTest/");
+    microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
 
     provider = new SystemPathXmlPluginProvider();
   }
@@ -85,6 +88,7 @@ public class SystemPathPluginProviderTest {
   @Test(expected = PlatformPluginRegistrationException.class)
   public void testLoad_BadSolutionPath() throws PlatformPluginRegistrationException {
     MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/SystemPathPluginProviderTest/system");
+    mp.define(ISolutionEngine.class, SolutionEngine.class);
     mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     mp.init();
 

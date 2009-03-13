@@ -181,6 +181,13 @@ public class PluginResourceLoaderTest {
       System.err.println(url.getPath());
       assertTrue("Url does not contain templates dir in path: "+url.getPath(), url.getPath().contains("templates"));
     }
-    assertEquals("Template not found", "test.html", urls.get(0).getPath().substring(urls.get(0).getPath().lastIndexOf('/') + 1));
+    boolean found = false;
+    for( URL url : urls ) {
+      found = url.getPath().endsWith("test.html");
+      if( found ) {
+        break;
+      }
+    }
+    assertTrue("Template not found", found);
   }
 }

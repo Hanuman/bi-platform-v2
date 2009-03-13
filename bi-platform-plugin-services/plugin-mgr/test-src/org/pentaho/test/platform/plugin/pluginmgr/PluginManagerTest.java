@@ -40,6 +40,7 @@ import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
@@ -49,6 +50,7 @@ import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
@@ -67,6 +69,7 @@ public class PluginManagerTest {
   @Before
   public void init0() {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
+    microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
     
@@ -235,6 +238,7 @@ public class PluginManagerTest {
     //the PluginClassLoader to not be able to open plugin jars, thus you would get ClassNotFound exceptions
     //when accessing plugin classes.
     MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
+    mp.define(ISolutionEngine.class, SolutionEngine.class);
     mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     mp.define(IPluginProvider.class, Tst8PluginProvider.class).init();
     
@@ -414,7 +418,7 @@ public class PluginManagerTest {
       cg1.setTitle("Test Generator 9");
       cg1.setUrl("/test9url");
       cg1.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
-      cg1.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+//      cg1.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
       p.addContentGenerator(cg1);
       
       ContentGeneratorInfo cg2 = new ContentGeneratorInfo();
@@ -423,7 +427,7 @@ public class PluginManagerTest {
       cg2.setType("test9type");
       cg2.setTitle("Test Generator 9b");
       cg2.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
-      cg2.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+//      cg2.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
       p.addContentGenerator(cg2);
       return Arrays.asList((IPlatformPlugin) p);
     }
