@@ -66,9 +66,6 @@ public class PluginManagerTest {
 
   @Before
   public void init0() {
-    //setup the most common platform config for these tests. Some tests may choose 
-    //to override some of these settings locally or not init the platform at all
-    //if they are true unit tests
     microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);

@@ -1,19 +1,14 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
- * Foundation.
+ * Copyright 2006 Pentaho Corporation.  All rights reserved. 
+ * This software was developed by Pentaho Corporation and is provided under the terms 
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
+ * this file except in compliance with the license. If you need a copy of the license, 
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
- * or from the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * Copyright 2005 - 2009 Pentaho Corporation.  All rights reserved.
- *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * the license for the specific language governing your rights and limitations.
  *
  * @created Jul 12, 2005 
  * @author James Dixon, Angelo Rodriguez, Steven Barkdull
@@ -24,6 +19,7 @@ package org.pentaho.platform.web.servlet;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,7 +46,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IFileInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -387,74 +382,75 @@ public class SolutionRepositoryService extends ServletBase {
         addFile |= isPlugin;
       }
 
-      if (addFile) { //$NON-NLS-1$
-
+      if (addFile) {
         Element child = parentElement.getOwnerDocument().createElement("file");
         parentElement.appendChild(child);
         IFileInfo fileInfo = null;
-
-          try {
+        try {
             // the visibility flag for action-sequences is controlled by
             // /action-sequence/documentation/result-type
             // and we should no longer be looking at 'visible' because it was
             // never actually used!
             String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile, "documentation/result-type")) ? "false" : "true";
             child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");
-          } catch (Exception e) {
-            child.setAttribute("visible", "true"); //$NON-NLS-1$
-          }
-          if (name.endsWith(".xaction")) {
-            // add special props?
-            // localization..
-          } else if (name.endsWith(".url")) {
+        } catch (Exception e) {
+          child.setAttribute("visible", "true"); //$NON-NLS-1$
+        }
+        if (name.endsWith(".xaction")) {
+          // add special props?
+          // localization..
+        } else if (name.endsWith(".url")) {
 
-            // add special props
-            String props = new String(childSolutionFile.getData());
-            StringTokenizer tokenizer = new StringTokenizer(props, "\n");
-            while (tokenizer.hasMoreTokens()) {
-              String line = tokenizer.nextToken();
-              int pos = line.indexOf('=');
-              if (pos > 0) {
-                String propname = line.substring(0, pos);
-                String value = line.substring(pos + 1);
-                if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
-                  value = value.substring(0, value.length() - 1);
-                }
-                if ("URL".equalsIgnoreCase(propname)) {
-                  child.setAttribute("url", value);
-                }
+          // add special props
+          String props = new String(childSolutionFile.getData());
+          StringTokenizer tokenizer = new StringTokenizer(props, "\n");
+          while (tokenizer.hasMoreTokens()) {
+            String line = tokenizer.nextToken();
+            int pos = line.indexOf('=');
+            if (pos > 0) {
+              String propname = line.substring(0, pos);
+              String value = line.substring(pos + 1);
+              if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
+                value = value.substring(0, value.length() - 1);
+              }
+              if ("URL".equalsIgnoreCase(propname)) {
+                child.setAttribute("url", value);
               }
             }
-          } else if (isPlugin) {
-            // must be a plugin - make it look like a URL
-            try {
-              IFileInfoGenerator fig = pluginManager.getFileInfoGeneratorForType(extension, session);
-              if (fig != null) {
-                fig.setLogger(this);
-                // get the file info object for this file
-                fileInfo = fig.getFileInfo(childSolutionFile.getSolution(), childSolutionFile.getSolutionPath(), name, childSolutionFile.getData());
-                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
-                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-                String solution = childSolutionFile.getSolutionPath();
-                String path = ""; //$NON-NLS-1$
-                int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
-                if (pos != -1) {
-                  path = solution.substring(pos + 1);
-                  solution = solution.substring(0, pos);
-                }
-                String url;
-                if (!fileUrl.equals("")) { //$NON-NLS-1$
-                  url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                } else {
-                  url = PentahoSystem.getApplicationContext().getBaseUrl()
-                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
-                child.setAttribute("url", url); //$NON-NLS-1$
-                }
-            } catch (PlatformPluginRegistrationException e) {
-              logger.warn(e.getMessage(), e);
-            }
           }
+        } else if (isPlugin) {
+          // must be a plugin - make it look like a URL
+          try {
+            // get the file info object for this file
+            InputStream inputStream = repository.getResourceInputStream(childSolutionFile.getFullPath(), true);
+            fileInfo = pluginManager.getFileInfo(extension, session, childSolutionFile, inputStream);
+            String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+            String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
+            String solution = childSolutionFile.getSolutionPath();
+            String path = ""; //$NON-NLS-1$
+            int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+            if (pos != -1) {
+              path = solution.substring(pos + 1);
+              solution = solution.substring(0, pos);
+            }
+            String url;
+            if (!fileUrl.equals("")) { //$NON-NLS-1$
+              url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
+                  + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            } else {
+              url = PentahoSystem.getApplicationContext().getBaseUrl()
+                  + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            }
+            child.setAttribute("url", url); //$NON-NLS-1$
+          } catch (FileNotFoundException e) {
+            logger.warn(e.getMessage(), e);
+          } catch (PlatformPluginRegistrationException e) {
+            logger.warn(e.getMessage(), e);
+          } catch (Throwable t) {
+            t.printStackTrace();
+          }
+
+        }
 
         // localization
         try {
@@ -466,7 +462,8 @@ public class SolutionRepositoryService extends ServletBase {
           } else {
             localizedName = repository.getLocalizedFileProperty(childSolutionFile, "title");
           }
-          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+          child
+              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
@@ -478,7 +475,8 @@ public class SolutionRepositoryService extends ServletBase {
             if (url_description == null && description == null) {
               child.setAttribute("description", name);
             } else {
-              child.setAttribute("description", url_description == null || "".equals(url_description) ? description : url_description);
+              child.setAttribute("description", url_description == null || "".equals(url_description) ? description
+                  : url_description);
             }
           } else if (name.endsWith(".xaction")) {
             String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
@@ -499,7 +497,7 @@ public class SolutionRepositoryService extends ServletBase {
       }
     }
   }
-  
+
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters)
       throws ParserConfigurationException {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);

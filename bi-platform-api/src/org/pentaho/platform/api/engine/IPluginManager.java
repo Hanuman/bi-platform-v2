@@ -20,6 +20,7 @@
 
 package org.pentaho.platform.api.engine;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -97,17 +98,6 @@ public interface IPluginManager {
   public List<XulOverlay> getOverlays();
 
   /**
-   * Returns a file info generator associated with a particular content type
-   * @param type  file type associated with a file info generator
-   * @param session  the current session
-   * @return a FileInfoGenerator or <code>null</code> if one is not defined for this content type
-   * @throws PlatformPluginRegistrationException if a FileInfoGenerator is specified for this type
-   * but there was a problem returning it
-   */
-  public IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
-      throws PlatformPluginRegistrationException;
-  
-  /**
    * If any plugins have registered a bean by id beanId, this method will return a new instance 
    * of the object.
    * @param beanId a unique identifier for a particular bean (cannot be null)
@@ -128,6 +118,8 @@ public interface IPluginManager {
    * Unloads all the plugins. Called when the context shuts down.
    */
   public void unloadAllPlugins();
+
+  public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in) throws PlatformPluginRegistrationException;
   
   
 }

@@ -23,6 +23,7 @@ package org.pentaho.platform.api.engine;
 import java.util.Collection;
 import java.util.List;
 
+import org.pentaho.platform.api.ui.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
 /**

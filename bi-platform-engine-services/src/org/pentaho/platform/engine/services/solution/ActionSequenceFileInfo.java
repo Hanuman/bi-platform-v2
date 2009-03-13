@@ -18,17 +18,15 @@
  */
 package org.pentaho.platform.engine.services.solution;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IFileInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.engine.SolutionFileMetaAdapter;
 import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.SequenceDefinition;
@@ -36,31 +34,30 @@ import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
-public class ActionSequenceFileInfo implements IFileInfoGenerator {
+public class ActionSequenceFileInfo extends SolutionFileMetaAdapter {
 
-  ILogger logger;
-  
-  public void setLogger( ILogger logger ) {
+  private ILogger logger;
+
+  public void setLogger(ILogger logger) {
     this.logger = logger;
   }
-  
-  public ContentType getContentType() {
-    return ContentType.DOM4JDOC;
-  }
-  
-  public IFileInfo getFileInfo( String solution, String path, String filename, InputStream in ) {
-    return getFileInfo(solution, path, filename, convertStreamToString(in));
-  }
-  
-  public IFileInfo getFileInfo( String solution, String path, String filename, Document actionSequenceDocument ) {
+
+  public IFileInfo getFileInfo(ISolutionFile solutionFile, InputStream in) {
+    try {
+      Document actionSequenceDocument = XmlDom4JHelper.getDocFromStream(in);
       if (actionSequenceDocument == null) {
         return null;
       }
 
+      String filename = solutionFile.getFileName();
+      String path = solutionFile.getSolutionPath();
+      String solution = solutionFile.getSolution();
+
       IActionSequence actionSequence = SequenceDefinition.ActionSequenceFactory(actionSequenceDocument, filename, path,
-          solution, logger, PentahoSystem.getApplicationContext(), Logger.getLogLevel() );
+          solution, logger, PentahoSystem.getApplicationContext(), Logger.getLogLevel());
       if (actionSequence == null) {
-        Logger.error(getClass().toString(), Messages.getErrorString("SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE",  //$NON-NLS-1$
+        Logger.error(getClass().toString(), Messages.getErrorString(
+            "SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", //$NON-NLS-1$
             solution + File.separator + path + File.separator + filename));
         return null;
       }
@@ -71,44 +68,12 @@ public class ActionSequenceFileInfo implements IFileInfoGenerator {
       info.setDisplayType(actionSequence.getResultType());
       info.setIcon(actionSequence.getIcon());
       info.setTitle(actionSequence.getTitle());
-    return info;
-  }
-  
-  public IFileInfo getFileInfo( String solution, String path, String filename, byte bytes[] ) {
-    
-      return getFileInfo(solution, path, filename, new String(bytes));
-  }
-  
-  public IFileInfo getFileInfo( String solution, String path, String filename, String str ) {
-    Document doc = null;
-    try  {
-      doc = XmlDom4JHelper.getDocFromString(str, null); 
-      return getFileInfo(solution,path,filename,doc);
-    } catch(Exception e) {
-          Logger.error(getClass().toString(), e.getLocalizedMessage());
-          return null;
+      return info;
+    } catch (Exception e) {
+      if (logger != null) {
+        logger.error(getClass().toString(), e);
+      }
+      return null;
     }
   }
-
-    private String convertStreamToString(InputStream is) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n"); //$NON-NLS-1$
-            }
-        } catch (IOException e) {
-            Logger.error(getClass().toString(), e.getLocalizedMessage());
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                Logger.error(getClass().toString(), e.getLocalizedMessage());
-            }
-        }
- 
-        return sb.toString();
-    }
 }

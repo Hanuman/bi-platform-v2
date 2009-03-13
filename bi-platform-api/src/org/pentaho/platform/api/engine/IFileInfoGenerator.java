@@ -22,20 +22,32 @@ import java.io.InputStream;
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.ILogger;
 
+/**
+ * WARNING: this class will be removed in an upcoming release.  Please implement {@link ISolutionFileMetaProvider}
+ * instead.
+ * @deprecated
+ */
 public interface IFileInfoGenerator {
 
+  @Deprecated //use ISolutionFileMetaProvider
 	public void setLogger( ILogger logger );
 	
+  @Deprecated //use ISolutionFileMetaProvider
 	public enum ContentType { INPUTSTREAM, DOM4JDOC, BYTES, STRING };
 	
+	@Deprecated //use ISolutionFileMetaProvider
 	public ContentType getContentType();
 	
+	@Deprecated //use ISolutionFileMetaProvider
 	public IFileInfo getFileInfo( String solution, String path, String filename, InputStream in );
 	
+	@Deprecated //use ISolutionFileMetaProvider
 	public IFileInfo getFileInfo( String solution, String path, String filename, Document in );
 	
+	@Deprecated //use ISolutionFileMetaProvider
 	public IFileInfo getFileInfo( String solution, String path, String filename, byte bytes[] );
 	
+	@Deprecated //use ISolutionFileMetaProvider
 	public IFileInfo getFileInfo( String solution, String path, String filename, String str );
 	
 }

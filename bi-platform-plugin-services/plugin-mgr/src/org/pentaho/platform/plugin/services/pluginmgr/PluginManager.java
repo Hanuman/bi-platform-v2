@@ -17,6 +17,7 @@
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,9 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
+import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -36,11 +39,15 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.engine.ISolutionFileMetaProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
@@ -290,11 +297,12 @@ public class PluginManager implements IPluginManager {
     }
   }
 
-  private void registerBeans(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session) throws PlatformPluginRegistrationException {
+  private void registerBeans(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session)
+      throws PlatformPluginRegistrationException {
     //we do not have to synchronize on the bean set here because the
     //map that backs the set is never modified after the plugin has 
     //been made available to the plugin manager
-    for(BeanDefinition def : plugin.getBeans()) {
+    for (BeanDefinition def : plugin.getBeans()) {
       if (objectFactory.objectDefined(def.beanId)) {
         throw new PlatformPluginRegistrationException(Messages.getErrorString(
             "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", def.beanId, plugin.getName())); //$NON-NLS-1$
@@ -312,7 +320,7 @@ public class PluginManager implements IPluginManager {
       //need to scrub out duplicate file delimeters otherwise we will 
       //not be able to locate resources in jars.  This classloader ultimately
       //needs to be made less fragile
-      pluginDir = pluginDir.replace("//", "/");  //$NON-NLS-1$ //$NON-NLS-2$
+      pluginDir = pluginDir.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
       loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }
@@ -381,7 +389,15 @@ public class PluginManager implements IPluginManager {
     return objectFactory;
   }
 
-  public IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
+  /**
+   * Returns a file info generator associated with a particular content type
+   * @param type  file type associated with a file info generator
+   * @param session  the current session
+   * @return a FileInfoGenerator or <code>null</code> if one is not defined for this content type
+   * @throws PlatformPluginRegistrationException if a FileInfoGenerator is specified for this type
+   * but there was a problem returning it
+   */
+  private IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
       throws PlatformPluginRegistrationException {
     IContentGeneratorInfo info = getDefaultContentGeneratorInfoForType(type, session);
     if (info != null) {
@@ -428,5 +444,61 @@ public class PluginManager implements IPluginManager {
     }
   }
 
-  
+  public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile solutionFile, InputStream in) {
+    IFileInfo fileInfo = null;
+    try {
+      IFileInfoGenerator fileInfoGenerator = getFileInfoGeneratorForType(extension, session);
+      if (fileInfoGenerator instanceof ISolutionFileMetaProvider) {
+        // new good stuff
+        ISolutionFileMetaProvider provider = (ISolutionFileMetaProvider) fileInfoGenerator;
+        fileInfo = provider.getFileInfo(solutionFile, in);
+      } else {
+        // old nasty stuff
+        fileInfo = getLegacyFileInfo(fileInfoGenerator, session, solutionFile);
+      }
+    } catch (Throwable t) {
+      // we cannot allow a plugin to break our application, so we *MUST* catch
+      // throwable here (think about AbstractMethodError for example)
+      // fileInfo will remain null if we hit an exception here, but just to make
+      // sure, we'll make sure to set it
+      fileInfo = null;
+    }
+    if (fileInfo == null) {
+      /* create a fallback file info based on the information from the solution file */
+      fileInfo = new FileInfo();
+      fileInfo.setTitle(solutionFile.getFileName());
+      fileInfo.setDescription("failsafe: " + solutionFile.getFullPath()); //$NON-NLS-1$
+      fileInfo.setDisplayType(solutionFile.getExtension());
+    }
+    return fileInfo;
+  }
+
+  private IFileInfo getLegacyFileInfo(IFileInfoGenerator fileInfoGenerator, IPentahoSession session,
+      ISolutionFile solutionFile) {
+    IFileInfo fileInfo = null;
+    try {
+      String fullPath = solutionFile.getFullPath();
+      String solution = solutionFile.getSolution();
+      String fileName = solutionFile.getFileName();
+      String path = solutionFile.getSolutionPath();
+      IFileInfoGenerator.ContentType contentType = fileInfoGenerator.getContentType();
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
+      if (contentType == IFileInfoGenerator.ContentType.INPUTSTREAM) {
+        InputStream in = repository.getResourceInputStream(fullPath, true);
+        fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, in);
+      } else if (contentType == IFileInfoGenerator.ContentType.DOM4JDOC) {
+        Document doc = repository.getResourceAsDocument(fullPath);
+        fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, doc);
+      } else if (contentType == IFileInfoGenerator.ContentType.BYTES) {
+        byte bytes[] = repository.getResourceAsBytes(fullPath, true);
+        fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, bytes);
+      } else if (contentType == IFileInfoGenerator.ContentType.STRING) {
+        String str = repository.getResourceAsString(fullPath);
+        fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, str);
+      }
+    } catch (Exception e) {
+    }
+    return fileInfo;
+  }
+
 }
