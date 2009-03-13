@@ -8,32 +8,43 @@ before returning to client. Do not modify the line below.
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 
-	<title>{system}</title>
+  <title>{system}</title>
         <link href="/pentaho-style/styles-new.css" rel="stylesheet" type="text/css" />
-	<!-- link rel="stylesheet" type="text/css" href="/pentaho-style/active/default.css" / -->
-	<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
-	<script language="javascript" src="/pentaho-style/pentaho.js"></script>
+  <!-- link rel="stylesheet" type="text/css" href="/pentaho-style/active/default.css" / -->
+  <link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
+  <script language="javascript" src="/pentaho-style/pentaho.js"></script>
 
-	{header-content}
+  <script type="text/javascript">
+    function closeDialog(){
+      //If running in PUC issue call to close tab, otherwise close window.
+      if(window.parent && window.parent.mantle_initialized){
+        window.parent.closeTab(window.location.href);
+      } else {
+        window.close();
+      }
+    }
+  </script>
+  
+  {header-content}
 
 </head>
 
 <body class="body_document" dir="{text-direction}" {body-tag} >
 <div id="dialog01_footer">
 
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<td width="100%" align="right" style="padding-right: 15px; align:right">
-				<table cellpadding="0" cellspacing="0">
-					<tr class="btn_hover_off" onClick="javascript:window.close();"  onMouseOver="this.className='btn_hover_on'" onMouseOut="this.className='btn_hover_off'">
-					<td class="btn_left">&nbsp;</td>
-					<td class="btn_middle">{close}</td>
-					<td class="btn_right">&nbsp;</td>
-					</tr>
-			  </table>
-		  </td>
-		</tr>
-	</table>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100%" align="right" style="padding-right: 15px; align:right">
+        <table cellpadding="0" cellspacing="0">
+          <tr class="btn_hover_off" onClick="closeDialog()"  onMouseOver="this.className='btn_hover_on'" onMouseOut="this.className='btn_hover_off'">
+          <td class="btn_left">&nbsp;</td>
+          <td class="btn_middle">{close}</td>
+          <td class="btn_right">&nbsp;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </div>
 <div id="dialog01_content">
 <table border="0" width="100%" class="content_header_line" cellpadding="0" cellspacing="0">
@@ -60,14 +71,14 @@ before returning to client. Do not modify the line below.
             <table id="WarningTable" style="padding: 0px 5px 5px 5px;">
                <tr>
                   <td colspan="2" style="font-size:1.6em" class="content_header_line">
-				  Warning !!!
-				  </td>
+          Warning !!!
+          </td>
 
                </tr>
-				<tr>
+        <tr>
                  <td colspan="2"style="font-size:1em" class="content_header">Your browser doesn't support JavaScript or you have disabled JavaScript. 
-	  Javascript should be enabled <br/> with this site. For example, the
-	  dropdown menu will not properly function without Javascript.</td>
+    Javascript should be enabled <br/> with this site. For example, the
+    dropdown menu will not properly function without Javascript.</td>
 
                </tr>
              </table>
@@ -81,8 +92,8 @@ before returning to client. Do not modify the line below.
       </tr>
    </table>
 </td>
-		</noscript>
-	{content}
+    </noscript>
+  {content}
     </td>
   </tr>
 </table>
