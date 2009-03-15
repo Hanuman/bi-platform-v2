@@ -21,7 +21,9 @@ package org.pentaho.mantle.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +69,6 @@ import org.pentaho.platform.api.engine.IBackgroundExecution;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
@@ -75,7 +76,6 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
-import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISchedule;
@@ -517,20 +517,15 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         solutionFileInfo.pluginTypeName = info.getDescription();
         
         // get the title for the plugin file
-        
-        IFileInfoGenerator fig;
+        InputStream inputStream = null;
         try {
-          fig = pluginManager.getFileInfoGeneratorForType(extension, getPentahoSession());
-
-          if (fig != null) {
-            fig.setLogger(getPentahoSession());
-            IFileInfo fileInfo = fig.getFileInfo(solutionFile.getSolution(), solutionFile.getSolutionPath(),
-                solutionFile.getFileName(), solutionFile.getData());
-            solutionFileInfo.localizedName = fileInfo.getTitle();
-          }
-        } catch (PlatformPluginRegistrationException e) {
+          inputStream = repository.getResourceInputStream(solutionFile.getFullPath(), true);
+        } catch (FileNotFoundException e) {
           logger.warn(e.getMessage(), e);
+          //proceed to get the file info from the plugin manager.  getFileInfo will return a failsafe fileInfo when something goes wrong.
         }
+        IFileInfo fileInfo = pluginManager.getFileInfo(extension, getPentahoSession(), solutionFile, inputStream);
+        solutionFileInfo.localizedName = fileInfo.getTitle();
       } else if (fileName.endsWith("waqr.xaction")) { //$NON-NLS-1$
         solutionFileInfo.type = SolutionFileInfo.Type.REPORT;
       } else if (fileName.endsWith("analysisview.xaction")) { //$NON-NLS-1$
