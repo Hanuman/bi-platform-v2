@@ -27,6 +27,8 @@ import mondrian.olap.Member;
 import mondrian.olap.Result;
 
 import org.pentaho.commons.connection.AbstractPentahoMetaData;
+import org.pentaho.commons.connection.IMultiDimensionalMetaData;
+import org.pentaho.commons.connection.MetaDataUtil;
 
 /**
  * @author wseyler
@@ -34,7 +36,7 @@ import org.pentaho.commons.connection.AbstractPentahoMetaData;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class MDXMetaData extends AbstractPentahoMetaData {
+public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimensionalMetaData {
   private static final int AXIS_COLUMN = 0;
 
   private Object[][] columnHeaders;
@@ -43,12 +45,20 @@ public class MDXMetaData extends AbstractPentahoMetaData {
 
   private String[] columnNames;
 
+  private String[] columnNamesFlattened;
+
+  protected String columnNameFormatStr; // format mask to use to generate the columnNames
+
   private static final int AXIS_ROW = 1;
 
   Result nativeResultSet = null;
 
   private boolean useExtendedColumnNames = false;
 
+  public MDXMetaData() {
+    super();
+  }
+  
   /**
    * @param connection
    */
@@ -68,7 +78,7 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     this(nativeResultSet, false);
   }
 
-  private Object[][] createColumnHeaders() {
+  protected Object[][] createColumnHeaders() {
     int rowCount = 0;
     int colCount = 0;
 
@@ -89,7 +99,7 @@ public class MDXMetaData extends AbstractPentahoMetaData {
     return result;
   }
 
-  private Object[][] createRowHeaders() {
+  protected Object[][] createRowHeaders() {
     int rowCount = 0;
     int colCount = 0;
 
@@ -115,7 +125,7 @@ public class MDXMetaData extends AbstractPentahoMetaData {
    * useful names and the unuseful columns have unusful names).
    * @return the row headers in a String array
    */
-  private String[] createColumnNames() {
+  protected String[] createColumnNames() {
     String[] colNames = null;
 
     if (nativeResultSet != null) {
@@ -125,14 +135,14 @@ public class MDXMetaData extends AbstractPentahoMetaData {
       
       if (useExtendedColumnNames){
     	
-      colNames = new String[this.rowHeaders[0].length];
-
-      // Flatten out the column headers into one column-name
-      for (int i = 0; i < colNames.length; ++i) 
-      {
-        Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
-        colNames[i] = "["+member.getDimension().getName()+"].["+member.getHierarchy().getName()+"].["+member.getLevel().getName()+"]";
-      }
+        colNames = new String[this.rowHeaders[0].length];
+  
+        // Flatten out the column headers into one column-name
+        for (int i = 0; i < colNames.length; ++i) 
+        {
+          Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
+          colNames[i] = "["+member.getDimension().getName()+"].["+member.getHierarchy().getName()+"].["+member.getLevel().getName()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        }
       }else{
         colNames = new String[getColumnCount()];
 
@@ -151,6 +161,7 @@ public class MDXMetaData extends AbstractPentahoMetaData {
         }
       }
     }
+
 
     return colNames;
   }
@@ -189,4 +200,33 @@ public class MDXMetaData extends AbstractPentahoMetaData {
   public Object[][] getRowHeaders() {
     return rowHeaders;
   }
+
+  protected void setColumnHeaders( Object[][] columnHeaders ) {
+    this.columnHeaders = columnHeaders;
+  }
+  
+  protected void setRowHeaders( Object[][] rowHeaders ) {
+    this.rowHeaders = rowHeaders;
+  }
+  
+  public String[] getRowHeaderNames() {
+    return columnNames;
+  }
+
+  public void setColumnNameFormat(String formatStr) {
+    this.columnNameFormatStr = formatStr;
+  }
+
+  public void generateColumnNames() {
+    String rowHeaderNames[] = getRowHeaderNames();
+    columnNamesFlattened = MetaDataUtil.generateColumnNames(columnHeaders, rowHeaders, rowHeaderNames, columnNameFormatStr);
+  }
+
+  public String[] getFlattenedColumnNames() {
+    if( columnNamesFlattened == null ) {
+      generateColumnNames();
+    }
+    return columnNamesFlattened;
+  }
+
 }

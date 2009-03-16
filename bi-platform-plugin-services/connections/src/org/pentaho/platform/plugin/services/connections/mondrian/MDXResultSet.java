@@ -21,10 +21,10 @@
 
 package org.pentaho.platform.plugin.services.connections.mondrian;
 
-import mondrian.olap.Axis;
 import mondrian.olap.Connection;
 import mondrian.olap.Result;
 
+import org.pentaho.commons.connection.IMultiDimensionalResultSet;
 import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
@@ -37,25 +37,22 @@ import org.pentaho.commons.connection.memory.MemoryResultSet;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class MDXResultSet implements IPentahoResultSet, IPeekable {
-  private static final int columnAxis = 0;
+public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensionalResultSet {
 
-  private static final int rowAxis = 1;
+  private Result nativeResultSet;
 
-  int columnCount = 0;
+  private Connection nativeConnection;
 
-  int rowCount = 0;
+  private int rowIndex = 0;
 
-  Result nativeResultSet;
+  private MDXMetaData mdxMetaData = null;
 
-  Connection nativeConnection;
+  private Object peekRow[];
 
-  int rowIndex = 0;
-
-  MDXMetaData mdxMetaData = null;
-
-  protected Object peekRow[];
-
+  public MDXResultSet() {
+    
+  }
+  
   /**
    * @param useExtendedColumnNames if true, columnNames will follow the format: 
    * "[dimension_name].[hierarchy_name].[level_name]"
@@ -73,28 +70,16 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
     this.nativeResultSet = nativeResultSet;
     this.nativeConnection = nativeConnection;
 
-    Axis[] axis = nativeResultSet.getAxes();
-    if ((axis == null) || (axis.length == 0)) {
-      columnCount = 0;
-      rowCount = 0;
-    } else if (axis.length == 1) {
-      columnCount = axis[MDXResultSet.columnAxis].getPositions().size();
-      rowCount = 0;
-    } else {
-      columnCount = axis[MDXResultSet.columnAxis].getPositions().size();
-      rowCount = axis[MDXResultSet.rowAxis].getPositions().size();
-    }
-
     mdxMetaData = new MDXMetaData(this.nativeResultSet, useExtendedColumnNames);
   }
-  
+
   /**
    * @param result
    */
   public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection) {
     this(nativeResultSet, nativeConnection, false);
   }
-
+  
   /*
    * (non-Javadoc)
    * 
@@ -104,6 +89,14 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
     return mdxMetaData;
   }
 
+  public Object[] peekRowHeaders() {
+    int peekRowNo = rowIndex;
+    if (peekRowNo < getRowCount()) {
+      return mdxMetaData.getRowHeaders()[peekRowNo];
+    }
+    return null;
+  }
+  
   public Object[] peek() {
 
     if( peekRow == null ) {
@@ -125,8 +118,8 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
       return row;
     }
     Object currentRow[] = null;
-
-    if (rowIndex < rowCount) {
+    int columnCount = getColumnCount();
+    if (rowIndex < getRowCount()) {
       currentRow = new Object[columnCount];
       for (int i = 0; i < columnCount; i++) {
         currentRow[i] = getValueAt(rowIndex, i);
@@ -256,4 +249,91 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable {
     return rowData;
   }
 
+  protected Result getNativeResultSet() {
+    return nativeResultSet;
+  }
+
+  protected void setNativeResultSet(Result nativeResultSet) {
+    this.nativeResultSet = nativeResultSet;
+  }
+
+  protected Connection getNativeConnection() {
+    return nativeConnection;
+  }
+
+  protected void setNativeConnection(Connection nativeConnection) {
+    this.nativeConnection = nativeConnection;
+  }
+
+  protected MDXMetaData getMdxMetaData() {
+    return mdxMetaData;
+  }
+
+  protected void setMdxMetaData(MDXMetaData mdxMetaData) {
+    this.mdxMetaData = mdxMetaData;
+  }
+
+  protected Object[] getPeekRow() {
+    return peekRow;
+  }
+
+  protected void setPeekRow(Object[] peekRow) {
+    this.peekRow = peekRow;
+  }
+
+  public int getRowIndex() {
+    return rowIndex;
+  }
+  
+  public Object[] nextFlattened() {
+    Object rowHeaders[][] = mdxMetaData.getRowHeaders();
+    if( rowHeaders == null ) {
+      // we have no row headers so we can call the regular next()
+      return next();
+    }
+    // get the row
+    Object row[] = next();
+    if( row == null ) {
+      // we have got to the end
+      return null;
+    }
+    // do we have row headers to return also?
+    if( rowIndex <= rowHeaders.length ) {
+      // pull out the right row headers
+      Object rowHeads[] = rowHeaders[rowIndex-1];
+      // create the flattened row
+      Object flatRow[] = new Object[rowHeads.length+row.length];
+      // copy in the row headers and row objects
+      System.arraycopy(rowHeads, 0, flatRow, 0, rowHeads.length);
+      System.arraycopy(row, 0, flatRow, rowHeads.length, row.length);
+      return flatRow;
+    }
+    return row;
+  }
+
+  public Object[] peekFlattened() {
+    Object rowHeaders[][] = mdxMetaData.getRowHeaders();
+    if( rowHeaders == null ) {
+      // we have no row headers so we can call the regular peek()
+      return peek();
+    }
+    // get the row
+    Object row[] = peek();
+    if( row == null ) {
+      // we have got to the end
+      return null;
+    }
+    // do we have row headers to return also?
+    if( rowIndex <= rowHeaders.length ) {
+      // pull out the right row headers
+      Object rowHeads[] = rowHeaders[rowIndex-1];
+      // create the flattened row
+      Object flatRow[] = new Object[rowHeads.length+row.length];
+      // copy in the row headers and row objects
+      System.arraycopy(rowHeads, 0, flatRow, 0, rowHeads.length);
+      System.arraycopy(row, 0, flatRow, rowHeads.length, row.length);
+      return flatRow;
+    }
+    return row;
+  }
 }
