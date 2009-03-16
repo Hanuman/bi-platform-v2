@@ -65,6 +65,8 @@ public abstract class BaseSession extends PentahoBase implements IPentahoSession
     if (name != null) {
       authenticated = true;
       this.name = name;
+    } else {
+      // TODO audit this
     }
   }
 

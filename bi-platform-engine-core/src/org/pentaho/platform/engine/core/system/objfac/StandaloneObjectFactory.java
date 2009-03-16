@@ -25,16 +25,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.messages.Messages;
 
-public class StandaloneObjectFactory implements IPentahoObjectFactory {
+public class StandaloneObjectFactory implements IPentahoDefinableObjectFactory {
 
-  public static enum Scope { GLOBAL, SESSION, REQUEST, THREAD, LOCAL };
-  
   private Map<String,ObjectCreator> creators = Collections.synchronizedMap(new HashMap<String,ObjectCreator>());
   
   public <T> T get(Class<T> interfaceClass, IPentahoSession session) throws ObjectFactoryException {

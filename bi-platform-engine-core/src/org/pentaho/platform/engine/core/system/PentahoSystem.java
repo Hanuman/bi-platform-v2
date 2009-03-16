@@ -198,6 +198,10 @@ public class PentahoSystem {
     PentahoSystem.IgnoredObjects.add("IAuditEntry"); //$NON-NLS-1$
   }
 
+  public static boolean init() {
+    return PentahoSystem.init( new StandaloneApplicationContext(".", ".") );
+  }
+  
   public static boolean init(final IApplicationContext pApplicationContext) {
     return PentahoSystem.init(pApplicationContext, null);
   }
@@ -218,52 +222,32 @@ public class PentahoSystem {
       LocaleHelper.setLocale(Locale.getDefault());
     }
     
-    // test to see if we have a valid document
-    String test = PentahoSystem.getSystemSetting("pentaho-system", null);//$NON-NLS-1$ 
-    if( test == null ) {
-    	return false;
-    }
-    
-    // Set Up ACL File Extensions by reading pentaho.xml for acl-files
-    //
-    // Read the files that are permitted to have ACLs on them from
-    // the pentaho.xml.
-    //
-    String aclFiles = PentahoSystem.getSystemSetting("acl-files", "xaction,url");//$NON-NLS-1$ //$NON-NLS-2$
-    StringTokenizer st = new StringTokenizer(aclFiles, ","); //$NON-NLS-1$
-    String extn;
-    while (st.hasMoreElements()) {
-      extn = st.nextToken();
-      if (!extn.startsWith(".")) { //$NON-NLS-1$
-        extn = "." + extn; //$NON-NLS-1$
+    if( PentahoSystem.systemSettingsService != null ) {
+      // Set Up ACL File Extensions by reading pentaho.xml for acl-files
+      //
+      // Read the files that are permitted to have ACLs on them from
+      // the pentaho.xml.
+      //
+      String aclFiles = PentahoSystem.getSystemSetting("acl-files", "xaction,url");//$NON-NLS-1$ //$NON-NLS-2$
+      StringTokenizer st = new StringTokenizer(aclFiles, ","); //$NON-NLS-1$
+      String extn;
+      while (st.hasMoreElements()) {
+        extn = st.nextToken();
+        if (!extn.startsWith(".")) { //$NON-NLS-1$
+          extn = "." + extn; //$NON-NLS-1$
+        }
+        PentahoSystem.ACLFileExtensionList.add(extn);
       }
-      PentahoSystem.ACLFileExtensionList.add(extn);
-    }
-
-    List settingsList = PentahoSystem.systemSettingsService.getSystemSettings("pentaho-system"); //$NON-NLS-1$
-    if (null == settingsList) {
-      // the application context is not configure correctly
-      Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-          "PentahoSystem.ERROR_0001_SYSTEM_SETTINGS_INVALID", PentahoSystem.systemSettingsService.getSystemCfgSourceName())); //$NON-NLS-1$
-      PentahoSystem.initializedStatus |= PentahoSystem.SYSTEM_SETTINGS_FAILED;
-      PentahoSystem.addInitializationFailureMessage(PentahoSystem.SYSTEM_SETTINGS_FAILED, Messages
-          .getErrorString("PentahoSystem.ERROR_0001_SYSTEM_SETTINGS_INVALID")); //$NON-NLS-1$
     }
 
     PentahoSystem.initXMLFactories();
-
-    // get a system startup session that will be used to init the platform
-    IPentahoSession session = null;
-    try {
-      session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
-    }
-    catch (ObjectFactoryException e) {
-      //we cannot recover from this, throw a Runtime exception
-      throw new RuntimeException(e);
-    }
     
-    PentahoSystem.loggingLevel = Logger
-        .getLogLevel(PentahoSystem.systemSettingsService.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
+    PentahoSystem.loggingLevel = ILogger.ERROR;
+    if( PentahoSystem.systemSettingsService != null ) {
+      PentahoSystem.loggingLevel = Logger
+      .getLogLevel(PentahoSystem.systemSettingsService.getSystemSetting("log-level", "ERROR")); //$NON-NLS-1$//$NON-NLS-2$
+    }
+
     Logger.setLogLevel(PentahoSystem.loggingLevel);
 
     // to guarantee hostnames in SSL mode are not being spoofed
@@ -278,7 +262,7 @@ public class PentahoSystem {
     
     // store a list of the system listeners
     try {
-      PentahoSystem.notifySystemListenersOfStartup(session);
+      PentahoSystem.notifySystemListenersOfStartup();
     } catch (PentahoSystemException e) {
       String msg = e.getLocalizedMessage();
       Logger.error(PentahoSystem.class.getName(), msg, e);
@@ -288,13 +272,33 @@ public class PentahoSystem {
     }
 
     // once everything else is initialized, start global actions
-    PentahoSystem.globalStartup( session );
+    PentahoSystem.globalStartup( );
     
     return true;
   }
 
+  private static void notifySystemListenersOfStartup() throws PentahoSystemException {
+
+    if(listeners == null || listeners.size() == 0) {
+      // nothing to do
+      return;
+    }
+    
+    IPentahoSession session = null;
+    try {
+      session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+      PentahoSystem.notifySystemListenersOfStartup(session);
+    }
+    catch (ObjectFactoryException e) {
+      //we cannot recover from this, throw a Runtime exception
+      throw new RuntimeException(e);
+    }
+
+  }
+  
   private static void notifySystemListenersOfStartup(IPentahoSession session) throws PentahoSystemException {
-  	if(listeners != null) {
+  	if(listeners != null && listeners.size() > 0) {
+  	  
 	    for (IPentahoSystemListener systemListener : listeners) {
 	      PentahoSystem.systemEntryPoint(); // make sure all startups occur in the context of a transaction
 	      try {
@@ -339,21 +343,23 @@ public class PentahoSystem {
     // assert systemSettings != null : "systemSettings property must be set
     // before calling initXMLFactories.";
 
-    String xpathToXMLFactoryNodes = "xml-factories/factory-impl"; //$NON-NLS-1$
-    List nds = PentahoSystem.systemSettingsService.getSystemSettings(xpathToXMLFactoryNodes);
-    if (null != nds) {
-      for (Iterator it = nds.iterator(); it.hasNext();) {
-        Node nd = (Node) it.next();
-        Node nameAttr = nd.selectSingleNode("@name"); //$NON-NLS-1$
-        Node implAttr = nd.selectSingleNode("@implementation"); //$NON-NLS-1$
-        if ((null != nameAttr) && (null != implAttr)) {
-          String name = nameAttr.getText();
-          String impl = implAttr.getText();
-          System.setProperty(name, impl);
-        } else {
-          Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
-              "PentahoSystem.ERROR_0025_LOAD_XML_FACTORY_PROPERTIES_FAILED", //$NON-NLS-1$ 
-              xpathToXMLFactoryNodes));
+    if( PentahoSystem.systemSettingsService != null ) {
+      String xpathToXMLFactoryNodes = "xml-factories/factory-impl"; //$NON-NLS-1$
+      List nds = PentahoSystem.systemSettingsService.getSystemSettings(xpathToXMLFactoryNodes);
+      if (null != nds) {
+        for (Iterator it = nds.iterator(); it.hasNext();) {
+          Node nd = (Node) it.next();
+          Node nameAttr = nd.selectSingleNode("@name"); //$NON-NLS-1$
+          Node implAttr = nd.selectSingleNode("@implementation"); //$NON-NLS-1$
+          if ((null != nameAttr) && (null != implAttr)) {
+            String name = nameAttr.getText();
+            String impl = implAttr.getText();
+            System.setProperty(name, impl);
+          } else {
+            Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+                "PentahoSystem.ERROR_0025_LOAD_XML_FACTORY_PROPERTIES_FAILED", //$NON-NLS-1$ 
+                xpathToXMLFactoryNodes));
+          }
         }
       }
     }
@@ -433,7 +439,7 @@ public class PentahoSystem {
   private static final boolean hasFailed(final int errorToCheck) {
     return ((PentahoSystem.initializedStatus & errorToCheck) == errorToCheck);
   }
-  
+
   //TODO: is this method needed?  See if we can use the factory directly and delete this method.
   public static IContentOutputHandler getOutputDestinationFromContentRef(final String contentTag,
       final IPentahoSession session) {
@@ -600,6 +606,25 @@ public class PentahoSystem {
     }
   }
 
+  public static void globalStartup() {
+
+    List<ISessionStartupAction> globalStartupActions = PentahoSystem.getGlobalStartupActions();
+    if (globalStartupActions == null || globalStartupActions.size() == 0 ) {
+      // nothing to do...
+      return;
+    }
+
+    IPentahoSession session = null;
+    try {
+      session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+      PentahoSystem.globalStartup(session);
+    }
+    catch (ObjectFactoryException e) {
+      //we cannot recover from this, throw a Runtime exception
+      throw new RuntimeException(e);
+    }
+  }
+  
   public static void globalStartup(final IPentahoSession session) {
     // getGlobalStartupActions doesn't pay any attention to session class
     List<ISessionStartupAction> globalStartupActions = PentahoSystem.getGlobalStartupActions();
@@ -738,11 +763,17 @@ public class PentahoSystem {
   }
 
   public static String getSystemSetting(final String path, final String settingName, final String defaultValue) {
+    if( PentahoSystem.systemSettingsService == null ) {
+      return defaultValue;
+    }
     return PentahoSystem.systemSettingsService.getSystemSetting(path, settingName, defaultValue);
   }
 
   public static String getSystemSetting(final String settingName, final String defaultValue) {
     // TODO make this more efficient using caching
+    if( PentahoSystem.systemSettingsService == null ) {
+      return defaultValue;
+    }
     return PentahoSystem.systemSettingsService.getSystemSetting(settingName, defaultValue);
   }
 

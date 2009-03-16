@@ -22,9 +22,9 @@ package org.pentaho.test.platform.engine.core;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 
 import junit.framework.TestCase;
 
