@@ -26,6 +26,7 @@ import org.pentaho.platform.util.logging.Logger;
 public class LocaleHelper {
 
   private static final ThreadLocal<Locale> threadLocales = new ThreadLocal<Locale>();
+  private static final ThreadLocal<Locale> threadLocaleOverride = new ThreadLocal<Locale>();
 
   public static final int FORMAT_SHORT = DateFormat.SHORT;
 
@@ -56,11 +57,23 @@ public class LocaleHelper {
     return LocaleHelper.defaultLocale;
   }
 
+  public static void setLocaleOverride(final Locale localeOverride) {
+    LocaleHelper.threadLocaleOverride.set(localeOverride);
+  }
+
+  public static Locale getLocaleOverride() {
+    return LocaleHelper.threadLocaleOverride.get();
+  }
+  
   public static void setLocale(final Locale newLocale) {
     LocaleHelper.threadLocales.set(newLocale);
   }
 
   public static Locale getLocale() {
+    Locale override = LocaleHelper.threadLocaleOverride.get();
+    if (override != null) {
+      return override;
+    }
     Locale rtn = LocaleHelper.threadLocales.get();
     if (rtn != null) {
       return rtn;

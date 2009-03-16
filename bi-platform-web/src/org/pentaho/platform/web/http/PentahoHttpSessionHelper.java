@@ -19,6 +19,7 @@ package org.pentaho.platform.web.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +38,12 @@ public class PentahoHttpSessionHelper {
   };
   
   public static IPentahoSession getPentahoSession(final HttpServletRequest request) {
-
     HttpSession session = request.getSession();
+    String localeOverride = (String)session.getAttribute("locale_override");
+    if (!StringUtils.isEmpty(localeOverride)) {
+      LocaleHelper.setLocaleOverride(new Locale(localeOverride));
+    }
+    
     IPentahoSession userSession = (IPentahoSession) session.getAttribute(IPentahoSession.PENTAHO_SESSION_KEY);
     LocaleHelper.setLocale(request.getLocale());
     if (userSession != null) {
