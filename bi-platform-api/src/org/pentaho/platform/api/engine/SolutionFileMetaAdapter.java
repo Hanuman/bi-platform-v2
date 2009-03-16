@@ -10,6 +10,13 @@ import org.dom4j.Document;
  */
 public abstract class SolutionFileMetaAdapter implements ISolutionFileMetaProvider {
 
+  // allow subclasses to access logger as is
+  protected ILogger logger;
+  
+  public void setLogger(ILogger logger) {
+    this.logger = logger;
+  }
+  
   public ContentType getContentType() {
     return null;
   }
