@@ -90,9 +90,11 @@ public String processTemplate(String template, final String title, final String 
     template = template.replaceAll("\\{text-direction\\}", LocaleHelper.getTextDirection()); //$NON-NLS-1$
     template = template.replaceAll("\\{logout\\}", Messages.getString("UI.USER_LOGOUT")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{portal\\}", Messages.getString("UI.USER_PORTAL")); //$NON-NLS-1$ //$NON-NLS-2$
-    IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, session);
+    if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
+      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, session);
+      template = template.replaceAll("\\{version\\}", "Version: " + versionHelper.getVersionInformation(PentahoSystem.class)); //$NON-NLS-1$ //$NON-NLS-2$
+    }
     template = template.replaceAll("\\{system\\}", PentahoSystem.getSystemName()); //$NON-NLS-1$
-    template = template.replaceAll("\\{version\\}", "Version: " + versionHelper.getVersionInformation(PentahoSystem.class)); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{isLoggedIn\\}", session.isAuthenticated() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     template = template.replaceAll("\\{background-alert\\}", session.getBackgroundExecutionAlert() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     template = template.replaceAll("\\{header-content\\}", headerContent); //$NON-NLS-1$ //$NON-NLS-2$

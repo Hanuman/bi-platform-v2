@@ -67,7 +67,7 @@ public class SoapUtilTest extends BaseTest {
       outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
 
       runtime = run(
-          "test", "rules", "JavaScriptResultSetTest.xaction", null, false, parameterProvider, outputHandler, session); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          "test", "rules", "XQueryTest.xaction", null, false, parameterProvider, outputHandler, session); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       SoapHelper.openSoapResponse();
       outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
       SoapHelper

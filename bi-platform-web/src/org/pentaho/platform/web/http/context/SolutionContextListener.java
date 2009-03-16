@@ -185,17 +185,19 @@ public class SolutionContextListener implements ServletContextListener {
   }
 
   public void showInitializationMessage(final boolean initOk, final String baseUrl) {
-    IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null); // No session yet
-    if (initOk) {
-      System.out
-          .println(Messages
-              .getString(
-                  "SolutionContextListener.INFO_SYSTEM_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    } else {
-      System.err
-          .println(Messages
-              .getString(
-                  "SolutionContextListener.INFO_SYSTEM_NOT_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
+      IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null); // No session yet
+      if (initOk) {
+        System.out
+            .println(Messages
+                .getString(
+                    "SolutionContextListener.INFO_SYSTEM_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      } else {
+        System.err
+            .println(Messages
+                .getString(
+                    "SolutionContextListener.INFO_SYSTEM_NOT_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      }
     }
   }
 
