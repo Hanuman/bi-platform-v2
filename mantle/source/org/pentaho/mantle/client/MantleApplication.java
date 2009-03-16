@@ -31,6 +31,7 @@ import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
 import org.pentaho.gwt.widgets.client.utils.MessageBundle;
+import org.pentaho.gwt.widgets.client.utils.StringUtils;
 import org.pentaho.mantle.client.commands.AboutCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
@@ -50,6 +51,7 @@ import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.RefreshSystemSettingsCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
 import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
+import org.pentaho.mantle.client.commands.SwitchLocaleCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.dialogs.FileDialog;
@@ -120,6 +122,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem saveAsMenuItem;
   private PentahoMenuItem propertiesMenuItem;
 
+  private MessageBundle supportedLanguages;
+  
   public boolean isAdministrator = false;
   
 
@@ -162,8 +166,22 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
    * This is the entry point method.
    */
   public void onModuleLoad() {
+
+    // just some quick sanity setting of the platform effective locale based on the override
+    // which comes from the url paramter
+    if (!StringUtils.isEmpty(Window.Location.getParameter("locale"))) {
+      MantleServiceCache.getService().setLocaleOverride(Window.Location.getParameter("locale"), null);
+    }
+    
+    IMessageBundleLoadCallback messageCallback = new IMessageBundleLoadCallback() {
+      public void bundleLoaded(String bundleName)
+      {
+        supportedLanguages = new MessageBundle("messages/", "supported_locales", MantleApplication.this);
+      }
+    };
+    
     // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-    Messages.setMessageBundle(new MessageBundle("messages/", "messages", this)); //$NON-NLS-1$ //$NON-NLS-2$
+    Messages.setMessageBundle(new MessageBundle("messages/", "messages", messageCallback)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {
@@ -185,7 +203,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     setupNativeHooks(this, main, solutionBrowserPerspective);
 
     Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
-
     
     Timer timer = new Timer() {
 
@@ -567,6 +584,16 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
           toolsMenu.addItem(Messages.getString("refresh"), adminMenu); //$NON-NLS-1$
           toolsMenu.addSeparator();
+
+          if (supportedLanguages != null && supportedLanguages.getKeys() != null && !supportedLanguages.getKeys().isEmpty()) {
+            MenuBar langMenu = new MantleMenuBar(true);
+            for (String lang : supportedLanguages.getKeys()) {
+              langMenu.addItem(supportedLanguages.getString(lang), new SwitchLocaleCommand(lang)); //$NON-NLS-1$
+            }
+            toolsMenu.addItem(Messages.getString("languages"), langMenu); //$NON-NLS-1$
+            toolsMenu.addSeparator();
+          }
+          
           toolsMenu.addItem(Messages.getString("softwareUpdates"), new CheckForSoftwareUpdatesCommand()); //$NON-NLS-1$
           menuBar.addItem(Messages.getString("tools"), toolsMenu); //$NON-NLS-1$
           // add additions to the admin menu

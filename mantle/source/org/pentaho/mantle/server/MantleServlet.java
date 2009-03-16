@@ -32,6 +32,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1115,6 +1116,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       throw new SimpleMessageException(e.getMessage());
     }
   }
+
+  public void setLocaleOverride(String locale) {
+    getThreadLocalRequest().getSession().setAttribute("locale_override", locale);
+    if (!StringUtils.isEmpty(locale)) {
+      LocaleHelper.setLocaleOverride(new Locale(locale));
+    }
+  }
   
   public void setUserSetting(String settingName, String settingValue) throws SimpleMessageException {
     try {
@@ -1209,7 +1217,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     } else {
       return null;
     }
-    
   }
 
 }

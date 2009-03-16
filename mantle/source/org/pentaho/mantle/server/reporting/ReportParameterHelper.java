@@ -19,8 +19,10 @@ package org.pentaho.mantle.server.reporting;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.ReportParameter;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
@@ -96,6 +98,7 @@ public class ReportParameterHelper {
       reportParameter.setName(plainParameter.getName());
       reportParameter.setMultiSelect(false);
       reportParameter.setParameterType(getParameterType(plainParameter));
+      reportParameter.setAttributes(getParameterAttributes(plainParameter, parameterContext));
       reportParameter.setPromptType(getPromptType(plainParameter, parameterContext));
     }
     
@@ -141,23 +144,41 @@ public class ReportParameterHelper {
       reportParameter.setName(listParameter.getName());
       reportParameter.setMultiSelect(listParameter.isAllowMultiSelection());
       reportParameter.setParameterType(getParameterType(listParameter));
+      reportParameter.setAttributes(getParameterAttributes(listParameter, parameterContext));
       reportParameter.setPromptType(getPromptType(listParameter, parameterContext));
     }
     return reportParameter;
   }
 
-  private static int getPromptType(ParameterDefinitionEntry parameter, ParameterContext parameterContext) {
-    String attribute = parameter.getParameterAttribute(parameterNamespace, parameterSelectionTypeAttribute, parameterContext);
-    if ("list".equals(attribute)) {
-      return ReportParameter.SELECTION_TYPE_LIST;
-    } else if ("textbox".equals(attribute)) {
-      return ReportParameter.SELECTION_TYPE_TEXTBOX;
-    } else if ("select".equals(attribute)) {
-      return ReportParameter.SELECTION_TYPE_SELECT;
-    } else if ("slider".equals(attribute)) {
-      return ReportParameter.SELECTION_TYPE_SLIDER;
+  private static HashMap<String, String> getParameterAttributes(ParameterDefinitionEntry parameter, ParameterContext parameterContext) {
+    HashMap<String,String> map = new HashMap<String,String>();
+    String[] attributeNames = parameter.getParameterAttributeNames(parameterNamespace);
+    for (String attributeName : attributeNames) {
+      String attributeValue = parameter.getParameterAttribute(parameterNamespace, attributeName, parameterContext);
+      map.put(attributeName, attributeValue);
+      System.out.println("Parameter Attribute: " + attributeName + " = " + attributeValue);
     }
-    return ReportParameter.SELECTION_TYPE_TEXTBOX;
+    return map;
+  }
+  
+  private static String getPromptType(ParameterDefinitionEntry parameter, ParameterContext parameterContext) {
+    String attribute = parameter.getParameterAttribute(parameterNamespace, parameterSelectionTypeAttribute, parameterContext);
+    if (StringUtils.isEmpty(attribute)) {
+      return ReportParameter.TEXTBOX;
+    }
+    return attribute;
+//    if ("list".equals(attribute)) {
+//      return ReportParameter.SELECTION_TYPE.LIST;
+//    } else if ("textbox".equals(attribute)) {
+//      return ReportParameter.SELECTION_TYPE.TEXTBOX;
+//    } else if ("select".equals(attribute)) {
+//      return ReportParameter.SELECTION_TYPE.SELECT;
+//    } else if ("slider".equals(attribute)) {
+//      return ReportParameter.SELECTION_TYPE.SLIDER;
+//    } else if ("buttons".equals(attribute)) {
+//      return ReportParameter.SELECTION_TYPE.BUTTONS;
+//    }
+//    return ReportParameter.SELECTION_TYPE.TEXTBOX;
   }
   
   private static int getParameterType(ParameterDefinitionEntry parameter) {

@@ -34,7 +34,6 @@ import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
-import org.pentaho.ui.xul.XulOverlay;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -102,6 +101,7 @@ public interface MantleServiceAsync {
   
   // user settings
   public void getUserSettings(AsyncCallback<List<IUserSetting>> callback);
+  public void setLocaleOverride(String locale, AsyncCallback<Void> callback);
   // generic user setting getter/setters
   public void setUserSetting(String settingName, String settingValue, AsyncCallback<Void> callback);
   public void getUserSetting(String settingName, AsyncCallback<IUserSetting> callback);

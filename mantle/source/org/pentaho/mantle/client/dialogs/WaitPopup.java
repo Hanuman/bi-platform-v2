@@ -71,14 +71,17 @@ public class WaitPopup extends SimplePanel{
 
   @Override
   public void setVisible(boolean visible) {
-    super.setVisible(visible);
-    pageBackground.setVisible(visible);
+    try {
+      super.setVisible(visible);
+      pageBackground.setVisible(visible);
     
-    // Notify listeners that this wait dialog is shown (hide pdfs, flash, etc.)
-    if(visible){
-      GlassPane.getInstance().show();
-    } else {
-      GlassPane.getInstance().hide();
+      // Notify listeners that this wait dialog is shown (hide pdfs, flash, etc.)
+      if(visible){
+        GlassPane.getInstance().show();
+      } else {
+        GlassPane.getInstance().hide();
+      }
+    } catch (Throwable t) {
     }
   }
   

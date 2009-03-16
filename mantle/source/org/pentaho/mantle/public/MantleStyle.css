@@ -739,39 +739,50 @@ gwt-TabPanelBottom {
 }
 
 .gwt-ToggleButton-up {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
-  border: 2px solid transparent;
-  border-color: #E8F1FF rgb(157, 174, 205) rgb(157, 174, 205) rgb(232, 241, 255);
+  background-image: url(buttonbg.gif);
+  padding: 3px;
+  margin: 2px;
+  background-color: #E8F1FF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: white #a0a0a0 #a0a0a0 white;
   cursor: pointer;
   cursor: hand;
 }
 
 .gwt-ToggleButton-up-hovering {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
-  border: 2px solid transparent;
-  border-color: #E8F1FF rgb(157, 174, 205) rgb(157, 174, 205) rgb(232, 241, 255);
+  background-image: url(buttonhoverbg.gif);
+  padding: 3px;
+  margin: 2px;
+  background-color: #E8F1FF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: white black black white;
   cursor: pointer;
   cursor: hand;
+
 }
 
 .gwt-ToggleButton-down {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
+  background-image: url(buttonbg.gif);
+  padding: 2px;
+  margin: 2px;
   background-color: #E8F1FF;
-  border: 2px solid transparent;
-  border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
+  border-width: 2px;
+  border-style: solid;
+  border-color: black white white black;
   cursor: pointer;
   cursor: hand;
 }
 
 .gwt-ToggleButton-down-hovering {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
+  background-image: url(buttonhoverbg.gif);
+  padding: 2px;
+  margin: 2px;
   background-color: #E8F1FF;
-  border: 2px solid transparent;
-  border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
+  border-width: 2px;
+  border-style: solid;
+  border-color: black white white black;
   cursor: pointer;
   cursor: hand;
 }

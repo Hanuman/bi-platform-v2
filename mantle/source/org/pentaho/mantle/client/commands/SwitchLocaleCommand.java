@@ -14,9 +14,26 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.perspective.solutionbrowser.reporting;
+package org.pentaho.mantle.client.commands;
 
+import org.pentaho.mantle.client.service.MantleServiceCache;
 
-public interface IParameterSubmissionCallback {
-  public void submitReportParameters();
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+
+public class SwitchLocaleCommand implements Command {
+
+  private String locale;
+  
+  public SwitchLocaleCommand(String locale) {
+    this.locale = locale;
+  }
+
+  public void execute() {
+    // stuff the locale in the server's session so we can use it
+    // to override the browser setting, as needed
+    MantleServiceCache.getService().setLocaleOverride(locale, null);
+    Window.Location.replace("Home?locale=" + locale);
+  }
+
 }

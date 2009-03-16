@@ -1,7 +1,20 @@
+<%@page import="java.util.Locale"%>
+<%@page import="org.pentaho.platform.util.messages.LocaleHelper"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+
+<% 
+  Locale effectiveLocale = request.getLocale(); 
+  if (!StringUtils.isEmpty(request.getParameter("locale"))) {
+    effectiveLocale = new Locale(request.getParameter("locale"));
+    request.getSession().setAttribute("locale_override", request.getParameter("locale"));
+    LocaleHelper.setLocaleOverride(effectiveLocale);
+  }
+%>
+
 <html>
 	<head>
 		<title>Pentaho User Console</title>
-		<meta name="gwt:property" content="locale=<%=request.getLocale()%>">
+		<meta name="gwt:property" content="locale=<%=effectiveLocale%>">
 		<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
 		<link rel='stylesheet' href='mantle/MantleStyle.css'/>
 		<!--[if lt IE 7.]>

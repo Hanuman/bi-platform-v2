@@ -24,17 +24,20 @@ import java.util.List;
 
 import org.pentaho.mantle.client.messages.Messages;
 
+import com.google.gwt.user.client.Window;
+
 public class ReportParameter implements Serializable {
-  // parameter types
+  // parameter data types
   public static final int STRING = 0;
   public static final int NUMBER = 1;
   public static final int DATE = 2;
-
+  
   // parameter prompt types
-  public static final int SELECTION_TYPE_LIST = 0;
-  public static final int SELECTION_TYPE_SELECT = 1;
-  public static final int SELECTION_TYPE_TEXTBOX = 2;
-  public static final int SELECTION_TYPE_SLIDER = 3;
+  public static final String TEXTBOX = "textbox";
+  public static final String SLIDER = "slider";
+  public static final String BUTTONS = "buttons"; // radio/checkbox
+  public static final String TOGGLE_BUTTONS = "toggle-buttons";
+  public static final String LIST = "list";
 
   private HashMap<Number, String> numberParameterChoices = new HashMap<Number, String>();
   private HashMap<String, String> stringParameterChoices = new HashMap<String, String>();
@@ -44,8 +47,10 @@ public class ReportParameter implements Serializable {
   private String defaultStringValue = null;
   private String name = null;
   private boolean isMultiSelect = false;
-  private int promptType = SELECTION_TYPE_LIST;
+  private String promptType = TEXTBOX;
 
+  private HashMap<String, String> attributes;
+  
   // actual user inputted values
   private List<Date> dateValues = new ArrayList<Date>();
   private List<Number> numberValues = new ArrayList<Number>();
@@ -220,11 +225,28 @@ public class ReportParameter implements Serializable {
     stringValues.clear();
   }
 
-  public int getPromptType() {
+  public String getPromptType() {
     return promptType;
   }
 
-  public void setPromptType(int promptType) {
+  public void setPromptType(String promptType) {
     this.promptType = promptType;
+  }
+
+  public String getAttribute(String attribute) {
+    if (attributes == null) {
+      return null;
+    }
+    return attributes.get(attribute);
+  }
+  
+  public HashMap<String, String> getAttributes()
+  {
+    return attributes;
+  }
+
+  public void setAttributes(HashMap<String, String> attributes)
+  {
+    this.attributes = attributes;
   }
 }
