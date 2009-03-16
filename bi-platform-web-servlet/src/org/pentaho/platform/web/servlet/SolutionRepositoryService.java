@@ -54,7 +54,6 @@ import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
-import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -428,13 +427,16 @@ public class SolutionRepositoryService extends ServletBase {
             String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
             String solution = childSolutionFile.getSolutionPath();
             String path = ""; //$NON-NLS-1$
+            if (solution.startsWith(ISolutionRepository.SEPARATOR+"")) {
+              solution = solution.substring(1);
+            }
             int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
             if (pos != -1) {
               path = solution.substring(pos + 1);
               solution = solution.substring(0, pos);
             }
             String url;
-            if (!fileUrl.equals("")) { //$NON-NLS-1$
+            if (!"".equals(fileUrl)) { //$NON-NLS-1$
               url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
                   + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             } else {
