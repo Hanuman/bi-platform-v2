@@ -76,4 +76,5 @@ public class ActionSequenceFileInfo extends SolutionFileMetaAdapter {
       return null;
     }
   }
+
 }
