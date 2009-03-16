@@ -48,6 +48,14 @@ public interface IActionSequence extends ISequenceDefinition {
   public String getLoopParameter();
 
   /**
+   * If the ActionSequence contains a loop, returns the parameter that the
+   * execution should loop on.
+   * 
+   * @return the parameter to loop on, if looping is defined, otherwise null
+   */
+  public boolean getLoopUsingPeek();
+
+  /**
    * Returns whether the ActionSequence has a loop in its definition.
    * 
    * @return true if looping is defined, otherwise false

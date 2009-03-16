@@ -109,6 +109,7 @@ public class SequenceDefinition implements ISequenceDefinition {
       final String solutionPath, final String solutionName, final ILogger logger, final int loggingLevel) {
 
     String loopParameterName = XmlDom4JHelper.getNodeText("@loop-on", actionsNode); //$NON-NLS-1$
+    boolean loopUsingPeek = "true".equalsIgnoreCase(XmlDom4JHelper.getNodeText("@peek-only", actionsNode)); //$NON-NLS-1$ //$NON-NLS-2$
 
     Node actionDefinitionNode;
     ActionDefinition actionDefinition;
@@ -133,7 +134,7 @@ public class SequenceDefinition implements ISequenceDefinition {
     IConditionalExecution conditionalExecution = SequenceDefinition.parseConditionalExecution(actionsNode, logger,
         "condition"); //$NON-NLS-1$
 
-    ActionSequence sequence = new ActionSequence(loopParameterName, seqDef, actionDefinitionList);
+    ActionSequence sequence = new ActionSequence(loopParameterName, seqDef, actionDefinitionList, loopUsingPeek);
 
     sequence.setConditionalExecution(conditionalExecution);
     return sequence;

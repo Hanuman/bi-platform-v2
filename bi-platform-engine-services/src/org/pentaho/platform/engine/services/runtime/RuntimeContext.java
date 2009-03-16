@@ -1014,7 +1014,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       final IExecutionListener execListener, final boolean async) {
     String loopParamName = sequence.getLoopParameter();
     
-    boolean peekOnly = false;
+    boolean peekOnly = sequence.getLoopUsingPeek();
     Object loopList;
     IActionParameter loopParm = null;
 
@@ -1022,11 +1022,6 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       loopList = new ArrayList<Integer>();
       ((ArrayList) loopList).add(new Integer(0));
     } else {
-      // temp hack
-      if(loopParamName.startsWith("~~") ) {
-        peekOnly = true;
-        loopParamName = loopParamName.substring( 2 );
-      }
       loopParm = getLoopParameter(loopParamName);
       loopList = loopParm.getValue();
 
@@ -1070,6 +1065,11 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     if (loopSet.isScrollable()) {
       loopSet.beforeFirst();
     }    
+    if( peekOnly && !(loopSet instanceof IPeekable) ) {
+        error(Messages.getErrorString("RuntimeContext.ERROR_0033_NOT_PEEKABLE")); //$NON-NLS-1$
+        status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
+        return;
+    }
     Object row[] = peekOnly ? ((IPeekable) loopSet).peek() : loopSet.next();
     Object headerSet[][] = loopSet.getMetaData().getColumnHeaders();
     // TODO handle OLAP result sets

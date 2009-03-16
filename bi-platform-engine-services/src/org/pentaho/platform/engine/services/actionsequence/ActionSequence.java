@@ -37,11 +37,14 @@ public class ActionSequence implements IActionSequence {
 
   private IConditionalExecution conditionalExecution;
 
+  private boolean loopUsingPeek;
+
   protected ActionSequence(final String loopParameter, final ISequenceDefinition sequenceDefinition,
-      final List actionDefinitions) {
+      final List actionDefinitions, boolean loopUsingPeek) {
     this.loopParameter = loopParameter;
     this.sequenceDefinition = sequenceDefinition;
     this.actionDefinitions = actionDefinitions;
+    this.loopUsingPeek = loopUsingPeek;
   }
 
   public List getActionDefinitions() {
@@ -122,6 +125,10 @@ public class ActionSequence implements IActionSequence {
 
   public List getActionDefinitionsAndSequences() {
     return getActionDefinitions();
+  }
+
+  public boolean getLoopUsingPeek() {
+    return loopUsingPeek;
   }
 
 }
