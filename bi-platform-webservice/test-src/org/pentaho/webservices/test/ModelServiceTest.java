@@ -5,11 +5,11 @@ import java.io.File;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.webservices.SessionHandler;
-import org.pentaho.platform.webservice.services.datasource.DatasourceService;
-import org.pentaho.platform.webservice.services.datasource.WSDataSource;
+import org.pentaho.platform.webservice.services.metadata.server.ModelService;
+import org.pentaho.pms.schema.v3.model.ModelEnvelope;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
-public class DatasourceServiceTest extends BaseTest {
+public class ModelServiceTest extends BaseTest {
 
 	  private static final String SOLUTION_PATH = "test-src/solution"; //$NON-NLS-1$
 
@@ -17,7 +17,7 @@ public class DatasourceServiceTest extends BaseTest {
 
 	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml"; //$NON-NLS-1$
 
-	  public DatasourceServiceTest() {
+	  public ModelServiceTest() {
 		  super( SOLUTION_PATH );
 	  }
 	  
@@ -32,19 +32,18 @@ public class DatasourceServiceTest extends BaseTest {
 	    }
 	  }
 
-	  public void testDatasourceService1() throws Exception {
+	  public void testListModels() throws Exception {
 		  
       IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
 	    SessionHandler.setSession(session);
-	    DatasourceService svc = new DatasourceService();
+	    ModelService svc = new ModelService();
 
-	    WSDataSource[] sources = svc.getDataSources();
+	    ModelEnvelope[] models = svc.listModels();
 
-	    assertNotNull( "Datasources is null", sources ); //$NON-NLS-1$
+	    assertNotNull( "models is null", models ); //$NON-NLS-1$
 	    
-	    assertEquals( "Wrong number of datasources", 2, sources.length ); //$NON-NLS-1$
-      assertEquals( "Wrong datasource name", "testdatasource1", sources[0].getName() ); //$NON-NLS-1$ //$NON-NLS-2$
-      assertEquals( "Wrong datasource name", "testdatasource2", sources[1].getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+	    assertEquals( "Wrong number of models", 1, models.length ); //$NON-NLS-1$
+      assertEquals( "Wrong model name", "Orders", models[0].getName() ); //$NON-NLS-1$ //$NON-NLS-2$
 
 	    
 	  }

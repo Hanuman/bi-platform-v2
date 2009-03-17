@@ -6,18 +6,17 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.SystemStartupSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory.Scope;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
 import org.pentaho.platform.plugin.services.webservices.AxisConfig;

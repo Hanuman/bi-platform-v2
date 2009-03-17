@@ -15,6 +15,7 @@ import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
 import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 import org.pentaho.platform.webservice.plugin.messages.Messages;
 import org.pentaho.platform.webservice.services.datasource.DatasourceServiceWrapper;
+import org.pentaho.platform.webservice.services.metadata.server.ModelServiceWrapper;
 
 /**
  * The web services setup objects for the BI server webservices plugin.
@@ -75,8 +76,8 @@ public class PluginServiceSetup extends BaseServiceSetup {
 
     List<IWebServiceWrapper> wrappers = new ArrayList<IWebServiceWrapper>();
     
-    IWebServiceWrapper wrapper = new DatasourceServiceWrapper();
-    wrappers.add( wrapper );
+    wrappers.add( new DatasourceServiceWrapper() );
+    wrappers.add( new ModelServiceWrapper() );
     
     return wrappers;
   }

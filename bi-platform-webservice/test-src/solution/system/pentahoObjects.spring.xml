@@ -30,4 +30,6 @@ PentahoSystem which is initialized after Spring
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.core.system.SystemStartupSession" scope="prototype" />
   <bean id="IDatasourceMgmtService" class="org.pentaho.webservices.test.TestDatasourceMgmtService" scope="prototype" />
 
+  <bean id="ICwmSchemaFactory" class="org.pentaho.pms.factory.CwmSchemaFactory" scope="session"/>
+
 </beans>

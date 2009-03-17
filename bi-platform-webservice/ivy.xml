@@ -27,10 +27,13 @@
 		<dependency org="org.apache.axis2" name="axis2-codegen" rev="1.4.1" transitive="false"/>
 		<dependency org="org.apache.axis2" name="axis2-java2wsdl" rev="1.4.1" transitive="false"/>
 		<dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/>
+		<dependency org="org.apache.axis2" name="axis2-jaxws" rev="1.4.1" transitive="false"/>
+		<dependency org="org.apache.axis2" name="axis2-json" rev="1.4.1" transitive="false"/>
 
 	    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" />
 
 	    <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
+        <dependency org="commons-codec"       name="commons-codec" rev="1.3" transitive="false" />
 
 		<!-- rev 1.0.1 would be better -->
 	    <dependency org="org.apache.geronimo.specs" name="geronimo-stax-api_1.0_spec" rev="1.0" />
@@ -48,14 +51,15 @@
 
 	    <dependency org="org.apache.ws.commons.schema" name="XmlSchema" rev="1.4.2" transitive="false"/>
 
-	    <dependency org="pentaho" name="mondrian" rev="3.0.4">
+	    <!-- dependency org="pentaho" name="mondrian" rev="3.0.4">
 	        <exclude org="commons-dbcp" name="commons-dbcp"/>
 	        <exclude org="javax.servlet" name="jsp-api"/>
 	        <exclude org="javax.servlet" name="servlet-api"/>
-	    </dependency>
-      
+	    </dependency -->
+    
 		<!-- platform -->
 	    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" transitive="false"/>
+    	<dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" transitive="false" />
 
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
@@ -64,6 +68,7 @@
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-services" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
     	<dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository" rev="${project.revision}" changing="true" transitive="false" conf="default->default"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true" conf="default->default"/>
+        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" changing="true" transitive="false" conf="default->default"/>
 
 		<!--  external test dependencies -->
         <dependency org="junit"               name="junit"               rev="4.4"   conf="test->default"/>
@@ -75,7 +80,22 @@
     	<dependency org="jaxen" name="jaxen" rev="1.1" conf="test->default" transitive="false" />
         <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" conf="test->default" transitive="false"/>
     	<dependency org="javax.mail" name="mail" rev="1.3.2" conf="test->default" transitive="false"/>
-        	
+    	<dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" conf="test->default" />
+        <dependency org="org.netbeans" name="jmi" rev="200507110943" conf="test->default"/>
+	    <dependency org="org.netbeans" name="mdrapi" rev="200507110943" conf="test->default"/>
+        <dependency org="commons-lang"        name="commons-lang" rev="2.2" conf="test->default"/>
+	    <dependency org="commons-io" name="commons-io" rev="1.4" conf="test->default"/>
+    	<dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="test->default"/>
+    	<dependency org="log4j" name="log4j" rev="1.2.14" conf="test->default"/>
+        
+	    <dependency org="org.netbeans" name="jmiutils" rev="200507110943"  conf="test->default"/>
+	    <dependency org="jug-lgpl" name="jug-lgpl" rev="2.0.0"  conf="test->default"/>
+	    <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}"  conf="test->default"/>
+    	<dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}"  conf="test->default"/>
+	    <dependency org="org.netbeans" name="mof" rev="200507110943"  conf="test->default"/>
+    	<dependency org="org.netbeans" name="openide-util" rev="200507110943"  conf="test->default"/>
+    	<dependency org="org.netbeans" name="nbmdr" rev="200507110943-custom"  conf="test->default"/>
+	        	
     </dependencies>
     
 </ivy-module>

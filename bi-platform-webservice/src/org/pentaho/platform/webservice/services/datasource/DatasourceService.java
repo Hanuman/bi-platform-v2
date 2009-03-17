@@ -8,7 +8,6 @@ import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
-
 import org.pentaho.platform.webservice.plugin.messages.Messages;
 
 /**
@@ -26,7 +25,8 @@ public class DatasourceService {
    * Returns a list of the data sources defined currently in the BI server
    * @return List of data sources
    */
-  public List<WSDataSource> getDataSources() {
+  
+  public WSDataSource[] getDataSources() {
     // get the datasource management service
     IDatasourceMgmtService datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class,null);
     try {
@@ -40,7 +40,7 @@ public class DatasourceService {
         wsSources.add( wsDataSource );
       }
       // return the list to the caller
-      return wsSources;
+      return wsSources.toArray( new WSDataSource[wsSources.size()]);
     } catch (DatasourceMgmtServiceException e) {
       Logger.error( DatasourceService.class.getName(), Messages.getErrorString( "DatasourceService.ERROR_0001_FAILED_TO_LIST" ), e ); //$NON-NLS-1$
     }
