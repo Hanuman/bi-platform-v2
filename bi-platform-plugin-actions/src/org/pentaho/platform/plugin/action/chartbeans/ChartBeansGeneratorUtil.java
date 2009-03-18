@@ -32,64 +32,8 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.services.solution.SolutionHelper;
 
 public class ChartBeansGeneratorUtil {
-  protected String queryString = null;
-  protected String serializedChartModel = null;
-  protected ChartModel chartModel = null;
-  protected int chartWidth = 400;
-  protected int chartHeight = 400;
-  protected IPentahoSession userSession = null;
-  
-  protected String lastError = null;
-  
-  public ChartBeansGeneratorUtil(){
-  }
-  
-  public InputStream getChart() throws ChartGenerationException{
-    if(!validate()){
-      if(lastError == null){
-        lastError = "An unexpected error has occurred";
-      }
-      throw new ChartGenerationException(lastError);
-    }
 
-    InputStream result = null;
-    
-    try{
-       result = ChartBeansGeneratorUtil.createChart(queryString, chartModel, chartWidth, chartHeight, userSession);
-    } catch (Exception e){
-      throw new ChartGenerationException(e);
-    }
-    return(result);
-  }
-  
-  public boolean validate(){
-    boolean result = true;
-
-    // Must have a data query
-    if((queryString == null) || (queryString.equals(""))){ //$NON-NLS-1$
-      lastError = "Query string must not be null";
-      // chartGenException = new ChartGenerationException("Query string must not be null");
-      return false;
-    }
-    
-    // Must have a chart model
-    if((serializedChartModel == null) || (serializedChartModel.equals(""))){ //$NON-NLS-1$
-      if(chartModel == null){
-        lastError = "No valid chart model found";
-        // chartGenException = new ChartGenerationException("No valid chart model found");
-        return false;
-      } else {
-        serializedChartModel = ChartSerializer.serialize(chartModel);
-      }
-    }
-    
-    if(userSession == null){
-      lastError = "No valid user session found";
-      // chartGenException = new ChartGenerationException("No valid user session found");
-      return false;
-    }
-    
-    return result;
+  private ChartBeansGeneratorUtil(){
   }
   
   public static void createChart(IPentahoSession userSession, String serializedChartDataDefinition, String serializedChartModel, int chartWidth, int chartHeight, OutputStream out) throws IOException{
@@ -216,55 +160,4 @@ public class ChartBeansGeneratorUtil {
     return null;
   }
   
-  public String getQueryString() {
-    return queryString;
-  }
-
-  public void setQueryString(String queryString) {
-    this.queryString = queryString;
-  }
-
-  public String getSerializedChartModel() {
-    return serializedChartModel;
-  }
-
-  public void setSerializedChartModel(String serializedChartModel) {
-    this.serializedChartModel = serializedChartModel;
-  }
-
-  public ChartModel getChartModel() {
-    return chartModel;
-  }
-
-  public void setChartModel(ChartModel chartModel) {
-    this.chartModel = chartModel;
-  }
-  
-  public int getChartWidth() {
-    return chartWidth;
-  }
-
-  public void setChartWidth(int chartWidth) {
-    this.chartWidth = chartWidth;
-  }
-
-  public int getChartHeight() {
-    return chartHeight;
-  }
-
-  public void setChartHeight(int chartHeight) {
-    this.chartHeight = chartHeight;
-  }
-
-  public IPentahoSession getUserSession() {
-    return userSession;
-  }
-
-  public void setUserSession(IPentahoSession userSession) {
-    this.userSession = userSession;
-  }
-  
-  public String getLastError() {
-    return lastError;
-  }
 }
