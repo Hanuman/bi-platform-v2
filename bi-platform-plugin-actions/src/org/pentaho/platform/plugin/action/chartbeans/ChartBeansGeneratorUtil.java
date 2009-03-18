@@ -256,8 +256,9 @@ public class ChartBeansGeneratorUtil {
     // JavaScript template contains a namespaced function
     // single quotes wrap curly braces so that MessageFormat is happy
     // two consecutive single quotes yields a single single quote in the result
+    // this function must be global scope!
     final String JS_TEMPLATE = "<script type=\"text/javascript\">"
-        + "var org='{' '}'; org.pentaho='{' '}'; org.pentaho.chart='{' '}';"
+        + "org='{' '}'; org.pentaho='{' '}'; org.pentaho.chart='{' '}';"
         + "org.pentaho.chart.getChartData = function() '{' return ''{0}''; '}'" + "</script>";
     final String OPEN_FLASH_CHART_TEMPLATE = ""
         + "<object id=\"ofco00b1c87708fe11dea97da1e1ba5b86bc\" height=\"100%\" align=\"middle\" width=\"100%\" "
