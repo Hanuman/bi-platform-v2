@@ -22,6 +22,7 @@ package org.pentaho.platform.api.engine;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.pentaho.platform.api.ui.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
@@ -74,6 +75,11 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    * Returns a list of bean configurations for this plugin-in
    */
   public Collection<BeanDefinition> getBeans();
+  
+  /**
+   * Returns a list of static resource paths for this plugin-in
+   */
+  public Map<String,String> getStaticResourceMap();
   
   /**
    * Returns a list of menu overlays for this plug-in

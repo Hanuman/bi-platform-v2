@@ -136,8 +136,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     return new String(bytes, charsetName);
   }
 
-  public String getSystemRelativePluginPath(Class<? extends Object> clazz) {
-    File dir = getPluginDir(getClassLoader(clazz));
+  public String getSystemRelativePluginPath(ClassLoader classLoader) {
+    File dir = getPluginDir(classLoader);
     if (dir == null) {
       return null;
     }
@@ -177,7 +177,14 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
   public InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
     ClassLoader classLoader = getClassLoader(clazz);
+    return getResourceAsStream(classLoader, resourcePath);
+  }
 
+  public InputStream getResourceAsStream(ClassLoader classLoader, String resourcePath) {
+    if (getOverrideClassloader() != null) {
+      classLoader = getOverrideClassloader();
+    }
+    
     InputStream in = null;
 
     File root = getPluginDir(classLoader);
@@ -202,7 +209,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     }
     return in;
   }
-
+  
   public List<URL> findResources(Class<?> clazz, String namePattern) {
 
     String dirPattern = "", filePattern = "*"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -238,16 +245,24 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
 
   public ResourceBundle getResourceBundle(Class<?> clazz, String resourcePath) {
-
     ResourceBundle bundle = ResourceBundle.getBundle(resourcePath, LocaleHelper.getLocale(), getClassLoader(clazz));
     return bundle;
   }
 
   public String getPluginSetting(Class<?> pluginClass, String key) {
-    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(pluginClass) + settingsPath, key, null);
+    return getPluginSetting(pluginClass, key, null);
   }
 
   public String getPluginSetting(Class<?> pluginClass, String key, String defaultVal) {
-    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(pluginClass) + settingsPath, key, defaultVal);
+    ClassLoader classLoader = getClassLoader(pluginClass);
+    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(classLoader) + settingsPath, key, defaultVal);
   }
+  
+  public String getPluginSetting(ClassLoader classLoader, String key, String defaultVal) {
+    if (getOverrideClassloader() != null) {
+      classLoader = getOverrideClassloader();
+    }
+    return PentahoSystem.getSystemSetting(getSystemRelativePluginPath(classLoader) + settingsPath, key, defaultVal);
+  }
+  
 }

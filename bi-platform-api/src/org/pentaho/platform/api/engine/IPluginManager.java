@@ -128,6 +128,29 @@ public interface IPluginManager {
    * @return meta information about the solution file
    */
   public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in);
+
+  /**
+   * Retrieves a plugin setting for a given plugin and key.
+   * @param plugin the plugin to find settings for
+   * @param key the setting name to lookup
+   * @param defaultValue the default to use if the setting key is not found
+   * @return the plugin setting
+   */
+  public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue);
   
+  /**
+   * Returns the plugin for a given resource path which can handle the loading of said resource.
+   * If no plugin can handle the resource path, null is returned.
+   * @param path the path to the plugin resource
+   * @return the plugin which owns the resource
+   */
+  public IPlatformPlugin isResourceLoadable(String path);
+  
+  /**
+   * Returns and InputStream to the specified resource path.
+   * @param path the path to the plugin resource
+   * @return the InputStream which may be used to read the plugin resource
+   */
+  public InputStream getStaticResource(String path);
   
 }

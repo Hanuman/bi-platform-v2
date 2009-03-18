@@ -138,6 +138,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       boolean hasLib) {
     PlatformPlugin plugin = new PlatformPlugin();
 
+    processStaticResourcePaths(plugin, doc, session);
     processPluginInfo(plugin, doc, folder, session);
     processMenuItems(plugin, doc, session);
     processContentTypes(plugin, doc, session);
@@ -160,6 +161,18 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     return plugin;
   }
 
+  protected void processStaticResourcePaths(PlatformPlugin plugin, Document doc, IPentahoSession session) {
+    List<?> nodes = doc.selectNodes("//static-path"); //$NON-NLS-1$
+    for (Object obj : nodes) {
+      Element node = (Element) obj;
+      if (node != null) {
+        String url = node.attributeValue("url");
+        String localFolder = node.attributeValue("localFolder");
+        plugin.addStaticResourcePath(url, localFolder); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    }
+  }
+  
   protected void processLifecycleListeners(PlatformPlugin plugin, Document doc) {
     Element node = (Element) doc.selectSingleNode("//lifecycle-listener"); //$NON-NLS-1$
     if (node != null) {

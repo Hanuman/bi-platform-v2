@@ -20,7 +20,9 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
@@ -47,6 +49,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
 
+  private Map<String,String> staticResourceMap = new HashMap<String,String>();
+  
   @SuppressWarnings("unchecked")
   private List menuOverlays = new ArrayList();
 
@@ -143,6 +147,14 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   public void setSourceDescription(String sourceDescription) {
     this.sourceDescription = sourceDescription;
+  }
+
+  public void addStaticResourcePath(String url, String localFolder) {
+    staticResourceMap.put(url, localFolder);
+  }
+
+  public Map<String,String> getStaticResourceMap() {
+    return staticResourceMap;
   }
   
   public Collection<BeanDefinition> getBeans() {

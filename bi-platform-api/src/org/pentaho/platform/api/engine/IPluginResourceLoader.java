@@ -90,6 +90,18 @@ public interface IPluginResourceLoader {
    * @return a resource as an {@link InputStream} or null if the resource is not found
    */
   public InputStream getResourceAsStream(Class<?> pluginClass, String resourcePath);
+
+  /**
+   * Gets a plugin-related resource in the form of an InputStream.
+   * An example of resource path is "resources/html/my.html".  {@link IPluginResourceLoader} is able to resolve 
+   * relative paths as it knows where to look for plugin classes and resources.
+   *  
+   * @param classLoader the ClassLoader which was used to load a plugin
+   * @param resourcePath the (relative) path to a resource
+   * @return a resource as an {@link InputStream} or null if the resource is not found
+   */
+  public InputStream getResourceAsStream(ClassLoader classLoader, String resourcePath);
+  
   
   /**
    * A searching method, yielding a list of plugin-related resources as URLs.  This method allows 
@@ -139,4 +151,15 @@ public interface IPluginResourceLoader {
    * @return the plugin setting value or defaultValue if setting not found
    */
   public String getPluginSetting(Class<?> pluginClass, String key, String defaultValue);
+  
+  /**
+   * Searches for the plugin setting with the specified key.
+   *
+   * @param pluginClassLoader the classloader that was used to load the plugin, must be a PluginClassLoader
+   * @param key the setting key
+   * @param defaultValue the value to return if no value is found for the setting key
+   * @return the plugin setting value or defaultValue if setting not found
+   */
+  public String getPluginSetting(ClassLoader pluginClassLoader, String key, String defaultValue);  
+  
 }

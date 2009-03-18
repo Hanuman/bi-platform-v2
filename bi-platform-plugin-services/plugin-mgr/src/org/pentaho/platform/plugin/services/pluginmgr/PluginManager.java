@@ -39,6 +39,7 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFileMetaProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
@@ -461,6 +462,7 @@ public class PluginManager implements IPluginManager {
       // throwable here (think about AbstractMethodError for example)
       // fileInfo will remain null if we hit an exception here, but just to make
       // sure, we'll make sure to set it
+      t.printStackTrace();
       fileInfo = null;
     }
     if (fileInfo == null) {
@@ -502,4 +504,37 @@ public class PluginManager implements IPluginManager {
     return fileInfo;
   }
 
+  public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue) {
+    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+    ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
+    return resLoader.getPluginSetting(classLoader, key, defaultValue);
+  }
+  
+  public IPlatformPlugin isResourceLoadable(String path) {
+    for (IPlatformPlugin plugin : plugins) {
+      Map<String,String> resourceMap = plugin.getStaticResourceMap();
+      for (String url : resourceMap.keySet() ) {
+        if (path.startsWith(url, 1) || path.startsWith(url)) {
+          return plugin;
+        }
+      }
+    }
+    return null;
+  }
+  
+  public InputStream getStaticResource(String path) {
+    for (IPlatformPlugin plugin : plugins) {
+      Map<String,String> resourceMap = plugin.getStaticResourceMap();
+      for (String url : resourceMap.keySet() ) {
+        if (path.startsWith(url, 1) || path.startsWith(url)) {
+          IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+          ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
+          String resourcePath = path.replace(url, resourceMap.get(url));
+          return resLoader.getResourceAsStream(classLoader, resourcePath);
+        }
+      }
+    }
+    return null;
+  }
+  
 }

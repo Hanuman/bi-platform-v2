@@ -14,9 +14,12 @@
  *
  * Copyright 2005 - 2009 Pentaho Corporation.  All rights reserved.
  *
-*/
+ */
 package org.pentaho.platform.web.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,18 +38,23 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.pentaho.commons.connection.SimpleStreamSource;
+import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
+import org.pentaho.platform.util.web.MimeHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.HttpOutputHandler;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
@@ -55,159 +63,217 @@ import org.pentaho.platform.web.servlet.messages.Messages;
 
 public class GenericServlet extends ServletBase {
 
-	private static final long serialVersionUID = 6713118348911206464L;
-	
-	private static final Log logger = LogFactory.getLog(GenericServlet.class);
-	
-	  @Override
-	  public Log getLogger() {
-	    return GenericServlet.logger;
-	  }
+  private static final long serialVersionUID = 6713118348911206464L;
 
-	  @Override
-	  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		  doGet( request, response );
-	  }
+  private static final Log logger = LogFactory.getLog(GenericServlet.class);
 
-	  @Override
-	  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-	    
-	    PentahoSystem.systemEntryPoint();
+  private String settingsPath = ISolutionRepository.SEPARATOR + "settings.xml"; //$NON-NLS-1$
+  private static final String CACHE_FILE = "file"; //$NON-NLS-1$
+  private static ICacheManager cache = PentahoSystem.getCacheManager(null);
 
-      // BISERVER-2767 - grabbing the current class loader so we can replace it at the end
-      ClassLoader origContextClassloader = Thread.currentThread().getContextClassLoader();
-	    try {
-	      InputStream in = request.getInputStream();
-	    	String servletPath = request.getServletPath();
-	    	String key = request.getPathInfo();
-	    	String contentGeneratorId = ""; //$NON-NLS-1$
-	    	String urlPath = ""; //$NON-NLS-1$
-	    	SimpleParameterProvider pathParams = new SimpleParameterProvider();
-	    	if( key == null ) {
-	    		contentGeneratorId = servletPath.substring(1);
-	    		urlPath = contentGeneratorId;
-	    	} else {
-	    		String path = key.substring( 1 );
-	    		int slashPos = path.indexOf( '/' );
-	    		if( slashPos != -1 ) {
-	    			pathParams.setParameter( "path" , key.substring( slashPos+1 ) ); //$NON-NLS-1$
-			    	contentGeneratorId = path.substring( 0, slashPos );
-	    		} else {
-			    	contentGeneratorId = path;
-	    		}
-		    	urlPath = "content/"+contentGeneratorId; //$NON-NLS-1$
-	    	}
-        pathParams.setParameter( "query" , request.getQueryString() ); //$NON-NLS-1$
-        pathParams.setParameter( "contentType", request.getContentType() ); //$NON-NLS-1$
-        pathParams.setParameter( "inputstream" , in ); //$NON-NLS-1$
-        pathParams.setParameter( "httpresponse", response ); //$NON-NLS-1$
-        pathParams.setParameter( "httprequest", request ); //$NON-NLS-1$
-        pathParams.setParameter( "remoteaddr", request.getRemoteAddr() ); //$NON-NLS-1$
-	    	if( PentahoSystem.debug ) debug( "GenericServlet contentGeneratorId="+contentGeneratorId ); //$NON-NLS-1$
-	    	if( PentahoSystem.debug ) debug( "GenericServlet urlPath="+urlPath ); //$NON-NLS-1$
-	    	IPentahoSession session = getPentahoSession( request );
-	    	IPluginManager pluginManager = PentahoSystem.get( IPluginManager.class, session );
-		    if( pluginManager == null ) {
-		    	OutputStream out = response.getOutputStream();
-		    	String message = Messages.getErrorString( "GenericServlet.ERROR_0001_BAD_OBJECT", IPluginManager.class.getSimpleName() ); //$NON-NLS-1$
-		    	error( message );
-		    	out.write( message.getBytes() );
-		    	return;
-		    }
+  static {
+    cache.addCacheRegion(CACHE_FILE);
+  }
 
-		    // TODO make doing the HTTP headers configurable per content generator
-        SimpleParameterProvider headerParams = new SimpleParameterProvider();
-		    Enumeration names = request.getHeaderNames();
-		    while( names.hasMoreElements() ) {
-		      String name = (String) names.nextElement();
-		      String value = request.getHeader( name );
-		      headerParams.setParameter(name, value);
-		    }
-		    
-		    IContentGenerator contentGenerator = pluginManager.getContentGenerator(contentGeneratorId, session);
-	    	if( contentGenerator == null ) {
-		    	OutputStream out = response.getOutputStream();
-          String message = Messages.getErrorString( "GenericServlet.ERROR_0002_BAD_GENERATOR", contentGeneratorId ); //$NON-NLS-1$
-		    	error( message );
-	    		out.write( message.getBytes() );
-	    		return;
-	    	}
+  @Override
+  public Log getLogger() {
+    return GenericServlet.logger;
+  }
 
-	    	// set the classloader of the current thread to the class loader of 
-	    	// the plugin so that it can load its libraries
-	      Thread.currentThread().setContextClassLoader( contentGenerator.getClass().getClassLoader() );
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    doGet(request, response);
+  }
 
-//		      String proxyClass = PentahoSystem.getSystemSetting( module+"/plugin.xml" , "plugin/content-generators/"+contentGeneratorId, "content generator not found");
-	    	IParameterProvider requestParameters = new HttpRequestParameterProvider( request );
-	    	// see if this is an upload
-	    	boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-	    	if( isMultipart ) {
-	    		requestParameters = new SimpleParameterProvider();
-	    		// Create a factory for disk-based file items
-	    		FileItemFactory factory = new DiskFileItemFactory();
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-	    		// Create a new file upload handler
-	    		ServletFileUpload upload = new ServletFileUpload(factory);
+    PentahoSystem.systemEntryPoint();
 
-	    		// Parse the request
-	    		List<?> /* FileItem */ items = upload.parseRequest(request);
-	    		Iterator<?> iter = items.iterator();
-	    		while (iter.hasNext()) {
-	    			FileItem item = (FileItem) iter.next();
+    // BISERVER-2767 - grabbing the current class loader so we can replace it at the end
+    ClassLoader origContextClassloader = Thread.currentThread().getContextClassLoader();
+    try {
+      InputStream in = request.getInputStream();
+      String servletPath = request.getServletPath();
+      String pathInfo = request.getPathInfo();
+      String contentGeneratorId = ""; //$NON-NLS-1$
+      String urlPath = ""; //$NON-NLS-1$
+      SimpleParameterProvider pathParams = new SimpleParameterProvider();
+      if (pathInfo == null) {
+        contentGeneratorId = servletPath.substring(1);
+        urlPath = contentGeneratorId;
+      } else {
+        String path = pathInfo.substring(1);
+        int slashPos = path.indexOf('/');
+        if (slashPos != -1) {
+          pathParams.setParameter("path", pathInfo.substring(slashPos + 1)); //$NON-NLS-1$
+          contentGeneratorId = path.substring(0, slashPos);
+        } else {
+          contentGeneratorId = path;
+        }
+        urlPath = "content/" + contentGeneratorId; //$NON-NLS-1$
+      }
+      pathParams.setParameter("query", request.getQueryString()); //$NON-NLS-1$
+      pathParams.setParameter("contentType", request.getContentType()); //$NON-NLS-1$
+      pathParams.setParameter("inputstream", in); //$NON-NLS-1$
+      pathParams.setParameter("httpresponse", response); //$NON-NLS-1$
+      pathParams.setParameter("httprequest", request); //$NON-NLS-1$
+      pathParams.setParameter("remoteaddr", request.getRemoteAddr()); //$NON-NLS-1$
+      if (PentahoSystem.debug)
+        debug("GenericServlet contentGeneratorId=" + contentGeneratorId); //$NON-NLS-1$
+      if (PentahoSystem.debug)
+        debug("GenericServlet urlPath=" + urlPath); //$NON-NLS-1$
+      IPentahoSession session = getPentahoSession(request);
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
+      if (pluginManager == null) {
+        OutputStream out = response.getOutputStream();
+        String message = Messages.getErrorString("GenericServlet.ERROR_0001_BAD_OBJECT", IPluginManager.class.getSimpleName()); //$NON-NLS-1$
+        error(message);
+        out.write(message.getBytes());
+        return;
+      }
 
-	    			if (item.isFormField()) {
-	    				((SimpleParameterProvider)requestParameters).setParameter( item.getFieldName() , item.getString() );
-	    			} else {
-	    				String name = item.getName();
-	    				((SimpleParameterProvider)requestParameters).setParameter( name , item.getInputStream() );
-	    			}
-	    		}	
-	    	}
+      // TODO make doing the HTTP headers configurable per content generator
+      SimpleParameterProvider headerParams = new SimpleParameterProvider();
+      Enumeration names = request.getHeaderNames();
+      while (names.hasMoreElements()) {
+        String name = (String) names.nextElement();
+        String value = request.getHeader(name);
+        headerParams.setParameter(name, value);
+      }
 
-//	    	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
-//	    	IContentGenerator contentGenerator = getContentGenerator( proxyClass, userSession );
-	    	
-	    	response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
+      if (pathInfo != null && pluginManager.isResourceLoadable(pathInfo) != null) {
+        IPlatformPlugin plugin = pluginManager.isResourceLoadable(pathInfo);
 
-	        IMimeTypeListener listener = new HttpMimeTypeListener(request, response);
-	    	
-	    	IOutputHandler outputHandler = getOutputHandler( response, true );
-	        outputHandler.setMimeTypeListener(listener);
-	    	
-	    	IParameterProvider sessionParameters = new HttpSessionParameterProvider( session );
-	    	
-	    	
-	    	Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
-	    	parameterProviders.put( IParameterProvider.SCOPE_REQUEST , requestParameters );
-        parameterProviders.put( IParameterProvider.SCOPE_SESSION , sessionParameters );
-        parameterProviders.put( "headers" , headerParams ); //$NON-NLS-1$
-	    	parameterProviders.put( "path", pathParams ); //$NON-NLS-1$
-	        SimpleUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl()
-	                + urlPath+"?"); //$NON-NLS-1$
-	    	List<String> messages = new ArrayList<String>();
-	    	contentGenerator.setOutputHandler(outputHandler);
-	    	contentGenerator.setMessagesList(messages);
-	    	contentGenerator.setParameterProviders(parameterProviders);
-	    	contentGenerator.setSession(session);
-	    	contentGenerator.setUrlFactory(urlFactory);
-//	    	String contentType = request.getContentType();
-//	    	SimpleStreamSource input = new SimpleStreamSource( "input", contentType, in, null ); //$NON-NLS-1$
-//        contentGenerator.setInput(input);
-	    	contentGenerator.createContent();
-	    	if (PentahoSystem.debug) debug( "Generic Servlet content generate successfully" ); //$NON-NLS-1$
+        boolean cacheOn = "true".equals(pluginManager.getPluginSetting(plugin, "settings/cache", "false"));
+        String maxAge = (String)pluginManager.getPluginSetting(plugin, "settings/max-age", null);
+        allowBrowserCache(maxAge, pathParams);
+        
+        String mimeType = MimeHelper.getMimeTypeFromFileName(pathInfo);
+        response.setContentType(mimeType);
+        OutputStream out = response.getOutputStream();
 
-	    } catch ( Exception e ) {
-	    	error( Messages.getErrorString( "GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString() ), e ); //$NON-NLS-1$
-	    } finally {
-        // reset the classloader of the current thread
-        Thread.currentThread().setContextClassLoader( origContextClassloader );
-	      PentahoSystem.systemExitPoint();
-	    }
-	  }
-	  
-	  protected IOutputHandler getOutputHandler( HttpServletResponse response, boolean allowFeedback ) throws IOException {
-      OutputStream out = response.getOutputStream();
-	    HttpOutputHandler handler = new HttpOutputHandler( response, out, allowFeedback );
-	    return handler;
-	  }
+        // do we have this resource cached?
+        ByteArrayOutputStream byteStream = null;
+
+        if (cacheOn) {
+          byteStream = (ByteArrayOutputStream) cache.getFromRegionCache(CACHE_FILE, pathInfo);
+        }
+
+        if (byteStream != null) {
+          IOUtils.write(byteStream.toByteArray(), out);
+          return;
+        }
+
+        InputStream resourceStream = pluginManager.getStaticResource(pathInfo);
+        if (resourceStream != null) {
+          byteStream = new ByteArrayOutputStream();
+          IOUtils.copy(resourceStream, byteStream);
+
+          // if cache is enabled, drop file in cache
+          if (cacheOn) {
+            cache.putInRegionCache(CACHE_FILE, pathInfo, byteStream);
+          }
+
+          // write it out
+          IOUtils.write(byteStream.toByteArray(), out);
+          return;
+        }
+      }
+
+      IContentGenerator contentGenerator = pluginManager.getContentGenerator(contentGeneratorId, session);
+      if (contentGenerator == null) {
+        OutputStream out = response.getOutputStream();
+        String message = Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", contentGeneratorId); //$NON-NLS-1$
+        error(message);
+        out.write(message.getBytes());
+        return;
+      }
+
+      // set the classloader of the current thread to the class loader of
+      // the plugin so that it can load its libraries
+      Thread.currentThread().setContextClassLoader(contentGenerator.getClass().getClassLoader());
+
+      // String proxyClass = PentahoSystem.getSystemSetting( module+"/plugin.xml" , "plugin/content-generators/"+contentGeneratorId,
+      // "content generator not found");
+      IParameterProvider requestParameters = new HttpRequestParameterProvider(request);
+      // see if this is an upload
+      boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+      if (isMultipart) {
+        requestParameters = new SimpleParameterProvider();
+        // Create a factory for disk-based file items
+        FileItemFactory factory = new DiskFileItemFactory();
+
+        // Create a new file upload handler
+        ServletFileUpload upload = new ServletFileUpload(factory);
+
+        // Parse the request
+        List<?> /* FileItem */items = upload.parseRequest(request);
+        Iterator<?> iter = items.iterator();
+        while (iter.hasNext()) {
+          FileItem item = (FileItem) iter.next();
+
+          if (item.isFormField()) {
+            ((SimpleParameterProvider) requestParameters).setParameter(item.getFieldName(), item.getString());
+          } else {
+            String name = item.getName();
+            ((SimpleParameterProvider) requestParameters).setParameter(name, item.getInputStream());
+          }
+        }
+      }
+
+      response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
+
+      IMimeTypeListener listener = new HttpMimeTypeListener(request, response);
+
+      IOutputHandler outputHandler = getOutputHandler(response, true);
+      outputHandler.setMimeTypeListener(listener);
+
+      IParameterProvider sessionParameters = new HttpSessionParameterProvider(session);
+
+      Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
+      parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
+      parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
+      parameterProviders.put("headers", headerParams); //$NON-NLS-1$
+      parameterProviders.put("path", pathParams); //$NON-NLS-1$
+      SimpleUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl() + urlPath + "?"); //$NON-NLS-1$
+      List<String> messages = new ArrayList<String>();
+      contentGenerator.setOutputHandler(outputHandler);
+      contentGenerator.setMessagesList(messages);
+      contentGenerator.setParameterProviders(parameterProviders);
+      contentGenerator.setSession(session);
+      contentGenerator.setUrlFactory(urlFactory);
+      // String contentType = request.getContentType();
+      //	    	SimpleStreamSource input = new SimpleStreamSource( "input", contentType, in, null ); //$NON-NLS-1$
+      // contentGenerator.setInput(input);
+      contentGenerator.createContent();
+      if (PentahoSystem.debug)
+        debug("Generic Servlet content generate successfully"); //$NON-NLS-1$
+
+    } catch (Exception e) {
+      error(Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
+    } finally {
+      // reset the classloader of the current thread
+      Thread.currentThread().setContextClassLoader(origContextClassloader);
+      PentahoSystem.systemExitPoint();
+    }
+  }
+
+  protected void allowBrowserCache(String maxAge, IParameterProvider pathParams) {
+    if (maxAge == null || "0".equals(maxAge)) { //$NON-NLS-1$
+      return;
+    }
+    if (maxAge != null) {
+      HttpServletResponse response = (HttpServletResponse) pathParams.getParameter("httpresponse"); //$NON-NLS-1$
+      if (response != null) {
+        response.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    }
+  }
+
+  protected IOutputHandler getOutputHandler(HttpServletResponse response, boolean allowFeedback) throws IOException {
+    OutputStream out = response.getOutputStream();
+    HttpOutputHandler handler = new HttpOutputHandler(response, out, allowFeedback);
+    return handler;
+  }
 }
