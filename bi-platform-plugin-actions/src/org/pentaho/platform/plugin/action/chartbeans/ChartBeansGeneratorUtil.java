@@ -20,18 +20,29 @@ package org.pentaho.platform.plugin.action.chartbeans;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SolutionHelper;
 
+import com.ibm.icu.text.MessageFormat;
+
+/**
+ * Takes all inputs necessary to generate a chart and passes them to the ChartBeans engine (via an xaction).
+ */
 public class ChartBeansGeneratorUtil {
+
+  private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title></head><body>{0}</body></html>"; //$NON-NLS-1$
 
   private ChartBeansGeneratorUtil() {
   }
@@ -45,7 +56,6 @@ public class ChartBeansGeneratorUtil {
   public static void createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
       IPentahoSession userSession, OutputStream out) throws IOException {
     String serializedChartModel = ChartSerializer.serialize(chartModel);
-
     ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
         chartWidth, chartHeight, userSession, out);
   }
@@ -65,7 +75,6 @@ public class ChartBeansGeneratorUtil {
   public static InputStream createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
       IPentahoSession userSession) throws IOException {
     String serializedChartModel = ChartSerializer.serialize(chartModel);
-
     return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
         chartWidth, chartHeight, userSession, null);
   }
@@ -173,6 +182,107 @@ public class ChartBeansGeneratorUtil {
     }
 
     return null;
+  }
+
+  /**
+   * Convenience method that returns a complete HTML document containing the chart. Resource references point back to 
+   * the BI Server.
+   */
+  public static String createChartAsHtml(IPentahoSession userSession, String serializedChartDataDefinition,
+      String serializedChartModel, int chartWidth, int chartHeight) throws IOException {
+
+    ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel);
+
+    String html = null;
+
+    if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_JFREE) {
+      final String SOLUTION_TMP_DIR = "system/tmp/"; //$NON-NLS-1$
+      File chartFileOnServer = new File(new File(PentahoSystem.getApplicationContext().getFileOutputPath(
+          SOLUTION_TMP_DIR)), java.util.UUID.randomUUID().toString());
+
+      BufferedOutputStream bos = null;
+      try {
+        bos = new BufferedOutputStream(new FileOutputStream(chartFileOnServer));
+        ChartBeansGeneratorUtil.createChart(userSession, serializedChartDataDefinition, serializedChartModel,
+            chartWidth, chartHeight, bos);
+      } finally {
+        IOUtils.closeQuietly(bos);
+      }
+
+      html = ChartBeansGeneratorUtil.mergeStaticImageHtmlTemplate(chartFileOnServer.getName());
+      
+    } else if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH) {
+
+      ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
+      ChartBeansGeneratorUtil.createChart(userSession, serializedChartDataDefinition, serializedChartModel, chartWidth,
+          chartHeight, tmpOut);
+      final String ENCODING = "UTF-8"; //$NON-NLS-1$
+      ByteArrayInputStream in = new ByteArrayInputStream(tmpOut.toByteArray());
+      IOUtils.closeQuietly(tmpOut);
+      String openFlashChartJson = IOUtils.toString(in, ENCODING);
+      IOUtils.closeQuietly(in);
+
+      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson);
+      
+    } else {
+      throw new IllegalArgumentException("unrecognized chart engine");
+    }
+
+    return html;
+  }
+
+  /**
+   * Returns a complete HTML document that references a static image held in a temporary file on the server. 
+   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   */
+  public static String mergeStaticImageHtmlTemplate(String filename) {
+    final String IMG_SRC_TEMPLATE = "{0}getImage?image={1}"; //$NON-NLS-1$
+    final String BODY_TEMPLATE = "<img src=\"{0}\" />"; //$NON-NLS-1$
+    final String imgSrc = MessageFormat.format(IMG_SRC_TEMPLATE, new String[] {
+        PentahoSystem.getApplicationContext().getBaseUrl(), filename });
+    final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { imgSrc });
+    return MessageFormat.format(HTML_TEMPLATE, new String[] { body });
+  }
+
+  /**
+   * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
+   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string). 
+   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   */
+  public static String mergeOpenFlashChartHtmlTemplate(String openFlashChartJson) {
+    // JavaScript template contains a namespaced function
+    // single quotes wrap curly braces so that MessageFormat is happy
+    // two consecutive single quotes yields a single single quote in the result
+    final String JS_TEMPLATE = "<script type=\"text/javascript\">"
+        + "var org='{' '}'; org.pentaho='{' '}'; org.pentaho.chart='{' '}';"
+        + "org.pentaho.chart.getChartData = function() '{' return ''{0}''; '}'" + "</script>";
+    final String OPEN_FLASH_CHART_TEMPLATE = ""
+        + "<object id=\"ofco00b1c87708fe11dea97da1e1ba5b86bc\" height=\"100%\" align=\"middle\" width=\"100%\" "
+        + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" "
+        + "classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\">"
+        + "<param value=\"sameDomain\" name=\"allowScriptAccess\"/>"
+        + "<param value=\"opaque\" name=\"wmode\"/>"
+        + "<param value=\"{0}openflashchart/open-flash-chart-full-embedded-font.swf?get-data=org.pentaho.chart.getChartData\" name=\"movie\"/>"
+        + "<param value=\"high\" name=\"quality\"/>"
+        + "<embed id=\"ofce00b1c87708fe11dea97da1e1ba5b86bc\""
+        + " height=\"100%\""
+        + " align=\"middle\""
+        + " width=\"100%\""
+        + " pluginspage=\"http://www.macromedia.com/go/getflashplayer\""
+        + " type=\"application/x-shockwave-flash\""
+        + " allowscriptaccess=\"sameDomain\""
+        + " bgcolor=\"#FFFFFF\""
+        + " quality=\"high\""
+        + " wmode=\"opaque\""
+        + " src=\"{0}openflashchart/open-flash-chart-full-embedded-font.swf?get-data=org.pentaho.chart.getChartData\"/>"
+        + "</object>";
+    final String BODY_TEMPLATE = "{0}{1}"; //$NON-NLS-1$
+    final String js = MessageFormat.format(JS_TEMPLATE, new String[] { openFlashChartJson });
+    final String openFlashChartEmbedHtml = MessageFormat.format(OPEN_FLASH_CHART_TEMPLATE,
+        new String[] { PentahoSystem.getApplicationContext().getBaseUrl() });
+    final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { js, openFlashChartEmbedHtml });
+    return MessageFormat.format(HTML_TEMPLATE, new String[] { body });
+
   }
 
 }
