@@ -125,7 +125,7 @@ public class PluginResourceLoaderTest {
 
   @Test
   public void testPluginPath() {
-    String path = resLoader.getSystemRelativePluginPath(pluginClass);
+    String path = resLoader.getSystemRelativePluginPath(pluginClass.getClassLoader());
     assertTrue("Plugin path is not correct", path.endsWith("plugin-mgr/test-res/PluginResourceLoaderTest")); //$NON-NLS-2$
   }
 
@@ -134,7 +134,7 @@ public class PluginResourceLoaderTest {
 
     final ISystemSettings mockSettings = mockery.mock(ISystemSettings.class);
 
-    final String fullPathToSettingsFile = resLoader.getSystemRelativePluginPath(pluginClass) + "/settings.xml";
+    final String fullPathToSettingsFile = resLoader.getSystemRelativePluginPath(pluginClass.getClassLoader()) + "/settings.xml";
 
     mockery.checking(new Expectations() {
       {
