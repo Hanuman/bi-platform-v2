@@ -42,7 +42,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ChartBeansGeneratorUtil {
 
-  private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title></head><body>{0}</body></html>"; //$NON-NLS-1$
+  private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title>{0}</head><body>{1}</body></html>"; //$NON-NLS-1$
 
   private ChartBeansGeneratorUtil() {
   }
@@ -244,7 +244,7 @@ public class ChartBeansGeneratorUtil {
   public static String mergeStaticImageHtmlTemplate(String imageUrl) {
     final String BODY_TEMPLATE = "<img src=\"{0}\" />"; //$NON-NLS-1$
     final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { imageUrl });
-    return MessageFormat.format(HTML_TEMPLATE, new String[] { body });
+    return MessageFormat.format(HTML_TEMPLATE, new String[] { "", body }); //$NON-NLS-1$
   }
 
   /**
@@ -256,26 +256,24 @@ public class ChartBeansGeneratorUtil {
     // JavaScript template contains a namespaced function
     // single quotes wrap curly braces so that MessageFormat is happy
     // two consecutive single quotes yields a single single quote in the result
-    // this function must be global scope!
     final String JS_TEMPLATE = "<script type=\"text/javascript\">"
-        + "org='{' '}'; org.pentaho='{' '}'; org.pentaho.chart='{' '}';"
-        + "org.pentaho.chart.getChartData = function() '{' return ''{0}''; '}'" + "</script>";
+        + "function getChartData() '{' return ''{0}''; '}'" + "</script>";
     final String OPEN_FLASH_CHART_TEMPLATE = ""
         + "<object id=\"ofco00b1c87708fe11dea97da1e1ba5b86bc\" height=\"100%\" align=\"middle\" width=\"100%\" "
         + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" "
         + "classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\">"
         + "<param value=\"sameDomain\" name=\"allowScriptAccess\"/>" + "<param value=\"opaque\" name=\"wmode\"/>"
-        + "<param value=\"{0}?get-data=org.pentaho.chart.getChartData\" name=\"movie\"/>"
+        + "<param value=\"{0}?get-data=getChartData\" name=\"movie\"/>"
         + "<param value=\"high\" name=\"quality\"/>" + "<embed id=\"ofce00b1c87708fe11dea97da1e1ba5b86bc\""
         + " height=\"100%\"" + " align=\"middle\"" + " width=\"100%\""
         + " pluginspage=\"http://www.macromedia.com/go/getflashplayer\"" + " type=\"application/x-shockwave-flash\""
         + " allowscriptaccess=\"sameDomain\"" + " bgcolor=\"#FFFFFF\"" + " quality=\"high\"" + " wmode=\"opaque\""
-        + " src=\"{0}?get-data=org.pentaho.chart.getChartData\"/>" + "</object>";
-    final String BODY_TEMPLATE = "{0}{1}"; //$NON-NLS-1$
+        + " src=\"{0}?get-data=getChartData\"/>" + "</object>";
+    final String BODY_TEMPLATE = "{0}"; //$NON-NLS-1$
     final String js = MessageFormat.format(JS_TEMPLATE, new String[] { openFlashChartJson });
     final String openFlashChartEmbedHtml = MessageFormat.format(OPEN_FLASH_CHART_TEMPLATE, new String[] { swfUrl });
-    final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { js, openFlashChartEmbedHtml });
-    return MessageFormat.format(HTML_TEMPLATE, new String[] { body });
+    final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { openFlashChartEmbedHtml });
+    return MessageFormat.format(HTML_TEMPLATE, new String[] { js, body });
 
   }
 
