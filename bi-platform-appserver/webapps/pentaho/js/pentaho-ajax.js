@@ -31,7 +31,10 @@ var base = '';
  */
 function pentahoAction( solution, path, action, params, func ) {
 	// execute an Action Sequence on the server
-	var url = "ViewAction";
+
+	var pathArray = window.location.pathname.split( '/' );
+	var url = "/" + pathArray[1] + "/ViewAction";
+	
 	// create the URL we need
 	var query = "wrapper=false&solution="+solution+"&path="+path+"&action="+action;
 	// add any parameters provided
@@ -69,7 +72,8 @@ function pentahoAction( solution, path, action, params, func ) {
 function pentahoService( component, params, func, mimeType ) {
 	// execute a web service on the server
 	// create the URL we need
-	var url = "ServiceAction";
+	var pathArray = window.location.pathname.split( '/' );
+	var url = "/" + pathArray[1] + "/ServiceAction";
 	
 	var query = "ajax=true&";
 	if( component ) {
