@@ -40,7 +40,7 @@
         -->
     </menu-items>
 
-    <content-generator scope="local" id="default-xaction" type="xaction" url="ViewAction">
+    <content-generator id="default-xaction" type="xaction" url="ViewAction">
         <classname>org.pentaho.platform.engine.services.solution.ActionSequenceContentGenerator</classname>
         <fileinfo-classname>org.pentaho.platform.engine.services.solution.ActionSequenceFileInfo</fileinfo-classname>
         <title>The default action sequence handler</title>
