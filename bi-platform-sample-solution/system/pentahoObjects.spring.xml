@@ -47,13 +47,14 @@ PentahoSystem which is initialized after Spring
   <bean id="IMessageFormatter" class="org.pentaho.platform.engine.services.MessageFormatter" scope="singleton" />
   <bean id="INavigationComponent" class="org.pentaho.platform.uifoundation.component.xml.NavigationComponent" scope="prototype" />
   <!--
-    IDatasourceService - other options are: 
+    IDatasourceService - options are: 
     org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService
     org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledOrJndiDatasourceService
     org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService
     org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceService
-    -->
-  <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService" scope="prototype" />
+    org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService  (Default option)
+  -->
+  <bean id="IDatasourceService" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService" scope="singleton" />
   <bean id="IPasswordService" class="org.pentaho.platform.util.Base64PasswordService" scope="singleton" />
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="prototype" />
   <bean id="IDatasourceMgmtService" class="org.pentaho.platform.repository.datasource.DatasourceMgmtService" scope="prototype" />
