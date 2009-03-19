@@ -228,7 +228,7 @@ public class ChartBeansGeneratorUtil {
       final String SWF_URL_TEMPLATE = "{0}openflashchart/open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$
       final String swfUrl = MessageFormat.format(SWF_URL_TEMPLATE, new String[] { PentahoSystem.getApplicationContext()
           .getBaseUrl() });
-      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson, swfUrl);
+      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson.replace("\"", "\\\""), swfUrl);
 
     } else {
       throw new IllegalArgumentException("unrecognized chart engine");
@@ -257,7 +257,7 @@ public class ChartBeansGeneratorUtil {
     // single quotes wrap curly braces so that MessageFormat is happy
     // two consecutive single quotes yields a single single quote in the result
     final String JS_TEMPLATE = "<script type=\"text/javascript\">"
-        + "function getChartData() '{' return ''{0}''; '}'" + "</script>";
+        + "window.getChartData = function() '{' return /*JSON*/\"{0}\"/*END_JSON*/; '}'" + "</script>";
     final String OPEN_FLASH_CHART_TEMPLATE = ""
         + "<object id=\"ofco00b1c87708fe11dea97da1e1ba5b86bc\" height=\"100%\" align=\"middle\" width=\"100%\" "
         + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" "
