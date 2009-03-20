@@ -302,6 +302,19 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     }
   }
 
+  /*
+   * Finds propName as either an attribute of the given node or the
+   * text element of a child element called propName
+   */
+  private static String getProperty(Element node, String propName) {
+    String propValue = null;
+    propValue = node.attributeValue(propName);
+    if (propValue == null) {
+      propValue = XmlDom4JHelper.getNodeText(propName, node, null);
+    }
+    return propValue;
+  }
+
   protected void processContentGenerators(PlatformPlugin plugin, Document doc, IPentahoSession session, String folder,
       ISolutionRepository repo, boolean hasLib) {
     // look for content generators
@@ -315,13 +328,13 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       String id = node.attributeValue("id"); //$NON-NLS-1$
       String type = node.attributeValue("type"); //$NON-NLS-1$
       String url = node.attributeValue("url"); //$NON-NLS-1$
-      String title = XmlDom4JHelper.getNodeText("title", node, null); //$NON-NLS-1$ 
-      String description = XmlDom4JHelper.getNodeText("description", node, ""); //$NON-NLS-1$ //$NON-NLS-2$
+      String title = getProperty(node, "title"); //$NON-NLS-1$
+      String description = getProperty(node, "description"); //$NON-NLS-1$
       try {
-
         if (id != null && type != null && className != null && title != null) {
           try {
-            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, className, session, folder);
+            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, className,
+                session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
             PluginMessageLogger.add(Messages.getString(
@@ -343,8 +356,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
   }
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
-      String description, String type, String url, String className, IPentahoSession session,
-      String location) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+      String description, String type, String url, String className, IPentahoSession session, String location)
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
     ContentGeneratorInfo info = new ContentGeneratorInfo();
     info.setId(id);
