@@ -36,8 +36,6 @@ public class ContentGeneratorInfoTest extends TestCase {
     cgi.setClassname("test classname");
     cgi.setDescription("test description");
     IFileInfoGenerator fig = new TestFileInfoGenerator();
-    cgi.setFileInfoGenerator( fig );
-    cgi.setFileInfoGeneratorClassname(TestFileInfoGenerator.class.getName());
     cgi.setId("test id");
     cgi.setTitle( "test title" );
     cgi.setType( "test type" );
@@ -50,7 +48,6 @@ public class ContentGeneratorInfoTest extends TestCase {
     assertEquals( "wrong field", "test type", cgi.getType() );
     assertEquals( "wrong field", "test url", cgi.getUrl() );
     assertEquals( "wrong field", TestFileInfoGenerator.class.getName(), cgi.getFileInfoGeneratorClassname() );
-    assertEquals( "wrong field", fig, cgi.getFileInfoGenerator() );
 
   }
     

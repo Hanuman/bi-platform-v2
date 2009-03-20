@@ -19,7 +19,6 @@
 package org.pentaho.platform.engine.core.solution;
 
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
-import org.pentaho.platform.api.engine.IFileInfoGenerator;
 
 public class ContentGeneratorInfo implements IContentGeneratorInfo {
 
@@ -33,10 +32,6 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
 	
 	private String type;
 
-	private String fileInfoGeneratorClassname;
-	
-	private IFileInfoGenerator fileInfoGenerator; 
-	
 	private String classname;
 	
 	public String getDescription() {
@@ -79,27 +74,16 @@ public class ContentGeneratorInfo implements IContentGeneratorInfo {
     this.type = type;
   }
 
-  public String getFileInfoGeneratorClassname() {
-    return fileInfoGeneratorClassname;
-  }
-
-  public void setFileInfoGeneratorClassname(String fileInfoGeneratorClassname) {
-    this.fileInfoGeneratorClassname = fileInfoGeneratorClassname;
-  }
-
-  public IFileInfoGenerator getFileInfoGenerator() {
-		return fileInfoGenerator;
-	}
-
-	public void setFileInfoGenerator(IFileInfoGenerator fileInfoGenerator) {
-		this.fileInfoGenerator = fileInfoGenerator;
-	}
-
   public String getClassname() {
     return classname;
   }
 
   public void setClassname(String classname) {
     this.classname = classname;
+  }
+
+  public String getFileInfoGeneratorClassname() {
+    //do nothing, this method is deprecated and is no longer called by the platform
+    return null;
   }
 }

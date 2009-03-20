@@ -172,7 +172,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       }
     }
   }
-  
+
   protected void processLifecycleListeners(PlatformPlugin plugin, Document doc) {
     Element node = (Element) doc.selectSingleNode("//lifecycle-listener"); //$NON-NLS-1$
     if (node != null) {
@@ -271,6 +271,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         String description = XmlDom4JHelper.getNodeText("description", node, ""); //$NON-NLS-1$ //$NON-NLS-2$
         String mimeType = node.attributeValue("mime-type", ""); //$NON-NLS-1$ //$NON-NLS-2$
         String iconUrl = XmlDom4JHelper.getNodeText("icon-url", node, ""); //$NON-NLS-1$ //$NON-NLS-2$
+        String metaProviderClass = XmlDom4JHelper.getNodeText("meta-provider", node, ""); //$NON-NLS-1$ //$NON-NLS-2$
+
         ContentInfo contentInfo = new ContentInfo();
         contentInfo.setDescription(description);
         contentInfo.setTitle(title);
@@ -290,6 +292,9 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         }
 
         plugin.addContentInfo(contentInfo);
+        if (!StringUtils.isEmpty(metaProviderClass)) {
+          plugin.getMetaProviderMap().put(contentInfo.getExtension(), metaProviderClass);
+        }
         PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
       } else {
         PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
@@ -316,11 +321,14 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
         if (id != null && type != null && className != null && title != null) {
           try {
-            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, className, fileInfoClassName, session, folder);
+            IContentGeneratorInfo info = createContentGenerator(plugin, id, title, description, type, url, className, session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
             PluginMessageLogger.add(Messages.getString(
                 "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+          }
+          if (!StringUtils.isEmpty(fileInfoClassName)) {
+            plugin.getMetaProviderMap().put(type, fileInfoClassName);
           }
         } else {
           PluginMessageLogger
@@ -335,9 +343,8 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
   }
 
   private static IContentGeneratorInfo createContentGenerator(PlatformPlugin plugin, String id, String title,
-      String description, String type, String url, String className, String fileInfoClassName,
-      IPentahoSession session, String location) throws ClassNotFoundException, InstantiationException,
-      IllegalAccessException {
+      String description, String type, String url, String className, IPentahoSession session,
+      String location) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
     ContentGeneratorInfo info = new ContentGeneratorInfo();
     info.setId(id);
@@ -345,7 +352,6 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     info.setDescription(description);
     info.setUrl((url != null) ? url : ""); //$NON-NLS-1$
     info.setType(type);
-    info.setFileInfoGeneratorClassname(fileInfoClassName);
     info.setClassname(className);
 
     return info;

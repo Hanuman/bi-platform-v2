@@ -51,6 +51,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private Map<String,String> staticResourceMap = new HashMap<String,String>();
   
+  private Map<String, String> metaProviderMap = new HashMap<String, String>();
+  
   @SuppressWarnings("unchecked")
   private List menuOverlays = new ArrayList();
 
@@ -185,6 +187,10 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   public void addLifecycleListener(IPluginLifecycleListener listener) {
     this.lifecycleListener = listener;
+  }
+
+  public Map<String, String> getMetaProviderMap() {
+    return metaProviderMap;
   }
 
 }

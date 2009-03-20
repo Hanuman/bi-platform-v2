@@ -134,4 +134,12 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
     public String beanId;
     public String classname;
   }
+
+  /**
+   * The storage mechanism for a plugin to know what ISolutionFileMetaProvider class
+   * should be used for a particular content type.
+   * @return a map of content types (extensions) keys and ISolutionFileMetaProvider 
+   * (or deprecated IFileInfoGenerator) classnames for values
+   */
+  public Map<String, String> getMetaProviderMap();
 }

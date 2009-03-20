@@ -271,12 +271,9 @@ public class PluginManager implements IPluginManager {
 
     plugin.init();
 
-    //index content types
-    for (IContentInfo info : plugin.getContentInfos()) {
-      contentTypeByExtension.put(info.getExtension(), info);
-    }
+    registerContentTypes(plugin, loader);
 
-    registerContentGenerators(plugin, loader, session);
+    registerContentGenerators(plugin, loader);
 
     //cache overlays
     overlaysCache.addAll(plugin.getOverlays());
@@ -295,6 +292,44 @@ public class PluginManager implements IPluginManager {
       String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getName()); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, t);
       PluginMessageLogger.add(msg);
+    }
+  }
+
+  private void registerContentTypes(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
+    //index content types and define any file meta providers
+    for (IContentInfo info : plugin.getContentInfos()) {
+      contentTypeByExtension.put(info.getExtension(), info);
+      
+      String metaProviderClass = plugin.getMetaProviderMap().get(info.getExtension());
+      
+      //if a meta-provider is defined for this content type, then register it...
+      if(!StringUtils.isEmpty(metaProviderClass)) {
+        Class<?> clazz = null;
+        String defaultErrMsg = Messages.getErrorString("PluginManager.ERROR_0013_FAILED_TO_SET_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension()); //$NON-NLS-1$
+        
+        try {
+          //do a test load to fail early if class not found
+          clazz = loader.loadClass(metaProviderClass);
+        } catch (Exception e) {
+          throw new PlatformPluginRegistrationException(defaultErrMsg, e);
+        }
+        
+        //check that the class is an accepted type
+        if(!(ISolutionFileMetaProvider.class.isAssignableFrom(clazz) || IFileInfoGenerator.class.isAssignableFrom(clazz))) {
+          throw new PlatformPluginRegistrationException(Messages.getErrorString("PluginManager.ERROR_0019_WRONG_TYPE_FOR_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension())); //$NON-NLS-1$
+        }
+        
+        //the class is ok, so register it with the factory
+        objectFactory.defineObject(info.getExtension(), metaProviderClass, Scope.LOCAL, loader);
+        
+        try {
+          //check that the class can be instantiated
+          //we have to tell the factory to return us an Object since the instance could be one of 2 permissible types
+          objectFactory.get(Object.class, info.getExtension(), null); //solution file meta providers cannot be session scoped, so null is ok here
+        } catch (Exception e) {
+          throw new PlatformPluginRegistrationException(defaultErrMsg, e);
+        }
+      }
     }
   }
 
@@ -328,7 +363,7 @@ public class PluginManager implements IPluginManager {
     return loader;
   }
 
-  private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader, IPentahoSession session)
+  private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader)
       throws PlatformPluginRegistrationException {
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
@@ -348,7 +383,7 @@ public class PluginManager implements IPluginManager {
       // this tests class loading and cast class issues
       Object tmpObject;
       try {
-        tmpObject = objectFactory.get(Object.class, cgInfo.getId(), session);
+        tmpObject = objectFactory.get(Object.class, cgInfo.getId(), null); //content generators cannot be session scoped, so null is ok here
       } catch (ObjectFactoryException e) {
         throw new PlatformPluginRegistrationException(errorMsg, e);
       }
@@ -390,31 +425,6 @@ public class PluginManager implements IPluginManager {
     return objectFactory;
   }
 
-  /**
-   * Returns a file info generator associated with a particular content type
-   * @param type  file type associated with a file info generator
-   * @param session  the current session
-   * @return a FileInfoGenerator or <code>null</code> if one is not defined for this content type
-   * @throws PlatformPluginRegistrationException if a FileInfoGenerator is specified for this type
-   * but there was a problem returning it
-   */
-  private IFileInfoGenerator getFileInfoGeneratorForType(String type, IPentahoSession session)
-      throws PlatformPluginRegistrationException {
-    IContentGeneratorInfo info = getDefaultContentGeneratorInfoForType(type, session);
-    if (info != null) {
-      String fileInfoClassName = info.getFileInfoGeneratorClassname();
-      if (!StringUtils.isEmpty(fileInfoClassName)) {
-        try {
-          return objectFactory.get(IFileInfoGenerator.class, type, session);
-        } catch (ObjectFactoryException e) {
-          throw new PlatformPluginRegistrationException(Messages.getErrorString(
-              "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", fileInfoClassName, type), e); //$NON-NLS-1$
-        }
-      }
-    }
-    return null;
-  }
-
   public Object getBean(String beanId) throws PluginBeanException {
     assert (beanId != null);
     if (objectFactory.objectDefined(beanId)) {
@@ -448,7 +458,10 @@ public class PluginManager implements IPluginManager {
   public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile solutionFile, InputStream in) {
     IFileInfo fileInfo = null;
     try {
-      IFileInfoGenerator fileInfoGenerator = getFileInfoGeneratorForType(extension, session);
+      IFileInfoGenerator fileInfoGenerator = null;      
+      if (objectFactory.objectDefined(extension)) {
+        fileInfoGenerator = objectFactory.get(IFileInfoGenerator.class, extension, null); //session scope not supported for meta providers
+      }
       if (fileInfoGenerator instanceof ISolutionFileMetaProvider) {
         // new good stuff
         ISolutionFileMetaProvider provider = (ISolutionFileMetaProvider) fileInfoGenerator;
@@ -509,11 +522,11 @@ public class PluginManager implements IPluginManager {
     ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
     return resLoader.getPluginSetting(classLoader, key, defaultValue);
   }
-  
+
   public IPlatformPlugin isResourceLoadable(String path) {
     for (IPlatformPlugin plugin : plugins) {
-      Map<String,String> resourceMap = plugin.getStaticResourceMap();
-      for (String url : resourceMap.keySet() ) {
+      Map<String, String> resourceMap = plugin.getStaticResourceMap();
+      for (String url : resourceMap.keySet()) {
         if (path.startsWith(url, 1) || path.startsWith(url)) {
           return plugin;
         }
@@ -521,11 +534,11 @@ public class PluginManager implements IPluginManager {
     }
     return null;
   }
-  
+
   public InputStream getStaticResource(String path) {
     for (IPlatformPlugin plugin : plugins) {
-      Map<String,String> resourceMap = plugin.getStaticResourceMap();
-      for (String url : resourceMap.keySet() ) {
+      Map<String, String> resourceMap = plugin.getStaticResourceMap();
+      for (String url : resourceMap.keySet()) {
         if (path.startsWith(url, 1) || path.startsWith(url)) {
           IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
           ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
@@ -536,5 +549,5 @@ public class PluginManager implements IPluginManager {
     }
     return null;
   }
-  
+
 }
