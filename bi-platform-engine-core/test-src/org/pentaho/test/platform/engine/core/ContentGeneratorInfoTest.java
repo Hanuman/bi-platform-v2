@@ -20,11 +20,11 @@
  */
 package org.pentaho.test.platform.engine.core;
 
+import junit.framework.TestCase;
+
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.FileInfo;
-
-import junit.framework.TestCase;
 
 @SuppressWarnings({"all"})
 public class ContentGeneratorInfoTest extends TestCase {
@@ -35,7 +35,6 @@ public class ContentGeneratorInfoTest extends TestCase {
     
     cgi.setClassname("test classname");
     cgi.setDescription("test description");
-    IFileInfoGenerator fig = new TestFileInfoGenerator();
     cgi.setId("test id");
     cgi.setTitle( "test title" );
     cgi.setType( "test type" );
@@ -47,7 +46,6 @@ public class ContentGeneratorInfoTest extends TestCase {
     assertEquals( "wrong field", "test title", cgi.getTitle() );
     assertEquals( "wrong field", "test type", cgi.getType() );
     assertEquals( "wrong field", "test url", cgi.getUrl() );
-    assertEquals( "wrong field", TestFileInfoGenerator.class.getName(), cgi.getFileInfoGeneratorClassname() );
 
   }
     
