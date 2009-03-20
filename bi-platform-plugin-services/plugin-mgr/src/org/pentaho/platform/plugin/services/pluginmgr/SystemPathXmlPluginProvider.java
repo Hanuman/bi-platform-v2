@@ -323,7 +323,10 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       Element node = (Element) obj;
 
       // create an IMenuCustomization object 
-      String className = XmlDom4JHelper.getNodeText("classname", node, null); //$NON-NLS-1$
+      String className = getProperty(node, "class"); //$NON-NLS-1$
+      if(className == null) {
+        className = XmlDom4JHelper.getNodeText("classname", node, null); //$NON-NLS-1$
+      }
       String fileInfoClassName = XmlDom4JHelper.getNodeText("fileinfo-classname", node, null); //$NON-NLS-1$
       String id = node.attributeValue("id"); //$NON-NLS-1$
       String type = node.attributeValue("type"); //$NON-NLS-1$
