@@ -123,7 +123,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert("Error fetching XulOverlay list\n "+caught.toString());
+        Window.alert("Error fetching XulOverlay list");
       }
 
       public void onSuccess(List<MantleXulOverlay> overlays) {
