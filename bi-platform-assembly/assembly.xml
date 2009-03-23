@@ -30,6 +30,9 @@
 
 	<property name="productId" value="biserver" />
 	<property name="releaseType" value="ce" />
+  	<!-- the impl properties are used to create the manifest file -->
+	<property name="impl.title" value="Pentaho BI Platform Community Edition" />
+	<property name="impl.version" value="${project.revision}" />
 	<property name="impl.vendor" value="Pentaho Corporation" />
 
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
@@ -98,7 +101,7 @@
 
 	<target name="package-targz">
 		<tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${stage.dir}" mode="755">
+			<tarfileset dir="${stage.dir}"  mode="755">
 				<include name="**/*.sh" />
 				<exclude name="jre/" />
 			</tarfileset>
@@ -199,7 +202,7 @@
 			<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
 			<copy todir="${stage.dir.server}/tomcat/common/lib">
 				<fileset dir="${lib.dir}">
-					<include name="hsqldb-*.jar" />
+				    <include name="hsqldb-*.jar" />
 					<include name="mysql-connector-*.jar" />
 					<include name="postgresql*.jar" />
 					<include name="naming*.jar" />
@@ -225,7 +228,7 @@
 			</copy>
 
 			<!-- Add general libs -->
-
+		  
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
@@ -237,7 +240,7 @@
 					<exclude name="*-sources.jar" />
 				</fileset>
 			</copy>
-
+		  
 			<!-- Add manifest -->
 			<mkdir dir="${prep.pentaho.war.dir}/META-INF" />
 			<manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
@@ -259,8 +262,8 @@
 					<exclude name="**/WEB-INF/portlet-instances.xml" />
 				</fileset>
 			</copy>
-			<delete dir="${prep.pentaho.war.dir}/.settings" />
-
+		    <delete dir="${prep.pentaho.war.dir}/.settings" />
+			
 			<copy todir="${prep.pentaho.war.lib.dir}">
 				<!-- get all pentaho jars from the build process -->
 				<fileset dir="${lib.dir}">
@@ -380,8 +383,8 @@
 				<include name="**/**" />
 			</fileset>
 		</copy>
-
-		<!-- install CDF samples -->
+	  
+	    <!-- install CDF samples -->
 		<!-- note, cdf samples now exist within the bi-developers folder, and the zip reflects that  -->
 		<unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 
@@ -396,26 +399,26 @@
 			</fileset>
 		</copy>
 	</target>
-
+ 
 	<!--====================================================
 			target: install-plugins
 			===================================================== -->
-	<target name="install-plugins">
-		<!-- CDF -->
-		<install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip" />
+  <target name="install-plugins">
+      <!-- CDF -->
+	  <install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 
 		<!-- install CDF solution -->
 		<unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 		
-		<!-- webservice -->
-		<install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip" />
+	  <!-- webservice -->
+	  <install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
 	</target>
-
+  
 	<macrodef name="install-plugin">
 		<attribute name="zipfile" />
-		<sequential>
-			<unzip src="@{zipfile}" dest="${stage.dir.server}/pentaho-solutions/system" overwrite="true" />
-		</sequential>
+	  <sequential>
+		<unzip src="@{zipfile}" dest="${stage.dir.server}/pentaho-solutions/system" overwrite="true" />
+	    </sequential>
 	</macrodef>
 
 	<!-- =================================
@@ -499,53 +502,53 @@
 				<classpath refid="jdoc.classpath" />
 				<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
 			</javadoc>
-			<move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">
-				<fileset dir="${unified.javadoc.src}" />
-			</move>
+			<move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">			  
+			  	<fileset dir="${unified.javadoc.src}"/>
+		  	</move>
 			<zip destfile="bi-server-ce-${project.revision}-all-sources.zip" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
 			<tar destfile="bi-server-ce-${project.revision}-all-sources.tar.gz" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" compression="gzip" />
-			<delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
+       	    <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
 		</sequential>
 	</target>
-
+	
 	<target name="validate-mantle-svn-revisions" unless="suppress-svn-validation">
-		<sequential>
-			<mkdir dir="${basedir}/temp/mantle" />
-			<mkdir dir="${basedir}/temp/mantle-pkg" />
+	<sequential>
+		<mkdir dir="${basedir}/temp/mantle" />
+		<mkdir dir="${basedir}/temp/mantle-pkg" />
+		
+		<property name="mantle.rev" value="${project.revision}.${build.id}" />
+		<property name="mantle.pkg.rev" value="${project.revision}.${build.id}" />
 
-			<property name="mantle.rev" value="${project.revision}.${build.id}" />
-			<property name="mantle.pkg.rev" value="${project.revision}.${build.id}" />
+		<unjar src="${prep.pentaho.war.lib.dir}/mantle-${project.revision}.jar" dest="${basedir}/temp/mantle" />
+		<unzip src="${lib.dir}/mantle-package-${project.revision}.zip" dest="${basedir}/temp/mantle-pkg" />
 
-			<unjar src="${prep.pentaho.war.lib.dir}/mantle-${project.revision}.jar" dest="${basedir}/temp/mantle" />
-			<unzip src="${lib.dir}/mantle-package-${project.revision}.zip" dest="${basedir}/temp/mantle-pkg" />
+		<loadfile property="mantle.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+			<filterchain>
+				<linecontains>
+					<contains value="Implementation-Version" />
+				</linecontains>
+			</filterchain>
+		</loadfile>
 
-			<loadfile property="mantle.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
-				<filterchain>
-					<linecontains>
-						<contains value="Implementation-Version" />
-					</linecontains>
-				</filterchain>
-			</loadfile>
-
-			<loadfile property="mantle.pkg.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
-				<filterchain>
-					<linecontains>
-						<contains value="Implementation-Version" />
-					</linecontains>
-				</filterchain>
-			</loadfile>
-			<if>
-				<equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
-				<then>
-					<echo message="Mantle SVN revisions in sync" />
-					<delete dir="${basedir}/temp" />
-				</then>
-				<else>
+		<loadfile property="mantle.pkg.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+			<filterchain>
+				<linecontains>
+					<contains value="Implementation-Version" />
+				</linecontains>
+			</filterchain>
+		</loadfile>
+		<if>
+			<equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
+			<then>
+				<echo message="Mantle SVN revisions in sync" />
+				<delete dir="${basedir}/temp"/>
+			</then>
+			<else>
 					<fail message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
-				</else>
-			</if>
-		</sequential>
-	</target>
+			</else>
+		</if>
+	</sequential>
+</target>
 
 	<!--=======================================================================
 		    report
