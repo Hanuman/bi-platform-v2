@@ -914,6 +914,7 @@
 			String wrappedQueryId = "#{" + queryId + "}";
 			String wrappedTableId = "#{" + tableId + "}";
 			String wrappedPrintId = "#{" + printId + "}";
+			String chartControllerURL = "?pivotId=" + pivotId;
 			%> 
 			<wcf:form id="<%=mdxEditId%>" xmlUri="/WEB-INF/jpivot/table/mdxedit.xml"
 				model="<%=wrappedQueryId%>" visible="false" />
@@ -925,7 +926,7 @@
 				xmlUri="/WEB-INF/jpivot/print/printpropertiesform.xml"
 				model="<%=wrappedPrintId%>" visible="false" />
 			<jp:chart
-			id="<%=chartId%>" query="<%=wrappedQueryId%>" visible="false" /> <% 
+			id="<%=chartId%>" query="<%=wrappedQueryId%>" visible="false" controllerURL="<%=chartControllerURL%>"/> <% 
 			
 	// we've reloaded the following session objects
 	_table =  (TableComponent) session.getAttribute(tableId);
