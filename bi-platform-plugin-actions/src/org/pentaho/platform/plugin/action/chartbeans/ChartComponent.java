@@ -44,6 +44,14 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 
+/**
+ * This is a bean that permits easy access to the ChartBeans functionality and was
+ * specifically designed to be run from within the Pentaho Platform as an Action Sequence 
+ * Component.
+ * 
+ * @author cboyden
+ *
+ */
 public class ChartComponent {
   protected static final String DEFAULT_CHART_PLUGIN = "org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin"; //$NON-NLS-1$
   
@@ -76,8 +84,10 @@ public class ChartComponent {
   protected String serializedChartModel = null;
   
   protected ChartModel chartModel = null;
-  
-  //Initialize ChartBeans engine
+
+  /**
+   * Initialize ChartBeans engine
+   */
   {
     synchronized (ChartBoot.getInstance()) {
       while (!ChartBoot.getInstance().isBootDone()) {
@@ -102,6 +112,18 @@ public class ChartComponent {
     }// End thread synchronization
   }
   
+  /**
+   * Called to process the chart definition and data set to produce
+   * a usable chart.
+   * 
+   * @return state of execution. 'true' if execution was successful, otherwise false.
+   * @throws ChartBootException
+   * @throws ChartProcessingException
+   * @throws ResourceException
+   * @throws InvalidChartDefinition
+   * @throws IOException
+   * @throws PersistenceException
+   */
   public boolean execute() throws ChartBootException, ChartProcessingException, ResourceException,
     InvalidChartDefinition, IOException, PersistenceException {
     if (bootException != null) {
@@ -172,14 +194,29 @@ public class ChartComponent {
     return(result);
   }
   
+  /**
+   * Define the OutputStream to which the resulting chart shall be written
+   * @param outStream Stream receive the chart
+   */
   public void setOutputStream(OutputStream outStream) {
     outputStream = outStream;
   }
   
+  /**
+   * Define the data set that will populate the chart
+   * @param chartDataSet data set for charting
+   */
   public void setChartData(IPentahoResultSet chartDataSet){
     resultSet = chartDataSet.memoryCopy();
   }
   
+  /**
+   * Validate the current settings of the ChartComponent. If validate() returns true,
+   * then execute may be called. If validate() returns false, a call to execute() is guaranteed
+   * to fail.
+   * @return state of validation
+   * @throws Exception
+   */
   public boolean validate() throws Exception{
   //Must have a valid result set
     if(resultSet == null){
@@ -258,18 +295,35 @@ public class ChartComponent {
     return true;
   }
   
+  /**
+   * Define the column in the data set that contains the Series/Domain data 
+   * @param seriesCol name of column that contains the Series/Domain for the chart
+   */
   public void setSeriesColumn(String seriesCol){
     seriesColumnName = seriesCol;
   }
 
+  /**
+   * Define the column in the data set that contains the Category data 
+   * @param seriesCol name of column that contains the Category for the chart
+   */
   public void setCategoryColumn(String categoryCol) {
     categoryColumnName = categoryCol;
   }
 
+  /**
+   * Define the column in the data set that contains the Value/Range data 
+   * @param seriesCol name of column that contains the Value/Range for the chart
+   */
   public void setValueColumn(String valueCol) {
     valueColumnName = valueCol;
   }
   
+  /**
+   * Fetch an instance of the desired chart plugin
+   * @return instance of chart plugin
+   * @throws ChartProcessingException
+   */
   protected IChartPlugin getChartPlugin() throws ChartProcessingException {
     if (chartPlugin == null) {
       chartPlugin = DEFAULT_CHART_PLUGIN;
@@ -278,6 +332,10 @@ public class ChartComponent {
     return ChartPluginFactory.getInstance(chartPlugin);
   }
   
+  /**
+   * Fetch the desired output type
+   * @return output type
+   */
   protected OutputTypes getOutputType(){
     if(outputType.equals("image-jpg")){ //$NON-NLS-1$
       return OutputTypes.FILE_TYPE_JPEG;
@@ -288,6 +346,10 @@ public class ChartComponent {
     return null;    
   }
   
+  /**
+   * Fetch the desired MimeType
+   * @return mime type
+   */
   public String getMimeType(){
       if(outputType.equals("image-jpg")){ //$NON-NLS-1$
         return "image/jpeg"; //$NON-NLS-1$
@@ -300,26 +362,50 @@ public class ChartComponent {
       return null;
   }
   
+  /**
+   * Set the JSON representation of the ChartModel
+   * @param serializedChartModel JSON serialized representation of the ChartModel
+   */
   public void setChartModel(String serializedChartModel) {
     this.serializedChartModel = serializedChartModel;
   }
   
+  /**
+   * Set the ChartModel
+   * @param chartModel model of the chart to be generated
+   */
   public void setChartModel(ChartModel chartModel){
     this.chartModel = chartModel;
   }
   
+  /**
+   * Set the width of the chart in units specific to the ChartPlugin
+   * @param chartWidth width of the chart
+   */
   public void setChartWidth(int chartWidth){
     this.chartWidth = chartWidth;
   }
   
+  /**
+   * Set the height of the chart in units specific to the ChartPlugin
+   * @param chartHeight height of the chart
+   */
   public void setChartHeight(int chartHeight){
     this.chartHeight = chartHeight;
   }
   
+  /**
+   * Set the width of the chart in units specific to the ChartPlugin
+   * @param chartWidth width of the chart
+   */
   public void setChartWidth(String chartWidth){
     this.chartWidth = Integer.valueOf(chartWidth);
   }
   
+  /**
+   * Set the height of the chart in units specific to the ChartPlugin
+   * @param chartHeight height of the chart
+   */
   public void setChartHeight(String chartHeight){
     this.chartHeight = Integer.valueOf(chartHeight);
   }
