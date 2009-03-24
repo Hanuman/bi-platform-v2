@@ -82,7 +82,7 @@ BusinessView.prototype.getItem = function( columnId )
 }
 
 /**
- * Holy shit this is going to be slow, can we get the tables into a pseudo-map?
+ * This could be slow - can we get the tables into a pseudo-map?
  * 
  * @param tableId String the id of the table to be returned
  * @return BusinessTable the business table whose id is tableId
