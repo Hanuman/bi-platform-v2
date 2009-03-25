@@ -66,7 +66,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
 
   private boolean useExtendedColumnNames = false;
   
-  private boolean returnNullCells = false;
+  private boolean returnNullCells = true;
 
   public MDXConnection() {
     super();

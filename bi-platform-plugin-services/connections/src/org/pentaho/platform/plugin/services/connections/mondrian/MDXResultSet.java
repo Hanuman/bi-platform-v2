@@ -49,7 +49,7 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
 
   private Object peekRow[];
 
-  private boolean returnNullCells;
+  private boolean returnNullCells = true;
 
   public MDXResultSet() {
     
@@ -70,7 +70,7 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
    * configurable for backwards compatibility
    *
    */
-  public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection, boolean useExtendedColumnNames) {
+  public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection, boolean useExtendedColumnNames, boolean returnNullCells) {
     super();
     this.returnNullCells = returnNullCells;
     this.nativeResultSet = nativeResultSet;
@@ -83,7 +83,7 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
    * @param result
    */
   public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection) {
-    this(nativeResultSet, nativeConnection, false, false);
+    this(nativeResultSet, nativeConnection, false, true);
   }
   
   /*

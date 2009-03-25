@@ -483,7 +483,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           }
         }
         if (isDefinedInput(RETURN_NULL_CELLS)) {
-          mdxConn.setReturnNullCells(getInputBooleanValue(RETURN_NULL_CELLS, false));
+          mdxConn.setReturnNullCells(getInputBooleanValue(RETURN_NULL_CELLS, true));
         }
       }
       return localConnection;
