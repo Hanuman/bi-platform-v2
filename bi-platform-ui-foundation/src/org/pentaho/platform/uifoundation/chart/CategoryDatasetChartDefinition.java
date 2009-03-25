@@ -352,9 +352,9 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
     setLegendBorderVisible(chartAttributes.selectSingleNode(ChartDefinition.DISPLAY_LEGEND_BORDER_NODE_NAME));
 
     // first see if Pentaho System sets this property
-    String defaultIncludeNullCategories = PentahoSystem.getSystemSetting("Charting/" + INCLUDE_NULL_CATEGORIES_NODE_NAME, "true");
+    String defaultIncludeNullCategories = PentahoSystem.getSystemSetting("Charting/" + INCLUDE_NULL_CATEGORIES_NODE_NAME, "true"); //$NON-NLS-1$ //$NON-NLS-2$
     
-    setIncludeNullCategories("true".equals(defaultIncludeNullCategories));
+    setIncludeNullCategories("true".equals(defaultIncludeNullCategories)); //$NON-NLS-1$
     
     // set whether to include null categories
     setIncludeNullCategories(chartAttributes.selectSingleNode(INCLUDE_NULL_CATEGORIES_NODE_NAME));
