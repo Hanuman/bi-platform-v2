@@ -20,21 +20,62 @@ public class ChartDataDefinition implements Serializable {
     this.query = query;
   }
 
+  /**
+   * Equals returns true if the parameter Object is an instanceof ChartDataDefinition
+   * with ALL properties being "*.equals()" to this instance's. 
+   */
   public boolean equals(Object obj) {
-    boolean result = false;
-    if (obj instanceof ChartDataDefinition) {
-      ChartDataDefinition chartDataQuery = (ChartDataDefinition) obj;
-      result = (query != null)
-          && query.equals(chartDataQuery.query)
-          && (rangeColumn != null)
-          && rangeColumn.equals(chartDataQuery.rangeColumn)
-          && (domainColumn == null ? chartDataQuery.domainColumn == null : domainColumn
-              .equals(chartDataQuery.domainColumn))
-          && (categoryColumn == null ? chartDataQuery.categoryColumn == null : categoryColumn
-              .equals(chartDataQuery.categoryColumn));
-
+    if(obj == null){
+      return false;
     }
-    return result;
+    
+    if (!(obj instanceof ChartDataDefinition)) {
+      return false;
+    }
+
+    ChartDataDefinition chartDataQuery = (ChartDataDefinition) obj;
+    
+    if(query == null){
+      if(chartDataQuery.query != null){
+        return false;
+      }
+    } else {
+      if(!query.equals(chartDataQuery.query)){
+        return false;
+      }
+    }
+    
+    if(rangeColumn == null){
+      if(chartDataQuery.rangeColumn != null){
+        return false;
+      }
+    } else {
+      if(!rangeColumn.equals(chartDataQuery.rangeColumn)){
+        return false;
+      }
+    }
+
+    if(domainColumn == null){
+      if(chartDataQuery.domainColumn != null){
+        return false;
+      }
+    } else {
+      if(!domainColumn.equals(chartDataQuery.domainColumn)){
+        return false;
+      }
+    }
+
+    if(categoryColumn == null){
+      if(chartDataQuery.categoryColumn != null){
+        return false;
+      }
+    } else {
+      if(!categoryColumn.equals(chartDataQuery.categoryColumn)){
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public String getRangeColumn() {
