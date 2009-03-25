@@ -1868,8 +1868,15 @@ Controller.prototype.selectBusinessView = function()
 
 Controller.prototype.selectTemplate = function( templateName )
 {
-  // unselect any selected item in the templates list ctrl
   var templatesListCtrl = this.wiz.getPg( 0 ).getTemplatesListCtrl();
+  
+  // Select first template by default
+  if(!templateName){
+    templatesListCtrl.selectItem(0);
+    return;
+  }
+    
+  // unselect any selected item in the templates list ctrl
   var idxAr = templatesListCtrl.getSelectedItemIdxs();
   if ( idxAr.length > 0 )
   {
