@@ -69,7 +69,8 @@ PentahoSystem which is initialized after Spring
        not directly from the PentahoObjectFactory. -->
   <bean id="connection-SQL" class="org.pentaho.platform.plugin.services.connections.sql.SQLConnection" scope="prototype" />
   <bean id="connection-MDX" class="org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection" scope="prototype" >
-  	      <property name="useExtendedColumnNames" value="true" /> 
+  	      <property name="useExtendedColumnNames" value="true" />
+          <property name="returnNullCells" value="true" />
   </bean>
   <bean id="connection-XML" class="org.pentaho.platform.plugin.services.connections.xquery.XQConnection" scope="prototype" />
   <bean id="connection-HQL" class="org.pentaho.platform.plugin.services.connections.hql.HQLConnection" scope="prototype" />

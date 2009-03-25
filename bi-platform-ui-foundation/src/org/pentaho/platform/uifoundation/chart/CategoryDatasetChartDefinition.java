@@ -45,6 +45,7 @@ import org.pentaho.commons.connection.IPentahoDataTypes;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.PentahoDataTransmuter;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.uifoundation.messages.Messages;
 
 // ESCA-JAVA0136:
@@ -78,6 +79,8 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
   private static final String DOMAIN_LABEL_ROTATION_DIRECTION_NODE_NAME = "domain-label-rotation-dir"; //$NON-NLS-1$
 
   private static final String MAX_BAR_WIDTH_NODE_NAME = "max-bar-width"; //$NON-NLS-1$
+  
+  private static final String INCLUDE_NULL_CATEGORIES_NODE_NAME = "include-null-categories"; //$NON-NLS-1$
 
   private int chartType = JFreeChartEngine.UNDEFINED_CHART_TYPE;
 
@@ -120,6 +123,8 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
   private Font legendFont = null;
 
   private boolean legendBorderVisible = true;
+  
+  private boolean includeNullCategories = true;
 
   private boolean threeD = false;
 
@@ -346,6 +351,13 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
     // set legend border visible
     setLegendBorderVisible(chartAttributes.selectSingleNode(ChartDefinition.DISPLAY_LEGEND_BORDER_NODE_NAME));
 
+    // first see if Pentaho System sets this property
+    String defaultIncludeNullCategories = PentahoSystem.getSystemSetting("Charting/" + INCLUDE_NULL_CATEGORIES_NODE_NAME, "true");
+    
+    setIncludeNullCategories("true".equals(defaultIncludeNullCategories));
+    
+    // set whether to include null categories
+    setIncludeNullCategories(chartAttributes.selectSingleNode(INCLUDE_NULL_CATEGORIES_NODE_NAME));
   }
 
   private void setDataByColumn(final IPentahoResultSet data) {
@@ -390,6 +402,14 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
           double currentValue = currentNumber.doubleValue();
           double newValue = ((Number) rowData[column]).doubleValue();
           setValue(new Double(currentValue + newValue), rowHeaders[row], columnHeaders[column]);
+        } else if (includeNullCategories && rowData[column] == null) {
+          Number currentNumber = null;
+          try { // If value has been set then we get it
+            currentNumber = getValue(rowHeaders[row], columnHeaders[column]);
+          } catch (UnknownKeyException uke) { // else we just set it
+            currentNumber = null;
+          }
+          setValue(currentNumber, rowHeaders[row], columnHeaders[column]);
         }
       }
       row++;
@@ -1205,6 +1225,30 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
    */
   public void setLegendBorderVisible(final boolean legendBorderVisible) {
     this.legendBorderVisible = legendBorderVisible;
+  }
+
+  public void setIncludeNullCategories(final Node includeNullCategoriesNode) {
+    if (includeNullCategoriesNode != null) {
+      boolean locIncludeNullCategories = (new Boolean(includeNullCategoriesNode.getText())).booleanValue();
+      setIncludeNullCategories(locIncludeNullCategories);
+    }
+  }
+
+  /**
+   * Return the boolen that states if null categories should be included
+   *
+   * @return boolean Is the legend border visible
+   */
+  public boolean isIncludeNullCategories() {
+    return includeNullCategories;
+  }
+  
+  /**
+   * @param boolean includeNullCategories
+   *        Set whether the dataset should include null categories
+   */
+  public void setIncludeNullCategories(final boolean includeNullCategories) {
+    this.includeNullCategories = includeNullCategories;
   }
 
   /**

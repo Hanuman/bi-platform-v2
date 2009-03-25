@@ -49,6 +49,8 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
 
   private Object peekRow[];
 
+  private boolean returnNullCells;
+
   public MDXResultSet() {
     
   }
@@ -62,11 +64,15 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
    * Implemented as a flag to allow reports prior to platform version 2.1
    * (Liberty) to continue to execute as expected with the short column names, 
    * but if the developer sets the extendedColumnNames flag to true, can overcome the
-   * bug in BISERVER-1266. 
+   * bug in BISERVER-1266.
+   *
+   * @param returnNullCells if true, returns null instead of 0.000000012345.  This is 
+   * configurable for backwards compatibility
+   *
    */
   public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection, boolean useExtendedColumnNames) {
     super();
-
+    this.returnNullCells = returnNullCells;
     this.nativeResultSet = nativeResultSet;
     this.nativeConnection = nativeConnection;
 
@@ -77,7 +83,7 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
    * @param result
    */
   public MDXResultSet(final Result nativeResultSet, final Connection nativeConnection) {
-    this(nativeResultSet, nativeConnection, false);
+    this(nativeResultSet, nativeConnection, false, false);
   }
   
   /*
@@ -176,6 +182,9 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
     int[] key = new int[2];
     key[0] = column;
     key[1] = row;
+    if (returnNullCells && nativeResultSet.getCell(key).isNull()) {
+    	return null;
+    }
     return nativeResultSet.getCell(key).getValue();
   }
 

@@ -46,6 +46,8 @@ import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 
 public abstract class MDXBaseComponent extends ComponentBase implements IDataComponent, IPreparedComponent {
 
+  private static final String RETURN_NULL_CELLS = "returnNullCells"; //$NON-NLS-1$
+
   private IPentahoResultSet rSet;
 
   /** is set to false if using another IPreparedComponents connection vs own */
@@ -479,6 +481,9 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           if ((connAction.getExtendedColumnNames() != ActionInputConstant.NULL_INPUT)){
             mdxConn.setUseExtendedColumnNames(connAction.getExtendedColumnNames().getBooleanValue());
           }
+        }
+        if (isDefinedInput(RETURN_NULL_CELLS)) {
+          mdxConn.setReturnNullCells(getInputBooleanValue(RETURN_NULL_CELLS, false));
         }
       }
       return localConnection;
