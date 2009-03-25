@@ -23,6 +23,7 @@ package org.pentaho.platform.engine.security.acls;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
   /**
    * Populated lazily in getValidPermissions().
    */
-  public static int[] validPermissions;
+  private static int[] validPermissions;
 
   private static final long serialVersionUID = -1123574274303339402L;
 
@@ -59,15 +60,17 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
   private static final int RECIPIENT_GRANTEDAUTHORITY = 1;
 
   private static final Map validPermissionsNameMap = new HashMap();
-
   public int recipientType = PentahoAclEntry.RECIPIENT_STRING;
+  
+  // Prevent breakage downstream by inadvertant or malicious modifications to validPermissions array
+  private int[] lazyPermissionClone;
 
   static {
     Map solutionPermissionsMap = new HashMap();
     Map allPermissionsMap = new HashMap();
 
-    PentahoAclEntry.validPermissionsNameMap.put(PentahoAclEntry.PERMISSIONS_LIST_SOLUTIONS, solutionPermissionsMap);
-    PentahoAclEntry.validPermissionsNameMap.put(PentahoAclEntry.PERMISSIONS_LIST_ALL, allPermissionsMap);
+    PentahoAclEntry.validPermissionsNameMap.put(PentahoAclEntry.PERMISSIONS_LIST_SOLUTIONS, Collections.unmodifiableMap(solutionPermissionsMap));
+    PentahoAclEntry.validPermissionsNameMap.put(PentahoAclEntry.PERMISSIONS_LIST_ALL, Collections.unmodifiableMap(allPermissionsMap));
 
     // TODO gmoran Are two lists really necessary any more? 
     // TODO mlowery Why does PentahoAclEntry know about what permissions are valid for solutions?
@@ -97,62 +100,10 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
     allPermissionsMap.put(
         Messages.getString("PentahoAclEntry.USER_ALL"), new Integer(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
 
+    initializePermissionsArray();
   }
 
-  public PentahoAclEntry() {
-    super();
-  }
-
-  public PentahoAclEntry(final Object recipient, final int mask) {
-    this();
-    setRecipient(recipient);
-    setMask(mask);
-  }
-
-  protected void setRecipientType(final int value) {
-    this.recipientType = value;
-  }
-
-  protected int getRecipientType() {
-    return this.recipientType;
-  }
-
-  protected void setRecipientString(final String value) {
-    if (this.recipientType == PentahoAclEntry.RECIPIENT_GRANTEDAUTHORITY) {
-      this.setRecipient(new GrantedAuthorityImpl(value));
-    } else {
-      this.setRecipient(value);
-    }
-
-  }
-
-  protected String getRecipientString() {
-    return this.getRecipient().toString();
-  }
-
-  @Override
-  public void setRecipient(final Object value) {
-    super.setRecipient(value);
-    if (value instanceof GrantedAuthority) {
-      this.setRecipientType(PentahoAclEntry.RECIPIENT_GRANTEDAUTHORITY);
-    } else {
-      this.setRecipientType(PentahoAclEntry.RECIPIENT_STRING);
-    }
-  }
-
-  /**
-   * As implemented, this method says that all permission combinations are valid.  (Well not all. FULL_CONTROL must
-   * stand alone.  It cannot be combined with other bits.)
-   * 
-   * <ol>
-   * <li>Find the permission value (call it p) that is the highest power of two.</li>
-   * <li>Find n (0-based) such that 2^n = p. (Uses logarithm with base 2.)</li>
-   * <li>So there are 2^(n+1) permutations of permission bits.</li>
-   * <li>So the valid permission values list consists of those 2^(n+1) permutations plus the FULL_CONTROL perm bit. (i.e. (2^(n+1))+1</li>
-   * </ol>
-   */
-  @Override
-  public synchronized int[] getValidPermissions() {
+  private static void initializePermissionsArray() {
     if (null == PentahoAclEntry.validPermissions) {
       int maxPower = -1;
       Field[] fields = IPentahoAclEntry.class.getDeclaredFields();
@@ -195,10 +146,67 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
       }
       PentahoAclEntry.validPermissions[PentahoAclEntry.validPermissions.length - 1] = PentahoAclEntry.PERM_FULL_CONTROL;
     }
-    // if (logger.isDebugEnabled()) {
-    //   logger.debug("validPermissions: " + Arrays.toString(validPermissions));
-    // }
-    return PentahoAclEntry.validPermissions;
+  }
+  
+  public PentahoAclEntry() {
+    super();
+  }
+
+  public PentahoAclEntry(final Object recipient, final int mask) {
+    this();
+    setRecipient(recipient);
+    setMask(mask);
+  }
+
+  protected void setRecipientType(final int value) {
+    this.recipientType = value;
+  }
+
+  protected int getRecipientType() {
+    return this.recipientType;
+  }
+
+  protected void setRecipientString(final String value) {
+    if (this.recipientType == PentahoAclEntry.RECIPIENT_GRANTEDAUTHORITY) {
+      this.setRecipient(new GrantedAuthorityImpl(value));
+    } else {
+      this.setRecipient(value);
+    }
+
+  }
+
+  protected String getRecipientString() {
+    return this.getRecipient().toString();
+  }
+
+  @Override
+  public void setRecipient(final Object value) {
+    super.setRecipient(value);
+    if (value instanceof GrantedAuthority) {
+      this.setRecipientType(PentahoAclEntry.RECIPIENT_GRANTEDAUTHORITY);
+    } else {
+      this.setRecipientType(PentahoAclEntry.RECIPIENT_STRING);
+    }
+  }
+  
+  /**
+   * As implemented, this method says that all permission combinations are valid.  (Well not all. FULL_CONTROL must
+   * stand alone.  It cannot be combined with other bits.)
+   * 
+   * <ol>
+   * <li>Find the permission value (call it p) that is the highest power of two.</li>
+   * <li>Find n (0-based) such that 2^n = p. (Uses logarithm with base 2.)</li>
+   * <li>So there are 2^(n+1) permutations of permission bits.</li>
+   * <li>So the valid permission values list consists of those 2^(n+1) permutations plus the FULL_CONTROL perm bit. (i.e. (2^(n+1))+1</li>
+   * </ol>
+   */
+  @Override
+  public int[] getValidPermissions() {
+    if (lazyPermissionClone == null) {
+      lazyPermissionClone = new int[validPermissions.length];
+      System.arraycopy(validPermissions, 0, lazyPermissionClone, 0, validPermissions.length);
+    }
+    return this.lazyPermissionClone;
   }
 
   public static void main(final String[] args) {
@@ -278,17 +286,31 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
     if (this == obj) {
       return true;
     }
+    //
+    // MB - If the instanceof above compares to anything other than
+    // this object, then the static comparison below of getValidPermissions() should
+    // be re-evaluated.
+    //
     PentahoAclEntry rhs = (PentahoAclEntry) obj;
-    return new EqualsBuilder().append(getRecipient(), rhs.getRecipient()).append(getRecipientType(),
-        rhs.getRecipientType()).append(getAclObjectIdentity(), rhs.getAclObjectIdentity()).append(
-        getAclObjectParentIdentity(), rhs.getAclObjectParentIdentity()).append(getValidPermissions(),
-        rhs.getValidPermissions()).append(getMask(), rhs.getMask()).isEquals();
+    return new EqualsBuilder()
+    .append(getRecipient(), rhs.getRecipient())
+    .append(getRecipientType(), rhs.getRecipientType())
+    .append(getAclObjectIdentity(), rhs.getAclObjectIdentity())
+    .append(getAclObjectParentIdentity(), rhs.getAclObjectParentIdentity())
+//    .append(getValidPermissions(),rhs.getValidPermissions())
+    .append(getMask(), rhs.getMask()).isEquals();
   }
 
   public int hashCode() {
-    return new HashCodeBuilder(79, 211).append(getRecipient()).append(getRecipientType())
-        .append(getAclObjectIdentity()).append(getAclObjectParentIdentity()).append(getValidPermissions()).append(
-            getMask()).toHashCode();
+    return new HashCodeBuilder(79, 211)
+    .append(getRecipient())
+    .append(getRecipientType())
+    .append(getAclObjectIdentity())
+    .append(getAclObjectParentIdentity())
+    // MB - Commented out because it's not relevant
+    // .append(getValidPermissions())
+    .append(getMask())
+    .toHashCode();
   }
 
 }
