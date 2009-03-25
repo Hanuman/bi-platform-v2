@@ -15,53 +15,53 @@
 
 <!-- JS Code for Design Studio Template DO NOT MODIFY Autogenerates FORM OBJECTS -->
 <script><![CDATA[
-      			  var url=unescape('ViewAction?');
-      			  var target=unescape('theoutput');
+              var url=unescape('ViewAction?');
+              var target=unescape('theoutput');
 
-      			  function doForm() {
-      			    var submitUrl = url;
-      			    var form = document.forms['parameter-form'];
-      			    var elements = form.elements;
-      			    var i;
-      			    for( i=0; i<elements.length; i++ ) {
-      			      if( elements[i].type == 'select-one' || elements[i].type == 'text' || elements[i].type == 'hidden') {
-      			        submitUrl += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
-      			      } else if( elements[i].type == 'radio' ) {
-      			      	if( elements[i].checked ) {
-      			          submitUrl += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
-      			      	}
-      			      } else if( elements[i].type == 'checkbox' ) {
-      			      	if( elements[i].checked ) {
-      				      submitUrl += '&' + elements[i].name + "=" + escape( elements[i].value );
-      			      	}
-      			      } else if( elements[i].type == 'select-multiple' ) {
-      				    var options = elements[i].options;
-      				    var j;
-      				    for( j=0; j!=options.length; j++ ) {
-      				      if( options[j].selected ) {
-      	  			        submitUrl += '&' + elements[i].name + '=' + escape( options[ j ].value );
-      				      }
-      				    }
-      				  }
-      			    }
-      			    if( target == '') {
-      				    document.location.href=submitUrl;
-
-      				    if (document.getElementById("radio").checked == true) document.getElementById("loader").style.visibility = "visible"
-
-      				} else {
-
-      				    if (document.getElementById("radio").checked == true) document.getElementById("loader").style.visibility = "visible"
-      				    
-      					window.open( submitUrl, target );
-      				}
-      			    return false;
-      			  }
-      			]]>
+              function doForm() {
+                var submitUrl = url;
+                        var submitParms = '';
+                var form = document.forms['parameter-form'];
+                var elements = form.elements;
+                var i;
+                for( i=0; i<elements.length; i++ ) {
+                  if( elements[i].type == 'select-one' || elements[i].type == 'text' || elements[i].type == 'hidden') {
+                    submitParms += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
+                  } else if( elements[i].type == 'radio' ) {
+                    if( elements[i].checked ) {
+                      submitParms += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
+                    }
+                  } else if( elements[i].type == 'checkbox' ) {
+                    if( elements[i].checked ) {
+                    submitParms += '&' + elements[i].name + "=" + escape( elements[i].value );
+                    }
+                  } else if( elements[i].type == 'select-multiple' ) {
+                  var options = elements[i].options;
+                  var j;
+                  for( j=0; j!=options.length; j++ ) {
+                    if( options[j].selected ) {
+                        submitParms += '&' + elements[i].name + '=' + escape( options[ j ].value );
+                    }
+                  }
+                }
+                }
+                if (submitParms != '') {
+                  submitUrl = url + submitParms.substring(1);
+                }
+                if( target == '') {
+                  document.location.href=submitUrl;
+                  if (document.getElementById("radio").checked == true) document.getElementById("loader").style.visibility = "visible"
+              } else {
+                if (document.getElementById("radio").checked == true) document.getElementById("loader").style.visibility = "visible"
+                window.open( submitUrl, target );
+              }
+                return false;
+              }
+            ]]>
 </script>
 
 <!-- JS Code for Design Studio Template DO NOT MODIFY Autogenerates FORM OBJECTS -->
-      		
+          
 <!-- Do not Modify -->
 {xform-header}
 <!-- Do not Modify -->
