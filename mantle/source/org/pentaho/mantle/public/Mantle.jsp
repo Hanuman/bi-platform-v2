@@ -1,8 +1,10 @@
 <%@page import="java.util.Locale"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="java.util.Properties"%>
-<%@page import="java.io.FileInputStream"%>
 <%@page import="org.pentaho.platform.util.messages.LocaleHelper"%>
+<%@page import="java.net.URLClassLoader"%>
+<%@page import="java.net.URL"%>
+<%@page import="java.util.ResourceBundle"%>
+<%@page import="java.io.File"%>
 
 <%
   Locale effectiveLocale = request.getLocale(); 
@@ -11,8 +13,10 @@
     request.getSession().setAttribute("locale_override", request.getParameter("locale"));
     LocaleHelper.setLocaleOverride(effectiveLocale);
   }
-  Properties properties = new Properties();
-  properties.load(new FileInputStream(getServletContext().getRealPath("mantle/messages/messages.properties")));
+
+  File file = new File(getServletContext().getRealPath("mantle/messages/"));
+  URLClassLoader loader = new URLClassLoader(new URL[] {file.toURI().toURL()});
+  ResourceBundle properties = ResourceBundle.getBundle("messages", effectiveLocale, loader);
 %>
 
 <html>
@@ -35,8 +39,8 @@
 
 	<div id="loading">
     		<div class="loading-indicator">
-    			<img src="mantle/large-loading.gif" width="32" height="32"/><%= properties.getProperty("loading", "Pentaho User Console is Loading...") %><a href="http://www.pentaho.com"></a><br/>
-    			<span id="loading-msg"><%= properties.getProperty("please_wait", "Please Wait") %></span>
+    			<img src="mantle/large-loading.gif" width="32" height="32"/><%= properties.getString("loadingConsole") %><a href="http://www.pentaho.com"></a><br/>
+    			<span id="loading-msg"><%= properties.getString("pleaseWait") %></span>
     		</div>
 	</div>
 		
