@@ -357,6 +357,7 @@ public class PluginManager implements IPluginManager {
       //not be able to locate resources in jars.  This classloader ultimately
       //needs to be made less fragile
       pluginDir = pluginDir.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+      Logger.debug(this, "plugin dir for "+plugin.getName()+" is ["+pluginDir+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }

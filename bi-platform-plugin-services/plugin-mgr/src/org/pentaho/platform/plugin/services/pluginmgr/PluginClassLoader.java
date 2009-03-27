@@ -146,7 +146,9 @@ public class PluginClassLoader extends ClassLoader {
   }
 
   private String getJarLocalName(String jarName) {
+    logger.debug("original jar path "+jarName); //$NON-NLS-1$
     String name = jarName.replace('\\', '/');
+    logger.debug("finding jar name for path ["+name+"] relative to ["+pluginDir+"/lib]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     int idx = name.indexOf(pluginDir + "/lib"); //$NON-NLS-1$
     return name.substring(idx);
   }
