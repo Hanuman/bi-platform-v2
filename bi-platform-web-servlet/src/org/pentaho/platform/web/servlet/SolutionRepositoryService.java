@@ -299,7 +299,7 @@ public class SolutionRepositoryService extends ServletBase {
 
   private boolean acceptFilter(String name, String[] filters) {
     if (filters == null || filters.length == 0) {
-      return true;
+      return false;
     }
     for (int i = 0; i < filters.length; i++) {
       if (name.endsWith(filters[i])) {
