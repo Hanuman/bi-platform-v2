@@ -323,6 +323,11 @@
 	</servlet>
 
 	<servlet>
+		<servlet-name>WebContextServlet</servlet-name>
+		<servlet-class>org.pentaho.platform.web.servlet.WebContextServlet</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>Pivot</servlet-name>
 		<jsp-file>/jsp/Pivot.jsp</jsp-file>
 	</servlet>
@@ -748,6 +753,12 @@
 		<servlet-name>Map</servlet-name>
 		<url-pattern>/Map</url-pattern>
 	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>WebContextServlet</servlet-name>
+		<url-pattern>/js/webcontext.js</url-pattern>
+	</servlet-mapping>
+
 
 	<!-- =============================== merged servlet-mappings ============================= -->
 	<servlet-mapping>

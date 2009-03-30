@@ -6,6 +6,12 @@ var STATUS_UNAUTHORIZED = 401;
 var STATUS_NOT_FOUND = 404;
 var base = '';
 
+var pathArray = window.location.pathname.split( '/' );
+var webAppPath = "/" + pathArray[1];
+
+document.write("<script type='text/javascript' src='/js/webcontext.js'></script>");
+document.write("<script type='text/javascript' src='" + webAppPath + "/js/webcontext.js'></script>");
+
 /**
  * @param solution String name of the solution containing the action sequence definition being called
  * @param path String path to the action sequence definition being called
@@ -32,8 +38,7 @@ var base = '';
 function pentahoAction( solution, path, action, params, func ) {
 	// execute an Action Sequence on the server
 
-	var pathArray = window.location.pathname.split( '/' );
-	var url = "/" + pathArray[1] + "/ViewAction";
+	var url = WEB_CONTEXT_BASE + "ViewAction";
 	
 	// create the URL we need
 	var query = "wrapper=false&solution="+solution+"&path="+path+"&action="+action;
@@ -72,8 +77,7 @@ function pentahoAction( solution, path, action, params, func ) {
 function pentahoService( component, params, func, mimeType ) {
 	// execute a web service on the server
 	// create the URL we need
-	var pathArray = window.location.pathname.split( '/' );
-	var url = "/" + pathArray[1] + "/ServiceAction";
+	var url = WEB_CONTEXT_BASE + "ServiceAction";
 	
 	var query = "ajax=true&";
 	if( component ) {
