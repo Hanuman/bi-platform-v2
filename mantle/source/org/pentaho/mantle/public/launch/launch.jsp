@@ -403,7 +403,10 @@ function loader(){
 }
 
 </script>
-<script defer type="text/javascript" src="../pngfix.js"></script>
+  <script type="text/javascript" src="../pngfix.js"></script>
+  <script type="text/javascript">
+      PngFix.spacerURL = "images/ql_spacer.png";
+  </script>
 </head>
 
 <body onLoad="loader()">
