@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
+import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
@@ -133,7 +134,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     };
     MantleServiceCache.getService().getOverlays(callback);    
     
-
+    // Fix for IE 6 transparent PNGs
+    ElementUtils.convertPNGs();
     
   }
   
@@ -168,6 +170,8 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   
   public void overlayLoaded(){
     cleanImageUrlsForHostedMode();
+    // Fix for IE 6 transparent PNGs
+    ElementUtils.convertPNGs();
   } 
   
   public void loadOverlays(List<MantleXulOverlay> overlays) {

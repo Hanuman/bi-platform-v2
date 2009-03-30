@@ -23,19 +23,23 @@ Problem: Containers with PNGs that have a background-position other than "top le
 method as we cannot position the filter image properly.
 Solution: Do not enter a position of "top left" as this is the defualt. There is no workaround for other positionings.
 
-Problem: Filter honors CSS heights moreso than HTML. If an element is defined as 10px, but in use something within it makes it 
-15px, the filter will render it as 10px. 
+Problem: Filter honors CSS heights moreso than HTML. If an element is defined as 10px, but in that element something makes it 
+15px (pushing the parent), the filter will still render it as 10px. 
 Solution: This is more a problem of a style not matching implementation. 
 
 */
 
 function fixPNGs(){
-
     var arVersion = navigator.appVersion.split("MSIE")
     var version = parseFloat(arVersion[1])
 
     if ((version >= 5.5) && (document.body.filters)) 
     {
+    
+       if(!window.baseURL){
+            window.baseURL = "";
+       } 
+       
       //replaces images with spans
        for(var i=0; i<document.images.length; i++)
        {
@@ -43,19 +47,14 @@ function fixPNGs(){
           var imgName = img.src.toUpperCase()
           if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
           {
-             var imgID = (img.id) ? "id='" + img.id + "' " : ""
-             var imgClass = (img.className) ? "class='" + img.className + "' " : ""
-             var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
-             var imgStyle = "display:inline-block;" + img.style.cssText 
-             if (img.align == "left") imgStyle = "float:left;" + imgStyle
-             if (img.align == "right") imgStyle = "float:right;" + imgStyle
-             if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
-             var strNewHTML = "<span " + imgID + imgClass + imgTitle
-             + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
-             + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
-             + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
-             img.outerHTML = strNewHTML
-             i = i-1
+            
+             img.style.height = img.height + "px";
+             img.style.width = img.width+"px";
+             img.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader"
+             + "(src=\'" + img.src + "\', sizingMethod='scale');\""; 
+             img.src = "/pentaho-style/images/spacer.gif"
+             img.style.position = "relative";
+             
           }
        }
        
@@ -113,6 +112,6 @@ function fixStyle(style){
    var repeat = style.backgroundRepeat;
    var sizingMethod = (repeat && repeat.toLowerCase() != "no-repeat")? "scale":"image";
    style.backgroundImage = "";
-   style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'" + background + "\', sizingMethod='"+sizingMethod+"')";
-   
+   //style.position = "relative";
+   style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'" + window.baseURL + background + "\', sizingMethod='"+sizingMethod+"')";
 }

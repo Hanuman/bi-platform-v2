@@ -25,14 +25,13 @@
 		<meta name="gwt:property" content="locale=<%=effectiveLocale%>">
 		<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
 		<link rel='stylesheet' href='mantle/MantleStyle.css'/>
-		<!--[if lt IE 7.]>
-			<script defer type="text/javascript" src="pngfix.js"></script>
-		<![endif]-->
-		<script type="text/javascript">
-			if(window.opener && window.opener.reportWindowOpened != undefined){
-			  window.opener.reportWindowOpened();
-			}
-		</script>
+		<script defer type="text/javascript" src="mantle/pngfix.js"></script>
+    <script type="text/javascript">
+      if(window.opener && window.opener.reportWindowOpened != undefined){
+        window.opener.reportWindowOpened();
+      }
+      window.baseURL = window.location.href.substring(0,window.location.href.lastIndexOf("/")+1)+"mantle/";
+    </script>
 	</head>
 
 	<body oncontextmenu="return false;">
