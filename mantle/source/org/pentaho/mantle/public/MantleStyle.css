@@ -30,8 +30,8 @@ body{
 }
 
 .reportParameterDisclosurePanel {
-  background-color: LightCyan;
-  border-bottom:1px solid black; 
+  background-color: #d8d8d8;
+  border-bottom:1px solid #848484; 
   text-decoration:none;
   cursor: pointer;
   cursor: hand;
@@ -183,8 +183,8 @@ body{
   line-height: 29px;
   background-color: #d8d8d8;
   background-image: url(style/images/subtoolbar_bg.png);
-    background-position:center;
-    background-repeat: repeat-x;
+  background-position:center;
+  background-repeat: repeat-x;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: #848484;
@@ -196,11 +196,11 @@ body{
   line-height: 29px;
   background-color: #d8d8d8;
   background-image: url(style/images/subtoolbar_bg.png);
-    background-repeat: repeat-x;
-    background-position:center;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: #848484;
+  background-repeat: repeat-x;
+  background-position:center;
   padding-left: 10px;
 }
 
@@ -208,8 +208,8 @@ body{
 .mainToolbar {
   height: 46px;
   background-image: url(toolbar_bg.png);
-    background-repeat: repeat-x;
-    background-position: top center;
+  background-repeat: repeat-x;
+  background-position: top center;
 }
 
 .gwt-DisclosurePanel-open .header {
@@ -236,7 +236,7 @@ body{
   width: 10px;
   background-image: url(splitter_horz_bg.png);
   background-repeat: repeat-y;
-    background-position:center;
+  background-position: center;
   border-left: 1px solid #848484;
   border-right: 1px solid #848484;
 }
@@ -252,8 +252,8 @@ body{
   cursor: n-resize;
   background-image: url(splitter_vert_bg.png);
   background-repeat: repeat-x;
-    background-position:center;
   border-top: 1px solid #848484;
+  background-position:center;
   border-bottom: 1px solid #848484;
 }
 
@@ -747,39 +747,50 @@ gwt-TabPanelBottom {
 }
 
 .gwt-ToggleButton-up {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
-  border: 2px solid transparent;
-  border-color: #E8F1FF rgb(157, 174, 205) rgb(157, 174, 205) rgb(232, 241, 255);
+  background-image: url(buttonbg.gif);
+  padding: 3px;
+  margin: 2px;
+  background-color: #E8F1FF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: white #a0a0a0 #a0a0a0 white;
   cursor: pointer;
   cursor: hand;
 }
 
 .gwt-ToggleButton-up-hovering {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
-  border: 2px solid transparent;
-  border-color: #E8F1FF rgb(157, 174, 205) rgb(157, 174, 205) rgb(232, 241, 255);
+  background-image: url(buttonhoverbg.gif);
+  padding: 3px;
+  margin: 2px;
+  background-color: #E8F1FF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: white black black white;
   cursor: pointer;
   cursor: hand;
+
 }
 
 .gwt-ToggleButton-down {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
+  background-image: url(buttonbg.gif);
+  padding: 2px;
+  margin: 2px;
   background-color: #E8F1FF;
-  border: 2px solid transparent;
-  border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
+  border-width: 2px;
+  border-style: solid;
+  border-color: black white white black;
   cursor: pointer;
   cursor: hand;
 }
 
 .gwt-ToggleButton-down-hovering {
-  background-color: #C3D9FF;
-  padding: 2px 2px 2px 2px;
+  background-image: url(buttonhoverbg.gif);
+  padding: 2px;
+  margin: 2px;
   background-color: #E8F1FF;
-  border: 2px solid transparent;
-  border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
+  border-width: 2px;
+  border-style: solid;
+  border-color: black white white black;
   cursor: pointer;
   cursor: hand;
 }
@@ -842,9 +853,8 @@ gwt-TabPanelBottom {
   border-color: #9DAECD rgb(232, 241, 255) rgb(232, 241, 255) rgb(157, 174, 205);
 }
 
-
 .gwt-SuggestBoxPopup {
-  background-color: #FEF9CE;
+  background-color: white;
   border-bottom: 1px solid black;
   border-right: 1px solid black;
 }
@@ -857,8 +867,8 @@ gwt-TabPanelBottom {
 
 .gwt-SuggestBoxPopup .item-selected {
   color: white;
-  background-color: #87944c;
-  border: 1px solid #87944c;
+  background-color: #d0d0d0;
+  border: 1px solid #d0d0d0;
   padding: 2px 2px 2px 2px;
   cursor: pointer;
   cursor: hand;
