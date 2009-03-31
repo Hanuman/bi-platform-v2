@@ -4,7 +4,7 @@ div.browser
 {
 	font-family:Tahoma,"Trebuchet MS",Arial;
 	position:absolute; top:0px; left:0px;
-	background:url(../images/transparentpixel.gif);
+	background:url(../images/spacer.png);
 }
 input.browserSaveAsText
 {
