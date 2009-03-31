@@ -23,9 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -37,7 +35,6 @@ import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
-import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ISolutionFile;
@@ -51,118 +48,12 @@ import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
-import org.pentaho.ui.xul.IMenuCustomization;
-import org.pentaho.ui.xul.XulOverlay;
 
-public class PluginManager implements IPluginManager {
-
-  private StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
-
-  private List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
-
-  /* indexes and cached collections */
-
-  private Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections
-      .synchronizedMap(new HashMap<String, List<IContentGeneratorInfo>>());
-
-  private Map<String, IContentGeneratorInfo> contentInfoMap = Collections
-      .synchronizedMap(new HashMap<String, IContentGeneratorInfo>());
-
-  private Map<String, IContentInfo> contentTypeByExtension = Collections
-      .synchronizedMap(new HashMap<String, IContentInfo>());
-
+public class PluginManager extends AbstractPluginManager {
+  
   private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
-
-  private List<XulOverlay> overlaysCache = Collections.synchronizedList(new ArrayList<XulOverlay>());
-
-  private List<IMenuCustomization> menuCustomizationsCache = Collections
-      .synchronizedList(new ArrayList<IMenuCustomization>());
-
-  public Set<String> getContentTypes() {
-    //map.keySet returns a set backed by the map, so we cannot allow modification of the set
-    return Collections.unmodifiableSet(contentTypeByExtension.keySet());
-  }
-
-  public List<XulOverlay> getOverlays() {
-    return Collections.unmodifiableList(overlaysCache);
-  }
-
-  public IContentInfo getContentInfoFromExtension(String extension, IPentahoSession session) {
-    return contentTypeByExtension.get(extension);
-  }
-
-  public List<IContentGeneratorInfo> getContentGeneratorInfoForType(String type, IPentahoSession session) {
-    List<IContentGeneratorInfo> cgInfos = contentGeneratorInfoByTypeMap.get(type);
-    return (cgInfos == null) ? null : Collections.unmodifiableList(contentGeneratorInfoByTypeMap.get(type));
-  }
-
-  public IContentGenerator getContentGenerator(String id, IPentahoSession session) throws ObjectFactoryException {
-    IContentGeneratorInfo info = getContentGeneratorInfo(id, session);
-    if (info == null) { //not sure why this is here ??
-      return null;
-    }
-    return objectFactory.get(IContentGenerator.class, id, session);
-  }
-
-  public IContentGeneratorInfo getContentGeneratorInfo(String id, IPentahoSession session) {
-    IContentGeneratorInfo contentId = contentInfoMap.get(id);
-    return contentId;
-  }
-
-  public IContentGeneratorInfo getDefaultContentGeneratorInfoForType(String type, IPentahoSession session) {
-    List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get(type);
-    if (!CollectionUtils.isEmpty(contentIds)) {
-      IContentGeneratorInfo info = contentIds.get(0);
-      return info;
-    }
-    return null;
-  }
-
-  public String getContentGeneratorIdForType(String type, IPentahoSession session) {
-    List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get(type);
-    if (!CollectionUtils.isEmpty(contentIds)) {
-      IContentGeneratorInfo info = contentIds.get(0);
-      return info.getId();
-    }
-    return null;
-  }
-
-  public String getContentGeneratorTitleForType(String type, IPentahoSession session) {
-    List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get(type);
-    if (!CollectionUtils.isEmpty(contentIds)) {
-      IContentGeneratorInfo info = contentIds.get(0);
-      return info.getTitle();
-    }
-    return null;
-  }
-
-  public String getContentGeneratorUrlForType(String type, IPentahoSession session) {
-    List<IContentGeneratorInfo> contentIds = contentGeneratorInfoByTypeMap.get(type);
-    if (!CollectionUtils.isEmpty(contentIds)) {
-      IContentGeneratorInfo info = contentIds.get(0);
-      return info.getUrl();
-    }
-    return null;
-  }
-
-  public IContentGenerator getContentGeneratorForType(String type, IPentahoSession session)
-      throws ObjectFactoryException {
-    // return the default content generator for the given type
-    // for now we'll assume the first in the list is the default
-    List<IContentGeneratorInfo> contentGenerators = contentGeneratorInfoByTypeMap.get(type);
-    if (!CollectionUtils.isEmpty(contentGenerators)) {
-      String id = contentGenerators.get(0).getId();
-      return objectFactory.get(IContentGenerator.class, id, session);
-    }
-    return null;
-  }
-
-  public List<IMenuCustomization> getMenuCustomizations() {
-    return Collections.unmodifiableList(menuCustomizationsCache);
-  }
 
   /**
    * Clears all the lists and maps in preparation for
@@ -282,7 +173,7 @@ public class PluginManager implements IPluginManager {
     menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
 
     registerBeans(plugin, loader, session);
-
+    
     PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
     try {
       plugin.loaded();
@@ -347,7 +238,7 @@ public class PluginManager implements IPluginManager {
       objectFactory.defineObject(def.beanId, def.classname, Scope.LOCAL, loader);
     }
   }
-
+  
   private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
     ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
     if (loader == null) {
