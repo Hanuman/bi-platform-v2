@@ -909,7 +909,7 @@
 	<tr>
 		<td class="content_body">
 
-		<form action="<%= pageName %>" method="get">
+		<form action="<%= pageName %>" method="post">
 			<%-- this allows us to remember which pivot we're working with --%>
 			<input type="hidden" name="pivotId" value="<%=pivotId%>">
 			<% if (_olapModel == null) { %>
