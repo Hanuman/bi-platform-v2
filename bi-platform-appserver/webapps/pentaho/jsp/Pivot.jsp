@@ -900,7 +900,7 @@
 	<tr>
 		<td class="content_body">
 
-		<form action="<%= pageName %>" method="post">
+		<form action="<%= pageName %>" method="get">
 			<%-- this allows us to remember which pivot we're working with --%>
 			<input type="hidden" name="pivotId" value="<%=pivotId%>">
 			<% if (_olapModel == null) { %>
@@ -1008,7 +1008,7 @@
 	  	String wrappedPrintFormVisible = "#{" + printFormId + ".visible}";
 	  	String printExcel = "./Print?cube=" + pivotId + "&type=0";
 	  	String printPdf = "./Print?cube=" + pivotId + "&type=1";	
-	  	
+			
  %> <wcf:toolbar id="<%=toolbarId%>"
 			bundle="com.tonbeller.jpivot.toolbar.resources">
 			<% if( options == null ) {
