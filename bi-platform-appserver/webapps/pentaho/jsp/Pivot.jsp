@@ -791,6 +791,15 @@
 			  tmpSaveAsButton.parentNode.parentNode.removeChild(tmpSaveAsButton.parentNode);
 			}
 			window.pivot_initialized = true;
+       <%    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { %>
+               try {
+                 var mdxEditTxtBx = document.getElementById('<%=mdxEditId%>.9');
+                 if (mdxEditTxtBx) {
+                   mdxEditTxtBx.readOnly = true;
+                 }
+               } catch (ignored) {
+               }
+       <%    }%>
 		}
 		
 		function save()
@@ -1295,7 +1304,11 @@
 			xslUri="/WEB-INF/jpivot/navi/navigator.xsl" xslCache="true" /></div>
 
 <%	if (_mdxEdit.isVisible()) { %>
-		<h3>MDX Query Editor</h3>
+    <%    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { %>
+    <h3>MDX Query Viewer <font color="red">(editing disabled)</font></h3>
+    <% } else { %>
+    <h3>MDX Query Editor</h3>
+    <% } %>
 		<%-- edit mdx --%>
 		<wcf:render ref="<%=mdxEditId%>" xslUri="/WEB-INF/wcf/wcf.xsl" xslCache="true" /> <% } %> 
 		<%-- sort properties --%>
