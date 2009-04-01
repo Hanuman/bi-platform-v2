@@ -65,12 +65,15 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
     if(form != null){
       form.submit();
     } else {
-      frame.setUrl(
-          getCurrentUrl()
-      );
+      //frame.setUrl(getCurrentUrl());
+      reloadFrame(frame.getElement());
     }
   }
 
+  public native void reloadFrame(Element frameElement)/*-{
+    frameElement.contentWindow.location.reload();
+  }-*/;
+  
   public void back(){
     frame.back();
   }
