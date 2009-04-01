@@ -47,5 +47,20 @@
 		<ant antfile="${gwt.common.build.file}" target="gwt-compile">
 			<property name="gwt-module.path" value="org.pentaho.mantle.login.MantleLogin" />
 		</ant>
+	  
+	    <!-- since MantleApplication inherits MantleLogin, all of MantleLogin's resources
+	    are copied to the MantleApplication web application.  This causes confusion especially
+	    when an admin is expected to edit one of these files (like loginsettings.properties).
+	    Here we are removing files from the MantleApplication that were copied from MantleLogin
+	    -->
+	    <delete>
+	      <fileset dir="${gwt.output.dir}/mantle">
+	        <include name="**/loginsettings.properties"/>
+	        <include name="**/mantleLogin.jsp"/>
+	        <include name="**/MantleLoginMessages*.properties"/>
+	      </fileset>
+	    </delete>
+	  
+	  
 	</target>
 </project>
