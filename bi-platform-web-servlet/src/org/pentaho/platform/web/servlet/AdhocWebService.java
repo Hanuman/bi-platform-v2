@@ -1394,7 +1394,9 @@ public class AdhocWebService extends ServletBase {
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
     if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      throw new AdhocWebServiceException("This feature is disabled.");
+      String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+      WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+      return;
     }
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     // NOTE: sbarkdull, shouldn't have to place the "/" on the front of the path segments.
@@ -1441,9 +1443,11 @@ public class AdhocWebService extends ServletBase {
   private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
-  if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-    throw new AdhocWebServiceException("Save is disabled.");
-  }
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+      String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+      WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+      return;
+    }
     
     String fileName = parameterProvider.getStringParameter("name", null); //$NON-NLS-1$
     if (AdhocWebService.isWaqrFilename(fileName)) {
