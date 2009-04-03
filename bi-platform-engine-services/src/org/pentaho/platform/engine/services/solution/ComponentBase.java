@@ -418,6 +418,27 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
 
   public int execute() {
 
+    // Fix regression issue - BISERVER-3004 (MB) --- Start
+    String xsl = null;
+    // see if we have a custom XSL for the parameter page, if required
+    if (isDefinedInput("xsl")) {
+      xsl = getComponentSetting("xsl"); //$NON-NLS-1$
+    }
+    if (xsl != null) {
+        runtimeContext.setParameterXsl(xsl);
+    } else {
+      //Fix for bug BISERVER-97 by Ezequiel Cuellar (and MB)
+      //If the component-definition's action-definition does not have an xsl element it reuses the one already
+      //set by its previous component-definition's action-definition peer. 
+      //If the xsl element is not present for the component-definition then reset to the default xsl value 
+      //specified in the Pentaho.xml tag "default-parameter-xsl"
+      
+      //Fix for bug BISERVER-238 by Ezequiel Cuellar (and MB)
+      //Added a default value of DefaultParameterForm.xsl when getting the value of default-parameter-xsl
+      runtimeContext.setParameterXsl(PentahoSystem.getSystemSetting("default-parameter-xsl", "DefaultParameterForm.xsl")) ; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    // Fix regression issue - BISERVER-3004 (MB) --- End
+    
     if (loggingLevel == ILogger.UNKNOWN) {
       warn(Messages.getString("Base.WARNING_LOGGING_LEVEL_UNKNOWN")); //$NON-NLS-1$
       loggingLevel = ILogger.DEBUG;
