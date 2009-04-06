@@ -25,7 +25,7 @@
 		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
 <!-- Pentaho Reporting Plugin -->
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" changing="true"/>
 
 <!-- BIRT -->
 		<dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
