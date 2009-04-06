@@ -18,14 +18,14 @@
 		<dependency org="org.netbeans" name="mdrjdbc" rev="1.4.2" />
 		<dependency org="org.beanshell" name="bsh" rev="1.3.0" />
 		<dependency org="ognl" name="ognl" rev="2.6.9" />
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-charts" rev="0.8.11-SNAPSHOT" />
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-functions" rev="0.8.11-SNAPSHOT" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-charts" rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-functions" rev="${dependency.pentaho-reporting.revision}" />
 		<dependency org="hsqldb" name="hsqldb" rev="1.8.0" />
 		<dependency org="mysql" name="mysql-connector-java" rev="5.0.7" />
 		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
 <!-- Pentaho Reporting Plugin -->
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="0.8.11-SNAPSHOT" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" />
 
 <!-- BIRT -->
 		<dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
@@ -79,12 +79,9 @@
     </dependency>
     <dependency org="pentaho" name="pentaho-cdf-samples" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-cdf-solution" rev="${dependency.pentaho-cdf-plugin.revision}" changing="true" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin-package" rev="${dependency.pentaho-reporting.revision}" changing="true"/>
     
     <exclude org="javax.servlet" module="servlet-api"/>
-    
-    
-    
   </dependencies>
-    
   
 </ivy-module>

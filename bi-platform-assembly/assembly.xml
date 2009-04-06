@@ -407,11 +407,15 @@
       <!-- CDF -->
 	  <install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
 
-		<!-- install CDF solution -->
-		<unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
+	  <!-- install CDF solution -->
+	  <unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 		
 	  <!-- webservice -->
 	  <install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
+
+	  <!-- install pentaho reporting plugin (for prpt files) -->
+	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${dependency.pentaho-reporting.revision}.zip"/>
+
 	</target>
   
 	<macrodef name="install-plugin">
