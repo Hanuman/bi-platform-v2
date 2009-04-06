@@ -41,14 +41,12 @@ import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
-import org.pentaho.mantle.client.objects.ReportContainer;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.IPerspective;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.RefreshPerspectiveCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
-import org.pentaho.mantle.client.perspective.solutionbrowser.reporting.ReportView;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.BrowserToolbar;
 import org.pentaho.mantle.client.perspective.workspace.IWorkspaceCallback;
@@ -502,45 +500,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return contentTabMap.get(contentTabPanel.getWidget(contentTabPanel.getWidgetIndex(tabWidget)));
   }
 
-  public void openNewHTMLReport(COMMAND mode) {
-    final String reportKey = "/" + selectedFileItem.getSolution() + selectedFileItem.getPath() + "/" + selectedFileItem.getName(); //$NON-NLS-1$ //$NON-NLS-2$
-    AsyncCallback<ReportContainer> callback = new AsyncCallback<ReportContainer>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetLogicalReportPage"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-        dialogBox.center();
-      }
-
-      public void onSuccess(ReportContainer reportContainer) {
-        Widget tabContent = new ReportView(reportKey, reportContainer);
-        TabWidget tabWidget = new TabWidget(selectedFileItem.getName(), selectedFileItem.getLocalizedName(), SolutionBrowserPerspective.this,
-            contentTabPanel, tabContent);
-        contentTabPanel.add(tabContent, tabWidget);
-        contentTabMap.put(tabContent, tabWidget);
-        contentTabPanel.selectTab(contentTabPanel.getWidgetCount() - 1);
-
-        final List<com.google.gwt.dom.client.Element> parentList = new ArrayList<com.google.gwt.dom.client.Element>();
-        com.google.gwt.dom.client.Element parent = tabContent.getElement();
-        while (parent != contentTabPanel.getElement()) {
-          parentList.add(parent);
-          parent = parent.getParentElement();
-        }
-        Collections.reverse(parentList);
-        for (int i = 1; i < parentList.size(); i++) {
-          parentList.get(i).getStyle().setProperty("height", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        showLaunchOrContent();
-
-        // update state to workspace state flag
-        showWorkspaceMenuItem.setChecked(false);
-        // fire
-        fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
-      }
-    };
-    MantleServiceCache.getService().getLogicalReportPage(null, reportKey, 0, callback);
-    showLaunchOrContent();
-  }
-
   public void openFile(final FileCommand.COMMAND mode) {
     String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) { //$NON-NLS-1$
@@ -581,9 +540,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       } else {
         showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
       }
-    } else if (name.endsWith(".prpt")) { //$NON-NLS-1$
-      // open jfreereport!!
-      openNewHTMLReport(mode);
     } else {
       
       // see if this file is a plugin
@@ -1106,10 +1062,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           if (!path.endsWith("/")) { //$NON-NLS-1$
             path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
           }
-          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc&filter=*.xaction, *.url, *.prpt"); //$NON-NLS-1$
+          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc"); //$NON-NLS-1$
         } else {
           builder = new RequestBuilder(RequestBuilder.GET,
-              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password&filter=*.xaction, *.url, *.prpt"); //$NON-NLS-1$
+              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password"); //$NON-NLS-1$
         }
 
         RequestCallback callback = new RequestCallback() {
@@ -1767,15 +1723,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     panel.setEditEnabled(enable);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
-  
 
   public void setContentEditSelected(boolean selected){
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setEditSelected(selected);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
-  
-  
   
   public void buildEnabledOptionsList(Map<String, String> settings) {
     
@@ -1794,11 +1747,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       int cmdIndex = 0;
       String cmdSetting = pluginSetting + "-command-" + cmdIndex;
       while (settings.containsKey(cmdSetting)) {
-        COMMAND cmd = COMMAND.valueOf(settings.get(cmdSetting));
-        String url = settings.get(pluginSetting + "-command-url-" + cmdIndex);
-        pluginMenu.addCommand(cmd);
-        plugin.addUrlCommand(cmd, url);
-        cmdSetting = pluginSetting + "-command-" + (++cmdIndex);
+        try {
+          COMMAND cmd = COMMAND.valueOf(settings.get(cmdSetting));
+          String url = settings.get(pluginSetting + "-command-url-" + cmdIndex);
+          pluginMenu.addCommand(cmd);
+          plugin.addUrlCommand(cmd, url);
+          cmdSetting = pluginSetting + "-command-" + (++cmdIndex);
+        } catch (Throwable t) {
+          cmdSetting = pluginSetting + "-command-" + (++cmdIndex);
+          // command is not found, invalid, we cannot let this break
+          // the entire application, and it doesn't help to annoy every
+          // single user everytime they start their application if
+          // a plugin has a poorly configured plugin
+        }
       }
       
       // all files can share, delete, and have properties
@@ -1853,7 +1814,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     defaultMenu.addCommand(COMMAND.SHARE);
     defaultMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(defaultMenu);
-
   }
   
   public static class ContentTypePlugin {

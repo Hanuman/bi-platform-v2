@@ -19,8 +19,6 @@
  */
 package org.pentaho.mantle.server;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,8 +48,6 @@ import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
-import org.pentaho.mantle.client.objects.ReportContainer;
-import org.pentaho.mantle.client.objects.ReportParameter;
 import org.pentaho.mantle.client.objects.RolePermission;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
@@ -61,9 +57,6 @@ import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.mantle.client.objects.UserPermission;
 import org.pentaho.mantle.client.service.MantleService;
 import org.pentaho.mantle.server.helpers.BookmarkHelper;
-import org.pentaho.mantle.server.reporting.ReportCreator;
-import org.pentaho.mantle.server.reporting.ReportPageSelector;
-import org.pentaho.mantle.server.reporting.ReportParameterHelper;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
@@ -98,7 +91,6 @@ import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
-import org.pentaho.platform.plugin.action.jfreereport.helper.PentahoURLRewriter;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCube;
@@ -116,18 +108,6 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.refactor.UserFilesComponent;
-import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
-import org.pentaho.reporting.engine.classic.core.MasterReport;
-import org.pentaho.reporting.engine.classic.core.layout.output.ReportProcessor;
-import org.pentaho.reporting.engine.classic.core.modules.output.pageable.base.PageableReportProcessor;
-import org.pentaho.reporting.engine.classic.core.modules.output.table.html.AllItemsHtmlPrinter;
-import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlPrinter;
-import org.pentaho.reporting.engine.classic.core.modules.output.table.html.PageableHtmlOutputProcessor;
-import org.pentaho.reporting.libraries.base.config.Configuration;
-import org.pentaho.reporting.libraries.repository.ContentLocation;
-import org.pentaho.reporting.libraries.repository.DefaultNameGenerator;
-import org.pentaho.reporting.libraries.repository.file.FileRepository;
-import org.pentaho.reporting.libraries.repository.stream.StreamRepository;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.IMenuCustomization.CustomizationType;
@@ -637,57 +617,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public boolean doesSolutionRepositorySupportPermissions() {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
     return repository.supportsAccessControls();
-  }
-
-  public ReportContainer getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage)
-      throws SimpleMessageException {
-    // ultimately we'll pull the data from the solutionFile and create a ByteArrayInputStream
-    ReportProcessor proc = null;
-    try {
-      System.out.println("getLogicalReportPage: " + reportDefinitionPath + " Page: " + logicalPage); //$NON-NLS-1$ //$NON-NLS-2$
-      MasterReport report = ReportCreator.createReport(reportDefinitionPath, getPentahoSession());
-      report.getReportConfiguration().setConfigProperty("org.jfree.report.modules.output.table.html.BodyFragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-      ReportContainer outReportContainer = new ReportContainer();
-       // parameter handling
-       ReportParameterHelper paramHelper = new ReportParameterHelper();
-       paramHelper.processReportParameters(report, reportParameters, outReportContainer);
-      
-       if (!outReportContainer.isPromptNeeded()) {
-       final PageableHtmlOutputProcessor outputProcessor = new PageableHtmlOutputProcessor(report.getConfiguration());
-       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-       final StreamRepository targetRepository = new StreamRepository(null, outputStream, "content.data");
-       final ContentLocation targetRoot = targetRepository.getRoot();
-      
-       File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-       final FileRepository dataRepository = new FileRepository(tmpDir);
-       final ContentLocation dataRoot = dataRepository.getRoot();
-      
-       final Configuration globalConfig = ClassicEngineBoot.getInstance().getGlobalConfig();
-       String htmlContentHandlerUrlPattern = globalConfig.getConfigProperty("org.pentaho.web.ContentHandler"); //$NON-NLS-1$
-      
-       final HtmlPrinter printer = new AllItemsHtmlPrinter(report.getResourceManager());
-       printer.setContentWriter(targetRoot, new DefaultNameGenerator(targetRoot, "report", "html"));
-       printer.setDataWriter(dataRoot, new DefaultNameGenerator(dataRoot, "content")); //$NON-NLS-1$
-       printer.setUrlRewriter(new PentahoURLRewriter(htmlContentHandlerUrlPattern));
-       outputProcessor.setPrinter(printer);
-       outputProcessor.setFlowSelector(new ReportPageSelector(logicalPage));
-      
-       proc = new PageableReportProcessor(report, outputProcessor);
-       proc.processReport();
-      
-       outReportContainer.setNumPages(outputProcessor.getLogicalPageCount());
-       outReportContainer.getReportPages().put(new Integer(logicalPage), outputStream.toString());
-       }
-      return outReportContainer;
-    } catch (Throwable e) {
-      e.printStackTrace();
-      throw new SimpleMessageException(e.getMessage());
-    } finally {
-      if (proc != null) {
-        proc.close();
-      }
-    }
   }
 
   public HashMap<String, String> getMantleSettings() {

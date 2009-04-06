@@ -174,8 +174,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }
     
     IMessageBundleLoadCallback messageCallback = new IMessageBundleLoadCallback() {
-      public void bundleLoaded(String bundleName)
-      {
+      public void bundleLoaded(String bundleName) {
         supportedLanguages = new MessageBundle("messages/", "supported_locales", MantleApplication.this);
       }
     };
@@ -417,6 +416,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         // perspectivesPanel.add(desktopPerspective);
         // perspectivesPanel.add(halogenPerspective);
         showNavigatorCommand.execute();
+
         // load user settings
         loadAndApplyUserSettings();
 
@@ -425,7 +425,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
         // update supported file types
         solutionBrowserPerspective.buildEnabledOptionsList(settings);
-        
+
         // show stuff we've created/configured
         mainApplicationPanel.add(perspectivesPanel);
 

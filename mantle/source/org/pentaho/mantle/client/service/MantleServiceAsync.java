@@ -27,8 +27,6 @@ import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
-import org.pentaho.mantle.client.objects.ReportContainer;
-import org.pentaho.mantle.client.objects.ReportParameter;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
@@ -94,8 +92,6 @@ public interface MantleServiceAsync {
   // version information
   public void getVersion(AsyncCallback<String> callback);
 
-  // pentaho reporting interaction api
-  public void getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage, AsyncCallback<ReportContainer> callback);
   // For New Analysis View
   public void getMondrianCatalogs(AsyncCallback<HashMap<String,List<String>>> callback);
   

@@ -27,8 +27,6 @@ import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
-import org.pentaho.mantle.client.objects.ReportContainer;
-import org.pentaho.mantle.client.objects.ReportParameter;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
@@ -95,8 +93,6 @@ public interface MantleService extends RemoteService {
   // version information
   public String getVersion();
   
-  // pentaho reporting interaction api
-  public ReportContainer getLogicalReportPage(List<ReportParameter> reportParameters, String reportDefinitionPath, int logicalPage) throws SimpleMessageException;
   // For New Analysis View
   public HashMap<String,List<String>> getMondrianCatalogs();  
   
