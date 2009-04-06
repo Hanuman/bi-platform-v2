@@ -422,9 +422,10 @@ public class ChartComponent extends ComponentBase {
 
         // Don't include the map in a file if HTML_MAPPING_HTML is specified, as that 
         // param sends the map back on the outputstream as a string
-        boolean includeMapFile = !isDefinedOutput(ChartComponent.HTML_MAPPING_HTML);
-
-        File[] fileResults = createTempFile(outputType, includeMapFile);
+        boolean createMapFile = !isDefinedOutput(ChartComponent.HTML_MAPPING_HTML);
+        boolean hasTemplate = urlTemplate != null && urlTemplate.length() > 0;
+        
+        File[] fileResults = createTempFile(outputType, hasTemplate);
 
         if (fileResults == null) {
           error(Messages.getErrorString("ChartComponent.ERROR_0003_CANT_CREATE_TEMP_FILES")); //$NON-NLS-1$
@@ -457,18 +458,20 @@ public class ChartComponent extends ComponentBase {
         }
 
         String mapString = null;
-        if (includeMapFile) {
+        if (hasTemplate) {
           try {
             String mapId = fileResults[ChartComponent.MAP_NAME].getName().substring(0,
                 fileResults[ChartComponent.MAP_NAME].getName().indexOf('.'));
             mapString = ImageMapUtilities.getImageMap(mapId, info, new StandardToolTipTagFragmentGenerator(),
-                new PentahoChartURLTagFragmentGenerator(data,urlTemplate, urlTarget, useBaseUrl, dataDefinition,
+                new PentahoChartURLTagFragmentGenerator(data, urlTemplate, urlTarget, useBaseUrl, dataDefinition,
                     parameterName, outerParameterName));
-
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileResults[ChartComponent.MAP_NAME]));
-            out.write(mapString);
-            out.flush();
-            out.close();
+            
+            if (createMapFile) {
+              BufferedWriter out = new BufferedWriter(new FileWriter(fileResults[ChartComponent.MAP_NAME]));
+              out.write(mapString);
+              out.flush();
+              out.close();
+            }
           } catch (IOException e) {
             error(Messages.getErrorString(
                 "ChartComponent.ERROR_0001_CANT_WRITE_MAP", fileResults[ChartComponent.MAP_NAME].getPath())); //$NON-NLS-1$
@@ -477,6 +480,7 @@ public class ChartComponent extends ComponentBase {
             error(e.getLocalizedMessage(), e);
             return false;
           }
+          
         }
 
         /*******************************************************************************************************
@@ -491,17 +495,18 @@ public class ChartComponent extends ComponentBase {
          * 
          *  HTML_MAPPING_OUTPUT (chart-mapping)
          *  Returns the name of the file that the map has been saved to, including the file extension
-         *  (with no path information) as a String.
+         *  (with no path information) as a String.  Will be empty if url-template is undefined
          * 
          *  HTML_MAPPING_HTML (chart-map-html)
-         *  Returns the chart image map HTML as a String.
+         *  Returns the chart image map HTML as a String.  Will be empty if url-template is undefined
          * 
          *  BASE_URL_OUTPUT (base-url)
          *  Returns the web app's base URL (ie., http://localhost:8080/pentaho) as a String.
          * 
          *  HTML_IMG_TAG (image-tag)
          *  Returns the HTML snippet including the image map, image (<IMG />) tag for the chart image
-         *  with src, width, height and usemap attributes defined.
+         *  with src, width, height and usemap attributes defined.  Usemap will not be included if url-template
+         *  is undefined.
          *  
          *******************************************************************************************************/
 
@@ -521,9 +526,9 @@ public class ChartComponent extends ComponentBase {
               outputValue = fileResults[ChartComponent.FILE_NAME].getName();
 
             } else if (outputName.equals(ChartComponent.HTML_MAPPING_OUTPUT)) {
-
-              outputValue = fileResults[ChartComponent.MAP_NAME].getName();
-
+              if (hasTemplate) {
+                outputValue = fileResults[ChartComponent.MAP_NAME].getName();
+              }
             } else if (outputName.equals(ChartComponent.HTML_MAPPING_HTML)) {
 
               outputValue = mapString;
@@ -533,13 +538,15 @@ public class ChartComponent extends ComponentBase {
               outputValue = PentahoSystem.getApplicationContext().getBaseUrl();
 
             } else if (outputName.equals(ChartComponent.HTML_IMG_TAG)) {
-
-              outputValue = mapString;
+              
+              outputValue = hasTemplate ? mapString : "";
 
               outputValue += "<img border=\"0\" "; //$NON-NLS-1$
               outputValue += "width=\"" + width + "\" "; //$NON-NLS-1$//$NON-NLS-2$
               outputValue += "height=\"" + height + "\" "; //$NON-NLS-1$//$NON-NLS-2$
-              outputValue += "usemap=\"#" + fileResults[ChartComponent.MAP_NAME].getName().substring(0, fileResults[ChartComponent.MAP_NAME].getName().indexOf('.')) + "\" "; //$NON-NLS-1$//$NON-NLS-2$
+              if (hasTemplate) {
+                outputValue += "usemap=\"#" + fileResults[ChartComponent.MAP_NAME].getName().substring(0, fileResults[ChartComponent.MAP_NAME].getName().indexOf('.')) + "\" "; //$NON-NLS-1$//$NON-NLS-2$
+              }
               outputValue += "src=\"" + PentahoSystem.getApplicationContext().getBaseUrl() + "getImage?image=" + fileResults[ChartComponent.FILE_NAME].getName() + "\"/>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
             }
