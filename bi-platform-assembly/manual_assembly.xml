@@ -58,7 +58,7 @@
 		<delete dir="${lib.dir}" />
 	</target>
     
-	<target name="package" depends="resolve, assemble, package-zip" />    		
+	<target name="package" depends="resolve, check-blacklist, assemble, package-zip" />    		
     		
 	<target name="package-zip">
 		<zip destfile="${dist.dir}/${package.basename}.zip">

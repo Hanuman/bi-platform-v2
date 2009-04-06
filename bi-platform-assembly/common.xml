@@ -209,5 +209,23 @@
     <ivy:resolve file="ivy.xml" conf="runtime" />
     <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
+  
+  <!--=======================================================================
+  	    check-blacklist
+	    
+	    searches for illegal classes that we have fetched via IVY and fail 
+	    the assembly if they are present.
+	    ====================================================================-->
+  <target name="check-blacklist">
+    
+    <available property="Servlet.class.present" classname="javax.servlet.Servlet">
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </available>
+    <fail if="Servlet.class.present" message="!!! Blacklisted class javax.servlet.Servlet found in a retrieved jar.  Assembly cannot proceed !!!"/>
+  </target>
 
 </project>
