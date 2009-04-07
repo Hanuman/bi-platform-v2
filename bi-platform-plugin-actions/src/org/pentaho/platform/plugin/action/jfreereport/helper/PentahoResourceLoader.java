@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.pentaho.reporting.libraries.resourceloader.ResourceData;
+import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceKeyCreationException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceLoader;
@@ -165,6 +166,18 @@ public class PentahoResourceLoader implements ResourceLoader {
 
   public URL toURL(final ResourceKey key) {
     // not supported ..
+    return null;
+  }
+
+  public ResourceKey deserialize(String stringKey) throws ResourceKeyCreationException {
+    return null;
+  }
+
+  public boolean isSupportedDeserializer(String data) {
+    return false;
+  }
+
+  public String serialize(ResourceKey key) throws ResourceException {
     return null;
   }
 
