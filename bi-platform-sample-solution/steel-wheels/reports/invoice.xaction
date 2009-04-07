@@ -19,6 +19,12 @@
         <request>type</request> 
       </sources> 
     </output-type>  
+    <!-- selected_count type="int">
+      <default-value>9</default-value>
+      <sources>
+        <runtime>not_there</runtime>
+      </sources>
+    </selected_count -->
     <customer type="string"> 
       <default-value>Reims Collectables</default-value>  
       <sources> 
@@ -464,7 +470,7 @@
         <selections> 
           <customer style="list-multi"> 
             <filter value-col-name="customernumber" display-col-name="customername">customer_list</filter>  
-            <title>Customer</title> 
+            <title>Customer (Select five or less)</title> 
           </customer>  
           <output-type style="radio"> 
             <title>Report Output</title>  
@@ -473,55 +479,70 @@
         </selections> 
       </component-definition> 
     </action-definition>
-  
-    <action-definition> 
-      <component-name>SQLLookupRule</component-name>
-      <action-type>Get Data</action-type>
-      <action-inputs> 
-        <customer type="string"/> 
-      </action-inputs>
-      <action-outputs> 
-        <query-result type="result-set" mapping="queryResult"/> 
-      </action-outputs>
-      <component-definition> 
-        <jndi>SampleData</jndi>  
-        <live>true</live>  
-        <query><![CDATA[SELECT CUSTOMERS.CUSTOMERNAME, CUSTOMERS.ADDRESSLINE1, CUSTOMERS.ADDRESSLINE2, CUSTOMERS.CITY, CUSTOMERS.STATE, CUSTOMERS.POSTALCODE, CUSTOMERS.COUNTRY, CUSTOMERS.SALESREPEMPLOYEENUMBER, CUSTOMERS.CONTACTFIRSTNAME, CUSTOMERS.CONTACTLASTNAME, ORDERS.STATUS, ORDERS.CUSTOMERNUMBER, ORDERS.ORDERNUMBER, ORDERS.ORDERDATE, ORDERDETAILS.ORDERLINENUMBER, PRODUCTS.PRODUCTNAME, ORDERDETAILS.QUANTITYORDERED, ORDERDETAILS.PRODUCTCODE, ORDERDETAILS.PRICEEACH, PRODUCTS.QUANTITYINSTOCK, (ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE FROM ORDERS, ORDERDETAILS, PRODUCTS, CUSTOMERS  WHERE CUSTOMERS.CUSTOMERNUMBER IN ({PREPARE:customer}) AND ( ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER AND PRODUCTS.PRODUCTCODE = ORDERDETAILS.PRODUCTCODE AND ORDERS.CUSTOMERNUMBER = CUSTOMERS.CUSTOMERNUMBER ) ORDER BY CUSTOMERS.CUSTOMERNAME ASC, ORDERS.ORDERNUMBER ASC, ORDERDETAILS.ORDERLINENUMBER ASC]]></query> 
-      </component-definition> 
-    </action-definition>
-  
-    <actions> 
-      <condition><![CDATA[queryResult.getRowCount() > 0]]></condition>  
+    
+    <actions name="runReport">
+      <condition><![CDATA[(typeof(customer) == 'string' ) || ( (typeof(customer) == 'object') && (customer instanceof Array) && customer.length <= 5)]]></condition>
       <action-definition> 
-        <component-name>JFreeReportComponent</component-name>
-        <action-type>Run Report</action-type>
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Get Data</action-type>
         <action-inputs> 
-          <output-type type="string"/>  
-          <customer type="string"/>  
-          <data type="result-set" mapping="queryResult"/> 
+          <customer type="string"/> 
         </action-inputs>
-        <action-resources> 
-          <report-definition type="resource"/> 
-        </action-resources>
-        <component-definition/> 
-      </action-definition>
- 
-    </actions>
-  
-    <actions> 
-      <condition><![CDATA[queryResult.getRowCount()==0]]></condition>  
-      <action-definition> 
-        <component-name>TemplateComponent</component-name>
-        <action-type>Prompt No Data Message</action-type>
         <action-outputs> 
-          <output-message type="string" mapping="NoData"/> 
+          <query-result type="result-set" mapping="queryResult"/> 
         </action-outputs>
         <component-definition> 
-          <template><![CDATA[There is no data on this customer.]]></template> 
+          <jndi>SampleData</jndi>  
+          <live>true</live>  
+          <query><![CDATA[SELECT CUSTOMERS.CUSTOMERNAME, CUSTOMERS.ADDRESSLINE1, CUSTOMERS.ADDRESSLINE2, CUSTOMERS.CITY, CUSTOMERS.STATE, CUSTOMERS.POSTALCODE, CUSTOMERS.COUNTRY, CUSTOMERS.SALESREPEMPLOYEENUMBER, CUSTOMERS.CONTACTFIRSTNAME, CUSTOMERS.CONTACTLASTNAME, ORDERS.STATUS, ORDERS.CUSTOMERNUMBER, ORDERS.ORDERNUMBER, ORDERS.ORDERDATE, ORDERDETAILS.ORDERLINENUMBER, PRODUCTS.PRODUCTNAME, ORDERDETAILS.QUANTITYORDERED, ORDERDETAILS.PRODUCTCODE, ORDERDETAILS.PRICEEACH, PRODUCTS.QUANTITYINSTOCK, (ORDERDETAILS.QUANTITYORDERED*ORDERDETAILS.PRICEEACH) SOLD_PRICE FROM ORDERS, ORDERDETAILS, PRODUCTS, CUSTOMERS  WHERE CUSTOMERS.CUSTOMERNUMBER IN ({PREPARE:customer}) AND ( ORDERS.ORDERNUMBER = ORDERDETAILS.ORDERNUMBER AND PRODUCTS.PRODUCTCODE = ORDERDETAILS.PRODUCTCODE AND ORDERS.CUSTOMERNUMBER = CUSTOMERS.CUSTOMERNUMBER ) ORDER BY CUSTOMERS.CUSTOMERNAME ASC, ORDERS.ORDERNUMBER ASC, ORDERDETAILS.ORDERLINENUMBER ASC]]></query> 
         </component-definition> 
       </action-definition>
- 
+    
+      <actions> 
+        <condition><![CDATA[queryResult.getRowCount() > 0]]></condition>  
+        <action-definition> 
+          <component-name>JFreeReportComponent</component-name>
+          <action-type>Run Report</action-type>
+          <action-inputs> 
+            <output-type type="string"/>  
+            <customer type="string"/>  
+            <data type="result-set" mapping="queryResult"/> 
+          </action-inputs>
+          <action-resources> 
+            <report-definition type="resource"/> 
+          </action-resources>
+          <component-definition/> 
+        </action-definition>
+   
+      </actions>
+    
+      <actions> 
+        <condition><![CDATA[queryResult.getRowCount()==0]]></condition>  
+        <action-definition> 
+          <component-name>TemplateComponent</component-name>
+          <action-type>Prompt No Data Message</action-type>
+          <action-outputs> 
+            <output-message type="string" mapping="NoData"/> 
+          </action-outputs>
+          <component-definition> 
+            <template><![CDATA[There is no data on this customer.]]></template> 
+          </component-definition> 
+        </action-definition>
+   
+      </actions>
     </actions>
- 
+    <actions name="tooManySelections">
+      <condition><![CDATA[( (typeof(customer) == 'object') && (customer instanceof Array) && (customer.length > 5) ) ||  ( (typeof(customer) != 'string') && (typeof(customer) != 'object') )]]></condition>
+        <action-definition> 
+          <component-name>TemplateComponent</component-name>
+          <action-type>Prompt Too Many Customers</action-type>
+          <action-outputs> 
+            <output-message type="string" mapping="NoData"/> 
+          </action-outputs>
+          <component-definition> 
+            <template><![CDATA[<font color='red'><br>Please only select five or fewer customers.</font>]]></template> 
+          </component-definition> 
+        </action-definition>
+    </actions>
   </actions> 
 </action-sequence>
