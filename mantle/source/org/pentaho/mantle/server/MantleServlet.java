@@ -296,24 +296,29 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public int cleanContentRepository(int daysBack) {
-    // get daysback off the input
-    daysBack = Math.abs(daysBack) * -1;
-
-    // get todays calendar
-    Calendar calendar = Calendar.getInstance();
-    // subtract (by adding a negative number) the daysback amount
-    calendar.add(Calendar.DATE, daysBack);
-    // create the new date for the content repository to use
-    Date agedDate = new Date(calendar.getTimeInMillis());
-    // get the content repository and tell it to remove the items older than
-    // agedDate
-    IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getPentahoSession());
-    int deleteCount = contentRepository.deleteContentOlderThanDate(agedDate);
+    int deleteCount = 0;
+    if (isAdministrator()) {
+      // get daysback off the input
+      daysBack = Math.abs(daysBack) * -1;
+  
+      // get todays calendar
+      Calendar calendar = Calendar.getInstance();
+      // subtract (by adding a negative number) the daysback amount
+      calendar.add(Calendar.DATE, daysBack);
+      // create the new date for the content repository to use
+      Date agedDate = new Date(calendar.getTimeInMillis());
+      // get the content repository and tell it to remove the items older than
+      // agedDate
+      IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getPentahoSession());
+      deleteCount = contentRepository.deleteContentOlderThanDate(agedDate);
+    }
     return deleteCount;
   }
 
   public void flushMondrianSchemaCache() {
-    mondrian.rolap.agg.AggregationManager.instance().getCacheControl(null).flushSchemaCache();
+    if (isAdministrator()) {
+      mondrian.rolap.agg.AggregationManager.instance().getCacheControl(null).flushSchemaCache();
+    }
   }
 
   public List<JobSchedule> getMySchedules() {
