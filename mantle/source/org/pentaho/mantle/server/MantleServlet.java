@@ -189,15 +189,21 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void executeGlobalActions() {
-    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.GlobalListsPublisher.class.getName());
+    if (isAdministrator()) {
+      PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.GlobalListsPublisher.class.getName());
+    }
   }
 
   public void refreshMetadata() {
-    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
+    if (isAdministrator()) {
+      PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
+    }
   }
 
   public void refreshSystemSettings() {
-    PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.SettingsPublisher.class.getName());
+    if (isAdministrator()) {
+      PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.core.system.SettingsPublisher.class.getName());
+    }
   }
 
   public boolean getBackgroundExecutionAlert() {
@@ -284,7 +290,9 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   public void refreshRepository() {
-    PentahoSystem.get(ISolutionRepository.class, getPentahoSession()).reloadSolutionRepository(getPentahoSession(), getPentahoSession().getLoggingLevel());
+    if (isAdministrator()) {
+      PentahoSystem.get(ISolutionRepository.class, getPentahoSession()).reloadSolutionRepository(getPentahoSession(), getPentahoSession().getLoggingLevel());
+    }
   }
 
   public int cleanContentRepository(int daysBack) {
