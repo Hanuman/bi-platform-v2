@@ -17,7 +17,6 @@
 */
 package org.pentaho.platform.plugin.action.chartbeans;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,20 +24,17 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
 import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
-import org.pentaho.chart.model.BarPlot;
+import org.pentaho.chart.core.ChartDocument;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.DialPlot;
 import org.pentaho.chart.model.PiePlot;
 import org.pentaho.chart.model.util.ChartSerializer;
-import org.pentaho.chart.model.util.ChartSerializer2;
-import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
 import org.pentaho.chart.plugin.ChartPluginFactory;
 import org.pentaho.chart.plugin.ChartProcessingException;
 import org.pentaho.chart.plugin.IChartPlugin;
@@ -46,8 +42,6 @@ import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.runtime.TemplateUtil;
-import org.pentaho.platform.util.UUIDUtil;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 
 /**
@@ -79,7 +73,7 @@ public class ChartComponent {
   
   protected Exception bootException = null;
   
-  protected String outputType = "text/html"; //$NON-NLS-1$
+  protected String outputType = "image-png"; //$NON-NLS-1$
   
   protected int chartWidth = -1;
 
@@ -87,28 +81,9 @@ public class ChartComponent {
   
   protected OutputStream outputStream = null;
   
-  protected String chartModelJson = null;
-  
-  protected String chartModelXml = null;
+  protected String serializedChartModel = null;
   
   protected ChartModel chartModel = null;
-
-  private static final String DEFAULT_FLASH_LOC = "openflashchart"; //$NON-NLS-1$
-  
-  private static final String DEFAULT_FLASH_SWF = "open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$s
-  
-  protected static String flashFragment =
-    "<script>function {dataFunction}() { return \"{chartJson}\";}</script>" //$NON-NLS-1$
-    + "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
-    + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" " //$NON-NLS-1$
-    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofco{chartId}\" align=\"middle\"> " //$NON-NLS-1$
-    + "<param name=\"allowScriptAccess\" value=\"sameDomain\" /> " //$NON-NLS-1$
-    + "<param name=\"wmode\" value=\"opaque\">"  //$NON-NLS-1$
-    + "<param name=\"movie\" value=\"{ofc-url}/{ofc-libname}?get-data={dataFunction}\" /> " //$NON-NLS-1$
-    + "<param name=\"quality\" value=\"high\" /> " //$NON-NLS-1$
-    + "<embed src=\"{ofc-url}/{ofc-libname}?get-data={dataFunction}\" wmode=\"opaque\" quality=\"high\" bgcolor=\"#FFFFFF\" " //$NON-NLS-1$
-    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofce{chartId}\" align=\"middle\" allowScriptAccess=\"sameDomain\" type=\"application/x-shockwave-flash\" " //$NON-NLS-1$
-    + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" /></object>"; //$NON-NLS-1$
 
   /**
    * Initialize ChartBeans engine
@@ -161,56 +136,26 @@ public class ChartComponent {
     
     try{
       
-      if(chartModel.getTheme() != null){
-        AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
-          protected List<File> getThemeFiles() {
-            ArrayList<File> themeFiles = new ArrayList<File>();
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml")));
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml")));
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme3.xml")));
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme4.xml")));
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme5.xml")));
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme6.xml")));
-            return themeFiles;
-              }
-        };
-        
-        
-        Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
-        if (chartTheme != null) {
-          chartTheme.applyTo(chartModel);
+      AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
+        protected List<File> getThemeFiles() {
+          ArrayList<File> themeFiles = new ArrayList<File>();
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme3.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme4.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme5.xml")));
+          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme6.xml")));
+          return themeFiles;
             }
-      }
+      };
+      
+      
+      Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
+      if (chartTheme != null) {
+        chartTheme.applyTo(chartModel);
+          }
       
       InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
-      
-      // Wrap output as necessary
-      if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
-        // Convert stream to string, insert into HTML fragment and re-stream it
-        StringBuilder sb = new StringBuilder();
-        int c = 0;
-        
-        // Build string
-        while((c = is.read()) >= 0){
-          sb.append((char)c);
-        }
-        
-        // generate a unique name for the function
-        String chartId = UUIDUtil.getUUIDAsString().replaceAll("[^\\w]",""); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        Properties props = new Properties();
-        props.setProperty("chartId", chartId); //$NON-NLS-1$
-        props.setProperty("dataFunction", "getData" + chartId); //$NON-NLS-1$ //$NON-NLS-2$
-        props.setProperty("chart-width", Integer.toString(chartWidth)); //$NON-NLS-1$
-        props.setProperty("chart-height", Integer.toString(chartHeight)); //$NON-NLS-1$
-        props.setProperty("ofc-url", DEFAULT_FLASH_LOC); //$NON-NLS-1$
-        props.setProperty("ofc-libname", DEFAULT_FLASH_SWF); //$NON-NLS-1$
-        props.setProperty("chartJson", sb.toString().replaceAll("\"", "\\\\\"")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        
-        String flashContent = TemplateUtil.applyTemplate(flashFragment, props, null);
-        
-        is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
-      }
 
       int val = 0;
       
@@ -316,18 +261,14 @@ public class ChartComponent {
     }
     
     if(chartModel == null){
-      if(chartModelJson != null){
-        chartModel = ChartSerializer.deSerialize(chartModelJson, ChartSerializationFormat.JSON);
+      if(serializedChartModel != null){
+        chartModel = ChartSerializer.deSerialize(serializedChartModel);
       } else {
-        if(chartModelXml != null){
-          chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
-        } else {
-          // No chart model is available
-          return false;
-        }
+        // No chart model is available
+        return false;
       }
     }
-    
+
     //Verify that all columns required for a given chart type are present
     if(chartModel.getPlot() instanceof DialPlot){
       if(valueColumn < 0){
@@ -410,7 +351,6 @@ public class ChartComponent {
    * @return mime type
    */
   public String getMimeType(){
-    //TODO: Better determine MIME Type / Beware method call ordering from PojoComponent
       if(outputType.equals("image-jpg")){ //$NON-NLS-1$
         return "image/jpeg"; //$NON-NLS-1$
       } else if (outputType.equals("image-png")){ //$NON-NLS-1$
@@ -424,18 +364,10 @@ public class ChartComponent {
   
   /**
    * Set the JSON representation of the ChartModel
-   * @param chartModelJson JSON serialized representation of the ChartModel
+   * @param serializedChartModel JSON serialized representation of the ChartModel
    */
-  public void setChartModelJson(String chartModelJson) {
-    this.chartModelJson = chartModelJson;
-  }
-  
-  /**
-   * Set the XML representation of the ChartModel
-   * @param chartStyleXml XML serialized representation of the ChartModel
-   */
-  public void setChartModelXml(String chartModelXml){
-    this.chartModelXml = chartModelXml;
+  public void setChartModel(String serializedChartModel) {
+    this.serializedChartModel = serializedChartModel;
   }
   
   /**
