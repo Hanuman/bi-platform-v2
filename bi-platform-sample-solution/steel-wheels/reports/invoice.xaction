@@ -470,7 +470,7 @@
         <selections> 
           <customer style="list-multi"> 
             <filter value-col-name="customernumber" display-col-name="customername">customer_list</filter>  
-            <title>Customer (Select five or less)</title> 
+            <title>Customer (Select less than six)</title> 
           </customer>  
           <output-type style="radio"> 
             <title>Report Output</title>  
@@ -540,7 +540,7 @@
             <output-message type="string" mapping="NoData"/> 
           </action-outputs>
           <component-definition> 
-            <template><![CDATA[<font color='red'><br>Please only select five or fewer customers.</font>]]></template> 
+            <template><![CDATA[<font color='red'><br>Please select less than six customers.</font>]]></template> 
           </component-definition> 
         </action-definition>
     </actions>
