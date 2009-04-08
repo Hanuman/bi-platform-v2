@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
 import org.dom4j.Element;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
@@ -45,7 +46,30 @@ import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider
 import org.pentaho.platform.engine.services.messages.Messages;
 /**
  * This class interfaces with a plain old Java object and makes it
- * available as a component within the Pentaho platform
+ * available as a component within the Pentaho platform.
+ * 
+ * Resources and Input Parameters are set on a Pojo via setters. Any public setter
+ * is available to both, without bias. The setters are called individually for Resources
+ * and Input Parameters and as such may be called for each one should a parameter exist
+ * in both forms. Resources are processed first, followed by Input Parameters giving
+ * Input Parameters the power to override.
+ * 
+ * All public getters are exposed through the PojoComponent for consumption as
+ * Output Parameters within an Action Sequence.
+ * 
+ * There exist special methods which may be defined on a Pojo (No interface needed)
+ * in order to better facilitate integration to the platform. They are as follows:
+ * configure
+ * validate
+ * execute
+ * done
+ * getOutputs
+ * setResources
+ * setInputs
+ * setLogger
+ * setSession
+ * setOutputStream / getMimeType
+ * 
  * @author jamesdixon
  *
  */
@@ -302,8 +326,49 @@ public class PojoComponent extends ComponentBase {
       }
     }
     
+    Iterator<?> it = null;
+    
+    // now process all of the resources and see if we can call them as setters
+    Set<?> resourceNames = getResourceNames();
+    Map<String, IActionSequenceResource> resourceMap = new HashMap<String, IActionSequenceResource>();
+    if( resourceNames!= null && resourceNames.size() > 0 ) {
+      it = resourceNames.iterator();
+      while( it.hasNext() ) {
+        String name = (String) it.next();
+        IActionSequenceResource resource = getResource( name );
+        name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        resourceMap.put(name, resource);
+        List<Method> methods = setMethods.get( name.toUpperCase() );
+        if( methods != null ) {
+          for(Method method : methods){
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if(paramTypes.length == 1){
+              if(paramTypes[0] == InputStream.class ) {
+                InputStream in = getRuntimeContext().getResourceInputStream( resource );
+                method.invoke(pojo, new Object[] { in } );
+                break;
+              } else if(paramTypes[0] == IActionSequenceResource.class ) {
+                method.invoke(pojo, new Object[] { resource } );
+                break;
+              } else if(paramTypes[0] == String.class){
+                String str = getRuntimeContext().getResourceAsString(resource);
+                method.invoke(pojo, new Object[] { str } );
+                break;
+              } else if(paramTypes[0] == Document.class){
+                Document doc = getRuntimeContext().getResourceAsDocument(resource);
+                method.invoke(pojo, new Object[] { doc } );
+                break;
+              }
+            }
+          }
+        } else {
+          // BISERVER-2715 we should ignore this as the resource might be meant for another component
+        }
+        }
+      }
+    
     // now process all of the inputs, overriding the component settings
-    Iterator<?> it = inputNames.iterator();
+    it = inputNames.iterator();
     while( it.hasNext() ) {
       String name = (String) it.next();
       Object value = getInputValue( name );
@@ -319,36 +384,6 @@ public class PojoComponent extends ComponentBase {
         throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
       }
     }
-
-    // now process all of the resources and see if we can call them as setters
-    Set<?> resourceNames = getResourceNames();
-    Map<String, IActionSequenceResource> resourceMap = new HashMap<String, IActionSequenceResource>();
-    if( resourceNames!= null && resourceNames.size() > 0 ) {
-      it = resourceNames.iterator();
-      while( it.hasNext() ) {
-        String name = (String) it.next();
-        IActionSequenceResource resource = getResource( name );
-        name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
-        resourceMap.put(name, resource);
-        List<Method> methods = setMethods.get( name.toUpperCase() );
-        if( methods != null ) {
-          for(Method method : methods){
-            Class<?>[] paramTypes = method.getParameterTypes();
-            if( paramTypes.length == 1 && paramTypes[0] == InputStream.class ) {
-              InputStream in = getRuntimeContext().getResourceInputStream( resource );
-              method.invoke(pojo, new Object[] { in } );
-              break;
-            }
-            else if( paramTypes.length == 1 && paramTypes[0] == IActionSequenceResource.class ) {
-              method.invoke(pojo, new Object[] { resource } );
-              break;
-            }
-          }
-        } else {
-          // BISERVER-2715 we should ignore this as the resource might be meant for another component
-        }
-        }
-      }
     
     if ( resourceMap.size() > 0 && resourcesMethod != null ) {
       // call the resources setter
