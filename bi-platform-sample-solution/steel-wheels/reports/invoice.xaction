@@ -18,15 +18,9 @@
       <sources> 
         <request>type</request> 
       </sources> 
-    </output-type>  
-    <!-- selected_count type="int">
-      <default-value>9</default-value>
-      <sources>
-        <runtime>not_there</runtime>
-      </sources>
-    </selected_count -->
+    </output-type>
     <customer type="string"> 
-      <default-value>Reims Collectables</default-value>  
+      <default-value>353</default-value>  
       <sources> 
         <request>customer</request> 
       </sources> 
