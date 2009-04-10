@@ -1654,7 +1654,7 @@ Controller.prototype.handlePreview = function()
       // open preview tab for waqr
           var url = "";
           if(form.action.indexOf('http') == -1){
-            //IE does not have the hostname
+                //IE does not have the hostname
             url += window.location.protocol+"//"+window.location.host;
         
             if (form.action.match("^/")) { 	// form action is not relative
@@ -2081,6 +2081,11 @@ Controller.prototype.loadTemplateItemsIntoList = function( templatesListCtrl )
   var children = this.waqrRepository.getFolderChildren( Controller.TEMPLATES_BASE_PATH, null, null, false,
     function( children )
     {
+	  // MB - Sort the templates
+      children.sort(
+              // Sort by the name attribute.
+              function(a,b){  try { return ( (a.name<b.name) ? -1 : ( (b.name < a.name) ? 1 : 0)  );} catch (e) {return 0;} } 
+       );	  
       for ( var ii=0; ii<children.length; ++ii )
       {
         var child = children[ ii ];
