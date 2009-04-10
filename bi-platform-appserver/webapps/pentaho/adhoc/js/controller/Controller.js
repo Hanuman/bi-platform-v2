@@ -1654,8 +1654,30 @@ Controller.prototype.handlePreview = function()
       // open preview tab for waqr
           var url = "";
           if(form.action.indexOf('http') == -1){
-                //IE does not have the hostname
-                url += window.location.protocol+"//"+window.location.host+form.action;
+            //IE does not have the hostname
+            url += window.location.protocol+"//"+window.location.host;
+        
+            if (form.action.match("^/")) { 	// form action is not relative
+              url += form.action;
+            } else {
+              // Split out the existing directories and the relative action url to compute
+              var existingPathArray = window.location.pathname.split( "/" );
+              var formPathArray = form.action.split("/");
+
+              if(window.location.pathname.match("/$") == null){		// does not end with a slash
+              existingPathArray.pop(); 	// Remove current filename from array
+              }
+
+              // Remove directories from list as prescribed by relative navigation.
+              while (formPathArray[0] == "..") {
+              existingPathArray.pop();
+              formPathArray.shift();
+              }
+
+              // Re-assemble the remaining directories
+              url += existingPathArray.concat(formPathArray).join("/");
+
+            }
           } else {
                 //Mozilla
                 url = form.action;
