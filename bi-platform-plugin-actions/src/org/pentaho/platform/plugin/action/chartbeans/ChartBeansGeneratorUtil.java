@@ -27,13 +27,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.util.ChartSerializer;
+import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.platform.engine.services.solution.SolutionHelper;
+import org.pentaho.platform.util.UUIDUtil;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -43,6 +47,20 @@ import com.ibm.icu.text.MessageFormat;
 public class ChartBeansGeneratorUtil {
 
   private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title>{0}</head><body>{1}</body></html>"; //$NON-NLS-1$
+  
+  protected static String flashScriptFragment = "<script>function {dataFunction}() { return \"{chartJson}\";}</script>"; //$NON-NLS-1$
+  
+  protected static String flashObjectFragment =
+    "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
+    + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" " //$NON-NLS-1$
+    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofco{chartId}\" align=\"middle\"> " //$NON-NLS-1$
+    + "<param name=\"allowScriptAccess\" value=\"sameDomain\" /> " //$NON-NLS-1$
+    + "<param name=\"wmode\" value=\"opaque\">"  //$NON-NLS-1$
+    + "<param name=\"movie\" value=\"{ofc-url}?get-data={dataFunction}\" /> " //$NON-NLS-1$
+    + "<param name=\"quality\" value=\"high\" /> " //$NON-NLS-1$
+    + "<embed src=\"{ofc-url}?get-data={dataFunction}\" wmode=\"opaque\" quality=\"high\" bgcolor=\"#FFFFFF\" " //$NON-NLS-1$
+    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofce{chartId}\" align=\"middle\" allowScriptAccess=\"sameDomain\" type=\"application/x-shockwave-flash\" " //$NON-NLS-1$
+    + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" /></object>"; //$NON-NLS-1$
 
   private ChartBeansGeneratorUtil() {
   }
@@ -55,7 +73,7 @@ public class ChartBeansGeneratorUtil {
 
   public static void createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
       IPentahoSession userSession, OutputStream out) throws IOException {
-    String serializedChartModel = ChartSerializer.serialize(chartModel);
+    String serializedChartModel = ChartSerializer.serialize(chartModel, ChartSerializationFormat.JSON);
     ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
         chartWidth, chartHeight, userSession, out);
   }
@@ -74,7 +92,7 @@ public class ChartBeansGeneratorUtil {
 
   public static InputStream createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
       IPentahoSession userSession) throws IOException {
-    String serializedChartModel = ChartSerializer.serialize(chartModel);
+    String serializedChartModel = ChartSerializer.serialize(chartModel, ChartSerializationFormat.JSON);
     return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
         chartWidth, chartHeight, userSession, null);
   }
@@ -127,7 +145,7 @@ public class ChartBeansGeneratorUtil {
     if (serializedChartDataDefinition != null) {
       // De-serialize the chartDataDefintion and extract relevant parts
       ChartDataDefinition chartDataDefinition = ChartSerializer
-          .deSerializeDataDefinition(serializedChartDataDefinition);
+          .deSerializeDataDefinition(serializedChartDataDefinition, ChartSerializationFormat.JSON);
 
       if (chartDataDefinition.getQuery() != null) {
         params.put("query", chartDataDefinition.getQuery()); //$NON-NLS-1$
@@ -191,7 +209,7 @@ public class ChartBeansGeneratorUtil {
   public static String createChartAsHtml(IPentahoSession userSession, String serializedChartDataDefinition,
       String serializedChartModel, int chartWidth, int chartHeight) throws IOException {
 
-    ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel);
+    ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel, ChartSerializationFormat.JSON);
 
     String html = null;
 
@@ -228,10 +246,10 @@ public class ChartBeansGeneratorUtil {
       final String SWF_URL_TEMPLATE = "{0}openflashchart/open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$
       final String swfUrl = MessageFormat.format(SWF_URL_TEMPLATE, new String[] { PentahoSystem.getApplicationContext()
           .getBaseUrl() });
-      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson.replace("\"", "\\\""), swfUrl);
+      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson.replace("\"", "\\\""), swfUrl);  //$NON-NLS-1$  //$NON-NLS-2$
 
     } else {
-      throw new IllegalArgumentException("unrecognized chart engine");
+      throw new IllegalArgumentException("unrecognized chart engine");  //$NON-NLS-1$
     }
 
     return html;
@@ -248,33 +266,44 @@ public class ChartBeansGeneratorUtil {
   }
 
   /**
+   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
+   * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
+   * more central to the ChartBeans code.
+   * 
    * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
    * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string). 
    * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
    */
   public static String mergeOpenFlashChartHtmlTemplate(String openFlashChartJson, String swfUrl) {
-    // JavaScript template contains a namespaced function
-    // single quotes wrap curly braces so that MessageFormat is happy
-    // two consecutive single quotes yields a single single quote in the result
-    final String JS_TEMPLATE = "<script type=\"text/javascript\">"
-        + "window.getChartData = function() '{' return /*JSON*/\"{0}\"/*END_JSON*/; '}'" + "</script>";
-    final String OPEN_FLASH_CHART_TEMPLATE = ""
-        + "<object id=\"ofco00b1c87708fe11dea97da1e1ba5b86bc\" height=\"100%\" align=\"middle\" width=\"100%\" "
-        + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" "
-        + "classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\">"
-        + "<param value=\"sameDomain\" name=\"allowScriptAccess\"/>" + "<param value=\"opaque\" name=\"wmode\"/>"
-        + "<param value=\"{0}?get-data=getChartData\" name=\"movie\"/>"
-        + "<param value=\"high\" name=\"quality\"/>" + "<embed id=\"ofce00b1c87708fe11dea97da1e1ba5b86bc\""
-        + " height=\"100%\"" + " align=\"middle\"" + " width=\"100%\""
-        + " pluginspage=\"http://www.macromedia.com/go/getflashplayer\"" + " type=\"application/x-shockwave-flash\""
-        + " allowscriptaccess=\"sameDomain\"" + " bgcolor=\"#FFFFFF\"" + " quality=\"high\"" + " wmode=\"opaque\""
-        + " src=\"{0}?get-data=getChartData\"/>" + "</object>";
-    final String BODY_TEMPLATE = "{0}"; //$NON-NLS-1$
-    final String js = MessageFormat.format(JS_TEMPLATE, new String[] { openFlashChartJson });
-    final String openFlashChartEmbedHtml = MessageFormat.format(OPEN_FLASH_CHART_TEMPLATE, new String[] { swfUrl });
-    final String body = MessageFormat.format(BODY_TEMPLATE, new String[] { openFlashChartEmbedHtml });
-    return MessageFormat.format(HTML_TEMPLATE, new String[] { js, body });
-
+    return buildOpenFlashChartHtmlFragment(openFlashChartJson, swfUrl, "100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
   }
+  
+  /**
+   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
+   * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
+   * more central to the ChartBeans code.
+   * 
+   * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
+   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string). 
+   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   */
+  public static String buildOpenFlashChartHtmlFragment(String openFlashChartJson, String swfUrl, String chartWidth, String chartHeight) {
+    // generate a unique name for the function
+    String chartId = UUIDUtil.getUUIDAsString().replaceAll("[^\\w]",""); //$NON-NLS-1$ //$NON-NLS-2$
+    
+    // populate the flash html template
+    Properties props = new Properties();
+    props.setProperty("chartId", chartId); //$NON-NLS-1$
+    props.setProperty("dataFunction", "getData" + chartId); //$NON-NLS-1$ //$NON-NLS-2$
+    props.setProperty("chart-width", chartWidth); //$NON-NLS-1$
+    props.setProperty("chart-height", chartHeight); //$NON-NLS-1$
+    props.setProperty("ofc-url", swfUrl); //$NON-NLS-1$
+    props.setProperty("chartJson", openFlashChartJson); //$NON-NLS-1$
 
+    String flashHtml = MessageFormat.format(HTML_TEMPLATE, new String[] { 
+        TemplateUtil.applyTemplate(flashScriptFragment, props, null), 
+        TemplateUtil.applyTemplate(flashObjectFragment, props, null) });
+    
+    return flashHtml;
+  }
 }

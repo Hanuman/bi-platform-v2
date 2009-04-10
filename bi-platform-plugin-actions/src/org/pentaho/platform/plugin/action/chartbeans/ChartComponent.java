@@ -17,6 +17,7 @@
 */
 package org.pentaho.platform.plugin.action.chartbeans;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,12 +30,12 @@ import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
 import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
-import org.pentaho.chart.core.ChartDocument;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.DialPlot;
 import org.pentaho.chart.model.PiePlot;
 import org.pentaho.chart.model.util.ChartSerializer;
+import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
 import org.pentaho.chart.plugin.ChartPluginFactory;
 import org.pentaho.chart.plugin.ChartProcessingException;
 import org.pentaho.chart.plugin.IChartPlugin;
@@ -73,7 +74,7 @@ public class ChartComponent {
   
   protected Exception bootException = null;
   
-  protected String outputType = "image-png"; //$NON-NLS-1$
+  protected String outputType = "text/html"; //$NON-NLS-1$
   
   protected int chartWidth = -1;
 
@@ -81,9 +82,15 @@ public class ChartComponent {
   
   protected OutputStream outputStream = null;
   
-  protected String serializedChartModel = null;
+  protected String chartModelJson = null;
+  
+  protected String chartModelXml = null;
   
   protected ChartModel chartModel = null;
+
+  private static final String DEFAULT_FLASH_LOC = "openflashchart"; //$NON-NLS-1$
+  
+  private static final String DEFAULT_FLASH_SWF = "open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$s
 
   /**
    * Initialize ChartBeans engine
@@ -136,26 +143,44 @@ public class ChartComponent {
     
     try{
       
-      AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
-        protected List<File> getThemeFiles() {
-          ArrayList<File> themeFiles = new ArrayList<File>();
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml")));
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml")));
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme3.xml")));
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme4.xml")));
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme5.xml")));
-          themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme6.xml")));
-          return themeFiles;
+      if(chartModel.getTheme() != null){
+        AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
+          protected List<File> getThemeFiles() {
+            ArrayList<File> themeFiles = new ArrayList<File>();
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme3.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme4.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme5.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme6.xml"))); //$NON-NLS-1$
+            return themeFiles;
+              }
+        };
+        
+        
+        Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
+        if (chartTheme != null) {
+          chartTheme.applyTo(chartModel);
             }
-      };
-      
-      
-      Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
-      if (chartTheme != null) {
-        chartTheme.applyTo(chartModel);
-          }
+      }
       
       InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
+      
+      // Wrap output as necessary
+      if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
+        // Convert stream to string, insert into HTML fragment and re-stream it
+        StringBuilder sb = new StringBuilder();
+        int c = 0;
+        
+        // Build string
+        while((c = is.read()) >= 0){
+          sb.append((char)c);
+        }
+        
+        String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+        
+        is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
+      }
 
       int val = 0;
       
@@ -260,15 +285,12 @@ public class ChartComponent {
       }
     }
     
+    loadChartModel();
+    
     if(chartModel == null){
-      if(serializedChartModel != null){
-        chartModel = ChartSerializer.deSerialize(serializedChartModel);
-      } else {
-        // No chart model is available
-        return false;
-      }
+      return false;
     }
-
+    
     //Verify that all columns required for a given chart type are present
     if(chartModel.getPlot() instanceof DialPlot){
       if(valueColumn < 0){
@@ -337,9 +359,9 @@ public class ChartComponent {
    * @return output type
    */
   protected OutputTypes getOutputType(){
-    if(outputType.equals("image-jpg")){ //$NON-NLS-1$
+    if(outputType.equals("image/jpg")){ //$NON-NLS-1$
       return OutputTypes.FILE_TYPE_JPEG;
-    } else if (outputType.equals("image-png")){ //$NON-NLS-1$
+    } else if (outputType.equals("image/png")){ //$NON-NLS-1$
       return OutputTypes.FILE_TYPE_PNG;
     }
     
@@ -351,23 +373,48 @@ public class ChartComponent {
    * @return mime type
    */
   public String getMimeType(){
-      if(outputType.equals("image-jpg")){ //$NON-NLS-1$
-        return "image/jpeg"; //$NON-NLS-1$
-      } else if (outputType.equals("image-png")){ //$NON-NLS-1$
-        return "image/png";  //$NON-NLS-1$
-      } else if (outputType.equals("text-html")){ //$NON-NLS-1$
-        return "text/html"; //$NON-NLS-1$
+    loadChartModel();
+    
+    if(chartModel != null){
+      switch(chartModel.getChartEngine()){
+        case ChartModel.CHART_ENGINE_JFREE: {
+          outputType = "image/png"; //$NON-NLS-1$
+        }break;
+        case ChartModel.CHART_ENGINE_OPENFLASH: {
+          outputType = "text/html"; //$NON-NLS-1$
+        }break;
       }
-      
-      return null;
+    }
+
+    return outputType;
+  }
+  
+  protected void loadChartModel(){
+    if(chartModel == null){
+      if(chartModelJson != null){
+        chartModel = ChartSerializer.deSerialize(chartModelJson, ChartSerializationFormat.JSON);
+      } else {
+        if(chartModelXml != null){
+          chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
+        }
+      }
+    }
   }
   
   /**
    * Set the JSON representation of the ChartModel
-   * @param serializedChartModel JSON serialized representation of the ChartModel
+   * @param chartModelJson JSON serialized representation of the ChartModel
    */
-  public void setChartModel(String serializedChartModel) {
-    this.serializedChartModel = serializedChartModel;
+  public void setChartModelJson(String chartModelJson) {
+    this.chartModelJson = chartModelJson;
+  }
+  
+  /**
+   * Set the XML representation of the ChartModel
+   * @param chartStyleXml XML serialized representation of the ChartModel
+   */
+  public void setChartModelXml(String chartModelXml){
+    this.chartModelXml = chartModelXml;
   }
   
   /**
