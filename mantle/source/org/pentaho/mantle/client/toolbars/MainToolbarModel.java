@@ -82,7 +82,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements SolutionB
     boolean prevVal = this.printEnabled;
     printEnabled = enabled;
 
-    this.firePropertyChange("printEnabled", prevVal, saveEnabled);
+    this.firePropertyChange("printEnabled", prevVal, enabled);
   }
 
   public void setNewAnalysisEnabled(Boolean enabled)
@@ -90,7 +90,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements SolutionB
     boolean prevVal = this.newAnalysisEnabled;
     newAnalysisEnabled = enabled;
 
-    this.firePropertyChange("printEnabled", prevVal, newAnalysisEnabled);
+    this.firePropertyChange("newAnalysisEnabled", prevVal, newAnalysisEnabled);
   }
 
   public void executeOpenFileCommand()
