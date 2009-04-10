@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
@@ -43,6 +44,7 @@ import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 
 /**
@@ -87,6 +89,8 @@ public class ChartComponent {
   protected String chartModelXml = null;
   
   protected ChartModel chartModel = null;
+  
+  protected String title = null;  
 
   private static final String DEFAULT_FLASH_LOC = "openflashchart"; //$NON-NLS-1$
   
@@ -395,6 +399,11 @@ public class ChartComponent {
         chartModel = ChartSerializer.deSerialize(chartModelJson, ChartSerializationFormat.JSON);
       } else {
         if(chartModelXml != null){
+          // Replace place holders in xml
+          Properties props = new Properties();
+          if(title != null){ props.setProperty("title", title); }//$NON-NLS-1$
+          
+          chartModelXml = TemplateUtil.applyTemplate(chartModelXml, props, null);
           chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
         }
       }
@@ -455,5 +464,13 @@ public class ChartComponent {
    */
   public void setChartHeight(String chartHeight){
     this.chartHeight = Integer.valueOf(chartHeight);
+  }
+  
+  /**
+   * Fill in the title variable in a chart definition xml
+   * @param title value to replace in the chart definition
+   */
+  public void setTitle(String title){
+    this.title = title;
   }
 }
