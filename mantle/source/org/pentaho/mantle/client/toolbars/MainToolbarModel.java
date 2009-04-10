@@ -74,7 +74,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements SolutionB
     boolean prevVal = this.saveAsEnabled;
     saveAsEnabled = enabled;
 
-    this.firePropertyChange("saveAsEnabled", prevVal, saveEnabled);
+    this.firePropertyChange("saveAsEnabled", prevVal, saveAsEnabled);
   }
 
   public void setPrintEnabled(Boolean enabled)
