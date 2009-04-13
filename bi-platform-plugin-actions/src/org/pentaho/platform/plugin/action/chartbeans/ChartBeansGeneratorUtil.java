@@ -137,7 +137,7 @@ public class ChartBeansGeneratorUtil {
     // Setup parameters to be passed to the xaction
     Map<String, Object> params = new HashMap<String, Object>();
 
-    params.put("chart-model", serializedChartModel); //$NON-NLS-1$
+    params.put("chart-model-json", serializedChartModel); //$NON-NLS-1$
     params.put("chart-width", chartWidth); //$NON-NLS-1$
     params.put("chart-height", chartHeight); //$NON-NLS-1$
 
