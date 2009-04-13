@@ -24,7 +24,7 @@
         <dependency org="commons-logging"       name="commons-logging"    rev="1.1"   transitive="false"/>
         <dependency org="commons-httpclient"    name="commons-httpclient" rev="3.0.1" transitive="false"/>
         <dependency org="commons-codec"         name="commons-codec"      rev="1.3"/>
-        <dependency org="org.zenica"            name="gwt-datepicker"     rev="r17" />
+        <dependency org="org.zenica"            name="gwt-datepicker"     rev="r18" />
         <dependency org="com.google.gwt"        name="gwt-servlet"        rev="1.5.2" />
 
 		    <!--  Pentaho dependencies -->
