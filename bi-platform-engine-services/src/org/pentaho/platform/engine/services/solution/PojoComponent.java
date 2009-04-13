@@ -105,8 +105,13 @@ public class PojoComponent extends ComponentBase {
       }
     }
   }
-
-  protected void callMethod( List<Method> methods, Object value ) throws Throwable {
+  
+  protected void callMethod(Method method, Object value) throws Throwable {
+    List<Method> methods = Arrays.asList(new Method[]{method});
+    callMethods(methods, value);
+  }
+  
+  protected void callMethods( List<Method> methods, Object value ) throws Throwable {
     if( value instanceof String ) {
       callMethodWithString( methods, value.toString() );
       return;
@@ -200,7 +205,9 @@ public class PojoComponent extends ComponentBase {
   }
   
   protected void callMethodWithString( List<Method> methodList, String value ) throws Throwable {
-    boolean done = false;    
+    boolean done = false;
+    
+    value = applyInputsToFormat(value);
     
     //Search ALL instances of a given method for an implementation
     //that takes a single string
@@ -294,12 +301,12 @@ public class PojoComponent extends ComponentBase {
 
     // set the PentahoSession
     if( sessionMethod != null ) {
-      callMethod( Arrays.asList(new Method[]{sessionMethod}), getSession() );
+      callMethods( Arrays.asList(new Method[]{sessionMethod}), getSession() );
     }
     
     // set the logger
     if( loggerMethod != null ) {
-      callMethod( Arrays.asList(new Method[]{loggerMethod}), getLogger() );
+      callMethods( Arrays.asList(new Method[]{loggerMethod}), getLogger() );
     }
     
     Map<String,Object> inputMap = new HashMap<String,Object>();
@@ -314,6 +321,7 @@ public class PojoComponent extends ComponentBase {
       String name = node.getName().replace("-", "").toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
       if( !name.equals( "CLASS" ) && !name.equals( "OUTPUTSTREAM" )) { //$NON-NLS-1$ //$NON-NLS-2$
         String value = node.getText();
+
         List<Method> method = setMethods.get( name );
         if( method != null ) {
           callMethodWithString( method, value );
@@ -339,33 +347,31 @@ public class PojoComponent extends ComponentBase {
         name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
         resourceMap.put(name, resource);
         List<Method> methods = setMethods.get( name.toUpperCase() );
+        
         if( methods != null ) {
           for(Method method : methods){
             Class<?>[] paramTypes = method.getParameterTypes();
             if(paramTypes.length == 1){
+              Object value = null;
+              
               if(paramTypes[0] == InputStream.class ) {
-                InputStream in = getRuntimeContext().getResourceInputStream( resource );
-                method.invoke(pojo, new Object[] { in } );
-                break;
+                value = getRuntimeContext().getResourceInputStream( resource );
               } else if(paramTypes[0] == IActionSequenceResource.class ) {
-                method.invoke(pojo, new Object[] { resource } );
-                break;
+                value = resource;
               } else if(paramTypes[0] == String.class){
-                String str = getRuntimeContext().getResourceAsString(resource);
-                method.invoke(pojo, new Object[] { str } );
-                break;
+                value = getRuntimeContext().getResourceAsString(resource);
               } else if(paramTypes[0] == Document.class){
-                Document doc = getRuntimeContext().getResourceAsDocument(resource);
-                method.invoke(pojo, new Object[] { doc } );
-                break;
+                value = getRuntimeContext().getResourceAsDocument(resource);
               }
+              
+              callMethod(method, value);
             }
           }
         } else {
           // BISERVER-2715 we should ignore this as the resource might be meant for another component
         }
-        }
       }
+    }
     
     // now process all of the inputs, overriding the component settings
     it = inputNames.iterator();
@@ -376,12 +382,13 @@ public class PojoComponent extends ComponentBase {
       name = name.replace("-", ""); //$NON-NLS-1$ //$NON-NLS-2$
       List<Method> methods = setMethods.get( name.toUpperCase() );
       if( methods != null ) {
-        callMethod( methods, value );
+        callMethods( methods, value );
       } 
       else if( runtimeInputsMethod != null ) {
         inputMap.put(name, value);
       } else {
-        throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
+        // Supress error (For string/value replacement)
+        getLogger().warn(Messages.getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
       }
     }
     
