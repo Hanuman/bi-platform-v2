@@ -17,11 +17,11 @@
         <request>query</request> 
       </sources>  
     </query> 
-    <chart-model type="string">
+    <chart-model-json type="string">
       <sources>
-        <request>chart-model</request>
+        <request>chart-model-json</request>
       </sources>
-    </chart-model>
+    </chart-model-json>
     <chart-width type="integer">
       <sources>
         <request>chart-width</request>
@@ -84,7 +84,7 @@
     <action-definition>
       <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
       <action-inputs> 
-        <chart-model type="string"/>
+        <chart-model-json type="string"/>
         <chartdata type="result-set" />
         <chart-width type="integer"/>
         <chart-height type="integer"/>
