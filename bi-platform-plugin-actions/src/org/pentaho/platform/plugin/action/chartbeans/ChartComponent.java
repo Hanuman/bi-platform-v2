@@ -399,11 +399,6 @@ public class ChartComponent {
         chartModel = ChartSerializer.deSerialize(chartModelJson, ChartSerializationFormat.JSON);
       } else {
         if(chartModelXml != null){
-          // Replace place holders in xml
-          Properties props = new Properties();
-          if(title != null){ props.setProperty("title", title); }//$NON-NLS-1$
-          
-          chartModelXml = TemplateUtil.applyTemplate(chartModelXml, props, null);
           chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
         }
       }
@@ -464,13 +459,5 @@ public class ChartComponent {
    */
   public void setChartHeight(String chartHeight){
     this.chartHeight = Integer.valueOf(chartHeight);
-  }
-  
-  /**
-   * Fill in the title variable in a chart definition xml
-   * @param title value to replace in the chart definition
-   */
-  public void setTitle(String title){
-    this.title = title;
   }
 }
