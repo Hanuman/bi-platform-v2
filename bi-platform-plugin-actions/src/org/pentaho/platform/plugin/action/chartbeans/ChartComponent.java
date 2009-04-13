@@ -56,8 +56,6 @@ import org.pentaho.reporting.libraries.resourceloader.ResourceException;
  *
  */
 public class ChartComponent {
-  protected static final String DEFAULT_CHART_PLUGIN = "org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin"; //$NON-NLS-1$
-  
   protected static final int DEFAULT_CHART_WIDTH = 400;
   protected static final int DEFAULT_CHART_HEIGHT = 300;
   
@@ -72,7 +70,7 @@ public class ChartComponent {
   
   protected IPentahoResultSet resultSet = null;
   
-  protected String chartPlugin = null;
+  protected int chartPlugin = ChartModel.CHART_ENGINE_OPENFLASH;
   
   protected Exception bootException = null;
   
@@ -346,19 +344,6 @@ public class ChartComponent {
   }
   
   /**
-   * Fetch an instance of the desired chart plugin
-   * @return instance of chart plugin
-   * @throws ChartProcessingException
-   */
-  protected IChartPlugin getChartPlugin() throws ChartProcessingException {
-    if (chartPlugin == null) {
-      chartPlugin = DEFAULT_CHART_PLUGIN;
-    }
-
-    return ChartPluginFactory.getInstance(chartPlugin);
-  }
-  
-  /**
    * Fetch the desired output type
    * @return output type
    */
@@ -402,6 +387,10 @@ public class ChartComponent {
           chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
         }
       }
+    }
+    
+    if(chartModel != null){
+      chartModel.setChartEngine(chartPlugin);
     }
   }
   
@@ -459,5 +448,17 @@ public class ChartComponent {
    */
   public void setChartHeight(String chartHeight){
     this.chartHeight = Integer.valueOf(chartHeight);
+  }
+
+  public String getChartPlugin() {
+    return ChartModel.getChartEngineFriendlyNameFromId(chartPlugin);
+  }
+
+  public void setChartPlugin(int chartPlugin) {
+    this.chartPlugin = chartPlugin;
+  }
+  
+  public void setChartPlugin(String chartPlugin) {
+    this.chartPlugin = ChartModel.getChartEngineIdFromFriendlyName(chartPlugin);
   }
 }
