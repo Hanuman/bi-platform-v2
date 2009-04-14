@@ -1,14 +1,14 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
+ * This program is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
  * Foundation.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
- * or from the Free Software Foundation, Inc., 
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * or from the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
@@ -47,9 +47,9 @@ import com.ibm.icu.text.MessageFormat;
 public class ChartBeansGeneratorUtil {
 
   private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title>{0}</head><body>{1}</body></html>"; //$NON-NLS-1$
-  
+
   protected static String flashScriptFragment = "<script>function {dataFunction}() { return \"{chartJson}\";}</script>"; //$NON-NLS-1$
-  
+
   protected static String flashObjectFragment =
     "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
     + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" " //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class ChartBeansGeneratorUtil {
   /**
    * The engine that processes the parameters from the specific interface methods
    * and writes a chart to the output stream or returns an input stream for reading
-   * 
+   *
    * @param mqlQueryString
    * @param serializedChartModel
    * @param chartWidth
@@ -203,7 +203,7 @@ public class ChartBeansGeneratorUtil {
   }
 
   /**
-   * Convenience method that returns a complete HTML document containing the chart. Resource references point back to 
+   * Convenience method that returns a complete HTML document containing the chart. Resource references point back to
    * the BI Server.
    */
   public static String createChartAsHtml(IPentahoSession userSession, String serializedChartDataDefinition,
@@ -243,11 +243,6 @@ public class ChartBeansGeneratorUtil {
       html = IOUtils.toString(in, ENCODING);
       IOUtils.closeQuietly(in);
 
-      final String SWF_URL_TEMPLATE = "{0}openflashchart/open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$
-      final String swfUrl = MessageFormat.format(SWF_URL_TEMPLATE, new String[] { PentahoSystem.getApplicationContext()
-          .getBaseUrl() });
-      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson.replace("\"", "\\\""), swfUrl);  //$NON-NLS-1$  //$NON-NLS-2$
-
     } else {
       throw new IllegalArgumentException("unrecognized chart engine");  //$NON-NLS-1$
     }
@@ -256,7 +251,7 @@ public class ChartBeansGeneratorUtil {
   }
 
   /**
-   * Returns a complete HTML document that references a static image held in a temporary file on the server. 
+   * Returns a complete HTML document that references a static image held in a temporary file on the server.
    * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
    */
   public static String mergeStaticImageHtmlTemplate(String imageUrl) {
@@ -269,28 +264,28 @@ public class ChartBeansGeneratorUtil {
    * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
    * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
    * more central to the ChartBeans code.
-   * 
+   *
    * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
-   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string). 
+   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string).
    * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
    */
   public static String mergeOpenFlashChartHtmlTemplate(String openFlashChartJson, String swfUrl) {
     return buildOpenFlashChartHtmlFragment(openFlashChartJson, swfUrl, "100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
   }
-  
+
   /**
    * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
    * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
    * more central to the ChartBeans code.
-   * 
+   *
    * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
-   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string). 
+   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string).
    * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
    */
   public static String buildOpenFlashChartHtmlFragment(String openFlashChartJson, String swfUrl, String chartWidth, String chartHeight) {
     // generate a unique name for the function
     String chartId = UUIDUtil.getUUIDAsString().replaceAll("[^\\w]",""); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     // populate the flash html template
     Properties props = new Properties();
     props.setProperty("chartId", chartId); //$NON-NLS-1$
@@ -300,10 +295,10 @@ public class ChartBeansGeneratorUtil {
     props.setProperty("ofc-url", swfUrl); //$NON-NLS-1$
     props.setProperty("chartJson", openFlashChartJson); //$NON-NLS-1$
 
-    String flashHtml = MessageFormat.format(HTML_TEMPLATE, new String[] { 
-        TemplateUtil.applyTemplate(flashScriptFragment, props, null), 
+    String flashHtml = MessageFormat.format(HTML_TEMPLATE, new String[] {
+        TemplateUtil.applyTemplate(flashScriptFragment, props, null),
         TemplateUtil.applyTemplate(flashObjectFragment, props, null) });
-    
+
     return flashHtml;
   }
 }
