@@ -70,11 +70,11 @@ public class ChartComponent {
   
   protected IPentahoResultSet resultSet = null;
   
-  protected int chartPlugin = ChartModel.CHART_ENGINE_OPENFLASH;
+  protected int chartEngine = ChartModel.CHART_ENGINE_OPENFLASH;
   
   protected Exception bootException = null;
   
-  protected String outputType = "text/html"; //$NON-NLS-1$
+  protected String outputType = ""; //$NON-NLS-1$
   
   protected int chartWidth = -1;
 
@@ -249,7 +249,7 @@ public class ChartComponent {
     if(resultSet == null){
       return false;
     }
-    
+   
     //Default to the first three columns if no others are explicitly specified
     //Resolve column name to column ordinal if present
     if(seriesColumnName != null){
@@ -286,7 +286,7 @@ public class ChartComponent {
         valueColumn = 2;
       }
     }
-    
+
     loadChartModel();
     
     if(chartModel == null){
@@ -315,7 +315,7 @@ public class ChartComponent {
     if(chartHeight <= 0){
       chartHeight = DEFAULT_CHART_HEIGHT;
     }
-
+    
     return true;
   }
   
@@ -348,9 +348,9 @@ public class ChartComponent {
    * @return output type
    */
   protected OutputTypes getOutputType(){
-    if(outputType.equals("image/jpg")){ //$NON-NLS-1$
+    if(outputType.equals("jpg")){ //$NON-NLS-1$
       return OutputTypes.FILE_TYPE_JPEG;
-    } else if (outputType.equals("image/png")){ //$NON-NLS-1$
+    } else if (outputType.equals("png")){ //$NON-NLS-1$
       return OutputTypes.FILE_TYPE_PNG;
     }
     
@@ -366,16 +366,27 @@ public class ChartComponent {
     
     if(chartModel != null){
       switch(chartModel.getChartEngine()){
+        
         case ChartModel.CHART_ENGINE_JFREE: {
-          outputType = "image/png"; //$NON-NLS-1$
-        }break;
+          if(outputType.equalsIgnoreCase("jpg")){ //$NON-NLS-1$
+            return "image/jpg"; //$NON-NLS-1$
+          } else if(outputType.equalsIgnoreCase("png")){ //$NON-NLS-1$
+            return "image/png"; //$NON-NLS-1$
+          }
+          
+          //Default JFREE action
+          outputType = "png"; //$NON-NLS-1$
+          return "image/png"; //$NON-NLS-1$
+        }
+        
         case ChartModel.CHART_ENGINE_OPENFLASH: {
-          outputType = "text/html"; //$NON-NLS-1$
-        }break;
+          outputType = "html"; //$NON-NLS-1$
+          return "text/html"; //$NON-NLS-1$
+        }
       }
     }
 
-    return outputType;
+    return "text/html"; //$NON-NLS-1$
   }
   
   protected void loadChartModel(){
@@ -390,7 +401,7 @@ public class ChartComponent {
     }
     
     if(chartModel != null){
-      chartModel.setChartEngine(chartPlugin);
+      chartModel.setChartEngine(chartEngine);
     }
   }
   
@@ -450,15 +461,31 @@ public class ChartComponent {
     this.chartHeight = Integer.valueOf(chartHeight);
   }
 
-  public String getChartPlugin() {
-    return ChartModel.getChartEngineFriendlyNameFromId(chartPlugin);
+  /**
+   * Get the chart engine that the resulting chart was created through
+   * @return
+   */
+  public String getChartEngine() {
+    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine);
   }
 
-  public void setChartPlugin(int chartPlugin) {
-    this.chartPlugin = chartPlugin;
+  /**
+   * Set the chart engine to render the chart
+   * @param chartEngine Integer value of chart engine
+   */
+  public void setChartEngine(int chartEngine) {
+    this.chartEngine = chartEngine;
   }
   
-  public void setChartPlugin(String chartPlugin) {
-    this.chartPlugin = ChartModel.getChartEngineIdFromFriendlyName(chartPlugin);
+  /**
+   * Set the chart engine to render the chart
+   * @param chartEngine Value of "JFreeChart" or "OpenFlashChart"
+   */
+  public void setChartEngine(String chartEngine) {
+    this.chartEngine = ChartModel.getChartEngineIdFromFriendlyName(chartEngine);
+  }
+  
+  public void setOutputType(String outputType){
+    this.outputType = outputType;
   }
 }
