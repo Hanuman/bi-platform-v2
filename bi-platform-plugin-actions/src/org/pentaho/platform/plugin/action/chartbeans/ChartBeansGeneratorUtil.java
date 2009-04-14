@@ -243,6 +243,11 @@ public class ChartBeansGeneratorUtil {
       html = IOUtils.toString(in, ENCODING);
       IOUtils.closeQuietly(in);
 
+      final String SWF_URL_TEMPLATE = "{0}openflashchart/open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$
+      final String swfUrl = MessageFormat.format(SWF_URL_TEMPLATE, new String[] { PentahoSystem.getApplicationContext()
+          .getBaseUrl() });
+      html = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(openFlashChartJson.replace("\"", "\\\""), swfUrl);  //$NON-NLS-1$  //$NON-NLS-2$
+
     } else {
       throw new IllegalArgumentException("unrecognized chart engine");  //$NON-NLS-1$
     }
