@@ -1,21 +1,21 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
- * Foundation.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * or from the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
- *
-*/
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License, version 2.1 as published by the Free Software Foundation. You should have received a copy of the GNU
+ * Lesser General Public License along with this program; if not, you can obtain a copy at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html or from the Free Software Foundation, Inc., 51 Franklin
+ * Street, Fifth Floor, Boston, MA 02110-1301 USA. This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details. Copyright 2008 - 2009 Pentaho Corporation. All rights
+ * reserved.
+ */
 package org.pentaho.platform.plugin.action.chartbeans;
+
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.CONTENT_TYPE;
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.INTEGER_TYPE;
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.REQUEST_INPUT_SOURCE;
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.RESPONSE_OUTPUT_DESTINATION;
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.RESULTSET_TYPE;
+import static org.pentaho.actionsequence.dom.IActionSequenceDocument.STRING_TYPE;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -25,19 +25,34 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.pentaho.actionsequence.dom.ActionSequenceDocument;
+import org.pentaho.actionsequence.dom.IActionSequenceInput;
+import org.pentaho.actionsequence.dom.IActionSequenceOutput;
+import org.pentaho.actionsequence.dom.actions.MQLAction;
+import org.pentaho.actionsequence.dom.actions.PojoAction;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
+import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.IOutputHandler;
+import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+import org.pentaho.platform.api.engine.IRuntimeContext;
+import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
+import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
-import org.pentaho.platform.engine.services.solution.SolutionHelper;
 import org.pentaho.platform.util.UUIDUtil;
+import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -48,77 +63,37 @@ public class ChartBeansGeneratorUtil {
 
   private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title>{0}</head><body>{1}</body></html>"; //$NON-NLS-1$
 
-  protected static String flashScriptFragment = "<script type=\"text/javascript\">function {dataFunction}() { return /*JSON*/\"{chartJson}\"/*END_JSON*/;}</script>"; //$NON-NLS-1$
+  private static String flashScriptFragment = "<script type=\"text/javascript\">function {dataFunction}() { return /*JSON*/\"{chartJson}\"/*END_JSON*/;}</script>"; //$NON-NLS-1$
 
-  protected static String flashObjectFragment =
-    "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
-    + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" " //$NON-NLS-1$
-    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofco{chartId}\" align=\"middle\"> " //$NON-NLS-1$
-    + "<param name=\"allowScriptAccess\" value=\"sameDomain\" /> " //$NON-NLS-1$
-    + "<param name=\"wmode\" value=\"opaque\">"  //$NON-NLS-1$
-    + "<param name=\"movie\" value=\"{ofc-url}?get-data={dataFunction}\" /> " //$NON-NLS-1$
-    + "<param name=\"quality\" value=\"high\" /> " //$NON-NLS-1$
-    + "<embed src=\"{ofc-url}?get-data={dataFunction}\" wmode=\"opaque\" quality=\"high\" bgcolor=\"#FFFFFF\" " //$NON-NLS-1$
-    + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofce{chartId}\" align=\"middle\" allowScriptAccess=\"sameDomain\" type=\"application/x-shockwave-flash\" " //$NON-NLS-1$
-    + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" /></object>"; //$NON-NLS-1$
+  private static String flashObjectFragment = "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
+      + "codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" " //$NON-NLS-1$
+      + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofco{chartId}\" align=\"middle\"> " //$NON-NLS-1$
+      + "<param name=\"allowScriptAccess\" value=\"sameDomain\" /> " //$NON-NLS-1$
+      + "<param name=\"wmode\" value=\"opaque\">" //$NON-NLS-1$
+      + "<param name=\"movie\" value=\"{ofc-url}?get-data={dataFunction}\" /> " //$NON-NLS-1$
+      + "<param name=\"quality\" value=\"high\" /> " //$NON-NLS-1$
+      + "<embed src=\"{ofc-url}?get-data={dataFunction}\" wmode=\"opaque\" quality=\"high\" bgcolor=\"#FFFFFF\" " //$NON-NLS-1$
+      + "width=\"{chart-width}\" height=\"{chart-height}\"  id=\"ofce{chartId}\" align=\"middle\" allowScriptAccess=\"sameDomain\" type=\"application/x-shockwave-flash\" " //$NON-NLS-1$
+      + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" /></object>"; //$NON-NLS-1$
 
   private ChartBeansGeneratorUtil() {
   }
 
-  public static void createChart(IPentahoSession userSession, String serializedChartDataDefinition,
-      String serializedChartModel, int chartWidth, int chartHeight, OutputStream out) throws IOException {
-    ChartBeansGeneratorUtil.internalCreateChart(serializedChartDataDefinition, null, null, null, null,
-        serializedChartModel, chartWidth, chartHeight, userSession, out);
-  }
-
-  public static void createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
-      IPentahoSession userSession, OutputStream out) throws IOException {
-    String serializedChartModel = ChartSerializer.serialize(chartModel, ChartSerializationFormat.JSON);
-    ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
-        chartWidth, chartHeight, userSession, out);
-  }
-
-  public static void createChart(String mqlQueryString, String serializedChartModel, int chartWidth, int chartHeight,
-      IPentahoSession userSession, OutputStream out) throws IOException {
-    ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
-        chartWidth, chartHeight, userSession, out);
-  }
-
-  public static InputStream createChart(IPentahoSession userSession, String serializedChartDataDefinition,
-      String serializedChartModel, int chartWidth, int chartHeight) throws IOException {
-    return ChartBeansGeneratorUtil.internalCreateChart(serializedChartDataDefinition, null, null, null, null,
-        serializedChartModel, chartWidth, chartHeight, userSession, null);
-  }
-
-  public static InputStream createChart(String mqlQueryString, ChartModel chartModel, int chartWidth, int chartHeight,
-      IPentahoSession userSession) throws IOException {
-    String serializedChartModel = ChartSerializer.serialize(chartModel, ChartSerializationFormat.JSON);
-    return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
-        chartWidth, chartHeight, userSession, null);
-  }
-
-  public static InputStream createChart(String mqlQueryString, String serializedChartModel, int chartWidth,
-      int chartHeight, IPentahoSession userSession) throws IOException {
-    return ChartBeansGeneratorUtil.internalCreateChart(null, mqlQueryString, null, null, null, serializedChartModel,
-        chartWidth, chartHeight, userSession, null);
-  }
-
   /**
-   * The engine that processes the parameters from the specific interface methods
-   * and writes a chart to the output stream or returns an input stream for reading
-   *
-   * @param mqlQueryString
+   * The engine that processes the parameters from the specific interface methods and writes a chart to the output
+   * stream or returns an input stream for reading.
+   * 
+   * @param pentahoSession
+   * @param serializedChartDataDefinition
    * @param serializedChartModel
    * @param chartWidth
    * @param chartHeight
-   * @param userSession
    * @param outputStream
    * @return
    * @throws IOException
    */
-  protected static InputStream internalCreateChart(String serializedChartDataDefinition, String mqlQueryString,
-      String seriesColumn, String categoryColumn, String valueColumn, String serializedChartModel, int chartWidth,
-      int chartHeight, IPentahoSession userSession, OutputStream outputStream) throws IOException {
+  private static InputStream internalCreateChart(IPentahoSession pentahoSession, String serializedChartDataDefinition,
+      String serializedChartModel, int chartWidth, int chartHeight, OutputStream outputStream) throws IOException {
     InputStream result = null;
     ByteArrayOutputStream resultOutputStream = null;
     OutputStream out = null;
@@ -141,53 +116,27 @@ public class ChartBeansGeneratorUtil {
     params.put("chart-width", chartWidth); //$NON-NLS-1$
     params.put("chart-height", chartHeight); //$NON-NLS-1$
 
-    // Chart data definition takes precedence over individual parts
-    if (serializedChartDataDefinition != null) {
-      // De-serialize the chartDataDefintion and extract relevant parts
-      ChartDataDefinition chartDataDefinition = ChartSerializer
-          .deSerializeDataDefinition(serializedChartDataDefinition, ChartSerializationFormat.JSON);
+    // De-serialize the chartDataDefintion and extract relevant parts
+    ChartDataDefinition chartDataDefinition = ChartSerializer.deSerializeDataDefinition(serializedChartDataDefinition,
+        ChartSerializationFormat.JSON);
 
-      if (chartDataDefinition.getQuery() != null) {
-        params.put("query", chartDataDefinition.getQuery()); //$NON-NLS-1$
-      }
-
-      if (chartDataDefinition.getDomainColumn() != null) {
-        params.put("series-column", chartDataDefinition.getDomainColumn()); //$NON-NLS-1$
-      }
-
-      if (chartDataDefinition.getCategoryColumn() != null) {
-        params.put("category-column", chartDataDefinition.getCategoryColumn()); //$NON-NLS-1$
-      }
-
-      if (chartDataDefinition.getRangeColumn() != null) {
-        params.put("value-column", chartDataDefinition.getRangeColumn()); //$NON-NLS-1$
-      }
+    if (chartDataDefinition.getQuery() != null) {
+      params.put("query", chartDataDefinition.getQuery()); //$NON-NLS-1$
     }
 
-    // Setup remaining data portion of chart
-    if (!params.containsKey("query")) { //$NON-NLS-1$
-      params.put("query", mqlQueryString); //$NON-NLS-1$
+    if (chartDataDefinition.getDomainColumn() != null) {
+      params.put("series-column", chartDataDefinition.getDomainColumn()); //$NON-NLS-1$
     }
 
-    if (!params.containsKey("series-column")) { //$NON-NLS-1$
-      if (seriesColumn != null) {
-        params.put("series-column", seriesColumn); //$NON-NLS-1$
-      }
+    if (chartDataDefinition.getCategoryColumn() != null) {
+      params.put("category-column", chartDataDefinition.getCategoryColumn()); //$NON-NLS-1$
     }
 
-    if (!params.containsKey("category-column")) { //$NON-NLS-1$
-      if (categoryColumn != null) {
-        params.put("category-column", categoryColumn); //$NON-NLS-1$
-      }
+    if (chartDataDefinition.getRangeColumn() != null) {
+      params.put("value-column", chartDataDefinition.getRangeColumn()); //$NON-NLS-1$
     }
 
-    if (!params.containsKey("value-column")) { //$NON-NLS-1$
-      if (valueColumn != null) {
-        params.put("value-column", valueColumn); //$NON-NLS-1$
-      }
-    }
-
-    SolutionHelper.execute("XAction", userSession, "system/chartbeans/chartbeans_mql.xaction", params, out, true); //$NON-NLS-1$ //$NON-NLS-2$
+    createAndRunActionSequence(pentahoSession, params, chartDataDefinition.getDefaultParameterMap(), out);
 
     if (out instanceof BufferedOutputStream) {
       out.flush();
@@ -200,6 +149,138 @@ public class ChartBeansGeneratorUtil {
     }
 
     return null;
+  }
+
+  private static void createAndRunActionSequence(final IPentahoSession pentahoSession,
+      final Map<String, Object> params, final Map<String, String> defaultParameterMap, final OutputStream out) {
+
+    SimpleParameterProvider parameterProvider = new SimpleParameterProvider(params);
+
+    // add the default parameter values
+    for (Map.Entry<String, String> entry : defaultParameterMap.entrySet()) {
+      parameterProvider.setParameter(entry.getKey(), entry.getValue());
+    }
+
+    Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
+
+    SimpleOutputHandler outputHandler = new SimpleOutputHandler(out, true);
+    outputHandler.setOutputPreference(IOutputHandler.OUTPUT_TYPE_DEFAULT);
+
+    ActionSequenceDocument doc = createActionSequenceDocument(defaultParameterMap.keySet());
+    runActionSequence(pentahoSession, parameterProviders, outputHandler, doc);
+  }
+
+  /**
+   * Executes an action sequence from an <code>ActionSequenceDocument</code>.
+   * 
+   * @param pentahoSession
+   *          current <code>IPentahoSession</code>
+   * @param parameterProviders
+   *          map of parameter providers; there should a single entry with "request" as the key
+   * @param outputHandler
+   *          output handler
+   * @param doc
+   *          action sequence document
+   * @throws RuntimeException
+   *           if anything goes wrong
+   */
+  private static void runActionSequence(final IPentahoSession pentahoSession,
+      final Map<String, IParameterProvider> parameterProviders, final IOutputHandler outputHandler,
+      final ActionSequenceDocument doc) throws RuntimeException {
+
+    // Get the solution engine
+    ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, pentahoSession);
+    if (solutionEngine == null) {
+      throw new RuntimeException("solutionEngine is null"); //$NON-NLS-1$
+    }
+    solutionEngine.setLoggingLevel(ILogger.DEBUG);
+    solutionEngine.init(pentahoSession);
+
+    IPentahoUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl());
+
+    IRuntimeContext runtime = solutionEngine.execute(doc.toString(), "chartbeans_mql", "myprocessid", false, true, //$NON-NLS-1$ //$NON-NLS-2$
+        "myinstanceid", true, parameterProviders, outputHandler, null, urlFactory, new ArrayList()); //$NON-NLS-1$
+
+    if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
+    } else {
+      StringBuilder buf = new StringBuilder();
+      boolean firstIteration = true;
+      for (Object /* String */message : runtime.getMessages()) {
+        if (!firstIteration) {
+          buf.append(" \\\\ "); //$NON-NLS-1$
+        }
+        buf.append(message);
+      }
+      throw new RuntimeException(buf.toString());
+    }
+
+  }
+
+  /**
+   * Creates an <code>ActionSequenceDocument</code> that will run an MQL query and pipe the results in the ChartBeans
+   * <code>ChartComponent</code>.
+   * 
+   * @param parameterNameSet
+   *          set of parameter names that appear in the MQL query
+   * @return doc
+   */
+  private static ActionSequenceDocument createActionSequenceDocument(final Set<String> parameterNameSet) {
+    ActionSequenceDocument actionSequenceDocument = new ActionSequenceDocument();
+    actionSequenceDocument.setTitle("chartbeans_mql.xaction"); //$NON-NLS-1$
+    actionSequenceDocument.setVersion("1"); //$NON-NLS-1$
+    actionSequenceDocument.setLoggingLevel("debug"); //$NON-NLS-1$
+    actionSequenceDocument.setAuthor("Curtis Boyden"); //$NON-NLS-1$
+    actionSequenceDocument.setDescription("Generate a chart through ChartBeans from an MQL statement."); //$NON-NLS-1$
+    actionSequenceDocument.setHelp("Pass in an MQL statement that returns a table of three columns. The first column " //$NON-NLS-1$
+        + "is the series, the second is the category and the third is the data."); //$NON-NLS-1$
+    actionSequenceDocument.setHelp(""); //$NON-NLS-1$
+    actionSequenceDocument.setResultType("rule"); //$NON-NLS-1$
+
+    IActionSequenceInput queryInput = actionSequenceDocument.createInput("query", STRING_TYPE); //$NON-NLS-1$
+    IActionSequenceInput chartModelJsonInput = actionSequenceDocument.createInput("chart-model-json", STRING_TYPE); //$NON-NLS-1$
+    IActionSequenceInput chartWidthInput = actionSequenceDocument.createInput("chart-width", INTEGER_TYPE); //$NON-NLS-1$
+    chartWidthInput.addSource(REQUEST_INPUT_SOURCE, "chart-width"); //$NON-NLS-1$
+    chartWidthInput.setDefaultValue("1"); //$NON-NLS-1$
+    IActionSequenceInput chartHeightInput = actionSequenceDocument.createInput("chart-height", INTEGER_TYPE); //$NON-NLS-1$
+    chartHeightInput.addSource(REQUEST_INPUT_SOURCE, "chart-height"); //$NON-NLS-1$
+    chartHeightInput.setDefaultValue("1"); //$NON-NLS-1$
+    IActionSequenceInput seriesColumnInput = actionSequenceDocument.createInput("series-column", STRING_TYPE); //$NON-NLS-1$
+    IActionSequenceInput categoryColumnInput = actionSequenceDocument.createInput("category-column", STRING_TYPE); //$NON-NLS-1$
+    IActionSequenceInput valueColumnInput = actionSequenceDocument.createInput("value-column", STRING_TYPE); //$NON-NLS-1$
+
+    // add inputs from parameterNameSet; these parameters will appear as placeholders in the query input
+    for (String parameterName : parameterNameSet) {
+      actionSequenceDocument.createInput(parameterName, STRING_TYPE);
+    }
+
+    IActionSequenceOutput outputStreamOutput = actionSequenceDocument.createOutput("outputstream", CONTENT_TYPE); //$NON-NLS-1$
+    outputStreamOutput.addDestination(RESPONSE_OUTPUT_DESTINATION, "content"); //$NON-NLS-1$
+
+    MQLAction mqlAction = (MQLAction) actionSequenceDocument.addAction(MQLAction.class);
+    mqlAction.setActionInputValue("query", queryInput); //$NON-NLS-1$
+
+    // add inputs from parameterNameSet to this action
+    for (String parameterName : parameterNameSet) {
+      mqlAction.addInput(parameterName, STRING_TYPE);
+    }
+
+    mqlAction.setOutputResultSet("chartdata"); //$NON-NLS-1$
+    mqlAction.setComponentDefinition("live", Boolean.TRUE.toString()); //$NON-NLS-1$
+    mqlAction.setComponentDefinition("display-names", Boolean.FALSE.toString()); //$NON-NLS-1$
+
+    PojoAction pojoAction = (PojoAction) actionSequenceDocument.addAction(PojoAction.class);
+    pojoAction.setActionInputValue("chart-model-json", chartModelJsonInput); //$NON-NLS-1$
+    pojoAction.addInput("chartdata", RESULTSET_TYPE); //$NON-NLS-1$
+    pojoAction.setActionInputValue("chart-width", chartWidthInput); //$NON-NLS-1$
+    pojoAction.setActionInputValue("chart-height", chartHeightInput); //$NON-NLS-1$
+    pojoAction.setActionInputValue("series-column", seriesColumnInput); //$NON-NLS-1$
+    pojoAction.setActionInputValue("category-column", categoryColumnInput); //$NON-NLS-1$
+    pojoAction.setActionInputValue("value-column", valueColumnInput); //$NON-NLS-1$
+    pojoAction.setComponentDefinition("class", "org.pentaho.platform.plugin.action.chartbeans.ChartComponent"); //$NON-NLS-1$ //$NON-NLS-2$
+    pojoAction.addOutput("outputstream", CONTENT_TYPE); //$NON-NLS-1$
+
+    return actionSequenceDocument;
   }
 
   /**
@@ -221,7 +302,7 @@ public class ChartBeansGeneratorUtil {
       BufferedOutputStream bos = null;
       try {
         bos = new BufferedOutputStream(new FileOutputStream(chartFileOnServer));
-        ChartBeansGeneratorUtil.createChart(userSession, serializedChartDataDefinition, serializedChartModel,
+        ChartBeansGeneratorUtil.internalCreateChart(userSession, serializedChartDataDefinition, serializedChartModel,
             chartWidth, chartHeight, bos);
       } finally {
         IOUtils.closeQuietly(bos);
@@ -235,8 +316,8 @@ public class ChartBeansGeneratorUtil {
     } else if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH) {
 
       ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
-      ChartBeansGeneratorUtil.createChart(userSession, serializedChartDataDefinition, serializedChartModel, chartWidth,
-          chartHeight, tmpOut);
+      ChartBeansGeneratorUtil.internalCreateChart(userSession, serializedChartDataDefinition, serializedChartModel,
+          chartWidth, chartHeight, tmpOut);
       final String ENCODING = "UTF-8"; //$NON-NLS-1$
       ByteArrayInputStream in = new ByteArrayInputStream(tmpOut.toByteArray());
       IOUtils.closeQuietly(tmpOut);
@@ -244,7 +325,7 @@ public class ChartBeansGeneratorUtil {
       IOUtils.closeQuietly(in);
 
     } else {
-      throw new IllegalArgumentException("unrecognized chart engine");  //$NON-NLS-1$
+      throw new IllegalArgumentException("unrecognized chart engine"); //$NON-NLS-1$
     }
 
     return html;
@@ -252,7 +333,9 @@ public class ChartBeansGeneratorUtil {
 
   /**
    * Returns a complete HTML document that references a static image held in a temporary file on the server.
-   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   * <p>
+   * Only exposed for debugging (i.e. hosted mode) purposes.
+   * </p>
    */
   public static String mergeStaticImageHtmlTemplate(String imageUrl) {
     final String BODY_TEMPLATE = "<img src=\"{0}\" />"; //$NON-NLS-1$
@@ -261,30 +344,33 @@ public class ChartBeansGeneratorUtil {
   }
 
   /**
-   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
-   * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
-   * more central to the ChartBeans code.
-   *
-   * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
-   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string).
-   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience for
+   * executing the default ActionSequence, if this is to hold true, this method probably needs a new home more central
+   * to the ChartBeans code. Returns a complete HTML document that references an Open Flash Chart SWF resource that
+   * resides on the server along with the data that should be displayed in the chart (via a JavaScript function that
+   * returns a JSON string).
+   * <p>
+   * Only exposed for debugging (i.e. hosted mode) purposes.
+   * </p>
    */
   public static String mergeOpenFlashChartHtmlTemplate(String openFlashChartJson, String swfUrl) {
     return buildOpenFlashChartHtmlFragment(openFlashChartJson, swfUrl, "100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   /**
-   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience
-   * for executing the default ActionSequence, if this is to hold true, this method probably needs a new home
-   * more central to the ChartBeans code.
-   *
-   * Returns a complete HTML document that references an Open Flash Chart SWF resource that resides on the server along
-   * with the data that should be displayed in the chart (via a JavaScript function that returns a JSON string).
-   * <p>Only exposed for debugging (i.e. hosted mode) purposes.</p>
+   * Does this method belong in ChartBeansGeneratorUtil? ChartBeansGeneratorUtil may be more of a convenience for
+   * executing the default ActionSequence, if this is to hold true, this method probably needs a new home more central
+   * to the ChartBeans code. Returns a complete HTML document that references an Open Flash Chart SWF resource that
+   * resides on the server along with the data that should be displayed in the chart (via a JavaScript function that
+   * returns a JSON string).
+   * <p>
+   * Only exposed for debugging (i.e. hosted mode) purposes.
+   * </p>
    */
-  public static String buildOpenFlashChartHtmlFragment(String openFlashChartJson, String swfUrl, String chartWidth, String chartHeight) {
+  private static String buildOpenFlashChartHtmlFragment(String openFlashChartJson, String swfUrl, String chartWidth,
+      String chartHeight) {
     // generate a unique name for the function
-    String chartId = UUIDUtil.getUUIDAsString().replaceAll("[^\\w]",""); //$NON-NLS-1$ //$NON-NLS-2$
+    String chartId = UUIDUtil.getUUIDAsString().replaceAll("[^\\w]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
     // populate the flash html template
     Properties props = new Properties();
