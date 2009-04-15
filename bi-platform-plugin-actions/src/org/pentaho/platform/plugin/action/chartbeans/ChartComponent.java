@@ -179,7 +179,7 @@ public class ChartComponent {
           sb.append((char)c);
         }
         
-        String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+        String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), PentahoSystem.getApplicationContext().getBaseUrl() + DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
         
         is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
       }
