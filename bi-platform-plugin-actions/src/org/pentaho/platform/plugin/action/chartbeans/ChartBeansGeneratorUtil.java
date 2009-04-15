@@ -48,7 +48,7 @@ public class ChartBeansGeneratorUtil {
 
   private static final String HTML_TEMPLATE = "<html><head><title>Command: doChart</title>{0}</head><body>{1}</body></html>"; //$NON-NLS-1$
 
-  protected static String flashScriptFragment = "<script>function {dataFunction}() { return \"{chartJson}\";}</script>"; //$NON-NLS-1$
+  protected static String flashScriptFragment = "<script type=\"text/javascript\">function {dataFunction}() { return /*JSON*/\"{chartJson}\"/*END_JSON*/;}</script>"; //$NON-NLS-1$
 
   protected static String flashObjectFragment =
     "<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" " //$NON-NLS-1$
