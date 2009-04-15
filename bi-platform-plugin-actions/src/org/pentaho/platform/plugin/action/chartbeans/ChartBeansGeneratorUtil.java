@@ -289,7 +289,7 @@ public class ChartBeansGeneratorUtil {
     // populate the flash html template
     Properties props = new Properties();
     props.setProperty("chartId", chartId); //$NON-NLS-1$
-    props.setProperty("dataFunction", "getData" + chartId); //$NON-NLS-1$ //$NON-NLS-2$
+    props.setProperty("dataFunction", "getChartData"); // + chartId); //$NON-NLS-1$ //$NON-NLS-2$
     props.setProperty("chart-width", chartWidth); //$NON-NLS-1$
     props.setProperty("chart-height", chartHeight); //$NON-NLS-1$
     props.setProperty("ofc-url", swfUrl); //$NON-NLS-1$
