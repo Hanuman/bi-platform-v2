@@ -1,16 +1,24 @@
 package org.pentaho.platform.plugin.action.chartbeans;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChartDataDefinition implements Serializable {
   
-  String query;
+  private String query;
 
-  String rangeColumn;
+  /**
+   * A map where the keys are the names of parameters (i.e. placeholders) that appear in the <code>query</code> string. 
+   * The values are the default values: the values to use if a "real" value isn't supplied at runtime.
+   */
+  private  Map<String, String> defaultParameterMap = new HashMap<String, String>();
+  
+  private String rangeColumn;
 
-  String domainColumn;
+  private String domainColumn;
 
-  String categoryColumn;
+  private String categoryColumn;
 
   public String getQuery() {
     return query;
@@ -100,6 +108,21 @@ public class ChartDataDefinition implements Serializable {
 
   public void setCategoryColumn(String categoryColumn) {
     this.categoryColumn = categoryColumn;
+  }
+
+  /**
+   * @return defaultParameterMap (never <code>null</code>)
+   */
+  public Map<String, String> getDefaultParameterMap() {
+    return defaultParameterMap;
+  }
+
+  public void setDefaultParameterMap(Map<String, String> defaultParameterMap) {
+    if (defaultParameterMap == null) {
+      this.defaultParameterMap = new HashMap<String, String>();
+    } else {
+      this.defaultParameterMap = defaultParameterMap;
+    }
   }
 
 }
