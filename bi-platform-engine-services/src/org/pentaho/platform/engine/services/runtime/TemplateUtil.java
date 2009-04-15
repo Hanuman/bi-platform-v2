@@ -171,6 +171,10 @@ public class TemplateUtil {
       if (value == null) {
         // TODO support type conversion
         value = inputs.getProperty(parameter);
+        if (value == null) {
+          TemplateUtil.logger.warn(Messages.getString("TemplateUtil.NOT_FOUND", parameter)); //$NON-NLS-1$
+        }
+        
       }
 
       results.append(template.substring(copyStart, start));
