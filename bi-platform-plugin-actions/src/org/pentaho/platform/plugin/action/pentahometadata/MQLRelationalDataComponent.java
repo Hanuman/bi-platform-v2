@@ -101,7 +101,11 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
   @Override
   public String getQuery() {
     MQLAction mqlAction = (MQLAction) getActionDefinition();
+    
+    // parameters in the query string are resolved in this call
     String mql = mqlAction.getQuery().getStringValue();
+    
+    
     String mqlQueryClassName = mqlAction.getMqlQueryClassName().getStringValue();
     if (mql != null) {
       if (ComponentBase.debug) {
