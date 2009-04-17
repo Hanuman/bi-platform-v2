@@ -28,10 +28,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.SubscriptionSchedulerException;
@@ -50,6 +52,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.services.BaseRequestHandler;
+import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.repository.content.CoreContentRepositoryOutputHandler;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
@@ -216,47 +219,69 @@ public class SubscriptionExecute extends PentahoBase {
         ((CoreContentRepositoryOutputHandler) outputHandler).setWriteMode(IContentItem.WRITEMODE_KEEPVERSIONS);
       }
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parametersMap);
+      IParameterProvider sessionParams = new PentahoSessionParameterProvider(userSession);
+      
+      int lastDot = actionName.lastIndexOf('.');
+      String type = actionName.substring(lastDot + 1);
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, userSession);
+      IContentGenerator generator = pluginManager.getContentGeneratorForType(type, userSession);
 
-      BaseRequestHandler requestHandler = new BaseRequestHandler(userSession, null, outputHandler, parameterProvider,
-          null);
-      requestHandler.setParameterProvider(IParameterProvider.SCOPE_SESSION, new PentahoSessionParameterProvider(
-          userSession));
+      if( generator == null ) {
+        BaseRequestHandler requestHandler = new BaseRequestHandler(userSession, null, outputHandler, parameterProvider,
+            null);
+        requestHandler.setParameterProvider(IParameterProvider.SCOPE_SESSION, sessionParams);
 
-      requestHandler.setInstanceId(instanceId);
-      requestHandler.setProcessId(processId);
-      requestHandler.setAction(actionPath, actionName);
-      requestHandler.setSolutionName(solutionName);
-      IRuntimeContext rt = null;
-      try {
-        rt = requestHandler.handleActionRequest(0, 0);
-        if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
-          IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE,
-              IOutputHandler.CONTENT, subscriptionName, null, rt.getSolutionName(), rt.getInstanceId(), "text/html"); //$NON-NLS-1$
-          outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
-          try {
+        requestHandler.setInstanceId(instanceId);
+        requestHandler.setProcessId(processId);
+        requestHandler.setAction(actionPath, actionName);
+        requestHandler.setSolutionName(solutionName);
+        IRuntimeContext rt = null;
+        try {
+          rt = requestHandler.handleActionRequest(0, 0);
+          
+          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
             if ((rt != null) && (rt.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
-              OutputStream os = outputContentItem.getOutputStream(actionName);
-              os.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
-              outputContentItem.closeOutputStream();
+              writeMessage( buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
             } else {
               // we need an error message...
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, userSession).formatFailureMessage(
                   "text/html", rt, buffer, requestHandler.getMessages()); //$NON-NLS-1$
-              OutputStream os = outputContentItem.getOutputStream(actionName);
-              os.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
-              os.close();
+              writeMessage( buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
             }
-          } catch (IOException ex) {
-            error(ex.getLocalizedMessage());
+          }
+        } finally {
+          if (rt != null) {
+            rt.dispose();
           }
         }
-      } finally {
-        if (rt != null) {
-          rt.dispose();
+      } else {
+        generator.setOutputHandler(outputHandler);
+        ((BaseContentGenerator) generator).setItemName(actionName);
+        generator.setInstanceId(instanceId);
+        generator.setSession(userSession);
+        Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
+        parameterProviders.put( IParameterProvider.SCOPE_REQUEST, parameterProvider);
+        parameterProviders.put( IParameterProvider.SCOPE_SESSION, new PentahoSessionParameterProvider(userSession));
+        generator.setParameterProviders(parameterProviders);
+        try {
+          generator.createContent();
+          // we succeeded
+          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName);
+            writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+          // we need an error message...
+          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName);
+            writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+          }
         }
+        
       }
       if (SubscriptionExecute.debug) {
         SubscriptionExecute.logger.debug(Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName)); //$NON-NLS-1$
@@ -266,4 +291,17 @@ public class SubscriptionExecute extends PentahoBase {
     }
   }
 
+  protected void writeMessage( String message, IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName, String instanceId, IPentahoSession userSession ) {
+    IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE,
+        IOutputHandler.CONTENT, subscriptionName, null, solutionName, instanceId, "text/html"); //$NON-NLS-1$
+    outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
+    try {
+      OutputStream os = outputContentItem.getOutputStream(fileName);
+      os.write(message.getBytes(LocaleHelper.getSystemEncoding()));
+      outputContentItem.closeOutputStream();
+    } catch (IOException ex) {
+      error(ex.getLocalizedMessage());
+    }
+  }
+  
 }
