@@ -859,7 +859,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     Iterator<ISubscription> subscrIter = userSubscriptionList.iterator();
     while (subscrIter.hasNext()) {
       final ISubscription currentSubscr = subscrIter.next();
-      final String actionSeqTitle = getActionSequenceTitle((Subscription) currentSubscr);
+      final ActionInfo actionInfo = ActionInfo.parseActionString(currentSubscr.getContent().getActionReference());
+      final String actionSeqTitle = getSolutionFileInfo(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName()).getLocalizedName();
 
       Schedule schedule = null;
       final Iterator schedIterator = currentSubscr.getSchedules().iterator();

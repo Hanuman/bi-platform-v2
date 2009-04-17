@@ -1251,7 +1251,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
       public void onSuccess(SolutionFileInfo fileInfo) {
         if (fileInfo.isSubscribable) {
-          executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
+          if (fileInfo.getType().equals(SolutionFileInfo.Type.PLUGIN)) {
+            // see if this file is a plugin
+            ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
+            String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
+            showNewURLTab(fileInfo.getLocalizedName(), fileInfo.getLocalizedName(), url);
+          } else {
+            executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
+          }
         } else {
           showScheduleDialog(fileInfo);
         }
@@ -1765,6 +1772,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       // all files can share, delete, and have properties
       pluginMenu.addCommand(COMMAND.SHARE);
       pluginMenu.addCommand(COMMAND.DELETE);
+      pluginMenu.addCommand(COMMAND.SCHEDULE_NEW);
       pluginMenu.addCommand(COMMAND.PROPERTIES);
       
       contentTypePluginList.add(plugin);
