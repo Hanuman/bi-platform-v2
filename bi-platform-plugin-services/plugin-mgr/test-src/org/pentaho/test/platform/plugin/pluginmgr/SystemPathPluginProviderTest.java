@@ -34,6 +34,7 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.IPlatformPlugin.WebserviceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
@@ -168,6 +169,29 @@ public class SystemPathPluginProviderTest {
     assertNotNull("Plugin 1 should have been found", plugin);
 
     assertEquals("org.pentaho.test.platform.plugin.pluginmgr.FooInitializer", plugin.getLifecycleListenerClassname());
+  }
+  
+  @Test
+  public void testLoadWebservices() throws PlatformPluginRegistrationException {
+    microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
+    List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
+    
+    IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils
+    .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
+    assertNotNull("Plugin 1 should have been found", plugin);
+    
+    Collection<WebserviceDefinition> webservices = plugin.getWebservices();
+    
+    Object wsobj = CollectionUtils.find(webservices, new Predicate() {
+      public boolean evaluate(Object object) {
+        WebserviceDefinition ws = (WebserviceDefinition)object;
+        boolean ret = ws.title.equals("%TestWS.TITLE%") && ws.serviceClass.equals("org.pentaho.platform.webservice.services.datasource.DatasourceService");
+        return ret;
+      }
+    });
+    assertNotNull("Webservice \"%TestWS.TITLE%\" should have been loaded", wsobj);
+    
+    System.out.println(PluginMessageLogger.getAll());
   }
 
   @Test

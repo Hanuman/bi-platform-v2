@@ -47,6 +47,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   
   private Collection<BeanDefinition> beanDefinitions = new ArrayList<BeanDefinition>();
 
+  private Collection<WebserviceDefinition> webserviceDefinitions = new ArrayList<WebserviceDefinition>();
+
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
 
   private Map<String,String> staticResourceMap = new HashMap<String,String>();
@@ -162,9 +164,17 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   public Collection<BeanDefinition> getBeans() {
     return Collections.unmodifiableCollection(beanDefinitions);
   }
+
+  public Collection<WebserviceDefinition> getWebservices() {
+    return Collections.unmodifiableCollection(webserviceDefinitions);
+  }
   
   public void addBean(BeanDefinition beanDefinition) {
     beanDefinitions.add(beanDefinition);
+  }
+  
+  public void addWebservice(WebserviceDefinition webserviceDefinition) {
+    webserviceDefinitions.add(webserviceDefinition);
   }
 
   public void init() throws PluginLifecycleException {

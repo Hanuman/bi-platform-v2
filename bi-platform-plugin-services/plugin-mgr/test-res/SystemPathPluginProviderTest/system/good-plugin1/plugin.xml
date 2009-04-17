@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin title="Plugin 1">
-
-    <lifecycle-listener class="org.pentaho.test.platform.plugin.pluginmgr.FooInitializer"/>
-
-    <content-generator scope="global" id="test1" type="test-type-3">
-        <classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1</classname>
-        <fileinfo-classname>org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator</fileinfo-classname>
-        <title>Test Generator 1</title>
-    </content-generator>
-    
-    <bean id="FooComponent" class="org.pentaho.test.platform.plugin.pluginmgr.FooComponent"/>
-    <bean id="genericBean" class="java.lang.Object"/>
-    
+  <lifecycle-listener class="org.pentaho.test.platform.plugin.pluginmgr.FooInitializer" />
+  <content-generator scope="global" id="test1" type="test-type-3">
+    <classname>org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1
+    </classname>
+    <fileinfo-classname>org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator
+    </fileinfo-classname>
+    <title>Test Generator 1</title>
+  </content-generator>
+  
+  <bean id="FooComponent" class="org.pentaho.test.platform.plugin.pluginmgr.FooComponent" />
+  <bean id="genericBean" class="java.lang.Object" />
+  
+  <webservice 
+    title="%TestWS.TITLE%" 
+    description="A test webservice"
+    class="org.pentaho.platform.webservice.services.datasource.DatasourceService">
+    <extra class="org.pentaho.platform.webservice.services.datasource.WSDataSource"/>
+  </webservice>
+  <webservice 
+    title="WS2" 
+    description="A test webservice">
+    <extra class="org.pentaho.platform.webservice.services.datasource.WSDataSource"/>
+  </webservice>
 </plugin>

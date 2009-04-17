@@ -23,6 +23,7 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.IPlatformPlugin.WebserviceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
@@ -146,6 +148,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     processOverlays(plugin, doc, session);
     processLifecycleListeners(plugin, doc);
     processBeans(plugin, doc);
+    processWebservices(plugin, doc);
 
     String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1"; //$NON-NLS-1$//$NON-NLS-2$
 
@@ -187,6 +190,36 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       Element node = (Element) obj;
       if (node != null) {
         plugin.addBean(new BeanDefinition(node.attributeValue("id"), node.attributeValue("class"))); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    }
+  }
+
+  protected void processWebservices(PlatformPlugin plugin, Document doc) {
+    List<?> nodes = doc.selectNodes("//webservice"); //$NON-NLS-1$
+    for (Object obj : nodes) {
+      Element node = (Element) obj;
+
+      WebserviceDefinition wsdef = new WebserviceDefinition();
+
+      // create an IMenuCustomization object 
+      wsdef.title = getProperty(node, "title"); //$NON-NLS-1$
+      wsdef.description = getProperty(node, "description"); //$NON-NLS-1$
+      wsdef.serviceClass = getProperty(node, "class"); //$NON-NLS-1$
+
+      Collection<String> extraClasses = new ArrayList<String>();
+      List<?> extraNodes = node.selectNodes("extra"); //$NON-NLS-1$
+      for (Object extra : extraNodes) {
+        Element extraElement = (Element) extra;
+        String extraClass = XmlDom4JHelper.getNodeText("class", extraElement); //$NON-NLS-1$ //$NON-NLS-2$
+        if (extraClasses != null) {
+          extraClasses.add(extraClass);
+        }
+      }
+
+      if (wsdef.title != null && wsdef.serviceClass != null) {
+        plugin.addWebservice(wsdef);
+      } else {
+        PluginMessageLogger.add(Messages.getString("PluginManager.WEBSERVICE_NOT_REGISTERED", wsdef.title, wsdef.serviceClass)); //$NON-NLS-1$
       }
     }
   }
@@ -324,7 +357,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
       // create an IMenuCustomization object 
       String className = getProperty(node, "class"); //$NON-NLS-1$
-      if(className == null) {
+      if (className == null) {
         className = XmlDom4JHelper.getNodeText("classname", node, null); //$NON-NLS-1$
       }
       String fileInfoClassName = XmlDom4JHelper.getNodeText("fileinfo-classname", node, null); //$NON-NLS-1$
