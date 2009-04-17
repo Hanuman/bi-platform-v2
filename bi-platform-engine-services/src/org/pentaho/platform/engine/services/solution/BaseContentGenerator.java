@@ -45,6 +45,8 @@ public abstract class BaseContentGenerator extends PentahoBase implements IConte
 
 	protected IOutputHandler outputHandler;
 	
+	protected String itemName;
+	
 	public abstract Log getLogger();
 	
 	public abstract void createContent() throws Exception;
@@ -98,5 +100,15 @@ public abstract class BaseContentGenerator extends PentahoBase implements IConte
 	public void setOutputHandler(IOutputHandler outputHandler) {
 		this.outputHandler = outputHandler;
 	}
+
+  public String getItemName()
+  {
+    return itemName;
+  }
+
+  public void setItemName(String itemName)
+  {
+    this.itemName = itemName;
+  }
 	
 }

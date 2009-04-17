@@ -89,4 +89,16 @@ public interface IContentGenerator extends ILogger {
    */
 	public void setInstanceId( String instanceId );
 	
+  /**
+   * Get the name of the output content item for this content generator
+   */
+  public String getItemName();
+
+  /**
+   * Set the name of the output content item for the content generator
+   * 
+   * @param itemName
+   */
+  public void setItemName(String itemName);
+	
 }

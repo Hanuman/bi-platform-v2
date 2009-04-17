@@ -42,7 +42,7 @@ public abstract class SimpleContentGenerator extends BaseContentGenerator {
     
     contentItem.setMimeType( getMimeType() );
     
-    out = contentItem.getOutputStream( null );
+    out = contentItem.getOutputStream( itemName );
     if( out == null ) {
       error( Messages.getErrorString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") ); //$NON-NLS-1$
       throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") );  //$NON-NLS-1$
