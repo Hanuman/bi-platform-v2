@@ -28,7 +28,16 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 
 public class ContentGenerator2 implements IContentGenerator {
-
+  
+  public String getItemName() {
+    // TODO Auto-generated method stub
+    return null;
+  }  
+  
+  public void setItemName(String itemName) {
+    // TODO Auto-generated method stub
+  }  
+  
 	public void createContent() throws Exception {
 		// TODO Auto-generated method stub
 
