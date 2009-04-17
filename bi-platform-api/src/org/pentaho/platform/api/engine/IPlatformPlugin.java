@@ -124,15 +124,26 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    * A simple struct that holds a plugin bean definition
    */
   public static class BeanDefinition {
+    public String beanId, classname;
     
-    public BeanDefinition() { }
     public BeanDefinition(String beanId, String classname) { 
       this.beanId = beanId;
       this.classname = classname;
     }
+  }
+  
+  public static class WebserviceDefinition {
+    public String title, description;
+    public String serviceClass;
+    public Collection<String> extraClasses;
     
-    public String beanId;
-    public String classname;
+    public WebserviceDefinition() { }
+    public WebserviceDefinition(String title, String description, String serviceClass, Collection<String> extraClasses) {
+      this.title = title;
+      this.description = description;
+      this.serviceClass = serviceClass;
+      this.extraClasses = extraClasses;
+    }
   }
 
   /**
@@ -142,4 +153,6 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    * (or deprecated IFileInfoGenerator) classnames for values
    */
   public Map<String, String> getMetaProviderMap();
+  
+  public Collection<WebserviceDefinition> getWebservices();
 }
