@@ -329,7 +329,8 @@ public class PojoComponent extends ComponentBase {
         else if( runtimeInputsMethod != null ) {
           inputMap.put(name, value);
         } else {
-          throw new NoSuchMethodException( "set"+name ); //$NON-NLS-1$
+          // Supress error (For string/value replacement)
+          getLogger().warn(Messages.getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
         }
       }
     }
