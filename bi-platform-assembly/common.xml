@@ -216,8 +216,8 @@
 	    searches for illegal classes that we have fetched via IVY and fail 
 	    the assembly if they are present.
 	    ====================================================================-->
-  <target name="check-blacklist">
-    
+  <target name="check-blacklist" depends="remove-servlet-api">
+  	
     <available property="Servlet.class.present" classname="javax.servlet.Servlet">
       <classpath>
         <fileset dir="${lib.dir}">
@@ -226,6 +226,21 @@
       </classpath>
     </available>
     <fail if="Servlet.class.present" message="!!! Blacklisted class javax.servlet.Servlet found in a retrieved jar.  Assembly cannot proceed !!!"/>
+  </target>
+	
+  <target name="remove-servlet-api" depends="test-servlet-api-exists" if="servlet-api-exists">
+  	<echo message="WARNING: servlet-api-*.jar is in the lib directory! Removing..." />
+  	<delete failonerror="true">
+  	  <fileset dir="${lib.dir}" includes="**/servlet-api-*.jar"/>
+  	</delete>
+  </target>
+	
+  <target name="test-servlet-api-exists">
+    <pathconvert property="servlet-api-exists" setonempty="false" pathsep=" ">
+      <path>
+        <fileset dir="${lib.dir}" includes="servlet-api-*.jar" />
+      </path>
+    </pathconvert>
   </target>
 
 </project>
