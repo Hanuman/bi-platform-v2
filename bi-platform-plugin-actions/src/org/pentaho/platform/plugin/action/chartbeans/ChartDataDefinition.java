@@ -19,6 +19,8 @@ public class ChartDataDefinition implements Serializable {
   private String domainColumn;
 
   private String categoryColumn;
+  
+  int scalingFactor = 1;
 
   public String getQuery() {
     return query;
@@ -42,6 +44,10 @@ public class ChartDataDefinition implements Serializable {
     }
 
     ChartDataDefinition chartDataQuery = (ChartDataDefinition) obj;
+    
+    if (scalingFactor != chartDataQuery.scalingFactor) {
+      return false;
+    }
     
     if(query == null){
       if(chartDataQuery.query != null){
@@ -123,6 +129,14 @@ public class ChartDataDefinition implements Serializable {
     } else {
       this.defaultParameterMap = defaultParameterMap;
     }
+  }
+  
+  public int getScalingFactor() {
+    return scalingFactor;
+  }
+
+  public void setScalingFactor(int scalingFactor) {
+    this.scalingFactor = scalingFactor;
   }
 
 }
