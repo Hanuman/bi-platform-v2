@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window id="datasourceEditorWindow" title="${connectionFrame.TITLE}" orient="vertical"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul"
+  height="600" width="800"
+  onload="connectionController.init(), datasourceController.init(), datasourceController.showDatasourceDialog()">
+
+
+  <dialog id="connectionDialog" buttonlabelaccept="${connectionDialog.OK}" buttonlabelcancel="${connectionDialog.CANCEL}"
+    buttons="accept,cancel" ondialogaccept="connectionController.addConnection()"
+    ondialogcancel="connectionController.closeDialog()" buttonalign="right"
+    title="${connectionDialog.Title}" width="350" height="400">
+    <groupbox flex="1">
+    	<hbox>
+    		<spacer width="10"/>
+    		<vbox>
+		        <label value="${connectionDialog.ConnectionName}" tooltiptext="${connectionDialog.ConnectionNameToolTip}"/>
+		        <textbox id="connectionname" multiline="false" width="300" />
+		        <label value="${connectionDialog.DriverClass}" tooltiptext="${connectionDialog.DriverClassToolTip}"/>
+                <textbox id="driverClass" multiline="false" width="300"/>            
+		        <label value="${connectionDialog.Username}" tooltiptext="${connectionDialog.UsernameToolTip}"/>
+		        <textbox id="username" multiline="false" width="300" />
+		        <label value="${connectionDialog.Password}" tooltiptext="${connectionDialog.PasswordToolTip}"/>
+		        <textbox id="password" multiline="false" width="300" type="password" />
+		        <label value="${connectionDialog.URL}" tooltiptext="${connectionDialog.URLToolTip}"/>
+		        <textbox id="url" multiline="false" width="300" />
+		        <spacer flex="1"/>
+		        <hbox>
+		        	<spacer flex="1"/>
+		        	<button id="testButton" label="${connectionDialog.TEST}" tooltiptext="${connectionDialog.testButtonToolTip}" onclick="connectionController.testConnection()"  disabled="false" align="top"/>
+		        </hbox>
+	        </vbox>
+			<spacer width="10"/>	        
+        </hbox>
+    </groupbox>
+  </dialog>
+  <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.BACK}" buttonlabelcancel="${datasourceDialog.NEXT}" buttonlabelextra1="${datasourceDialog.FINISH}" buttonlabelextra2="${datasourceDialog.CANCEL}"
+    buttons="accept,cancel,extra1,extra2" ondialogaccept="datasourceController.executeBack()"   ondialogcancel="datasourceController.executeNext()" ondialogextra1="datasourceController.executeFinish()" ondialogextra2="datasourceController.executeCancel()" title="${datasourceDialog.Title}" width="640" height="595" pen:acceptbuttonalign="center" pen:cancelbuttonalign="center" pen:extra2buttonalign="right" pen:extra1buttonalign="right">
+    <groupbox flex="1">
+      <vbox>
+        <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
+        <hbox>
+        	<textbox id="datasourcename" multiline="false" width="200"/>
+         	<spacer flex="1"/>
+        </hbox>
+      </vbox>
+      <vbox flex="1">
+         <hbox flex="1">
+            <vbox>
+              <button flex="1" id="sqlButton" image="images/sql_selected.png"  tooltiptext="${datasourceDialog.SqlImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="top"/>
+              <spacer height="50"/>
+              <button flex="1" id="olap" image="images/olap.png" tooltiptext="${datasourceDialog.OlapImageToolTip}" onclick="datasourceController.selectOlap()"  disabled="false" align="top"/>
+              <spacer height="50"/>
+              <button flex="1" id="csv" image="images/csv.png" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="bottom"/>
+              <spacer height="50"/>
+              <button flex="1" id="xml" image="images/xml.png"  tooltiptext="${datasourceDialog.XmlImageToolTip}" onclick="datasourceController.selectXml()"  disabled="false" align="bottom"/>
+            </vbox>
+            <deck id="datasourceDeck" flex="1">
+	            <vbox flex="1">
+	            	  <hbox>
+	            	  	<vbox>
+	                      <hbox>
+	                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
+	                        <spacer flex="1"/>
+	                        <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="datasourceController.editConnection()"  disabled="true"/>
+	                        <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="datasourceController.addConnection()"  disabled="false"/>
+	                        <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="datasourceController.removeConnection()"  disabled="true"/>
+	                      </hbox>
+		                  <listbox id="connectionList" pen:binding="name" rows="5" width="250"/>
+		                </vbox>
+	                    <spacer flex="1"/>
+	                  </hbox>
+	                  <vbox flex="1">
+	                        <hbox>
+	                            <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
+	                            <spacer flex="1"/>
+	                            <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="datasourceController.editQuery()"  disabled="false"/>
+	                        </hbox>
+	                        <textbox id="query" multiline="true" rows="10" cols="80"/>
+	                        <hbox>
+	                            <spacer flex="1"/>
+	                            <label value="Limit:"/>
+						        <textbox id="previewLimit" value="10" width="30"/>
+		                        <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="datasourceController.displayPreview()"  disabled="false"/>
+	                        </hbox>
+	                  </vbox>
+	            </vbox>
+				<grid id="grid" height="450" width="540">
+					<columns id="columns" />
+					<rows id="rows" />
+				</grid>
+            </deck>
+         </hbox>
+      </vbox>
+   </groupbox>
+  </dialog>
+  
+  <dialog id="previewResultsDialog" buttonlabelaccept="${previewResultsDialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
+    ondialogaccept="datasourceController.closePreviewResultsDialog()" buttonalign="right"
+    title="${previewResultsDialog.title}" width="340" height="400">
+        <tree flex="1" id="previewResultsTable" width ="400" height="350" seltype="single">
+              <treecols>
+		   			<treecol label="Preview" flex="1" />
+		      </treecols>
+              <treechildren />
+		</tree>    
+  </dialog>
+    
+    
+  <dialog id="removeConfirmationDialog" buttonlabelaccept="${removeConfirmationDialog.OK}" buttonlabelcancel="${removeConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeRemoveConfirmationDialog()"
+  ondialogaccept="connectionController.deleteConnection()" buttonalign="right" title="${removeConfirmationDialog.title}" 
+  xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
+       <vbox>
+        <label value="${removeConfirmationDialog.confirmMessage}"/>
+      </vbox>
+  </dialog>
+  
+    <dialog id="saveConnectionConfirmationDialog" buttonlabelaccept="${saveConnectionConfirmationDialog.OK}" buttonlabelcancel="${saveConnectionConfirmationDialog.CANCEL}" buttons="accept,cancel" ondialogcancel="connectionController.closeSaveConnectionConfirmationDialog()"
+  ondialogaccept="connectionController.saveConnection()" buttonalign="right" title="${saveConnectionConfirmationDialog.title}" 
+  xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
+       <vbox>
+        <label value="${saveConnectionConfirmationDialog.confirmMessage}"/>
+      </vbox>
+  </dialog>
+
+  
+  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="150" height="200">
+        <label value="${waitingDialog.generatingPreview}"/>
+  </dialog>
+
+  <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="75" height="65" buttonalign="center">
+        <label id="errorLabel" value="${errorDialog.errorOccurred}"/>
+  </dialog>
+  <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="75" height="65" buttonalign="center">
+        <label id="successLabel" value="${successDialog.successMessage}"/>
+  </dialog>  
+</window>
