@@ -78,5 +78,11 @@ public class ChartDefinitionTest {
     
     Assert.assertFalse(cdd1.equals(cdd2));
     Assert.assertFalse(cdd2.equals(cdd1));
+    
+    cdd2.setScalingFactor(10);
+    
+    Assert.assertFalse(cdd1.equals(cdd2));
+    Assert.assertFalse(cdd2.equals(cdd1));
+    
   }
 }
