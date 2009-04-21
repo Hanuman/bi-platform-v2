@@ -80,6 +80,8 @@ public class ChartComponent {
 
   protected int chartHeight = -1;
   
+  protected int scalingFactor = 1;
+  
   protected OutputStream outputStream = null;
   
   protected String chartModelJson = null;
@@ -141,7 +143,7 @@ public class ChartComponent {
     
     // Transform IPentahoResultSet to an object array
     
-    Object[][] data = processChartData(resultSet);
+    Object[][] data = processChartData(resultSet, scalingFactor);
     
     try{
       
@@ -203,7 +205,7 @@ public class ChartComponent {
    * 
    * @return Row / Column data table or null
    */
-  protected Object[][] processChartData(IPentahoResultSet resultSet){
+  protected Object[][] processChartData(IPentahoResultSet resultSet, int scalingFactor){
     if(resultSet == null){
       return null;
     }
@@ -214,7 +216,11 @@ public class ChartComponent {
     
     for(int r = 0; r < resultSet.getRowCount(); r++){
       for(int c = 0; c < resultSet.getMetaData().getColumnCount(); c++){
-        result[r][c] = resultSet.getValueAt(r, c);
+        Object value = resultSet.getValueAt(r, c);
+        if ((scalingFactor != 0) && (scalingFactor != 1) && (value instanceof Number)) {
+          value = new Double(((Number)value).doubleValue() / scalingFactor);
+        }
+        result[r][c] = value;
       }
     }
     
@@ -487,5 +493,9 @@ public class ChartComponent {
   
   public void setOutputType(String outputType){
     this.outputType = outputType;
+  }
+
+  public void setScalingFactor(int scalingFactor) {
+    this.scalingFactor = scalingFactor;
   }
 }

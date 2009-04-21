@@ -136,6 +136,8 @@ public class ChartBeansGeneratorUtil {
       params.put("value-column", chartDataDefinition.getRangeColumn()); //$NON-NLS-1$
     }
 
+    params.put("scaling-factor", chartDataDefinition.getScalingFactor()); //$NON-NLS-1$
+
     createAndRunActionSequence(pentahoSession, params, chartDataDefinition.getDefaultParameterMap(), out);
 
     if (out instanceof BufferedOutputStream) {
