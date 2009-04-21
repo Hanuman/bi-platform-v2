@@ -155,6 +155,10 @@ public class SubscriptionExecute extends PentahoBase {
         paramMap.put("SUB_NAME", sub.getTitle()); //$NON-NLS-1$
         paramMap.put("SUB_ID", sub.getId()); //$NON-NLS-1$
 
+        paramMap.put("useContentRepository", Boolean.TRUE);
+        paramMap.put("content-handler-pattern", PentahoSystem.getApplicationContext().getBaseUrl() + "GetContent?id={0}");
+
+        
         execute(jobName, paramMap, userSession);
       } // end while loop
       if ( isFinalFiring ) {
@@ -184,6 +188,7 @@ public class SubscriptionExecute extends PentahoBase {
       String solutionName = (String) parametersMap.get("solution"); //$NON-NLS-1$
       String actionPath = (String) parametersMap.get("path"); //$NON-NLS-1$
       String actionName = (String) parametersMap.get("action"); //$NON-NLS-1$
+      
       String instanceId = null;
       String processId = this.getClass().getName();
 
