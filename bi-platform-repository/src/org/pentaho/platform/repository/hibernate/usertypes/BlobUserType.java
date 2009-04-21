@@ -44,11 +44,6 @@ import org.hibernate.util.SerializationHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.messages.Messages;
 
-/**
- * @deprecated Use BlobtoByteArrayUserType instead
- * @see org.pentaho.platform.repository.hibernate.usertypes.BlobtoByteArrayUserType
- */
-@Deprecated
 public class BlobUserType implements UserType {
   private static final Log log = LogFactory.getLog(BlobUserType.class);
 

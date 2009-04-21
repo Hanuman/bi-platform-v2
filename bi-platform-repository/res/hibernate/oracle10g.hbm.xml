@@ -67,11 +67,8 @@
 			cascade="all,delete-orphan">
 			<key column="ITEMID" />
 			<map-key column="PARAMKEY" type="string" length="50" />
-                        <!--
-                        Oracle fix - Oracle can't use the BlobUserType
-                        -->
 			<element
-				type="org.pentaho.platform.repository.hibernate.usertypes.BlobtoByteArrayUserType"
+				type="org.pentaho.platform.repository.hibernate.usertypes.BlobUserType"
 				column="PARAMVALUE" />
 		</map>
 		<property name="readOnly" type="boolean" not-null="false">
@@ -397,11 +394,8 @@
 			<cache usage="read-write" />
 			<key column="ITEMID" />
 			<map-key column="PARAMKEY" type="string" length="100" />
-                        <!--
-                          Oracle fix - Oracle can't use the BlobUserType
-                        -->
 			<element
-				type="org.pentaho.platform.repository.hibernate.usertypes.BlobtoByteArrayUserType"
+				type="org.pentaho.platform.repository.hibernate.usertypes.BlobUserType"
 				column="PARAMVALUE" />
 		</map>
 		<query name="findUserSubscriptions">
@@ -482,9 +476,6 @@
 			<cache usage="read-write" />
 			<key column="ITEMID" />
 			<map-key column="PARAMKEY" type="string" length="100" />
-                        <!--
-                         Oracle fix - Oracle can't use the BlobUserType
-                        -->
 			<element
 				type="org.pentaho.platform.repository.hibernate.usertypes.VarBinaryUserType"
 				column="PARAMVALUE" />
@@ -532,10 +523,9 @@
 
 		<property name="fullPath" not-null="true" length="1024"
 			unique="true" />
-
-                <!--
-                 Oracle fix - Oracle can't use the BlobUserType
-                -->
+        <!--
+         Oracle fix - BISERVER-486
+        -->
 		<property name="data" not-null="false"
 			type="org.pentaho.platform.repository.hibernate.usertypes.BlobtoByteArrayUserType" />
 
