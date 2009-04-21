@@ -145,6 +145,14 @@ public class ChartComponent {
     
     Object[][] data = processChartData(resultSet, scalingFactor);
     
+    if (scalingFactor > 1) {
+      for (int row = 0; row < data.length; row++) {
+        if (data[row][valueColumn] instanceof Number) {
+          data[row][valueColumn] = new Double(((Number)data[row][valueColumn]).doubleValue() / scalingFactor);
+        }
+      }
+    }
+    
     try{
       
       if(chartModel.getTheme() != null){
