@@ -25,23 +25,17 @@ import java.util.List;
 
 import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
-import org.pentaho.mantle.client.objects.JobDetail;
-import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
+import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MantleServiceAsync {
-  public void getBackgroundExecutionAlert(AsyncCallback<Boolean> callback);
-  public void resetBackgroundExecutionAlert(AsyncCallback<Void> callback);
   public void isAuthenticated(AsyncCallback<Boolean> callback);
   public void isAdministrator(AsyncCallback<Boolean> callback);
-  public void getScheduledBackgroundContent(AsyncCallback<List<JobDetail>> callback);
-  public void getCompletedBackgroundContent(AsyncCallback<List<JobDetail>> callback);
   public void cancelBackgroundJob(String jobName, String jobGroup, AsyncCallback<Boolean> callback);
   public void deleteContentItem(String contentId, AsyncCallback<Boolean> callback);
 
@@ -60,8 +54,6 @@ public interface MantleServiceAsync {
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date strStartDate, Date strEndDate, int repeatCount, int strRepeatInterval,
       String solutionName, String path, String actionName, AsyncCallback<Void> callback);
 
-  public void getAllSchedules(AsyncCallback<List<JobSchedule>> callback);
-  public void getMySchedules(AsyncCallback<List<JobSchedule>> callback);
   public void suspendJob(String jobName, String jobGroup, AsyncCallback<Void> callback);
   public void resumeJob(String jobName, String jobGroup, AsyncCallback<Void> callback);
   public void deleteJob(String jobName, String jobGroup, AsyncCallback<Void> callback);
@@ -73,10 +65,11 @@ public interface MantleServiceAsync {
   public void getAppliedSubscriptionSchedules(String actionRef, AsyncCallback<List<SubscriptionSchedule>> callback);
   public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules, AsyncCallback<Void> callback);
   public void getSubscriptionState(String actionRef, AsyncCallback<SubscriptionState> callback);
-  public void getSubscriptionsForMyWorkspace(AsyncCallback<List<SubscriptionBean>> callback);
   public void deleteSubscriptionArchive(String subscriptionName, String fileId, AsyncCallback<String> callback);
   public void deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList, AsyncCallback<String> callback);
   public void runAndArchivePublicSchedule(String publicScheduleName, AsyncCallback<String> callback);
+  // workspace
+  public void getWorkspaceContent(AsyncCallback<WorkspaceContent> callback);
   
   // file api
   public void getSolutionFileInfo(String solutionName, String path, String fileName, AsyncCallback<SolutionFileInfo> callback);

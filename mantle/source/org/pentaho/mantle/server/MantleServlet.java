@@ -55,6 +55,7 @@ import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.mantle.client.objects.UserPermission;
+import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.mantle.client.service.MantleService;
 import org.pentaho.mantle.server.helpers.BookmarkHelper;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
@@ -206,18 +207,20 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  public boolean getBackgroundExecutionAlert() {
-    return getPentahoSession().getBackgroundExecutionAlert();
-  }
-
-  public void resetBackgroundExecutionAlert() {
-    getPentahoSession().resetBackgroundExecutionAlert();
-  }
-
   public boolean isAuthenticated() {
     return getPentahoSession() != null && getPentahoSession().isAuthenticated();
   }
 
+  public WorkspaceContent getWorkspaceContent() {
+    WorkspaceContent content = new WorkspaceContent();
+    content.setAllSchedules(getAllSchedules());
+    content.setCompletedJobs(getCompletedBackgroundContent());
+    content.setMySchedules(getMySchedules());
+    content.setScheduledJobs(getScheduledBackgroundContent());
+    content.setSubscriptions(getSubscriptionsForMyWorkspace());
+    return content;
+  }
+  
   @SuppressWarnings("unchecked") //$NON-NLS-1$
   public List<JobDetail> getScheduledBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();

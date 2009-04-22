@@ -25,24 +25,19 @@ import java.util.List;
 
 import org.pentaho.mantle.client.MantleXulOverlay;
 import org.pentaho.mantle.client.objects.Bookmark;
-import org.pentaho.mantle.client.objects.JobDetail;
-import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
+import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface MantleService extends RemoteService {
-  public boolean getBackgroundExecutionAlert();
-  public void resetBackgroundExecutionAlert();
   public boolean isAuthenticated();
   public boolean isAdministrator();
-  public List<JobDetail> getScheduledBackgroundContent();
-  public List<JobDetail> getCompletedBackgroundContent();
   public boolean cancelBackgroundJob(String jobName, String jobGroup);
   public boolean deleteContentItem(String contentId);
   
@@ -57,12 +52,9 @@ public interface MantleService extends RemoteService {
   public void flushMondrianSchemaCache();
   
   //schedule API
-//  public void createCronJob(String solutionName, String path, String actionName, String cronExpression) throws SimpleMessageException;
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description, String cronExpression) throws SimpleMessageException;
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date strStartDate, Date strEndDate, int repeatCount, int strRepeatInterval,
       String solutionName, String path, String actionName) throws SimpleMessageException;
-  public List<JobSchedule> getMySchedules();
-  public List<JobSchedule> getAllSchedules();
   public void suspendJob(String jobName, String jobGroup);
   public void resumeJob(String jobName, String jobGroup);
   public void deleteJob(String jobName, String jobGroup);
@@ -74,10 +66,10 @@ public interface MantleService extends RemoteService {
   public List<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef);
   public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules);
   public SubscriptionState getSubscriptionState(String actionRef);
-  public List<SubscriptionBean> getSubscriptionsForMyWorkspace();
   public String deleteSubscriptionArchive(String subscriptionName, String fileId);
   public String deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList);    
   public String runAndArchivePublicSchedule(String publicScheduleName) throws SimpleMessageException;
+  public WorkspaceContent getWorkspaceContent();
   
   // file api
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName);

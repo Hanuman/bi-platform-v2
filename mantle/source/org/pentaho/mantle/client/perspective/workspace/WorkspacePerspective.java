@@ -31,6 +31,7 @@ import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
+import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
@@ -60,7 +61,6 @@ public class WorkspacePerspective extends ScrollPanel {
   private static final int ALLSCHEDULES = 3;
   private static final String DELETE = "delete"; //$NON-NLS-1$
 
-  private boolean backgroundAlertRaised = false;
   private DisclosurePanel allScheduledContentDisclosure = new DisclosurePanel(Messages.getString("allSchedulesAdminOnly"), false); //$NON-NLS-1$
   private DisclosurePanel subscriptionsContentDisclosure = new DisclosurePanel(Messages.getString("publicSchedules"), false); //$NON-NLS-1$
   private DisclosurePanel myScheduledContentDisclosure = new DisclosurePanel(Messages.getString("mySchedules"), false); //$NON-NLS-1$
@@ -621,57 +621,11 @@ public class WorkspacePerspective extends ScrollPanel {
     MantleServiceCache.getService().deleteSubscriptionArchive(subscriptionName, fileId, callback);
   }
 
-  public void fetchWaitingBackgroundItems() {
-    AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-            Messages.getString("couldNotFetchWaitingBackgroundItems"), false, false, true); //$NON-NLS-1$
-        dialogBox.center();
-      }
-
-      public void onSuccess(List<JobDetail> scheduledJobs) {
-        backgroundAlertRaised = false;
-        // result is List<JobDetail>
-        waitingContentTable = buildEmptyBackgroundItemTable(WAITING);
-        buildJobTable(scheduledJobs, waitingContentTable, waitingContentDisclosure, WAITING);
-        waitingContentDisclosure.setContent(waitingContentTable);
-
-      }
-    };
-    MantleServiceCache.getService().getScheduledBackgroundContent(callback);
-  }
-
-  public void fetchCompletedBackgroundItems() {
-    AsyncCallback<List<JobDetail>> callback = new AsyncCallback<List<JobDetail>>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-            Messages.getString("couldNotFetchCompletedBackgroundItems"), false, false, true); //$NON-NLS-1$
-        dialogBox.center();
-      }
-
-      public void onSuccess(List<JobDetail> result) {
-        backgroundAlertRaised = false;
-        // result is List<JobDetail>
-        List<JobDetail> completedJobs = (List<JobDetail>) result;
-        completedContentTable = buildEmptyBackgroundItemTable(COMPLETE);
-        buildJobTable(completedJobs, completedContentTable, completedContentDisclosure, COMPLETE);
-        completedContentDisclosure.setContent(completedContentTable);
-      }
-    };
-    MantleServiceCache.getService().getCompletedBackgroundContent(callback);
-  }
-
   public void refreshWorkspace() {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
-        fetchWaitingBackgroundItems();
-        fetchCompletedBackgroundItems();
-        fetchMySchedules();
-        fetchAllSchedules();
-        fetchSubscriptions();
+        fetchWorkspaceContent();
       }
 
       public void onFailure(Throwable caught) {
@@ -691,6 +645,38 @@ public class WorkspacePerspective extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
+  public void fetchWorkspaceContent() {
+    AsyncCallback<WorkspaceContent> callback = new AsyncCallback<WorkspaceContent>() {
+
+      public void onSuccess(WorkspaceContent result) {
+        // scheduled jobs
+        waitingContentTable = buildEmptyBackgroundItemTable(WAITING);
+        buildJobTable(result.getScheduledJobs(), waitingContentTable, waitingContentDisclosure, WAITING);
+        waitingContentDisclosure.setContent(waitingContentTable);
+        // completed background items
+        completedContentTable = buildEmptyBackgroundItemTable(COMPLETE);
+        buildJobTable(result.getCompletedJobs(), completedContentTable, completedContentDisclosure, COMPLETE);
+        completedContentDisclosure.setContent(completedContentTable);
+        // my schedules
+        myScheduledContentTable = buildEmptyScheduleTable();
+        buildScheduleTable(result.getMySchedules(), myScheduledContentTable, myScheduledContentDisclosure, MYSCHEDULES);
+        myScheduledContentDisclosure.setContent(myScheduledContentTable);
+        // all schedules
+        allScheduledContentTable = buildEmptyScheduleTable();
+        buildScheduleTable(result.getAllSchedules(), allScheduledContentTable, allScheduledContentDisclosure, ALLSCHEDULES);
+        allScheduledContentDisclosure.setContent(allScheduledContentTable);
+        // my subscriptions
+        subscriptionsContentTable = buildEmptySubscriptionsTable();
+        buildSubscriptionsTable(result.getSubscriptions(), subscriptionsContentTable, subscriptionsContentDisclosure);
+        subscriptionsContentDisclosure.setContent(subscriptionsContentTable);
+      }
+
+      public void onFailure(Throwable caught) {
+      }
+    };
+    MantleServiceCache.getService().getWorkspaceContent(callback);    
+  }
+  
   public void cancelBackgroundJob(final String jobName, final String jobGroup) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
@@ -704,7 +690,7 @@ public class WorkspacePerspective extends ScrollPanel {
           }
 
           public void onSuccess(Boolean result) {
-            fetchWaitingBackgroundItems();
+            fetchWorkspaceContent();
           }
         };
         MantleServiceCache.getService().cancelBackgroundJob(jobName, jobGroup, callback);
@@ -739,7 +725,7 @@ public class WorkspacePerspective extends ScrollPanel {
           }
 
           public void onSuccess(Boolean result) {
-            fetchCompletedBackgroundItems();
+            fetchWorkspaceContent();
           }
         };
         MantleServiceCache.getService().deleteContentItem(contentId, callback);
@@ -902,83 +888,6 @@ public class WorkspacePerspective extends ScrollPanel {
       }
     };
     MantleServiceCache.getService().isAuthenticated(callback);
-  }
-
-  public void resetBackgroundExecutionAlert() {
-    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-
-      public void onFailure(Throwable caught) {
-      }
-
-      public void onSuccess(Void nothing) {
-        backgroundAlertRaised = false;
-      }
-    };
-    MantleServiceCache.getService().resetBackgroundExecutionAlert(callback);
-  }
-
-  public void fetchMySchedules() {
-    AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-            Messages.getString("couldNotFetchMySchedules"), false, false, true); //$NON-NLS-1$
-        dialogBox.center();
-      }
-
-      public void onSuccess(List<JobSchedule> scheduledJobs) {
-        // result is List<JobSchedule>
-        myScheduledContentTable = buildEmptyScheduleTable();
-        buildScheduleTable(scheduledJobs, myScheduledContentTable, myScheduledContentDisclosure, MYSCHEDULES);
-        myScheduledContentDisclosure.setContent(myScheduledContentTable);
-      }
-    };
-    MantleServiceCache.getService().getMySchedules(callback);
-  }
-
-  public void fetchSubscriptions() {
-    AsyncCallback<List<SubscriptionBean>> callback = new AsyncCallback<List<SubscriptionBean>>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-            Messages.getString("couldNotFetchSubscriptions"), false, false, true); //$NON-NLS-1$
-        dialogBox.center();
-      }
-
-      public void onSuccess(List<SubscriptionBean> subscriptionsInfo) {
-        subscriptionsContentTable = buildEmptySubscriptionsTable();
-        buildSubscriptionsTable(subscriptionsInfo, subscriptionsContentTable, subscriptionsContentDisclosure);
-        subscriptionsContentDisclosure.setContent(subscriptionsContentTable);
-      }
-    };
-    MantleServiceCache.getService().getSubscriptionsForMyWorkspace(callback);
-  }
-
-  public void fetchAllSchedules() {
-    AsyncCallback<List<JobSchedule>> callback = new AsyncCallback<List<JobSchedule>>() {
-
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
-            Messages.getString("couldNotFetchAllSchedules"), false, false, true); //$NON-NLS-1$
-        dialogBox.center();
-      }
-
-      public void onSuccess(List<JobSchedule> scheduledJobs) {
-        // result is List<JobSchedule>
-        allScheduledContentTable = buildEmptyScheduleTable();
-        buildScheduleTable(scheduledJobs, allScheduledContentTable, allScheduledContentDisclosure, ALLSCHEDULES);
-        allScheduledContentDisclosure.setContent(allScheduledContentTable);
-      }
-    };
-    MantleServiceCache.getService().getAllSchedules(callback);
-  }
-
-  public boolean isBackgroundAlertRaised() {
-    return backgroundAlertRaised;
-  }
-
-  public void setBackgroundAlertRaised(boolean backgroundAlertRaised) {
-    this.backgroundAlertRaised = backgroundAlertRaised;
   }
 
   // Event classes
