@@ -37,33 +37,7 @@
   <target name="gwt-compile" description="Performs the required GWT Compilation">
     <!-- Compile the Mantle Application -->
     <ant antfile="${gwt.common.build.file}" target="gwt-compile">
-      <property name="gwt-module.path" value="org.pentaho.commons.metadata.mqleditor.DatasourceJavascriptEditor" />
+      <property name="gwt-module.path" value="org.pentaho.platform.dataaccess.datasource.JavascriptDatasourceEditor" />
     </ant>
-  </target>
-  <target name="assemble">
-    <mkdir dir="${stage.dir}" />
-  	<mkdir dir="${stage.dir}/lib" />
-    <copy todir="${stage.dir}/lib">
-		<fileset dir="${dist.dir}"/>
-		<fileset dir="lib"/>
-   	</copy>
-    <copy todir="${stage.dir}">	   
-		<fileset dir="build-res" includes="*.bat" />
-		<fileset dir="build-res" includes="*.sh"/>
-    </copy>
-    <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
-  </target>
-
-  <target name="dist" depends="package-zip" />
-
-  <target name="package-zip" depends="jar, assemble">
-    <zip destfile="${gwt.package.zipfile}">
-	     <zipfileset dir="${stage.dir}" prefix="${ivy.artifact.id}"/>
-    </zip>
-	<delete dir="${stage.dir}"/>
-  </target>
-
-  <target name="publish-pentaho-nojar" depends="install-antcontrib,create-pom,ivy.deliver" description="Publishes the jar file to a Maven2 repository">
-	<ant antfile="${common.build.file}" target="publish-pentaho-nojar"/>
   </target>
 </project>
