@@ -26,6 +26,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,21 +46,28 @@ public class AnalysisViewCommand implements Command {
       }
 
       public void okPressed() {
-        String actionName = System.currentTimeMillis() + ".analysisview.xaction"; //$NON-NLS-1$
-        String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        if (!GWT.isScript()) {
-          newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        
-        navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);
-        navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        //Set it to save-enabled and fire event
-        navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
-        navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
-        
-        //navigatorPerspective.refreshPerspective(false);
+        // without the timer, this code would cause a crash in IE6 and IE7
+        Timer timer = new Timer() {
+          @Override
+          public void run() {
+            String actionName = System.currentTimeMillis() + ".analysisview.xaction"; //$NON-NLS-1$
+            String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (!GWT.isScript()) {
+              newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            
+            navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);
+            navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            //Set it to save-enabled and fire event
+            navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
+            navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
+            
+            //navigatorPerspective.refreshPerspective(false);
+          }
+        };
+        timer.schedule(1);
       }
     };
 
