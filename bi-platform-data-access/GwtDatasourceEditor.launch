@@ -31,7 +31,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.GWTShell"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-out www org.pentaho.commons.metadata.mqleditor.JavascriptDatasourceEditor/datasourceeditor.html"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-out www org.pentaho.platform.dataaccess.datasource.JavascriptDatasourceEditor/datasourceeditor.html"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="bi-platform-data-access"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx512M -Xms512M"/>
 </launchConfiguration>
