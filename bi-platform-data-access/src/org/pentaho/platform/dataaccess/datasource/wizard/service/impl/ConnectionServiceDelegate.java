@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceException;
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
@@ -22,9 +23,14 @@ public class ConnectionServiceDelegate {
 
   private List<IConnection> connectionList = new ArrayList<IConnection>();
   private IDatasourceMgmtService datasourceMgmtSvc;
+  
   public ConnectionServiceDelegate() {
-    // get the datasource management service
     datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class,null);
+  }
+
+  public ConnectionServiceDelegate(IPentahoSession session) {
+    // get the datasource management service
+    datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class,session);
 
   }
   
