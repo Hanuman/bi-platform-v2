@@ -20,7 +20,7 @@ public class ChartDataDefinition implements Serializable {
 
   private String categoryColumn;
   
-  int scalingFactor = 1;
+  Number scalingFactor = 1;
 
   public String getQuery() {
     return query;
@@ -45,8 +45,14 @@ public class ChartDataDefinition implements Serializable {
 
     ChartDataDefinition chartDataQuery = (ChartDataDefinition) obj;
     
-    if (scalingFactor != chartDataQuery.scalingFactor) {
-      return false;
+    if(scalingFactor == null){
+      if(chartDataQuery.scalingFactor != null){
+        return false;
+      }
+    } else {
+      if(!scalingFactor.equals(chartDataQuery.scalingFactor)){
+        return false;
+      }
     }
     
     if(query == null){
@@ -131,11 +137,11 @@ public class ChartDataDefinition implements Serializable {
     }
   }
   
-  public int getScalingFactor() {
+  public Number getScalingFactor() {
     return scalingFactor;
   }
 
-  public void setScalingFactor(int scalingFactor) {
+  public void setScalingFactor(Number scalingFactor) {
     this.scalingFactor = scalingFactor;
   }
 
