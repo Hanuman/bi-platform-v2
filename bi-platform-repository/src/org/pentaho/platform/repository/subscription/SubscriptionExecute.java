@@ -52,7 +52,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.services.BaseRequestHandler;
-import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.repository.content.CoreContentRepositoryOutputHandler;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
@@ -223,6 +222,14 @@ public class SubscriptionExecute extends PentahoBase {
         outputHandler = new CoreContentRepositoryOutputHandler(contentPath, subscriptionId, solutionName, userSession);
         ((CoreContentRepositoryOutputHandler) outputHandler).setWriteMode(IContentItem.WRITEMODE_KEEPVERSIONS);
       }
+      parametersMap.put("useContentRepository", Boolean.TRUE);
+
+      String contentUrlPattern = PentahoSystem.getApplicationContext().getBaseUrl();
+      if (!contentUrlPattern.endsWith("/")) {
+        contentUrlPattern += "/";
+      }
+      contentUrlPattern += "GetContent?id=";
+      parametersMap.put("content-handler-pattern", contentUrlPattern);
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parametersMap);
       IParameterProvider sessionParams = new PentahoSessionParameterProvider(userSession);
       
@@ -264,7 +271,7 @@ public class SubscriptionExecute extends PentahoBase {
         }
       } else {
         generator.setOutputHandler(outputHandler);
-        ((BaseContentGenerator) generator).setItemName(actionName);
+        generator.setItemName(actionName);
         generator.setInstanceId(instanceId);
         generator.setSession(userSession);
         Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
