@@ -38,36 +38,44 @@ public class ConnectionServiceDelegate {
     return connectionList;
   }
   public IConnection getConnectionByName(String name) {
-    for(IConnection connection:connectionList) {
-      if(connection.getName().equals(name)) {
-        return connection;
-      }
+    try {
+      return convertTo(datasourceMgmtSvc.getDatasource(name));
+    } catch(DatasourceMgmtServiceException dme) {
+      return null;  
     }
-    return null;
+    
   }
   public Boolean addConnection(IConnection connection) {
-    connectionList.add(connection);
-    return true;
+    try {
+      datasourceMgmtSvc.createDatasource(convertFrom(connection));
+      return true;
+    } catch(Exception e) {
+      return false;  
+    }
   }
   public Boolean updateConnection(IConnection connection) {
-    IConnection conn = getConnectionByName(connection.getName());
-    conn.setDriverClass(connection.getDriverClass());
-    conn.setPassword(connection.getPassword());
-    conn.setUrl(connection.getUrl());
-    conn.setUsername(connection.getUsername());
-    return true;
+    try {
+      datasourceMgmtSvc.updateDatasource(convertFrom(connection));
+      return true;
+    } catch(Exception e) {
+      return false;  
+    }
   }
   public Boolean deleteConnection(IConnection connection) {
-    connectionList.remove(connectionList.indexOf(connection));
-    return true;
+    try {
+      datasourceMgmtSvc.deleteDatasource(convertFrom(connection));
+      return true;
+    } catch(Exception e) {
+      return false;  
+    }
   }
   public Boolean deleteConnection(String name) {
-    for(IConnection connection:connectionList) {
-      if(connection.getName().equals(name)) {
-        return deleteConnection(connection);
-      }
+    try {
+      datasourceMgmtSvc.deleteDatasource(name);
+      return true;
+    } catch(Exception e) {
+      return false;  
     }
-    return false;
   }
   
   public boolean testConnection(IConnection connection) throws ConnectionServiceException {
@@ -128,6 +136,31 @@ public class ConnectionServiceDelegate {
     } catch (SQLException e) {
       throw new ConnectionServiceException("Unable to connect", e); //$NON-NLS-1$
     }
+  }
+
+  private IConnection convertTo (IDatasource datasource) {
+    IConnection returnDatasource = new org.pentaho.platform.dataaccess.datasource.beans.Connection();
+    returnDatasource.setDriverClass(datasource.getDriverClass());
+    returnDatasource.setName(datasource.getName());
+    returnDatasource.setPassword(datasource.getPassword());
+    returnDatasource.setUsername(datasource.getUserName());
+    returnDatasource.setUrl(datasource.getUrl());
+    return returnDatasource;
+  }
+  
+  private IDatasource convertFrom (IConnection connection) {
+    IDatasource returnDatasource = (IDatasource) PentahoSystem.get(IDatasource.class, null);
+    //IPasswordService passwordService  = (IPasswordService) PentahoSystem.get(IPasswordService.class, null); 
+    returnDatasource.setDriverClass(connection.getDriverClass());
+    returnDatasource.setName(connection.getName());
+    //try {
+    returnDatasource.setPassword(/*passwordService.encrypt((*/connection.getPassword()/*))*/);
+    //} catch(Exception e) {
+      
+    //}
+    returnDatasource.setUserName(connection.getUsername());
+    returnDatasource.setUrl(connection.getUrl());
+    return returnDatasource;
   }
 
 }

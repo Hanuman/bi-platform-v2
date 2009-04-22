@@ -35,10 +35,10 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/ExampleApp*"/>
         <exclude name="**/CsvMqlGenerator*"/>             
     </source>
-    <public path="editor/public"/>
-    <entry-point class="org.pentaho.commons.metadata.mqleditor.editor.JavascriptDatasourceEditor"/>
+    <public path="wizard/public"/>
+    <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.JavascriptDatasourceEditor"/>
     
-  <servlet path="/ConnectionService" class="org.pentaho.commons.metadata.mqleditor.editor.service.gwt.ConnectionDebugGwtServlet" />
-  <servlet path="/DatasourceService" class="org.pentaho.commons.metadata.mqleditor.editor.service.gwt.DatasourceDebugGwtServlet" />
+  <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
+  <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />
   
  </module>
