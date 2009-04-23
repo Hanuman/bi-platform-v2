@@ -19,6 +19,7 @@
 	
 	<property name="bi.platform.util.dir" value="../bi-platform-util" />
 	<property name="bi.platform.engine.core.dir" value="../bi-platform-engine-core" />
+	<property name="bi.platform.data.access.dir" value="../bi-platform-data-access" />
     <property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
 	<property name="bi.platform.engine.security.dir" value="../bi-platform-engine-security" />
 	<property name="bi.platform.repository.dir" value="../bi-platform-repository" />
@@ -78,6 +79,9 @@
                 <include name="**/messages*properties" />
             </fileset>
             <fileset dir="${bi.platform.engine.core.dir}/src">
+                <include name="**/messages*properties" />
+            </fileset>
+            <fileset dir="${bi.platform.data.access.dir}/src">
                 <include name="**/messages*properties" />
             </fileset>
             <fileset dir="${bi.platform.engine.services.dir}/src">

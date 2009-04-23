@@ -49,6 +49,7 @@
                 value="bi-platform-api,
 			  											bi-platform-util,
 			  											bi-platform-engine-core,
+														bi-platform-data-access,
 			  											bi-platform-test-foundation,
 			  											bi-platform-engine-security,
 			  											bi-platform-engine-services,
