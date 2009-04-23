@@ -39,7 +39,6 @@ import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -400,25 +399,11 @@ public class WorkspacePerspective extends ScrollPanel {
       vp.add(new Label(Messages.getString("deleteContentItem"))); //$NON-NLS-1$
     }
 
-    final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
-        Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-    final IDialogCallback callback = new IDialogCallback() {
-      public void cancelPressed() {
-        deleteConfirmDialog.hide();
-      }
-
-      public void okPressed() {
-        if (isPublicSchedule) {
-          deletePublicScheduleAndContents(currentSubscr);
-        } else {
-          deleteContentItem(currentSubscr.getId(), fileId);
-        }
-        refreshWorkspace();
-      }
-    };
-    deleteConfirmDialog.setCallback(callback);
-    deleteConfirmDialog.center();
+    if (isPublicSchedule) {
+      deletePublicScheduleAndContents(currentSubscr);
+    } else {
+      deleteContentItem(currentSubscr.getId(), fileId);
+    }
   }
 
   /*
@@ -438,7 +423,8 @@ public class WorkspacePerspective extends ScrollPanel {
         }
 
         public void onSuccess(String result) {
-          // Don't do anything on success.
+          refreshWorkspace();
+
         }
       };
 
@@ -612,9 +598,6 @@ public class WorkspacePerspective extends ScrollPanel {
       }
 
       public void onSuccess(String message) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
-            message, false, false, true); //$NON-NLS-1$
-        dialogBox.center();
         refreshWorkspace();
       }
     };
@@ -674,9 +657,9 @@ public class WorkspacePerspective extends ScrollPanel {
       public void onFailure(Throwable caught) {
       }
     };
-    MantleServiceCache.getService().getWorkspaceContent(callback);    
+    MantleServiceCache.getService().getWorkspaceContent(callback);
   }
-  
+
   public void cancelBackgroundJob(final String jobName, final String jobGroup) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
