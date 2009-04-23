@@ -16,6 +16,7 @@ import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
 public class ConnectionServiceDelegate {
 
@@ -51,7 +52,9 @@ public class ConnectionServiceDelegate {
   }
   public Boolean addConnection(IConnection connection) {
     try {
+      HibernateUtil.beginTransaction();
       datasourceMgmtSvc.createDatasource(convertFrom(connection));
+      HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
       return false;  
@@ -59,7 +62,9 @@ public class ConnectionServiceDelegate {
   }
   public Boolean updateConnection(IConnection connection) {
     try {
+      HibernateUtil.beginTransaction();
       datasourceMgmtSvc.updateDatasource(convertFrom(connection));
+      HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
       return false;  
@@ -67,7 +72,9 @@ public class ConnectionServiceDelegate {
   }
   public Boolean deleteConnection(IConnection connection) {
     try {
+      HibernateUtil.beginTransaction();
       datasourceMgmtSvc.deleteDatasource(convertFrom(connection));
+      HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
       return false;  
@@ -75,7 +82,9 @@ public class ConnectionServiceDelegate {
   }
   public Boolean deleteConnection(String name) {
     try {
+      HibernateUtil.beginTransaction();
       datasourceMgmtSvc.deleteDatasource(name);
+      HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
       return false;  

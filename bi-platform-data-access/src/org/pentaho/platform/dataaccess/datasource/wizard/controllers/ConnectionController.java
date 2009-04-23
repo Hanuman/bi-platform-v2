@@ -220,12 +220,17 @@ public class ConnectionController extends AbstractXulEventHandler {
       public void success(Boolean value) {
         try {
           if (value) {
-            openSuccesDialog("Connection Deleted","Successfully deleted the connection");            
+            openSuccesDialog("Connection Deleted","Successfully deleted the connection");
+            System.out.println("Deleting from the model " + connectionModel.getName());
+            System.out.println("Count before deleting " + datasourceModel.getConnections().size());
             datasourceModel.deleteConnection(connectionModel.getConnection().getName());
+            System.out.println("Count after deleting " + datasourceModel.getConnections().size());          
             List<IConnection> connections = datasourceModel.getConnections();
             if (connections != null && connections.size() > 0) {
+              System.out.println("Setting selected connection to  " + connections.get(connections.size() - 1).getName());
               datasourceModel.setSelectedConnection(connections.get(connections.size() - 1));
             } else {
+              System.out.println("Setting selected connection to  null");
               datasourceModel.setSelectedConnection(null);
             }
 

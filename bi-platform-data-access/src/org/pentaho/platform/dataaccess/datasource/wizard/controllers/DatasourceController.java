@@ -502,7 +502,7 @@ public class DatasourceController extends AbstractXulEventHandler {
   }
   public void addConnection() {
     datasourceModel.setEditType(EditType.ADD);
-    connectionModel.setConnection(null);
+    connectionModel.clear();
     showConnectionDialog();
   }
   

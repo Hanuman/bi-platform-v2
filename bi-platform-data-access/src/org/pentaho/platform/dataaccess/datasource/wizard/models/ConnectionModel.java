@@ -119,5 +119,12 @@ public class ConnectionModel extends XulEventSourceAdapter implements IConnectio
     }
   }
 
+  public void clear() {
+    setDriverClass(null);
+    setName(null);
+    setPassword(null);
+    setUrl(null);
+    setUsername(null);    
+  }
 }
 
