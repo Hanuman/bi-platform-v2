@@ -81,6 +81,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       throw new DatasourceMgmtServiceException(Messages.getString(
           "DatasourceMgmtService.NULL_DATASOURCE_OBJECT"));
     }
+    HibernateUtil.flushSession();
    }
   public void deleteDatasource(String jndiName) throws NonExistingDatasourceException, DatasourceMgmtServiceException {
     IDatasource datasource = getDatasource(jndiName);
@@ -92,11 +93,10 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     }
   }  
   public void deleteDatasource(IDatasource datasource) throws NonExistingDatasourceException, DatasourceMgmtServiceException {
-    if(datasource != null) {    
-      IDatasource tmpDatasource = getDatasource(datasource.getName());
-      if (tmpDatasource != null) {
+    Session session = HibernateUtil.getSession();
+      if (datasource != null) {
         try {
-          HibernateUtil.makeTransient(tmpDatasource);
+          session.delete(session.merge(datasource));
         } catch (HibernateException ex) {
           throw new DatasourceMgmtServiceException( ex.getMessage(), ex );
         }
@@ -104,10 +104,6 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
         throw new NonExistingDatasourceException(Messages.getString(
           "DatasourceMgmtService.DATASOURCE_DOES_NOT_EXIST") +datasource.getName());
       }
-    } else {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-          "DatasourceMgmtService.NULL_DATASOURCE_OBJECT"));
-    }
 
     HibernateUtil.flushSession();
   }
@@ -164,11 +160,12 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
   public void updateDatasource(IDatasource datasource) throws NonExistingDatasourceException, DatasourceMgmtServiceException {
     Session session = HibernateUtil.getSession();
     if(datasource != null) {
-      if (getDatasource(datasource.getName()) != null) {
+      IDatasource tmpDatasource = getDatasource(datasource.getName());
+      if (tmpDatasource != null) {
         try {
           IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);          // Store the new encrypted password in the datasource object
           datasource.setPassword(passwordService.encrypt(datasource.getPassword()));
-          session.update(datasource);
+          session.update(session.merge(datasource));
         } catch(ObjectFactoryException objface) {
           throw new DatasourceMgmtServiceException(Messages.getString(
             "DatasourceMgmtService.UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);
@@ -206,4 +203,5 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       returnDatasource.setWait(datasource.getWait());
       return returnDatasource;
   }
+  
 }
