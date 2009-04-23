@@ -228,7 +228,7 @@ public class SubscriptionExecute extends PentahoBase {
       if (!contentUrlPattern.endsWith("/")) {
         contentUrlPattern += "/";
       }
-      contentUrlPattern += "GetContent?id=";
+      contentUrlPattern += "GetContent?id={0}";
       parametersMap.put("content-handler-pattern", contentUrlPattern);
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parametersMap);
       IParameterProvider sessionParams = new PentahoSessionParameterProvider(userSession);

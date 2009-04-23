@@ -66,19 +66,16 @@ import org.pentaho.platform.util.UUIDUtil;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
-public class SubscriptionHelper
-{
+public class SubscriptionHelper {
 
   protected static final Log logger = LogFactory.getLog(SubscriptionHelper.class);
 
   public static void editSubscription(final String subscriptionName, final IPentahoSession session, final SimpleUrlFactory urlFactory,
-      final OutputStream outputStream)
-  {
+      final OutputStream outputStream) {
 
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       // TODO surface an error
       return;
     }
@@ -110,8 +107,7 @@ public class SubscriptionHelper
     parameterProviderMap.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
 
     SimpleOutputHandler outputHandler = null;
-    if (outputStream != null)
-    {
+    if (outputStream != null) {
       outputHandler = new SimpleOutputHandler(outputStream, true);
     }
 
@@ -122,13 +118,10 @@ public class SubscriptionHelper
     boolean persisted = false;
     ActionInfo contentInfo = ActionInfo.parseActionString(content.getActionReference());
 
-    try
-    {
+    try {
       runtime = solutionEngine.execute(contentInfo.getSolutionName(), contentInfo.getPath(), contentInfo.getActionName(),
           "Subscriptions", false, true, instanceId, persisted, parameterProviderMap, outputHandler, null, urlFactory, messages); //$NON-NLS-1$
-    }
-    finally
-    {
+    } finally {
       runtime.dispose();
     }
   }
@@ -136,8 +129,7 @@ public class SubscriptionHelper
   /*
    * The regular save subscription
    */
-  public static String saveSubscription(final IParameterProvider parameterProvider, final String actionReference, final IPentahoSession userSession)
-  {
+  public static String saveSubscription(final IParameterProvider parameterProvider, final String actionReference, final IPentahoSession userSession) {
     return SubscriptionHelper.saveSubscription(parameterProvider, actionReference, userSession, false);
   }
 
@@ -145,11 +137,9 @@ public class SubscriptionHelper
    * Pass in boolean true to save subscription information without requiring a content to be defined - Used for JPovot views
    */
   public static String saveSubscription(final IParameterProvider parameterProvider, final String actionReference, final IPentahoSession userSession,
-      final boolean saveOnly)
-  {
+      final boolean saveOnly) {
 
-    if ((userSession == null) || (userSession.getName() == null))
-    {
+    if ((userSession == null) || (userSession.getName() == null)) {
       return Messages.getString("SubscriptionHelper.USER_LOGIN_NEEDED"); //$NON-NLS-1$
     }
 
@@ -160,11 +150,9 @@ public class SubscriptionHelper
     String destination = parameterProvider.getStringParameter("destination", null); //$NON-NLS-1$
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, userSession);
 
-    if (!editing)
-    {
+    if (!editing) {
       boolean isUniqueName = subscriptionRepository.checkUniqueSubscriptionName(subscriptionName, userSession.getName(), actionReference);
-      if (!isUniqueName)
-      {
+      if (!isUniqueName) {
         return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NAME_ALREADY_EXISTS", subscriptionName); //$NON-NLS-1$
       }
     }
@@ -173,23 +161,18 @@ public class SubscriptionHelper
     ActionInfo contentInfo = ActionInfo.parseActionString(actionReference);
     IActionSequence actionSequence = solutionRepository.getActionSequence(contentInfo.getSolutionName(), contentInfo.getPath(), contentInfo.getActionName(),
         PentahoSystem.loggingLevel, ISolutionRepository.ACTION_SUBSCRIBE);
-    if (actionSequence == null)
-    {
+    if (actionSequence == null) {
       // TODO log an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
     }
     Map inputs = actionSequence.getInputDefinitionsForParameterProvider(IParameterProvider.SCOPE_REQUEST);
     ISubscribeContent content = subscriptionRepository.getContentByActionReference(actionReference);
-    if (content == null)
-    {
-      if (saveOnly)
-      {
+    if (content == null) {
+      if (saveOnly) {
         String subContId = UUIDUtil.getUUIDAsString();
         content = new SubscribeContent(subContId, actionReference, SubscribeContent.TYPE_REPORT);
         subscriptionRepository.addContent(content);
-      }
-      else
-      {
+      } else {
         return (Messages.getString("SubscriptionHelper.ACTION_SEQUENCE_NOT_ALLOWED", contentInfo.getActionName())); //$NON-NLS-1$
       }
     }
@@ -200,42 +183,33 @@ public class SubscriptionHelper
     // TODO load the action sequence from the repository so we can limit this
     // to just the required parameters or the action name
     Iterator inputsIterator = inputs.keySet().iterator();
-    while (inputsIterator.hasNext())
-    {
+    while (inputsIterator.hasNext()) {
       String parameterName = (String) inputsIterator.next();
       Object parameterValue = parameterProvider.getParameter(parameterName);
-      if (parameterValue != null)
-      {
+      if (parameterValue != null) {
         parameters.put(parameterName, parameterValue);
       }
     }
 
     // Just in case it's a PivotView Subscription
-    if (saveOnly)
-    {
+    if (saveOnly) {
       String parameterValue = (String) parameterProvider.getParameter("mdx"); //$NON-NLS-1$
-      if (parameterValue != null)
-      {
+      if (parameterValue != null) {
         parameters.put("mdx", parameterValue); //$NON-NLS-1$
       }
     }
 
     String parameterValue = (String) parameterProvider.getParameter("action2"); //$NON-NLS-1$
-    if (parameterValue != null)
-    {
+    if (parameterValue != null) {
       parameters.put("action", parameterValue); //$NON-NLS-1$
     }
     ISubscription subscription = null;
-    if (editing)
-    {
+    if (editing) {
       // update an existing subscription
       subscription = subscriptionRepository.getSubscription(subscriptionId, userSession);
-      if (subscription == null)
-      {
+      if (subscription == null) {
         editing = false;
-      }
-      else
-      {
+      } else {
         subscription.setTitle(subscriptionName);
         subscription.setDestination(destination);
         subscription.getParameters().clear();
@@ -243,8 +217,7 @@ public class SubscriptionHelper
         subscription.getSchedules().clear();
       }
     }
-    if (!editing)
-    {
+    if (!editing) {
       // create a new subscription
       subscriptionId = UUIDUtil.getUUIDAsString();
       subscription = new Subscription(subscriptionId, userSession.getName(), subscriptionName, content, destination, Subscription.TYPE_PERSONAL, parameters);
@@ -252,22 +225,18 @@ public class SubscriptionHelper
 
     // now add the schedules
     List schedules = subscriptionRepository.getSchedules();
-    for (int i = 0; i < schedules.size(); i++)
-    {
+    for (int i = 0; i < schedules.size(); i++) {
       ISchedule schedule = (ISchedule) schedules.get(i);
       String scheduleId = schedule.getId();
       String scheduleValue = (String) parameterProvider.getParameter("schedule-" + scheduleId); //$NON-NLS-1$
-      if ("true".equals(scheduleValue)){ //$NON-NLS-1$
+      if ("true".equals(scheduleValue)) { //$NON-NLS-1$
         subscription.addSchedule(schedule);
       }
     }
 
-    if (subscriptionRepository.addSubscription(subscription))
-    {
+    if (subscriptionRepository.addSubscription(subscription)) {
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_CREATED"); //$NON-NLS-1$
-    }
-    else
-    {
+    } else {
       // TODO log an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
     }
@@ -279,36 +248,28 @@ public class SubscriptionHelper
    * public static boolean scheduleSubscription(final ISubscription subscription) { IScheduler scheduler = PentahoSystem.getScheduler(); return
    * scheduler.scheduleSubscription(subscription); }
    */
-  public static String deleteSubscription(final String subscriptionId, final IPentahoSession userSession)
-  {
+  public static String deleteSubscription(final String subscriptionId, final IPentahoSession userSession) {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, userSession);
 
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionId, userSession);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
     }
 
-    try
-    {
+    try {
       subscriptionRepository.deleteSubscription(subscriptionId, userSession);
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DELETED"); //$NON-NLS-1$
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
     }
   }
 
   public static void runSubscription(final String subscriptionName, final IPentahoSession session, final IParameterProvider sessionParameters,
-      final SimpleUrlFactory urlFactory, final IOutputHandler outputHandler)
-  {
-    try
-    {
+      final SimpleUrlFactory urlFactory, final IOutputHandler outputHandler) {
+    try {
       ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
       ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-      if (subscription == null)
-      {
+      if (subscription == null) {
         // TODO surface an error
         return;
       }
@@ -322,11 +283,11 @@ public class SubscriptionHelper
 
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(contentParameters);
       parameterProvider.setParameters(subscriptionParameters);
-      
+
       ArrayList messages = new ArrayList();
       String instanceId = null;
       boolean persisted = false;
-      
+
       String actionName = contentInfo.getActionName();
       int lastDot = actionName.lastIndexOf('.');
       String type = actionName.substring(lastDot + 1);
@@ -334,11 +295,9 @@ public class SubscriptionHelper
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
       IContentGenerator generator = pluginManager.getContentGeneratorForType(type, session);
 
-      if (generator == null)
-      {
+      if (generator == null) {
         IRuntimeContext runtime = null;
-        try
-        {
+        try {
           ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
           solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
           solutionEngine.init(session);
@@ -349,28 +308,22 @@ public class SubscriptionHelper
               "Subscriptions", false, true, instanceId, persisted, parameterProviderMap, outputHandler, null, urlFactory, messages); //$NON-NLS-1$
           // see if we need to provide feedback to the caller
 
-          if (!outputHandler.contentDone())
-          {
+          if (!outputHandler.contentDone()) {
             IContentItem contentItem = outputHandler.getFeedbackContentItem();
             OutputStream outputStream = contentItem.getOutputStream(subscriptionName);
 
-            if (runtime == null)
-            {
+            if (runtime == null) {
               // we need an error message...
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
               outputStream.write(buffer.toString().getBytes());
               contentItem.closeOutputStream();
-            }
-            else if (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)
-            {
+            } else if (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, session).formatSuccessMessage("text/html", runtime, buffer, false); //$NON-NLS-1$
               outputStream.write(buffer.toString().getBytes());
               contentItem.closeOutputStream();
-            }
-            else
-            {
+            } else {
               // we need an error message...
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, session).formatFailureMessage("text/html", runtime, buffer); //$NON-NLS-1$
@@ -378,20 +331,13 @@ public class SubscriptionHelper
               contentItem.closeOutputStream();
             }
           }
-        }
-        catch (Throwable t)
-        {
-        }
-        finally
-        {
-          if (runtime != null)
-          {
+        } catch (Throwable t) {
+        } finally {
+          if (runtime != null) {
             runtime.dispose();
           }
         }
-      }
-      else
-      {
+      } else {
         // we have a generator
         generator.setOutputHandler(outputHandler);
         generator.setItemName(actionName);
@@ -401,60 +347,47 @@ public class SubscriptionHelper
         parameterProviders.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
         parameterProviders.put(IParameterProvider.SCOPE_SESSION, new PentahoSessionParameterProvider(session));
         generator.setParameterProviders(parameterProviders);
-        try
-        {
+        try {
           generator.createContent();
           // we succeeded
-          if (!outputHandler.contentDone())
-          {
+          if (!outputHandler.contentDone()) {
             String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", subscriptionName);
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
-          if (!outputHandler.contentDone())
-          {
+          if (!outputHandler.contentDone()) {
             String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", subscriptionName);
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
         }
       }
-    }
-    catch (Throwable t)
-    {
+    } catch (Throwable t) {
       logger.error("Error Executing Subscription", t); //$NON-NLS-1$
     }
 
   }
 
   protected static void writeMessage(String message, IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName,
-      String instanceId, IPentahoSession userSession)
-  {
+      String instanceId, IPentahoSession userSession) {
     IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, subscriptionName, null, solutionName,
         instanceId, "text/html"); //$NON-NLS-1$
     outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
-    try
-    {
+    try {
       OutputStream os = outputContentItem.getOutputStream(fileName);
       os.write(message.getBytes(LocaleHelper.getSystemEncoding()));
       outputContentItem.closeOutputStream();
-    }
-    catch (IOException ex)
-    {
+    } catch (IOException ex) {
       logger.error(ex.getLocalizedMessage());
     }
   }
 
-  public static void getArchived(final String subscriptionName, final String fileId, final IPentahoSession session, final IOutputHandler outputHandler)
-  {
+  public static void getArchived(final String subscriptionName, final String fileId, final IPentahoSession session, final IOutputHandler outputHandler) {
 
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       // TODO surface an error
       return;
     }
@@ -462,22 +395,18 @@ public class SubscriptionHelper
     List files = contentItem.getFileVersions();
     Iterator fileIterator = files.iterator();
     IContentItemFile file = null;
-    while (fileIterator.hasNext())
-    {
+    while (fileIterator.hasNext()) {
       file = (IContentItemFile) fileIterator.next();
-      if (fileId.equals(file.getId()))
-      {
+      if (fileId.equals(file.getId())) {
         break;
       }
     }
 
-    try
-    {
+    try {
       IContentItem outoutContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, contentItem
           .getMimeType());
       OutputStream outputStream = outoutContentItem.getOutputStream(subscriptionName);
-      if (file == null)
-      {
+      if (file == null) {
         // TODO surface an error
         outputStream.write(Messages.getString("SubscriptionHelper.USER_ARCHIVE_NOT_FOUND").getBytes()); //$NON-NLS-1$
         outoutContentItem.closeOutputStream();
@@ -487,28 +416,23 @@ public class SubscriptionHelper
       InputStream inputStream = file.getInputStream();
       byte buffer[] = new byte[2048];
       int n = inputStream.read(buffer);
-      while (n > 0)
-      {
+      while (n > 0) {
         outputStream.write(buffer, 0, n);
         n = inputStream.read(buffer);
       }
       outoutContentItem.closeOutputStream();
-    }
-    catch (IOException e)
-    {
+    } catch (IOException e) {
       // TODO surface an error
       SubscriptionHelper.logger.error(null, e);
     }
 
   }
 
-  public static String getSubscriptionParameters(final String subscriptionName, final IParameterSetter parameters, final IPentahoSession session)
-  {
+  public static String getSubscriptionParameters(final String subscriptionName, final IParameterSetter parameters, final IPentahoSession session) {
 
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
@@ -516,8 +440,7 @@ public class SubscriptionHelper
     // handle the parameters for the subscription
     Map subscriptionParameters = subscription.getParameters();
     Iterator parameterIterator = subscriptionParameters.keySet().iterator();
-    while (parameterIterator.hasNext())
-    {
+    while (parameterIterator.hasNext()) {
       String key = (String) parameterIterator.next();
       Object value = subscriptionParameters.get(key);
       parameters.setParameter(key, value);
@@ -540,8 +463,7 @@ public class SubscriptionHelper
     // handle the schedules
     List schedules = subscription.getSchedules();
     ISchedule schedule;
-    for (int i = 0; i < schedules.size(); i++)
-    {
+    for (int i = 0; i < schedules.size(); i++) {
       schedule = (ISchedule) schedules.get(i);
       parameters.setParameter("schedule-" + schedule.getId(), "true"); //$NON-NLS-1$ //$NON-NLS-2$      
     }
@@ -549,19 +471,16 @@ public class SubscriptionHelper
     return null;
   }
 
-  public static String deleteSubscriptionArchive(final String subscriptionName, final String fileId, final IPentahoSession session)
-  {
+  public static String deleteSubscriptionArchive(final String subscriptionName, final String fileId, final IPentahoSession session) {
 
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     IContentItem contentItem = subscriptionRepository.getContentItem(subscriptionName, session);
-    if (contentItem == null)
-    {
+    if (contentItem == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
@@ -571,18 +490,15 @@ public class SubscriptionHelper
   }
 
   public static String createSubscriptionArchive(final String subscriptionName, final IPentahoSession session, final SimpleUrlFactory urlFactory,
-      final IParameterProvider sessionParameters) throws BackgroundExecutionException
-  {
+      final IParameterProvider sessionParameters) throws BackgroundExecutionException {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, session);
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
-    if (subscription == null)
-    {
+    if (subscription == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     ISubscribeContent content = subscription.getContent();
-    if (content == null)
-    {
+    if (content == null) {
       // TODO surface an error
       return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
@@ -590,15 +506,13 @@ public class SubscriptionHelper
     Map subscriptionParameters = subscription.getParameters();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider(contentParameters);
     parameterProvider.setParameters(subscriptionParameters);
-    if (subscriptionName != null)
-    {
+    if (subscriptionName != null) {
       parameterProvider.setParameter("subscribe-name", subscriptionName); //$NON-NLS-1$
     }
     ActionInfo contentInfo = ActionInfo.parseActionString(content.getActionReference());
 
     String actionName = (String) subscriptionParameters.get("action"); //$NON-NLS-1$
-    if (actionName == null)
-    {
+    if (actionName == null) {
       actionName = contentInfo.getActionName();
     }
 
@@ -609,8 +523,7 @@ public class SubscriptionHelper
     return be.backgroundExecuteAction(session, parameterProvider);
   }
 
-  public static String getSubscriptionOutputLocation(final String solutionName, final String actionPath, final String actionName)
-  {
+  public static String getSubscriptionOutputLocation(final String solutionName, final String actionPath, final String actionName) {
     String outputFolder = actionName.substring(0, actionName.lastIndexOf('.'));
     return solutionName + "/" + actionPath + "/" + outputFolder + "/subscriptions"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
@@ -623,8 +536,7 @@ public class SubscriptionHelper
    * 
    * @return
    */
-  public static DateFormat getDateTimeFormatter()
-  {
+  public static DateFormat getDateTimeFormatter() {
     return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, LocaleHelper.getLocale());
   }
 }

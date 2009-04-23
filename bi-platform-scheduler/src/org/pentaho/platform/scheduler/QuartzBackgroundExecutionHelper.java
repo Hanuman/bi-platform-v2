@@ -17,6 +17,8 @@
  */
 package org.pentaho.platform.scheduler;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,9 +30,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
+import org.pentaho.platform.api.engine.IContentGenerator;
+import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.IContentRepository;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -73,95 +78,82 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
   public static final String BACKGROUND_CONTENT_COOKIE_PREFIX = "pentaho_background_content"; //$NON-NLS-1$
 
   public static final String BACKGROUND_EXECUTION_FLAG = "backgroundExecution"; //$NON-NLS-1$
-  
+
   private static final Log logger = LogFactory.getLog(QuartzBackgroundExecutionHelper.class);
 
   /*
-   *****************************
-   * Methods from the Interface 
-   *****************************
+   * **************************** Methods from the Interface****************************
    */
 
   /**
-   * NOTE: client code is responsible for making sure a job with the name identified by the
-   * parameter StandardSettings.SCHEDULE_NAME in the parameter provider does not already
-   * exist in the quartz scheduler. If such a job does already exist, 
-   * @param parameterProvider IParameterProvider expected to have the following parameters:
-   * required:
-   *  solution
-   *  path
-   *  action
-   * optional (cron-string is required to create a CronTrigger):
-   *  cron-string
-   *  repeat-count
-   *  repeat-time-milliseconds
-   *  start-date
-   *  end-date
+   * NOTE: client code is responsible for making sure a job with the name identified by the parameter StandardSettings.SCHEDULE_NAME in the parameter provider
+   * does not already exist in the quartz scheduler. If such a job does already exist,
+   * 
+   * @param parameterProvider
+   *          IParameterProvider expected to have the following parameters: required: solution path action optional (cron-string is required to create a
+   *          CronTrigger): cron-string repeat-count repeat-time-milliseconds start-date end-date
    * 
    */
-  public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) throws  BackgroundExecutionException{
+  public String backgroundExecuteAction(IPentahoSession userSession, IParameterProvider parameterProvider) throws BackgroundExecutionException {
     try {
       String cronString = parameterProvider.getStringParameter(StandardSettings.CRON_STRING, null);
       String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
-      assert (repeatInterval==null && cronString != null) 
-      || (repeatInterval!=null && cronString == null) 
-      || (repeatInterval==null && cronString == null) : Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0423_INVALID_INTERVAL"); //$NON-NLS-1$
-      
+      assert (repeatInterval == null && cronString != null) || (repeatInterval != null && cronString == null) || (repeatInterval == null && cronString == null) : Messages
+          .getErrorString("QuartzBackgroundExecutionHelper.ERROR_0423_INVALID_INTERVAL"); //$NON-NLS-1$
+
       String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
       String actionPath = parameterProvider.getStringParameter(StandardSettings.PATH, null); //$NON-NLS-1$
       String actionName = parameterProvider.getStringParameter(StandardSettings.ACTION, null); //$NON-NLS-1$
 
       String actionSeqPath = parameterProvider.getStringParameter(StandardSettings.ACTIONS_REF, null);
-      if(actionSeqPath == null  || actionSeqPath.length() <= 0) {
-        actionSeqPath = solutionName + ISolutionRepository.SEPARATOR + actionPath + ISolutionRepository.SEPARATOR +  actionName;
+      if (actionSeqPath == null || actionSeqPath.length() <= 0) {
+        actionSeqPath = solutionName + ISolutionRepository.SEPARATOR + actionPath + ISolutionRepository.SEPARATOR + actionName;
       }
-      
+
       String description = parameterProvider.getStringParameter(StandardSettings.DESCRIPTION, null);
       String scheduleName = null;
       String scheduleGroupName = null;
-      
 
       String outputContentGUID = UUIDUtil.getUUIDAsString();
-      
-      if ( ( null == cronString ) && ( null == repeatInterval ) ) {
+
+      if ((null == cronString) && (null == repeatInterval)) {
         // must be a quick one-shot background schedule
         scheduleName = outputContentGUID;
-        scheduleGroupName = getUserName( userSession );
+        scheduleGroupName = getUserName(userSession);
       } else {
         // must be some kind of repeating or cron schedule
         scheduleName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_NAME, null);
         scheduleGroupName = parameterProvider.getStringParameter(StandardSettings.SCHEDULE_GROUP_NAME, null);
       }
 
-      JobDetail jobDetail = createDetailFromParameterProvider(parameterProvider, userSession, 
-          outputContentGUID, scheduleName, scheduleGroupName, description, actionSeqPath );
-      
+      JobDetail jobDetail = createDetailFromParameterProvider(parameterProvider, userSession, outputContentGUID, scheduleName, scheduleGroupName, description,
+          actionSeqPath);
+
       // stores the user name and outputContentGUID in the Content Repository's persistent store (e.g. a database via hibernate)
       trackBackgroundExecution(userSession, outputContentGUID);
 
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
-      
+
       Trigger bgTrigger = null;
-      if ( null != cronString ) {
+      if (null != cronString) {
         String startDate = parameterProvider.getStringParameter(StandardSettings.START_DATE_TIME, null);
         String endDate = parameterProvider.getStringParameter(StandardSettings.END_DATE_TIME, null);
-        bgTrigger = SchedulerHelper.createCronTrigger( scheduleName, scheduleGroupName, startDate, endDate, cronString );
-      } else if ( null != repeatInterval ) {
+        bgTrigger = SchedulerHelper.createCronTrigger(scheduleName, scheduleGroupName, startDate, endDate, cronString);
+      } else if (null != repeatInterval) {
         String startDate = parameterProvider.getStringParameter(StandardSettings.START_DATE_TIME, null);
         String endDate = parameterProvider.getStringParameter(StandardSettings.END_DATE_TIME, null);
         String repeatCount = parameterProvider.getStringParameter(StandardSettings.REPEAT_COUNT, null);
-        bgTrigger = SchedulerHelper.createRepeatTrigger( scheduleName, scheduleGroupName, startDate, endDate, repeatCount, repeatInterval );
+        bgTrigger = SchedulerHelper.createRepeatTrigger(scheduleName, scheduleGroupName, startDate, endDate, repeatCount, repeatInterval);
       } else {
         // listener's name (as returned by listener.getName() will be the value of outputContentGUID
-        // the listener arranges for a flag to be set in the user's session, and can be used by web UI 
+        // the listener arranges for a flag to be set in the user's session, and can be used by web UI
         // to inform user that job has completed
-        BackgroundExecuteListener listener = new BackgroundExecuteListener(userSession, scheduleName, sched,
-            jobDetail.getName());
-        
+        BackgroundExecuteListener listener = new BackgroundExecuteListener(userSession, scheduleName, sched, jobDetail.getName());
+
         sched.addJobListener(listener);
         jobDetail.addJobListener(listener.getName());
 
-        bgTrigger = new SimpleTrigger(scheduleName, scheduleGroupName );  // trigger fires now (or as soon as possible)
+        bgTrigger = new SimpleTrigger(scheduleName, scheduleGroupName); // trigger fires now (or as soon as possible)
       }
 
       sched.scheduleJob(jobDetail, bgTrigger);
@@ -173,12 +165,14 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
+      ex.printStackTrace();
       throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB"), ex);
     } catch (ParseException ex) {
+      ex.printStackTrace();
       throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT"), ex);
     }
   }
-  
+
   public void trackBackgroundExecution(IPentahoSession userSession, String GUID) {
     IContentRepository repo = ContentRepository.getInstance(userSession);
     repo.newBackgroundExecutedContentId(userSession, GUID);
@@ -195,16 +189,16 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     return null;
   }
 
-  public List<IJobDetail> getScheduledAndExecutingBackgroundJobs(IPentahoSession userSession) throws BackgroundExecutionException{
+  public List<IJobDetail> getScheduledAndExecutingBackgroundJobs(IPentahoSession userSession) throws BackgroundExecutionException {
     try {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
-      String userName = getUserName( userSession );
-      String[] jobNames = sched.getJobNames(userName);  // can throw SchedulerException
+      String userName = getUserName(userSession);
+      String[] jobNames = sched.getJobNames(userName); // can throw SchedulerException
       List<IJobDetail> rtn = new ArrayList<IJobDetail>();
       if (jobNames != null) {
         for (int i = 0; i < jobNames.length; i++) {
-          JobDetail jobDetail = sched.getJobDetail(jobNames[i], userName);  // can throw SchedulerException
-          rtn.add( new QuartzJobDetail( jobDetail ) );
+          JobDetail jobDetail = sched.getJobDetail(jobNames[i], userName); // can throw SchedulerException
+          rtn.add(new QuartzJobDetail(jobDetail));
         }
       }
       return rtn;
@@ -248,17 +242,20 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
   /**
    * @param parameterProvider
    * @param userSession
-   * @param outputContentGUID String will be used as the job name in Quartz
-   * @param jobGroup String will be used as the job group name in Quartz
+   * @param outputContentGUID
+   *          String will be used as the job name in Quartz
+   * @param jobGroup
+   *          String will be used as the job group name in Quartz
    * @param solutionName
    * @param actionPath
    * @param actionName
    */
-  protected JobDetail createDetailFromParameterProvider(IParameterProvider parameterProvider, IPentahoSession userSession, String outputContentId, String jobName, String jobGroup, String description, String actionSeqPath ) {
-    
+  protected JobDetail createDetailFromParameterProvider(IParameterProvider parameterProvider, IPentahoSession userSession, String outputContentId,
+      String jobName, String jobGroup, String description, String actionSeqPath) {
+
     JobDetail jobDetail = new JobDetail(jobName, jobGroup, QuartzExecute.class);
-    if ( null != description ) {
-      jobDetail.setDescription( description );
+    if (null != description) {
+      jobDetail.setDescription(description);
     }
     JobDataMap data = jobDetail.getJobDataMap();
     Iterator<String> inputNamesIterator = parameterProvider.getParameterNames();
@@ -267,12 +264,39 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       Object inputValue = parameterProvider.getParameter(inputName);
       data.put(inputName, inputValue);
     }
+    ActionInfo actionInfo = ActionInfo.parseActionString(actionSeqPath);
+    String actionName = actionInfo.getActionName();
+
+    int lastDot = actionName.lastIndexOf('.');
+    String type = actionName.substring(lastDot + 1);
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, userSession);
+    IContentGenerator generator = null;
+    try {
+      generator = pluginManager.getContentGeneratorForType(type, userSession);
+    } catch (Throwable t) {
+      // don't let a bad plugin situation take us down
+    }
+
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, userSession);
-    ActionInfo actionInfo = ActionInfo.parseActionString( actionSeqPath );
-    IActionSequence action = repo.getActionSequence( actionInfo.getSolutionName(),
-        actionInfo.getPath(), actionInfo.getActionName(),
-        repo.getLoggingLevel(), ISolutionRepository.ACTION_EXECUTE);
-    data.put(BACKGROUND_ACTION_NAME_STR, action.getTitle());
+    String title = jobName;
+    if (generator != null) {
+      // get the title for the plugin file
+      InputStream inputStream = null;
+      try {
+        inputStream = repo.getResourceInputStream(actionSeqPath, true);
+      } catch (FileNotFoundException e) {
+        logger.warn(e.getMessage(), e);
+        // proceed to get the file info from the plugin manager. getFileInfo will return a failsafe fileInfo when something goes wrong.
+      }
+      IFileInfo fileInfo = pluginManager.getFileInfo(type, userSession, repo.getFileByPath(actionSeqPath), inputStream);
+      title = fileInfo.getTitle();
+    } else {
+      IActionSequence action = repo.getActionSequence(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName(), repo.getLoggingLevel(),
+          ISolutionRepository.ACTION_EXECUTE);
+      title = action.getTitle();
+    }
+
+    data.put(BACKGROUND_ACTION_NAME_STR, title);
     data.put("processId", this.getClass().getName()); //$NON-NLS-1$
     data.put(BACKGROUND_USER_NAME_STR, getUserName(userSession));
     data.put(BACKGROUND_CONTENT_GUID_STR, outputContentId);
@@ -280,10 +304,10 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     SimpleDateFormat fmt = new SimpleDateFormat();
     data.put(BACKGROUND_SUBMITTED, fmt.format(new Date()));
 
-    data.put( StandardSettings.SOLUTION, actionInfo.getSolutionName() );
-    data.put( StandardSettings.PATH, actionInfo.getPath() );
-    data.put( StandardSettings.ACTION, actionInfo.getActionName() );
-    
+    data.put(StandardSettings.SOLUTION, actionInfo.getSolutionName());
+    data.put(StandardSettings.PATH, actionInfo.getPath());
+    data.put(StandardSettings.ACTION, actionInfo.getActionName());
+
     // This tells our execution component (QuartzExecute) that we're running a background job instead of
     // a standard quartz execution.
     data.put(BACKGROUND_EXECUTION_FLAG, "true"); //$NON-NLS-1$
@@ -332,35 +356,33 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       // Update the userSession with the updated content item.
       JobDetail ctxDetail = context.getJobDetail();
       if ((ctxDetail != null) && (ctxDetail.getName().equals(this.jobName))) { // Only do if it's for our job...
-        Object contentItemGUID = context.get(BACKGROUND_CONTENT_GUID_STR);
+        Object contentItemGUID = ctxDetail.getJobDataMap().get(BACKGROUND_CONTENT_GUID_STR);
         if (contentItemGUID != null && userSession != null) {
           userSession.setBackgroundExecutionAlert(); // Toggle the alert status
-        } else {
-          Logger.warn(this.getClass().getName(), Messages
-              .getString("BackgroundExecuteHelper.WARN_CONTENT_ITEM_NOT_CREATED")); //$NON-NLS-1$
+        } else if (contentItemGUID == null) {
+          Logger.warn(this.getClass().getName(), Messages.getString("BackgroundExecuteHelper.WARN_CONTENT_ITEM_NOT_CREATED")); //$NON-NLS-1$
         }
         this.userSession = null; // Make sure nothing keeps a handle to the user session.
         try {
-          if(sched != null) {
-            sched.removeJobListener(this.getName());  
+          if (sched != null) {
+            sched.removeJobListener(this.getName());
           }
-        } catch ( RuntimeException ex ) {
+        } catch (RuntimeException ex) {
           throw ex; // programmer error, let RuntimeExceptions leak
         } catch (Exception ex) {
-          logger.error( Messages
-              .getErrorString( "BackgroundExecuteHelper.ERROR_0002_REMOVE_LISTENER_FAILED" ), ex ); //$NON-NLS-1$
+          logger.error(Messages.getErrorString("BackgroundExecuteHelper.ERROR_0002_REMOVE_LISTENER_FAILED"), ex); //$NON-NLS-1$
         }
       }
     }
 
   }
 
-  public IOutputHandler getContentOutputHandler(final String location, final String fileName,
-      final String solutionName, final IPentahoSession userSession, final IParameterProvider parameterProvider) {
+  public IOutputHandler getContentOutputHandler(final String location, final String fileName, final String solutionName, final IPentahoSession userSession,
+      final IParameterProvider parameterProvider) {
     return new CoreContentRepositoryOutputHandler(location, fileName, solutionName, userSession);
   }
 
-  private static String getUserName( IPentahoSession userSession ) {
+  private static String getUserName(IPentahoSession userSession) {
     return userSession.isAuthenticated() ? userSession.getName() : IBackgroundExecution.DEFAULT_USER_NAME;
   }
 }
