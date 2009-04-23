@@ -544,9 +544,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       
       // see if this file is a plugin
       ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
-      if (plugin != null && plugin.hasCommand(COMMAND.RUN)) {
+      if (plugin != null && plugin.hasCommand(mode)) {
         // load the editor for this plugin
-        String url = plugin.getCommandUrl(selectedFileItem, COMMAND.RUN);
+        String url = plugin.getCommandUrl(selectedFileItem, mode);
         if (GWT.isScript()) {
           if (url != null && !"".equals(url)) { //$NON-NLS-1$
             // we have a URL so open it in a new tab
