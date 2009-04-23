@@ -10,6 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.repository.datasource.DatasourceMgmtService;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
@@ -28,8 +29,7 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
   private ConnectionServiceDelegate getService(){
     if(SERVICE == null){
       try {
-        IPentahoSession session = PentahoHttpSessionHelper.getPentahoSession(this.getThreadLocalRequest());
-        datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class, session); //$NON-NLS-1$
+        datasourceMgmtSvc = new DatasourceMgmtService();
         SERVICE = new ConnectionServiceDelegate(datasourceMgmtSvc);
         
       } catch (Exception e) {

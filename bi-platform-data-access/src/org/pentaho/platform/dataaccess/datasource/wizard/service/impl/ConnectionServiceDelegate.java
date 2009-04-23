@@ -154,14 +154,10 @@ public class ConnectionServiceDelegate {
   
   private IDatasource convertFrom (IConnection connection) {
     IDatasource returnDatasource = (IDatasource) PentahoSystem.get(IDatasource.class, null);
-    //IPasswordService passwordService  = (IPasswordService) PentahoSystem.get(IPasswordService.class, null); 
     returnDatasource.setDriverClass(connection.getDriverClass());
     returnDatasource.setName(connection.getName());
-    //try {
-    returnDatasource.setPassword(/*passwordService.encrypt((*/connection.getPassword()/*))*/);
-    //} catch(Exception e) {
-      
-    //}
+    returnDatasource.setQuery("select count(*) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES");
+    returnDatasource.setPassword(connection.getPassword());
     returnDatasource.setUserName(connection.getUsername());
     returnDatasource.setUrl(connection.getUrl());
     return returnDatasource;
