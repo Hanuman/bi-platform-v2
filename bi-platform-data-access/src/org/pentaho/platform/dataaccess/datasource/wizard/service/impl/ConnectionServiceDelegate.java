@@ -21,25 +21,23 @@ public class ConnectionServiceDelegate {
 
   private String locale = Locale.getDefault().toString();
 
-  private List<IConnection> connectionList = new ArrayList<IConnection>();
   private IDatasourceMgmtService datasourceMgmtSvc;
   
   public ConnectionServiceDelegate() {
-    datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class,null);
-  }
+   }
 
-  public ConnectionServiceDelegate(IPentahoSession session) {
-    // get the datasource management service
-    datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class,session);
-
+  public ConnectionServiceDelegate(IDatasourceMgmtService datasourceMgmtSvc) {
+    this.datasourceMgmtSvc = datasourceMgmtSvc;
   }
   
   public List<IConnection> getConnections() {
-    List<IDatasource> datasources = null;
+    List<IConnection> connectionList = new ArrayList<IConnection>();
     try  {
-    datasources = datasourceMgmtSvc.getDatasources();
+      for(IDatasource datasource:datasourceMgmtSvc.getDatasources()) {
+        connectionList.add(convertTo(datasource));
+      }
     } catch(DatasourceMgmtServiceException dme) {
-      
+      return null;
     }
     return connectionList;
   }
