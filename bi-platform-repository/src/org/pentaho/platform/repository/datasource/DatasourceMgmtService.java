@@ -63,23 +63,24 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           newDatasource.setPassword(passwordService.encrypt(newDatasource.getPassword()));
           session.save(newDatasource);
         } catch(ObjectFactoryException objface) {
-          throw new DatasourceMgmtServiceException(Messages.getString(
-            "DatasourceMgmtService.UNABLE_TO_INIT_PASSWORD_SERVICE"));
+          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+            "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE")); //$NON-NLS-1$
         } catch(PasswordServiceException pse) {
             session.evict(newDatasource);
-          throw new DatasourceMgmtServiceException( pse.getMessage(), pse );
+          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+              "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
         } catch (HibernateException ex) {
           session.evict(newDatasource);
-          throw new DatasourceMgmtServiceException(Messages.getString(
-              "DatasourceMgmtService.UNABLE_TO_CREATE_DATASOURCE"), ex );
+          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+              "DatasourceMgmtService.ERROR_0001_UNABLE_TO_CREATE_DATASOURCE",newDatasource.getName()), ex );//$NON-NLS-1$
         }
       } else {
-        throw new DuplicateDatasourceException(Messages.getString(
-        "DatasourceMgmtService.DATASOURCE_ALREADY_EXIST") + newDatasource.getName());
+        throw new DuplicateDatasourceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0005_DATASOURCE_ALREADY_EXIST",newDatasource.getName()));//$NON-NLS-1$
       }
     } else {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-          "DatasourceMgmtService.NULL_DATASOURCE_OBJECT"));
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
     }
     HibernateUtil.flushSession();
    }
@@ -88,8 +89,8 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     if (datasource != null) {
       deleteDatasource(datasource);
     } else {
-      throw new NonExistingDatasourceException(Messages.getString(
-        "DatasourceMgmtService.DATASOURCE_DOES_NOT_EXIST") +jndiName);
+      throw new NonExistingDatasourceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0006_DATASOURCE_DOES_NOT_EXIST",jndiName));//$NON-NLS-1$
     }
   }  
   public void deleteDatasource(IDatasource datasource) throws NonExistingDatasourceException, DatasourceMgmtServiceException {
@@ -101,8 +102,8 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           throw new DatasourceMgmtServiceException( ex.getMessage(), ex );
         }
       } else {
-        throw new NonExistingDatasourceException(Messages.getString(
-          "DatasourceMgmtService.DATASOURCE_DOES_NOT_EXIST") +datasource.getName());
+        throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
       }
 
     HibernateUtil.flushSession();
@@ -120,14 +121,14 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       }
       return datasource;
     } catch(ObjectFactoryException objface) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
     } catch(PasswordServiceException pse) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_DECRYPT_PASSWORD"), pse );
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0008_UNABLE_TO_DECRYPT_PASSWORD"), pse );//$NON-NLS-1$
     } catch (HibernateException ex) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_RETRIEVE_DATASOURCE"), ex);
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE"), ex);//$NON-NLS-1$
     }
   }
 
@@ -146,14 +147,14 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       }
       return datasourceList;
     } catch(PasswordServiceException pse) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_ENCRYPT_PASSWORD"), pse );
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
     } catch(ObjectFactoryException objface) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
     } catch (HibernateException ex) {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-        "DatasourceMgmtService.UNABLE_TO_RETRIEVE_DATASOURCE"), ex );
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", ""), ex );//$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
@@ -163,26 +164,27 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       IDatasource tmpDatasource = getDatasource(datasource.getName());
       if (tmpDatasource != null) {
         try {
-          IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);          // Store the new encrypted password in the datasource object
+          IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null); 
+          // Store the new encrypted password in the datasource object
           datasource.setPassword(passwordService.encrypt(datasource.getPassword()));
           session.update(session.merge(datasource));
         } catch(ObjectFactoryException objface) {
-          throw new DatasourceMgmtServiceException(Messages.getString(
-            "DatasourceMgmtService.UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);
+          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+            "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
         } catch(PasswordServiceException pse) {
-            throw new DatasourceMgmtServiceException( Messages.getString(
-              "DatasourceMgmtService.UNABLE_TO_ENCRYPT_PASSWORD"), pse );
+            throw new DatasourceMgmtServiceException( Messages.getErrorString(
+              "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
         } catch (HibernateException ex) {
-          throw new DatasourceMgmtServiceException(Messages.getString(
-            "DatasourceMgmtService.UNABLE_TO_RETRIEVE_DATASOURCE"), ex );
+          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+            "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", datasource.getName()), ex );//$NON-NLS-1$
         }
       } else {
-        throw new NonExistingDatasourceException(Messages.getString(
-          "DatasourceMgmtService.DATASOURCE_DOES_NOT_EXIST", datasource.getName()) );
+        throw new NonExistingDatasourceException(Messages.getErrorString(
+          "DatasourceMgmtService.ERROR_0006_DATASOURCE_DOES_NOT_EXIST", datasource.getName()) );//$NON-NLS-1$
       }
     } else {
-      throw new DatasourceMgmtServiceException(Messages.getString(
-          "DatasourceMgmtService.NULL_DATASOURCE_OBJECT"));
+      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
     }
   }
   
