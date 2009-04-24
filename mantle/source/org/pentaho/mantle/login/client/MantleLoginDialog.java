@@ -34,6 +34,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -126,7 +127,8 @@ public class MantleLoginDialog extends PromptDialogBox {
       };
       try {
         String username = userTextBox.getText();
-        builder.sendRequest("j_username=" + username + "&j_password=" + passwordTextBox.getText(), callback); //$NON-NLS-1$ //$NON-NLS-2$
+        String password = passwordTextBox.getText();
+        builder.sendRequest("j_username=" + URL.encodeComponent(username) + "&j_password=" + URL.encodeComponent(password), callback); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (RequestException e) {
         e.printStackTrace();
       }
