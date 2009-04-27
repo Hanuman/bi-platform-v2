@@ -136,7 +136,9 @@ public class ChartBeansGeneratorUtil {
       params.put("value-column", chartDataDefinition.getRangeColumn()); //$NON-NLS-1$
     }
 
-    params.put("scaling-factor", chartDataDefinition.getScalingFactor()); //$NON-NLS-1$
+    if (chartDataDefinition.getScalingFactor() != null) {
+      params.put("scaling-factor", new Double(chartDataDefinition.getScalingFactor().doubleValue())); //$NON-NLS-1$
+    }
 
     createAndRunActionSequence(pentahoSession, params, chartDataDefinition.getDefaultParameterMap(), out);
 
