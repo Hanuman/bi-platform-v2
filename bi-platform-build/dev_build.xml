@@ -151,9 +151,6 @@ INSTRUCTIONS
       <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="compile">
         <reference refid="classpath" />
       </ant>
-      <ant antfile="build.xml" dir="../bi-platform-data-access" target="compile">
-        <reference refid="classpath" />
-      </ant>     	
     </sequential>
     <antcall target="copy-solution" />
   </target>
@@ -184,7 +181,6 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="resolve" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="resolve" />
     <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="resolve" />
-  	<ant antfile="build.xml" dir="../bi-platform-data-access" target="resolve" />
     <ant antfile="build.xml" dir="../mantle" target="resolve" />
   </target>
 
@@ -204,7 +200,6 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-all" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-all" />
     <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="clean-all" />
-  	<ant antfile="build.xml" dir="../bi-platform-data-access" target="clean-all" />
     <ant antfile="build.xml" dir="../mantle" target="clean-all" />
   </target>
 
@@ -224,7 +219,6 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="clean-dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="clean-dist" />
     <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="clean-dist" />
-  	<ant antfile="build.xml" dir="../bi-platform-data-access" target="clean-dist" />  	
     <ant antfile="build.xml" dir="../mantle" target="clean-dist" />
   </target>
 
@@ -244,7 +238,6 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="compile" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="compile" />
     <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="compile" />
-  	<ant antfile="build.xml" dir="../bi-platform-data-access" target="compile" />
     <ant antfile="build.xml" dir="../mantle" target="compile" />
   </target>
 
@@ -264,7 +257,6 @@ INSTRUCTIONS
     <ant antfile="build.xml" dir="../bi-platform-web-servlet" target="dist" />
     <ant antfile="build.xml" dir="../bi-platform-web-portlet" target="dist" />
     <ant antfile="build.xml" dir="../bi-platform-security-userroledao" target="dist" />
-  	<ant antfile="build.xml" dir="../bi-platform-data-access" target="dist" />
     <ant antfile="build.xml" dir="../mantle" target="dist" />
   </target>
 
@@ -345,11 +337,6 @@ INSTRUCTIONS
         <target name="resolve" />
         <target name="publish-local" />
     </ant>
-    <ant antfile="build.xml" dir="../bi-platform-data-access">
-      <target name="clean-all" />
-        <target name="resolve" />
-        <target name="publish-local" />
-    </ant>  	
     <ant antfile="build.xml" dir="../pentaho-open-admin-console">
       <target name="clean-all" />
         <target name="resolve" />
