@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.commons.metadata.mqleditor.ColumnType;
-import org.pentaho.commons.metadata.mqleditor.beans.BusinessTable;
+/*import org.pentaho.commons.metadata.mqleditor.beans.BusinessTable;*/
 import org.pentaho.commons.metadata.mqleditor.beans.Category;
 import org.pentaho.commons.metadata.mqleditor.beans.Column;
 import org.pentaho.commons.metadata.mqleditor.beans.Model;
@@ -60,7 +60,7 @@ public class BusinessModelGenerator {
     cat.setName("Columns");
     categories.add(cat);
     
-    BusinessTable bt = new BusinessTable();
+/*    BusinessTable bt = new BusinessTable();
     bt.setId("BT1");
     bt.setName("CSV");
 
@@ -79,7 +79,7 @@ public class BusinessModelGenerator {
     }
     
     cat.setBusinessColumns(cols);
-    bizModel.setCategories(categories);
+    bizModel.setCategories(categories);*/
     return bizModel;
   }
   
