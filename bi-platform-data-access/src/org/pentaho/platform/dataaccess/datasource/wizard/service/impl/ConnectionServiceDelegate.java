@@ -1,27 +1,19 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
-import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceException;
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
 public class ConnectionServiceDelegate {
-
-  private String locale = Locale.getDefault().toString();
-
   private IDatasourceMgmtService datasourceMgmtSvc;
   
   public ConnectionServiceDelegate() {
@@ -92,65 +84,23 @@ public class ConnectionServiceDelegate {
   }
   
   public boolean testConnection(IConnection connection) throws ConnectionServiceException {
-    Connection conn = null;
-    try {
-      conn = getConnection(connection);
-    } catch (ConnectionServiceException dme) {
-      throw new ConnectionServiceException(dme.getMessage(), dme);
-    } finally {
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        throw new ConnectionServiceException(e);
+    IPentahoConnection pentahoConnection = null;
+      pentahoConnection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
+        connection.getUrl(), connection.getUsername(), connection.getPassword(), null,null);
+      if (pentahoConnection != null) {
+        pentahoConnection.close();
+        return true;
+      } else {
+        return false;
       }
-    }
-    return true;
   }
-  
+
   /**
-   * NOTE: caller is responsible for closing connection
+   * This method converts from IDatasource to IConnection 
    * 
-   * @param ds
-   * @return
-   * @throws DataSourceManagementException
-   */
-  private static Connection getConnection(IConnection connection) throws ConnectionServiceException {
-    Connection conn = null;
-
-    String driverClass = connection.getDriverClass();
-    if (StringUtils.isEmpty(driverClass)) {
-      throw new ConnectionServiceException("Connection attempt failed"); //$NON-NLS-1$  
-    }
-    Class<?> driverC = null;
-
-    try {
-      driverC = Class.forName(driverClass);
-    } catch (ClassNotFoundException e) {
-      throw new ConnectionServiceException("Driver not found in the class path. Driver was " + driverClass, e); //$NON-NLS-1$
-    }
-    if (!Driver.class.isAssignableFrom(driverC)) {
-      throw new ConnectionServiceException("Driver not found in the class path. Driver was " + driverClass); //$NON-NLS-1$    }
-    }
-    Driver driver = null;
-    
-    try {
-      driver = driverC.asSubclass(Driver.class).newInstance();
-    } catch (InstantiationException e) {
-      throw new ConnectionServiceException("Unable to instance the driver", e); //$NON-NLS-1$
-    } catch (IllegalAccessException e) {
-      throw new ConnectionServiceException("Unable to instance the driver", e); //$NON-NLS-1$    }
-    }
-    try {
-      DriverManager.registerDriver(driver);
-      conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
-      return conn;
-    } catch (SQLException e) {
-      throw new ConnectionServiceException("Unable to connect", e); //$NON-NLS-1$
-    }
-  }
-
+   * @param IDatasource
+   * @return IConnection
+   */ 
   private IConnection convertTo (IDatasource datasource) {
     IConnection returnDatasource = new org.pentaho.platform.dataaccess.datasource.beans.Connection();
     returnDatasource.setDriverClass(datasource.getDriverClass());
@@ -161,11 +111,17 @@ public class ConnectionServiceDelegate {
     return returnDatasource;
   }
   
+  /**
+   * This method converts from IConnection to IDatasource 
+   * 
+   * @param IConnection
+   * @return IDatasource
+   */ 
   private IDatasource convertFrom (IConnection connection) {
     IDatasource returnDatasource = (IDatasource) PentahoSystem.get(IDatasource.class, null);
     returnDatasource.setDriverClass(connection.getDriverClass());
     returnDatasource.setName(connection.getName());
-    returnDatasource.setQuery("select count(*) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES");
+    returnDatasource.setQuery("select count(*) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES"); //$NON-NLS-1$
     returnDatasource.setPassword(connection.getPassword());
     returnDatasource.setUserName(connection.getUsername());
     returnDatasource.setUrl(connection.getUrl());
