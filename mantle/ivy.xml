@@ -3,15 +3,14 @@
     <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
     
     <configurations>
-    	<conf name="default" extends="default-ext"/>
+    	<conf name="default"/>
     	<conf name="runtime"/>
-    	<conf name="default-ext"/>
-      <conf name="test"          visibility="private"/>
+    	<conf name="source" />    	
+    	<conf name="test" visibility="private"/>
     	<conf name="codegen"       visibility="private"/>
     	<conf name="codegen-mac"   visibility="private" extends="codegen"/>
     	<conf name="codegen-win"   visibility="private" extends="codegen"/>
     	<conf name="codegen-linux" visibility="private" extends="codegen"/>
-    	<conf name="source"/>
     </configurations>
     
     <publications>
@@ -19,13 +18,12 @@
     	<artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source" />
     </publications>
     
-    <dependencies defaultconf="default-ext->default">
+    <dependencies defaultconf="default->default">
         <!--  Actual dependencies -->
         <dependency org="commons-logging"       name="commons-logging"    rev="1.1"   transitive="false"/>
         <dependency org="commons-httpclient"    name="commons-httpclient" rev="3.0.1" transitive="false"/>
         <dependency org="commons-codec"         name="commons-codec"      rev="1.3"/>
-        <dependency org="org.zenica"            name="gwt-datepicker"     rev="r18" />
-        <dependency org="com.google.gwt"        name="gwt-servlet"        rev="1.5.2" />
+        <dependency org="com.google.gwt"        name="gwt-servlet"        rev="1.6.4"/>
 
 		    <!--  Pentaho dependencies -->
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" conf="default->default" changing="true">
@@ -46,29 +44,34 @@
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-plugin-actions"  rev="${project.revision}" conf="default->default" changing="true" />
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" conf="default->default" changing="true" />
         
+        <!--  Testing dependencies -->
+        <dependency org="junit"          name="junit"          rev="4.4" conf="test->default" />
+
+        <!--  Codegen dependencies -->
+        <dependency org="org.zenica"            name="gwt-datepicker"     rev="r18" conf="codegen->default"/>
         <!-- The organization of GWT Widgets can not be varied since we do not create optimized versions of the GWT Widgets -->
-        <dependency org="pentaho" name="pentaho-gwt-widgets" rev="${dependency.pentaho-gwt-widgets.revision}" conf="default-ext->default" changing="true">
+        <dependency org="pentaho" name="pentaho-gwt-widgets" rev="${dependency.pentaho-gwt-widgets.revision}" conf="codegen->default" changing="true">
           <artifact name="pentaho-gwt-widgets"/>
           <artifact name="pentaho-gwt-widgets" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
         
-        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" conf="default-ext->default" changing="true">
+        <dependency org="pentaho" name="pentaho-xul-core" rev="${dependency.pentaho-xul.revision}" conf="codegen->default" changing="true">
           <artifact name="pentaho-xul-core"/>
           <artifact name="pentaho-xul-core" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
-
-        <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul.revision}" conf="default-ext->default" changing="true">
+        
+        <dependency org="pentaho" name="pentaho-xul-gwt" rev="${dependency.pentaho-xul.revision}" conf="codegen->default" changing="true">
           <artifact name="pentaho-xul-gwt"/>
           <artifact name="pentaho-xul-gwt" type="source" ext="jar" m:classifier="sources"/>
         </dependency>
 
-        <!--  Testing dependencies -->
-        <dependency org="junit"          name="junit"          rev="4.4" conf="test->default"/>
+		<dependency org="com.google.code.gwtx" name="gwtx" rev="1.5-20081002" conf="codegen->default"/>
+                
+        <dependency org="com.google.gwt" name="gwt-user" rev="1.6.4"                         conf="codegen->default"/>
+        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.6.4" m:classifier="mac"      conf="codegen-mac->default"/>
+        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.6.4" m:classifier="windows"  conf="codegen-win->default"/>
+        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.6.4" m:classifier="linux"    conf="codegen-linux->default"/>
 
-        <!--  Codegen dependencies -->
-        <dependency org="com.google.gwt" name="gwt-user" rev="1.5.2"                         conf="codegen->default"/>
-        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="mac"      conf="codegen-mac->default"/>
-        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="windows"  conf="codegen-win->default"/>
-        <dependency org="com.google.gwt" name="gwt-dev"  rev="1.5.2" m:classifier="linux"    conf="codegen-linux->default"/>
+
     </dependencies>
 </ivy-module>
