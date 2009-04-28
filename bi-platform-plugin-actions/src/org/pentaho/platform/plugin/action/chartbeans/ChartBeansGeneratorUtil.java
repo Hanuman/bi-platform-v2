@@ -251,6 +251,8 @@ public class ChartBeansGeneratorUtil {
     chartHeightInput.setDefaultValue("1"); //$NON-NLS-1$
     IActionSequenceInput seriesColumnInput = actionSequenceDocument.createInput("series-column", STRING_TYPE); //$NON-NLS-1$
     IActionSequenceInput categoryColumnInput = actionSequenceDocument.createInput("category-column", STRING_TYPE); //$NON-NLS-1$
+    // set a default value of empty string to avoid an error when rendering pie charts (which don't have a category column
+    categoryColumnInput.setDefaultValue(""); //$NON-NLS-1$
     IActionSequenceInput valueColumnInput = actionSequenceDocument.createInput("value-column", STRING_TYPE); //$NON-NLS-1$
 
     // add inputs from parameterNameSet; these parameters will appear as placeholders in the query input
