@@ -92,7 +92,7 @@ public class ChartBeansGeneratorUtil {
    * @return
    * @throws IOException
    */
-  private static InputStream internalCreateChart(IPentahoSession pentahoSession, String serializedChartDataDefinition,
+  private static InputStream internalCreateChart(IPentahoSession pentahoSession, Map<String, String> parameterMap, String serializedChartDataDefinition,
       String serializedChartModel, int chartWidth, int chartHeight, OutputStream outputStream) throws IOException {
     InputStream result = null;
     ByteArrayOutputStream resultOutputStream = null;
@@ -140,7 +140,7 @@ public class ChartBeansGeneratorUtil {
       params.put("scaling-factor", new Double(chartDataDefinition.getScalingFactor().doubleValue())); //$NON-NLS-1$
     }
 
-    createAndRunActionSequence(pentahoSession, params, chartDataDefinition.getDefaultParameterMap(), out);
+    createAndRunActionSequence(pentahoSession, params, parameterMap, out);
 
     if (out instanceof BufferedOutputStream) {
       out.flush();
@@ -293,7 +293,7 @@ public class ChartBeansGeneratorUtil {
    * Convenience method that returns a complete HTML document containing the chart. Resource references point back to
    * the BI Server.
    */
-  public static String createChartAsHtml(IPentahoSession userSession, String serializedChartDataDefinition,
+  public static String createChartAsHtml(IPentahoSession userSession, Map<String, String> parameterMap, String serializedChartDataDefinition,
       String serializedChartModel, int chartWidth, int chartHeight) throws IOException {
 
     ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel, ChartSerializationFormat.JSON);
@@ -308,7 +308,7 @@ public class ChartBeansGeneratorUtil {
       BufferedOutputStream bos = null;
       try {
         bos = new BufferedOutputStream(new FileOutputStream(chartFileOnServer));
-        ChartBeansGeneratorUtil.internalCreateChart(userSession, serializedChartDataDefinition, serializedChartModel,
+        ChartBeansGeneratorUtil.internalCreateChart(userSession, parameterMap, serializedChartDataDefinition, serializedChartModel,
             chartWidth, chartHeight, bos);
       } finally {
         IOUtils.closeQuietly(bos);
@@ -322,7 +322,7 @@ public class ChartBeansGeneratorUtil {
     } else if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH) {
 
       ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
-      ChartBeansGeneratorUtil.internalCreateChart(userSession, serializedChartDataDefinition, serializedChartModel,
+      ChartBeansGeneratorUtil.internalCreateChart(userSession, parameterMap, serializedChartDataDefinition, serializedChartModel,
           chartWidth, chartHeight, tmpOut);
       final String ENCODING = "UTF-8"; //$NON-NLS-1$
       ByteArrayInputStream in = new ByteArrayInputStream(tmpOut.toByteArray());
