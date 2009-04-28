@@ -72,6 +72,16 @@ public class MetadataPublisher extends BasePublisher {
   @Override
   public String publish(final IPentahoSession session) {
     MetadataPublisher.numberUpdated = 0;
+
+    // refresh new metadata domains
+    try {
+      IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, session);
+      repo.reloadDomains();
+      MetadataPublisher.numberUpdated = repo.getDomainIds().size();
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("MetadataPublisher.ERROR_0000_THIN_METADATA_FAILED"));
+    }
+    
     List messages = new ArrayList();
     int result = MetadataPublisher.loadAllMetadata(session, true);
     if (result == MetadataPublisher.NO_ERROR) {
@@ -87,6 +97,8 @@ public class MetadataPublisher extends BasePublisher {
     //    if ((result & NO_META) == NO_META) {
     //      messages.add(Messages.getString("MetadataPublisher.USER_SOME_RELOAD_FAILED"));  //$NON-NLS-1$
     //    }
+    
+    
     StringBuffer buffer = new StringBuffer();
     buffer.append("<small>"); //$NON-NLS-1$
     Iterator iter = messages.iterator();
