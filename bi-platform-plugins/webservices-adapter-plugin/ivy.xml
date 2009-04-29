@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+
+    <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
+    
+    <configurations>
+    	<conf name="default" extends="default-ext"/>
+    	<conf name="default-ext"/>
+    	<conf name="test" visibility="private"/>
+    </configurations>
+    
+    <dependencies defaultconf="default-ext->default">
+    
+    </dependencies>
+    
+</ivy-module>

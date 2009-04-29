@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Pentaho Web Services Adapter">
+
+    <menu-items>
+        <menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/>
+    </menu-items>
+
+    <content-generator id="ws-services" type="ws-services" title="Web services discovery page" class="org.pentaho.platform.plugin.services.webservices.content.HtmlWebServiceLister"/>
+    
+    <content-generator id="ws-run" type="ws-run" title="Web services execution" class="org.pentaho.platform.plugin.services.webservices.content.RunService"/>
+    
+    <content-generator id="ws-wsdl" type="ws-wsdl" title="Web services execution" class="org.pentaho.platform.plugin.services.webservices.content.ServiceWsdl"/>
+    
+</plugin>
