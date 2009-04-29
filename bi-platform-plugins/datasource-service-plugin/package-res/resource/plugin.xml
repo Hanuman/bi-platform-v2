@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Echo Service Sample">
+  
+  <bean id="datasourceService" class="org.pentaho.platform.plugins.datasource.DatasourceService"/>
+  
+  <webservice 
+    title="%DatasourceServiceWrapper.USER_DATASOURCE_SERVICE_TITLE%" 
+    description="%DatasourceServiceWrapper.USER_DATASOURCE_SERVICE_DESC%"
+    ref="datasourceService">
+    <extra class="org.pentaho.platform.plugins.datasource.WSDataSource"/>
+  </webservice>
+  
+</plugin>

@@ -1,0 +1,122 @@
+<!--===========================================================================
+  This is the build file for the Pentaho Aggregation Designer project.
+  
+  This build file will use the common_build.xml file as the default build
+  process and should only override the tasks that need to differ from
+  the common build file.
+  
+  See common_build.xml for more details
+============================================================================-->
+<project name="Common Package" basedir="." default="package" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- Define the default location of the common build file -->
+  <property name="common.build.file"
+            value="./common_build.xml"
+            description="This is the location of the standardized common_build.xml file" />
+
+  <!-- Import the common_build.xml file which contains all the default tasks -->
+  <import file="${common.build.file}" />
+
+  <property name="productId" value="${ivy.artifact.id}" />
+  <property name="stage.dir" value="${bin.dir}/stage" description="Package staging" />
+  <property name="package.root.dir" value="${ivy.artifact.id}" description="Root directory of final zip or tar package"/>
+  <property name="approot.stage.dir" value="${stage.dir}/${package.root.dir}" description="Stage application root dir" />
+  <property name="releaseType" value="ce" />
+  <property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
+  <property name="package.resdir" value="${basedir}/package-res" />
+
+  <target name="dist" depends="jar,package" description="Builds and packages the application" />
+
+  <target name="clean-dist" description="Removes all dist artifacts">
+  <delete dir="${dist.dir}" />
+    <delete dir="${stage.dir}" />
+  </target>
+  
+  <!-- override of jar target.. this definitely should be moved into common build -->
+  <target name="jar"
+          depends="compile,set-build.id,create-version-file"
+          description="Jars up the bin directory after a compile">
+    <jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
+      <manifest>
+        <attribute name="Implementation-Title" value="${impl.title}" />
+        <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
+        <attribute name="Implementation-Vendor" value="${impl.vendor}" />
+        <attribute name="Implementation-ProductID" value="${impl.productID}" />
+      </manifest>
+      <fileset dir="${classes.dir}" />
+    </jar>
+  </target>
+
+  <target name="create-version-file">
+    <propertyfile file="${classes.dir}/version.properties" comment="${impl.title} build information">
+      <entry key="version" value="${project.revision}.${build.id}" />
+      <entry key="builddate" type="date" value="now" />
+    </propertyfile>
+  </target>
+
+  <target name="assemble" depends="assemble.copy-libs">
+    <mkdir dir="${approot.stage.dir}" />
+    <copy todir="${approot.stage.dir}">
+      <fileset dir="${package.resdir}" />
+    </copy>
+    <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
+  </target>
+  
+  <target name="assemble.copy-libs">
+      <copy todir="${approot.stage.dir}/lib">
+      <fileset dir="${lib.dir}" />
+      <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+    </copy>
+  </target>
+
+  <target name="package" depends="assemble,package-zip,package-targz" />
+
+  <target name="package-zip">
+    <zip destfile="${dist.dir}/${package.basename}.zip">
+      <zipfileset dir="${stage.dir}" />
+    </zip>
+  </target>
+
+  <target name="package-targz">
+    <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
+      <tarfileset dir="${stage.dir}" mode="755">
+        <include name="**/*.sh" />
+      </tarfileset>
+      <tarfileset dir="${stage.dir}">
+        <exclude name="**/*.sh" />
+      </tarfileset>
+    </tar>
+  </target>
+  
+    <!--=======================================================================
+      publish-pentaho-nojar (override)
+      
+      Publishes the jar and zip package to the Maven repository
+      ====================================================================-->
+  <target name="publish-pentaho-nojar"
+          depends="install-antcontrib,create-pom,ivy.deliver">
+    <ant antfile="build-res/common_build.xml" target="publish-pentaho-nojar" />
+    
+    <ivy:makepom ivyfile="package-ivy.xml" pomfile="package-pom.xml" />
+    <replace file="package-pom.xml" token="jar" value="zip" />
+
+    <antcall target="maven-publish-artifact">
+      <param name="publish.pomFile" value="package-pom.xml" />
+      <param name="publish.file" value="${dist.dir}/${package.basename}.zip" />
+    </antcall>
+  </target>
+  
+  <!--=======================================================================
+      publish-local-nojar (override)
+      
+      Publishes jar and zip package locally
+      ====================================================================-->
+  <target name="publish-local-nojar" depends="install-ivy">
+    <ant antfile="build-res/common_build.xml" target="publish-local-nojar" />
+    <ivy:resolve file="package-ivy.xml" />
+    <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
+      <artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
+    </ivy:publish>
+  </target>
+
+</project>
