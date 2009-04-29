@@ -91,7 +91,7 @@
     <!--=======================================================================
       publish-pentaho-nojar (override)
       
-      Publishes the jar and plugin zip package to the Maven repository
+      Publishes the jar and zip package to the Maven repository
       ====================================================================-->
   <target name="publish-pentaho-nojar"
           depends="install-antcontrib,create-pom,ivy.deliver">
@@ -102,14 +102,14 @@
 
     <antcall target="maven-publish-artifact">
       <param name="publish.pomFile" value="package-pom.xml" />
-      <param name="publish.file" value="${dist.dir}/${plugin.zipfile}" />
+      <param name="publish.file" value="${dist.dir}/${package.basename}.zip" />
     </antcall>
   </target>
   
   <!--=======================================================================
       publish-local-nojar (override)
       
-      Publishes jar and gwt zip package locally
+      Publishes jar and zip package locally
       ====================================================================-->
   <target name="publish-local-nojar" depends="install-ivy">
     <ant antfile="build-res/common_build.xml" target="publish-local-nojar" />
