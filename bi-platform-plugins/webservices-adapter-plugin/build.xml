@@ -7,7 +7,7 @@
   
   See common_build.xml for more details
 ============================================================================-->
-<project name="Datasource Service Plugin" basedir="." default="package" 
+<project name="Webservice Adapter Plugin" basedir="." default="package" 
 	xmlns:ivy="antlib:org.apache.ivy.ant" >
 	
 	<description>
