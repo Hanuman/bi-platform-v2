@@ -143,7 +143,7 @@ public class ChartComponent {
     
     // Transform IPentahoResultSet to an object array
     
-    Object[][] data = processChartData(resultSet, scalingFactor);
+    Object[][] data = processChartData(resultSet, scalingFactor, valueColumn);
     
     try{
       
@@ -205,7 +205,7 @@ public class ChartComponent {
    * 
    * @return Row / Column data table or null
    */
-  protected Object[][] processChartData(IPentahoResultSet resultSet, Number scalingFactor){
+  protected Object[][] processChartData(IPentahoResultSet resultSet, Number scalingFactor, int valueColumnIndex){
     if(resultSet == null){
       return null;
     }
@@ -217,7 +217,7 @@ public class ChartComponent {
     for(int r = 0; r < resultSet.getRowCount(); r++){
       for(int c = 0; c < resultSet.getMetaData().getColumnCount(); c++){
         Object value = resultSet.getValueAt(r, c);
-        if ((scalingFactor != null) && !scalingFactor.equals(0) && !scalingFactor.equals(1) && (value instanceof Number)) {
+        if ((c == valueColumnIndex) && (scalingFactor != null) && !scalingFactor.equals(0) && !scalingFactor.equals(1) && (value instanceof Number)) {
           value = new Double(((Number)value).doubleValue() / scalingFactor.doubleValue());
         }
         result[r][c] = value;

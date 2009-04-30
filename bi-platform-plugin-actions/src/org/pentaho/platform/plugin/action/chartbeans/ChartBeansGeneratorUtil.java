@@ -137,7 +137,7 @@ public class ChartBeansGeneratorUtil {
     }
 
     if (chartDataDefinition.getScalingFactor() != null) {
-      params.put("scaling-factor", new Double(chartDataDefinition.getScalingFactor().doubleValue())); //$NON-NLS-1$
+      params.put("scaling-factor", chartDataDefinition.getScalingFactor().toString()); //$NON-NLS-1$
     }
 
     createAndRunActionSequence(pentahoSession, params, parameterMap, out);
@@ -254,6 +254,7 @@ public class ChartBeansGeneratorUtil {
     // set a default value of empty string to avoid an error when rendering pie charts (which don't have a category column
     categoryColumnInput.setDefaultValue(""); //$NON-NLS-1$
     IActionSequenceInput valueColumnInput = actionSequenceDocument.createInput("value-column", STRING_TYPE); //$NON-NLS-1$
+    IActionSequenceInput scalingFactorInput = actionSequenceDocument.createInput("scaling-factor", STRING_TYPE); //$NON-NLS-1$
 
     // add inputs from parameterNameSet; these parameters will appear as placeholders in the query input
     for (String parameterName : parameterNameSet) {
@@ -283,6 +284,7 @@ public class ChartBeansGeneratorUtil {
     pojoAction.setActionInputValue("series-column", seriesColumnInput); //$NON-NLS-1$
     pojoAction.setActionInputValue("category-column", categoryColumnInput); //$NON-NLS-1$
     pojoAction.setActionInputValue("value-column", valueColumnInput); //$NON-NLS-1$
+    pojoAction.setActionInputValue("scaling-factor", scalingFactorInput); //$NON-NLS-1$
     pojoAction.setComponentDefinition("class", "org.pentaho.platform.plugin.action.chartbeans.ChartComponent"); //$NON-NLS-1$ //$NON-NLS-2$
     pojoAction.addOutput("outputstream", CONTENT_TYPE); //$NON-NLS-1$
 
