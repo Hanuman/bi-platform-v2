@@ -136,11 +136,11 @@ public class AnalysisSaver extends PentahoMessenger {
       String propertyTitle = (String) props.get(AnalysisSaver.TITLE_NODE_NAME);
       title = document.selectSingleNode("action-sequence/title"); //$NON-NLS-1$
       if ((propertyTitle != null) && (title != null)) {
-        title.setText(propertyTitle);
+        title.setText("<![CDATA[" + propertyTitle + "]]>");
       }
 
       // Next, we need to retrieve the PivotViewComponent action and
-      // process/update it.. there could popssibly be more than one
+      // process/update it.. there could possibly be more than one
       // PivotViewComponent in an action sequence, however, we have no idea
       // how to figure out which one to process, so we default to picking the last one we found.
 
@@ -193,13 +193,12 @@ public class AnalysisSaver extends PentahoMessenger {
       } else {
         Object value = props.get(key);
         if (value != null) {
-          node.setText(value.toString());
+          node.setText("<![CDATA[" + value.toString() + "]]>" );
         }
       }
     }
-
-    String mdxValue = componentDefinition.selectSingleNode("mdx").getText();//$NON-NLS-1$
-    componentDefinition.selectSingleNode("query").setText(mdxValue);//$NON-NLS-1$
+    // the property "mdx" is no longer being put in the hashmap. So,
+    // query will be passed properly now.
   }
 
   /**
