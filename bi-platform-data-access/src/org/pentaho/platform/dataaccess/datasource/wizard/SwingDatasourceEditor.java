@@ -28,7 +28,7 @@ public class SwingDatasourceEditor {
   
   public SwingDatasourceEditor(){
     try{
-      XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/commons/metadata/mqleditor/editor/public/connectionFrame.xul");
+      XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/connectionFrame.xul");
     
       final XulRunner runner = new SwingXulRunner();
       runner.addContainer(container);

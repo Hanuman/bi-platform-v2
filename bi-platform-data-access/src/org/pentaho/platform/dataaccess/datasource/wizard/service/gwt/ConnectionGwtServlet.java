@@ -9,7 +9,6 @@ import java.util.Stack;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.pentaho.commons.metadata.mqleditor.ColumnType;
 import org.pentaho.commons.metadata.mqleditor.CombinationType;
@@ -22,6 +21,17 @@ import org.pentaho.commons.metadata.mqleditor.MqlModel;
 import org.pentaho.commons.metadata.mqleditor.MqlOrder;
 import org.pentaho.commons.metadata.mqleditor.MqlQuery;
 import org.pentaho.commons.metadata.mqleditor.Operator;
+import org.pentaho.metadata.model.Category;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.IPhysicalColumn;
+import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.SqlPhysicalColumn;
+import org.pentaho.metadata.model.SqlPhysicalModel;
+import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.DatabaseColumnType;
@@ -29,13 +39,11 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
-import org.pentaho.platform.dataaccess.datasource.utils.ResultSetObject;
+import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
-import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
 import org.pentaho.pms.schema.v3.model.Column;
@@ -133,7 +141,18 @@ public class ConnectionGwtServlet extends RemoteServiceServlet implements Connec
           classes.add(Attribute.class);
           classes.add(Envelope.class);
           classes.add(BusinessData.class);
-          classes.add(ResultSetObject.class);
+          classes.add(SerializedResultSet.class);
+          classes.add(DataType.class);
+          classes.add(Domain.class);
+          classes.add(IPhysicalColumn.class);
+          classes.add(LogicalModel.class);
+          classes.add(Category.class);
+          classes.add(LogicalColumn.class);
+          classes.add(SqlPhysicalColumn.class);
+          classes.add(SqlPhysicalModel.class);
+          classes.add(SqlPhysicalTable.class);
+          classes.add(Concept.class);
+          classes.add(AggregationType.class);
         }
         @Override
         public boolean shouldDeserializeFields(Class<?> clazz) {

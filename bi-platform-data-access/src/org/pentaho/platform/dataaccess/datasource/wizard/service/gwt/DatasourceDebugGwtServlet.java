@@ -5,7 +5,7 @@ import java.util.List;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
-import org.pentaho.platform.dataaccess.datasource.utils.ResultSetObject;
+import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
 
@@ -41,25 +41,21 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
     return SERVICE.deleteDatasource(name);    
   }
 
-  public ResultSetObject doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
+  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
     return SERVICE.doPreview(connection, query, previewLimit);
   }
 
-  public ResultSetObject doPreview(IDatasource datasource) throws DatasourceServiceException{
+  public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException{
     return SERVICE.doPreview(datasource);
   }
 
-  public Boolean createCategory(String categoryName, IConnection connection, String query, BusinessData businessData) throws DatasourceServiceException {
-    return SERVICE.createCategory(categoryName,connection, query, businessData);  }
+  public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+    return SERVICE.generateModel(modelName, connection, query, previewLimit);
+   }
 
-  public BusinessData getBusinessData(IConnection connection, String query, String previewLimit)   throws DatasourceServiceException {
-    return SERVICE.getBusinessData(connection, query, previewLimit);
+  public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
+    return SERVICE.saveModel(businessData, overwrite);
   }
-
-  public BusinessData getBusinessData(IDatasource datasource) throws DatasourceServiceException {
-    return SERVICE.getBusinessData(datasource);    
-  }
-
-  
+ 
 
 }
