@@ -20,6 +20,7 @@
 
 package org.pentaho.platform.api.engine;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -132,16 +133,16 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
     }
   }
   
-  public static class WebserviceDefinition {
+  public class WebServiceDefinition {
     public String title, description;
-    public String serviceClass;
-    public Collection<String> extraClasses;
+    public String serviceBeanId;
+    public Collection<String> extraClasses = new ArrayList<String>();
     
-    public WebserviceDefinition() { }
-    public WebserviceDefinition(String title, String description, String serviceClass, Collection<String> extraClasses) {
+    public WebServiceDefinition() { }
+    public WebServiceDefinition(String title, String description, String serviceBeanId, Collection<String> extraClasses) {
       this.title = title;
       this.description = description;
-      this.serviceClass = serviceClass;
+      this.serviceBeanId = serviceBeanId;
       this.extraClasses = extraClasses;
     }
   }
@@ -154,5 +155,5 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    */
   public Map<String, String> getMetaProviderMap();
   
-  public Collection<WebserviceDefinition> getWebservices();
+  public Collection<IPlatformPlugin.WebServiceDefinition> getWebservices();
 }

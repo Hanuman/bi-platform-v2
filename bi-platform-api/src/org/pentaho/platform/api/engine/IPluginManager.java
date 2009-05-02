@@ -99,12 +99,23 @@ public interface IPluginManager {
 
   /**
    * If any plugins have registered a bean by id beanId, this method will return a new instance 
-   * of the object.
+   * of the object.  The correct classloader must be used to instantiate the object.
    * @param beanId a unique identifier for a particular bean (cannot be null)
    * @return an instance of the bean registered under beanId
    * @throws PluginBeanException if there was a problem retrieving the bean instance
    */
   public Object getBean(String beanId) throws PluginBeanException;
+  
+  /**
+   * Returns a loaded class for the bean registered as beanId.  The class will have 
+   * been loaded by the proper classloader, so it indirectly provides the caller
+   * with it's classloader by class.getClassLoader().  This is often helpful since
+   * plugin bean classes are often not available through the caller's classloader.
+   * @param beanId a unique identifier for a particular bean (cannot be null)
+   * @return a loaded class for the registered bean
+   * @throws PluginBeanException if there was a problem loading the class
+   */
+  public Class<?> loadClass(String beanId) throws PluginBeanException;
 
   /**
    * Returns true if a bean with id beanId has been registered with the plugin manager,
@@ -152,5 +163,4 @@ public interface IPluginManager {
    * @return the InputStream which may be used to read the plugin resource
    */
   public InputStream getStaticResource(String path);
-  
 }
