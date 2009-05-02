@@ -33,8 +33,8 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
-import org.pentaho.platform.api.engine.IPlatformPlugin.WebserviceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
@@ -180,12 +180,12 @@ public class SystemPathPluginProviderTest {
     .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
     
-    Collection<WebserviceDefinition> webservices = plugin.getWebservices();
+    Collection<IPlatformPlugin.WebServiceDefinition> webservices = plugin.getWebservices();
     
     Object wsobj = CollectionUtils.find(webservices, new Predicate() {
       public boolean evaluate(Object object) {
-        WebserviceDefinition ws = (WebserviceDefinition)object;
-        boolean ret = ws.title.equals("%TestWS.TITLE%") && ws.serviceClass.equals("org.pentaho.platform.webservice.services.datasource.DatasourceService");
+        WebServiceDefinition ws = (WebServiceDefinition)object;
+        boolean ret = ws.getTitle().equals("%TestWS.TITLE%") && ws.getServiceClass().getName().equals("org.pentaho.platform.webservice.services.datasource.DatasourceService");
         return ret;
       }
     });

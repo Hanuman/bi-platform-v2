@@ -30,8 +30,8 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.AxisConfig;
-import org.pentaho.platform.plugin.services.webservices.content.ServiceWsdl;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.webservices.content.AxisServiceWsdlGenerator;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
@@ -40,26 +40,25 @@ public class BaseClassesError1Test extends TestCase {
   
   public void testBadInit2() throws Exception {
     
-    AxisConfig config = AxisConfig.getInstance( );
-    assertNull( config );
+    assertNull( AxisWebServiceManager.currentAxisConfiguration );
         
   }
   
-  public void testBadInit1() throws Exception {
-    
-    try {
-      AxisConfig.getInstance( null );
-      assertTrue( "Exception expected", false ); //$NON-NLS-1$
-    } catch (NullPointerException e) {
-      assertTrue( "Exception expected", true ); //$NON-NLS-1$
-    }
-    
-  }
+//  public void testBadInit1() throws Exception {
+//    
+//    try {
+//      AxisConfigurationContextProvider.getInstance( null );
+//      assertTrue( "Exception expected", false ); //$NON-NLS-1$
+//    } catch (NullPointerException e) {
+//      assertTrue( "Exception expected", true ); //$NON-NLS-1$
+//    }
+//    
+//  }
   
   public void testBadInit3() {
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
     
-    ServiceWsdl contentGenerator = new ServiceWsdl();
+    AxisServiceWsdlGenerator contentGenerator = new AxisServiceWsdlGenerator();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$

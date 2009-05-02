@@ -19,13 +19,8 @@ package org.pentaho.test.platform.plugin.services.webservices;
 
 import junit.framework.TestCase;
 
-import org.apache.axis2.description.AxisService;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.AxisConfig;
-import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
-import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
 import org.pentaho.platform.plugin.services.webservices.SessionHandler;
-import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
 
 
 public class BaseClassesTest extends TestCase {
@@ -36,39 +31,43 @@ public class BaseClassesTest extends TestCase {
     
     StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
-    AxisConfig config = AxisConfig.getInstance( setup );
-    assertNotNull( "AxisConfig is null", config ); //$NON-NLS-1$
     
-    IWebServiceConfigurator axisConfigurator = config.getAxisConfigurator();
-
-    assertNotNull( "axisConfigurator is null", axisConfigurator ); //$NON-NLS-1$
+    fail("FIXME");
     
-    axisConfigurator.setSession( session );
-    
-    AxisService service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
-    assertNotNull( "test service is missing", service ); //$NON-NLS-1$
-    
-    IWebServiceWrapper wrapper = axisConfigurator.getServiceWrapper( "StubService" ); //$NON-NLS-1$
-    assertNotNull( "wrapper is null", wrapper ); //$NON-NLS-1$
-
-    assertEquals( service, wrapper.getService() );
-    config.reset();
-    
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
-    assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
-    
-    axisConfigurator.unloadServices();
-    
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
-    assertNull( "test service is still there", service ); //$NON-NLS-1$
-    
-    axisConfigurator.reloadServices();
-
-    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
-    assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
-
-    axisConfigurator.cleanup();
-    
+//    AxisConfiguration config = WebServiceManager.currentAxisConfiguration;
+//    assertNotNull( "AxisConfig is null", WebServiceManager.currentAxisConfiguration ); //$NON-NLS-1$
+//    
+//    IWebServiceConfigurator axisConfigurator = config.getAxisConfigurator();
+//
+//    assertNotNull( "axisConfigurator is null", axisConfigurator ); //$NON-NLS-1$
+//    
+//    axisConfigurator.setSession( session );
+//    
+//    AxisService service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
+//    assertNotNull( "test service is missing", service ); //$NON-NLS-1$
+//    
+//    WebServiceDefinition wsDef = axisConfigurator.getWebServiceDefinition( "StubService" ); //$NON-NLS-1$
+//    assertNotNull( "wsDef is null", wsDef ); //$NON-NLS-1$
+//
+//    //TODO: the definition bean no longer has access to the service object
+////    assertEquals( service, wsDef.getService() );
+//    config.reset();
+//    
+//    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
+//    assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
+//    
+//    axisConfigurator.unloadServices();
+//    
+//    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
+//    assertNull( "test service is still there", service ); //$NON-NLS-1$
+//    
+//    axisConfigurator.reloadServices();
+//
+//    service = config.getConfigurationContext().getAxisConfiguration().getService( "StubService" ); //$NON-NLS-1$
+//    assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
+//
+//    axisConfigurator.cleanup();
+//    
   }
   
   public void testSessionHandler() {
@@ -84,16 +83,6 @@ public class BaseClassesTest extends TestCase {
     
     SessionHandler.removeSession();
     assertNull( SessionHandler.getSession() );
-  }
-  
-  public void testPluginConst() {
-    
-    new WebServiceConst();
-    
-    assertEquals( "admin url is wrong", "http://testhost:8080/testcontext/content/ws-services", WebServiceConst.getDiscoveryUrl() ); //$NON-NLS-1$ //$NON-NLS-2$
-    assertEquals( "admin url is wrong", "http://testhost:8080/testcontext/content/ws-run", WebServiceConst.getExecuteUrl() ); //$NON-NLS-1$ //$NON-NLS-2$
-    assertEquals( "admin url is wrong", "http://testhost:8080/testcontext/content/ws-wsdl", WebServiceConst.getWsdlUrl() ); //$NON-NLS-1$ //$NON-NLS-2$
-    
   }
   
 }

@@ -38,29 +38,30 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
-import org.pentaho.platform.plugin.services.webservices.AxisConfig;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**
- * The base content generator for all of the webservices content generators.
+ * The base class for serving GenericServlet, i.e. /content/ requests through to an Axis webservice.
  * This class ensures that the webservices system is properly configured before
  * handing over to a subclass for processing of the request.
  * @author jamesdixon
- *
  */
-public abstract class WebServiceContentGenerator extends SimpleContentGenerator {
+public abstract class AbstractAxisServiceContentGenerator extends SimpleContentGenerator {
   
   @Override
   public void createContent( OutputStream out ) throws Exception {
 
-    // make sure this classes class loader is the context classloader
-    ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
     try {
-      Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
+      //NOTE: commented out classloader override since Axis webservices are created in the platform 
+      //now and not in a plugin.
+      //Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
       // try to get the AxisConfig object
-      AxisConfig config = AxisConfig.getInstance( );
-      if( config == null || config.getConfigurationContext() == null || config.getConfigurationContext().getAxisConfiguration() == null ) {
+      AxisConfiguration axisConfiguration = AxisWebServiceManager.currentAxisConfiguration;
+      if( axisConfiguration == null ) {
         // return an error
         String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0001_AXIS_CONFIG_IS_NULL"); //$NON-NLS-1$
         getLogger().error( message );
@@ -68,16 +69,10 @@ public abstract class WebServiceContentGenerator extends SimpleContentGenerator 
         return;
       }
       
-      // get the ConfigurationContext for this config
-      ConfigurationContext context = config.getConfigurationContext();
-      
-      // get the AxisConfiguration for this context
-      AxisConfiguration axisConfiguration = context.getAxisConfiguration();
-
       // hand over to a subclass to process this request
-      createContent( axisConfiguration, context, out );
+      createContent( axisConfiguration, AxisWebServiceManager.currentAxisConfigContext, out );
     } finally {
-      Thread.currentThread().setContextClassLoader( originalLoader );
+//      Thread.currentThread().setContextClassLoader( originalLoader );
     }
 
   }
@@ -170,6 +165,24 @@ public abstract class WebServiceContentGenerator extends SimpleContentGenerator 
     }
 
     AxisEngine.sendFault(faultContext);
+  }
+  
+  /**
+   * Currently webservice content generators are wired up by a plugin.  The following methods
+   * generate urls for executing and wsdl generation.  These methods are tightly bound to the 
+   * content generator specifications in the default-plugin of the system solution.
+   */
+  public static String getWebServiceExecuteUrl() {
+    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
+    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-run", null); //$NON-NLS-1$
+    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+    return url;
+  }
+  public static String getWebServiceWsdlUrl() {
+    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
+    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-wsdl", null); //$NON-NLS-1$
+    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+    return url;
   }
 
 }

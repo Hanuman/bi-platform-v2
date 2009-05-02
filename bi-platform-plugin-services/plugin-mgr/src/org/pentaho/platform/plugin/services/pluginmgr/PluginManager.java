@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved.
+ * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
  *
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
@@ -37,12 +37,15 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFileMetaProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+import org.pentaho.platform.api.engine.ServiceInitializationException;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -52,7 +55,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 
 public class PluginManager extends AbstractPluginManager {
-  
+
   private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
 
   /**
@@ -120,6 +123,16 @@ public class PluginManager extends AbstractPluginManager {
         }
       }
     }
+
+    IServiceManager svcManager = PentahoSystem.get(IServiceManager.class, null);
+    try {
+      svcManager.initServices(session);
+    } catch (ServiceInitializationException e) {
+      String msg = Messages.getErrorString("PluginManager.ERROR_0022_SERVICE_INITIALIZATION_FAILED"); //$NON-NLS-1$
+      Logger.error(getClass().toString(), msg, e);
+      PluginMessageLogger.add(msg);
+    }
+
     return !anyErrors;
   }
 
@@ -173,7 +186,11 @@ public class PluginManager extends AbstractPluginManager {
     menuCustomizationsCache.addAll(plugin.getMenuCustomizations());
 
     registerBeans(plugin, loader, session);
-    
+
+    //service registry must take place after bean registry since
+    //a service class may be configured as a plugin bean
+    registerServices(plugin);
+
     PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
     try {
       plugin.loaded();
@@ -186,33 +203,40 @@ public class PluginManager extends AbstractPluginManager {
     }
   }
 
-  private void registerContentTypes(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
+  private void registerContentTypes(IPlatformPlugin plugin, ClassLoader loader)
+      throws PlatformPluginRegistrationException {
     //index content types and define any file meta providers
     for (IContentInfo info : plugin.getContentInfos()) {
       contentTypeByExtension.put(info.getExtension(), info);
-      
+
       String metaProviderClass = plugin.getMetaProviderMap().get(info.getExtension());
-      
+
       //if a meta-provider is defined for this content type, then register it...
-      if(!StringUtils.isEmpty(metaProviderClass)) {
+      if (!StringUtils.isEmpty(metaProviderClass)) {
         Class<?> clazz = null;
-        String defaultErrMsg = Messages.getErrorString("PluginManager.ERROR_0013_FAILED_TO_SET_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension()); //$NON-NLS-1$
-        
+        String defaultErrMsg = Messages
+            .getErrorString(
+                "PluginManager.ERROR_0013_FAILED_TO_SET_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension()); //$NON-NLS-1$
+
         try {
           //do a test load to fail early if class not found
           clazz = loader.loadClass(metaProviderClass);
         } catch (Exception e) {
           throw new PlatformPluginRegistrationException(defaultErrMsg, e);
         }
-        
+
         //check that the class is an accepted type
-        if(!(ISolutionFileMetaProvider.class.isAssignableFrom(clazz) || IFileInfoGenerator.class.isAssignableFrom(clazz))) {
-          throw new PlatformPluginRegistrationException(Messages.getErrorString("PluginManager.ERROR_0019_WRONG_TYPE_FOR_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension())); //$NON-NLS-1$
+        if (!(ISolutionFileMetaProvider.class.isAssignableFrom(clazz) || IFileInfoGenerator.class
+            .isAssignableFrom(clazz))) {
+          throw new PlatformPluginRegistrationException(
+              Messages
+                  .getErrorString(
+                      "PluginManager.ERROR_0019_WRONG_TYPE_FOR_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension())); //$NON-NLS-1$
         }
-        
+
         //the class is ok, so register it with the factory
         objectFactory.defineObject(info.getExtension(), metaProviderClass, Scope.LOCAL, loader);
-        
+
         try {
           //check that the class can be instantiated
           //we have to tell the factory to return us an Object since the instance could be one of 2 permissible types
@@ -230,6 +254,8 @@ public class PluginManager extends AbstractPluginManager {
     //map that backs the set is never modified after the plugin has 
     //been made available to the plugin manager
     for (BeanDefinition def : plugin.getBeans()) {
+      //register by classname if id is null
+      def.beanId = (def.beanId == null) ? def.classname : def.beanId;
       if (objectFactory.objectDefined(def.beanId)) {
         throw new PlatformPluginRegistrationException(Messages.getErrorString(
             "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", def.beanId, plugin.getName())); //$NON-NLS-1$
@@ -238,7 +264,45 @@ public class PluginManager extends AbstractPluginManager {
       objectFactory.defineObject(def.beanId, def.classname, Scope.LOCAL, loader);
     }
   }
-  
+
+  private void registerServices(IPlatformPlugin plugin) throws PlatformPluginRegistrationException {
+    IServiceManager svcManager = PentahoSystem.get(IServiceManager.class, null);
+
+    for (IPlatformPlugin.WebServiceDefinition pws : plugin.getWebservices()) {
+      svcManager.defineService(toWebServiceDefinition(pws, plugin));
+    }
+  }
+
+  /* 
+   * A util method to convert plugin version of webservice definition to the official engine version
+   * consumable by an IServiceManager 
+   */
+  private WebServiceDefinition toWebServiceDefinition(IPlatformPlugin.WebServiceDefinition pws, IPlatformPlugin plugin)
+      throws PlatformPluginRegistrationException {
+    WebServiceDefinition wsDef = new WebServiceDefinition();
+    wsDef.setTitle(pws.title);
+    wsDef.setDescription(pws.description);
+    if (!this.isBeanRegistered(pws.serviceBeanId)) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0020_NO_SERVICE_CLASS_REGISTERED", pws.serviceBeanId)); //$NON-NLS-1$
+    }
+
+    try {
+      wsDef.setServiceClass(this.loadClass(pws.serviceBeanId));
+
+      ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+      for (String extraClass : pws.extraClasses) {
+        classes.add(this.getBean(extraClass).getClass());
+      }
+      wsDef.setExtraClasses(classes);
+    } catch (PluginBeanException e) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0021_SERVICE_CLASS_LOAD_FAILED" + pws.serviceBeanId, pws.title), e); //$NON-NLS-1$
+    }
+
+    return wsDef;
+  }
+
   private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
     ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
     if (loader == null) {
@@ -248,7 +312,7 @@ public class PluginManager extends AbstractPluginManager {
       //not be able to locate resources in jars.  This classloader ultimately
       //needs to be made less fragile
       pluginDir = pluginDir.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-      Logger.debug(this, "plugin dir for "+plugin.getName()+" is ["+pluginDir+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      Logger.debug(this, "plugin dir for " + plugin.getName() + " is [" + pluginDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       loader = new PluginClassLoader(pluginDir, this);
       classLoaderMap.put(plugin.getSourceDescription(), loader);
     }
@@ -313,7 +377,7 @@ public class PluginManager extends AbstractPluginManager {
     }
   }
 
-  public IPentahoObjectFactory getObjectFactory() {
+  public IPentahoObjectFactory getBeanFactory() {
     return objectFactory;
   }
 
@@ -336,6 +400,20 @@ public class PluginManager extends AbstractPluginManager {
     }
   }
 
+  public Class<?> loadClass(String beanId) throws PluginBeanException {
+    assert (beanId != null);
+    if (objectFactory.objectDefined(beanId)) {
+      Object bean = null;
+      try {
+        return objectFactory.getImplementingClass(beanId);
+      } catch (Throwable ex) { // Catching throwable on purpose
+        throw new PluginBeanException(ex);
+      }
+    } else {
+      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
+    }
+  }
+
   public boolean isBeanRegistered(String beanId) {
     assert (beanId != null);
     return objectFactory.objectDefined(beanId);
@@ -350,7 +428,7 @@ public class PluginManager extends AbstractPluginManager {
   public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile solutionFile, InputStream in) {
     IFileInfo fileInfo = null;
     try {
-      IFileInfoGenerator fileInfoGenerator = null;      
+      IFileInfoGenerator fileInfoGenerator = null;
       if (objectFactory.objectDefined(extension)) {
         fileInfoGenerator = objectFactory.get(IFileInfoGenerator.class, extension, null); //session scope not supported for meta providers
       }

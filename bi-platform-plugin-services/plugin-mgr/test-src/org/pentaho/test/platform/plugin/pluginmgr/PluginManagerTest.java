@@ -24,8 +24,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -34,6 +38,8 @@ import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IContentGeneratorInfo;
 import org.pentaho.platform.api.engine.IContentInfo;
+import org.pentaho.platform.api.engine.IOutputHandler;
+import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
@@ -44,26 +50,34 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
+import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
+import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
+import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
+import org.pentaho.test.platform.plugin.services.webservices.MimeTypeListener;
 import org.pentaho.ui.xul.XulOverlay;
 
 @SuppressWarnings("nls")
 public class PluginManagerTest {
 
   private MicroPlatform microPlatform;
+
   StandaloneSession session;
+
   IPluginManager pluginManager;
 
   @Before
@@ -72,10 +86,10 @@ public class PluginManagerTest {
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
-    
+
     session = new StandaloneSession();
     pluginManager = new PluginManager();
-    
+
   }
 
   @Test
@@ -203,7 +217,7 @@ public class PluginManagerTest {
     microPlatform.define(IPluginProvider.class, Tst6PluginProvider.class).init();
 
     PluginMessageLogger.clear();
-    
+
     //reload should register the beans
     pluginManager.reload(new StandaloneSession());
 
@@ -211,27 +225,29 @@ public class PluginManagerTest {
     assertTrue(
         "The first plugin to register by this id is a String, it should have remained the registered bean for this id",
         pluginManager.getBean("bean1") instanceof String);
-    
+
     //TODO: we should be able to test that the plugin was not loaded, indicated by bean1 not being registered, but
     //we cannot until plugin registration becomes transactional
   }
-  
+
   @Test
   public void test8_getBeanFromPluginClassloader() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst8PluginProvider.class).init();
-    
+
     //reload should register the beans
     pluginManager.reload(new StandaloneSession());
-    
+
     try {
       Class.forName("org.pentaho.nowhere.PluginOnlyClass");
       fail("PluginOnlyClass needs to be available only through the plugin lib dir in order for this test to be valid");
-    } catch (ClassNotFoundException e) { }
-    
+    } catch (ClassNotFoundException e) {
+    }
+
     assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
-    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory",
+        pluginManager.getBean("PluginOnlyClass"));
   }
-  
+
   @Test
   public void test8b_getBeanFromPluginClassloader_altSolutionPath() throws PluginBeanException {
     //This test is to validate a bug that had existed where a solution path ending in '/' was causing
@@ -241,19 +257,21 @@ public class PluginManagerTest {
     mp.define(ISolutionEngine.class, SolutionEngine.class);
     mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     mp.define(IPluginProvider.class, Tst8PluginProvider.class).init();
-    
+
     //reload should register the beans
     pluginManager.reload(new StandaloneSession());
-    
+
     try {
       Class.forName("org.pentaho.nowhere.PluginOnlyClass");
       fail("PluginOnlyClass needs to be available only through the plugin lib dir in order for this test to be valid");
-    } catch (ClassNotFoundException e) { }
-    
+    } catch (ClassNotFoundException e) {
+    }
+
     assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
-    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory",
+        pluginManager.getBean("PluginOnlyClass"));
   }
-  
+
   @Test
   public void INTEGRATION_getBeanFromPluginClassloader() throws PluginBeanException {
     microPlatform.init();
@@ -262,17 +280,20 @@ public class PluginManagerTest {
     pluginManager.reload(new StandaloneSession());
 
     assertTrue("PluginOnlyClass should have been registered", pluginManager.isBeanRegistered("PluginOnlyClass"));
-    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("PluginOnlyClass"));
-    assertTrue("TestClassForClassloader should have been registered", pluginManager.isBeanRegistered("TestClassForClassloader"));
-    assertNotNull("TestClassForClassloader bean should have been loaded from test-jar.jar in the plugin lib directory", pluginManager.getBean("TestClassForClassloader"));
+    assertNotNull("PluginOnlyClass bean should have been loaded from test-jar.jar in the plugin lib directory",
+        pluginManager.getBean("PluginOnlyClass"));
+    assertTrue("TestClassForClassloader should have been registered", pluginManager
+        .isBeanRegistered("TestClassForClassloader"));
+    assertNotNull("TestClassForClassloader bean should have been loaded from test-jar.jar in the plugin lib directory",
+        pluginManager.getBean("TestClassForClassloader"));
   }
-  
+
   @Test
   public void test9_ContentGenerationRegistration() throws ObjectFactoryException {
     microPlatform.define(IPluginProvider.class, Tst9PluginProvider.class).init();
-    
+
     PluginMessageLogger.clear();
-    
+
     pluginManager.reload(session);
 
     System.err.println(PluginMessageLogger.prettyPrint());
@@ -281,35 +302,34 @@ public class PluginManagerTest {
     assertNotNull("Should be able to get cg for test9id", pluginManager.getContentGeneratorInfo("test9id", session));
     assertNotNull("Should be able to get cg for test9bid", pluginManager.getContentGeneratorInfo("test9bid", session));
 
-    
-    
     //see if we have the expected number of cg's that support the test content type
     List<IContentGeneratorInfo> cgInfos = pluginManager.getContentGeneratorInfoForType("test9type", session);
     assertEquals("There should be 2 content generators that support the test9type", 2, cgInfos.size());
-    
+
     //see if we can get a content generator instance by id
-    assertNotNull("Could not get content generator test9 by id", pluginManager.getContentGenerator("test9id", session));    
-    assertNotNull("Could not get content generator test9b by id", pluginManager.getContentGenerator("test9bid", session));    
-    
+    assertNotNull("Could not get content generator test9 by id", pluginManager.getContentGenerator("test9id", session));
+    assertNotNull("Could not get content generator test9b by id", pluginManager
+        .getContentGenerator("test9bid", session));
+
     //see if we can access the content generator by type
     IContentGenerator contentGenerator = pluginManager.getContentGeneratorForType("test9type", session);
     assertNotNull("Should have gotten an instance of a cg for content type", contentGenerator);
     assertTrue(contentGenerator instanceof ContentGenerator1);
-    
+
     //see if we can lookup content generator ids by content type
     assertEquals("test9id", pluginManager.getContentGeneratorIdForType("test9type", session));
-    
+
     //see if we can lookup content generator titles by content type
     assertEquals("Test Generator 9", pluginManager.getContentGeneratorTitleForType("test9type", session));
 
     //see if we can lookup content generator urls by content type
     assertEquals("/test9url", pluginManager.getContentGeneratorUrlForType("test9type", session));
   }
-  
+
   @Test
   public void test10_ContentTypeRegistration() {
     microPlatform.define(IPluginProvider.class, Tst10PluginProvider.class).init();
-    
+
     pluginManager.reload(session);
 
     Set<String> types = pluginManager.getContentTypes();
@@ -318,7 +338,7 @@ public class PluginManagerTest {
     //generator configured, then it is invisible through this API.
     assertTrue("test10type1 should be registered", types.contains("test10type1-ext"));
     assertTrue("test10type2 should be registered", types.contains("test10type2-ext"));
-    
+
     IContentInfo contentInfo = pluginManager.getContentInfoFromExtension("test10type1-ext", session);
     assertNotNull("type should be registered for extension test10type1-ext", contentInfo);
     assertEquals("test10type1-mimeType", contentInfo.getMimeType());
@@ -326,7 +346,7 @@ public class PluginManagerTest {
     assertEquals("test10type1-description", contentInfo.getDescription());
     assertEquals("test10type1-ext", contentInfo.getExtension());
     assertEquals("test10type1-url", contentInfo.getIconUrl());
-    
+
     List<IPluginOperation> ops = contentInfo.getOperations();
     assertNotNull("Operations are null", ops);
     assertEquals("Wrong number of ops", 2, ops.size());
@@ -337,7 +357,43 @@ public class PluginManagerTest {
     assertEquals("Operation name is wrong", "test10type1-oper2-id", ops.get(1).getId());
     assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
   }
+
+  @Test
+  //TODO: move this test into it's own class for webservice testing
+  public void test11_WebserviceRegistration() throws Exception {
+    microPlatform.define(IPluginProvider.class, Tst11PluginProvider.class);
+    microPlatform.define(IPluginManager.class, PluginManager.class);
+    microPlatform.init();
+
+    pluginManager.reload(session);
+
+    IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
+
+    System.out.println(getContentAsString(serviceLister));
+  }
   
+  private String getContentAsString(IContentGenerator cg) throws Exception {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    IOutputHandler outputHandler = new SimpleOutputHandler(out, false);
+
+    String baseUrl = "http://testhost:testport/testcontent";
+    Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
+    SimpleParameterProvider requestParams = new SimpleParameterProvider();
+    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParams);
+    SimpleUrlFactory urlFactory = new SimpleUrlFactory(baseUrl + "?");
+    List<String> messages = new ArrayList<String>();
+    cg.setOutputHandler(outputHandler);
+    MimeTypeListener mimeTypeListener = new MimeTypeListener();
+    outputHandler.setMimeTypeListener(mimeTypeListener);
+    cg.setMessagesList(messages);
+    cg.setParameterProviders(parameterProviders);
+    cg.setSession(session);
+    cg.setUrlFactory(urlFactory);
+    cg.createContent();
+    String content = new String(out.toByteArray());
+    return content;
+  }
+
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
 
@@ -395,7 +451,7 @@ public class PluginManagerTest {
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
-  
+
   public static class Tst8PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
@@ -405,12 +461,12 @@ public class PluginManagerTest {
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
-  
+
   public static class Tst9PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
       p.setName("test9Plugin");
-      
+
       ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
       cg1.setDescription("test 9 plugin description");
       cg1.setId("test9id");
@@ -418,43 +474,61 @@ public class PluginManagerTest {
       cg1.setTitle("Test Generator 9");
       cg1.setUrl("/test9url");
       cg1.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
-//      cg1.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+      //      cg1.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
       p.addContentGenerator(cg1);
-      
+
       ContentGeneratorInfo cg2 = new ContentGeneratorInfo();
       cg2.setDescription("test 9b plugin description");
       cg2.setId("test9bid");
       cg2.setType("test9type");
       cg2.setTitle("Test Generator 9b");
       cg2.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
-//      cg2.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
+      //      cg2.setFileInfoGeneratorClassname("org.pentaho.test.platform.plugin.pluginmgr.FileInfoGenerator");
       p.addContentGenerator(cg2);
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
-  
+
   public static class Tst10PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
       p.setName("test10Plugin");
-      
+
       ContentInfo type = new ContentInfo();
       type.setDescription("test10type1-description");
       type.setExtension("test10type1-ext");
       type.setMimeType("test10type1-mimeType");
       type.setTitle("test10type1-title");
       type.setIconUrl("test10type1-url");
-      
+
       type.addOperation(new PluginOperation("test10type1-oper1-id", "test10type1-oper1-cmd"));
       type.addOperation(new PluginOperation("test10type1-oper2-id", "test10type1-oper2-cmd"));
-      
+
       p.addContentInfo(type);
-      
+
       type = new ContentInfo();
       type.setExtension("test10type2-ext");
       p.addContentInfo(type);
-      
+
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
+
+  public static class Tst11PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test11Plugin");
+      IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
+      pws.title = "ws11title";
+      pws.description = "ws11description";
+      pws.serviceBeanId = "org.pentaho.test.platform.engine.core.EchoServiceBean";
+      p.addWebservice(pws);
+
+      //defining bean with null id, the classname will be used as the id
+      p.addBean(new BeanDefinition(null, "org.pentaho.test.platform.engine.core.EchoServiceBean"));
+
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+
 }

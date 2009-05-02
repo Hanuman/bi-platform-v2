@@ -41,7 +41,8 @@ public interface IServiceManager {
   /**
    * Activates the services that have been registered with the service manager.
    * @param session the current session
+   * @throws ServiceInitializationException 
    */
-  public void initServices(IPentahoSession session);
+  public void initServices(IPentahoSession session) throws ServiceInitializationException;
 
 }

@@ -17,7 +17,9 @@
 */
 package org.pentaho.test.platform.plugin.services.webservices;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.Map;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IOutputHandler;
@@ -36,8 +39,8 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.AxisConfig;
-import org.pentaho.platform.plugin.services.webservices.content.RunService;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.webservices.content.AxisServiceExecutor;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -57,7 +60,6 @@ public class Run1Test {
     
     StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
-    AxisConfig config =  AxisConfig.getInstance( setup );
 
     /*
     // create a test transport so we can catch the output
@@ -65,19 +67,21 @@ public class Run1Test {
     
     assertEquals( "Transport is wrong", "http", config.getTransportOut() ); //$NON-NLS-1$ //$NON-NLS-2$
 */
+    AxisConfiguration axisConfig = AxisWebServiceManager.currentAxisConfiguration;
+    
     TransportInDescription tIn = new TransportInDescription( "http" ); //$NON-NLS-1$
     StubTransportListener receiver = new StubTransportListener();
     tIn.setReceiver(receiver);
-    config.getAxisConfigurator().getAxisConfiguration().addTransportIn(tIn);
+    axisConfig.addTransportIn(tIn);
     
     TransportOutDescription tOut = new TransportOutDescription( "http" ); //$NON-NLS-1$
     StubTransportSender sender = new StubTransportSender();
     tOut.setSender(sender);
-    config.getAxisConfigurator().getAxisConfiguration().addTransportOut(tOut);
+    axisConfig.addTransportOut(tOut);
 
-    LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(config.getAxisConfigurator().getAxisConfiguration());
+    LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(axisConfig);
     
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -148,7 +152,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -211,7 +215,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -272,7 +276,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -336,7 +340,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
 
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -398,7 +402,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
         
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -465,7 +469,7 @@ public class Run1Test {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
         
-    RunService contentGenerator = new RunService();
+    AxisServiceExecutor contentGenerator = new AxisServiceExecutor();
     
     assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
       assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$

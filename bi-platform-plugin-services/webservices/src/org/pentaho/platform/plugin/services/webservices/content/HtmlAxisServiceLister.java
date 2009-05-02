@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
 */
 package org.pentaho.platform.plugin.services.webservices.content;
@@ -28,20 +28,22 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.plugin.services.webservices.IWebServiceConfigurator;
-import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
+import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 /**
- * A content generator for listing web services and providing links to their WSDL URLs
+ * A content generator for listing metadata on Axis web services.
  * @author jamesdixon
  *
  */
-public class ListServices  extends WebServiceContentGenerator {
+public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
 
   private static final long serialVersionUID = -1772210710764038165L;
 
+  @SuppressWarnings("unchecked")
   @Override
   public void createContent( AxisConfiguration axisConfiguration, ConfigurationContext context, OutputStream out ) throws Exception {
     
@@ -76,6 +78,7 @@ public class ListServices  extends WebServiceContentGenerator {
    * @param serviceMap Map of current web services
    * @param sb StringBuilder to write content to
    */
+  @SuppressWarnings("unchecked")
   protected void getPageTitle( HashMap serviceMap, StringBuilder sb ) {
     // write out the page title
     sb.append( "<div id=\"webservicediv\">" ); //$NON-NLS-1$
@@ -95,13 +98,10 @@ public class ListServices  extends WebServiceContentGenerator {
    */
   protected void getTitleSection( AxisService axisService, AxisConfiguration axisConfiguration, StringBuilder sb ) {
 
-    IWebServiceConfigurator getAxisConfigurator = (IWebServiceConfigurator) axisConfiguration.getConfigurator();
-    
-    String serviceName = axisService.getName();
     // get the wrapper for the web service so we can get the localized title and description
-    IWebServiceWrapper wrapper = getAxisConfigurator.getServiceWrapper( serviceName );
+    WebServiceDefinition wsDef = AxisUtil.getSourceDefinition(axisService, (SystemSolutionAxisConfigurator)axisConfiguration.getConfigurator());
 
-    sb.append( "<table>\n<tr>\n<td colspan=\"2\"><h2>" ).append( wrapper.getTitle() ).append( "</h2></td></tr>\n<tr><td>" ); //$NON-NLS-1$ //$NON-NLS-2$
+    sb.append( "<table>\n<tr>\n<td colspan=\"2\"><h2>" ).append( wsDef.getTitle() ).append( "</h2></td></tr>\n<tr><td>" ); //$NON-NLS-1$ //$NON-NLS-2$
 
     String serviceDescription = axisService.getDocumentation();
     if (serviceDescription == null || "".equals(serviceDescription)) { //$NON-NLS-1$
@@ -131,7 +131,7 @@ public class ListServices  extends WebServiceContentGenerator {
    */
   protected void getWsdlSection( AxisService axisService, StringBuilder sb ) {
     // write out the WSDL URL
-    String wsdlUrl = WebServiceConst.getWsdlUrl()+"/"; //$NON-NLS-1$
+    String wsdlUrl = getWebServiceWsdlUrl();
     sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_WSDL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class ListServices  extends WebServiceContentGenerator {
    */
   protected void getRunSection( AxisService axisService, StringBuilder sb ) {
     // write out the execution URL
-    String serviceUrl = WebServiceConst.getExecuteUrl()+"/"; //$NON-NLS-1$
+    String serviceUrl = getWebServiceExecuteUrl();
     sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_URL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
@@ -158,6 +158,7 @@ public class ListServices  extends WebServiceContentGenerator {
    * @param axisService the Axis service
    * @param sb StringBuilder to write content to
    */
+  @SuppressWarnings("unchecked")
   protected void getOperationsSection( AxisService axisService, StringBuilder sb ) {
     
     // write out the operations
@@ -189,6 +190,7 @@ public class ListServices  extends WebServiceContentGenerator {
    * @param serviceMap Map of current web services
    * @param sb StringBuilder to write content to
    */
+  @SuppressWarnings("unchecked")
   protected void getPageFooter( HashMap serviceMap, StringBuilder sb ) {
     // write out the page footer
     sb.append( "</div" ); //$NON-NLS-1$
@@ -202,7 +204,7 @@ public class ListServices  extends WebServiceContentGenerator {
   
   @Override
   public Log getLogger() {
-    return LogFactory.getLog(ListServices.class);
+    return LogFactory.getLog(HtmlAxisServiceLister.class);
   }
 
 }

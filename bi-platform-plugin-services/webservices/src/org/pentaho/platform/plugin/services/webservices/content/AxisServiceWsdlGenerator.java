@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * @author jamesdixon
  *
  */
-public class ServiceWsdl extends ServiceContentGenerator {
+public class AxisServiceWsdlGenerator extends AxisWebServiceDemultiplexer {
   
   private static final long serialVersionUID = -163750511475038584L;
 
@@ -40,14 +40,12 @@ public class ServiceWsdl extends ServiceContentGenerator {
    */
   @Override
   public void createServiceContent( AxisService axisService, String operationName, AxisConfiguration axisConfiguration, ConfigurationContext context, OutputStream out ) throws Exception {
-
-    axisService.printWSDL(out, WebServiceConst.getExecuteUrl() );
-    
+    axisService.printWSDL(out, getWebServiceExecuteUrl() );
   }
 
   @Override
   public Log getLogger() {
-    return LogFactory.getLog(ServiceWsdl.class);
+    return LogFactory.getLog(AxisServiceWsdlGenerator.class);
   }
 
   @Override

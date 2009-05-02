@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved.
+ * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
  *
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
@@ -47,7 +47,7 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   
   private Collection<BeanDefinition> beanDefinitions = new ArrayList<BeanDefinition>();
 
-  private Collection<WebserviceDefinition> webserviceDefinitions = new ArrayList<WebserviceDefinition>();
+  private Collection<IPlatformPlugin.WebServiceDefinition> webserviceDefinitions = new ArrayList<IPlatformPlugin.WebServiceDefinition>();
 
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
 
@@ -165,7 +165,7 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
     return Collections.unmodifiableCollection(beanDefinitions);
   }
 
-  public Collection<WebserviceDefinition> getWebservices() {
+  public Collection<IPlatformPlugin.WebServiceDefinition> getWebservices() {
     return Collections.unmodifiableCollection(webserviceDefinitions);
   }
   
@@ -173,7 +173,7 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
     beanDefinitions.add(beanDefinition);
   }
   
-  public void addWebservice(WebserviceDefinition webserviceDefinition) {
+  public void addWebservice(IPlatformPlugin.WebServiceDefinition webserviceDefinition) {
     webserviceDefinitions.add(webserviceDefinition);
   }
 

@@ -28,14 +28,15 @@ import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.AxisConfig;
-import org.pentaho.platform.plugin.services.webservices.content.ServiceWsdl;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.webservices.content.AxisServiceWsdlGenerator;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
@@ -50,21 +51,21 @@ public class WsdlPageTest extends TestCase {
 	    
 	    StubServiceSetup setup = new StubServiceSetup();
 	    setup.setSession(session);
-	    AxisConfig config =  AxisConfig.getInstance( setup );
+	    AxisConfiguration axisConfig = AxisWebServiceManager.currentAxisConfiguration;
 	    
 	    TransportInDescription tIn = new TransportInDescription( "http" ); //$NON-NLS-1$
 	    StubTransportListener receiver = new StubTransportListener();
 	    tIn.setReceiver(receiver);
-	    config.getAxisConfigurator().getAxisConfiguration().addTransportIn(tIn);
+	    axisConfig.addTransportIn(tIn);
 	    
 	    TransportOutDescription tOut = new TransportOutDescription( "http" ); //$NON-NLS-1$
 	    StubTransportSender sender = new StubTransportSender();
 	    tOut.setSender(sender);
-	    config.getAxisConfigurator().getAxisConfiguration().addTransportOut(tOut);
+	    axisConfig.addTransportOut(tOut);
 
-	    LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(config.getAxisConfigurator().getAxisConfiguration());
+	    LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(axisConfig);
 
-      ServiceWsdl contentGenerator = new ServiceWsdl();
+      AxisServiceWsdlGenerator contentGenerator = new AxisServiceWsdlGenerator();
 	    
       assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
 	    	assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -125,9 +126,8 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
-	      AxisConfig.getInstance( setup );
 	      
-	      ServiceWsdl contentGenerator = new ServiceWsdl();
+	      AxisServiceWsdlGenerator contentGenerator = new AxisServiceWsdlGenerator();
 	      
 	      assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
 	        assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -165,9 +165,8 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
-	      AxisConfig.getInstance( setup );
 	      
-	      ServiceWsdl contentGenerator = new ServiceWsdl();
+	      AxisServiceWsdlGenerator contentGenerator = new AxisServiceWsdlGenerator();
 	      
 	      assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
 	        assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
@@ -207,9 +206,8 @@ public class WsdlPageTest extends TestCase {
 	      
 	      StubServiceSetup setup = new StubServiceSetup();
 	      setup.setSession(session);
-	      AxisConfig.getInstance( setup );
 	      
-	      ServiceWsdl contentGenerator = new ServiceWsdl();
+	      AxisServiceWsdlGenerator contentGenerator = new AxisServiceWsdlGenerator();
 	      
 	      assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
 	        assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$

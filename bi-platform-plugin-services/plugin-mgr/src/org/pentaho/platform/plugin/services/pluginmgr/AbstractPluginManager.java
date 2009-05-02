@@ -12,8 +12,10 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
+ * Created May 1, 2009
+ * @author aphillips
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
 
@@ -46,7 +48,7 @@ public abstract class AbstractPluginManager implements IPluginManager {
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
   protected List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
-
+  
   /* indexes and cached collections */
   
   protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections

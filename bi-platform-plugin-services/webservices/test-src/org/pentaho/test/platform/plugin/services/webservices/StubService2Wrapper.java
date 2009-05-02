@@ -17,18 +17,18 @@
 */
 package org.pentaho.test.platform.plugin.services.webservices;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
-import org.pentaho.platform.plugin.services.webservices.BaseWebServiceWrapper;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 
 
-public class StubService2Wrapper extends BaseWebServiceWrapper {
+public class StubService2Wrapper extends WebServiceDefinition {
 
   public StubService2Wrapper() {
     setEnabled( false );
   }
 
-  public Class getServiceClass() {
+  public Class<?> getServiceClass() {
     return StubService2.class;
   }
 
@@ -41,7 +41,7 @@ public class StubService2Wrapper extends BaseWebServiceWrapper {
   }
 
   @Override
-  protected ArrayList<Class> getExtraClasses() {
+  public Collection<Class<?>> getExtraClasses() {
     return null;
   }
 

@@ -12,9 +12,9 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
-*/
+ */
 package org.pentaho.platform.plugin.services.webservices;
 
 import java.io.InputStream;
@@ -24,38 +24,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.wsdl.Definition;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.AxisConfigBuilder;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.engine.core.system.PentahoBase;
-import org.pentaho.platform.plugin.services.webservices.messages.Messages;
+import org.pentaho.platform.plugin.services.messages.Messages;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
 
-
-/**
- * This is the base IWebServiceConfigurator class. Specific implementations can
- * subclass this.
- * @author jamesdixon
- *
- */
-public abstract class BaseServiceSetup extends PentahoBase implements IWebServiceConfigurator {
+public abstract class AbstractAxisConfigurator extends PentahoBase implements AxisConfigurator {
 
   protected AxisConfiguration axisConfig = null;
 
   protected IPentahoSession session; // Session to use during initialization
   
   //map of the web service wrappers
-  private Map<String, IWebServiceWrapper> services = new HashMap<String,IWebServiceWrapper>();  
+  private Map<String, WebServiceDefinition> services = new HashMap<String,WebServiceDefinition>();  
 
   public abstract Log getLogger();
   
-  public BaseServiceSetup() {
+  public AbstractAxisConfigurator() {
     init();
   }
   
@@ -69,9 +61,11 @@ public abstract class BaseServiceSetup extends PentahoBase implements IWebServic
     List<String> removed = new ArrayList<String>();
     // iterate through the list of web service wrappers
     for( String key : keys ) {
-      IWebServiceWrapper wrapper = services.get( key );
-      String serviceName = wrapper.getServiceClass().getSimpleName();
+      WebServiceDefinition wrapper = services.get( key );
+      
+      
       // use the service name to remove them from the Axis system
+      String serviceName = wrapper.getServiceClass().getSimpleName();
       axisConfig.removeService( serviceName );
       // build a list of the ones removed
       removed.add( serviceName );
@@ -83,7 +77,7 @@ public abstract class BaseServiceSetup extends PentahoBase implements IWebServic
 
   }
   
-  public IWebServiceWrapper getServiceWrapper( String name ) {
+  public WebServiceDefinition getWebServiceDefinition( String name ) {
      return services.get( name );
   }
 
@@ -142,20 +136,21 @@ public abstract class BaseServiceSetup extends PentahoBase implements IWebServic
    * Returns a list of the web service wrappers for this implmentation
    * @return
    */
-  protected abstract List<IWebServiceWrapper> getWebServiceWrappers();
+  protected abstract List<WebServiceDefinition> getWebServiceDefinitions();
 
   /**
    * Load the web services from the list of web service wrappers
    */
   public void loadServices() {
     
-    List<IWebServiceWrapper> wrappers = getWebServiceWrappers();
+    List<WebServiceDefinition> wsDfns = getWebServiceDefinitions();
     
-    for( IWebServiceWrapper wrapper : wrappers ) {
+    for( WebServiceDefinition wsDef : wsDfns ) {
       try {
-        loadService( wrapper );
+        loadService( wsDef );
       } catch (Exception e) {
-        error( Messages.getErrorString( "BaseServiceSetup.ERROR_0001_COULD_NOT_LOAD_SERVICE", wrapper.getName() ), e ); //$NON-NLS-1$
+        //Axis cannot handle a typed exception from this method, we must just log the error and continue on
+        error( Messages.getErrorString( "AbstractAxisConfigurator.ERROR_0001_COULD_NOT_LOAD_SERVICE", wsDef.getName() ), e ); //$NON-NLS-1$
       }
     }
       
@@ -166,11 +161,11 @@ public abstract class BaseServiceSetup extends PentahoBase implements IWebServic
    * @param wrapper Web service wrapper
    * @throws Exception
    */
-  protected void loadService( IWebServiceWrapper wrapper) throws Exception {
+  protected void loadService( WebServiceDefinition wsDef) throws Exception {
 
     // first create the service
-    String serviceName = wrapper.getName();
-    AxisService axisService = createService( wrapper );
+    String serviceName = wsDef.getName();
+    AxisService axisService = AxisUtil.createService( wsDef, getAxisConfiguration());
 
     // add any additional transports
     addTransports( axisService );
@@ -179,70 +174,20 @@ public abstract class BaseServiceSetup extends PentahoBase implements IWebServic
     addServiceEndPoints( axisService );
     
     // create the WSDL for the service
-    createServiceWsdl( axisService, wrapper );
+    AxisUtil.createServiceWsdl( axisService, wsDef, getAxisConfiguration() );
     
     // add the wrapper to the service list
-    services.put( serviceName, wrapper );
+    services.put( serviceName, wsDef );
     
     // start the service
     axisConfig.addService(axisService);
     axisConfig.startService(axisService.getName());
     
     // enable or disable the service as the wrapper dictates
-    axisService.setActive( wrapper.isEnabled() );
+    axisService.setActive( wsDef.isEnabled() );
 
-  }  
-  
-  /**
-   * Create a web service from a web service wrapper. The concrete subclass
-   * providers the wrappers via getWebServiceWrappers()
-   * @param wrapper The wrapper
-   * @return
-   * @throws AxisFault
-   */
-  protected AxisService createService( IWebServiceWrapper wrapper ) throws AxisFault {
-    
-    Class serviceClass = wrapper.getServiceClass();
-    String serviceName = wrapper.getName();
-    String className = serviceClass.getName();
-    
-    if( axisConfig.getService( serviceName ) != null ) {
-      axisConfig.removeService( serviceName );
-    }
-  
-    AxisService axisService = AxisService.createService( className,  axisConfig );
-
-    axisService.setName( serviceName );
-    axisService.setDocumentation( wrapper.getDescription() );
-    
-    wrapper.setService( axisService );
-    
-    return axisService;
   }
   
-  /**
-   * Creates the WSDL for an Axis service
-   * @param axisService
-   * @param wrapper
-   * @throws Exception
-   */
-  protected void createServiceWsdl( AxisService axisService, IWebServiceWrapper wrapper ) throws Exception {
-    // specific that we are generating the WSDL
-    Parameter useOriginalwsdl = new Parameter();
-    useOriginalwsdl.setName("useOriginalwsdl"); //$NON-NLS-1$
-    useOriginalwsdl.setValue("true"); //$NON-NLS-1$
-    axisService.addParameter(useOriginalwsdl);
-    
-    // get the WSDL generation and make it a parameter
-    Definition wsdlDefn = wrapper.getDefinition( axisConfig );
-    Parameter wsdl = new Parameter();
-    wsdl.setName( WSDLConstants.WSDL_4_J_DEFINITION );
-    wsdl.setValue( wsdlDefn);
-    
-    // add the WSDL parameter to the service
-    axisService.addParameter(wsdl);
-  }
-
   /**
    * An AxisConfigurator method that we don't need
    */

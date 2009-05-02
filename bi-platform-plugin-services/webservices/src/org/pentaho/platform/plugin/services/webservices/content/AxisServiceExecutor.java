@@ -47,7 +47,7 @@ import org.pentaho.platform.plugin.services.webservices.messages.Messages;
  * @author jamesdixon
  *
  */
-public class RunService extends ServiceContentGenerator implements OutTransportInfo {
+public class AxisServiceExecutor extends AxisWebServiceDemultiplexer implements OutTransportInfo {
   
   private static final long serialVersionUID = -8815968682881342687L;
 
@@ -111,7 +111,7 @@ public class RunService extends ServiceContentGenerator implements OutTransportI
   
   @Override
   public Log getLogger() {
-    return LogFactory.getLog(RunService.class);
+    return LogFactory.getLog(AxisServiceExecutor.class);
   }
 
   public void setContentType( String contentType ) {

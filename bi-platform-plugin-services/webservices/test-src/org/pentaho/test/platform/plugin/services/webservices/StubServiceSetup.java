@@ -26,16 +26,17 @@ import java.util.List;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.plugin.services.webservices.BaseServiceSetup;
-import org.pentaho.platform.plugin.services.webservices.IWebServiceWrapper;
-import org.pentaho.platform.plugin.services.webservices.content.WebServiceConst;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 
 
-public class StubServiceSetup extends BaseServiceSetup {
+public class StubServiceSetup extends SystemSolutionAxisConfigurator {
 
   private static final long serialVersionUID = 3383802441135983726L;
 
   protected static StubServiceSetup instance = null;
+  
+  private static final String BASE_URL = "http://testhost:8080/testcontext/"; //$NON-NLS-1$
   
   private static final Log logger = LogFactory.getLog(StubServiceSetup.class);
 
@@ -54,9 +55,8 @@ public class StubServiceSetup extends BaseServiceSetup {
   @Override
   public InputStream getConfigXml( ) {
 
-    WebServiceConst.baseUrl = "http://testhost:8080/testcontext/"; //$NON-NLS-1$
     try {
-      File f = new File( "webservices/test-src/solution/system/"+WebServiceConst.AXIS_CONFIG_FILE); //$NON-NLS-1$
+      File f = new File( "webservices/test-src/solution/system/axis2_config.xml"); //$NON-NLS-1$
       return new FileInputStream( f );
     } catch (Exception e) {
       // TODO log this
@@ -67,16 +67,17 @@ public class StubServiceSetup extends BaseServiceSetup {
   
   @Override
   public boolean setEnabled( String name, boolean enabled ) {
-    IWebServiceWrapper wrapper = getServiceWrapper( name );
+    WebServiceDefinition wrapper = getWebServiceDefinition( name );
     wrapper.setEnabled(enabled);
-    AxisService axisService = wrapper.getService( );
-    axisService.setActive( enabled );
+    //FIXME: service is not available through the definition bean
+//    AxisService axisService = wrapper.getService( );
+//    axisService.setActive( enabled );
     return true;
   }
   
   @Override
-  protected List<IWebServiceWrapper> getWebServiceWrappers() {
-    List<IWebServiceWrapper> wrappers = new ArrayList<IWebServiceWrapper>();
+  protected List<WebServiceDefinition> getWebServiceDefinitions() {
+    List<WebServiceDefinition> wrappers = new ArrayList<WebServiceDefinition>();
     wrappers.add( new StubServiceWrapper() );
     wrappers.add( new StubService2Wrapper() );
     wrappers.add( new StubService3Wrapper() );
@@ -93,7 +94,7 @@ public class StubServiceSetup extends BaseServiceSetup {
 
   @Override
   protected void addServiceEndPoints( AxisService axisService ) {
-    String endPoint1 = WebServiceConst.getExecuteUrl()+"/"+axisService.getName(); //$NON-NLS-1$
+    String endPoint1 = BASE_URL+"content/ws-run/"+axisService.getName(); //$NON-NLS-1$
       String endPoint2 = "http:test"; //$NON-NLS-1$
       
       ArrayList<String> transports = new ArrayList<String>();
