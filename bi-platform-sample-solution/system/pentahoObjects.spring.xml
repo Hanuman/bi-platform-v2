@@ -63,6 +63,7 @@ PentahoSystem which is initialized after Spring
   <bean id="IPluginManager" class="org.pentaho.platform.plugin.services.pluginmgr.PluginManager" scope="singleton" />
   <bean id="IPluginResourceLoader" class="org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader" scope="singleton" />
   <bean id="IMenuProvider" class="org.pentaho.platform.web.html.HtmlMenuProvider" scope="singleton" />
+  <bean id="IServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager" scope="singleton" />
 
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
   
