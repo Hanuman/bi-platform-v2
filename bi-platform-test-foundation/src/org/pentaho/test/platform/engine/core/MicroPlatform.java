@@ -41,16 +41,22 @@ import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
  * </pre>
  * @author aphillips
  */
+@SuppressWarnings("nls")
 public class MicroPlatform {
   private SimpleSystemSettings settings = new SimpleSystemSettings();
 
-  private String solutionPath;
+  private String solutionPath, baseUrl;
 
   private SimpleObjectFactory factory = new SimpleObjectFactory();
   
 
   public MicroPlatform(String solutionPath) {
+    this(solutionPath, "http://localhost:8080/pentaho");
+  }
+  
+  public MicroPlatform(String solutionPath, String baseUrl) {
     this.solutionPath = solutionPath;
+    this.baseUrl = baseUrl;
     PentahoSystem.setObjectFactory(factory);
   }
 
@@ -58,7 +64,11 @@ public class MicroPlatform {
     PentahoSystem.setSystemSettingsService(settings);
 
       StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
-      PentahoSystem.init(applicationContext);
+      applicationContext.setBaseUrl(baseUrl);
+      boolean success = PentahoSystem.init(applicationContext);
+      if(!success) {
+        throw new RuntimeException("platform initialization failed");
+      }
   }
 
   public MicroPlatform set(String settingName, String settingVal) {
@@ -70,5 +80,4 @@ public class MicroPlatform {
     factory.defineObject(interfaceClass.getSimpleName(), implClass.getName());
     return this;
   }
-  
 }
