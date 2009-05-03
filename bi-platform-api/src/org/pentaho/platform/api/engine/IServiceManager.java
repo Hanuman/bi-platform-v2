@@ -24,7 +24,7 @@ package org.pentaho.platform.api.engine;
  * A service manager allows a Java bean to be exposed as a web service by constructing 
  * a simple {@link WebServiceDefinition} and calling {@link #defineService(WebServiceDefinition)}.
  * Currently, these services will then become invokable through the GenericServlet servlet
- * proxying system.  Your new webservice will be available through <base_url>/content/ws-run/<service_name>/<operation>.
+ * proxying system.  Your new webservice will be available through {base_url}/content/ws-run/{service_name}/<operation>.
  * 
  * @author aphillips
  *
