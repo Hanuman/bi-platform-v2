@@ -17,83 +17,89 @@
  */
 package org.pentaho.test.platform.plugin.pluginmgr;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IServiceManager;
+import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.messages.Messages;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
-import org.pentaho.test.platform.engine.core.BaseTest;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
+import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
+import org.pentaho.test.platform.engine.core.MicroPlatform;
 
-public class PluginAdapterTest extends BaseTest {
-  private static final String SOLUTION_PATH = "plugin-mgr/test-res/solution4-content-gen"; //$NON-NLS-1$
-  private static final String ALT_SOLUTION_PATH = "test-res/solution4-content-gen"; //$NON-NLS-1$
-  private static final String PENTAHO_XML_PATH = "/system/pentahoObjects.spring.xml"; //$NON-NLS-1$
+@SuppressWarnings("nls")
+public class PluginAdapterTest {
+  private MicroPlatform microPlatform;
+  private IPentahoSession session;
+  private PluginAdapter pluginAdapter;
 
-  @Override 
-  public String getSolutionPath() {
-      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
-      if(file.exists()) {
-        return SOLUTION_PATH;  
-      } else {
-        return ALT_SOLUTION_PATH;
-      }
+  @Before
+  public void init0() {
+    microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
+    microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
+    microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
+    microPlatform.define(IPluginManager.class, PluginManager.class);
+    microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
+    microPlatform.define(IServiceManager.class, AxisWebServiceManager.class);
+
+    session = new StandaloneSession();
+
+    pluginAdapter = new PluginAdapter();
+
+    PentahoSystem.setAdministrationPlugins(Arrays.asList((IPentahoPublisher) pluginAdapter));
+
+    microPlatform.init();
   }
 
+  @Test
   public void testPluginAdapterViaPublish() throws Exception {
-	    startTest();
-	    
-	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
-
-	    String str = PentahoSystem.publish( session, "org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"); //$NON-NLS-1$
-	    System.err.println(str);
-	    assertTrue( str.indexOf( "Discovered plugin") > 0 ); //$NON-NLS-1$
-	    finishTest();
-	  }
+    String str = PentahoSystem.publish(session, "org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter"); //$NON-NLS-1$
+    //If we see 'Discovered plugin' anywhere in the result string we know that the plugin adapter was able to invoke the plugin manager properly
+    assertTrue("Result string '"+str+"' did not contain 'Discovered plugin'",str.indexOf("Discovered plugin") > 0);
+  }
 
   @SuppressWarnings("cast")
-  public void testPluginAdapterViaPublisherAPI() throws Exception {
-  	    startTest();
-  	    
-  	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
+  @Test
+  public void testPluginAdapterAsPublisher() throws Exception {
+    IPentahoPublisher asPublisher = (IPentahoPublisher) pluginAdapter;
 
-  	    PluginAdapter mgr = new PluginAdapter();
-  	    assertTrue( mgr instanceof IPentahoPublisher );
-  	    IPentahoPublisher publisher = (IPentahoPublisher) mgr;
-  	    
-  	    assertEquals( Messages.getString("PluginAdapter.USER_PLUGIN_MANAGER"), publisher.getName() ); //$NON-NLS-1$
-  	    assertNotSame( "!PluginAdapter.USER_PLUGIN_MANAGER!", publisher.getName() ); //$NON-NLS-1$
-  	    
-  	    assertEquals( Messages.getString("PluginAdapter.USER_REFRESH_PLUGINS"), publisher.getDescription() ); //$NON-NLS-1$
-  	    assertNotSame( "!PluginAdapter.USER_REFRESH_PLUGINS!", publisher.getName() ); //$NON-NLS-1$
-  	    
-  	    String str = publisher.publish(session, ILogger.DEBUG);
-  	    assertTrue( str.indexOf( "Discovered plugin") > 0 ); //$NON-NLS-1$
-  	    finishTest();
-  	  }
+    assertEquals(Messages.getString("PluginAdapter.USER_PLUGIN_MANAGER"), asPublisher.getName()); //$NON-NLS-1$
+    assertNotSame("!PluginAdapter.USER_PLUGIN_MANAGER!", asPublisher.getName()); //$NON-NLS-1$
+
+    assertEquals(Messages.getString("PluginAdapter.USER_REFRESH_PLUGINS"), asPublisher.getDescription()); //$NON-NLS-1$
+    assertNotSame("!PluginAdapter.USER_REFRESH_PLUGINS!", asPublisher.getName()); //$NON-NLS-1$
+
+    String str = asPublisher.publish(session, ILogger.DEBUG);
+    //If we see 'Discovered plugin' anywhere in the result string we know that the plugin adapter was able to invoke the plugin manager properly
+    assertTrue("Result string '"+str+"' did not contain 'Discovered plugin'",str.indexOf("Discovered plugin") > 0);
+  }
 
   @SuppressWarnings("cast")
-  public void testPluginAdapterViaSystemListenerAPI() throws Exception {
-  	    startTest();
-  	    
-  	    IPentahoSession session = new StandaloneSession( "test user" ); //$NON-NLS-1$
+  @Test
+  public void testPluginAdapterAsSystemListener() throws Exception {
+    IPentahoSystemListener listener = (IPentahoSystemListener) pluginAdapter;
 
-  	    PluginAdapter mgr = new PluginAdapter();
-  	    assertTrue( mgr instanceof IPentahoSystemListener );
-  	    
-  	    IPentahoSystemListener listener = (IPentahoSystemListener) mgr;
-  	    
-  	    assertTrue( listener.startup(session) );
+    assertTrue(listener.startup(session));
 
-  	    // this does not do anything but it shouldn't error
-  	    listener.shutdown();
-  	    
-  	    finishTest();
-  	  }
-
-  
+    // this does not do anything but it shouldn't error
+    listener.shutdown();
+  }
 }
