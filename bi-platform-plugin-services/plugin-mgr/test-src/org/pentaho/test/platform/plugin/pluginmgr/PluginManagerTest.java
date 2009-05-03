@@ -46,11 +46,11 @@ import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
@@ -60,6 +60,7 @@ import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
@@ -86,6 +87,7 @@ public class PluginManagerTest {
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
+    microPlatform.define(IServiceManager.class, AxisWebServiceManager.class);
 
     session = new StandaloneSession();
     pluginManager = new PluginManager();
@@ -256,6 +258,7 @@ public class PluginManagerTest {
     MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
     mp.define(ISolutionEngine.class, SolutionEngine.class);
     mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
+    mp.define(IServiceManager.class, AxisWebServiceManager.class);
     mp.define(IPluginProvider.class, Tst8PluginProvider.class).init();
 
     //reload should register the beans
