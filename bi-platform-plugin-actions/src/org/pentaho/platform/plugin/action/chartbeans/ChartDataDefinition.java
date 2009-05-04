@@ -22,7 +22,7 @@ public class ChartDataDefinition implements Serializable {
   
   Number scalingFactor = 1;
   
-  boolean treatNullsAsZero = false;
+  boolean convertNullsToZero = false;
 
   public String getQuery() {
     return query;
@@ -97,7 +97,7 @@ public class ChartDataDefinition implements Serializable {
       }
     }
 
-    if (treatNullsAsZero != chartDataQuery.treatNullsAsZero) {
+    if (convertNullsToZero != chartDataQuery.convertNullsToZero) {
       return false;
     }
     
@@ -151,12 +151,12 @@ public class ChartDataDefinition implements Serializable {
     this.scalingFactor = scalingFactor;
   }
 
-  public boolean getTreatNullsAsZero() {
-    return treatNullsAsZero;
+  public boolean getConvertNullsToZero() {
+    return convertNullsToZero;
   }
 
-  public void setTreatNullsAsZero(boolean treatNullValuesAsZero) {
-    this.treatNullsAsZero = treatNullValuesAsZero;
+  public void setConvertNullsToZero(boolean convert) {
+    this.convertNullsToZero = convert;
   }
 
 }

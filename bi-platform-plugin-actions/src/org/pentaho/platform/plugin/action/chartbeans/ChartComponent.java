@@ -59,6 +59,8 @@ public class ChartComponent {
   protected static final int DEFAULT_CHART_WIDTH = 400;
   protected static final int DEFAULT_CHART_HEIGHT = 300;
   
+  protected boolean convertNullsToZero = false;
+  
   protected String seriesColumnName = null;
   protected int seriesColumn = -1;
   
@@ -333,6 +335,14 @@ public class ChartComponent {
     seriesColumnName = seriesCol;
   }
 
+  public void setConvertNullsToZero(boolean convert){
+    this.convertNullsToZero = convert;
+  }
+  
+  public boolean getConvertNullsToZero(){
+    return convertNullsToZero;
+  }
+  
   /**
    * Define the column in the data set that contains the Category data 
    * @param seriesCol name of column that contains the Category for the chart
