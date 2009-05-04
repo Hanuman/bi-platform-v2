@@ -9,6 +9,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.engine.AxisConfiguration;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
@@ -24,7 +25,9 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.SystemStartupSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
+import org.pentaho.platform.plugin.services.webservices.content.HtmlAxisServiceLister;
 import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
@@ -117,6 +120,96 @@ public class HtmlServiceListerTest extends TestCase {
     } catch (Exception e) {
       assertTrue("Exception occurred", false); //$NON-NLS-1$
     }
+  }
+  
+  public void testRender2() throws Exception {
+    
+    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
+    
+    StubServiceSetup2 setup = new StubServiceSetup2();
+    setup.setSession(session);
+    
+    fail("FIXME");
+//    AxisConfigurationContextProvider.getInstance( setup );
+//    
+//    HtmlAxisWebServiceLister contentGenerator = new HtmlAxisWebServiceLister();
+//    assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
+//    
+//      assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
+//      
+//      ByteArrayOutputStream out = new ByteArrayOutputStream();
+//      IOutputHandler outputHandler = new SimpleOutputHandler( out, false );
+//      
+//      String baseUrl = "http://testhost:testport/testcontent"; //$NON-NLS-1$
+//      Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
+//      SimpleParameterProvider requestParams = new SimpleParameterProvider();
+//      parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
+//        SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
+//      List<String> messages = new ArrayList<String>();
+//      contentGenerator.setOutputHandler(outputHandler);
+//      MimeTypeListener mimeTypeListener = new MimeTypeListener();
+//      outputHandler.setMimeTypeListener(mimeTypeListener);
+//      contentGenerator.setMessagesList(messages);
+//      contentGenerator.setParameterProviders(parameterProviders);
+//      contentGenerator.setSession(session);
+//      contentGenerator.setUrlFactory(urlFactory);
+//      try {
+//          contentGenerator.createContent();
+//          String content = new String( out.toByteArray() );
+//        System.out.println( content );
+//        
+//        assertTrue( "Messages is missing", content.indexOf( Messages.getString("ListServices.USER_NO_SERVICES") ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+//      } catch (Exception e) {
+//        assertTrue( "Exception occurred", false ); //$NON-NLS-1$
+//      }
+  }
+  
+  public void testRender3() throws Exception {
+    
+    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
+
+     StubServiceSetup setup = new StubServiceSetup();
+      setup.setSession(session);
+
+      AxisConfiguration axisConfig = AxisWebServiceManager.currentAxisConfiguration;
+      axisConfig.getService( "StubService3" ).setActive( false ); //$NON-NLS-1$
+
+
+//    AxisConfig config = AxisConfig.getInstance();
+
+    HtmlAxisServiceLister contentGenerator = new HtmlAxisServiceLister();
+    assertNotNull( "contentGenerator is null", contentGenerator ); //$NON-NLS-1$
+    
+      assertNotNull( "Logger is null", contentGenerator.getLogger() ); //$NON-NLS-1$
+      
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      IOutputHandler outputHandler = new SimpleOutputHandler( out, false );
+      
+      String baseUrl = "http://testhost:testport/testcontent"; //$NON-NLS-1$
+      Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
+      SimpleParameterProvider requestParams = new SimpleParameterProvider();
+      parameterProviders.put( IParameterProvider.SCOPE_REQUEST, requestParams );
+        SimpleUrlFactory urlFactory = new SimpleUrlFactory( baseUrl+"?" ); //$NON-NLS-1$
+      List<String> messages = new ArrayList<String>();
+      contentGenerator.setOutputHandler(outputHandler);
+      MimeTypeListener mimeTypeListener = new MimeTypeListener();
+      outputHandler.setMimeTypeListener(mimeTypeListener);
+      contentGenerator.setMessagesList(messages);
+      contentGenerator.setParameterProviders(parameterProviders);
+      contentGenerator.setSession(session);
+      contentGenerator.setUrlFactory(urlFactory);
+      try {
+          contentGenerator.createContent();
+          String content = new String( out.toByteArray() );
+        System.out.println( content );
+        assertTrue( "WSDL URL is missing", content.indexOf( "/content/ws-wsdl" ) != -1 ); //$NON-NLS-1$
+        assertTrue( "Test Service URL is missing", content.indexOf("/content/ws-run/StubService" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+        assertTrue( "setString is missing", content.indexOf( "setString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+        assertTrue( "getString is missing", content.indexOf( "getString" ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+
+      } catch (Exception e) {
+        assertTrue( "Exception occurred", false ); //$NON-NLS-1$
+      }
   }
 
 }
