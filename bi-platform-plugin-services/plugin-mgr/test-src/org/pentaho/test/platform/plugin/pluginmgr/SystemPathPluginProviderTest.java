@@ -185,11 +185,15 @@ public class SystemPathPluginProviderTest {
     Object wsobj = CollectionUtils.find(webservices, new Predicate() {
       public boolean evaluate(Object object) {
         WebServiceDefinition ws = (WebServiceDefinition)object;
-        boolean ret = ws.getTitle().equals("%TestWS.TITLE%") && ws.getServiceClass().getName().equals("org.pentaho.platform.webservice.services.datasource.DatasourceService");
+        boolean ret = ws.getTitle().equals("%TestWS1.TITLE%");
         return ret;
       }
     });
-    assertNotNull("Webservice \"%TestWS.TITLE%\" should have been loaded", wsobj);
+    assertNotNull("Webservice \"%TestWS1.TITLE%\" should have been loaded", wsobj);
+    
+    WebServiceDefinition wsDfn = (WebServiceDefinition)wsobj;
+    
+    assertEquals("org.pentaho.test.platform.engine.core.EchoServiceBean", wsDfn.getServiceClass().getName());
     
     System.out.println(PluginMessageLogger.getAll());
   }
