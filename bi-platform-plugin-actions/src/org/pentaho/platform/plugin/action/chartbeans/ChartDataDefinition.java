@@ -97,6 +97,10 @@ public class ChartDataDefinition implements Serializable {
       }
     }
 
+    if (treatNullsAsZero != chartDataQuery.treatNullsAsZero) {
+      return false;
+    }
+    
     return true;
   }
 
