@@ -66,7 +66,7 @@
 	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
 	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
 	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
-	<property name="dependency.pentaho-webservice-plugin.revision" value="${project.revision}" />
+	<property name="dependency.pentaho-datasource-service-plugin.revision" value="${project.revision}" />
 	<property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
 	<property name="system.solution.dir" value="${solution.dir.server}/system" />
 	<property name="bi-developers.solution.dir" value="${solution.dir.server}/bi-developers" />
@@ -413,8 +413,8 @@
 	  <!-- install CDF solution -->
 	  <unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 		
-	  <!-- webservice -->
-	  <install-plugin zipfile="${lib.dir}/webservices-${dependency.pentaho-webservice-plugin.revision}.zip"/>
+	  <!-- datasource service -->
+	  <install-plugin zipfile="${lib.dir}/datasource-service-plugin-${dependency.pentaho-datasource-service-plugin.revision}.zip"/>
 
 	  <!-- install pentaho reporting plugin (for prpt files) -->
 	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${dependency.pentaho-reporting.revision}.zip"/>
