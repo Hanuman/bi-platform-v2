@@ -341,7 +341,7 @@ public class DatasourceController extends AbstractXulEventHandler {
                           textBox.setMultiline(false);
                           textBox.setWidth(20);
                           //LocalizedString columnName = column.getName();
-                          String columnName = column.getName();
+                          String columnName = column.getName().toString();
                           if(columnName != null) {
                             //textBox.setValue(column.getName().toString());
                             textBox.setValue(columnName);
@@ -508,7 +508,7 @@ public class DatasourceController extends AbstractXulEventHandler {
           // updated the data type and name of the column
           logicalColumn.setDataType(type);
          // logicalColumn.setName(new LocalizedString(textBox.getValue()));
-          logicalColumn.setName(textBox.getValue());
+          //logicalColumn.setName(textBox.getValue());
         }
       }
     }
