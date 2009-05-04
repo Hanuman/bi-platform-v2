@@ -48,9 +48,9 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockServletConfig;
 import com.mockrunner.mock.web.MockServletContext;
 
-public class Run1Test {
+public class AxisServiceExecutorTest {
 
-  public Run1Test() {
+  public AxisServiceExecutorTest() {
   }
 
   @Test
