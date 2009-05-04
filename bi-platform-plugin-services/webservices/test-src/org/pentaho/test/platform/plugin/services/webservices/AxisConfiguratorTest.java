@@ -19,12 +19,19 @@ package org.pentaho.test.platform.plugin.services.webservices;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 
 
-public class BaseClassesTest extends TestCase {
+public class AxisConfiguratorTest extends TestCase {
 
+  @Test
+  @Ignore
   public void testInit() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -32,11 +39,9 @@ public class BaseClassesTest extends TestCase {
     StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
     
-    fail("FIXME");
+    AxisConfiguration config = AxisWebServiceManager.currentAxisConfiguration;
+    assertNotNull( "AxisConfig is null", AxisWebServiceManager.currentAxisConfiguration ); //$NON-NLS-1$
     
-//    AxisConfiguration config = WebServiceManager.currentAxisConfiguration;
-//    assertNotNull( "AxisConfig is null", WebServiceManager.currentAxisConfiguration ); //$NON-NLS-1$
-//    
 //    IWebServiceConfigurator axisConfigurator = config.getAxisConfigurator();
 //
 //    assertNotNull( "axisConfigurator is null", axisConfigurator ); //$NON-NLS-1$
@@ -67,22 +72,7 @@ public class BaseClassesTest extends TestCase {
 //    assertNotNull( "test service is missing after reset", service ); //$NON-NLS-1$
 //
 //    axisConfigurator.cleanup();
-//    
-  }
-  
-  public void testSessionHandler() {
-
-    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
-    assertNull( SessionHandler.getSession() );
     
-    new SessionHandler();
-    
-    SessionHandler.setSession(session);
-    assertNotNull( SessionHandler.getSession() );
-    assertEquals( session, SessionHandler.getSession() );
-    
-    SessionHandler.removeSession();
-    assertNull( SessionHandler.getSession() );
   }
   
 }
