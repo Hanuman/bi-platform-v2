@@ -17,12 +17,11 @@
   <!-- Import the common_build.xml file which contains all the default tasks -->
   <import file="${common.build.file}" />
 
-  <property name="productId" value="${ivy.artifact.id}" />
   <property name="stage.dir" value="${bin.dir}/stage" description="Package staging" />
   <property name="package.root.dir" value="${ivy.artifact.id}" description="Root directory of final zip or tar package"/>
   <property name="approot.stage.dir" value="${stage.dir}/${package.root.dir}" description="Stage application root dir" />
-  <property name="releaseType" value="ce" />
-  <property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
+  <property name="package.id" value="${ivy.artifact.id}"/>
+  <property name="package.basename" value="${package.id}-${project.revision}" />
   <property name="package.resdir" value="${basedir}/package-res" />
 
   <target name="dist" depends="jar,package" description="Builds and packages the application" />
