@@ -9,7 +9,6 @@ import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource.EditType;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -341,11 +340,11 @@ public class DatasourceController extends AbstractXulEventHandler {
                           textBox.setId("columnHeader" + (columnCounter++));//$NON-NLS-1$
                           textBox.setMultiline(false);
                           textBox.setWidth(20);
-                          LocalizedString columnName = column.getName();
-                          //String columnName = column.getName();
+                          //LocalizedString columnName = column.getName();
+                          String columnName = column.getName();
                           if(columnName != null) {
-                            textBox.setValue(column.getName().toString());
-                            //textBox.setValue(columnName);
+                            //textBox.setValue(column.getName().toString());
+                            textBox.setValue(columnName);
                          
                           }
                           // Add the row for column header.
@@ -508,8 +507,8 @@ public class DatasourceController extends AbstractXulEventHandler {
           XulTextbox textBox = (XulTextbox) columnHeaderRowList.get(i);
           // updated the data type and name of the column
           logicalColumn.setDataType(type);
-          logicalColumn.setName(new LocalizedString(textBox.getValue()));
-          //logicalColumn.setName(textBox.getValue());
+         // logicalColumn.setName(new LocalizedString(textBox.getValue()));
+          logicalColumn.setName(textBox.getValue());
         }
       }
     }
