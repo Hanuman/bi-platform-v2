@@ -21,6 +21,8 @@ public class ChartDataDefinition implements Serializable {
   private String categoryColumn;
   
   Number scalingFactor = 1;
+  
+  boolean treatNullsAsZero = false;
 
   public String getQuery() {
     return query;
@@ -143,6 +145,14 @@ public class ChartDataDefinition implements Serializable {
 
   public void setScalingFactor(Number scalingFactor) {
     this.scalingFactor = scalingFactor;
+  }
+
+  public boolean getTreatNullsAsZero() {
+    return treatNullsAsZero;
+  }
+
+  public void setTreatNullsAsZero(boolean treatNullValuesAsZero) {
+    this.treatNullsAsZero = treatNullValuesAsZero;
   }
 
 }
