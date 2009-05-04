@@ -2,27 +2,27 @@ package org.pentaho.platform.dataaccess.datasource.beans;
 
 import java.util.List;
 
-import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.IPhysicalColumn;
+import org.pentaho.pms.schema.v3.model.Column;
 
 public class BusinessData implements java.io.Serializable{
   private static final long serialVersionUID = 8275330793662889379L;
-  private Domain domain;// contains column names
-  private List<List<String>> data; // contains sample data
-  public BusinessData(Domain domain, List<List<String>> data) {
+  private List<Column> columns;// contains column names
+  private List<List<String>> data;// 2 dimensional array
+
+  public BusinessData(List<Column> columns2, List<List<String>> data) {
     super();
-    this.domain = domain;
+    this.columns = columns2;
     this.data = data;
   }
   public BusinessData()
   {
     
   }
-  public Domain getDomain() {
-    return domain;
+  public List<Column> getColumns() {
+    return columns;
   }
-  public void setDomain(Domain domain) {
-    this.domain = domain;
+  public void setColumns(List<Column> columns) {
+    this.columns = columns;
   }
 
   public List<List<String>> getData() {
