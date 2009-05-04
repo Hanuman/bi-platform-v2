@@ -51,8 +51,6 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
 
   protected List<WebServiceDefinition> wsDfns = new ArrayList<WebServiceDefinition>();
   
-  private static String BASE_URL = null;
-
   public SystemSolutionAxisConfigurator() {
     super();
   }
@@ -73,8 +71,6 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
   @Override
   public InputStream getConfigXml( ) {
 
-    // Setup up the base URL for webservices calls
-    BASE_URL = PentahoSystem.getApplicationContext().getBaseUrl();
     try {
       ISolutionRepository solutionRepo = PentahoSystem.get(ISolutionRepository.class, session);
       byte[] configBytes = solutionRepo.getResourceAsBytes(getAxisConfigPath(), false);
@@ -83,7 +79,7 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
       ByteArrayInputStream in = new ByteArrayInputStream( configBytes );
       return in;
     } catch (Exception e) {
-      error( Messages.getErrorString( "SystemSolutionAxisConfigurator.ERROR_0001_BAD_CONFIG_FILE", getAxisConfigPath() ), e ); //$NON-NLS-1$
+      logger.error( Messages.getErrorString("SystemSolutionAxisConfigurator.ERROR_0001_BAD_CONFIG_FILE", getAxisConfigPath()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -110,7 +106,8 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
 
   @Override
   protected void addServiceEndPoints( AxisService axisService ) {
-    String endPoint1 = BASE_URL+"content/ws-run/"+axisService.getName(); //$NON-NLS-1$
+    String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
+    String endPoint1 = baseUrl+"content/ws-run/"+axisService.getName(); //$NON-NLS-1$
     axisService.setEPRs(new String[] { endPoint1 } );
   }
 

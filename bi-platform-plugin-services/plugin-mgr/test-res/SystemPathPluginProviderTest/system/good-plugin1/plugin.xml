@@ -13,14 +13,19 @@
   <bean id="genericBean" class="java.lang.Object" />
   
   <webservice 
+    title="%TestWS1.TITLE%" 
+    description="A test webservice"
+    class="org.pentaho.test.platform.engine.core.EchoServiceBean">
+  </webservice>
+  <!-- webservice 
     title="%TestWS.TITLE%" 
     description="A test webservice"
-    class="org.pentaho.platform.webservice.services.datasource.DatasourceService">
+    class="org.pentaho.test.platform.engine.core.EchoServiceBean">
     <extra class="org.pentaho.platform.webservice.services.datasource.WSDataSource"/>
   </webservice>
   <webservice 
     title="WS2" 
     description="A test webservice">
     <extra class="org.pentaho.platform.webservice.services.datasource.WSDataSource"/>
-  </webservice>
+  </webservice-->
 </plugin>
