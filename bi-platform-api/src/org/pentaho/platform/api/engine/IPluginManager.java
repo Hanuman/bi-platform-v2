@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
 /**
@@ -74,12 +75,10 @@ public interface IPluginManager {
       throws ObjectFactoryException;
 
   /**
-   * Returns a list of menu customization objects. Objects in this list will be
-   * org.pentaho.ui.xul.IMenuCustomization objects
+   * Returns a list of menu customization objects.
    * @return List of IMenuCustomization objects
    */
-  @SuppressWarnings("unchecked")
-  public List getMenuCustomizations();
+  public List<IMenuCustomization> getMenuCustomizations();
 
   /**
   * Causes the plug-in manager object to re-register all of the plug-ins that
