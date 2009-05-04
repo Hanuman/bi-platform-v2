@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -70,6 +71,7 @@ import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepos
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 import org.pentaho.test.platform.plugin.services.webservices.MimeTypeListener;
+import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
 @SuppressWarnings("nls")
@@ -170,7 +172,7 @@ public class PluginManagerTest {
     assertTrue("Wrong overlay content", overlay.getSource().indexOf("<node4") != -1); //$NON-NLS-1$ //$NON-NLS-2$
     assertNull("Overlay URI should be null", overlay.getOverlayUri()); //$NON-NLS-1$
   }
-
+  
   @Test
   public void test5a_getBean() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
@@ -361,11 +363,10 @@ public class PluginManagerTest {
     assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
   }
 
+  @Ignore
   @Test
-  //TODO: move this test into it's own class for webservice testing
   public void test11_WebserviceRegistration() throws Exception {
     microPlatform.define(IPluginProvider.class, Tst11PluginProvider.class);
-    microPlatform.define(IPluginManager.class, PluginManager.class);
     microPlatform.init();
 
     pluginManager.reload(session);
@@ -373,6 +374,20 @@ public class PluginManagerTest {
     IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
 
     System.out.println(getContentAsString(serviceLister));
+    
+    fail("make this a proper test.  It should probably be moved into a AxisWebServiceManagerTest");
+  }
+  
+  @Test
+  public void test12_MenuCustomizationRegistration() {
+    microPlatform.define(IPluginProvider.class, Tst12PluginProvider.class);
+    microPlatform.init();
+
+    pluginManager.reload(session);
+    
+    IMenuCustomization menuCust = pluginManager.getMenuCustomizations().get(0);
+    assertNotNull(menuCust);
+    assertEquals("menuCust12label", menuCust.getLabel());
   }
   
   private String getContentAsString(IContentGenerator cg) throws Exception {
@@ -530,6 +545,50 @@ public class PluginManagerTest {
       //defining bean with null id, the classname will be used as the id
       p.addBean(new BeanDefinition(null, "org.pentaho.test.platform.engine.core.EchoServiceBean"));
 
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst12PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test12Plugin");
+      p.addMenuCustomization(new IMenuCustomization() {
+
+        public String getAnchorId() {
+          return "anchorId";
+        }
+
+        public String getCommand() {
+          return "command";
+        }
+
+        public CustomizationType getCustomizationType() {
+          return CustomizationType.INSERT_BEFORE;
+        }
+
+        public String getId() {
+          return "id";
+        }
+
+        public ItemType getItemType() {
+          return ItemType.MENU_ITEM;
+        }
+
+        public String getLabel() {
+          return "menuCust12label";
+        }
+
+        //This is retarded, why do we have setters in a bean-like interface?
+        public void setAnchorId(String anchorId) { }
+        public void setCommand(String command) { }
+        public void setCustomizationType(CustomizationType customizationType) {  }
+        public void setId(String id) {  }
+        public void setItemType(ItemType itemType) {  }
+        public void setLabel(String label) { }
+        
+      });
+      
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
