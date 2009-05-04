@@ -170,7 +170,7 @@ public class ChartComponent {
             }
       }
       
-      InputStream is = ChartFactory.createChart(data, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
+      InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       // Wrap output as necessary
       if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
