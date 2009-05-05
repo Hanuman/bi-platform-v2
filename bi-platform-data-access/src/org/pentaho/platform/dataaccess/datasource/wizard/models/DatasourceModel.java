@@ -3,6 +3,11 @@ package org.pentaho.platform.dataaccess.datasource.wizard.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.metadata.model.Category;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.IPhysicalColumn;
+import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.IDatasource.DatasourceType;
@@ -15,6 +20,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
   private boolean isValid;
   private IConnection selectedConnection;
   private List<IConnection> connections = new ArrayList<IConnection>();
+  private List<ModelDataRow> dataRows = new ArrayList<ModelDataRow>();
   private String query;
   private String datasourceName;
   private String previewLimit;
@@ -25,6 +31,49 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
   public DatasourceModel() {
     previewLimit="10";
   }
+
+
+  
+  
+  public void setModelData(BusinessData businessData) {
+    if(businessData != null) {
+      Domain domain = businessData.getDomain();
+      List<List<String>> data = businessData.getData();
+      List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
+      List<LogicalModel> logicalModels = domain.getLogicalModels();
+      int i=0;
+      for (LogicalModel logicalModel : logicalModels) {
+        List<Category> categories = logicalModel.getCategories();
+        for (Category category : categories) {
+          List<LogicalColumn> logicalColumns = category.getLogicalColumns();
+          for (LogicalColumn logicalColumn : logicalColumns) {
+            addModelDataRow(logicalColumn.getPhysicalColumn(), data.get(i++));
+          }
+        }
+      }
+      firePropertyChange("dataRows", null, dataRows);
+    } else {
+      this.dataRows.removeAll(dataRows);
+      List<ModelDataRow> previousValue = this.dataRows;
+      firePropertyChange("dataRows", previousValue, null);
+    }
+  }
+
+  public void addModelDataRow(IPhysicalColumn column, List<String> data) {
+    this.dataRows.add(new ModelDataRow(column, data));
+  }
+
+  public List<ModelDataRow> getDataRows() {
+    return dataRows;
+  }
+
+
+  public void setDataRows(List<ModelDataRow> modelData) {
+    this.dataRows = dataRows;
+    firePropertyChange("dataRows", null, dataRows);
+  }
+
+
   
   public EditType getEditType() {
     return editType;
@@ -172,5 +221,6 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
 
   public void setBusinessData(BusinessData object) {
     this.object = object;
+    setModelData(object);
   }
 }

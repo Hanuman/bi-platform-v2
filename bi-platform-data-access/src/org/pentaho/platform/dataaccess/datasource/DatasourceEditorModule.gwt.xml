@@ -6,7 +6,15 @@
   <inherits name="org.pentaho.gwt.widgets.Widgets"/>
   <inherits name="org.pentaho.ui.xul.Gwt"/>
   <inherits name="org.pentaho.pms.schema.v3.Column"/>
+  <inherits name="org.pentaho.metadata.Model"/>
     <source path="">
+        <exclude name="**/MQLEditorDebugGwtServlet*"/>
+        <exclude name="**/SwingMqlEditor*"/>
+        <exclude name="**/MQLEditorServiceDeligate*"/>
+        <exclude name="**/MQLEditorGwtServlet*"/>
+        <exclude name="**/MQLEditorServiceDebugImpl*"/>
+        <exclude name="**/ModelSerializer*"/>
+        <exclude name="**/CWMStartup*"/>
         <exclude name="**/ConnectionDebugGwtServlet*"/>
         <exclude name="**/DatasourceDebugGwtServlet*"/>
         <exclude name="**/SwingDatasourceEditor*"/>
@@ -24,8 +32,7 @@
         <exclude name="**/CsvMqlGenerator*"/>
         
     </source>
-    <public path="wizard/public"/>
+     <public path="wizard/public"/>
   <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
   <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />
-
- </module>
+</module>

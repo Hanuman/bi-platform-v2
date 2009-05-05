@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -56,6 +57,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveModel(businessData, overwrite);
   }
- 
+  public BogoPojo gwtWorkaround(BogoPojo pojo) {
+    return pojo;
+  } 
 
 }

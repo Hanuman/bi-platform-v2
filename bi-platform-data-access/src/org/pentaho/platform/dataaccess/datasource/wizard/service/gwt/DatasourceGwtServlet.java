@@ -5,11 +5,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
+import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
 import org.pentaho.commons.metadata.mqleditor.ColumnType;
 import org.pentaho.commons.metadata.mqleditor.CombinationType;
 import org.pentaho.commons.metadata.mqleditor.MqlBusinessTable;
@@ -32,6 +37,9 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TargetColumnType;
+import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.platform.dataaccess.datasource.DatabaseColumnType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
@@ -45,7 +53,12 @@ import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
 import org.pentaho.pms.schema.v3.model.Column;
 
+import antlr.collections.Stack;
+import antlr.collections.impl.Vector;
+
 import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 
@@ -56,6 +69,7 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
   public DatasourceGwtServlet() {
     SERVICE = new DatasourceServiceDelegate();
   }
+
   public Boolean addDatasource(IDatasource datasource) {
     return SERVICE.addDatasource(datasource);
   }
@@ -67,7 +81,6 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
   public Boolean deleteDatasource(String name) {
     return SERVICE.deleteDatasource(name);
   }
-
 
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit)
       throws DatasourceServiceException {
@@ -98,82 +111,89 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveModel(businessData, overwrite);
   }
-  
+
   @Override
   protected SerializationPolicy doGetSerializationPolicy(HttpServletRequest arg0, String arg1, String arg2) {
-      return new SerializationPolicy(){
+    return new SerializationPolicy() {
 
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        {
-          classes.add(Exception.class);
-          classes.add(Integer.class);
-          classes.add(Number.class);
-          classes.add(Boolean.class);
-          classes.add(RuntimeException.class);
-          classes.add(String.class);
-          classes.add(Throwable.class);
-          classes.add(ArrayList.class);
-          classes.add(HashMap.class);
-          classes.add(LinkedHashMap.class);
-          classes.add(LinkedList.class);
-          classes.add(Stack.class);
-          classes.add(Vector.class);
-          classes.add(MqlDomain.class);
-          classes.add(MqlColumn.class);
-          classes.add(MqlCondition.class);
-          classes.add(MqlOrder.class);
-          classes.add(ColumnType.class);
-          classes.add(CombinationType.class);
-          classes.add(MqlBusinessTable.class);
-          classes.add(MqlCategory.class);
-          classes.add(MqlModel.class);
-          classes.add(MqlQuery.class);
-          classes.add(Operator.class);
-          classes.add(DatabaseColumnType.class);
-          classes.add(Connection.class);
-          classes.add(Datasource.class);
-          classes.add(MqlOrder.class);
-          classes.add(Column.class);
-          classes.add(Attribute.class);
-          classes.add(Envelope.class);
-          classes.add(BusinessData.class);
-          classes.add(SerializedResultSet.class);
-          classes.add(DataType.class);
-          classes.add(Domain.class);
-          classes.add(IPhysicalColumn.class);
-          classes.add(LogicalModel.class);
-          classes.add(Category.class);
-          classes.add(LogicalColumn.class);
-          classes.add(SqlPhysicalColumn.class);
-          classes.add(SqlPhysicalModel.class);
-          classes.add(SqlPhysicalTable.class);
-          classes.add(Concept.class);
-          classes.add(AggregationType.class);
-        }
-        @Override
-        public boolean shouldDeserializeFields(Class<?> clazz) {
-          return classes.contains(clazz);
-        }
+      List<Class<?>> classes = new ArrayList<Class<?>>();
+      {
+        classes.add(Exception.class);
+        classes.add(Integer.class);
+        classes.add(Number.class);
+        classes.add(Boolean.class);
+        classes.add(RuntimeException.class);
+        classes.add(String.class);
+        classes.add(Throwable.class);
+        classes.add(ArrayList.class);
+        classes.add(HashMap.class);
+        classes.add(LinkedHashMap.class);
+        classes.add(LinkedList.class);
+        classes.add(Stack.class);
+        classes.add(Vector.class);
+        classes.add(MqlDomain.class);
+        classes.add(MqlColumn.class);
+        classes.add(MqlCondition.class);
+        classes.add(MqlOrder.class);
+        classes.add(ColumnType.class);
+        classes.add(CombinationType.class);
+        classes.add(MqlBusinessTable.class);
+        classes.add(MqlCategory.class);
+        classes.add(MqlModel.class);
+        classes.add(MqlQuery.class);
+        classes.add(Operator.class);
+        classes.add(DatabaseColumnType.class);
+        classes.add(Connection.class);
+        classes.add(Datasource.class);
+        classes.add(MqlOrder.class);
+        classes.add(Column.class);
+        classes.add(Attribute.class);
+        classes.add(Envelope.class);
+        classes.add(BusinessData.class);
+        classes.add(SerializedResultSet.class);
+        classes.add(DataType.class);
+        classes.add(Domain.class);
+        classes.add(IPhysicalColumn.class);
+        classes.add(LogicalModel.class);
+        classes.add(Category.class);
+        classes.add(LogicalColumn.class);
+        classes.add(SqlPhysicalColumn.class);
+        classes.add(SqlPhysicalModel.class);
+        classes.add(SqlPhysicalTable.class);
+        classes.add(Concept.class);
+        classes.add(AggregationType.class);
+        classes.add(DataType.class);
+        classes.add(TargetColumnType.class);
+        classes.add(TargetTableType.class);
+        classes.add(LocalizedString.class);
+      }
 
-        @Override
-        public boolean shouldSerializeFields(Class<?> clazz) {
+      @Override
+      public boolean shouldDeserializeFields(Class<?> clazz) {
+        return classes.contains(clazz);
+      }
 
-          return classes.contains(clazz);
-            
-        }
+      @Override
+      public boolean shouldSerializeFields(Class<?> clazz) {
 
-        @Override
-        public void validateDeserialize(Class<?> arg0) throws SerializationException {
-          
-            
-        }
+        return classes.contains(clazz);
 
-        @Override
-        public void validateSerialize(Class<?> arg0) throws SerializationException {
-          
-            
-        }
-        
-      };
+      }
+
+      @Override
+      public void validateDeserialize(Class<?> arg0) throws SerializationException {
+
+      }
+
+      @Override
+      public void validateSerialize(Class<?> arg0) throws SerializationException {
+
+      }
+
+    };
+  }
+
+  public BogoPojo gwtWorkaround(BogoPojo pojo) {
+    return pojo;
   }
 }

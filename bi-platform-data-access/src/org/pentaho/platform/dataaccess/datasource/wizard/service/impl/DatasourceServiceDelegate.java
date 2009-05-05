@@ -287,8 +287,8 @@ public class DatasourceServiceDelegate {
       Domain domain = getModelManagementService().generateModel(modelName, /*sqlConnection.getNativeConnection()*/ getDataSourceConnection(connection), query);
       
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
-      return null;
-      //return new BusinessData(domain, data);
+      
+      return new BusinessData(domain, data);
     } catch(ModelManagementServiceException mmse) {
       throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
     }
@@ -303,7 +303,7 @@ public class DatasourceServiceDelegate {
    */  
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException {
     Boolean returnValue = false;
-    /*    try {
+    try {
     getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
     returnValue = true;
     } catch(DomainStorageException dse) {
@@ -312,7 +312,7 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException("Domain already exist" + businessData.getDomain().getName(), dae); //$NON-NLS-1$
     } catch(DomainIdNullException dne) {
       throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
-    }*/
+    }
     return returnValue;
   }
   public void setModelManagementService(IModelManagementService modelManagementService) {

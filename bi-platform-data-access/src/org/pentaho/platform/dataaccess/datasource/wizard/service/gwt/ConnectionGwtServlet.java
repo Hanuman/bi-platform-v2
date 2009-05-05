@@ -44,6 +44,9 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServi
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TargetColumnType;
+import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
 import org.pentaho.pms.schema.v3.model.Column;
@@ -153,6 +156,10 @@ public class ConnectionGwtServlet extends RemoteServiceServlet implements Connec
           classes.add(SqlPhysicalTable.class);
           classes.add(Concept.class);
           classes.add(AggregationType.class);
+          classes.add(DataType.class);
+          classes.add(TargetColumnType.class);
+          classes.add(TargetTableType.class);
+          classes.add(LocalizedString.class);
         }
         @Override
         public boolean shouldDeserializeFields(Class<?> clazz) {
