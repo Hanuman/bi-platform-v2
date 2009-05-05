@@ -159,7 +159,9 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
           }
         }
 	    IMimeTypeListener mimeTypeListener = outputHandler.getMimeTypeListener();
-	    mimeTypeListener.setName(fileName);
+	    if (mimeTypeListener != null) {
+	      mimeTypeListener.setName(fileName);
+	    }
 	}
 	
 	protected void setup( ISolutionEngine solutionEngine ) {
