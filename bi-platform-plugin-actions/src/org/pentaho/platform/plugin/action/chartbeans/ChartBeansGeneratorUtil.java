@@ -32,11 +32,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.pentaho.actionsequence.dom.IActionSequenceDocument;
 import org.pentaho.actionsequence.dom.ActionSequenceDocument;
 import org.pentaho.actionsequence.dom.IActionSequenceInput;
 import org.pentaho.actionsequence.dom.IActionSequenceOutput;
 import org.pentaho.actionsequence.dom.actions.MQLAction;
 import org.pentaho.actionsequence.dom.actions.PojoAction;
+import org.pentaho.chart.model.ChartDataDefinition;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
@@ -92,6 +94,7 @@ public class ChartBeansGeneratorUtil {
    * @return
    * @throws IOException
    */
+  
   private static InputStream internalCreateChart(IPentahoSession pentahoSession, Map<String, String> parameterMap, String serializedChartDataDefinition,
       String serializedChartModel, int chartWidth, int chartHeight, OutputStream outputStream) throws IOException {
     InputStream result = null;

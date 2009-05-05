@@ -19,7 +19,7 @@ package org.pentaho.test.platform.plugin.chartbeans;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.pentaho.platform.plugin.action.chartbeans.ChartDataDefinition;
+import org.pentaho.chart.model.ChartDataDefinition;
 
 public class ChartDefinitionTest {
   
