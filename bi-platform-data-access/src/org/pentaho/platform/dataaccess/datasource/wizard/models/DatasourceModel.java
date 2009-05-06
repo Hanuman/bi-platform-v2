@@ -13,6 +13,7 @@ import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.IDatasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IDatasource.EditType;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 
@@ -222,5 +223,16 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
   public void setBusinessData(BusinessData object) {
     this.object = object;
     setModelData(object);
+  }
+  
+  public IDatasource getDatasource() {
+    IDatasource datasource = new Datasource();
+    datasource.setBusinessData(getBusinessData());
+    datasource.setConnections(getConnections());
+    datasource.setDatasourceName(getDatasourceName());
+    datasource.setDatasourceType(getDatasourceType());
+    datasource.setQuery(getQuery());
+    datasource.setSelectedConnection(getSelectedConnection());
+    return datasource;
   }
 }

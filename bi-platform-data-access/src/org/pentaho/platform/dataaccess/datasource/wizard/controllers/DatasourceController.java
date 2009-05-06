@@ -522,6 +522,9 @@ public class DatasourceController extends AbstractXulEventHandler {
         public void success(Boolean value) {
           openSuccesDialog("Success", "Successfully saved model: " + datasourceModel.getDatasourceName());
           datasourceDialog.hide();
+          for (DatasourceDialogListener listener : listeners) {
+            listener.onDialogFinish(datasourceModel.getDatasource());
+          }
         }
       });
     } catch (DatasourceServiceException e) {
