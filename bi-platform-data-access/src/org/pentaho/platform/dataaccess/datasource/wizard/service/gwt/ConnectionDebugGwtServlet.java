@@ -9,6 +9,7 @@ import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceInMemoryDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.datasource.DatasourceMgmtService;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
@@ -20,18 +21,17 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements ConnectionGwtService {
 
-  ConnectionServiceDelegate SERVICE;
-  IDatasourceMgmtService datasourceMgmtSvc;
+  ConnectionServiceInMemoryDelegate SERVICE;
+
  
   public ConnectionDebugGwtServlet() {
 
   }
 
-  private ConnectionServiceDelegate getService(){
+  private ConnectionServiceInMemoryDelegate getService(){
     if(SERVICE == null){
       try {
-        datasourceMgmtSvc = new DatasourceMgmtService();
-        SERVICE = new ConnectionServiceDelegate(datasourceMgmtSvc);
+        SERVICE = new ConnectionServiceInMemoryDelegate();
         
       } catch (Exception e) {
         System.out.println(e.getMessage());
@@ -42,30 +42,24 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
   }
 
   public List<IConnection> getConnections() {
-    HibernateUtil.beginTransaction();
     return getService().getConnections();
   }
   public IConnection getConnectionByName(String name) {
-    HibernateUtil.beginTransaction();
     return getService().getConnectionByName(name);
   }
   public Boolean addConnection(IConnection connection) {
-    HibernateUtil.beginTransaction();
     return getService().addConnection(connection);
   }
 
   public Boolean updateConnection(IConnection connection) {
-    HibernateUtil.beginTransaction();
     return getService().updateConnection(connection);
   }
 
   public Boolean deleteConnection(IConnection connection) {
-    HibernateUtil.beginTransaction();
     return getService().deleteConnection(connection);
   }
     
   public Boolean deleteConnection(String name) {
-    HibernateUtil.beginTransaction();
     return getService().deleteConnection(name);    
   }
 

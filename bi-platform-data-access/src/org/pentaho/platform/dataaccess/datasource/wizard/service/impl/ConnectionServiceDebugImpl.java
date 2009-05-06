@@ -9,9 +9,9 @@ import org.pentaho.ui.xul.XulServiceCallback;
 
 public class ConnectionServiceDebugImpl implements ConnectionService{
 
-  ConnectionServiceDelegate SERVICE;
+  ConnectionServiceInMemoryDelegate SERVICE;
   public ConnectionServiceDebugImpl(){
-    SERVICE = new ConnectionServiceDelegate();
+    SERVICE = new ConnectionServiceInMemoryDelegate();
   }
  
   public void getConnections(XulServiceCallback<List<IConnection>> callback) {

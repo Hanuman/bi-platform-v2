@@ -23,7 +23,9 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/DatasourceDebugGwtServlet*"/>
         <exclude name="**/SwingDatasourceEditor*"/>
         <exclude name="**/ConnectionServiceDelegate*"/>
-        <exclude name="**/DatasourceServiceDelegate*"/>        
+        <exclude name="**/DatasourceServiceDelegate*"/>
+        <exclude name="**/ConnectionServiceInMemoryDelegate*"/>
+        <exclude name="**/DatasourceServiceInMemoryDelegate*"/>                   
         <exclude name="**/ConnectionGwtServlet*"/>
         <exclude name="**/DatasourceGwtServlet*"/>
         <exclude name="**/ConnectionServiceDebugImpl*"/>

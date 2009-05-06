@@ -9,15 +9,16 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceInMemoryDelegate;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements DatasourceGwtService {
 
-  DatasourceServiceDelegate SERVICE;
+  DatasourceServiceInMemoryDelegate SERVICE;
 
   public DatasourceDebugGwtServlet() {
-    SERVICE = new DatasourceServiceDelegate();
+    SERVICE = new DatasourceServiceInMemoryDelegate();
   }
 
   public List<IDatasource> getDatasources() {

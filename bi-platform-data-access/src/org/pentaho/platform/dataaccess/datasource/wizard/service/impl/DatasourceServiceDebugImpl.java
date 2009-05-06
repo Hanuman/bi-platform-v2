@@ -12,9 +12,9 @@ import org.pentaho.ui.xul.XulServiceCallback;
 
 public class DatasourceServiceDebugImpl implements DatasourceService{
 
-  DatasourceServiceDelegate SERVICE;
+  DatasourceServiceInMemoryDelegate SERVICE;
   public DatasourceServiceDebugImpl(){
-    SERVICE = new DatasourceServiceDelegate();
+    SERVICE = new DatasourceServiceInMemoryDelegate();
   }
  
   public void getDatasources(XulServiceCallback<List<IDatasource>> callback) {
