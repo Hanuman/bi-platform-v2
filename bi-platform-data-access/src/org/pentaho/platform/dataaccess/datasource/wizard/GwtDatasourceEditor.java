@@ -49,13 +49,13 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
         e.printStackTrace();
       }
     } else {
-      XulDialog dialog = (XulDialog) container.getDocumentRoot().getElementById("newdatasourceDialog");
+      XulDialog dialog = (XulDialog) container.getDocumentRoot().getElementById("datasourceDialog");
       dialog.show();
     }
   }
 
   public void hide(){
-    XulDialog dialog = (XulDialog) container.getDocumentRoot().getElementById("newdatasourceDialog");
+    XulDialog dialog = (XulDialog) container.getDocumentRoot().getElementById("datasourceDialog");
     dialog.hide();
   }
   
