@@ -127,7 +127,6 @@ public class DatasourceController extends AbstractXulEventHandler {
   }
 
   public void init() {
-    datasourceModel = new DatasourceModel ();
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
 
     rows = (XulRows) document.getElementById("rows");//$NON-NLS-1$
