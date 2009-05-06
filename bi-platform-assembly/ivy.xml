@@ -11,6 +11,11 @@
 		<dependency org="pentaho" name="pentaho-bi-platform-web-servlet" rev="${project.revision}" changing="true" />
         <dependency org="pentaho" name="pentaho-bi-platform-security-userroledao" rev="${project.revision}" changing="true" />
         <dependency org="pentaho" name="pentaho-bi-platform-legacy" rev="${project.revision}" changing="true" />
+        <!-- MQL Editor and Data Access jar are being add only for a temporary basis. Once we have the webservice piece implemented -->
+        <!-- these jars needs to be yanked out of here -->
+        <dependency org="pentaho" name="pentaho-mql-editor" rev="${project.revision}" changing="true" transitive="false" />
+        <dependency org="pentaho" name="pentaho-bi-platform-data-access" rev="${project.revision}" changing="true" transitive="false" />
+        
 		<dependency org="pentaho" name="mantle" rev="${project.revision}" changing="true" />
 		<dependency org="org.apache.axis" name="axis" rev="1.4" />
 		<dependency org="batik" name="batik-bridge" rev="1.6" />
