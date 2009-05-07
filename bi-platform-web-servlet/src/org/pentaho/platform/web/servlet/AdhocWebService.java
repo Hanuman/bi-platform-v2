@@ -1205,7 +1205,6 @@ public class AdhocWebService extends ServletBase {
       final String loggingLevel, final IPentahoSession userSession) throws IOException , AdhocWebServiceException{
     
     boolean bIsMultipleOutputType = outputTypeList.length > 1;
-    ByteArrayOutputStream xactionOutputStream = new ByteArrayOutputStream();    
     
     Document document = DOMDocumentFactory.getInstance().createDocument();
     document.setXMLEncoding( LocaleHelper.getSystemEncoding() );
@@ -1373,14 +1372,27 @@ public class AdhocWebService extends ServletBase {
     actionTypeElement.setText("report"); //$NON-NLS-1$
     componentDefinitionElement = actionDefinitionElement.addElement("component-definition"); //$NON-NLS-1$
     componentDefinitionElement.addElement("output-type").setText(outputTypeList[0]); //$NON-NLS-1$
+  
+    Document tmp = customizeActionSequenceDocument(document);
+    if (tmp != null) {
+      document = tmp;
+    }
+    return exportDocumentAsByteArrayOutputStream(document);
+  }
 
+  protected Document customizeActionSequenceDocument(Document document) {
+    // Nothing here, but could subclass and return a whole new document.
+    return null;
+  }
+  
+  protected ByteArrayOutputStream exportDocumentAsByteArrayOutputStream(Document document) throws IOException {
+    ByteArrayOutputStream xactionOutputStream = new ByteArrayOutputStream();    
     // end action-definition for JFreeReportComponent
     OutputFormat format = OutputFormat.createPrettyPrint();
     format.setEncoding( LocaleHelper.getSystemEncoding() );
     XMLWriter writer = new XMLWriter(xactionOutputStream, format);
     writer.write(document);
     writer.close();
-    
     return xactionOutputStream;
   }
 
@@ -1482,11 +1494,11 @@ public class AdhocWebService extends ServletBase {
   private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
-    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
-      WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
-      return;
-    }
+  if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+    String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+    WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+    return;
+  }
     
     String fileName = parameterProvider.getStringParameter("name", null); //$NON-NLS-1$
     if (AdhocWebService.isWaqrFilename(fileName)) {
@@ -1496,6 +1508,16 @@ public class AdhocWebService extends ServletBase {
     }
   }
 
+  protected void preSaveActions(final String fileName, final IParameterProvider parameterProvider, final OutputStream outputStream,
+      final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException,
+      PentahoMetadataException, PentahoAccessControlException {
+  }
+  
+  protected void postSaveActions(final String fileName, final IParameterProvider parameterProvider, final OutputStream outputStream,
+      final IPentahoSession userSession, final boolean wrapWithSoap, int xActionSaveStatus) throws AdhocWebServiceException, IOException,
+      PentahoMetadataException, PentahoAccessControlException {
+  }
+  
   /**
    * 
    * @param fileName
@@ -1512,6 +1534,8 @@ public class AdhocWebService extends ServletBase {
       final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException,
       PentahoMetadataException, PentahoAccessControlException {
 
+    preSaveActions(fileName, parameterProvider, outputStream, userSession, wrapWithSoap);
+    
     // TODO sbarkdull, all parameters coming in from the client need to be validated, and error msgs returned to the client when a parameter does not validate
     String reportXML = parameterProvider.getStringParameter("content", null); //$NON-NLS-1$    
     String solutionName = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
@@ -1589,6 +1613,7 @@ public class AdhocWebService extends ServletBase {
         xreportSpecSaveStatus = repository.publish(baseUrl, path, xreportSpecFilename, reportXML
             .getBytes(LocaleHelper.getSystemEncoding()), overwrite);
       }
+      postSaveActions(fileName, parameterProvider, outputStream, userSession, wrapWithSoap, xactionSaveStatus);
     }
     int[] errorStatusAr = { xactionSaveStatus, jfreeSaveStatus, xreportSpecSaveStatus };
     int errorStatus = AdhocWebService.getSaveErrorStatus(errorStatusAr);
