@@ -1,7 +1,7 @@
 <action-sequence>
 	<name>test1.xaction</name>
 	<version>1</version>
-	<title>XAction w/PRPT & Parameters</title>
+	<title>Parameterized PRPT via XAction</title>
 	<logging-level>debug</logging-level>
 	<documentation>
 		<author>Michael D'Amour</author>
