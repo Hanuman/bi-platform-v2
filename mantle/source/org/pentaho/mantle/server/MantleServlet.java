@@ -886,10 +886,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         String type = actionInfo.getActionName().substring(lastDot + 1);
         IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
         String pluginUrl = pluginManager.getContentGeneratorUrlForType(type, getPentahoSession());
+
         if (!StringUtils.isEmpty(pluginUrl)) {
           // with this information, a content generator can perform a lookup of all the information it will
           // need to build a new parameter form for the content requested to be edited
-          pluginUrl += "?subscription-name=" + currentSubscr.getId();
+          pluginUrl += "/reportviewer/report.html?subscribe=true&subscription-name=" + currentSubscr.getId();
         }
         subscriptionBean.setPluginUrl(pluginUrl);
       }

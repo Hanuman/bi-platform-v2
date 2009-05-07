@@ -474,7 +474,7 @@ public class WorkspacePerspective extends ScrollPanel {
       }
     }
 
-    if (action.equals("archived") || action.equals("run")) { //$NON-NLS-1$ //$NON-NLS-2$
+    if (action.equals("archived") || action.equals("run") || action.equals("edit")) { //$NON-NLS-1$ //$NON-NLS-2$
       solutionBrowserPerspective.showNewURLTab(subscription.getName(), subscription.getId(), url);
     } else {
       viewDialog.center();
