@@ -3,6 +3,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceInMemoryDelegate;
 
@@ -21,7 +22,14 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
     if(SERVICE == null){
       try {
         SERVICE = new ConnectionServiceInMemoryDelegate();
-        
+        // add the sample data default connection for testing
+        Connection connection = new Connection();
+        connection.setDriverClass("org.hsqldb.jdbcDriver");
+        connection.setName("SampleData");
+        connection.setUrl("jdbc:hsqldb:hsql://localhost:9001/sampledata");
+        connection.setUsername("pentaho_user");
+        connection.setPassword("password");
+        SERVICE.addConnection(connection);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         e.printStackTrace();

@@ -209,9 +209,11 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
       }
       firePropertyChange("dataRows", null, dataRows);
     } else {
-      this.dataRows.removeAll(dataRows);
-      List<ModelDataRow> previousValue = this.dataRows;
-      firePropertyChange("dataRows", previousValue, null);
+      if(this.dataRows != null) {
+        this.dataRows.removeAll(dataRows);
+        List<ModelDataRow> previousValue = this.dataRows;
+        firePropertyChange("dataRows", previousValue, null);
+      }
     }
   }
 
