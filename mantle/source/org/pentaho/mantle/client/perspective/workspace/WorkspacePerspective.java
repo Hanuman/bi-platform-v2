@@ -26,6 +26,7 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.gwt.widgets.client.utils.StringUtils;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
@@ -294,7 +295,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       Label lblRunNow = new Label(Messages.getString("run")); //$NON-NLS-1$
       lblRunNow.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblRunNow.addClickListener(new RunSubscriptionClickListener(subscriptionId));
+      lblRunNow.addClickListener(new RunSubscriptionClickListener(currentSubscr));
 
       Label lblArchive = new Label(Messages.getString("archive")); //$NON-NLS-1$
       lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
@@ -302,7 +303,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       Label lblEdit = new Label(Messages.getString("edit")); //$NON-NLS-1$
       lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblEdit.addClickListener(new EditSubscriptionClickListener(subscriptionId));
+      lblEdit.addClickListener(new EditSubscriptionClickListener(currentSubscr));
 
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
@@ -342,7 +343,7 @@ public class WorkspacePerspective extends ScrollPanel {
             public void onClick(Widget sender) {
               final String fileId = currSchedule[3];
               final String name = subscriptionId;
-              performActionOnSubscriptionContent("archived", name, fileId); //$NON-NLS-1$
+              performActionOnSubscriptionContent("archived", currentSubscr, name, fileId); //$NON-NLS-1$
             }
           });
           actionButtonsPanel.add(lblViewContent);
@@ -438,11 +439,11 @@ public class WorkspacePerspective extends ScrollPanel {
     }
   }
 
-  private void performActionOnSubscriptionContent(final String action, final String subscrName, final String contentID) {
-    performActionOnSubscription(action, subscrName + ":" + contentID); //$NON-NLS-1$
+  private void performActionOnSubscriptionContent(final String action, final SubscriptionBean subscription, final String subscrName, final String contentID) {
+    performActionOnSubscription(action, subscription, subscrName + ":" + contentID); //$NON-NLS-1$
   }
 
-  void performActionOnSubscription(final String action, final String subscrName) {
+  void performActionOnSubscription(final String action, final SubscriptionBean subscription, final String subscrName) {
     final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getString("view"), Messages.getString("close"), null, false, false); //$NON-NLS-1$ //$NON-NLS-2$
     viewDialog.setContent(new VerticalPanel());
     viewDialog.setCallback(new IDialogCallback() {
@@ -458,15 +459,23 @@ public class WorkspacePerspective extends ScrollPanel {
       }
     });
 
-    final String url;
-    if (GWT.isScript()) {
-      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
+    String url;
+    if (action.equals("edit") && !StringUtils.isEmpty(subscription.getPluginUrl())) {
+      url = subscription.getPluginUrl();
+      if (!GWT.isScript()) {
+        // for debug mode
+        url = "http://localhost:8080/pentaho/" + url;
+      }
     } else {
-      url = "http://localhost:8080/pentaho/ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
+      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
+      if (!GWT.isScript()) {
+        // for debug mode
+        url = "http://localhost:8080/pentaho/" + url;
+      }
     }
 
     if (action.equals("archived") || action.equals("run")) { //$NON-NLS-1$ //$NON-NLS-2$
-      solutionBrowserPerspective.showNewURLTab(subscrName, subscrName, url);
+      solutionBrowserPerspective.showNewURLTab(subscription.getName(), subscription.getId(), url);
     } else {
       viewDialog.center();
       final Frame iframe = new Frame(url);
@@ -887,26 +896,26 @@ public class WorkspacePerspective extends ScrollPanel {
   }
 
   public class RunSubscriptionClickListener implements ClickListener {
-    String subscriptionId;
+    SubscriptionBean subscription;
 
-    public RunSubscriptionClickListener(String subscriptionID) {
-      this.subscriptionId = subscriptionID;
+    public RunSubscriptionClickListener(SubscriptionBean subscription) {
+      this.subscription = subscription;
     }
 
     public void onClick(Widget arg0) {
-      performActionOnSubscription("run", subscriptionId); //$NON-NLS-1$
+      performActionOnSubscription("run", subscription, subscription.getId()); //$NON-NLS-1$
     }
   }
 
   public class EditSubscriptionClickListener implements ClickListener {
-    String subscriptionId;
+    SubscriptionBean subscription;
 
-    public EditSubscriptionClickListener(String subscriptionID) {
-      this.subscriptionId = subscriptionID;
+    public EditSubscriptionClickListener(SubscriptionBean subscription) {
+      this.subscription = subscription;
     }
 
     public void onClick(Widget arg0) {
-      performActionOnSubscription("edit", subscriptionId); //$NON-NLS-1$
+      performActionOnSubscription("edit", subscription, subscription.getId()); //$NON-NLS-1$
     }
   }
 

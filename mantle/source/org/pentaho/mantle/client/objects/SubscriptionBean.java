@@ -30,6 +30,7 @@ public class SubscriptionBean implements Serializable {
   private String scheduleDate;
   private String size;
   private String type;
+  private String pluginUrl;
   private List<String[]> content;
   
   public SubscriptionBean() {
@@ -76,5 +77,11 @@ public class SubscriptionBean implements Serializable {
   }
   public void setId(String id) {
     this.id = id;
+  }
+  public String getPluginUrl() {
+    return pluginUrl;
+  }
+  public void setPluginUrl(String pluginUrl) {
+    this.pluginUrl = pluginUrl;
   }
 }
