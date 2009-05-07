@@ -218,6 +218,9 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
   }
 
   public void addModelDataRow(LogicalColumn column, List<String> columnData) {
+    if(dataRows == null) {
+      dataRows = new ArrayList<ModelDataRow>();
+    } 
     this.dataRows.add(new ModelDataRow(column, columnData));
   }
 
