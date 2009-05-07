@@ -32,6 +32,22 @@
 <!-- Pentaho Reporting Plugin -->
 		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" changing="true"/>
 
+<!--  Pentaho Reporting Library -->
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core"                             rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions"                       rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-hibernate"             rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-kettle"                rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-mondrian"              rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-olap4j"                rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-pmd"                   rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-reportdesigner-parser" rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-sampledata"            rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-scripting"             rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-xpath"                 rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-charts"                            rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-functions"                         rev="${dependency.pentaho-reporting.revision}" />
+		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-wizard-core"                              rev="${dependency.pentaho-reporting.revision}" />
+		
 <!-- BIRT -->
 		<dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
 		<dependency org="org.eclipse/birt" name="org.eclipse.emf.common" rev="2.2.1.v200702131851-birt-custom" />
