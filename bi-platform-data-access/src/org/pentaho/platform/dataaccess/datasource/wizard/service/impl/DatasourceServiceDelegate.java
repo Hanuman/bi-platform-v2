@@ -23,6 +23,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.metadata.MetadataDomainRepository;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
@@ -41,7 +42,7 @@ public class DatasourceServiceDelegate {
   
   public DatasourceServiceDelegate() {
     modelManagementService =  new JDBCModelManagementService();
-    metadataDomainRepository = new MetadataDomainRepository();
+    metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
   }
   
   public List<IDatasource> getDatasources() {

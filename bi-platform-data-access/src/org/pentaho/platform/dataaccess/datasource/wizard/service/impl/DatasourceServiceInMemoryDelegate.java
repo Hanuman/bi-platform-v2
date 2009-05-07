@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +35,7 @@ import org.pentaho.pms.service.ModelManagementServiceException;
 
 public class DatasourceServiceInMemoryDelegate {
 
+  public static final IMetadataDomainRepository METADATA_DOMAIN_REPO = new InMemoryMetadataDomainRepository();
 
 
   private List<IDatasource> datasources = new ArrayList<IDatasource>();
@@ -41,9 +43,12 @@ public class DatasourceServiceInMemoryDelegate {
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
   
+  
   public DatasourceServiceInMemoryDelegate() {
     modelManagementService =  new JDBCModelManagementService();
-    metadataDomainRepository = new InMemoryMetadataDomainRepository();
+    
+    // this needs to share the same one as MQL editor...
+    metadataDomainRepository = METADATA_DOMAIN_REPO;
   }
   
   public List<IDatasource> getDatasources() {
