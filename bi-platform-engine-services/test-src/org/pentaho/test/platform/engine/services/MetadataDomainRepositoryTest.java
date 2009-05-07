@@ -110,8 +110,11 @@ public class MetadataDomainRepositoryTest {
     // flush domains from memory
     repo.flushDomains();
 
+    // TEMPORARY HACK DUE TO GWT:
+    String locale = "DEFAULT";
+    
     // make sure the renaming isn't there
-    Assert.assertEquals("Second Save", repo.getDomain(domain.getId()).getName().getString(Locale.getDefault().toString()));
+    Assert.assertEquals("Second Save", repo.getDomain(domain.getId()).getName().getString(locale));
     
     // reload domains from disk
     repo.reloadDomains();
@@ -119,7 +122,7 @@ public class MetadataDomainRepositoryTest {
     Assert.assertNotNull(repo.getDomain(domain.getId()));
     Assert.assertNotNull(repo.getDomain(domain2.getId()));
 
-    Assert.assertEquals("Second Save", repo.getDomain(domain.getId()).getName().getString(Locale.getDefault().toString()));
+    Assert.assertEquals("Second Save", repo.getDomain(domain.getId()).getName().getString(locale));
     
     // clear domains, reload, make sure they are gone
 
