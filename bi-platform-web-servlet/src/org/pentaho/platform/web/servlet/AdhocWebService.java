@@ -68,6 +68,11 @@ import org.pentaho.jfreereport.castormodel.reportspec.ReportSpec;
 import org.pentaho.jfreereport.wizard.utility.CastorUtility;
 import org.pentaho.jfreereport.wizard.utility.report.ReportGenerationUtility;
 import org.pentaho.jfreereport.wizard.utility.report.ReportSpecUtility;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.query.model.Query;
+import org.pentaho.metadata.query.model.util.QueryXmlHelper;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.ILogger;
@@ -106,6 +111,7 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
@@ -638,11 +644,47 @@ public class AdhocWebService extends ServletBase {
         reportSpecTypeToElement.put(element.getName(), element);
       }
     }
-    MetadataPublisher.loadAllMetadata(userSession, false);
-    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", userSession); //$NON-NLS-1$
-
-    MQLQuery mql = MQLQueryFactory.getMQLQuery(mqlNode.asXML(), null, LocaleHelper.getLocale().toString(), cwmSchemaFactory);
-
+    
+    // get the business model from the mql statement
+    String xml = mqlNode.asXML();
+    
+    
+    // first see if it's a thin model...
+    Exception thinException = null;
+    QueryXmlHelper helper = new QueryXmlHelper();
+    IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
+    Query queryObject = null;
+    try {
+      queryObject = helper.fromXML(repo, xml);
+    } catch (Exception e) {
+      thinException = e;
+    }
+    
+    BusinessModel model = null;
+    if (queryObject != null) {
+      try {
+        SchemaMeta schemaMeta = ThinModelConverter.convertToLegacy(queryObject.getDomain());
+        for (BusinessModel bizmodel : schemaMeta.getBusinessModels()) {
+          if (bizmodel.getId().equals(queryObject.getLogicalModel().getId())) {
+            model = bizmodel;
+          }
+        }
+      } catch (Exception e) {
+        logger.error("AdhocWebService.ERROR_0020_FAILED_TO_CONVERT_THIN_MODEL", e);
+      }
+    } else {
+      MetadataPublisher.loadAllMetadata(userSession, false);
+      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", userSession); //$NON-NLS-1$
+  
+      MQLQuery mql = MQLQueryFactory.getMQLQuery(xml, null, LocaleHelper.getLocale().toString(), cwmSchemaFactory);
+  
+      model = mql.getModel();
+    
+    }
+    if (model == null) {
+      throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
+    }
+    
     String reportXMLEncoding = XmlHelper.getEncoding(reportXML);
     ByteArrayInputStream reportSpecInputStream = new ByteArrayInputStream(reportXML.getBytes( reportXMLEncoding ));
     ReportSpec reportSpec = (ReportSpec) CastorUtility.getInstance().readCastorObject(reportSpecInputStream,
@@ -651,10 +693,7 @@ public class AdhocWebService extends ServletBase {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0002_REPORT_INVALID")); //$NON-NLS-1$
     }
 
-    BusinessModel model = mql.getModel();
-    if (model == null) {
-      throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
-    }
+
     
     // ========== begin column width stuff
     

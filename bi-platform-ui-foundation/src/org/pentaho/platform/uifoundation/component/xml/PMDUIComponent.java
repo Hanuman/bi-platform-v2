@@ -30,6 +30,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
@@ -92,6 +96,10 @@ public class PMDUIComponent extends XmlComponent {
     return true;
   }
 
+  public IMetadataDomainRepository getMetadataRepository() {
+    return PentahoSystem.get(IMetadataDomainRepository.class, getSession());
+  }
+  
   @Override
   public Document getXmlContent() {
 
@@ -121,6 +129,13 @@ public class PMDUIComponent extends XmlComponent {
         String domains[] = CWM.getDomainNames();
         for (String element : domains) {
           addDomainModels(element, modelsNode, root);
+        }
+        
+        // Thin model
+        
+          
+        for (String domain : getMetadataRepository().getDomainIds()) {
+          addThinDomainModels(domain, modelsNode, root);
         }
       } catch (Throwable t) {
         error(Messages.getString("PMDUIComponent.ERROR_0001_GET_MODEL_LIST")); //$NON-NLS-1$
@@ -178,6 +193,40 @@ public class PMDUIComponent extends XmlComponent {
     return;
   }
 
+  
+  private void addThinDomainModels(final String domain, final Element modelsNode, final Element root) {
+
+    IMetadataDomainRepository repo = getMetadataRepository();
+    
+    Domain domainObject = repo.getDomain(domain);
+
+    // TODO: closest locale list
+    String locale = "DEFAULT"; // LocaleHelper.getLocale().toString();
+//    String locales[] = schemaMeta.getLocales().getLocaleCodes();
+//    locale = LocaleHelper.getClosestLocale( locale, locales );
+
+    Element modelNode;    
+    for (LogicalModel model : domainObject.getLogicalModels()) {
+      modelNode = modelsNode.addElement("model"); //$NON-NLS-1$
+      modelNode.addElement("domain_id").setText(domain); //$NON-NLS-1$
+      if (model.getId() != null) {
+        modelNode.addElement("model_id").setText(model.getId()); //$NON-NLS-1$
+      }
+      String modelName = model.getName().getString(locale);
+      if (modelName != null) {
+        modelNode.addElement("model_name").setText(modelName); //$NON-NLS-1$
+      }
+      
+      if (model.getDescription() != null) {
+        String modelDescription = model.getDescription().getString(locale);
+        if (modelDescription != null) {
+          modelNode.addElement("model_description").setText(modelDescription); //$NON-NLS-1$
+        }
+      }
+    }
+    return;
+  }
+  
   private Document loadModel() {
     // Create a document that describes the result
     Document doc = DocumentHelper.createDocument();
@@ -196,20 +245,34 @@ public class PMDUIComponent extends XmlComponent {
       return doc;
     }
 
+    SchemaMeta schemaMeta = null;
     Element modelNode = root.addElement("model"); //$NON-NLS-1$
-    MetadataPublisher.loadMetadata(domainName, getSession(), false);
-    CWM cwm = null;
-    try {
-      cwm = CWM.getInstance(domainName, false);
-    } catch (Throwable t) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
-      error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", domainName), t); //$NON-NLS-1$
-      t.printStackTrace();
-      return doc;
+    
+    // because it's lighter weight, check the thin model
+    Domain domain = getMetadataRepository().getDomain(domainName);
+    if (domain != null) {
+      try {
+        schemaMeta = ThinModelConverter.convertToLegacy(domain);
+      } catch (Throwable t) {
+        root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
+        error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", domainName), t); //$NON-NLS-1$
+        t.printStackTrace();
+        return doc;
+      }
+    } else {
+      MetadataPublisher.loadMetadata(domainName, getSession(), false);
+      CWM cwm = null;
+      try {
+        cwm = CWM.getInstance(domainName, false);
+      } catch (Throwable t) {
+        root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
+        error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", domainName), t); //$NON-NLS-1$
+        t.printStackTrace();
+        return doc;
+      }
+      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
+      schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
     }
-    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
-    SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-
     String locale = LocaleHelper.getLocale().toString();
     String locales[] = schemaMeta.getLocales().getLocaleCodes();
 
