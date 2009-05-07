@@ -71,7 +71,7 @@
             <hbox>
                 <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
                 <spacer flex="1"/>
-                <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="datasourceController.editQuery()"  disabled="false"/>
+                <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="datasourceController.editQuery()"  disabled="true"/>
             </hbox>
             <textbox flex="1" id="query" multiline="true" rows="6" cols="80" width="400"/>
             <hbox>
