@@ -237,7 +237,7 @@ public class ChartBeansGeneratorUtil {
     actionSequenceDocument.setTitle("chartbeans_mql.xaction"); //$NON-NLS-1$
     actionSequenceDocument.setVersion("1"); //$NON-NLS-1$
     actionSequenceDocument.setLoggingLevel("debug"); //$NON-NLS-1$
-    actionSequenceDocument.setAuthor("Curtis Boyden"); //$NON-NLS-1$
+    actionSequenceDocument.setAuthor("Dashboard"); //$NON-NLS-1$
     actionSequenceDocument.setDescription("Generate a chart through ChartBeans from an MQL statement."); //$NON-NLS-1$
     actionSequenceDocument.setHelp("Pass in an MQL statement that returns a table of three columns. The first column " //$NON-NLS-1$
         + "is the series, the second is the category and the third is the data."); //$NON-NLS-1$
@@ -253,10 +253,12 @@ public class ChartBeansGeneratorUtil {
     chartHeightInput.addSource(REQUEST_INPUT_SOURCE, "chart-height"); //$NON-NLS-1$
     chartHeightInput.setDefaultValue("1"); //$NON-NLS-1$
     IActionSequenceInput seriesColumnInput = actionSequenceDocument.createInput("series-column", STRING_TYPE); //$NON-NLS-1$
+    seriesColumnInput.setDefaultValue("1"); //$NON-NLS-1$
     IActionSequenceInput categoryColumnInput = actionSequenceDocument.createInput("category-column", STRING_TYPE); //$NON-NLS-1$
     // set a default value of empty string to avoid an error when rendering pie charts (which don't have a category column
-    categoryColumnInput.setDefaultValue(""); //$NON-NLS-1$
+    categoryColumnInput.setDefaultValue("2"); //$NON-NLS-1$
     IActionSequenceInput valueColumnInput = actionSequenceDocument.createInput("value-column", STRING_TYPE); //$NON-NLS-1$
+    valueColumnInput.setDefaultValue("0"); //$NON-NLS-1$
     IActionSequenceInput scalingFactorInput = actionSequenceDocument.createInput("scaling-factor", STRING_TYPE); //$NON-NLS-1$
 
     // add inputs from parameterNameSet; these parameters will appear as placeholders in the query input

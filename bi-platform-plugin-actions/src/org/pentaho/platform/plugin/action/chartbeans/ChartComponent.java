@@ -72,7 +72,7 @@ public class ChartComponent {
   
   protected IPentahoResultSet resultSet = null;
   
-  protected int chartEngine = ChartModel.CHART_ENGINE_OPENFLASH;
+  protected Integer chartEngine = null;
   
   protected Exception bootException = null;
   
@@ -163,11 +163,12 @@ public class ChartComponent {
               }
         };
         
-        
-        Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
-        if (chartTheme != null) {
-          chartTheme.applyTo(chartModel);
-            }
+        if (!(chartModel.getPlot() instanceof DialPlot)) {
+          Theme chartTheme = chartThemeFactory.getTheme(chartModel.getTheme());
+          if (chartTheme != null) {
+            chartTheme.applyTo(chartModel);
+          }
+        }
       }
       
       InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
@@ -416,7 +417,7 @@ public class ChartComponent {
       }
     }
     
-    if(chartModel != null){
+    if ((chartModel != null) && (chartEngine != null)) {
       chartModel.setChartEngine(chartEngine);
     }
   }
@@ -482,7 +483,7 @@ public class ChartComponent {
    * @return
    */
   public String getChartEngine() {
-    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine);
+    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine != null ? chartEngine : chartModel.getChartEngine());
   }
 
   /**
