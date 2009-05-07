@@ -291,7 +291,7 @@ public class DatasourceServiceInMemoryDelegate {
       //SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
       //    connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
       
-      Domain domain = getModelManagementService().generateModel(modelName, /*sqlConnection.getNativeConnection()*/ getDataSourceConnection(connection), query);
+      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), /*sqlConnection.getNativeConnection()*/ getDataSourceConnection(connection), query);
       
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       
