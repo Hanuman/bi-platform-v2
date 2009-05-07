@@ -328,7 +328,7 @@ public class DatasourceController extends AbstractXulEventHandler {
           for (LogicalColumn logicalColumn : logicalColumns) {
             ModelDataRow row = dataRows.get(i++);
             logicalColumn.setDataType(row.getSelectedDataType());
-            logicalColumn.setName(new LocalizedString(row.getColumnName()));
+            logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
           }
         }
       }

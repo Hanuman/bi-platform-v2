@@ -203,7 +203,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
         for (Category category : categories) {
           List<LogicalColumn> logicalColumns = category.getLogicalColumns();
           for (LogicalColumn logicalColumn : logicalColumns) {
-            addModelDataRow(logicalColumn, getColumnData(columnNumber++, data));
+            addModelDataRow(logicalColumn, getColumnData(columnNumber++, data), domain.getLocales().get(0).getCode());
           }
         }
       }
@@ -217,11 +217,11 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
     }
   }
 
-  public void addModelDataRow(LogicalColumn column, List<String> columnData) {
+  public void addModelDataRow(LogicalColumn column, List<String> columnData, String locale) {
     if(dataRows == null) {
       dataRows = new ArrayList<ModelDataRow>();
     } 
-    this.dataRows.add(new ModelDataRow(column, columnData));
+    this.dataRows.add(new ModelDataRow(column, columnData, locale));
   }
 
   public List<ModelDataRow> getDataRows() {
