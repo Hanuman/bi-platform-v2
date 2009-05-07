@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.beans;
 
 import java.io.Serializable;
 
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
@@ -18,6 +19,8 @@ public class BogoPojo implements Serializable{
   DataType dataType;
   AggregationType aggType;
   TargetColumnType targetColumnType;
+  LocaleType localeType;
+  
   public TargetTableType getTargetTableType() {
     return targetTableType;
   }
@@ -47,5 +50,11 @@ public class BogoPojo implements Serializable{
   }
   public void setTargetColumnType(TargetColumnType targetColumnType) {
     this.targetColumnType = targetColumnType;
+  }
+  public void setLocaleType(LocaleType localeType) {
+    this.localeType = localeType;
+  }
+  public LocaleType getLocaleType() {
+    return localeType;
   }
 }
