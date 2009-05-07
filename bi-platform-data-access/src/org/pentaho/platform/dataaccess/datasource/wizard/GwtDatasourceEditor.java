@@ -55,25 +55,30 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
       XulDialog dialog = (XulDialog) container.getDocumentRoot().getElementById("datasourceDialog");
       datasourceModel.clearModel();
       connectionModel.clearModel();
-      if(connectionService != null) {
-        connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
-  
-          public void error(String message, Throwable error) {
-            showErrorDialog("Error Occurred","Unable to show the dialog." +error.getLocalizedMessage());
-          }
-  
-          public void success(List<IConnection> connections) {
-            datasourceModel.setConnections(connections);
-          }
-          
-        });
-        dialog.show();
-      } else {
-        showErrorDialog("Error Occurred","Unable to show the dialog. Connection Service is null");
-      }
-
+      reloadConnections();
+      dialog.show();
     }
   }
+  
+  private void reloadConnections() {
+    if(connectionService != null) {
+      connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
+
+        public void error(String message, Throwable error) {
+          showErrorDialog("Error Occurred","Unable to show the dialog." +error.getLocalizedMessage());
+        }
+
+        public void success(List<IConnection> connections) {
+          datasourceModel.setConnections(connections);
+        }
+        
+      });
+    } else {
+      showErrorDialog("Error Occurred","Connection Service is null");
+    }
+
+  }
+  
   private void showErrorDialog(String title, String message) {
     XulDialog errorDialog = (XulDialog) container.getDocumentRoot().getElementById("errorDialog");
     XulLabel errorLabel = (XulLabel) container.getDocumentRoot().getElementById("errorLabel");        
@@ -190,6 +195,7 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
   public void setConnectionService(ConnectionService service){
     this.connectionService = service;
     connectionController.setService(service);
+    reloadConnections();
   }
 
   public void setDatasourceService(DatasourceService service){
