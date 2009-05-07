@@ -5,13 +5,10 @@ import java.util.List;
 
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.IDatasource.DatasourceType;
-import org.pentaho.platform.dataaccess.datasource.IDatasource.EditType;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
@@ -19,6 +16,8 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class DatasourceModel extends XulEventSourceAdapter implements IDatasource{
   private boolean isValid;
+  private boolean generateModelChecked;
+  private boolean modelTableVisible;
   private IConnection selectedConnection;
   private List<IConnection> connections = new ArrayList<IConnection>();
   private List<ModelDataRow> dataRows = new ArrayList<ModelDataRow>();
@@ -32,50 +31,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
   public DatasourceModel() {
     previewLimit="10";
   }
-
-
-  
-  
-  public void setModelData(BusinessData businessData) {
-    if(businessData != null) {
-      Domain domain = businessData.getDomain();
-      List<List<String>> data = businessData.getData();
-      List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
-      List<LogicalModel> logicalModels = domain.getLogicalModels();
-      int i=0;
-      for (LogicalModel logicalModel : logicalModels) {
-        List<Category> categories = logicalModel.getCategories();
-        for (Category category : categories) {
-          List<LogicalColumn> logicalColumns = category.getLogicalColumns();
-          for (LogicalColumn logicalColumn : logicalColumns) {
-            addModelDataRow(logicalColumn.getPhysicalColumn(), data.get(i++));
-          }
-        }
-      }
-      firePropertyChange("dataRows", null, dataRows);
-    } else {
-      this.dataRows.removeAll(dataRows);
-      List<ModelDataRow> previousValue = this.dataRows;
-      firePropertyChange("dataRows", previousValue, null);
-    }
-  }
-
-  public void addModelDataRow(IPhysicalColumn column, List<String> data) {
-    this.dataRows.add(new ModelDataRow(column, data));
-  }
-
-  public List<ModelDataRow> getDataRows() {
-    return dataRows;
-  }
-
-
-  public void setDataRows(List<ModelDataRow> modelData) {
-    this.dataRows = dataRows;
-    firePropertyChange("dataRows", null, dataRows);
-  }
-
-
-  
+ 
   public EditType getEditType() {
     return editType;
   }
@@ -234,5 +190,92 @@ public class DatasourceModel extends XulEventSourceAdapter implements IDatasourc
     datasource.setQuery(getQuery());
     datasource.setSelectedConnection(getSelectedConnection());
     return datasource;
+  }
+  
+    public void setModelData(BusinessData businessData) {
+    if(businessData != null) {
+      Domain domain = businessData.getDomain();
+      List<List<String>> data = businessData.getData();
+      List<LogicalModel> logicalModels = domain.getLogicalModels();
+      int columnNumber=0;
+      for (LogicalModel logicalModel : logicalModels) {
+        List<Category> categories = logicalModel.getCategories();
+        for (Category category : categories) {
+          List<LogicalColumn> logicalColumns = category.getLogicalColumns();
+          for (LogicalColumn logicalColumn : logicalColumns) {
+            addModelDataRow(logicalColumn, getColumnData(columnNumber++, data));
+          }
+        }
+      }
+      firePropertyChange("dataRows", null, dataRows);
+    } else {
+      this.dataRows.removeAll(dataRows);
+      List<ModelDataRow> previousValue = this.dataRows;
+      firePropertyChange("dataRows", previousValue, null);
+    }
+  }
+
+  public void addModelDataRow(LogicalColumn column, List<String> columnData) {
+    this.dataRows.add(new ModelDataRow(column, columnData));
+  }
+
+  public List<ModelDataRow> getDataRows() {
+    return dataRows;
+  }
+
+
+  public void setDataRows(List<ModelDataRow> dataRows) {
+    this.dataRows = dataRows;
+    firePropertyChange("dataRows", null, dataRows);
+  }
+  
+  private List<String> getColumnData(int columnNumber, List<List<String>> data) {
+    List<String> column = new ArrayList<String>();
+    for(List<String> row: data) {
+      if(columnNumber < row.size()) {
+        column.add(row.get(columnNumber));
+      }
+    }
+    return column;
+  }
+  /*
+   * Clears out the model
+   */
+  public void clearModel() {
+    setBusinessData(null);
+    setDataRows(null);
+    setDatasourceName("");
+    setPreviewLimit("10");
+    setQuery("");
+    setSelectedConnection(null);
+    setModelTableVisible(false);
+    setGenerateModelChecked(false);
+    clearConnections();
+  }
+  
+  private void clearConnections() {
+    for(int i=0;i<connections.size();i++) {
+      List<IConnection> previousValue = getPreviousValue();
+      connections.remove(i);
+      this.firePropertyChange("connections", previousValue, connections); //$NON-NLS-1$
+    }
+  }
+
+  public void setGenerateModelChecked(boolean generateModelChecked) {
+    this.generateModelChecked = generateModelChecked;
+    this.firePropertyChange("generateModelChecked", null, generateModelChecked); //$NON-NLS-1$
+  }
+
+  public boolean isGenerateModelChecked() {
+    return generateModelChecked;
+  }
+
+  public void setModelTableVisible(boolean modelTableVisible) {
+    this.modelTableVisible = modelTableVisible;
+    this.firePropertyChange("modelTableVisible", null, modelTableVisible); //$NON-NLS-1$
+  }
+
+  public boolean isModelTableVisible() {
+    return modelTableVisible;
   }
 }

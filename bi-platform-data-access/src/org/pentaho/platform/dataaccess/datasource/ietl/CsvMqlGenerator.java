@@ -6,6 +6,10 @@ import java.util.List;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
+import org.pentaho.commons.metadata.mqleditor.MqlOrder.Type;
+import org.pentaho.commons.metadata.mqleditor.beans.Column;
+import org.pentaho.commons.metadata.mqleditor.beans.Order;
+import org.pentaho.commons.metadata.mqleditor.beans.Query;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -18,10 +22,6 @@ import org.pentaho.di.trans.step.StepMetaDataCombi;
 import org.pentaho.di.trans.steps.groupby.GroupByMeta;
 import org.pentaho.di.trans.steps.selectvalues.SelectValuesMeta;
 import org.pentaho.di.trans.steps.sort.SortRowsMeta;
-import org.pentaho.commons.metadata.mqleditor.MqlOrder.Type;
-import org.pentaho.commons.metadata.mqleditor.beans.Column;
-import org.pentaho.commons.metadata.mqleditor.beans.Order;
-import org.pentaho.commons.metadata.mqleditor.beans.Query;
 
 public class CsvMqlGenerator {
   

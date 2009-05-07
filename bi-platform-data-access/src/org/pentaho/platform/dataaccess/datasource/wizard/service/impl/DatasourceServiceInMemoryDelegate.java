@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +24,6 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.engine.services.metadata.MetadataDomainRepository;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.IModelManagementService;
@@ -181,7 +179,7 @@ public class DatasourceServiceInMemoryDelegate {
    * 
    * @param ds
    * @return
-   * @throws DataSourceManagementException
+   * @throws DatasourceServiceException
    */
   private static Connection getDataSourceConnection(IConnection connection) throws DatasourceServiceException {
     Connection conn = null;
@@ -241,7 +239,7 @@ public class DatasourceServiceInMemoryDelegate {
    * This is a temporary fix. We need to figure out a better way of doing. Will be gone once we implement the thin version of common database dialog
    * @param IConnection connection, String query
    * @return IDataSource
-   * @throws DataSourceManagementException
+   * @throws DatasourceServiceException
    */
   private IDataSource constructIDataSource(IConnection connection, String query) throws DatasourceServiceException{
     final String SLASH = "/"; //$NON-NLS-1$
@@ -282,17 +280,13 @@ public class DatasourceServiceInMemoryDelegate {
    * 
    * @param modelName, connection, query, previewLimit
    * @return BusinessData
-   * @throws DataSourceManagementException
+   * @throws DatasourceServiceException
    */
   
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
-      //SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
-      //    connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
-      
-      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), /*sqlConnection.getNativeConnection()*/ getDataSourceConnection(connection), query);
-      
+      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query);
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       
       return new BusinessData(domain, data);
@@ -301,6 +295,34 @@ public class DatasourceServiceInMemoryDelegate {
     }
   }
 
+  
+  /**
+   * This method generates the business mode from the query and save it
+   * 
+   * @param modelName, connection, query
+   * @return Boolean
+   * @throws DatasourceServiceException
+   */  
+  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite)  throws DatasourceServiceException {
+    Boolean returnValue = false;
+    Domain domain = null;
+    try {
+      domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query);
+      getMetadataDomainRepository().storeDomain(domain, overwrite);
+      returnValue = true;
+    } catch(ModelManagementServiceException mmse) {
+      throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
+    } catch(DomainStorageException dse) {
+      throw new DatasourceServiceException("Unable to store domain" + domain.getName(), dse); //$NON-NLS-1$
+    } catch(DomainAlreadyExistsException dae) {
+      throw new DatasourceServiceException("Domain already exist" + domain.getName(), dae); //$NON-NLS-1$
+    } catch(DomainIdNullException dne) {
+      throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
+    }
+    return returnValue;
+    
+  }
+  
   /**
    * This method save the model
    * 

@@ -8,13 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
-import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
-import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
 import org.pentaho.commons.metadata.mqleditor.ColumnType;
 import org.pentaho.commons.metadata.mqleditor.CombinationType;
 import org.pentaho.commons.metadata.mqleditor.MqlBusinessTable;
@@ -43,6 +36,7 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.platform.dataaccess.datasource.DatabaseColumnType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
@@ -57,8 +51,6 @@ import antlr.collections.Stack;
 import antlr.collections.impl.Vector;
 
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 
@@ -106,6 +98,10 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit)
       throws DatasourceServiceException {
     return SERVICE.generateModel(modelName, connection, query, previewLimit);
+  }
+  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite)
+  throws DatasourceServiceException {
+      return SERVICE.saveModel(modelName, connection, query, overwrite);
   }
 
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {

@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.di.core.util.EnvUtil;
-import org.pentaho.di.trans.StepLoader;
-import org.pentaho.di.trans.steps.groupby.GroupByMeta;
 import org.pentaho.commons.metadata.mqleditor.MqlOrder.Type;
 import org.pentaho.commons.metadata.mqleditor.beans.Column;
 import org.pentaho.commons.metadata.mqleditor.beans.Model;
 import org.pentaho.commons.metadata.mqleditor.beans.Order;
 import org.pentaho.commons.metadata.mqleditor.beans.Query;
+import org.pentaho.di.core.util.EnvUtil;
+import org.pentaho.di.trans.StepLoader;
 
 
 public class ExampleApp {

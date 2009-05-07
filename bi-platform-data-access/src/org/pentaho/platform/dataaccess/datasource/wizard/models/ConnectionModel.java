@@ -1,8 +1,8 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.models;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
-import org.pentaho.platform.dataaccess.datasource.beans.Connection;;
 
 
 public class ConnectionModel extends XulEventSourceAdapter implements IConnection {
@@ -118,8 +118,11 @@ public class ConnectionModel extends XulEventSourceAdapter implements IConnectio
       this.setValidated(false);
     }
   }
-
-  public void clear() {
+  
+  /*
+   * Clears out the model
+   */
+  public void clearModel() {
     setDriverClass(null);
     setName(null);
     setPassword(null);
