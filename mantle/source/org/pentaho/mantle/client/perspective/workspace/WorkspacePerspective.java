@@ -467,7 +467,7 @@ public class WorkspacePerspective extends ScrollPanel {
         url = "http://localhost:8080/pentaho/" + url;
       }
     } else {
-      url = "ViewAction?subscribe=" + action + "&subscription-id=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
+      url = "ViewAction?subscribe=" + action + "&subscribe-name=" + subscrName; //$NON-NLS-1$ //$NON-NLS-2$
       if (!GWT.isScript()) {
         // for debug mode
         url = "http://localhost:8080/pentaho/" + url;
