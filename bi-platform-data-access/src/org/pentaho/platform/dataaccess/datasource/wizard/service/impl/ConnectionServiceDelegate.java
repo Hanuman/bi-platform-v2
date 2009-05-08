@@ -23,63 +23,63 @@ public class ConnectionServiceDelegate {
     this.datasourceMgmtSvc = datasourceMgmtSvc;
   }
   
-  public List<IConnection> getConnections() {
+  public List<IConnection> getConnections() throws ConnectionServiceException  {
     List<IConnection> connectionList = new ArrayList<IConnection>();
     try  {
       for(IDatasource datasource:datasourceMgmtSvc.getDatasources()) {
         connectionList.add(convertTo(datasource));
       }
     } catch(DatasourceMgmtServiceException dme) {
-      return null;
+      throw new ConnectionServiceException("Unable to get connection list " + dme.getLocalizedMessage(), dme); 
     }
     return connectionList;
   }
-  public IConnection getConnectionByName(String name) {
+  public IConnection getConnectionByName(String name) throws ConnectionServiceException  {
     try {
       return convertTo(datasourceMgmtSvc.getDatasource(name));
     } catch(DatasourceMgmtServiceException dme) {
-      return null;  
+      throw new ConnectionServiceException("Unable to get connection: " + name + " " + dme.getLocalizedMessage(), dme);  
     }
     
   }
-  public Boolean addConnection(IConnection connection) {
+  public Boolean addConnection(IConnection connection) throws ConnectionServiceException  {
     try {
       HibernateUtil.beginTransaction();
       datasourceMgmtSvc.createDatasource(convertFrom(connection));
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      return false;  
+      throw new ConnectionServiceException("Unable to add connection: " + connection.getName() + " "  + e.getLocalizedMessage(), e);  
     }
   }
-  public Boolean updateConnection(IConnection connection) {
+  public Boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
     try {
       HibernateUtil.beginTransaction();
       datasourceMgmtSvc.updateDatasource(convertFrom(connection));
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      return false;  
+      throw new ConnectionServiceException("Unable to update connection: " + connection.getName() + " "  + e.getLocalizedMessage(),e);  
     }
   }
-  public Boolean deleteConnection(IConnection connection) {
+  public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
     try {
       HibernateUtil.beginTransaction();
       datasourceMgmtSvc.deleteDatasource(convertFrom(connection));
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      return false;  
+      throw new ConnectionServiceException("Unable to delete connection: " + connection.getName() + " " +  e.getLocalizedMessage(),e);  
     }
   }
-  public Boolean deleteConnection(String name) {
+  public Boolean deleteConnection(String name) throws ConnectionServiceException  {
     try {
       HibernateUtil.beginTransaction();
       datasourceMgmtSvc.deleteDatasource(name);
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      return false;  
+      throw new ConnectionServiceException("Unable to delete connection: " + name + " " +  e.getLocalizedMessage(),e);  
     }
   }
   

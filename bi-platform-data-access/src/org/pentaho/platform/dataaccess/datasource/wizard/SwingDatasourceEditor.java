@@ -10,6 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceC
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDebugImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDebugImpl;
@@ -51,7 +52,7 @@ public class SwingDatasourceEditor {
 
       DatasourceService datasourceService = new DatasourceServiceDebugImpl();
       datasourceController.setService(datasourceService);
-      
+      try {
       service.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
@@ -76,6 +77,9 @@ public class SwingDatasourceEditor {
         }
         
       });
+      } catch(ConnectionServiceException cse) {
+        log.error("error loading Xul application", cse);
+      }
       
       
     } catch(XulException e){

@@ -6,7 +6,7 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 
 public class ConnectionModel extends XulEventSourceAdapter implements IConnection {
-  
+  private boolean disableConnectionName;
   private boolean isValid;
   private String name;
   private String driverClass;
@@ -96,6 +96,16 @@ public class ConnectionModel extends XulEventSourceAdapter implements IConnectio
       setUsername(null);      
     }
   }
+  public boolean isDisableConnectionName() {
+    return disableConnectionName;
+  }
+
+  public void setDisableConnectionName(boolean disableConnectionName) {
+    boolean prevVal = this.disableConnectionName;
+    this.disableConnectionName = disableConnectionName;
+    this.firePropertyChange("disableConnectionName", null, disableConnectionName);
+  }
+
 
 
   public boolean isValidated(){

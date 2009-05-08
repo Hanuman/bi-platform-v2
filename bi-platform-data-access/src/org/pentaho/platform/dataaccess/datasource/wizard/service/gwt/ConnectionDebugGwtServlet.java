@@ -38,25 +38,25 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
     return SERVICE;
   }
 
-  public List<IConnection> getConnections() {
+  public List<IConnection> getConnections()  throws ConnectionServiceException {
     return getService().getConnections();
   }
-  public IConnection getConnectionByName(String name) {
+  public IConnection getConnectionByName(String name)  throws ConnectionServiceException {
     return getService().getConnectionByName(name);
   }
-  public Boolean addConnection(IConnection connection) {
+  public Boolean addConnection(IConnection connection)  throws ConnectionServiceException{ 
     return getService().addConnection(connection);
   }
 
-  public Boolean updateConnection(IConnection connection) {
+  public Boolean updateConnection(IConnection connection)  throws ConnectionServiceException {
     return getService().updateConnection(connection);
   }
 
-  public Boolean deleteConnection(IConnection connection) {
+  public Boolean deleteConnection(IConnection connection)  throws ConnectionServiceException {
     return getService().deleteConnection(connection);
   }
     
-  public Boolean deleteConnection(String name) {
+  public Boolean deleteConnection(String name)  throws ConnectionServiceException {
     return getService().deleteConnection(name);    
   }
 

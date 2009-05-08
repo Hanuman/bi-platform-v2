@@ -14,25 +14,25 @@ public class ConnectionServiceDebugImpl implements ConnectionService{
     SERVICE = new ConnectionServiceInMemoryDelegate();
   }
  
-  public void getConnections(XulServiceCallback<List<IConnection>> callback) {
+  public void getConnections(XulServiceCallback<List<IConnection>> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.getConnections());
   }
-  public void getConnectionByName(String name, XulServiceCallback<IConnection> callback) {
+  public void getConnectionByName(String name, XulServiceCallback<IConnection> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.getConnectionByName(name));
   }
-  public void addConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+  public void addConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.addConnection(connection));
   }
-  public void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+  public void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.updateConnection(connection));
   }
-  public void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+  public void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.deleteConnection(connection));
   }
-  public void deleteConnection(String name, XulServiceCallback<Boolean> callback) {
+  public void deleteConnection(String name, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.deleteConnection(name));
   }
-  public void testConnection(IConnection connection, XulServiceCallback<Boolean> callback)throws ConnectionServiceException  {
+  public void testConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.testConnection(connection));
   }  
   

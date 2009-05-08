@@ -6,12 +6,12 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.ui.xul.XulServiceCallback;
 
 public interface ConnectionService {
-  void getConnections(XulServiceCallback<List<IConnection>> callback);
-  void getConnectionByName(String name, XulServiceCallback<IConnection> callback);
-  void addConnection(IConnection connection, XulServiceCallback<Boolean> callback);
-  void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback);
-  void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback);
-  void deleteConnection(String name, XulServiceCallback<Boolean> callback);
+  void getConnections(XulServiceCallback<List<IConnection>> callback) throws ConnectionServiceException;
+  void getConnectionByName(String name, XulServiceCallback<IConnection> callback) throws ConnectionServiceException;
+  void addConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException;
+  void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException;
+  void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException;
+  void deleteConnection(String name, XulServiceCallback<Boolean> callback) throws ConnectionServiceException;
   void testConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException;
 }
 

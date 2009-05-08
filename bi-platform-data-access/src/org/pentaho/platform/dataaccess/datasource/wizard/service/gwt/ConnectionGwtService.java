@@ -9,12 +9,12 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServi
 import com.google.gwt.user.client.rpc.RemoteService;
      
 public interface ConnectionGwtService extends RemoteService{
-  public List<IConnection> getConnections();
-  public IConnection getConnectionByName(String name);
-  public Boolean addConnection(IConnection connection);
-  public Boolean updateConnection(IConnection connection);
-  public Boolean deleteConnection(IConnection connection);
-  public Boolean deleteConnection(String name);
+  public List<IConnection> getConnections() throws ConnectionServiceException;
+  public IConnection getConnectionByName(String name) throws ConnectionServiceException;
+  public Boolean addConnection(IConnection connection) throws ConnectionServiceException;
+  public Boolean updateConnection(IConnection connection) throws ConnectionServiceException;
+  public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException;
+  public Boolean deleteConnection(String name) throws ConnectionServiceException;
   public Boolean testConnection(IConnection connection) throws ConnectionServiceException;
 }
 

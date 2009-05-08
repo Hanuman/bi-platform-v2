@@ -15,7 +15,7 @@
     		<spacer width="10"/>
     		<vbox>
 		        <label value="${connectionDialog.ConnectionName}" tooltiptext="${connectionDialog.ConnectionNameToolTip}"/>
-		        <textbox id="connectionname" multiline="false" width="300" />
+		        <textbox id="connectionname" multiline="false" width="300" disabled="false"/>
 		        <label value="${connectionDialog.DriverClass}" tooltiptext="${connectionDialog.DriverClassToolTip}"/>
                 <textbox id="driverClass" multiline="false" width="300"/>            
 		        <label value="${connectionDialog.Username}" tooltiptext="${connectionDialog.UsernameToolTip}"/>
@@ -35,9 +35,9 @@
     </groupbox>
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}"
-    buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.exitDatasourceDialog()" title="${datasourceDialog.Title}" width="640" height="595" buttonalign="right">
+    buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.exitDatasourceDialog()" title="${datasourceDialog.Title}" width="640" height="400" buttonalign="right">
     <groupbox flex="1">
-      <hbox>
+      <hbox id="buttonBox">
           <button flex="1" id="sqlButton" image="images/sql_selected.png"  tooltiptext="${datasourceDialog.SqlImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="top"/>
           <spacer width="50"/>
           <button flex="1" id="olap" image="images/olap.png" tooltiptext="${datasourceDialog.OlapImageToolTip}" onclick="datasourceController.selectOlap()"  disabled="false" align="top"/>
@@ -128,8 +128,8 @@
   </dialog>
 
   
-  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="150" height="200">
-        <label value="${waitingDialog.generatingPreview}"/>
+  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="100" height="50">
+        <label id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   </dialog>
 
   <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="75" height="65" buttonalign="center">

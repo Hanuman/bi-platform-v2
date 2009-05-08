@@ -10,6 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceC
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.components.XulLabel;
@@ -62,6 +63,7 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
   
   private void reloadConnections() {
     if(connectionService != null) {
+      try {
       connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
@@ -73,6 +75,9 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
         }
         
       });
+      } catch(ConnectionServiceException cse) {
+        showErrorDialog("Error Occurred","Unable to get connections" + cse.getLocalizedMessage());
+      }
     } else {
       showErrorDialog("Error Occurred","Connection Service is null");
     }

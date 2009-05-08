@@ -34,6 +34,7 @@ import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulColumns;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulGrid;
+import org.pentaho.ui.xul.containers.XulHbox;
 import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulMenupopup;
 import org.pentaho.ui.xul.containers.XulRows;
@@ -50,7 +51,9 @@ public class DatasourceController extends AbstractXulEventHandler {
   private XulDialog removeConfirmationDialog;
 
   private XulDialog waitingDialog = null;
-
+  
+  private XulLabel waitingDialogLabel = null;
+  
   private XulDialog previewResultsDialog = null;
 
   private DatasourceService service;
@@ -119,18 +122,20 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   private XulTree modelDataTable = null;
 
-  XulMenuList<XulMenupopup> dataTypeMenuList = null;
-
+  private XulHbox buttonBox = null;  
   public DatasourceController() {
 
   }
 
   public void init() {
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
-
+    buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
+    waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$
     successDialog = (XulDialog) document.getElementById("successDialog"); //$NON-NLS-1$
+    waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$
+    
     successLabel = (XulLabel) document.getElementById("successLabel");//$NON-NLS-1$
 
     datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
@@ -217,6 +222,7 @@ public class DatasourceController extends AbstractXulEventHandler {
 
     okButton.setDisabled(true);
     modelDataTable.setVisible(false);
+    buttonBox.setBgcolor("white");
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
       // call initializes the entire UI.
@@ -267,19 +273,23 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   public void generateModel() {
     if (mqlModelCheckBox.isChecked()) {
+      datasourceDialog.setHeight(595);
       if (validateInputs()) {
         try {
-
+          showWaitingDialog("Generating Model", "Please wait ....");
           service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getSelectedConnection(),
               datasourceModel.getQuery(), datasourceModel.getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
                 public void error(String message, Throwable error) {
-                  mqlModelCheckBox.setChecked(false);                
+                  hideWaitingDialog();
+                  mqlModelCheckBox.setChecked(false);
+                  datasourceDialog.setHeight(300);
                   openErrorDialog("Error occurred", "Unable to retrieve business data. " + error.getLocalizedMessage());
                 }
 
                 public void success(BusinessData businessData) {
                   try {
+                    hideWaitingDialog();
                     datasourceModel.setBusinessData(businessData);
                     modelDataTable.setVisible(true);                    
                   } catch (Exception xe) {
@@ -288,15 +298,19 @@ public class DatasourceController extends AbstractXulEventHandler {
                 }
               });
         } catch (DatasourceServiceException e) {
+          hideWaitingDialog();
           mqlModelCheckBox.setChecked(false);
+          datasourceDialog.setHeight(300);
           openErrorDialog("Error occurred", "Unable to retrieve business data. " + e.getLocalizedMessage());
         }
       } else {
 				mqlModelCheckBox.setChecked(false);
+				datasourceDialog.setHeight(300);
         openErrorDialog("Missing Input", "Some of the required inputs are missing");
       }
     } else {
-      modelDataTable.setVisible(false);      
+      modelDataTable.setVisible(false); 
+      datasourceDialog.setHeight(300);
       datasourceModel.setBusinessData(null);
     }
   }
@@ -399,11 +413,13 @@ public class DatasourceController extends AbstractXulEventHandler {
   public void addConnection() {
     datasourceModel.setEditType(EditType.ADD);
     connectionModel.clearModel();
+    connectionModel.setDisableConnectionName(false);
     showConnectionDialog();
   }
 
   public void editConnection() {
     datasourceModel.setEditType(EditType.EDIT);
+    connectionModel.setDisableConnectionName(true);
     connectionModel.setConnection(datasourceModel.getSelectedConnection());
     showConnectionDialog();
   }
@@ -452,10 +468,13 @@ public class DatasourceController extends AbstractXulEventHandler {
       openErrorDialog("Missing Input", "Some of the required inputs are missing"); //$NON-NLS-2$
     } else {
       try {
+        showWaitingDialog("Generating Preview Data", "Please wait ....");
+
         service.doPreview(datasourceModel.getSelectedConnection(), datasourceModel.getQuery(), datasourceModel
             .getPreviewLimit(), new XulServiceCallback<SerializedResultSet>() {
 
           public void error(String message, Throwable error) {
+            hideWaitingDialog();
             openErrorDialog("Preview Failed", "Unable to preview data: " + error.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$ 
           }
 
@@ -512,15 +531,18 @@ public class DatasourceController extends AbstractXulEventHandler {
                 previewResultsTable.addTreeRow(row);
               }
               previewResultsTable.update();
+              hideWaitingDialog();
               previewResultsDialog.show();
             } catch (XulException e) {
               // TODO: add logging
+              hideWaitingDialog();
               System.out.println(e.getMessage());
               e.printStackTrace();
             }
           }
         });
       } catch (DatasourceServiceException e) {
+        hideWaitingDialog();
         openErrorDialog("Preview Failed", "Unable to preview data: " + e.getLocalizedMessage());
       }
     }
@@ -572,5 +594,16 @@ public class DatasourceController extends AbstractXulEventHandler {
     if (!successDialog.isHidden()) {
       successDialog.hide();
     }
+  }
+  
+  public void showWaitingDialog(String title, String message) {
+    waitingDialog.setTitle(title);
+    waitingDialogLabel.setValue(message);
+    waitingDialog.show();
+    
+  }
+  
+  public void hideWaitingDialog() {
+    waitingDialog.hide();
   }
 }

@@ -9,6 +9,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.ConnectionDialogListene
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingFactory;
@@ -35,10 +36,13 @@ public class ConnectionController extends AbstractXulEventHandler {
   private XulDialog saveConnectionConfirmationDialog;
 
   private XulDialog errorDialog;
+
   private XulDialog successDialog;
+
   private XulLabel errorLabel = null;
+
   private XulLabel successLabel = null;
-  
+
   BindingFactory bf;
 
   XulTextbox name = null;
@@ -56,6 +60,7 @@ public class ConnectionController extends AbstractXulEventHandler {
   XulButton testBtn = null;
 
   XulListbox driverClassList = null;
+
   public ConnectionController() {
 
   }
@@ -66,10 +71,10 @@ public class ConnectionController extends AbstractXulEventHandler {
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$
     successDialog = (XulDialog) document.getElementById("successDialog"); //$NON-NLS-1$
     successLabel = (XulLabel) document.getElementById("successLabel");//$NON-NLS-1$
-    
+
     name = (XulTextbox) document.getElementById("connectionname"); //$NON-NLS-1$
-		driverClass = (XulTextbox) document.getElementById("driverClass"); //$NON-NLS-1$
-    
+    driverClass = (XulTextbox) document.getElementById("driverClass"); //$NON-NLS-1$
+
     username = (XulTextbox) document.getElementById("username"); //$NON-NLS-1$
     password = (XulTextbox) document.getElementById("password"); //$NON-NLS-1$
     url = (XulTextbox) document.getElementById("url"); //$NON-NLS-1$
@@ -77,6 +82,7 @@ public class ConnectionController extends AbstractXulEventHandler {
     removeConfirmationDialog = (XulDialog) document.getElementById("removeConfirmationDialog"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(connectionModel, "name", name, "value"); //$NON-NLS-1$  //$NON-NLS-2$
+    bf.createBinding(connectionModel, "disableConnectionName", name, "disabled"); //$NON-NLS-1$  //$NON-NLS-2$
     bf.createBinding(connectionModel, "driverClass", driverClass, "value"); //$NON-NLS-1$  //$NON-NLS-2$
     bf.createBinding(connectionModel, "username", username, "value"); //$NON-NLS-1$  //$NON-NLS-2$
     bf.createBinding(connectionModel, "password", password, "value"); //$NON-NLS-1$  //$NON-NLS-2$
@@ -108,23 +114,25 @@ public class ConnectionController extends AbstractXulEventHandler {
     errorLabel.setValue(message);
     errorDialog.show();
   }
+
   public void closeErrorDialog() {
-    if(!errorDialog.isHidden()) {
+    if (!errorDialog.isHidden()) {
       errorDialog.hide();
     }
   }
-  
+
   public void openSuccesDialog(String title, String message) {
     successDialog.setTitle(title);
     successLabel.setValue(message);
     successDialog.show();
   }
+
   public void closeSuccessDialog() {
-    if(!successDialog.isHidden()) {
+    if (!successDialog.isHidden()) {
       successDialog.hide();
     }
   }
-  
+
   public void setBindingFactory(BindingFactory bf) {
     this.bf = bf;
   }
@@ -155,16 +163,18 @@ public class ConnectionController extends AbstractXulEventHandler {
       listener.onDialogCancel();
     }
   }
-  public void  closeSaveConnectionConfirmationDialog(){
-    saveConnectionConfirmationDialog.hide(); 
- }
+
+  public void closeSaveConnectionConfirmationDialog() {
+    saveConnectionConfirmationDialog.hide();
+  }
+
   public void addConnection() {
     try {
       service.testConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
           System.out.println(message);
           error.printStackTrace();
-          saveConnectionConfirmationDialog.show(); 
+          saveConnectionConfirmationDialog.show();
         }
 
         public void success(Boolean value) {
@@ -174,8 +184,7 @@ public class ConnectionController extends AbstractXulEventHandler {
             saveConnectionConfirmationDialog.show();
           }
         }
-      }  
-      );
+      });
     } catch (Exception e) {
       saveConnectionConfirmationDialog.show();
     }
@@ -187,86 +196,53 @@ public class ConnectionController extends AbstractXulEventHandler {
         public void error(String message, Throwable error) {
           System.out.println(message);
           error.printStackTrace();
-          openErrorDialog("Connection Test Not Successful","Unable to test the connection" + error.getLocalizedMessage());
+          openErrorDialog("Connection Test Not Successful", "Unable to test the connection"
+              + error.getLocalizedMessage());
         }
 
         public void success(Boolean value) {
           try {
 
             if (value) {
-              openSuccesDialog("Connection Test Successful","Successfully tested the connection");
+              openSuccesDialog("Connection Test Successful", "Successfully tested the connection");
             } else {
-              openErrorDialog("Connection Test Not Successful","Unable to test the connection");            }
+              openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
+            }
 
           } catch (Exception e) {
-            openErrorDialog("Connection Test Not Successful","Unable to test the connection" );              
+            openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
           }
         }
       });
     } catch (Exception e) {
-        openErrorDialog("Connection Test Not Successful","Unable to test the connection");
+      openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
     }
   }
 
   public void deleteConnection() {
     removeConfirmationDialog.hide();
-    service.deleteConnection(datasourceModel.getSelectedConnection().getName(), new XulServiceCallback<Boolean>() {
-
-      public void error(String message, Throwable error) {
-        System.out.println(message);
-        error.printStackTrace();
-      }
-
-      public void success(Boolean value) {
-        try {
-          if (value) {
-            openSuccesDialog("Connection Deleted","Successfully deleted the connection");
-            System.out.println("Deleting from the model " + connectionModel.getName());
-            System.out.println("Count before deleting " + datasourceModel.getConnections().size());
-            datasourceModel.deleteConnection(connectionModel.getConnection().getName());
-            System.out.println("Count after deleting " + datasourceModel.getConnections().size());          
-            List<IConnection> connections = datasourceModel.getConnections();
-            if (connections != null && connections.size() > 0) {
-              System.out.println("Setting selected connection to  " + connections.get(connections.size() - 1).getName());
-              datasourceModel.setSelectedConnection(connections.get(connections.size() - 1));
-            } else {
-              System.out.println("Setting selected connection to  null");
-              datasourceModel.setSelectedConnection(null);
-            }
-
-          } else {
-            openErrorDialog("Connection Not Deleted","Unable to deleted the connection");
-          }
-
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
-  }
-
-  public void saveConnection() {
-    if(!saveConnectionConfirmationDialog.isHidden()) {
-      saveConnectionConfirmationDialog.hide();
-    }
-    if (EditType.ADD.equals(datasourceModel.getEditType())) {
-      service.addConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
+    try {
+      service.deleteConnection(datasourceModel.getSelectedConnection().getName(), new XulServiceCallback<Boolean>() {
 
         public void error(String message, Throwable error) {
           System.out.println(message);
           error.printStackTrace();
-          openErrorDialog("Connection Not saved","Unable to save the connection "+error.getLocalizedMessage());
         }
 
         public void success(Boolean value) {
           try {
-            dialog.hide();
             if (value) {
-              openSuccesDialog("Connection Saved","Successfully saved the connection");
-              datasourceModel.addConnection(connectionModel.getConnection());
-              datasourceModel.setSelectedConnection(connectionModel.getConnection());
+              openSuccesDialog("Connection Deleted", "Successfully deleted the connection");
+              datasourceModel.deleteConnection(connectionModel.getName());
+              List<IConnection> connections = datasourceModel.getConnections();
+              if (connections != null && connections.size() > 0) {
+                datasourceModel.setSelectedConnection(connections.get(connections.size() - 1));
+              } else {
+                datasourceModel.setSelectedConnection(null);
+              }
+
             } else {
-              openErrorDialog("Connection Not saved","Unable to save the connection");
+              openErrorDialog("Connection Not Deleted", "Unable to delete the connection");
             }
 
           } catch (Exception e) {
@@ -274,30 +250,71 @@ public class ConnectionController extends AbstractXulEventHandler {
           }
         }
       });
-    } else {
-      service.updateConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
+    } catch (ConnectionServiceException cse) {
+      openErrorDialog("Connection Not Deleted", "Unable to deleted the connection" + cse.getLocalizedMessage());
+    }
+  }
 
-        public void error(String message, Throwable error) {
-          System.out.println(message);
-          error.printStackTrace();
-          openErrorDialog("Connection Not Updated","Unable to update the connection "+error.getLocalizedMessage());          
-        }
+  public void saveConnection() {
+    if (!saveConnectionConfirmationDialog.isHidden()) {
+      saveConnectionConfirmationDialog.hide();
+    }
 
-        public void success(Boolean value) {
-          try {
-            dialog.hide();
-            if (value) {
-              openSuccesDialog("Connection Updated","Successfully updated the connection");
-              datasourceModel.updateConnection(connectionModel.getConnection());
-              datasourceModel.setSelectedConnection(connectionModel.getConnection());
-            } else {
-               openErrorDialog("Connection Not updated","Unable to updated the connection");
-            }
-
-          } catch (Exception e) {
+    if (EditType.ADD.equals(datasourceModel.getEditType())) {
+      try {
+        service.addConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {  
+          public void error(String message, Throwable error) {
+            System.out.println(message);
+            error.printStackTrace();
+            openErrorDialog("Connection Not saved", "Unable to save the connection " + error.getLocalizedMessage());
           }
-        }
-      });
+          public void success(Boolean value) {
+            try {
+              dialog.hide();
+              if (value) {
+                openSuccesDialog("Connection Saved", "Successfully saved the connection");
+                datasourceModel.addConnection(connectionModel.getConnection());
+                datasourceModel.setSelectedConnection(connectionModel.getConnection());
+              } else {
+                openErrorDialog("Connection Not saved", "Unable to save the connection");
+              }
+  
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        });
+      } catch(ConnectionServiceException cse) {
+        openErrorDialog("Connection Not saved", "Unable to save the connection"+ cse.getLocalizedMessage());
+      }
+    } else {
+      try {
+        service.updateConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
+  
+          public void error(String message, Throwable error) {
+            System.out.println(message);
+            error.printStackTrace();
+            openErrorDialog("Connection Not Updated", "Unable to update the connection " + error.getLocalizedMessage());
+          }
+  
+          public void success(Boolean value) {
+            try {
+              dialog.hide();
+              if (value) {
+                openSuccesDialog("Connection Updated", "Successfully updated the connection");
+                datasourceModel.updateConnection(connectionModel.getConnection());
+                datasourceModel.setSelectedConnection(connectionModel.getConnection());
+              } else {
+                openErrorDialog("Connection Not updated", "Unable to updated the connection");
+              }
+  
+            } catch (Exception e) {
+            }
+          }
+        });
+      } catch(ConnectionServiceException cse) {
+        openErrorDialog("Connection Not updated", "Unable to update the connection"+ cse.getLocalizedMessage());
+      }
     }
   }
 

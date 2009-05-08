@@ -21,40 +21,48 @@ public class ConnectionServiceInMemoryDelegate {
   public ConnectionServiceInMemoryDelegate() {
   }
   
-  public List<IConnection> getConnections() {
+  public List<IConnection> getConnections() throws ConnectionServiceException  {
     return connectionList;
   }
-  public IConnection getConnectionByName(String name) {
+  public IConnection getConnectionByName(String name) throws ConnectionServiceException  {
     for(IConnection connection:connectionList) {
       if(connection.getName().equals(name)) {
         return connection;
       }
     }
-    return null;
+    throw new ConnectionServiceException("Connection name does not exists");
   }
-  public Boolean addConnection(IConnection connection) {
-    connectionList.add(connection);
-    return true;
+  public Boolean addConnection(IConnection connection) throws ConnectionServiceException  {
+    if(!isConnectionExist(connection.getName())) {
+      connectionList.add(connection);
+      return true;
+    } else {
+      throw new ConnectionServiceException("Connection name already exists");
+    }
   }
-  public Boolean updateConnection(IConnection connection) {
+  public Boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
     IConnection conn = getConnectionByName(connection.getName());
-    conn.setDriverClass(connection.getDriverClass());
-    conn.setPassword(connection.getPassword());
-    conn.setUrl(connection.getUrl());
-    conn.setUsername(connection.getUsername());
-    return true;
+    if(conn != null) {
+      conn.setDriverClass(connection.getDriverClass());
+      conn.setPassword(connection.getPassword());
+      conn.setUrl(connection.getUrl());
+      conn.setUsername(connection.getUsername());
+      return true;
+    } else {
+      throw new ConnectionServiceException("Connection name does not exists");
+    }
   }
-  public Boolean deleteConnection(IConnection connection) {
+  public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
     connectionList.remove(connectionList.indexOf(connection));
     return true;
   }
-  public Boolean deleteConnection(String name) {
+  public Boolean deleteConnection(String name) throws ConnectionServiceException  {
     for(IConnection connection:connectionList) {
       if(connection.getName().equals(name)) {
         return deleteConnection(connection);
       }
     }
-    return false;
+    throw new ConnectionServiceException("Connection name does not exists");
   }
   
   public boolean testConnection(IConnection connection) throws ConnectionServiceException {
@@ -116,5 +124,12 @@ public class ConnectionServiceInMemoryDelegate {
       throw new ConnectionServiceException("Unable to connect", e); //$NON-NLS-1$
     }
   }
-
+  private boolean isConnectionExist(String connectionName) {
+    for(IConnection connection:connectionList) {
+      if(connection.getName().equals(connectionName)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
