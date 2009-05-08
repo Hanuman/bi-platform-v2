@@ -1,7 +1,5 @@
 package org.pentaho.test.platform.engine.services;
 
-import java.util.Locale;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -16,6 +14,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.metadata.MetadataDomainRepository;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.util.UUIDUtil;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 
 @SuppressWarnings("nls")
@@ -32,6 +31,9 @@ public class MetadataDomainRepositoryTest {
   
   @Test
   public void testMetadataDomainRepo() {
+    
+    String locale = LocaleHelper.getLocale().toString();
+    
     microPlatform.init();
     //Assert.assertTrue( "Initialization of the platform failed", init() );
     
@@ -78,7 +80,7 @@ public class MetadataDomainRepositoryTest {
     
     // store again, with overwrite
     
-    domain.setName(new LocalizedString("Second Save"));
+    domain.setName(new LocalizedString(locale, "Second Save"));
     
     try  {
       repo.storeDomain(domain, true);
@@ -91,7 +93,7 @@ public class MetadataDomainRepositoryTest {
     
     Domain domain2 = new Domain();
     domain2.setId(UUIDUtil.getUUIDAsString());
-    domain2.setName(new LocalizedString("Second Domain"));
+    domain2.setName(new LocalizedString(locale, "Second Domain"));
     try  {
       repo.storeDomain(domain2, false);
     } catch (Exception e) {
@@ -105,14 +107,11 @@ public class MetadataDomainRepositoryTest {
 
     // rename first domain
     
-    domain.setName(new LocalizedString("Won't Save"));
+    domain.setName(new LocalizedString(locale, "Won't Save"));
     
     // flush domains from memory
     repo.flushDomains();
 
-    // TEMPORARY HACK DUE TO GWT:
-    String locale = "DEFAULT";
-    
     // make sure the renaming isn't there
     Assert.assertEquals("Second Save", repo.getDomain(domain.getId()).getName().getString(locale));
     
