@@ -64,7 +64,7 @@
             <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="datasourceController.addConnection()"  disabled="false"/>
             <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="datasourceController.removeConnection()"  disabled="true"/>
           </hbox>
-          <listbox id="connectionList" rows="6" width="240" height="117" pen:binding="name"/>
+          <listbox id="connectionList" rows="7" width="240" height="117" pen:binding="name"/>
         </vbox>
         <spacer width="20"/>
         <vbox flex="1">
@@ -93,7 +93,7 @@
 					<!--<treecol label="${datasourceDialog.format}" flex="1" type="combobox" editable="true" pen:combobinding="bindingDataFormatTypes" 					pen:binding="selectedDataFormatType"/>-->
 					<treecol label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
 				</treecols>
-				<treechildren />
+				<treechildren id="modelDataRows" />
 		</tree>
 	  </vbox>
    </groupbox>
@@ -115,7 +115,7 @@
   ondialogaccept="connectionController.deleteConnection()" buttonalign="right" title="${removeConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
-        <label width="190" value="${removeConfirmationDialog.confirmMessage}"/>
+        <label value="${removeConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
   
@@ -123,7 +123,7 @@
   ondialogaccept="connectionController.saveConnection()" buttonalign="right" title="${saveConnectionConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
-        <label width="190" value="${saveConnectionConfirmationDialog.confirmMessage}"/>
+        <label value="${saveConnectionConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
 

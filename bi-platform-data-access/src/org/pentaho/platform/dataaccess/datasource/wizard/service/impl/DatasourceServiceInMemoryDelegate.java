@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
@@ -24,6 +25,8 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.IModelManagementService;
@@ -299,17 +302,18 @@ public class DatasourceServiceInMemoryDelegate {
   /**
    * This method generates the business mode from the query and save it
    * 
-   * @param modelName, connection, query
-   * @return Boolean
+   * @param modelName, connection, query, previewLimit
+   * @return BusinessData
    * @throws DatasourceServiceException
    */  
-  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite)  throws DatasourceServiceException {
-    Boolean returnValue = false;
+  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     Domain domain = null;
     try {
+      IDataSource dataSource = constructIDataSource(connection, query);
       domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query);
       getMetadataDomainRepository().storeDomain(domain, overwrite);
-      returnValue = true;
+      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
+      return new BusinessData(domain, data);
     } catch(ModelManagementServiceException mmse) {
       throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
     } catch(DomainStorageException dse) {
@@ -318,9 +322,7 @@ public class DatasourceServiceInMemoryDelegate {
       throw new DatasourceServiceException("Domain already exist" + domain.getName(), dae); //$NON-NLS-1$
     } catch(DomainIdNullException dne) {
       throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
-    }
-    return returnValue;
-    
+    }   
   }
   
   /**

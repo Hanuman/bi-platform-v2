@@ -99,9 +99,9 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
       throws DatasourceServiceException {
     return SERVICE.generateModel(modelName, connection, query, previewLimit);
   }
-  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite)
+  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)
   throws DatasourceServiceException {
-      return SERVICE.saveModel(modelName, connection, query, overwrite);
+      return SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit);
   }
 
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {

@@ -53,8 +53,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
     return SERVICE.generateModel(modelName, connection, query, previewLimit);
    }
-  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite) throws DatasourceServiceException {
-    return SERVICE.saveModel(modelName, connection, query, overwrite);
+  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit) throws DatasourceServiceException {
+    return SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit);
   }
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveModel(businessData, overwrite);

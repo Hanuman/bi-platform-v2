@@ -300,19 +300,20 @@ public class DatasourceServiceDelegate {
    * This method generates the business mode from the query and save it
    * 
    * @param modelName, connection, query
-   * @return Boolean
+   * @return BusinessData
    * @throws DatasourceServiceException
    */  
-  public Boolean saveModel(String modelName, IConnection connection, String query, Boolean overwrite)  throws DatasourceServiceException {
-    Boolean returnValue = false;
+  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     Domain domain = null;
     try {
+      IDataSource dataSource = constructIDataSource(connection, query);
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
           connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
       domain = getModelManagementService().generateModel(modelName, connection.getName(),
           sqlConnection.getNativeConnection(), query);
+      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       getMetadataDomainRepository().storeDomain(domain, overwrite);
-      returnValue = true;
+      return new BusinessData(domain, data);
     } catch(ModelManagementServiceException mmse) {
       throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
     } catch(DomainStorageException dse) {
@@ -322,8 +323,6 @@ public class DatasourceServiceDelegate {
     } catch(DomainIdNullException dne) {
       throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
     }
-    return returnValue;
-    
   }
   /**
    * This method save the model

@@ -160,15 +160,15 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
     });
   }
-  
-  public void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, final XulServiceCallback<Boolean> callback)  throws DatasourceServiceException {
-      SERVICE.saveModel(modelName, connection, query, overwrite, new AsyncCallback<Boolean>() {
+  public void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit
+      ,final XulServiceCallback<BusinessData> callback)  throws DatasourceServiceException {
+      SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit, new AsyncCallback<BusinessData>() {
 
         public void onFailure(Throwable arg0) {
           callback.error("error saving the mode: ", arg0); //$NON-NLS-1$
         }
 
-        public void onSuccess(Boolean arg0) {
+        public void onSuccess(BusinessData arg0) {
           callback.success(arg0);
         }
 

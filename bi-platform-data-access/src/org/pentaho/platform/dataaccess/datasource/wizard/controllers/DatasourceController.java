@@ -39,6 +39,7 @@ import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulMenupopup;
 import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
+import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeCols;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -121,7 +122,8 @@ public class DatasourceController extends AbstractXulEventHandler {
   private XulGrid grid = null;
 
   private XulTree modelDataTable = null;
-
+  private XulTreeChildren  modelDataRows = null;
+  
   private XulHbox buttonBox = null;  
   public DatasourceController() {
 
@@ -129,6 +131,7 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   public void init() {
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
+    modelDataRows = (XulTreeChildren) document.getElementById("modelDataRows");
     buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
@@ -222,7 +225,8 @@ public class DatasourceController extends AbstractXulEventHandler {
 
     okButton.setDisabled(true);
     modelDataTable.setVisible(false);
-    buttonBox.setBgcolor("white");
+    // Setting the Button Panel background to white
+    buttonBox.setBgcolor("#FFFFFF");
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
       // call initializes the entire UI.
@@ -274,6 +278,7 @@ public class DatasourceController extends AbstractXulEventHandler {
   public void generateModel() {
     if (mqlModelCheckBox.isChecked()) {
       datasourceDialog.setHeight(595);
+      query.setDisabled(true);
       if (validateInputs()) {
         try {
           showWaitingDialog("Generating Metadata Model", "Please wait ....");
@@ -283,6 +288,7 @@ public class DatasourceController extends AbstractXulEventHandler {
                 public void error(String message, Throwable error) {
                   hideWaitingDialog();
                   mqlModelCheckBox.setChecked(false);
+                  query.setDisabled(false);
                   datasourceDialog.setHeight(300);
                   openErrorDialog("Error occurred", "Unable to retrieve business data. " + error.getLocalizedMessage());
                 }
@@ -300,16 +306,20 @@ public class DatasourceController extends AbstractXulEventHandler {
         } catch (DatasourceServiceException e) {
           hideWaitingDialog();
           mqlModelCheckBox.setChecked(false);
+          query.setDisabled(false);
           datasourceDialog.setHeight(300);
           openErrorDialog("Error occurred", "Unable to retrieve business data. " + e.getLocalizedMessage());
         }
       } else {
 				mqlModelCheckBox.setChecked(false);
+				query.setDisabled(false);
 				datasourceDialog.setHeight(300);
         openErrorDialog("Missing Input", "Some of the required inputs are missing");
       }
     } else {
+      // If the user un checks the modeling check box we will clear out the business data 
       modelDataTable.setVisible(false); 
+      query.setDisabled(false);
       datasourceDialog.setHeight(300);
       datasourceModel.setBusinessData(null);
     }
@@ -357,21 +367,20 @@ public class DatasourceController extends AbstractXulEventHandler {
         try {
 
           service.saveModel(datasourceModel.getDatasourceName(), datasourceModel.getSelectedConnection(),
-              datasourceModel.getQuery(), false, new XulServiceCallback<Boolean>() {
+              datasourceModel.getQuery(), false, datasourceModel.getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
                 public void error(String message, Throwable error) {
                   openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
                       + error.getLocalizedMessage());
                 }
 
-                public void success(Boolean value) {
-                  if(value) {
-                    openSuccesDialog("Success", "Successfully saved model: " + datasourceModel.getDatasourceName());
-                    datasourceDialog.hide();
-                  } else {
-                    openErrorDialog("Error occurred", "Unable to save model. ");
-                        }
-                      }
+                public void success(BusinessData businessData) {
+                  datasourceDialog.hide();
+                  datasourceModel.setBusinessData(businessData);
+                  for (DatasourceDialogListener listener : listeners) {
+                    listener.onDialogFinish(datasourceModel.getDatasource());
+                  }                  
+                }
               });
         } catch (DatasourceServiceException e) {
           openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
@@ -393,8 +402,7 @@ public class DatasourceController extends AbstractXulEventHandler {
         }
 
         public void success(Boolean value) {
-          openSuccesDialog("Success", "Successfully saved model: " + datasourceModel.getDatasourceName());
-          datasourceDialog.hide();
+           datasourceDialog.hide();
           for (DatasourceDialogListener listener : listeners) {
             listener.onDialogFinish(datasourceModel.getDatasource());
           }
@@ -488,12 +496,22 @@ public class DatasourceController extends AbstractXulEventHandler {
             for (int i = 0; i < previewResultsList.size(); i++) {
               previewResultsTable.removeChild(previewResultsList.get(i));
             }
+            XulTreeChildren treeChildren = previewResultsTable.getRootChildren();
+            List<XulComponent> treeChildrenList = treeChildren.getChildNodes();
+            for(int i=0;i<treeChildrenList.size();i++) {
+              treeChildren.removeItem(i);
+            }
+            List<XulComponent> componentList = modelDataRows.getChildNodes();
+            for(int i=0;i<componentList.size();i++) {
+              modelDataRows.removeAll();
+            }
             // Remove all the existing columns
             int curTreeColCount = previewResultsTable.getColumns().getColumnCount();
             List<XulComponent> cols = previewResultsTable.getColumns().getChildNodes();
             for (int i = 0; i < curTreeColCount; i++) {
               previewResultsTable.getColumns().removeChild(cols.get(i));
             }
+            previewResultsTable.update();
             // Recreate the colums
             XulTreeCols treeCols = previewResultsTable.getColumns();
             if (treeCols == null) {
@@ -514,7 +532,7 @@ public class DatasourceController extends AbstractXulEventHandler {
 
               }
             }
-            previewResultsTable.update();
+
             XulTreeCols treeCols1 = previewResultsTable.getColumns();
             int count = previewResultsTable.getColumns().getColumnCount();
             // Create the tree children and setting the data
