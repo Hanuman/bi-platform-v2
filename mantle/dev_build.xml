@@ -14,9 +14,7 @@
 	<property file="version.properties" />
 
 	<path id="classpath">
-		<fileset dir="lib" excludes="pentaho-gwt-widgets*.jar" includes="*.jar, apache-commons/*.jar, gwt-win/*.jar, platform/*.jar, reporting_0894/*.jar" />
-		<fileset dir="../pentaho-gwt-widgets/lib" includes="*.jar, apache-commons/*.jar, gwt-win/*.jar" />
-	  <fileset dir="../pentaho-xul-gwt/lib" excludes="pentaho-gwt-widgets*.jar"  includes="*.jar, apache-commons/*.jar, gwt-win/*.jar" />
+		<fileset dir="war/WEB-INF/lib"/>
 	</path>
 
 	<!-- ===================================================================
@@ -32,7 +30,6 @@
 			</fileset>
 		</delete>
 		<delete dir="${pentaho-webapp-root}/mantle" />
-		<delete dir="_source" />
 	</target>
 
 
@@ -40,105 +37,72 @@
         target: init              
        =================================================================== -->
 	<target name="init">
-		<mkdir dir="_source" />
-		<copy todir="_source">
-			<fileset dir="source" includes="**/*" />
-			<fileset dir="../pentaho-gwt-widgets/src" includes="**/*" />
-      <fileset dir="../pentaho-xul-gwt/src" includes="**/*" />
-		</copy>
-		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_MAJOR$" value="${release.major.number}" />
-		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_MINOR$" value="${release.minor.number}" />
-		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_MILESTONE$" value="${release.milestone.number}" />
-		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_BUILD$" value="${release.build.number}" />
-		<replace file="_source/org/pentaho/mantle/client/MantleApplication.java" token="$VERSION_CANDIDATE$" value="${release.candidate.token}" />
-		<replace file="_source/org/pentaho/mantle/MantleApplication.gwt.xml" token="org.pentaho.mantle.server.DebugMantleServlet" value="org.pentaho.mantle.server.MantleServlet" />
 		<mkdir dir="dist/bin" />
 		<copy todir="dist/bin">
-			<fileset dir="_source" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
-      <fileset dir="../pentaho-xul-gwt/src" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
-			<fileset dir="../pentaho-gwt-widgets/src" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
+			<fileset dir="source" includes="**/*.png, **/*.jpg, **/*.gif, **/*.properties, **/*.xml" />
 		</copy>
 		<mkdir dir="${pentaho-webapp-root}/mantle" />
 	</target>
 
 	<target name="compile" depends="init">
 		<javac destdir="dist/bin" debug="${debug}" optimize="${optimize}" deprecation="${deprecation}" compiler="modern" source="1.5" target="1.5" fork="true">
-			<src path="_source" />
+			<src path="source" />
 			<classpath refid="classpath" />
 		</javac>
 	</target>
 
 	<target name="compile-mantle-dev" depends="compile">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
+		<java classname="com.google.gwt.dev.Compiler" fork="true" failonerror="true" maxmemory="1024M">
+			<jvmarg value="-Xss8M"/>    	
 			<classpath>
-				<pathelement location="_source" />
+				<pathelement location="source" />
 				<path refid="classpath" />
 			</classpath>
-			<arg value="-out" />
-			<arg value="${gwt.output.dir}" />
-			<arg value="%*" />
+			<arg value="-localWorkers" />
+			<arg value="-4" />
 			<arg value="${mantle-dev.app}" />
 			<!--
 			<arg value="-logLevel" />
 			<arg value="TRACE" />
 			-->
 		</java>
-		<delete dir="_source" />
 	</target>
 
 	<target name="compile-mantle-login" depends="clean, compile">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
+		<java classname="com.google.gwt.dev.Compiler" fork="true" failonerror="true" maxmemory="1024M">
+			<jvmarg value="-Xss8M"/>    	
 			<classpath>
+				<pathelement location="source" />
 				<path refid="classpath" />
-        <pathelement location="_source" />
 			</classpath>
-			<arg value="-out" />
-			<arg value="login-output" />
-			<arg value="%*" />
+			<arg value="-localWorkers" />
+			<arg value="-4" />
 			<arg value="org.pentaho.mantle.login.MantleLogin" />
 			<!--
-      <arg value="-logLevel" />
-      <arg value="TRACE" />
-      -->
+			<arg value="-logLevel" />
+			<arg value="TRACE" />
+			-->
 		</java>
 	</target>
   
-  <target name="compile-mantle-login-dev" depends="compile">
-    <java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
-      <classpath>
-        <pathelement location="_source" />
-        <path refid="classpath" />
-      </classpath>
-      <arg value="-out" />
-      <arg value="login-output" />
-      <arg value="%*" />
-      <arg value="org.pentaho.mantle.login.MantleLogin" />
-      <!--
-      <arg value="-logLevel" />
-      <arg value="TRACE" />
-      -->
-    </java>
-  </target>
-  
 	<target name="compile-mantle" depends="clean, compile, compile-mantle-login">
 		<java classname="com.google.gwt.dev.GWTCompiler" fork="true" failonerror="true" maxmemory="512M">
+			<jvmarg value="-Xss8M"/>    	
 			<classpath>
-        <path refid="classpath" />
-        <pathelement location="_source" />
+				<pathelement location="source" />
+				<path refid="classpath" />
 			</classpath>
-			<arg value="-out" />
-			<arg value="${gwt.output.dir}" />
-			<arg value="%*" />
+			<arg value="-localWorkers" />
+			<arg value="-4" />
 			<arg value="${mantle.app}" />
 			<!--
 			<arg value="-logLevel" />
 			<arg value="TRACE" />
 			-->
 		</java>
-		<delete dir="_source" />
 	</target>
 
-	<target name="dist" depends="clean, compile-mantle">
+	<target name="dist" depends="clean, compile">
 		<mkdir dir="dist/pentaho.war/WEB-INF/lib" />
 		<jar basedir="dist/bin" destfile="dist/mantle-${release.major.number}.${release.minor.number}.${release.milestone.number}.${release.build.number}.jar" />
 		<copy todir="dist/pentaho.war/WEB-INF/lib">
