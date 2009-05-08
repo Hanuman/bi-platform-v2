@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -32,6 +33,7 @@ import org.dom4j.Element;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -200,10 +202,12 @@ public class PMDUIComponent extends XmlComponent {
     
     Domain domainObject = repo.getDomain(domain);
 
-    // TODO: closest locale list
-    String locale = "DEFAULT"; // LocaleHelper.getLocale().toString();
-//    String locales[] = schemaMeta.getLocales().getLocaleCodes();
-//    locale = LocaleHelper.getClosestLocale( locale, locales );
+    String locale = LocaleHelper.getLocale().toString();
+    String locales[] = new String[domainObject.getLocales().size()];
+    for (int i = 0; i < domainObject.getLocales().size(); i++) {
+      locales[i] = domainObject.getLocales().get(i).getCode();
+    }
+    locale = LocaleHelper.getClosestLocale( locale, locales );
 
     Element modelNode;    
     for (LogicalModel model : domainObject.getLogicalModels()) {
