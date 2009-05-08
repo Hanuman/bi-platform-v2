@@ -70,7 +70,6 @@
 		<dependency org="itext" name="itext" rev="1.5.2" />
 		<dependency org="jakarta-regexp" name="jakarta-regexp" rev="1.2" />
 		<dependency org="javax.xml" name="jaxrpc-api" rev="1.1" />
-		<dependency org="jcommon" name="jcommon-xml" rev="1.0.12" />
 		<dependency org="jcommon-logging-log4jlog" name="jcommon-logging-log4jlog" rev="1.0.2" />
 		<dependency org="poi" name="poi" rev="3.0.1-jdk122-final-20071014" />
 
@@ -84,7 +83,6 @@
 		<dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
 		<dependency org="rhino" name="js" rev="1.7R1" />
 		<dependency org="soap" name="soap" rev="2.3" />
-		<dependency org="svgSalamander" name="svgSalamander" rev="1.0" />
 		<dependency org="wsdl4j" name="wsdl4j" rev="1.5.0" />
 		<dependency org="opensymphony" name="quartz-oracle" rev="1.5.2" />
 		<dependency org="jexcelapi" name="jxl" rev="2.4.3" />
