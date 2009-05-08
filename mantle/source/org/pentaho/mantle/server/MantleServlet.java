@@ -890,7 +890,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         if (!StringUtils.isEmpty(pluginUrl)) {
           // with this information, a content generator can perform a lookup of all the information it will
           // need to build a new parameter form for the content requested to be edited
-          pluginUrl += "/reportviewer/report.html?subscribe=true&subscription-name=" + currentSubscr.getId();
+          pluginUrl += "/reportviewer/report.html?subscribe=true&subscription-id=" + currentSubscr.getId();
         }
         subscriptionBean.setPluginUrl(pluginUrl);
       }
