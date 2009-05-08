@@ -884,15 +884,19 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       if (!actionInfo.getActionName().endsWith(".")) {
         int lastDot = actionInfo.getActionName().lastIndexOf('.');
         String type = actionInfo.getActionName().substring(lastDot + 1);
-        IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
-        String pluginUrl = pluginManager.getContentGeneratorUrlForType(type, getPentahoSession());
+        // not very generic :(
+        // we need plugin.xml 'properties' for this sort of need
+        if (type.equals("prpt")) {
+          IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
+          String pluginUrl = pluginManager.getContentGeneratorUrlForType(type, getPentahoSession());
 
-        if (!StringUtils.isEmpty(pluginUrl)) {
-          // with this information, a content generator can perform a lookup of all the information it will
-          // need to build a new parameter form for the content requested to be edited
-          pluginUrl += "/reportviewer/report.html?subscribe=true&subscription-id=" + currentSubscr.getId();
+          if (!StringUtils.isEmpty(pluginUrl)) {
+            // with this information, a content generator can perform a lookup of all the information it will
+            // need to build a new parameter form for the content requested to be edited
+            pluginUrl += "/reportviewer/report.html?subscribe=true&subscription-id=" + currentSubscr.getId();
+          }
+          subscriptionBean.setPluginUrl(pluginUrl);
         }
-        subscriptionBean.setPluginUrl(pluginUrl);
       }
       
       if (schedule != null) {
@@ -931,21 +935,17 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @return List of String arrays where the array consists of formatted date of the content, file type and size, file id, name and OS path.
    */
   private List<String[]> getContentItems(final ISubscriptionRepository subscriptionRepository, final Subscription currentSubscr) {
-    final List contentItemFileList = subscriptionRepository.getSubscriptionArchives(currentSubscr.getId(), getPentahoSession());
+    final List<ContentItemFile> contentItemFileList = (List<ContentItemFile>)subscriptionRepository.getSubscriptionArchives(currentSubscr.getId(), getPentahoSession());
     List<String[]> archiveList = null;
 
     if (contentItemFileList != null) {
       archiveList = new ArrayList<String[]>();
-      final int contentItemFileListSize = contentItemFileList.size();
-
-      for (int j = 0; j < contentItemFileListSize; j++) {
-        final ContentItemFile contentItemFile = (ContentItemFile) contentItemFileList.get(j);
+      for (ContentItemFile contentItemFile : contentItemFileList) {
         final Date fileItemDate = contentItemFile.getFileDateTime();
         final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy h:mm a"); //$NON-NLS-1$
         final String formattedDateStr = dateFormat.format(fileItemDate);
         final String fileType = contentItemFile.getParent().getMimeType();
         final String fileSize = String.valueOf(contentItemFile.getFileSize());
-
         final String[] tempArchiveArr = new String[6];
         tempArchiveArr[0] = formattedDateStr;
         tempArchiveArr[1] = fileType;
