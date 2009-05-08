@@ -276,7 +276,7 @@ public class DatasourceController extends AbstractXulEventHandler {
       datasourceDialog.setHeight(595);
       if (validateInputs()) {
         try {
-          showWaitingDialog("Generating Model", "Please wait ....");
+          showWaitingDialog("Generating Metadata Model", "Please wait ....");
           service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getSelectedConnection(),
               datasourceModel.getQuery(), datasourceModel.getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
