@@ -75,7 +75,7 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
       
       String requestPayload = RPCServletUtils.readContentAsUtf8(req);
       System.out.println("INCOMING: " + requestPayload); //$NON-NLS-1$
-      requestPayload = requestPayload.replaceAll("8888", "8080"); //$NON-NLS-1$ //$NON-NLS-2$
+      requestPayload = requestPayload.replaceAll("8888/mantle", "8080/pentaho/mantle"); //$NON-NLS-1$ //$NON-NLS-2$
       
       PostMethod postMethod = null;
       if (requestPayload.indexOf("MantleLoginService") != -1) { //$NON-NLS-1$
@@ -85,6 +85,8 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
       }
       requestPayload = requestPayload.replaceAll("org.pentaho.mantle.MantleApplication", "pentaho/mantle"); //$NON-NLS-1$ //$NON-NLS-2$
       requestPayload = requestPayload.replaceAll("org.pentaho.mantle.login.MantleLogin", "pentaho/mantleLogin"); //$NON-NLS-1$ //$NON-NLS-2$
+
+      System.out.println("OUTGOING: " + requestPayload); //$NON-NLS-1$
       
       StringRequestEntity stringEntity = new StringRequestEntity(requestPayload, "text/x-gwt-rpc", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
       postMethod.setRequestEntity(stringEntity);
