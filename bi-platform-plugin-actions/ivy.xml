@@ -97,11 +97,23 @@
         <!--  charting  -->
     <dependency org="pentaho-charting" name="pentaho-charting" rev="${dependency.pentaho-chartbeans.revision}" changing="true" />
         
-        <!--  reporting -->
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core" rev="${dependency.pentaho-reporting-engine}" changing="true" />
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
-
+	<!--  Pentaho Reporting Library -->
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core"                             rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions"                       rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-hibernate"             rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-kettle"                rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-mondrian"              rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-olap4j"                rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-pmd"                   rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-reportdesigner-parser" rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-sampledata"            rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-scripting"             rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions-xpath"                 rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-charts"                            rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-legacy-functions"                         rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-wizard-core"                              rev="${dependency.pentaho-reporting.revision}" />
+	<dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}" changing="true"/>
+	
         <!-- metadata -->
     <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" transitive="false" />
     <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
