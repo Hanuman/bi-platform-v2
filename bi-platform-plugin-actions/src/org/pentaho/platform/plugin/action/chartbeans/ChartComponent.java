@@ -17,6 +17,9 @@
 */
 package org.pentaho.platform.plugin.action.chartbeans;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,26 +28,24 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
+import javax.imageio.ImageIO;
+
+import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.ChartBoot;
 import org.pentaho.chart.ChartFactory;
-import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.InvalidChartDefinition;
 import org.pentaho.chart.model.ChartModel;
-import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.DialPlot;
 import org.pentaho.chart.model.PiePlot;
+import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
-import org.pentaho.chart.plugin.ChartPluginFactory;
 import org.pentaho.chart.plugin.ChartProcessingException;
-import org.pentaho.chart.plugin.IChartPlugin;
 import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 
 /**
@@ -173,27 +174,36 @@ public class ChartComponent {
       
       InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
-      // Wrap output as necessary
-      if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
-        // Convert stream to string, insert into HTML fragment and re-stream it
-        StringBuilder sb = new StringBuilder();
-        int c = 0;
-        
-        // Build string
-        while((c = is.read()) >= 0){
-          sb.append((char)c);
+      if (is == null) {
+        BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setFont(new Font("serif", Font.BOLD, 20));
+        graphics.drawString("No Data", 20, 20);
+        String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png";
+        ImageIO.write(image, outputType, outputStream);
+      } else {
+        // Wrap output as necessary
+        if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
+          // Convert stream to string, insert into HTML fragment and re-stream it
+          StringBuilder sb = new StringBuilder();
+          int c = 0;
+          
+          // Build string
+          while((c = is.read()) >= 0){
+            sb.append((char)c);
+          }
+          
+          String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), PentahoSystem.getApplicationContext().getBaseUrl() + DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+          
+          is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
         }
-        
-        String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), PentahoSystem.getApplicationContext().getBaseUrl() + DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-        
-        is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
-      }
 
-      int val = 0;
-      
-      //TODO: Buffer for more efficiency
-      while((val = is.read()) != -1){
-        outputStream.write(val);
+        int val = 0;
+        
+        //TODO: Buffer for more efficiency
+        while((val = is.read()) != -1){
+          outputStream.write(val);
+        }
       }
     } catch(SQLException e){
       //No SQLException possible from this usage
@@ -502,7 +512,7 @@ public class ChartComponent {
     this.chartEngine = ChartModel.getChartEngineIdFromFriendlyName(chartEngine);
   }
   
-  public void setOutputType(String outputType){
+  public void setOutputType(String outputType) {
     this.outputType = outputType;
   }
 
