@@ -17,6 +17,7 @@
 */
 package org.pentaho.platform.plugin.action.chartbeans;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -178,6 +179,7 @@ public class ChartComponent {
         BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setFont(new Font("serif", Font.BOLD, 20));
+        graphics.setColor(Color.BLACK);
         graphics.drawString("No Data", 20, 20);
         String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png";
         ImageIO.write(image, outputType, outputStream);
