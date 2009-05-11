@@ -229,6 +229,10 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
+    <!--
+      Note - the "=Nobody" below is saying that resource URLs
+      with those patterns not be available through a web call.
+    -->      
         <![CDATA[
 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 \A/docs/.*\Z=Anonymous,Authenticated
@@ -255,6 +259,32 @@ CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 \A/scheduleradmin.*\Z=Admin
 \A/publish.*\Z=Admin
 \A/logout.*\Z=Anonymous
+.*system.*pentaho.xml.*=Nobody
+.*system.*applicationcontext.*.xml.*=Nobody
+.*system.*pentahoobjects.spring.xml.*=Nobody
+.*system.*pentahosystemconfig.xml.*=Nobody
+.*system.*adminplugins.xml.*=Nobody
+.*system.*plugin.properties.*=Nobody
+.*system.*publisher_config.xml.*=Nobody
+.*system.*sessionstartupactions.xml.*=Nobody
+.*system.*systemlisteners.xml.*=Nobody
+.*system.*hibernate.*=Nobody
+.*system.*birt/.*=Nobody
+.*system.*dialects/.*=Nobody
+.*system.*google/.*=Nobody
+.*system.*jasperreports/.*=Nobody
+.*system.*jfree/.*=Nobody
+.*system.*kettle/.*=Nobody
+.*system.*logs/.*=Nobody
+.*system.*metadata/.*=Nobody
+.*system.*mondrian/.*=Nobody
+.*system.*olap/.*=Nobody
+.*system.*quartz/.*=Nobody
+.*system.*simple-jndi/.*=Nobody
+.*system.*smtp-email/.*=Nobody
+.*system.*ui/.*=Nobody
+.*system.*analysistemplate.tpl.*=Nobody
+.*system.*\.\./.*=Nobody
 \A/.*\Z=Authenticated
         ]]>
       </value>

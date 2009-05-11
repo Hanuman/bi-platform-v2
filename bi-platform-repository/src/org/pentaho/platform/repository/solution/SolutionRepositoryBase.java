@@ -131,6 +131,8 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   protected File rootFile;
 
+  protected String rootCanonicalName; 
+
   @Override
   public Log getLogger() {
     return SolutionRepositoryBase.logger;
@@ -144,6 +146,12 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     rootFile = getFile("", false); //$NON-NLS-1$
     rootPath = rootFile.getAbsolutePath() + File.separator;
     setLogId(SolutionRepositoryBase.LOG_NAME + ": "); //$NON-NLS-1$
+    try {
+      rootCanonicalName = rootFile.getCanonicalPath();
+    } catch (IOException ex) {
+      // If we get an IO error here, we have really bad problems.
+      ex.printStackTrace();
+    }
   }
 
   /**
@@ -205,15 +213,37 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   public ISolutionFile getFileByPath(final String path) {
     File file = new File(PentahoSystem.getApplicationContext().getSolutionPath(path));
-    if (file.exists()) {
+    if ((isPathedUnderSolutionRoot(file)) && (file.exists())) {
       return new FileSolutionFile(file, rootFile);
     } else {
       return null;
     }
   }
 
+  protected boolean isPathedUnderSolutionRoot(String fName) {
+    return isPathedUnderSolutionRoot(new File(fName));
+  }
+  
+  protected boolean isPathedUnderSolutionRoot(File aFile) {
+    String fc = null;
+    try {
+      fc= aFile.getCanonicalPath();
+    } catch (IOException logitOnly) {
+      debug("", logitOnly);
+      return false;
+    }
+    return ( fc.startsWith(rootCanonicalName) );
+  }
+  
   protected File getFile(final String path, boolean create) {
     File f = new File(PentahoSystem.getApplicationContext().getSolutionPath(path));
+    
+    // Because the startup path calls this method to
+    // set the rootFile, check if the rootFile is null
+    if ((rootFile != null) && !(isPathedUnderSolutionRoot(f))) {
+      return null;
+    }
+    
     if (!f.exists() && !create) {
       error(Messages.getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", path)); //$NON-NLS-1$
       return null;
@@ -778,14 +808,20 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     if (resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE) {
       realPath = actionResource.getAddress();
       if (!SolutionRepositoryBase.isSystemPath(realPath)) {
+				// Not checking here because the underlying
+				// has the check.
         solutionFile = getFileByPath(realPath);
       } else {
         realPath = PentahoSystem.getApplicationContext().getSolutionPath(actionResource.getAddress());
+        if ((isPathedUnderSolutionRoot(realPath))) {
         solutionFile = new FileSolutionFile(new File(realPath), rootFile);
+      }
       }
     } else if (resourceSource == IActionSequenceResource.FILE_RESOURCE) {
       realPath = actionResource.getAddress();
+      if ((isPathedUnderSolutionRoot(realPath))) {
       solutionFile = new FileSolutionFile(new File(realPath), rootFile);
+    }
     }
     if ((solutionFile == null) || !solutionFile.exists()) {
       solutionFile = null;
@@ -794,6 +830,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public ISolutionFile createFolder(final File newFolder) throws IOException {
+      if (!(isPathedUnderSolutionRoot(newFolder))) {
+        throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName()));
+      }
     newFolder.mkdirs();
     FileSolutionFile fsf = new FileSolutionFile(newFolder, rootFile);
     return fsf;
