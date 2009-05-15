@@ -22,6 +22,7 @@ package org.pentaho.platform.plugin.services.versionchecker;
 
 import java.util.Map;
 
+import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.VersionHelper;
 import org.pentaho.platform.util.VersionInfo;
@@ -30,11 +31,23 @@ import org.pentaho.versionchecker.IVersionCheckDataProvider;
 public class PentahoVersionCheckDataProvider implements IVersionCheckDataProvider {
 
   /**
-   * The version information for the pentaho platform is in the core jar. The PentahoSystem
-   * class will guarantee that we get the information. This information will contain the 
-   * product id and the version number.
+   * The version information for the pentaho platform is in the core jar - that
+   * is the fallback position. The VersionHelper implementation however should be
+   * in a .jar file with correct manifest.
    */
-  protected static final VersionInfo versionInfo = VersionHelper.getVersionInfo(PentahoSystem.class);
+  protected static final VersionInfo versionInfo;
+  
+  static {
+    //
+    // Allow override of product id information
+    //
+    IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
+    if (versionHelper != null) {
+      versionInfo = VersionHelper.getVersionInfo(versionHelper.getClass());
+    } else {
+      versionInfo = VersionHelper.getVersionInfo(PentahoSystem.class);
+    }
+  }
 
   protected int versionRequestFlags = IVersionCheckDataProvider.DEPTH_MINOR_MASK
       + IVersionCheckDataProvider.DEPTH_GA_MASK;
