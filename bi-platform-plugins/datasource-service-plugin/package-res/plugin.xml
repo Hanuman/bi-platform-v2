@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin title="Echo Service Sample">
+<plugin title="Datasource Service">
   
   <bean id="datasourceService" class="org.pentaho.platform.plugins.datasource.DatasourceService"/>
   
