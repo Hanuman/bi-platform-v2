@@ -9,4 +9,11 @@
     ref="echoService">
   </webservice>
   
+  <content-generator
+    id="echo"
+    title="Echo"
+    type=""
+    class="org.pentaho.samples.EchoContentGenerator"/>
+  
+  
 </plugin>

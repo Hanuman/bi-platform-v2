@@ -26,6 +26,7 @@
   except for pentaho platform jars which the platform provides -->
   <target name="assemble.copy-libs">
     <copy todir="${approot.stage.dir}/lib">
+      <fileset file="${lib.dir}/commons-*.jar" />
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
     </copy>
   </target>
