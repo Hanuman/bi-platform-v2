@@ -34,7 +34,7 @@
   <property name="temp-src.dir" value="${bin.dir}/src" />
   <property name="stage.dir" value="${bin.dir}/stage" />
 	
-  <target name="dist" depends="package"> <!-- gwt-compile -->
+  <target name="dist" depends="gwt-compile,package">
   </target>
 	
   <!--=======================================================================
