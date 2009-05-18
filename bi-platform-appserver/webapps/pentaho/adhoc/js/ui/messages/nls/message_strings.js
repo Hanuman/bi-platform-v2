@@ -202,5 +202,6 @@ step2_div:"Make Selections",
 step3_div:"Customize Selections",
 step4_div:"Report Settings",
 IS_NULL: "Is Null",
-IS_NOT_NULL: "Is not Null"
+IS_NOT_NULL: "Is not Null",
+dataaccessButtonText:"Create Datasource"
 }

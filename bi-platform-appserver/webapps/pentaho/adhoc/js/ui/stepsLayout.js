@@ -92,7 +92,7 @@ function setHeights_step0() {
 	var topRowHeight = Math.round( totalHeight * TOP_ROW_PERCENT );
 	var bottomRowHeight = Math.max(totalHeight - topRowHeight, 255 );
 	
-	shim_availBusinessBlock.style.height = (topRowHeight - SHIM_HEIGHT) + "px";
+	shim_availBusinessBlock.style.height = (topRowHeight - SHIM_HEIGHT - 26) + "px";
 	descriptionContainer.style.height = topRowHeight + "px";
 	categoriesContainer.style.height = topRowHeight + "px"; 
 
