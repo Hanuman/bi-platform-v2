@@ -14,7 +14,7 @@
   
   <!-- Fetch the platform jars and place them in the dev-lib folder which will be picked
   up in the compile classpath -->
-  <target name="compile.pre">
+  <target name="compile.pre" depends="init">
     <copy todir="${devlib.dir}">
       <fileset dir="${pentaho.lib.dir}">
         <include name="**/pentaho-bi-platform*.jar" />
