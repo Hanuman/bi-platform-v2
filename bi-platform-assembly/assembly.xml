@@ -419,6 +419,8 @@
 	  <!-- install pentaho reporting plugin (for prpt files) -->
 	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${dependency.pentaho-reporting.revision}.zip"/>
 
+  	  <!-- install the data access plugin (for data access dialog in WAQR) -->
+      <install-plugin zipfile="${lib.dir}/pentaho-bi-platform-data-access-package-${project.revision}.zip"/>
 	</target>
   
 	<macrodef name="install-plugin">
