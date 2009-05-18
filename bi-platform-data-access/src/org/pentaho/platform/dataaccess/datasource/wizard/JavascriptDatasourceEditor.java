@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -34,7 +35,7 @@ public class JavascriptDatasourceEditor implements EntryPoint{
   private native void setupNativeHooks(JavascriptDatasourceEditor editor)/*-{
 
     $wnd.openDatasourceEditor= function(callback) {
-      wizard.@org.pentaho.platform.dataaccess.datasource.wizard.JavascriptDatasourceEditor::show(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);
+      editor.@org.pentaho.platform.dataaccess.datasource.wizard.JavascriptDatasourceEditor::show(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);
     }
   }-*/;
 
@@ -55,7 +56,8 @@ public class JavascriptDatasourceEditor implements EntryPoint{
       public void onDialogFinish(final IDatasource datasource) {
         datasourceService.addDatasource(datasource, new XulServiceCallback<Boolean>(){
           public void success(Boolean value) {
-            notifyCallbackSuccess(callback, value);
+            WAQRTransport transport = WAQRTransport.createFromMetadata(datasource.getBusinessData().getDomain());
+            notifyCallbackSuccess(callback, value, transport);
           }
 
           public void error(String s, Throwable throwable) {
@@ -74,8 +76,8 @@ public class JavascriptDatasourceEditor implements EntryPoint{
     editor.show();
   }
 
-  private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value)/*-{
-    callback.onFinish(value);
+  private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value, WAQRTransport transport)/*-{
+    callback.onFinish(value, transport);
   }-*/;
 
   private native void notifyCallbackError(JavaScriptObject callback, String error)/*-{

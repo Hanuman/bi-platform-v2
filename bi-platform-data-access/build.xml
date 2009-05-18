@@ -2,10 +2,14 @@
      description: main build file for pentaho  . .                                                    
      ====================================================================== -->
 <project name="Data Access" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-	<description>Data Access build file</description>
+  <description>Data Access build file</description>
 
-	<property file="build.properties" />
-	
+  <property file="build.properties" />
+
+  <property name="plugin.name" value="data-access" description="Name of the plugin" />
+  <property name="package-res.dir" value="package-res"/>
+  <property name="gwt-module.path" value="org.pentaho.platform.dataaccess.datasource.JavascriptDatasourceEditor"/>
+  <property name="plugin.zipfile" value="data-access-plugin-${project.revision}.zip" />
 	<!-- override classpath to use recurse lib -->
 	<path id="classpath">
 		<fileset dir="lib">
@@ -29,15 +33,42 @@
   <!-- Directory in which the source will be copied before a compile -->
   <property name="temp-src.dir" value="${bin.dir}/src" />
 
-  <!--=======================================================================
-      gwt-compile
-      
-      Performs the required gwt compiles
-      ====================================================================-->
-  <target name="gwt-compile" description="Performs the required GWT Compilation">
-    <!-- Compile the Mantle Application -->
-    <ant antfile="${gwt.common.build.file}" target="gwt-compile">
-      <property name="gwt-module.path" value="org.pentaho.platform.dataaccess.datasource.JavascriptDatasourceEditor" />
-    </ant>
+  <target name="dist" depends="gwt-compile,package">
   </target>
+	
+  <!--=======================================================================
+    package
+    
+    Creates a zip distribution of this plugin
+    ====================================================================-->
+  <!-- need to add obfuscate call after the jar target in the depends attribute below; also add -obf to JAR filename -->
+  <target name="package" depends="jar" description="Creates a distribution">
+    <property name="stage.dir" value="${bin.dir}/stage" />
+
+    <!-- delete and re-create the plugin dist folder tree -->
+    <delete dir="${stage.dir}" />
+    <mkdir dir="${stage.dir}/${plugin.name}" />
+    <!-- mkdir dir="${stage.dir}/${plugin.name}/lib" / -->
+
+    <!-- Copy the plugin.xml and any other files from the resource dir -->
+    <copy todir="${stage.dir}/${plugin.name}">
+      <fileset dir="${package-res.dir}">
+        <include name="**/*" />
+      </fileset>
+    </copy>
+
+    <copy todir="${stage.dir}/${plugin.name}/resources/gwt">
+      <fileset dir="${gwt.output.dir}/DatasourceEditor">
+        <include name="**/*" />
+        <exclude name=".gwt-tmp/" />
+        <exclude name="*-aux/" />
+      </fileset>
+    </copy>
+
+    <!-- create a zip file -->
+    <zip zipfile="${dist.dir}/${plugin.zipfile}" basedir="${stage.dir}" includes="**/*" excludes="**/Thumbs.db" />
+
+  </target>
+
+	
 </project>

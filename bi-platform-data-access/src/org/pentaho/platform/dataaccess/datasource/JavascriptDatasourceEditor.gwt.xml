@@ -3,7 +3,7 @@ This module serves as the Debuging environment and default implementation for in
 
 -->
 
-<module>
+<module rename-to="DatasourceEditor">
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.googlecode.gwtx.Java'/>
   <inherits name='com.google.gwt.xml.XML'/>
