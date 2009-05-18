@@ -41,8 +41,11 @@ import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
 /**
  * This class interfaces with a plain old Java object and makes it
@@ -481,13 +484,25 @@ public class PojoComponent extends ComponentBase {
     boolean ok = false;
     if( pojo == null && isDefinedInput( "class" ) ) { //$NON-NLS-1$
       String className = getInputStringValue( "class" ); //$NON-NLS-1$
-      // try to load the class
+      
+      //try to load the class from a plugin
+      IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, getSession());
+      if(pluginMgr != null && pluginMgr.isBeanRegistered(className)) {
+        try {
+          pojo = pluginMgr.getBean(className); //"className" is actually the plugin bean id in this case
+        } catch (PluginBeanException e) {
+          error( "Could not load bean class from plugin" , e); //$NON-NLS-1$
+          return false;
+        }
+      }
+      
+      //the bean class was not found in a plugin, so try the default classloader
       try {
         // TODO support loading classes from the solution repository
         Class<?> aClass = getClass().getClassLoader().loadClass(className);
         pojo = aClass.newInstance();
       } catch (Exception ex) {
-        error( "Could not load object class" , ex); //$NON-NLS-1$
+        error( "Could not load bean class" , ex); //$NON-NLS-1$
         return false;
       }
     }
