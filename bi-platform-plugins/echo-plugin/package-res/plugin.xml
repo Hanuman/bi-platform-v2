@@ -33,7 +33,7 @@
     <content-type type="xecho" mime-type="text/html">
     <title>Echo Config</title>
     <description>Echo Config File</description>
-    <icon-url>content/echo-res/resources/echo.jpg</icon-url>
+    <icon-url>content/echo-res/echo.jpg</icon-url>
     <meta-provider>org.pentaho.samples.EchoContentTypeMetaProvider</meta-provider>
     <operations>
       <operation>
@@ -59,7 +59,7 @@
     <!-- 
     3.  Echo POJO-style BI Component
     -->
-  
+    <bean id="echoComponent" class="org.pentaho.samples.EchoComponent"/>
 
 
   
