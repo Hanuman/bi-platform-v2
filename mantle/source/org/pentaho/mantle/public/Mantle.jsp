@@ -25,13 +25,13 @@
 		<meta name="gwt:property" content="locale=<%=effectiveLocale%>">
 		<link rel="shortcut icon" href="/pentaho-style/favicon.ico" />
 		<link rel='stylesheet' href='mantle/MantleStyle.css'/>
-    <script defer type="text/javascript" src="mantle/pngfix.js"></script>
+    <script type="text/javascript" src="mantle/pngfix.js"></script>
     <script type="text/javascript">
       if(window.opener && window.opener.reportWindowOpened != undefined){
         window.opener.reportWindowOpened();
       }
-      PngFix.baseURL = window.location.href.substring(0,window.location.href.lastIndexOf("/")+1)+"mantle/";
-      PngFix.spacerURL = "../adhoc/spacer.png";
+      PngFix.baseURL = window.location.href.substring(0,window.location.href.lastIndexOf("/"))+"/mantle/";
+      PngFix.spacerURL = PngFix.baseURL+"images/spacer.gif";
       
     </script>
 	</head>

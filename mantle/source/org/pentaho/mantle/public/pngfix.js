@@ -48,10 +48,10 @@ function fixPNGs(){
     var arVersion = navigator.appVersion.split("MSIE")
     var version = parseFloat(arVersion[1])
 
-    if ((version >= 5.5) && (document.body.filters)) 
+    if ((version >= 5.5) && (version < 7) && (document.body.filters)) 
     {
     
-       if(PngFix.baseURL != "" && !window.baseURL.match("/$")){
+       if(PngFix.baseURL != "" && !PngFix.baseURL.match("/$")){
             PngFix.baseURL += "/";
        }
        
@@ -60,16 +60,37 @@ function fixPNGs(){
        {
           var img = document.images[i]
           var imgName = img.src.toUpperCase()
-          if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+          if (imgName.substring(imgName.length-3, imgName.length) == "PNG"  && !img.getAttribute("previouslyProcessed"))
           {
-            
-             img.style.height = img.height + "px";
-             img.style.width = img.width+"px";
-             img.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader"
-             + "(src=\'" + PngFix.baseURL + img.src + "\', sizingMethod='scale');\""; 
-             img.src = PngFix.spacerURL;
-             img.style.position = "relative";
-             
+            if(img.onclick || img.onmouseover || img.onmouseout){ 
+              // If there are events on this image, re-use the tag (some layout issues with 
+              // doing this, but at least the events work)
+              img.style.height = img.height + "px";
+              img.style.width = img.width+"px";
+              img.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader"
+              + "(src=\'" + img.src + "\', sizingMethod='scale');\""; 
+              img.src = PngFix.spacerURL;
+              img.style.position = "relative";
+              
+              //subsequent calls to fixPNGs will erroneously reprocess this image. Marking it here
+              img.setAttribute("previouslyProcessed", true); 
+              
+            } else {
+              // absent script events this is by far the most robust approach.
+              var imgID = (img.id) ? "id='" + img.id + "' " : ""
+              var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+              var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+              var imgStyle = "display:inline-block;" + img.style.cssText 
+              if (img.align == "left") imgStyle = "float:left;" + imgStyle
+              if (img.align == "right") imgStyle = "float:right;" + imgStyle
+              if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
+              var strNewHTML = "<span " + imgID + imgClass + imgTitle
+              + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+              + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+              + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
+              img.outerHTML = strNewHTML;
+              i = i-1; //one less image in the collection, stay at the same position in the loop
+            }
           }
        }
        
@@ -101,7 +122,12 @@ function fixPNGs(){
 Recurse to find all elements that have a style with a PNG backgroundImage
 ====================================================================*/
 function searchForBGs(list, node){
-  if(node.style && node.style.backgroundImage && node.style.backgroundImage.toLowerCase().indexOf(".png") > -1){
+  
+  if(node.style 
+      && node.style.backgroundImage 
+      && node.style.backgroundImage.toLowerCase().indexOf(".png") > -1
+      && ! node.getAttribute("previouslyProcessed")
+      ){
     list[list.length] = node;
   }
   for(var i=0; i<node.childNodes.length; i++){
