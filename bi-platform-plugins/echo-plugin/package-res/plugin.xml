@@ -12,8 +12,26 @@
   <content-generator
     id="echo"
     title="Echo"
-    type=""
+    type="xecho"
     class="org.pentaho.samples.EchoContentGenerator"/>
+    
+    
+    <static-paths>
+      <static-path url="/echo-res" localFolder="resources"/>
+    </static-paths>  
   
+  <content-type type="xecho" mime-type="text/html">
+    <title>Echo Config</title>
+    <description>Echo Config File</description>
+    <icon-url>content/echo-res/resources/echo.jpg</icon-url>
+    <meta-provider>org.pentaho.samples.EchoContentTypeMetaProvider</meta-provider>
+    <operations>
+      <operation>
+        <id>RUN</id>
+        <command>content/echo?message=from_platform&amp;solution={solution}&amp;path={path}&amp;action={name}</command>
+      </operation>
+    </operations>
+  </content-type>
+
   
 </plugin>

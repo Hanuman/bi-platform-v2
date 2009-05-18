@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-web-servlet-CITRUS-M2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
