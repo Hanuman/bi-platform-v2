@@ -32,8 +32,9 @@
 
   <!-- Directory in which the source will be copied before a compile -->
   <property name="temp-src.dir" value="${bin.dir}/src" />
-
-  <target name="dist" depends="gwt-compile,package">
+  <property name="stage.dir" value="${bin.dir}/stage" />
+	
+  <target name="dist" depends="package"> <!-- gwt-compile -->
   </target>
 	
   <!--=======================================================================
@@ -43,11 +44,11 @@
     ====================================================================-->
   <!-- need to add obfuscate call after the jar target in the depends attribute below; also add -obf to JAR filename -->
   <target name="package" depends="jar" description="Creates a distribution">
-    <property name="stage.dir" value="${bin.dir}/stage" />
 
     <!-- delete and re-create the plugin dist folder tree -->
     <delete dir="${stage.dir}" />
     <mkdir dir="${stage.dir}/${plugin.name}" />
+  	<echo message="${stage.dir}/${plugin.name}" />
     <!-- mkdir dir="${stage.dir}/${plugin.name}/lib" / -->
 
     <!-- Copy the plugin.xml and any other files from the resource dir -->
@@ -66,7 +67,7 @@
     </copy>
 
     <!-- create a zip file -->
-    <zip zipfile="${dist.dir}/${gwt.package.zipfile}" basedir="${stage.dir}" includes="**/*" excludes="**/Thumbs.db" />
+    <zip zipfile="${gwt.package.zipfile}" basedir="${stage.dir}" includes="**/*" excludes="**/Thumbs.db" />
 
   </target>
 
