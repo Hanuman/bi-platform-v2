@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Echo Service Sample">
+  
+  <bean id="echoService" class="org.pentaho.samples.EchoService"/>
+  
+  <webservice 
+    title="Echo Service" 
+    description="A sample webservice that echos an input"
+    ref="echoService">
+  </webservice>
+  
+</plugin>
