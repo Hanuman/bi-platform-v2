@@ -176,13 +176,23 @@ public class ChartComponent {
       InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       if (is == null) {
-        BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = image.createGraphics();
-        graphics.setFont(new Font("serif", Font.BOLD, 20));
-        graphics.setColor(Color.BLACK);
-        graphics.drawString("No Data", 20, 20);
-        String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png";
-        ImageIO.write(image, outputType, outputStream);
+        if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_JFREE){
+          BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
+          Graphics2D graphics = image.createGraphics();
+          graphics.setFont(new Font("serif", Font.BOLD, 20));
+          graphics.setColor(Color.BLACK);
+          graphics.drawString("No Data", 20, 20);
+          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png";
+          ImageIO.write(image, outputType, outputStream);
+        } else {
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("No Data"); //$NON-NLS-1$
+          is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
+          int val = 0;          
+          //TODO: Buffer for more efficiency
+          while((val = is.read()) != -1){
+            outputStream.write(val);
+          }
+        }
       } else {
         // Wrap output as necessary
         if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
