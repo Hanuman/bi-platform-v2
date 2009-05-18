@@ -848,12 +848,12 @@
 
 	<servlet-mapping>
 		<servlet-name>ConnectionServlet</servlet-name>
-		<url-pattern>/content/dashboards/resources/gwt/ConnectionService</url-pattern>
+		<url-pattern>/content/data-access/resources/gwt/ConnectionService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>DatasourceServlet</servlet-name>
-		<url-pattern>/content/dashboards/resources/gwt/DatasourceService</url-pattern>
+		<url-pattern>/content/data-access/resources/gwt/DatasourceService</url-pattern>
 	</servlet-mapping>
 
 	<!-- insert additional servlet mappings -->
