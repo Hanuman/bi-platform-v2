@@ -3,16 +3,6 @@
   <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
   <import file="build-res/subfloor-pkg.xml" />
   
-  <path id="classpath">
-    <fileset dir="${devlib.dir}">
-      <include name="*.jar" />
-    </fileset>
-    <fileset dir="${lib.dir}">
-      <include name="*.jar" />
-    </fileset>
-	<dirset dir="${pentaho.classes.dir}" />
-  </path>
-
   <target name="install">
     <unzip src="${dist.dir}/${package.basename}.zip" dest="${pentaho.solutions.dir}/system" overwrite="true">
     </unzip>
@@ -21,17 +11,19 @@
   <!-- 
   subfloor overrides 
   -->
+  <path id="classpath">
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${pentaho.lib.dir}">
+      <include name="pentaho-bi-platform-*.jar" />
+    </fileset>
+	<dirset dir="${pentaho.classes.dir}" />
+  </path>
   
-  <!-- Fetch the platform jars and place them in the dev-lib folder which will be picked
-  up in the compile classpath -->
-  <target name="compile.pre" depends="init">
-    <copy todir="${devlib.dir}">
-      <fileset dir="${pentaho.lib.dir}">
-        <include name="**/pentaho-bi-platform*.jar" />
-      </fileset>
-    </copy>
-  </target>
-
   <!-- Copy all jars over to the plugin zip, 
   except for pentaho platform jars which the platform provides -->
   <target name="assemble.copy-libs">
