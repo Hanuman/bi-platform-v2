@@ -55,7 +55,7 @@ public class AnalysisSaver extends PentahoMessenger {
   public static final String PROPERTIES_SUFFIX = ".properties"; //$NON-NLS-1$
 
   private static Log logger = null;
-
+  
   /*
    * (non-Javadoc)
    * 
@@ -131,12 +131,18 @@ public class AnalysisSaver extends PentahoMessenger {
       if (actionSequence == null) {
         throw new InvalidDocumentException(Messages.getErrorString("ANALYSISSAVER.ERROR_0004_INVALID_ORIGIN_DOCUMENT")); //$NON-NLS-1$
       }
-
+      Element asElement = ((Element)actionSequence);
       Node title = null;
       String propertyTitle = (String) props.get(AnalysisSaver.TITLE_NODE_NAME);
-      title = document.selectSingleNode("action-sequence/title"); //$NON-NLS-1$
-      if ((propertyTitle != null) && (title != null)) {
-        title.setText("<![CDATA[" + propertyTitle + "]]>");
+      title = asElement.selectSingleNode(AnalysisSaver.TITLE_NODE_NAME); //$NON-NLS-1$)
+      if ( (title == null) && (propertyTitle != null) ) {
+        title = asElement.addElement(AnalysisSaver.TITLE_NODE_NAME);
+      }
+      
+      if ( (title != null) && (propertyTitle != null)  ) {
+        // remove existing text if it's there
+        title.setText(""); //$NON-NLS-1$ 
+        ((Element)title).addCDATA( propertyTitle ); // adds CDATA
       }
 
       // Next, we need to retrieve the PivotViewComponent action and
@@ -193,12 +199,14 @@ public class AnalysisSaver extends PentahoMessenger {
       } else {
         Object value = props.get(key);
         if (value != null) {
-          node.setText("<![CDATA[" + value.toString() + "]]>" );
+          // remove existing text
+          node.setText(""); //$NON-NLS-1$
+          ((Element)node).addCDATA( value.toString() );
         }
       }
     }
-    // the property "mdx" is no longer being put in the hashmap. So,
-    // query will be passed properly now.
+		// the property "mdx" is no longer being put in the hashmap. So,
+		// query will be passed properly now.
   }
 
   /**
