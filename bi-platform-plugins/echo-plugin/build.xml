@@ -6,6 +6,10 @@
   <target name="install">
     <unzip src="${dist.dir}/${package.basename}.zip" dest="${pentaho.solutions.dir}/system" overwrite="true">
     </unzip>
+    
+    <copy todir="${pentaho.solutions.dir}">
+      <fileset dir="${basedir}/solutions/"/>
+    </copy>
   </target>
 
   <!-- 
@@ -28,7 +32,7 @@
   except for pentaho platform jars which the platform provides -->
   <target name="assemble.copy-libs">
     <copy todir="${approot.stage.dir}/lib">
-      <fileset file="${lib.dir}/commons-*.jar" />
+      <fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" />
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
     </copy>
   </target>

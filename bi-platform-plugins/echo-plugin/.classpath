@@ -2,21 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-api-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-engine-core-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-engine-security-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-engine-services-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-legacy-CITRUS-M2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-plugin-actions-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-plugin-services-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-repository-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-scheduler-CITRUS-M2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-security-userroledao-CITRUS-M2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-ui-foundation-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-util-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-web-CITRUS-M2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-web-portlet-CITRUS-M2.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-bi-platform-web-servlet-CITRUS-M2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
