@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <!-- roles with data access permissions -->
+    <data-access-roles>Admin</sql-execute-roles>
+    <!-- users with data access permissions -->
+    <!--   
+    <data-access-users></sql-execute-users>
+     -->
+</settings>

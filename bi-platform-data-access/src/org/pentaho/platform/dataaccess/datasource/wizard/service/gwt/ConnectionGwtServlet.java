@@ -46,6 +46,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
@@ -79,30 +80,41 @@ public class ConnectionGwtServlet extends RemoteServiceServlet implements Connec
     return SERVICE;
   }
 
+  public void initSession() {
+    IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest());
+    SessionHandler.setSession(userSession);
+  }
   
   public List<IConnection> getConnections() throws ConnectionServiceException {
+    initSession();
     return getService().getConnections();
   }
   public IConnection getConnectionByName(String name) throws ConnectionServiceException {
+    initSession();
     return getService().getConnectionByName(name);
   }
   public Boolean addConnection(IConnection connection) throws ConnectionServiceException {
+    initSession();
     return getService().addConnection(connection);
   }
 
   public Boolean updateConnection(IConnection connection) throws ConnectionServiceException {
+    initSession();
     return getService().updateConnection(connection);
   }
 
   public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException {
+    initSession();
     return getService().deleteConnection(connection);
   }
     
   public Boolean deleteConnection(String name) throws ConnectionServiceException {
+    initSession();
     return getService().deleteConnection(name);    
   }
 
   public Boolean testConnection(IConnection connection) throws ConnectionServiceException {
+    initSession();
     return getService().testConnection(connection);    
   }
   

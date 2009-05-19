@@ -1,5 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -17,6 +18,7 @@ import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -27,6 +29,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServi
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.IModelManagementService;
@@ -36,7 +39,7 @@ import org.pentaho.pms.service.ModelManagementServiceException;
 
 public class DatasourceServiceDelegate {
 
-
+  private IDataAccessPermissionHandler dataAccessPermHandler;
   private List<IDatasource> datasources = new ArrayList<IDatasource>();
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
@@ -47,10 +50,40 @@ public class DatasourceServiceDelegate {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
   }
   
+  protected boolean hasDataAccessPermission() {
+    if (dataAccessPermHandler == null) {
+      String dataAccessClassName = null;
+      try {
+        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        Class<?> clazz = Class.forName(dataAccessClassName);
+        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+        dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+      } catch (Exception e) {
+        // TODO: error(Messages.getErrorString("DashboardRenderer.ERROR_0024_SQL_PERMISSIONS_INIT_ERROR", sqlExecClassName), e); //$NON-NLS-1$
+        e.printStackTrace();
+      }
+      
+    }
+    return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(SessionHandler.getSession());
+  }
+  
+  
   public List<IDatasource> getDatasources() {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     return datasources;
   }
+  
   public IDatasource getDatasourceByName(String name) {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     for(IDatasource datasource:datasources) {
       if(datasource.getDatasourceName().equals(name)) {
         return datasource;
@@ -58,11 +91,28 @@ public class DatasourceServiceDelegate {
     }
     return null;
   }
+  
   public Boolean addDatasource(IDatasource datasource) {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     datasources.add(datasource);
     return true;
   }
+  
   public Boolean updateDatasource(IDatasource datasource) {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     for(IDatasource datasrc:datasources) {
       if(datasrc.getDatasourceName().equals(datasource.getDatasourceName())) {
         datasources.remove(datasrc);
@@ -72,10 +122,20 @@ public class DatasourceServiceDelegate {
     return true;
   }
   public Boolean deleteDatasource(IDatasource datasource) {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }
   public Boolean deleteDatasource(String name) {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     for(IDatasource datasource:datasources) {
       if(datasource.getDatasourceName().equals(name)) {
         return deleteDatasource(datasource);
@@ -85,7 +145,12 @@ public class DatasourceServiceDelegate {
   }
 
   
-  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
+  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -127,7 +192,12 @@ public class DatasourceServiceDelegate {
 
   }
   
-  public SerializedResultSet doPreview(IConnection connection, String query) throws DatasourceServiceException{
+  public SerializedResultSet doPreview(IConnection connection, String query) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -163,6 +233,11 @@ public class DatasourceServiceDelegate {
 
   }
   public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     String limit = datasource.getPreviewLimit();
     if(limit != null && limit.length() > 0) {
       return doPreview(datasource.getSelectedConnection(), datasource.getQuery(), limit);
@@ -215,6 +290,11 @@ public class DatasourceServiceDelegate {
   }
 
   public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return false;
+    }
     Connection conn = null;
     try {
       conn = getDataSourceConnection(connection);
@@ -282,6 +362,11 @@ public class DatasourceServiceDelegate {
    */
   
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
@@ -304,6 +389,11 @@ public class DatasourceServiceDelegate {
    * @throws DatasourceServiceException
    */  
   public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     Domain domain = null;
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
@@ -332,6 +422,11 @@ public class DatasourceServiceDelegate {
    * @throws DataSourceManagementException
    */  
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+      // TODO: log
+      System.out.println("NO PERMISSION");
+      return null;
+    }
     Boolean returnValue = false;
     try {
     getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
