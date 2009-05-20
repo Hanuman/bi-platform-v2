@@ -1,0 +1,50 @@
+<project name="GEcho Plugin" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
+  <import file="build-res/subfloor-gwt.xml" />
+
+  <!-- 
+  subfloor overrides 
+  -->
+  <!--path id="classpath">
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${pentaho.lib.dir}">
+      <include name="pentaho-bi-platform-*.jar" />
+    </fileset>
+	<dirset dir="${pentaho.classes.dir}" />
+  </path-->
+
+  <path id="classpath">
+    <fileset dir="${gwt.sdk.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${codegenlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement path="${src.dir}" />
+  </path>
+
+  <!-- 
+  The following overrides are in place to suppress IVY dependency management.  If you
+  want to use IVY to manage dependencies, you can comment out these overrides. 
+  -->
+
+  <!-- Set default target to skip the ivy "resolve" step -->
+  <target name="default" depends="clean-all,dist" />
+
+  <!-- Set the clean-all target to skip the "clean-jars" step.  We do not want our build
+  process to delete the "lib" dir -->
+  <target name="clean-all" depends="clean" />
+
+</project>

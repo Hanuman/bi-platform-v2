@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>Echo</title>
+  <version>1</version>
+  <logging-level>DEBUG</logging-level>
+  <documentation> 
+    <author>Aaron Phillips</author>  
+    <description>An Action Sequence to test the sample Echo component from a plugin</description>  
+    <help>%help</help>  
+    <result-type>rule</result-type>  
+    <icon>HelloWorld.png</icon> 
+  </documentation>
+
+  <inputs/>
+
+  <outputs> 
+    <outputstream type="content"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </outputstream> 
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <action-inputs/>
+      <action-outputs> 
+        <outputstream type="content"/> 
+      </action-outputs>
+      <component-definition> 
+        <class>echoComponent</class> 
+      </component-definition>  
+      <action-name>Test the sample Echo component</action-name>  
+      <logging-level>DEBUG</logging-level> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>
