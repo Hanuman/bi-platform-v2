@@ -6,7 +6,7 @@
         3. Am Echo BI Component (POJO style)
         
       A plugin file could contain just one of these sections and be complete.  For purposes of illustration only, we 
-      are showing all in a single plugin, how you might configure each type of exension.  In other words, your plugin
+      are showing all in a single plugin, how you might configure each type of extension.  In other words, your plugin
       may only need to provide a Web Service, in which case you would only need the xml in section 1.  Conversely, your
       plugin may only need to specify a new content type and content generator, so your plugin.xml would only need to 
       contain the stuff in section 2, etc. 
@@ -22,8 +22,7 @@
   <webservice 
     title="Echo Service" 
     description="A sample webservice that echos an input"
-    ref="echoService">
-  </webservice>
+    ref="echoService"/>
   
   <!-- 
   2. Echo Content Type and Content Generation
