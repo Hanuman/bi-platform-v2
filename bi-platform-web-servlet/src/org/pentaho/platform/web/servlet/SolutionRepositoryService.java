@@ -45,6 +45,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
+import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -52,6 +53,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -435,13 +437,26 @@ public class SolutionRepositoryService extends ServletBase {
               path = solution.substring(pos + 1);
               solution = solution.substring(0, pos);
             }
-            String url;
+            String url = null;
             if (!"".equals(fileUrl)) { //$NON-NLS-1$
               url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
                   + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             } else {
-              url = PentahoSystem.getApplicationContext().getBaseUrl()
+              IContentInfo info = pluginManager.getContentInfoFromExtension(extension, session);
+              for (IPluginOperation operation : info.getOperations()) {
+                if (operation.getId().equalsIgnoreCase("RUN")) { //$NON-NLS-1$
+              	  String command = operation.getCommand();
+                  command = command.replaceAll("\\{solution\\}", solution);
+                  command = command.replaceAll("\\{path\\}", path);
+                  command = command.replaceAll("\\{name\\}", name);
+                  url = PentahoSystem.getApplicationContext().getBaseUrl() + command;
+                  break;
+                }
+              }
+              if (url == null) {
+                url = PentahoSystem.getApplicationContext().getBaseUrl()
                   + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+              }
             }
             child.setAttribute("url", url); //$NON-NLS-1$
           } catch (FileNotFoundException e) {
