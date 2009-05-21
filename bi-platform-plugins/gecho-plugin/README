@@ -3,3 +3,8 @@ to compile and install:
 2. ant
 3. ant install
 4. (re)start the Pentaho BI Server
+
+Now in the BI Developer samples soluton folder you should see a GEcho folder.  
+Double click on the sample.xgecho solution file.  This GWT client is part of the GEcho plugin.
+If you click on the button, you are submitting an RPC request to the GEchoServiceImplLite class
+found only in the plugin folder.
