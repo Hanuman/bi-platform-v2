@@ -18,7 +18,9 @@
 
 package org.pentaho.platform.api.engine;
 
-public class PluginBeanException extends Exception {
+import java.io.Serializable;
+
+public class PluginBeanException extends Exception implements Serializable {
 
   private static final long serialVersionUID = 994L;
 

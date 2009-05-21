@@ -321,6 +321,11 @@
     	<servlet-name>GenericServlet</servlet-name>
 		<servlet-class>org.pentaho.platform.web.servlet.GenericServlet</servlet-class>
 	</servlet>
+  
+	<servlet>
+    	<servlet-name>GwtRpcPluginProxyServlet</servlet-name>
+		<servlet-class>org.pentaho.platform.web.servlet.GwtRpcPluginProxyServlet</servlet-class>
+	</servlet>
 
 	<servlet>
 		<servlet-name>WebContextServlet</servlet-name>
@@ -589,6 +594,11 @@
 	<servlet-mapping>
 		<servlet-name>GenericServlet</servlet-name>
 		<url-pattern>/content/*</url-pattern>
+	</servlet-mapping>
+  
+	<servlet-mapping>
+		<servlet-name>GwtRpcPluginProxyServlet</servlet-name>
+		<url-pattern>/gwtrpc/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- Pentaho JSPs -->
