@@ -14,18 +14,17 @@
  *
  * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
- * Created May 20, 2009
+ * Created May 21, 2009
  * @author Aaron Phillips
  */
 
 package org.pentaho.platform.web.servlet;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -48,7 +47,10 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     HttpServletRequest request = getThreadLocalRequest();
     //path info will give us what we want with 
     String requestPathInfo = request.getPathInfo();
-    return StringUtils.remove(requestPathInfo, '/');
+    if(requestPathInfo.startsWith("/")) {
+      requestPathInfo = requestPathInfo.substring(1);
+    }
+    return requestPathInfo;
   }
 
   public String processCall(String payload) throws SerializationException {
