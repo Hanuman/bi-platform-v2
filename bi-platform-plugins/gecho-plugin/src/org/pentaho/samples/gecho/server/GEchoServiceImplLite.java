@@ -24,13 +24,9 @@ import java.util.Date;
 
 import org.pentaho.samples.gecho.client.GEchoService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-@SuppressWarnings("serial")
-public class GEchoServiceImpl extends RemoteServiceServlet implements
-    GEchoService {
+public class GEchoServiceImplLite implements GEchoService {
 
   public String echo(String input) {
-    return "Hi "+input+", the GEcho service is alive on "+new Date();
+    return "Hi "+input+", the lite (pluggable) GEcho service is alive on "+new Date();
   }
 }

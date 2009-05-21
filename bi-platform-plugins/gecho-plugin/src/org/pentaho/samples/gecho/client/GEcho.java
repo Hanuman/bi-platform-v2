@@ -49,7 +49,7 @@ public class GEcho implements EntryPoint {
     echoPanel.setSpacing(20);
     echoPanel.add(echoMessageButton);
     echoPanel.add(serverResponseLabel);
-    //    echoPanel.add(debugLabel); //uncomment to see the request URL
+    echoPanel.add(debugLabel); //uncomment to see the request URL
 
     mainPanel.add(echoPanel);
 
@@ -74,8 +74,22 @@ public class GEcho implements EntryPoint {
    */
   private String getBaseUrl() {
     String moduleUrl = GWT.getModuleBaseURL();
-    String baseUrl = moduleUrl.substring(0, moduleUrl.indexOf("content"));
-    return baseUrl + "gecho/service";
+    
+    //
+    //Set the base url appropriately based on the context in which we are running this client
+    //
+    if(moduleUrl.indexOf("content") > -1) {
+      //we are running the client in the context of a BI Server plugin, so 
+      //point the request to the GWT rpc proxy servlet
+      String baseUrl = moduleUrl.substring(0, moduleUrl.indexOf("content"));
+      //NOTE: the dispatch URL ("gechoService") must match the bean id for 
+      //this service object in your plugin.xml.  "gwtrpc" is the servlet 
+      //that handles plugin gwt rpc requests in the BI Server.
+      return  baseUrl + "gwtrpc/gechoService";
+    }
+    //we are running this client in hosted mode, so point to the servlet 
+    //defined in war/WEB-INF/web.xml
+    return moduleUrl + "gwtrpc";
   }
 
   private void getServerMessage() {
@@ -84,9 +98,8 @@ public class GEcho implements EntryPoint {
     ServiceDefTarget endpoint = (ServiceDefTarget) gechoService;
     endpoint.setServiceEntryPoint(getBaseUrl());
 
-    debugLabel.setText("sending POST to: " + endpoint.getServiceEntryPoint());
+    debugLabel.setText("posting to: " + endpoint.getServiceEntryPoint());
 
-    // Set up the callback object.
     AsyncCallback<String> callback = new AsyncCallback<String>() {
       public void onFailure(Throwable caught) {
         serverResponseLabel.setText("Error communicating with GEchoService: " + caught.toString());

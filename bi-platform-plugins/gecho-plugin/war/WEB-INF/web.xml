@@ -16,7 +16,7 @@
   
   <servlet-mapping>
     <servlet-name>gechoServlet</servlet-name>
-    <url-pattern>/gecho/echo</url-pattern>
+    <url-pattern>/gecho/gwtrpc</url-pattern>
   </servlet-mapping>
 
 </web-app>

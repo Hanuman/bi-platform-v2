@@ -18,7 +18,8 @@
   1. Echo Web Service 
   Here we are exposing the GEchoService java bean as a GWT RPC service 
   -->
-  <bean id="gechoService" class="org.pentaho.samples.gecho.GEchoService"/>
+  <bean id="gechoService" class="org.pentaho.samples.gecho.server.GEchoServiceImplLite"/>
+  
   
   <!-- 
   2. Echo Content Type and Content Generation

@@ -21,9 +21,8 @@
 package org.pentaho.samples.gecho.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("service")
+//@RemoteServiceRelativePath("service")
 public interface GEchoService extends RemoteService {
   String echo(String name);
 }
