@@ -2,17 +2,4 @@ to compile and install:
 1. ant -f gbuild.xml gwt-compile
 2. ant
 3. ant install
-
-4. Now add the gwt servlet to the platform web.xml:
-
-  <servlet>
-    <servlet-name>gechoServlet</servlet-name>
-    <servlet-class>org.pentaho.samples.gecho.server.GEchoServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>gechoServlet</servlet-name>
-    <url-pattern>/gecho/echo</url-pattern>
-  </servlet-mapping>
-  
-5. Now drop the gecho-plugin-*.jar into the platform WEB-INF/lib directory and (re)start the Pentaho BI Server
+4. (re)start the Pentaho BI Server
