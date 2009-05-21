@@ -2,13 +2,13 @@
 
   <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
   <import file="build-res/subfloor-pkg.xml" />
-  
+
   <target name="install">
     <unzip src="${dist.dir}/${package.basename}.zip" dest="${pentaho.solutions.dir}/system" overwrite="true">
     </unzip>
-    
+
     <copy todir="${pentaho.solutions.dir}">
-      <fileset dir="${basedir}/solutions/"/>
+      <fileset dir="${basedir}/solutions/" />
     </copy>
   </target>
 
@@ -28,19 +28,31 @@
     <fileset dir="${pentaho.lib.dir}">
       <include name="pentaho-bi-platform-*.jar" />
     </fileset>
-	<dirset dir="${pentaho.classes.dir}" />
+    <dirset dir="${pentaho.classes.dir}" />
   </path>
-  
-  <!-- Copy all jars over to the plugin zip, 
-  except for pentaho platform jars which the platform provides -->
-  <target name="assemble.copy-libs">
+
+
+  <!-- override the subfloor assemble target to do special assembly from the war directory -->
+  <target name="assemble" depends="assemble.init">
     <copy todir="${approot.stage.dir}/lib">
       <fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" />
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+      <fileset file="${gwt.sdk.dir}/gwt-user*.jar" />
+    </copy>
+
+    <copy todir="${approot.stage.dir}">
+      <fileset dir="${package.resdir}" />
+    </copy>
+    <copy todir="${approot.stage.dir}/resources">
+      <fileset dir="${gwt.output.dir}">
+        <exclude name=".gwt-tmp/" />
+        <exclude name="*-aux/" />
+        <exclude name="WEB-INF/" />
+      </fileset>
     </copy>
   </target>
-  
-  
+
+
   <!-- 
   The following overrides are in place to suppress IVY dependency management.  If you
   want to use IVY to manage dependencies, you can comment out these overrides. 
@@ -48,9 +60,9 @@
 
   <!-- Set default target to skip the ivy "resolve" step -->
   <target name="default" depends="clean-all,dist,package" />
-  
+
   <!-- Set the clean-all target to skip the "clean-jars" step.  We do not want our build
   process to delete the "lib" dir -->
-  <target name="clean-all" depends="clean"/>
+  <target name="clean-all" depends="clean" />
 
 </project>
