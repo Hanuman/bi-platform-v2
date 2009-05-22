@@ -24,13 +24,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.actionsequence.dom.ActionInputConstant;
 import org.pentaho.actionsequence.dom.IActionInput;
+import org.pentaho.actionsequence.dom.IActionOutput;
 import org.pentaho.actionsequence.dom.actions.MQLAction;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalModel;
+import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
@@ -98,7 +101,7 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
 
     return result;
   }
-
+  
   /**
    * makes the necessary calls to generate the SQL query based on the MQL XML provided.
    * 
@@ -343,7 +346,40 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     boolean result = super.executeAction();
 
     MQLAction actionDefinition = (MQLAction) getActionDefinition();
+    
+    String mql = actionDefinition.getQuery().getStringValue();
+    
+    // if this is an inline etl model, we need to do things differently.
+    QueryXmlHelper helper = new QueryXmlHelper();
+    IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
+    Query queryObject = null;
+    try {
+      queryObject = helper.fromXML(repo, mql);
+    } catch (Exception e) {
+      // if we fail to parse the model, it most likely lives as part of the old
+      // metadata layer
+    }
+    
+    if (queryObject != null ) {
+      // need to get the correct DatabaseMeta
+      if (queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel() instanceof InlineEtlPhysicalModel) {
+        InlineEtlPhysicalModel ietlModel = (InlineEtlPhysicalModel)queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
 
+        InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+        try {
+          IPentahoResultSet resultset = executor.executeQuery(queryObject);
+          IActionOutput actionOutput = actionDefinition.getOutputResultSet();
+          if (actionOutput != null) {
+            actionOutput.setValue(resultset);
+          }
+          return true;
+        } catch (Exception e ) {
+          getLogger().error("Error", e);
+          return false;
+        }
+      }
+    }
+    
     long end = new Date().getTime();
     // Fix for BISERVER-459 - MQL can be too large for the audit message column.
     // audit(MessageTypes.INSTANCE_ATTRIBUTE, "metadata query", mql, (int) (end - start)); //$NON-NLS-1$
