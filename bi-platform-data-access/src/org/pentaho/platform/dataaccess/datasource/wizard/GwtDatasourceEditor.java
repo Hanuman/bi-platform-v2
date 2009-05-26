@@ -6,7 +6,9 @@ import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
 import org.pentaho.gwt.widgets.client.utils.MessageBundle;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
+import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
+import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
@@ -34,6 +36,8 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
 
   private MessageBundle bundle;
   private DatasourceController datasourceController = new DatasourceController();
+  private CsvDatasourceController csvDatasourceController = new CsvDatasourceController();
+  private RelationalDatasourceController relationalDatasourceController = new RelationalDatasourceController();
   private ConnectionController connectionController = new ConnectionController();
   private ConnectionService connectionService;
   private DatasourceService datasourceService;
@@ -71,7 +75,7 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
         }
 
         public void success(List<IConnection> connections) {
-          datasourceModel.setConnections(connections);
+          datasourceModel.getRelationalModel().setConnections(connections);
         }
         
       });
@@ -178,6 +182,17 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
       wrapper.setHandler(datasourceController);      
       container.addEventHandler(wrapper);
 
+      wrapper = GWT.create(CsvDatasourceController.class);
+      csvDatasourceController.setBindingFactory(bf);
+      wrapper.setHandler(csvDatasourceController);      
+      container.addEventHandler(wrapper);
+
+      wrapper = GWT.create(RelationalDatasourceController.class);
+      relationalDatasourceController.setBindingFactory(bf);
+      wrapper.setHandler(relationalDatasourceController);      
+      container.addEventHandler(wrapper);
+
+      
       wrapper = GWT.create(ConnectionController.class);
       connectionController.setBindingFactory(bf);
       wrapper.setHandler(connectionController);      
@@ -186,6 +201,9 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
       runner.addContainer(container);
       datasourceController.setConnectionModel(connectionModel);
       datasourceController.setDatasourceModel(datasourceModel);
+      csvDatasourceController.setDatasourceModel(datasourceModel);
+      relationalDatasourceController.setConnectionModel(connectionModel);
+      relationalDatasourceController.setDatasourceModel(datasourceModel);
       connectionController.setConnectionModel(connectionModel);
       connectionController.setDatasourceModel(datasourceModel);
       runner.initialize();
@@ -206,6 +224,8 @@ public class GwtDatasourceEditor implements IMessageBundleLoadCallback {
   public void setDatasourceService(DatasourceService service){
     this.datasourceService = service;
     datasourceController.setService(service);
+    csvDatasourceController.setService(service);
+    relationalDatasourceController.setService(service);
   }
 
   

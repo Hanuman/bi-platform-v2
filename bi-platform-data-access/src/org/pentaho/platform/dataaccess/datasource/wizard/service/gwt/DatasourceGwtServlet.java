@@ -33,6 +33,7 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.dataaccess.datasource.DatabaseColumnType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
@@ -43,6 +44,8 @@ import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
+import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
 import org.pentaho.pms.schema.v3.model.Column;
@@ -62,49 +65,65 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
     SERVICE = new DatasourceServiceDelegate();
   }
 
+  public void initSession() {
+    IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest());
+    SessionHandler.setSession(userSession);
+  }
+  
   public Boolean addDatasource(IDatasource datasource) {
+    initSession();
     return SERVICE.addDatasource(datasource);
   }
 
   public Boolean deleteDatasource(IDatasource datasource) {
+    initSession();
     return SERVICE.deleteDatasource(datasource);
   }
 
   public Boolean deleteDatasource(String name) {
+    initSession();
     return SERVICE.deleteDatasource(name);
   }
 
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit)
       throws DatasourceServiceException {
+    initSession();
     return SERVICE.doPreview(connection, query, previewLimit);
   }
 
   public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException {
+    initSession();
     return SERVICE.doPreview(datasource);
   }
 
   public IDatasource getDatasourceByName(String name) {
+    initSession();
     return SERVICE.getDatasourceByName(name);
   }
 
   public List<IDatasource> getDatasources() {
+    initSession();
     return SERVICE.getDatasources();
   }
 
   public Boolean updateDatasource(IDatasource datasource) {
+    initSession();
     return SERVICE.updateDatasource(datasource);
   }
 
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit)
       throws DatasourceServiceException {
+    initSession();
     return SERVICE.generateModel(modelName, connection, query, previewLimit);
   }
   public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)
   throws DatasourceServiceException {
-      return SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit);
+    initSession();
+    return SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit);
   }
 
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
+    initSession();
     return SERVICE.saveModel(businessData, overwrite);
   }
 
@@ -192,4 +211,16 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
   public BogoPojo gwtWorkaround(BogoPojo pojo) {
     return pojo;
   }
+
+  public Domain generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
+      String delimeter, String enclosure) throws DatasourceServiceException {
+    initSession();
+    return SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+   }
+
+  public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException {
+    initSession();
+    return SERVICE.saveInlineEtlModel(modelName, overwrite);
+  }
+  
 }

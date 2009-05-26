@@ -35,12 +35,16 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/ResultSetHelper*"/>   
         <exclude name="**/BusinessModelGenerator*"/>
         <exclude name="**/ExampleApp*"/>
-        <exclude name="**/CsvMqlGenerator*"/>             
+        <exclude name="**/CsvMqlGenerator*"/>     
+        <exclude name="**/UploadFileServlet*"/>
+        <exclude name="**/UploadFileDebugServlet*"/>
+        <exclude name="**/IDataAccessPermissionHandler*"/>
+        <exclude name="**/SimpleDataAccessPermissionHandler*"/>                
     </source>
    <public path="wizard/public"/>
     <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.JavascriptDatasourceEditor"/>
    
   <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
   <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />
- 
+  <servlet path="/UploadService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.UploadFileDebugServlet" />
  </module>

@@ -1,5 +1,4 @@
 <module>
-
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.googlecode.gwtx.Java'/>
   <inherits name='com.google.gwt.xml.XML'/>
@@ -7,6 +6,8 @@
   <inherits name="org.pentaho.ui.xul.Gwt"/>
   <inherits name="org.pentaho.pms.schema.v3.Column"/>
   <inherits name="org.pentaho.metadata.Model"/>
+  <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.UploadFile"/>
+  
     <source path="">
         <exclude name="**/MQLEditorDebugGwtServlet*"/>
         <exclude name="**/SwingMqlEditor*"/>
@@ -33,13 +34,9 @@
         <exclude name="**/ExampleApp*"/>
         <exclude name="**/CsvMqlGenerator*"/>
         <exclude name="**/UploadFileServlet*"/>
-        <exclude name="**/UploadFileDebugServlet*"/>        
         <exclude name="**/IDataAccessPermissionHandler*"/>
-        <exclude name="**/SimpleDataAccessPermissionHandler*"/>        
-        
+        <exclude name="**/SimpleDataAccessPermissionHandler*"/>
     </source>
      <public path="wizard/public"/>
-  <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
-  <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />
-  <servlet path="/UploadService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.UploadFileDebugServlet" />
+  <servlet path="/UploadService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.UploadFileServlet" />
 </module>

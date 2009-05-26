@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 
 import java.util.List;
 
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
@@ -61,6 +62,15 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
   }
   public BogoPojo gwtWorkaround(BogoPojo pojo) {
     return pojo;
+  }
+
+  public Domain generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
+      String delimeter, String enclosure) throws DatasourceServiceException {
+    return SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+  }
+
+  public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException {
+    return SERVICE.saveInlineEtlModel(modelName, overwrite);
   } 
 
 }

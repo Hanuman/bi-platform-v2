@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource.EditType;
 import org.pentaho.platform.dataaccess.datasource.wizard.ConnectionDialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -222,7 +222,8 @@ public class ConnectionController extends AbstractXulEventHandler {
   public void deleteConnection() {
     removeConfirmationDialog.hide();
     try {
-      service.deleteConnection(datasourceModel.getSelectedConnection().getName(), new XulServiceCallback<Boolean>() {
+      service.deleteConnection(datasourceModel.getRelationalModel().getSelectedConnection().getName(),
+          new XulServiceCallback<Boolean>() {
 
         public void error(String message, Throwable error) {
           System.out.println(message);
@@ -231,15 +232,16 @@ public class ConnectionController extends AbstractXulEventHandler {
 
         public void success(Boolean value) {
           try {
-            if (value) {
-              openSuccesDialog("Connection Deleted", "Successfully deleted the connection");
-              datasourceModel.deleteConnection(datasourceModel.getSelectedConnection().getName());
-              List<IConnection> connections = datasourceModel.getConnections();
-              if (connections != null && connections.size() > 0) {
-                datasourceModel.setSelectedConnection(connections.get(connections.size() - 1));
-              } else {
-                datasourceModel.setSelectedConnection(null);
-              }
+                if (value) {
+                  openSuccesDialog("Connection Deleted", "Successfully deleted the connection");
+                  datasourceModel.getRelationalModel().deleteConnection(
+                      datasourceModel.getRelationalModel().getSelectedConnection().getName());
+                  List<IConnection> connections = datasourceModel.getRelationalModel().getConnections();
+                  if (connections != null && connections.size() > 0) {
+                    datasourceModel.getRelationalModel().setSelectedConnection(connections.get(connections.size() - 1));
+                  } else {
+                    datasourceModel.getRelationalModel().setSelectedConnection(null);
+                  }
 
             } else {
               openErrorDialog("Connection Not Deleted", "Unable to delete the connection");
@@ -260,7 +262,7 @@ public class ConnectionController extends AbstractXulEventHandler {
       saveConnectionConfirmationDialog.hide();
     }
 
-    if (EditType.ADD.equals(datasourceModel.getEditType())) {
+    if (RelationalModel.EditType.ADD.equals(datasourceModel.getRelationalModel().getEditType())) {
       try {
         service.addConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {  
           public void error(String message, Throwable error) {
@@ -273,8 +275,8 @@ public class ConnectionController extends AbstractXulEventHandler {
               dialog.hide();
               if (value) {
                 openSuccesDialog("Connection Saved", "Successfully saved the connection");
-                datasourceModel.addConnection(connectionModel.getConnection());
-                datasourceModel.setSelectedConnection(connectionModel.getConnection());
+                datasourceModel.getRelationalModel().addConnection(connectionModel.getConnection());
+                datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
               } else {
                 openErrorDialog("Connection Not saved", "Unable to save the connection");
               }
@@ -302,8 +304,8 @@ public class ConnectionController extends AbstractXulEventHandler {
               dialog.hide();
               if (value) {
                 openSuccesDialog("Connection Updated", "Successfully updated the connection");
-                datasourceModel.updateConnection(connectionModel.getConnection());
-                datasourceModel.setSelectedConnection(connectionModel.getConnection());
+                datasourceModel.getRelationalModel().updateConnection(connectionModel.getConnection());
+                datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
               } else {
                 openErrorDialog("Connection Not updated", "Unable to updated the connection");
               }

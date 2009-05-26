@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
@@ -18,6 +17,7 @@ import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -25,8 +25,6 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.IModelManagementService;
@@ -409,6 +407,28 @@ public class DatasourceServiceInMemoryDelegate {
       return conn;
     } catch (SQLException e) {
       throw new ConnectionServiceException("Unable to connect", e); //$NON-NLS-1$
+    }
+  }
+  
+  public Domain generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
+    try  {
+    InlineEtlModelGenerator generator = new InlineEtlModelGenerator(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+    return generator.generate();
+    } catch(Exception e) {
+      throw new DatasourceServiceException("Unable to generate the model" + e.getLocalizedMessage());
+    }
+  }
+
+  public Boolean saveInlineEtlModel(Domain modelName, boolean overwrite) throws DatasourceServiceException  {
+    try {
+      getMetadataDomainRepository().storeDomain(modelName, overwrite);
+      return true;
+    } catch(DomainStorageException dse) {
+      throw new DatasourceServiceException("Unable to store domain" + modelName.getName(), dse); //$NON-NLS-1$
+    } catch(DomainAlreadyExistsException dae) {
+      throw new DatasourceServiceException("Domain already exist" + modelName.getName(), dae); //$NON-NLS-1$
+    } catch(DomainIdNullException dne) {
+      throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
     }
   }
 

@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.util.List;
 
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -9,6 +10,13 @@ import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FormHandler;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 
 public class DatasourceServiceDebugImpl implements DatasourceService{
 
@@ -61,6 +69,29 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
     callback.success(SERVICE.saveModel(businessData, overwrite));
   }
 
+  public void uploadFile(FormPanel uploadForm, final XulServiceCallback<String> callback)  throws DatasourceServiceException {
+    uploadForm.setAction(GWT.getModuleBaseURL() + "UploadService");
+    uploadForm.submit();
+    uploadForm.addFormHandler(new FormHandler() {
+      public void onSubmit(FormSubmitEvent event) {
+      }
+
+      public void onSubmitComplete(FormSubmitCompleteEvent event) {
+        Window.alert(event.getResults());
+        callback.success(event.getResults());
+      }
+    });
+}
+
+  public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
+      String delimeter, String enclosure, XulServiceCallback<Domain> callback) throws DatasourceServiceException {
+    callback.success(SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure));
+  }
+
+  public void saveInlineEtlModel(Domain modelName, Boolean overwrite, XulServiceCallback<Boolean> callback)
+      throws DatasourceServiceException {
+    callback.success(SERVICE.saveInlineEtlModel(modelName, overwrite));
+  }
 }
 
   
