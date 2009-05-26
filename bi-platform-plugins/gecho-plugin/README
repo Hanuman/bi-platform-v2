@@ -1,5 +1,4 @@
 to compile and install:
-1. ant -f gbuild.xml gwt-compile
 2. ant
 3. ant install
 4. (re)start the Pentaho BI Server
