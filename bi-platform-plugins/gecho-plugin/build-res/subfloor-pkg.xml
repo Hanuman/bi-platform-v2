@@ -35,21 +35,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <import file="${subfloor.file}" />
 
   <property name="stage.dir" value="${bin.dir}/stage" description="Package staging" />
-  <property name="package.root.dir" value="${ivy.artifact.id}" description="Root directory of final zip or tar package"/>
-  <property name="approot.stage.dir" value="${stage.dir}/${package.root.dir}" description="Stage application root dir" />
-  <property name="package.id" value="${ivy.artifact.id}"/>
+  <property name="package.root.dir"
+            value="${ivy.artifact.id}"
+            description="Root directory of final zip or tar package" />
+  <property name="approot.stage.dir"
+            value="${stage.dir}/${package.root.dir}"
+            description="Stage application root dir" />
+  <property name="package.id" value="${ivy.artifact.id}" />
   <property name="package.basename" value="${package.id}-${project.revision}" />
   <property name="package.resdir" value="${basedir}/package-res" />
-  <property name="package.artifact.ivyfile" value="package-ivy.xml" description="The ivy file defining dependencies of the package"/>
-  <property name="package.artifact.pomfile" value="package-pom.xml" description="The Maven pom file defining dependencies of the package"/>
+  <property name="package.artifact.ivyfile"
+            value="package-ivy.xml"
+            description="The ivy file defining dependencies of the package" />
+  <property name="package.artifact.pomfile"
+            value="package-pom.xml"
+            description="The Maven pom file defining dependencies of the package" />
 
   <target name="dist" depends="jar,package" description="Builds and packages the application" />
-  
+
   <target name="clean-dist">
-  <delete dir="${dist.dir}" />
+    <delete dir="${dist.dir}" />
     <delete dir="${stage.dir}" />
   </target>
-  
+
   <!-- override of jar target.. this definitely should be moved into common build -->
   <target name="jar"
           depends="compile,set-build.id,create-version-file"
@@ -71,7 +79,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <entry key="builddate" type="date" value="now" />
     </propertyfile>
   </target>
-  
+
   <target name="assemble.init">
     <mkdir dir="${approot.stage.dir}" />
   </target>
@@ -82,15 +90,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </copy>
     <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
   </target>
-  
+
   <target name="assemble.copy-libs">
-      <copy todir="${approot.stage.dir}/lib">
+    <copy todir="${approot.stage.dir}/lib">
       <fileset dir="${lib.dir}" />
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
     </copy>
   </target>
 
-  <target name="package" depends="assemble,package-zip,package-targz" description="Creates packaged distributable artifacts"/>
+  <target name="package"
+          depends="assemble,package-zip,package-targz"
+          description="Creates packaged distributable artifacts" />
 
   <target name="package-zip">
     <zip destfile="${dist.dir}/${package.basename}.zip">
@@ -108,17 +118,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </tarfileset>
     </tar>
   </target>
-  
+
   <!--=======================================================================
 	    create-pom (override)
 	    
 	    Creates the POM files for publishing the jar and gwt zip package to the Maven repository
 	    ====================================================================-->
-  <target name="create-pom" depends="install-ivy" description="Creates a POM file based on the ivy dependencies">
-    <ant antfile="${subfloor.file}" target="create-pom" />
-    <antcall target="create-package-pom" />
-  </target>
-    
+  <target name="create-pom"
+          depends="install-ivy,subfloor.create-pom,create-package-pom"
+          description="Creates a POM file based on the ivy dependencies" />
+
   <!--=======================================================================
 	    create-package-pom 
 	    
@@ -130,29 +139,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <ivy:makepom ivyfile="${package.artifact.ivyfile}" pomfile="${package.artifact.pomfile}" />
     <replace file="${package.artifact.pomfile}" token="jar" value="zip" />
   </target>
-  
-    <!--=======================================================================
+
+  <!--=======================================================================
       publish-nojar (override)
       
       Publishes the jar and zip package to the Maven repository
       ====================================================================-->
-  <target name="publish-nojar"
-          depends="install-antcontrib,create-pom,ivy.deliver">
-    <ant antfile="${subfloor.file}" target="publish-nojar" />
+  <target name="publish-nojar" depends="install-antcontrib,create-pom,ivy.deliver,subfloor.publish-nojar">
 
     <antcall target="maven-publish-artifact">
       <param name="publish.pomFile" value="${package.artifact.pomfile}" />
       <param name="publish.file" value="${dist.dir}/${package.basename}.zip" />
     </antcall>
   </target>
-  
+
   <!--=======================================================================
       publish-local-nojar (override)
       
       Publishes jar and zip package locally
       ====================================================================-->
-  <target name="publish-local-nojar" depends="install-ivy">
-    <ant antfile="${subfloor.file}" target="publish-local-nojar" />
+  <target name="publish-local-nojar" depends="install-ivy,subfloor.publish-local-nojar">
     <ivy:resolve file="${package.artifact.ivyfile}" />
     <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
       <artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
