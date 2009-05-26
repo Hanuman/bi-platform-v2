@@ -1,75 +1,35 @@
-<!-- ======================================================================
-     description: main build file for pentaho  . .                                                    
-     ====================================================================== -->
-<project name="Data Access" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-  <description>Data Access build file</description>
+<project name="Data Access" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <property file="build.properties" />
+  <!-- Import the subfloor-gwt.xml file which contains all the default tasks -->
+  <import file="build-res/subfloor-gwt.xml" />
 
-  <property name="plugin.name" value="data-access" description="Name of the plugin" />
-  <property name="package-res.dir" value="package-res"/>
-  <property name="gwt-module.path" value="org.pentaho.platform.dataaccess.datasource.JavascriptDatasourceEditor"/>
-  <property name="plugin.zipfile" value="data-access-plugin-${project.revision}.zip" />
-	<!-- override classpath to use recurse lib -->
-	<path id="classpath">
-		<fileset dir="lib">
-			<include name="**/*.jar" />
-			<include name="**/*.zip" />
-		</fileset>
-	</path>
-	
-  <!-- Define the default location of the gwt common build file -->
-  <property name="gwt.common.build.file" value="./gwt_common_build.xml" description="This is the location of the standardized common_build.xml file" />
+  <target name="install" description="Installs the plugin to your Pentaho BI Server">
+    <unzip src="${dist.dir}/${package.basename}.zip" dest="${pentaho.solutions.dir}/system" overwrite="true">
+    </unzip>
 
-  <!-- Import the common_build.xml file which contains all the default tasks -->
-  <import file="${gwt.common.build.file}" />
-
-  <!--
-      AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
-      THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
-      FOUND IN common_build.xml.
-    -->
-
-  <!-- Directory in which the source will be copied before a compile -->
-  <property name="temp-src.dir" value="${bin.dir}/src" />
-  <property name="stage.dir" value="${bin.dir}/stage" />
-	
-  <target name="dist" depends="gwt-compile,package">
+    <copy todir="${pentaho.solutions.dir}">
+      <fileset dir="${basedir}/solutions/" />
+    </copy>
   </target>
-	
-  <!--=======================================================================
-    package
-    
-    Creates a zip distribution of this plugin
-    ====================================================================-->
-  <!-- need to add obfuscate call after the jar target in the depends attribute below; also add -obf to JAR filename -->
-  <target name="package" depends="jar" description="Creates a distribution">
 
-    <!-- delete and re-create the plugin dist folder tree -->
-    <delete dir="${stage.dir}" />
-    <mkdir dir="${stage.dir}/${plugin.name}" />
-  	<echo message="${stage.dir}/${plugin.name}" />
-    <!-- mkdir dir="${stage.dir}/${plugin.name}/lib" / -->
-
-    <!-- Copy the plugin.xml and any other files from the resource dir -->
-    <copy todir="${stage.dir}/${plugin.name}">
-      <fileset dir="${package-res.dir}">
-        <include name="**/*" />
-      </fileset>
+  <!-- override the subfloor assemble target to do special assembly from the war directory -->
+  <target name="assemble" depends="gwt-compile,assemble.init">
+    <copy todir="${approot.stage.dir}/lib">
+      <fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" />
+      <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+      <!--fileset file="${gwt.sdk.dir}/gwt-user*.jar" /-->
     </copy>
 
-    <copy todir="${stage.dir}/${plugin.name}/resources/gwt">
-      <fileset dir="${gwt.output.dir}/DatasourceEditor">
-        <include name="**/*" />
+    <copy todir="${approot.stage.dir}">
+      <fileset dir="${package.resdir}" />
+    </copy>
+    <copy todir="${approot.stage.dir}/resources">
+      <fileset dir="${gwt.output.dir}">
         <exclude name=".gwt-tmp/" />
         <exclude name="*-aux/" />
+        <exclude name="WEB-INF/" />
       </fileset>
     </copy>
-
-    <!-- create a zip file -->
-    <zip zipfile="${gwt.package.zipfile}" basedir="${stage.dir}" includes="**/*" excludes="**/Thumbs.db" />
-
   </target>
 
-	
 </project>
