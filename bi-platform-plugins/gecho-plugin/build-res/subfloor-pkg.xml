@@ -45,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <target name="dist" depends="jar,package" description="Builds and packages the application" />
   
-  <target name="clean-dist" description="Removes all dist artifacts">
+  <target name="clean-dist">
   <delete dir="${dist.dir}" />
     <delete dir="${stage.dir}" />
   </target>
@@ -90,7 +90,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </copy>
   </target>
 
-  <target name="package" depends="assemble,package-zip,package-targz" />
+  <target name="package" depends="assemble,package-zip,package-targz" description="Creates packaged distributable artifacts"/>
 
   <target name="package-zip">
     <zip destfile="${dist.dir}/${package.basename}.zip">
