@@ -12,7 +12,7 @@
     </copy>
   </target>
 
-  <!-- override the subfloor assemble target to do special assembly from the war directory -->
+  <!-- override the subfloor assemble target to do special plug-in assembly -->
   <target name="assemble" depends="gwt-compile,assemble.init">
     <copy todir="${approot.stage.dir}/lib">
       <fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" />
