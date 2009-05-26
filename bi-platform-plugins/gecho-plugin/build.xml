@@ -1,9 +1,9 @@
 <project name="Echo Plugin" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
-  <import file="build-res/subfloor-pkg.xml" />
+  <!-- Import the subfloor-gwt.xml file which contains all the default tasks -->
+  <import file="build-res/subfloor-gwt.xml" />
 
-  <target name="install">
+  <target name="install" description="Installs the plugin to your Pentaho BI Server">
     <unzip src="${dist.dir}/${package.basename}.zip" dest="${pentaho.solutions.dir}/system" overwrite="true">
     </unzip>
 
@@ -19,21 +19,22 @@
     <fileset dir="${gwt.sdk.dir}">
       <include name="*.jar" />
     </fileset>
+    <fileset dir="${pentaho.lib.dir}">
+      <include name="pentaho-bi-platform-*.jar" />
+    </fileset>
+    <dirset dir="${pentaho.classes.dir}" />
     <fileset dir="${devlib.dir}">
       <include name="*.jar" />
     </fileset>
     <fileset dir="${lib.dir}">
       <include name="*.jar" />
     </fileset>
-    <fileset dir="${pentaho.lib.dir}">
-      <include name="pentaho-bi-platform-*.jar" />
-    </fileset>
-    <dirset dir="${pentaho.classes.dir}" />
+    <pathelement path="${src.dir}" />
   </path>
 
 
   <!-- override the subfloor assemble target to do special assembly from the war directory -->
-  <target name="assemble" depends="assemble.init">
+  <target name="assemble" depends="gwt-compile,assemble.init">
     <copy todir="${approot.stage.dir}/lib">
       <fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" />
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
