@@ -22,6 +22,9 @@ import org.pentaho.commons.metadata.mqleditor.Operator;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.IPhysicalColumn;
+import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
+import org.pentaho.metadata.model.InlineEtlPhysicalModel;
+import org.pentaho.metadata.model.InlineEtlPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
@@ -29,8 +32,11 @@ import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -185,6 +191,13 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
         classes.add(TargetColumnType.class);
         classes.add(TargetTableType.class);
         classes.add(LocalizedString.class);
+        classes.add(Throwable.class);
+        classes.add(InlineEtlPhysicalColumn.class);
+        classes.add(InlineEtlPhysicalModel.class);
+        classes.add(InlineEtlPhysicalTable.class);
+        classes.add(TableType.class);
+        classes.add(FieldType.class);
+        classes.add(ColumnWidth.class);
       }
 
       @Override
