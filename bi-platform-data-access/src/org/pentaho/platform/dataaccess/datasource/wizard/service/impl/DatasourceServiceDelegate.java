@@ -47,11 +47,21 @@ public class DatasourceServiceDelegate {
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
+  private IPentahoSession session;
+
   public DatasourceServiceDelegate() {
     modelManagementService =  new JDBCModelManagementService();
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
   }
-  
+
+  public IPentahoSession getSession() {
+    return session;
+  }
+
+  public void setSession(IPentahoSession session) {
+    this.session = session;
+  }
+
   protected boolean hasDataAccessPermission() {
     if (dataAccessPermHandler == null) {
       String dataAccessClassName = null;
@@ -527,6 +537,13 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException("Domain already exist" + modelName.getName(), dae); //$NON-NLS-1$
     } catch(DomainIdNullException dne) {
       throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
+    }
+  }
+  public boolean isAdministrator() {
+    if(getSession() != null) {
+      return SecurityHelper.isPentahoAdministrator(getSession());
+    } else {
+      return false;
     }
   }
 }

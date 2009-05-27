@@ -43,7 +43,7 @@
       <vbox>
         <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
         <hbox>
-        	<textbox id="datasourcename" width="190" multiline="false"/>
+        	<textbox id="datasourcename" width="237" multiline="false"/>
          	<spacer flex="1"/>
         </hbox>
       </vbox>
@@ -59,7 +59,7 @@
 			            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
 			            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
 			          </hbox>
-			          <listbox id="connectionList" rows="6" pen:binding="name"/>
+			          <listbox id="connectionList" rows="7" pen:binding="name"/>
 			        </vbox>
 			        <spacer width="10"/>
 			        <vbox flex="1">

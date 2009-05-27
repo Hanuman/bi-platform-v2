@@ -78,6 +78,9 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
       throws DatasourceServiceException {
     callback.success(SERVICE.saveInlineEtlModel(modelName, overwrite));
   }
+  public void isAdministrator(XulServiceCallback<Boolean> callback) {
+    callback.success(SERVICE.isAdministrator());
+  }
 }
 
   

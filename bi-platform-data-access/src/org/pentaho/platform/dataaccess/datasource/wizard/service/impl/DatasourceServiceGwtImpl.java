@@ -230,4 +230,17 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
+  public void isAdministrator(final XulServiceCallback<Boolean> callback) {
+    SERVICE.isAdministrator(new AsyncCallback<Boolean>() {
+
+      public void onFailure(Throwable arg0) {
+        callback.error("error checking if the user is the administrator: ", arg0); //$NON-NLS-1$
+      }
+
+      public void onSuccess(Boolean arg0) {
+        callback.success(arg0);
+      }
+
+    });
+  }
 }

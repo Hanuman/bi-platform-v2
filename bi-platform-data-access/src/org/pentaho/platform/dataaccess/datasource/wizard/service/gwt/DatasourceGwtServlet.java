@@ -126,6 +126,10 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
     initSession();
     return SERVICE.saveModel(businessData, overwrite);
   }
+  public Boolean isAdministrator() {
+    SERVICE.setSession(PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest()));
+    return SERVICE.isAdministrator();
+  }
 
   @Override
   protected SerializationPolicy doGetSerializationPolicy(HttpServletRequest arg0, String arg1, String arg2) {

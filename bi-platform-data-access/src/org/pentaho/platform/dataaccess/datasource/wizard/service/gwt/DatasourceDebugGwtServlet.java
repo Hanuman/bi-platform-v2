@@ -72,5 +72,9 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
   public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveInlineEtlModel(modelName, overwrite);
   } 
+  
+  public Boolean isAdministrator() {
+    return SERVICE.isAdministrator();
+  }
 
 }

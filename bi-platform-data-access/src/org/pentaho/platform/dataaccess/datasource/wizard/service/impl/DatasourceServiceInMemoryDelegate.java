@@ -431,5 +431,8 @@ public class DatasourceServiceInMemoryDelegate {
       throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
     }
   }
-
+  
+  public Boolean isAdministrator() {
+    return true;
+  }
 }
