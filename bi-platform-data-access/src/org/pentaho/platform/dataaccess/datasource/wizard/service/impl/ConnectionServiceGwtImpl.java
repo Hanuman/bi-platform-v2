@@ -19,9 +19,33 @@ public class ConnectionServiceGwtImpl implements ConnectionService {
 
     SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServiceAsync) GWT.create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
-    String moduleRelativeURL = GWT.getModuleBaseURL() + "ConnectionService"; //$NON-NLS-1$
-    endpoint.setServiceEntryPoint(moduleRelativeURL);
+//    String moduleRelativeURL = GWT.getModuleBaseURL() + "ConnectionService"; //$NON-NLS-1$
+    
+    endpoint.setServiceEntryPoint(getBaseUrl());
 
+  }
+  
+  /** 
+   * Returns the context-aware URL to the rpc service
+   */
+  private static String getBaseUrl() {
+    String moduleUrl = GWT.getModuleBaseURL();
+    
+    //
+    //Set the base url appropriately based on the context in which we are running this client
+    //
+    if(moduleUrl.indexOf("content") > -1) {
+      //we are running the client in the context of a BI Server plugin, so 
+      //point the request to the GWT rpc proxy servlet
+      String baseUrl = moduleUrl.substring(0, moduleUrl.indexOf("content"));
+      //NOTE: the dispatch URL ("connectionService") must match the bean id for 
+      //this service object in your plugin.xml.  "gwtrpc" is the servlet 
+      //that handles plugin gwt rpc requests in the BI Server.
+      return  baseUrl + "gwtrpc/connectionService";
+    }
+    //we are running this client in hosted mode, so point to the servlet 
+    //defined in war/WEB-INF/web.xml
+    return moduleUrl + "ConnectionService";
   }
 
   public ConnectionServiceGwtImpl() {
