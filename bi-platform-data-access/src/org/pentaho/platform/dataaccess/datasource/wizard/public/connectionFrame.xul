@@ -94,7 +94,7 @@
 			  <vbox flex="1">
 			      <label value="${datasourceDialog.UploadFile}"/>
 			      <vbox>
-				      <pen:fileupload action="../../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
+				      <pen:fileupload action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
 			      </vbox>
 				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false"/>
 				  <vbox flex="1">
