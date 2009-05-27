@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceException;
 import org.pentaho.platform.api.repository.datasource.IDatasource;
@@ -28,6 +29,7 @@ public class ConnectionServiceDelegate {
     if (dataAccessPermHandler == null) {
       String dataAccessClassName = null;
       try {
+        //FIXME: we should be using an object factory of some kind here
         IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
         dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
         Class<?> clazz = Class.forName(dataAccessClassName);
