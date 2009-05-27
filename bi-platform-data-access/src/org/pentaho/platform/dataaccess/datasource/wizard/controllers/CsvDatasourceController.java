@@ -4,20 +4,14 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingFactory;
-import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulCheckbox;
-import org.pentaho.ui.xul.components.XulFileDialog;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
-import org.pentaho.ui.xul.components.XulFileDialog.RETURN_CODE;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulTree;
-import org.pentaho.ui.xul.containers.XulVbox;
-import org.pentaho.ui.xul.gwt.tags.GwtFileDialog;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
 public class CsvDatasourceController extends AbstractXulEventHandler {
@@ -31,8 +25,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   BindingFactory bf;
   
-  XulButton okButton = null;
-
   XulTextbox datasourceName = null;
 
   private XulDialog errorDialog;
@@ -45,20 +37,15 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   private XulTree csvDataTable = null;
 
-  private XulFileDialog fileDialog = null;
-
   XulTextbox selectedFile = null;
 
   XulCheckbox headersPresent = null;
-
-  private XulVbox fileUploadVBox = null;
 
   public CsvDatasourceController() {
 
   }
 
   public void init() {
-    fileUploadVBox = (XulVbox) document.getElementById("fileUploadVBox"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
     regenerateModelConfirmationDialog = (XulDialog) document.getElementById("regenerateModelConfirmationDialog"); //$NON-NLS-1$
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
@@ -70,7 +57,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     headersPresent = (XulCheckbox) document.getElementById("headersPresent"); //$NON-NLS-1$
     datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
     selectedFile = (XulTextbox) document.getElementById("selectedFile"); //$NON-NLS-1$
-    okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$    
@@ -82,15 +68,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
-    try {
-      fileDialog = (XulFileDialog) document.createElement("filedialog");
-      fileUploadVBox.addChild(fileDialog);
-      fileUploadVBox.addComponent(fileDialog);
-    } catch (XulException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
   }
 
   public void setBindingFactory(BindingFactory bf) {
@@ -151,36 +128,13 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         .getDatasourceName().length() > 0));
   }
 
-  public void browseFile() {
-    RETURN_CODE returnValue = fileDialog.showOpenDialog();
-    if (returnValue == RETURN_CODE.OK) {
-      datasourceModel.getCsvModel()
-          .setSelectedFile(fileDialog.getFile() != null ? fileDialog.getFile().toString() : "");
-      if(datasourceModel.getCsvModel().getDomain() != null) {
-        regenerateModelConfirmationDialog.show();
-      } else {
-        uploadFile();  
-      }
-    }
+  public void uploadSuccess(String results){
+    datasourceModel.getCsvModel().setSelectedFile(results);
+    generateModel();    
   }
-
-  private void uploadFile() {
-    try {
-
-      service.uploadFile(((GwtFileDialog) fileDialog).getUploadForm(), new XulServiceCallback<String>() {
-        public void error(String message, Throwable error) {
-          openErrorDialog("Upload Failed", error.getLocalizedMessage());
-        }
-
-        public void success(String filePath) {
-          datasourceModel.getCsvModel().setSelectedFile(filePath);
-          okButton.setDisabled(false);
-          generateModel();
-        }
-      });
-    } catch (DatasourceServiceException e) {
-      openErrorDialog("Upload Failed", e.getLocalizedMessage());
-    }
+  
+  public void uploadFailure(Throwable t){ 
+    openErrorDialog("Upload Failed", t.getLocalizedMessage());
   }
 
   public void openErrorDialog(String title, String message) {

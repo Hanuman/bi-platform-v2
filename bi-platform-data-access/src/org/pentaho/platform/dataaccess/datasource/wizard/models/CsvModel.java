@@ -10,6 +10,7 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class CsvModel extends XulEventSourceAdapter{
+  private CsvModelValidationListenerCollection csvModelValidationListeners;
   private boolean validated;
   private Domain domain;
   private boolean headersPresent = false;
@@ -64,8 +65,10 @@ public class CsvModel extends XulEventSourceAdapter{
 
   public void validate() {
     if (getSelectedFile() != null && getSelectedFile().length() > 0) {
+      fireCsvModelValid();
       this.setValidated(true);
     } else {
+      fireCsvModelInValid();
       this.setValidated(false);
     }
   }
@@ -117,4 +120,35 @@ public class CsvModel extends XulEventSourceAdapter{
     setSelectedFile(null);
   }
 
+  public void addCsvModelValidationListener(ICsvModelValidationListener listener) {
+    if (csvModelValidationListeners == null) {
+      csvModelValidationListeners = new CsvModelValidationListenerCollection();
+    }
+    csvModelValidationListeners.add(listener);
+  }
+
+  public void removeCsvModelValidationListener(IRelationalModelValidationListener listener) {
+    if (csvModelValidationListeners != null) {
+      csvModelValidationListeners.remove(listener);
+    }
+  }
+
+  /**
+   * Fire all current {@link ICsvModelValidationListener}.
+   */
+  void fireCsvModelValid() {
+
+    if (csvModelValidationListeners != null) {
+      csvModelValidationListeners.fireCsvModelValid();
+    }
+  }
+  /**
+   * Fire all current {@link ICsvModelValidationListener}.
+   */
+  void fireCsvModelInValid() {
+
+    if (csvModelValidationListeners != null) {
+      csvModelValidationListeners.fireCsvModelInValid();
+    }
+  }
 }

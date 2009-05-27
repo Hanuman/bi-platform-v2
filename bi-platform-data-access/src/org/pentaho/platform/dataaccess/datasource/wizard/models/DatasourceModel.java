@@ -6,7 +6,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
-public class DatasourceModel extends XulEventSourceAdapter{
+public class DatasourceModel extends XulEventSourceAdapter implements IRelationalModelValidationListener, ICsvModelValidationListener{
   private boolean validated;
   private String datasourceName;
   private DatasourceType datasourceType = DatasourceType.NONE;
@@ -15,6 +15,8 @@ public class DatasourceModel extends XulEventSourceAdapter{
   public DatasourceModel() {
     relationalModel = new RelationalModel();
     csvModel = new CsvModel();
+    relationalModel.addRelationalModelValidationListener(this);
+    csvModel.addCsvModelValidationListener(this);
   }
 
   public RelationalModel getRelationalModel() {
@@ -50,7 +52,7 @@ public class DatasourceModel extends XulEventSourceAdapter{
   }
 
   private void setValidated(boolean validated) {
-    boolean prevVal = validated;
+    boolean prevVal = this.validated;
     this.validated = validated;
     this.firePropertyChange("validated", prevVal, validated);
   }
@@ -100,5 +102,30 @@ public class DatasourceModel extends XulEventSourceAdapter{
     }
     return datasource;
   }
+
+  public void onRelationalModelInValid() {
+    if(DatasourceType.SQL == getDatasourceType()) {
+      setValidated(false);
+    }
+  }
+
+  public void onRelationalModelValid() {
+    if(DatasourceType.SQL == getDatasourceType()) {
+      setValidated(datasourceName != null && datasourceName.length() > 0 && true);
+    }
+  }
+
+  public void onCsvModelInValid() {
+    if(DatasourceType.CSV == getDatasourceType()) {
+      setValidated(false);
+    }
+  }
+
+  public void onCsvModelValid() {
+    if(DatasourceType.CSV == getDatasourceType()) {
+      setValidated(datasourceName != null && datasourceName.length() > 0 && true);
+    }
+  }
+
 
 }

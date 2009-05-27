@@ -199,31 +199,6 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  @SuppressWarnings("deprecation")
-  public void uploadFile(FormPanel uploadForm, final XulServiceCallback<String> callback) throws DatasourceServiceException {
-    uploadForm.setAction(GWT.getModuleBaseURL() + "UploadService"); //$NON-NLS-1$
-    uploadForm.submit();
-    uploadForm.addFormHandler(new FormHandler() {
-      public void onSubmit(FormSubmitEvent event) {
-      }
-
-      public void onSubmitComplete(FormSubmitCompleteEvent event) {
-        String results = event.getResults();
-        if(results != null && results.indexOf(ERROR) >= 0) {
-         if(results.indexOf(ERROR) + ERROR.length() < results.length()) {
-           callback.error(results.substring(results.indexOf(ERROR) + ERROR.length())
-               , new DatasourceServiceException(results.substring(results.indexOf(ERROR) + ERROR.length())));  
-         } else {
-           callback.error(results, new DatasourceServiceException(results));
-         }
-        } else {
-          String result = event.getResults().replaceAll("\\<.*?>","");
-          callback.success(result);          
-        }
-      }
-    });
-  }
-
   public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
       String delimeter, String enclosure, final XulServiceCallback<Domain> callback) throws DatasourceServiceException {
     SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<Domain>() {

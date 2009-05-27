@@ -56,7 +56,6 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       outputStream.write(fileContents);
       outputStream.flush();
       outputStream.close();
-      System.out.println(new String(fileContents));
       response.getWriter().write(new String("system/metadata/"+filename));
       } catch(Exception e) {
         response.getWriter().write("ERROR:" + e.getLocalizedMessage());

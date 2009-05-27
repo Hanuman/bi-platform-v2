@@ -8,6 +8,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceDialogListener;
@@ -86,8 +87,8 @@ public class DatasourceController extends AbstractXulEventHandler {
     okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     cancelButton = (XulButton) document.getElementById("datasourceDialog_cancel"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.ONE_WAY);
+    final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
-
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
       @Override
@@ -102,13 +103,38 @@ public class DatasourceController extends AbstractXulEventHandler {
 
     };
 
-    bf.setBindingType(Binding.Type.ONE_WAY);
-    final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
+    BindingConvertor<DatasourceType, Integer> deckIndexConvertor = new BindingConvertor<DatasourceType, Integer>() {
+
+      @Override
+      public Integer sourceToTarget(DatasourceType value) {
+        Integer returnValue = null;
+        if(DatasourceType.SQL == value) {
+          returnValue = 0;
+        } else if(DatasourceType.CSV == value) {
+          returnValue = 1;
+        }
+        return returnValue;
+      }
+
+      @Override
+      public DatasourceType targetToSource(Integer value) {
+        DatasourceType type = null;
+        if(value == 0) {
+          type = DatasourceType.SQL;
+        } else if(value == 1) {
+          type = DatasourceType.CSV;
+        }
+        return type;
+      }
+    };
+    bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+
 
     okButton.setDisabled(true);
     // Setting the Button Panel background to white
     buttonBox.setBgcolor("#FFFFFF");
-    datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
+    datasourceModel.setDatasourceType(DatasourceType.SQL);
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
       // call initializes the entire UI.
@@ -158,9 +184,9 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   public void saveModel() {
 
-    if (RELATIONAL_DECK == datasourceDeck.getSelectedIndex()) {
+    if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
       saveRelationalModel();
-    } else if (CSV_DECK == datasourceDeck.getSelectedIndex()) {
+    } else if (datasourceModel.getDatasourceType() == DatasourceType.CSV) {
       saveCsvModel();
     }
   }

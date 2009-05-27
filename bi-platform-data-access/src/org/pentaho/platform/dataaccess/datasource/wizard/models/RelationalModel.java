@@ -13,7 +13,9 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
+
 public class RelationalModel extends XulEventSourceAdapter{
+  private RelationalModelValidationListenerCollection relationalModelValidationListeners;
   private boolean validated;
   public static enum EditType {ADD, EDIT};
   private IConnection selectedConnection;
@@ -143,8 +145,10 @@ public class RelationalModel extends XulEventSourceAdapter{
     if ((getQuery() != null && getQuery().length() > 0)
         && (getSelectedConnection() != null)) {
       this.setValidated(true);
+      fireRelationalModelValid();
     } else {
       this.setValidated(false);
+      fireRelationalModelInValid();
     }
   }
 
@@ -232,6 +236,39 @@ public class RelationalModel extends XulEventSourceAdapter{
       List<IConnection> previousValue = getPreviousValue();
       connections.remove(i);
       this.firePropertyChange("connections", previousValue, connections); //$NON-NLS-1$
+    }
+  }
+  
+  public void addRelationalModelValidationListener(IRelationalModelValidationListener listener) {
+    if (relationalModelValidationListeners == null) {
+      relationalModelValidationListeners = new RelationalModelValidationListenerCollection();
+    }
+    relationalModelValidationListeners.add(listener);
+  }
+
+  public void removeRelationalListener(IRelationalModelValidationListener listener) {
+    if (relationalModelValidationListeners != null) {
+      relationalModelValidationListeners.remove(listener);
+    }
+  }
+
+  /**
+   * Fire all current {@link IRelationalModelValidationListener}.
+   */
+  void fireRelationalModelValid() {
+
+    if (relationalModelValidationListeners != null) {
+      relationalModelValidationListeners.fireRelationalModelValid();
+    }
+  }
+  
+  /**
+   * Fire all current {@link IRelationalModelValidationListener}.
+   */
+  void fireRelationalModelInValid() {
+
+    if (relationalModelValidationListeners != null) {
+      relationalModelValidationListeners.fireRelationalModelInValid();
     }
   }
 }

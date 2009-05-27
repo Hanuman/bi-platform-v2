@@ -82,14 +82,11 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   private XulButton applyButton = null;
 
-  XulButton okButton = null;
-
   public RelationalDatasourceController() {
 
   }
 
   public void init() {
-    okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     applyButton = (XulButton) document.getElementById("apply"); //$NON-NLS-1$
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
@@ -219,7 +216,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       if (validateInputs()) {
         datasourceModel.getRelationalModel().setBusinessData(null);
         query.setDisabled(true);
-        okButton.setDisabled(false);
         try {
           showWaitingDialog("Generating Metadata Model", "Please wait ....");
           service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel().getSelectedConnection(),

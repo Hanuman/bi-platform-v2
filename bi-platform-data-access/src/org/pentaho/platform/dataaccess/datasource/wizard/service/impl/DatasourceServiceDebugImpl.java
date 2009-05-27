@@ -69,20 +69,6 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
     callback.success(SERVICE.saveModel(businessData, overwrite));
   }
 
-  public void uploadFile(FormPanel uploadForm, final XulServiceCallback<String> callback)  throws DatasourceServiceException {
-    uploadForm.setAction(GWT.getModuleBaseURL() + "UploadService");
-    uploadForm.submit();
-    uploadForm.addFormHandler(new FormHandler() {
-      public void onSubmit(FormSubmitEvent event) {
-      }
-
-      public void onSubmitComplete(FormSubmitCompleteEvent event) {
-        Window.alert(event.getResults());
-        callback.success(event.getResults());
-      }
-    });
-}
-
   public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
       String delimeter, String enclosure, XulServiceCallback<Domain> callback) throws DatasourceServiceException {
     callback.success(SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure));
