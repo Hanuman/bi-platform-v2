@@ -77,7 +77,10 @@ public class SwingDatasourceEditor {
           datasourceController.setConnectionModel(connectionModel);
           connectionController.setDatasourceModel(datasourceModel);
           connectionController.setConnectionModel(connectionModel);
-
+          csvDatasourceController.setDatasourceModel(datasourceModel);
+          relationalDatasourceController.setConnectionModel(connectionModel);
+          relationalDatasourceController.setDatasourceModel(datasourceModel);
+          
           try{
             runner.initialize();
             runner.start();
