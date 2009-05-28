@@ -14,7 +14,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
 public class ConnectionServiceDelegate {
@@ -45,7 +45,7 @@ public class ConnectionServiceDelegate {
 
       
     }
-    return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(SessionHandler.getSession());
+    return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
   }
   
   public ConnectionServiceDelegate(IDatasourceMgmtService datasourceMgmtSvc) {

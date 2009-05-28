@@ -46,7 +46,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 import org.pentaho.pms.schema.v3.model.Attribute;
@@ -82,7 +82,7 @@ public class ConnectionGwtServlet extends RemoteServiceServlet implements Connec
 
   public void initSession() {
     IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest());
-    SessionHandler.setSession(userSession);
+    PentahoSessionHolder.setSession(userSession);
   }
   
   public List<IConnection> getConnections() throws ConnectionServiceException {
