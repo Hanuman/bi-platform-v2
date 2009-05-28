@@ -49,7 +49,7 @@ public class PentahoHttpRequestListener implements ServletRequestListener {
       return;
     }
     
-    HttpServletRequest request = (HttpServletRequest)sre;
+    HttpServletRequest request = (HttpServletRequest)sre.getServletRequest();
     IPentahoSession session = PentahoHttpSessionHelper.getPentahoSession(request);
     
     if(logger.isTraceEnabled()) {
