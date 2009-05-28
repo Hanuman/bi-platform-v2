@@ -68,6 +68,7 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
   }
   public Boolean isAdministrator() {
     SERVICE.setSession(PentahoSessionHolder.getSession());
+    return SERVICE.isAdministrator();
   }
 
 //  @Override
