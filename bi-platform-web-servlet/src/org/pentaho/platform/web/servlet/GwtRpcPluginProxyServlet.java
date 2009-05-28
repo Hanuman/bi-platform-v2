@@ -28,10 +28,12 @@ import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.util.web.HttpUtil;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -159,7 +161,11 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
         is = getServletContext().getResourceAsStream(contextPath+serializationPolicyFilePath);
       }
       if(is == null) {
-        log(contextPath+serializationPolicyFilePath + " didn't work, giving up");
+        log(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
+        String fileContent = HttpUtil.getURLContent(contextPath+serializationPolicyFilePath);
+        if(fileContent != null) {
+          is = IOUtils.toInputStream(fileContent);
+        }
       }
       try {
         if (is != null) {
