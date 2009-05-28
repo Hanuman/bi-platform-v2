@@ -542,7 +542,7 @@
 		<servlet-class>org.pentaho.mantle.login.server.MantleLoginServlet</servlet-class>
 	</servlet>
 
-	<servlet>
+	<!-- servlet>
 		<servlet-name>ConnectionServlet</servlet-name>
 		<servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServlet</servlet-class>
 	</servlet>
@@ -550,7 +550,7 @@
 	<servlet>
 		<servlet-name>DatasourceServlet</servlet-name>
 		<servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtServlet</servlet-class>
-	</servlet>
+	</servlet-->
 
   <!-- insert additional servlets -->
 
@@ -856,7 +856,7 @@
 		<url-pattern>/NewAnalysisView</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
+	<!-- servlet-mapping>
 		<servlet-name>ConnectionServlet</servlet-name>
 		<url-pattern>/content/data-access/resources/gwt/ConnectionService</url-pattern>
 	</servlet-mapping>
@@ -864,7 +864,7 @@
 	<servlet-mapping>
 		<servlet-name>DatasourceServlet</servlet-name>
 		<url-pattern>/content/data-access/resources/gwt/DatasourceService</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping-->
 
 	<!-- insert additional servlet mappings -->
 
