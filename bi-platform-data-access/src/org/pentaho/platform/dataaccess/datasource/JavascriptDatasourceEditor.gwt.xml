@@ -24,6 +24,7 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/SwingDatasourceEditor*"/>
         <exclude name="**/ConnectionServiceDelegate*"/>
         <exclude name="**/ConnectionServiceBeanImpl*"/>
+        <exclude name="**/DatasourceServiceBeanImpl*"/>
         <exclude name="**/DatasourceServiceDelegate*"/>
         <exclude name="**/ConnectionServiceInMemoryDelegate*"/>
         <exclude name="**/DatasourceServiceInMemoryDelegate*"/>                   

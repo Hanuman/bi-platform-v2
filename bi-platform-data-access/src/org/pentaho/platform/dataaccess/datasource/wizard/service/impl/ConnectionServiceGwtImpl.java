@@ -19,8 +19,6 @@ public class ConnectionServiceGwtImpl implements ConnectionService {
 
     SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServiceAsync) GWT.create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
-//    String moduleRelativeURL = GWT.getModuleBaseURL() + "ConnectionService"; //$NON-NLS-1$
-    
     endpoint.setServiceEntryPoint(getBaseUrl());
 
   }

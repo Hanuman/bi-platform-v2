@@ -7,4 +7,5 @@
    </static-paths>
    
    <bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl"/>
+   <bean id="datasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
 </plugin>

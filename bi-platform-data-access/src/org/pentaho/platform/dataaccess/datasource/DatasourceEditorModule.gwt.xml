@@ -20,6 +20,8 @@
         <exclude name="**/SwingDatasourceEditor*"/>
         <exclude name="**/ConnectionServiceDelegate*"/>
         <exclude name="**/DatasourceServiceDelegate*"/>
+        <exclude name="**/ConnectionServiceBeanImpl*"/>
+        <exclude name="**/DatasourceServiceBeanImpl*"/>
         <exclude name="**/ConnectionServiceInMemoryDelegate*"/>
         <exclude name="**/DatasourceServiceInMemoryDelegate*"/>        
         <exclude name="**/ConnectionGwtServlet*"/>
