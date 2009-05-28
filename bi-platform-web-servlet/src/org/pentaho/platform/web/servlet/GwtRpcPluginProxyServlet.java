@@ -155,8 +155,11 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
         is = getServletContext().getResourceAsStream(serializationPolicyFilePath.substring(1));
       }
       if(is == null) {
-        log(serializationPolicyFilePath.substring(1) + " didn't work, giving up");
-        is = getServletContext().getResourceAsStream(contextPath+serializationPolicyFilePath.substring(1));
+        log(serializationPolicyFilePath.substring(1) + " didn't work");
+        is = getServletContext().getResourceAsStream(contextPath+serializationPolicyFilePath);
+      }
+      if(is == null) {
+        log(contextPath+serializationPolicyFilePath + " didn't work, giving up");
       }
       try {
         if (is != null) {
