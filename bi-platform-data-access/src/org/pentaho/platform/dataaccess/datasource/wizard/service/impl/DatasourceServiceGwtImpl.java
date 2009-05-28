@@ -200,14 +200,14 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
   }
 
   public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
-      String delimeter, String enclosure, final XulServiceCallback<Domain> callback) throws DatasourceServiceException {
-    SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<Domain>() {
+      String delimeter, String enclosure, final XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
+    SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error generating the inline etl model: ", arg0);//$NON-NLS-1$
       }
 
-      public void onSuccess(Domain arg0) {
+      public void onSuccess(BusinessData arg0) {
         callback.success(arg0);
       }
 

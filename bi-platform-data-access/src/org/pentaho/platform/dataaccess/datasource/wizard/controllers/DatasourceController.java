@@ -109,9 +109,9 @@ public class DatasourceController extends AbstractXulEventHandler {
       @Override
       public Integer sourceToTarget(DatasourceType value) {
         Integer returnValue = null;
-        if(DatasourceType.SQL == value) {
+        if (DatasourceType.SQL == value) {
           returnValue = 0;
-        } else if(DatasourceType.CSV == value) {
+        } else if (DatasourceType.CSV == value) {
           returnValue = 1;
         }
         return returnValue;
@@ -120,16 +120,15 @@ public class DatasourceController extends AbstractXulEventHandler {
       @Override
       public DatasourceType targetToSource(Integer value) {
         DatasourceType type = null;
-        if(value == 0) {
+        if (value == 0) {
           type = DatasourceType.SQL;
-        } else if(value == 1) {
+        } else if (value == 1) {
           type = DatasourceType.CSV;
         }
         return type;
       }
     };
     bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-
 
     okButton.setDisabled(true);
     // Setting the Button Panel background to white
@@ -190,25 +189,35 @@ public class DatasourceController extends AbstractXulEventHandler {
       saveCsvModel();
     }
   }
+
   private void saveCsvModel() {
     List<CsvModelDataRow> dataRows = datasourceModel.getCsvModel().getDataRows();
     try {
       // Get the domain from the business data
-      Domain domain = datasourceModel.getCsvModel().getDomain();
-      List<LogicalModel> logicalModels = domain.getLogicalModels();
-      for (LogicalModel logicalModel : logicalModels) {
-        List<Category> categories = logicalModel.getCategories();
-        for (Category category : categories) {
-          List<LogicalColumn> logicalColumns = category.getLogicalColumns();
-          int i = 0;
-          for (LogicalColumn logicalColumn : logicalColumns) {
-            CsvModelDataRow row = dataRows.get(i++);
-            logicalColumn.setDataType(row.getSelectedDataType());
-            logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+      BusinessData businessData = datasourceModel.getCsvModel().getBusinessData();
+      if (businessData != null) {
+        Domain domain = businessData.getDomain();
+        if (domain != null) {
+          List<LogicalModel> logicalModels = domain.getLogicalModels();
+          for (LogicalModel logicalModel : logicalModels) {
+            List<Category> categories = logicalModel.getCategories();
+            for (Category category : categories) {
+              List<LogicalColumn> logicalColumns = category.getLogicalColumns();
+              int i = 0;
+              for (LogicalColumn logicalColumn : logicalColumns) {
+                CsvModelDataRow row = dataRows.get(i++);
+                logicalColumn.setDataType(row.getSelectedDataType());
+                logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+              }
+            }
           }
+          saveCsvModel(domain, false);
+        } else {
+          openErrorDialog("Error occurred", "Domain model is null. There is nothing to save");
         }
+      } else {
+        openErrorDialog("Error occurred", "Business data is null. There is nothing to save");
       }
-      saveCsvModel(domain, false);
     } catch (Exception xe) {
       openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
           + xe.getLocalizedMessage());
@@ -224,21 +233,30 @@ public class DatasourceController extends AbstractXulEventHandler {
     try {
       // Get the domain from the business data
       BusinessData businessData = datasourceModel.getRelationalModel().getBusinessData();
-      Domain domain = businessData.getDomain();
-      List<LogicalModel> logicalModels = domain.getLogicalModels();
-      for (LogicalModel logicalModel : logicalModels) {
-        List<Category> categories = logicalModel.getCategories();
-        for (Category category : categories) {
-          List<LogicalColumn> logicalColumns = category.getLogicalColumns();
-          int i = 0;
-          for (LogicalColumn logicalColumn : logicalColumns) {
-            ModelDataRow row = dataRows.get(i++);
-            logicalColumn.setDataType(row.getSelectedDataType());
-            logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+      if (businessData != null) {
+        Domain domain = businessData.getDomain();
+        if (domain != null) {
+          List<LogicalModel> logicalModels = domain.getLogicalModels();
+          for (LogicalModel logicalModel : logicalModels) {
+            List<Category> categories = logicalModel.getCategories();
+            for (Category category : categories) {
+              List<LogicalColumn> logicalColumns = category.getLogicalColumns();
+              int i = 0;
+              for (LogicalColumn logicalColumn : logicalColumns) {
+                ModelDataRow row = dataRows.get(i++);
+                logicalColumn.setDataType(row.getSelectedDataType());
+                logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+              }
+            }
           }
+          saveRelationalModel(businessData, false);
+        } else {
+          openErrorDialog("Error occurred", "Domain model is null. There is nothing to save");
         }
+      } else {
+        openErrorDialog("Error occurred", "Business data is null. There is nothing to save");
       }
-      saveRelationalModel(businessData, false);
+
     } catch (Exception xe) {
       openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
           + xe.getLocalizedMessage());

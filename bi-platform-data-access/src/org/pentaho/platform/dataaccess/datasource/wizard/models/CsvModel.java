@@ -7,12 +7,13 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class CsvModel extends XulEventSourceAdapter{
   private CsvModelValidationListenerCollection csvModelValidationListeners;
   private boolean validated;
-  private Domain domain;
+  private BusinessData businessData;
   private boolean headersPresent = false;
   private List<CsvModelDataRow> dataRows = new ArrayList<CsvModelDataRow>();
   private String selectedFile = null;
@@ -20,13 +21,13 @@ public class CsvModel extends XulEventSourceAdapter{
   public CsvModel() {
   }
 
-  public Domain getDomain() {
-    return domain;
+  public BusinessData getBusinessData() {
+    return businessData;
   }
 
-  public void setDomain(Domain domain) {
-    this.domain = domain;
-    setModelData(domain);  
+  public void setBusinessData(BusinessData businessData) {
+    this.businessData = businessData;
+    setModelData(businessData);  
   }
 
   public boolean isHeadersPresent() {
@@ -73,15 +74,18 @@ public class CsvModel extends XulEventSourceAdapter{
     }
   }
 
-  public void setModelData(Domain domain) {
-    if (domain != null) {
+  public void setModelData(BusinessData businessData) {
+    if (businessData != null) {
+      Domain domain = businessData.getDomain();
+      List<List<String>> data = businessData.getData();
       List<LogicalModel> logicalModels = domain.getLogicalModels();
+      int columnNumber = 0;
       for (LogicalModel logicalModel : logicalModels) {
         List<Category> categories = logicalModel.getCategories();
         for (Category category : categories) {
           List<LogicalColumn> logicalColumns = category.getLogicalColumns();
           for (LogicalColumn logicalColumn : logicalColumns) {
-            addCsvModelDataRow(logicalColumn, domain.getLocales().get(0).getCode());
+            addCsvModelDataRow(logicalColumn, getColumnData(columnNumber++, data), domain.getLocales().get(0).getCode());
           }
         }
       }
@@ -95,11 +99,11 @@ public class CsvModel extends XulEventSourceAdapter{
     }
   }
 
-  public void addCsvModelDataRow(LogicalColumn column, String locale) {
+  public void addCsvModelDataRow(LogicalColumn column, List<String> columnData,String locale) {
     if (dataRows == null) {
       dataRows = new ArrayList<CsvModelDataRow>();
     }
-    this.dataRows.add(new CsvModelDataRow(column, locale));
+    this.dataRows.add(new CsvModelDataRow(column, columnData, locale));
   }
 
 
@@ -111,11 +115,20 @@ public class CsvModel extends XulEventSourceAdapter{
     this.dataRows = dataRows;
   }
 
+  private List<String> getColumnData(int columnNumber, List<List<String>> data) {
+    List<String> column = new ArrayList<String>();
+    for (List<String> row : data) {
+      if (columnNumber < row.size()) {
+        column.add(row.get(columnNumber));
+      }
+    }
+    return column;
+  }
   /*
    * Clears out the model
    */
   public void clearModel() {
-    setDomain(null);
+    setBusinessData(null);
     setDataRows(null);
     setSelectedFile(null);
   }

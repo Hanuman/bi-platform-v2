@@ -229,7 +229,7 @@ public class DatasourceGwtServlet extends RemoteServiceServlet implements Dataso
     return pojo;
   }
 
-  public Domain generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
+  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
       String delimeter, String enclosure) throws DatasourceServiceException {
     initSession();
     return SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);

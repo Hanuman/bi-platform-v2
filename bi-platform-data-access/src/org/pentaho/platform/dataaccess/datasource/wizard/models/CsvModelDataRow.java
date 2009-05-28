@@ -12,7 +12,8 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 public class CsvModelDataRow extends XulEventSourceAdapter{
 
   
-  private String columnName;
+  private String columnName, sampleData;
+  private List<String> sampleDataList;
   private List<DataType> dataTypes = new ArrayList<DataType>();
   private DataType selectedDataType;
   private String locale;
@@ -20,12 +21,15 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
   //private DataFormatType selectedDataFormatType;
   
   // Commenting out data format for now
- public CsvModelDataRow(LogicalColumn col,String locale) {
+ public CsvModelDataRow(LogicalColumn col, List<String> columnData,String locale) {
     this.selectedDataType = col.getDataType();
     //this.selectedDataFormatType = DataFormatType.CURRENCY;
     this.columnName = col.getName().getString(locale);
+    if(columnData.size() > 0) {
+      this.sampleData = columnData.get(0);
+      this.sampleDataList = columnData;
+    }    
   }
-
 
   public String getColumnName() {
     return columnName;
@@ -36,6 +40,14 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
     this.columnName = columnName;
   }
 
+  public String getSampleData() {
+    return sampleData;
+  }
+
+
+  public void setSampleData(String sampleData) {
+    this.sampleData = sampleData;
+  }
 
   public List<DataType> getDataTypes() {
     return dataTypes;
@@ -44,6 +56,15 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
 
   public void setDataTypes(List<DataType> dataTypes) {
     this.dataTypes = dataTypes;
+  }
+
+  public List<String> getSampleDataList() {
+    return sampleDataList;
+  }
+
+
+  public void setSampleDataList(List<String> sampleDataList) {
+    this.sampleDataList = sampleDataList;
   }
 
   public DataType getSelectedDataType() {

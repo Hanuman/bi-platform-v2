@@ -96,7 +96,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
       datasource.setQuery(getRelationalModel().getQuery());
       datasource.setSelectedConnection(getRelationalModel().getSelectedConnection());
     } else {
-      datasource.setBusinessData(new BusinessData(getCsvModel().getDomain(), null));
+      datasource.setBusinessData(getCsvModel().getBusinessData());
       datasource.setSelectedFile(getCsvModel().getSelectedFile());
       datasource.setHeadersPresent(getCsvModel().isHeadersPresent());
     }

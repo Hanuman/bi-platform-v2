@@ -70,7 +70,7 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
   }
 
   public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
-      String delimeter, String enclosure, XulServiceCallback<Domain> callback) throws DatasourceServiceException {
+      String delimeter, String enclosure, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
     callback.success(SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure));
   }
 

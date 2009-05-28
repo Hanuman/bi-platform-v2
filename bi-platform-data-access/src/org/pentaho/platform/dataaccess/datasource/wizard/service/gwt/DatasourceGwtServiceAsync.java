@@ -24,7 +24,7 @@ public interface DatasourceGwtServiceAsync {
   void generateModel(String modelName, IConnection connection, String query, String previewLimit, AsyncCallback<BusinessData> callback) throws DatasourceServiceException;
   void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, AsyncCallback<BusinessData> callback) throws DatasourceServiceException;
   void saveModel(BusinessData businessData, Boolean overwrite, AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
-  void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<Domain> callback) throws DatasourceServiceException ;
+  void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
   void isAdministrator(AsyncCallback<Boolean> callback);
   void gwtWorkaround (BogoPojo pojo, AsyncCallback<BogoPojo> callback);

@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -58,9 +59,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
     selectedFile = (XulTextbox) document.getElementById("selectedFile"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
+    bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
-    bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$    
-    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       domainBinding.fireSourceChanged();
 
@@ -94,21 +94,22 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     if (validateIputForCsv()) {
       try {
         // Clear out the model for data
-        datasourceModel.getCsvModel().setDomain(null);
+        datasourceModel.getCsvModel().setBusinessData(null);
         showWaitingDialog("Generating Metadata Model", "Please wait ....");
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
-            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), "\"", ",",
-            new XulServiceCallback<Domain>() {
+            // TODO Binding for the check box is not working. Need to investigate
+            .getSelectedFile(), /*datasourceModel.getCsvModel().isHeadersPresent()*/ headersPresent.isChecked(), "\"", ",",
+            new XulServiceCallback<BusinessData>() {
 
               public void error(String message, Throwable error) {
                 hideWaitingDialog();
                 openErrorDialog("Error occurred", "Unable to generate the model. " + error.getLocalizedMessage());
               }
 
-              public void success(Domain csvDomain) {
+              public void success(BusinessData businessData) {
                 try {
                   hideWaitingDialog();
-                  datasourceModel.getCsvModel().setDomain(csvDomain);
+                  datasourceModel.getCsvModel().setBusinessData(businessData);
                 } catch (Exception xe) {
                   xe.printStackTrace();
                 }

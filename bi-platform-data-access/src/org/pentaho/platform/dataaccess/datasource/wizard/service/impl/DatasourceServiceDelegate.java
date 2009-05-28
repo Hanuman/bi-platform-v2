@@ -35,6 +35,7 @@ import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.webservices.SessionHandler;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
+import org.pentaho.pms.service.CsvModelManagementService;
 import org.pentaho.pms.service.IModelManagementService;
 import org.pentaho.pms.service.IModelQueryService;
 import org.pentaho.pms.service.JDBCModelManagementService;
@@ -518,10 +519,12 @@ public class DatasourceServiceDelegate {
     }
   }
 
-  public Domain generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
+  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
     try  {
-    InlineEtlModelGenerator generator = new InlineEtlModelGenerator(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
-    return generator.generate();
+    CsvModelManagementService service = new CsvModelManagementService();
+    Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+    List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
+    return  new BusinessData(domain, data);
     } catch(Exception e) {
       throw new DatasourceServiceException("Unable to generate the model" + e.getLocalizedMessage());
     }
