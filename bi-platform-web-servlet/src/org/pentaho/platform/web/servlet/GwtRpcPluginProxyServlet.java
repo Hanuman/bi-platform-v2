@@ -168,6 +168,13 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
           is = IOUtils.toInputStream(fileContent);
         }
       }
+      if(is == null) {
+        System.err.println("trying to fetch via http: "+moduleBaseURL+serializationPolicyFilePath+strongName);
+        String fileContent = HttpUtil.getURLContent(moduleBaseURL+serializationPolicyFilePath+strongName);
+          if(fileContent != null) {
+            is = IOUtils.toInputStream(fileContent);
+          }
+      }
       try {
         if (is != null) {
           try {
