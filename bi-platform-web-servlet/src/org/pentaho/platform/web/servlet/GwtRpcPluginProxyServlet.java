@@ -146,23 +146,23 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       String serializationPolicyFilePath = SerializationPolicyLoader.getSerializationPolicyFileName(contextRelativePath
           + strongName);
 
-      log("trying "+serializationPolicyFilePath);
+      System.err.println("trying "+serializationPolicyFilePath);
       // Open the RPC resource file read its contents.
       InputStream is = getServletContext().getResourceAsStream(serializationPolicyFilePath);
       if(is == null) {
-        log(serializationPolicyFilePath + " didn't work");
+        System.err.println(serializationPolicyFilePath + " didn't work");
         is = getServletContext().getResourceAsStream(".."+serializationPolicyFilePath);
       }
       if(is == null) {
-        log(".."+serializationPolicyFilePath + " didn't work");
+        System.err.println(".."+serializationPolicyFilePath + " didn't work");
         is = getServletContext().getResourceAsStream(serializationPolicyFilePath.substring(1));
       }
       if(is == null) {
-        log(serializationPolicyFilePath.substring(1) + " didn't work");
+        System.err.println(serializationPolicyFilePath.substring(1) + " didn't work");
         is = getServletContext().getResourceAsStream(contextPath+serializationPolicyFilePath);
       }
       if(is == null) {
-        log(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
+        System.err.println(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
         String fileContent = HttpUtil.getURLContent(contextPath+serializationPolicyFilePath);
         if(fileContent != null) {
           is = IOUtils.toInputStream(fileContent);
