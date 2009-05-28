@@ -10,7 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 
 public class DatasourceServiceBeanImpl implements DatasourceGwtService {
@@ -21,12 +21,6 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
     SERVICE = new DatasourceServiceDelegate();
   }
 
-//  public void initSession() {
-//    IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest());
-//    IPentahoSession session = SessionHandler.getSession();
-//    SessionHandler.setSession(userSession);
-//  }
-  
   public Boolean addDatasource(IDatasource datasource) {
     return SERVICE.addDatasource(datasource);
   }
@@ -73,8 +67,7 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
     return SERVICE.saveModel(businessData, overwrite);
   }
   public Boolean isAdministrator() {
-    SERVICE.setSession(SessionHandler.getSession());
-    return SERVICE.isAdministrator();
+    SERVICE.setSession(PentahoSessionHolder.getSession());
   }
 
 //  @Override

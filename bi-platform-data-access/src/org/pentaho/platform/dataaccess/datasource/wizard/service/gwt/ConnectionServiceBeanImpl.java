@@ -8,7 +8,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDelegate;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 
 public class ConnectionServiceBeanImpl implements ConnectionGwtService {
 
@@ -18,8 +18,7 @@ public class ConnectionServiceBeanImpl implements ConnectionGwtService {
   private ConnectionServiceDelegate getService(){
     if(SERVICE == null){
       try {
-//        IPentahoSession session = PentahoHttpSessionHelper.getPentahoSession(PentahoHttpSessionHelper.this.getThreadLocalRequest());
-        IPentahoSession session = SessionHandler.getSession();
+        IPentahoSession session = PentahoSessionHolder.getSession();
         
         datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class, session); //$NON-NLS-1$
         SERVICE = new ConnectionServiceDelegate(datasourceMgmtSvc);
@@ -32,11 +31,6 @@ public class ConnectionServiceBeanImpl implements ConnectionGwtService {
     return SERVICE;
   }
 
-//  public void initSession() {
-//    IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(getThreadLocalRequest());
-//    SessionHandler.setSession(userSession);
-//  }
-  
   public List<IConnection> getConnections() throws ConnectionServiceException {
     return getService().getConnections();
   }
