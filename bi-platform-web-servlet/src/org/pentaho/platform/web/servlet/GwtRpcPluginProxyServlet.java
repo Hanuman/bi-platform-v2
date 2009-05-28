@@ -146,6 +146,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       String serializationPolicyFilePath = SerializationPolicyLoader.getSerializationPolicyFileName(contextRelativePath
           + strongName);
 
+      log("trying "+serializationPolicyFilePath);
       // Open the RPC resource file read its contents.
       InputStream is = getServletContext().getResourceAsStream(serializationPolicyFilePath);
       if(is == null) {
@@ -173,14 +174,14 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
             serializationPolicy = SerializationPolicyLoader.loadFromStream(is,
                 null);
           } catch (ParseException e) {
-            log("ERROR: Failed to parse the policy file '"
+            log("PTO ERROR: Failed to parse the policy file '"
                 + serializationPolicyFilePath + "'", e);
           } catch (IOException e) {
-            log("ERROR: Could not read the policy file '"
+            log("PTO ERROR: Could not read the policy file '"
                 + serializationPolicyFilePath + "'", e);
           }
         } else {
-          String message = "ERROR: The serialization policy file '"
+          String message = "PTO ERROR: The serialization policy file '"
               + serializationPolicyFilePath
               + "' was not found; did you forget to include it in this deployment?";
           log(message, null);
