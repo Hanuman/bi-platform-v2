@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.plugin.services.webservices.AxisServletHooks;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**
@@ -86,7 +86,7 @@ public class AxisServiceExecutor extends AxisWebServiceDemultiplexer implements 
     // now execute the operation
     if( request != null && response != null ) {
       try {
-        SessionHandler.setSession( userSession );
+        PentahoSessionHolder.setSession( userSession );
         String method = request.getMethod();
         if( "GET".equalsIgnoreCase( method ) ) { //$NON-NLS-1$
           hooks.handleGet( method, request, response);

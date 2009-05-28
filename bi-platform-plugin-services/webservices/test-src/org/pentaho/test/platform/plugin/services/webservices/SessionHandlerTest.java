@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.webservices.SessionHandler;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 
 @SuppressWarnings("nls")
 public class SessionHandlerTest {
@@ -33,16 +33,16 @@ public class SessionHandlerTest {
   public void testSessionHandler() {
 
     StandaloneSession session = new StandaloneSession( "test" );
-    assertNull( SessionHandler.getSession() );
+    assertNull( PentahoSessionHolder.getSession() );
     
-    new SessionHandler();
+    new PentahoSessionHolder();
     
-    SessionHandler.setSession(session);
-    assertNotNull( SessionHandler.getSession() );
-    assertEquals( session, SessionHandler.getSession() );
+    PentahoSessionHolder.setSession(session);
+    assertNotNull( PentahoSessionHolder.getSession() );
+    assertEquals( session, PentahoSessionHolder.getSession() );
     
-    SessionHandler.removeSession();
-    assertNull( SessionHandler.getSession() );
+    PentahoSessionHolder.removeSession();
+    assertNull( PentahoSessionHolder.getSession() );
   }
   
 }

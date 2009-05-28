@@ -26,16 +26,16 @@ import org.pentaho.platform.api.engine.IPentahoSession;
  * @author jamesdixon
  *
  */
-public class SessionHandler {
+public class PentahoSessionHolder {
 
-  private static ThreadLocal<IPentahoSession> sessions = new ThreadLocal<IPentahoSession>();
+  private static final ThreadLocal<IPentahoSession> perThreadSession = new InheritableThreadLocal<IPentahoSession>();
   
   /**
    * Sets an IPentahoSession for the current thread
    * @param session
    */
   public static void setSession( IPentahoSession session ) {
-    sessions.set( session );
+    perThreadSession.set(session);
   }
   
   /**
@@ -43,7 +43,7 @@ public class SessionHandler {
    * @return thread session
    */
   public static IPentahoSession getSession() {
-    return sessions.get();
+    return perThreadSession.get();
   }
   
   /**
@@ -52,7 +52,7 @@ public class SessionHandler {
    * through between requests as threads are re-used by the server.
    */
   public static void removeSession() {
-    sessions.remove();
+    perThreadSession.remove();
   }
   
 }
