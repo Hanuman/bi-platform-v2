@@ -31,7 +31,7 @@ public class ConnectionServiceDelegate {
       try {
         //FIXME: we should be using an object factory of some kind here
         IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", SimpleDataAccessPermissionHandler.class.getName() );  //$NON-NLS-1$ //$NON-NLS-2$
         Class<?> clazz = Class.forName(dataAccessClassName, true, getClass().getClassLoader());
         Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
         dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
