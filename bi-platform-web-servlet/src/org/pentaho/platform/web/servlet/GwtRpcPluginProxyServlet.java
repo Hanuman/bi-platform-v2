@@ -29,6 +29,7 @@ import java.text.ParseException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.PluginBeanException;
@@ -164,14 +165,16 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       if(is == null) {
         System.err.println(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
         String fileContent = HttpUtil.getURLContent(contextPath+serializationPolicyFilePath);
-        if(fileContent != null) {
+        System.err.println("content is "+fileContent);
+        if(!StringUtils.isEmpty(fileContent)) {
           is = IOUtils.toInputStream(fileContent);
         }
       }
       if(is == null) {
         System.err.println("trying to fetch via http: "+moduleBaseURL+serializationPolicyFilePath+strongName);
         String fileContent = HttpUtil.getURLContent(moduleBaseURL+serializationPolicyFilePath+strongName);
-          if(fileContent != null) {
+        System.err.println("content is "+fileContent);
+          if(!StringUtils.isEmpty(fileContent)) {
             is = IOUtils.toInputStream(fileContent);
           }
       }
