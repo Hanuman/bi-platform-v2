@@ -31,14 +31,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.util.web.HttpUtil;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
@@ -131,18 +134,32 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
         log("Malformed moduleBaseURL: " + moduleBaseURL, ex);
       }
     }
+    
+    String contextRelativePath = modulePath.substring(contextPath.length());
 
     SerializationPolicy serializationPolicy = null;
-
-    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, PentahoSessionHolder.getSession());
-    String serializationPolicyPath = SerializationPolicyLoader.getSerializationPolicyFileName("resources/gwt/"
-        + strongName);
-    InputStream is = null;
+    
+    //get the content generator id from the request so we can track down the plugin related to the client
+    //NOTE: this technique requires all clients of gwtrpc plugin beans to be plugins themselves, otherwise we cannot
+    //locate their serialization policy files
+    String relativePath = contextRelativePath.substring(contextRelativePath.indexOf('/', 1)); //remove '/content' from the beginning of the path
+    String contentGeneratorId = relativePath.substring(1, relativePath.indexOf('/', 1)); //exact the first element of the path
+    //now lookup the plugin by the content generator id
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, null);
+    IContentGenerator aPluginClass = null;
     try {
-      resLoader.getResourceAsString(perThreadTargetBean.getClass(), serializationPolicyPath);
-    } catch (UnsupportedEncodingException e1) {
-      log("failed to get serialization policy file '" + serializationPolicyPath + "' from the plugin resource loader",
-          e1);
+      aPluginClass = pluginManager.getContentGenerator(contentGeneratorId, PentahoSessionHolder.getSession());
+    } catch (ObjectFactoryException e1) {
+      log("could not find a content generator by id '"+contentGeneratorId+"'", e1);
+    }
+    
+    //now that we have the plugin class, we can load the resources in that plugin
+    String resourceDir = relativePath.substring(contentGeneratorId.length()+2); // leaves us with e.g. 'resources/gwt/'
+    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, PentahoSessionHolder.getSession());
+    String serializationPolicyPath = SerializationPolicyLoader.getSerializationPolicyFileName(resourceDir + strongName);
+    InputStream is = resLoader.getResourceAsStream(aPluginClass.getClass(), serializationPolicyPath);
+    if (is == null) {
+      log("failed to get serialization policy file '" + serializationPolicyPath + "' from the plugin resource loader");
     }
 
     try {
