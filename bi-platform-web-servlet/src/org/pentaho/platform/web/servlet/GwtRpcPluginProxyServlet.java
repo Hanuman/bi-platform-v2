@@ -162,14 +162,14 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
         System.err.println(serializationPolicyFilePath.substring(1) + " didn't work");
         is = getServletContext().getResourceAsStream(contextPath+serializationPolicyFilePath);
       }
-      if(is == null) {
-        System.err.println(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
-        String fileContent = HttpUtil.getURLContent(contextPath+serializationPolicyFilePath);
-        System.err.println("content is "+fileContent);
-        if(!StringUtils.isEmpty(fileContent)) {
-          is = IOUtils.toInputStream(fileContent);
-        }
-      }
+//      if(is == null) {
+//        System.err.println(contextPath+serializationPolicyFilePath + " didn't work, trying to fetch file via http request");
+//        String fileContent = HttpUtil.getURLContent(contextPath+serializationPolicyFilePath);
+//        System.err.println("content is "+fileContent);
+//        if(!StringUtils.isEmpty(fileContent)) {
+//          is = IOUtils.toInputStream(fileContent);
+//        }
+//      }
       if(is == null) {
         System.err.println("trying to fetch via http: "+moduleBaseURL+serializationPolicyFilePath+strongName);
         String fileContent = HttpUtil.getURLContent(moduleBaseURL+serializationPolicyFilePath+strongName);
