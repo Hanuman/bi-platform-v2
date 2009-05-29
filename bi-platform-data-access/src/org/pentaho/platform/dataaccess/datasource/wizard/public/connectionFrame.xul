@@ -35,7 +35,7 @@
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}"
     buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.exitDatasourceDialog()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
-    <groupbox flex="1">
+    <groupbox>
       <hbox id="buttonBox">
           <button id="sqlButton" image="images/relational_selected.png"  tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="left"/>
           <button id="csv" image="images/csv.png" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="left"/>
@@ -82,12 +82,12 @@
 				  <vbox flex="1">
 					<tree flex="1" id="modelDataTable" seltype="single">
 							<treecols id="modelDataTableCols">
-								<treecol label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="true" type="text"/>
-								<treecol label="${datasourceDialog.type}" flex="1" type="combobox" editable="true" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
-								<!--<treecol label="${datasourceDialog.format}" flex="1" type="combobox" editable="true" pen:combobinding="bindingDataFormatTypes" 					pen:binding="selectedDataFormatType"/>-->
+								<treecol label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
+								<treecol label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
+								<!--<treecol label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" 					pen:binding="selectedDataFormatType"/>-->
 								<treecol label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
 							</treecols>
-							<treechildren id="modelDataRows"/>
+  						    <treechildren id="modelDataRows"/>
 					</tree>
 				  </vbox>
 			  </vbox>
@@ -100,12 +100,12 @@
 				  <vbox flex="1">
 					  <tree flex="1" id="csvDataTable" seltype="single">
 								<treecols id="csvDataTableCols">
-									<treecol label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="true" type="text"/>
-									<treecol label="${datasourceDialog.type}" flex="1" type="combobox" editable="true" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
-									<!--<treecol label="${datasourceDialog.format}" flex="1" type="combobox" editable="true" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
+									<treecol label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
+									<treecol label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
+									<!--<treecol label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
 									<treecol label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
 								</treecols>
-								<treechildren id="modelDataRows" />
+								<treechildren id="modelDataRows"/>
 					  </tree>
 			  	  </vbox>
 			  </vbox>
@@ -143,8 +143,8 @@
   </dialog>
 
   
-  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="100" height="50">
-        <label width="90" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
+  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="155" height="80">
+        <label width="150" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   </dialog>
 
   <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="75" height="65" buttonalign="center">

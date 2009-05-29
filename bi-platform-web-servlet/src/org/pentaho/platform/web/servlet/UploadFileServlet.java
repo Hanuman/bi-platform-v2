@@ -18,28 +18,30 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.web.servlet.messages.Messages;
 
 public class UploadFileServlet extends HttpServlet implements Servlet {
 
   private static final long serialVersionUID = 8305367618713715640L;
   private static final long MAX_FILE_SIZE = 300000;
   private static final long MAX_FOLDER_SIZE = 900000;
+  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ; 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
       try {
       response.setContentType("text/plain");
       FileItem uploadItem = getFileItem(request);
       if (uploadItem == null) {
-        response.getWriter().write("ERROR:No file to upload");
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0001_NO_FILE_TO_UPLOAD"));
         return;
       }
       if(MAX_FILE_SIZE < uploadItem.getSize()) {
-        response.getWriter().write("ERROR:File too big to upload");
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0003_FILE_TOO_BIG"));
         return;        
       }
-      String path = PentahoSystem.getApplicationContext().getSolutionPath("/system/metadata");
+      String path = PentahoSystem.getApplicationContext().getSolutionPath(RELATIVE_UPLOAD_FILE_PATH);
       if(uploadItem.getSize() + getFolderSize(new File(path)) > MAX_FOLDER_SIZE) {
-        response.getWriter().write("ERROR:Folder will be over the max size limit after the upload");
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
         return;                
       }
       byte[] fileContents = uploadItem.get();
@@ -49,7 +51,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
         filename = filename.substring(index);
       }
       if(doesFileExists(new File(path+filename))) {
-        response.getWriter().write("ERROR:File already exists");
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0002_FILE_ALREADY_EXIST"));
         return;                        
       }
       FileOutputStream outputStream = new FileOutputStream(path+filename);
@@ -58,7 +60,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       outputStream.close();
       response.getWriter().write(new String(path+filename));
       } catch(Exception e) {
-        response.getWriter().write("ERROR:" + e.getLocalizedMessage());
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0005_UNKNOW_ERROR",e.getLocalizedMessage()));
       }
  }
 
