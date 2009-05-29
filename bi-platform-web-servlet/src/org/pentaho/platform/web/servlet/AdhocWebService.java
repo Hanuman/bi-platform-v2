@@ -2043,7 +2043,6 @@ public class AdhocWebService extends ServletBase {
     Document document = DocumentHelper.createDocument();
     Element root = document.addElement("adhoc-webservice");
     Element isAdminElement = DocumentHelper.createElement("isadmin");
-    isAdminElement.setText(Boolean.toString(value));
     isAdminElement.addAttribute("value", Boolean.toString(value));
     root.add(isAdminElement);
     return document;

@@ -162,11 +162,22 @@
     {
 
       /** initialize the dataaccess button */
-      var daBtnContainer = document.getElementById( "dataaccessButton" );
-      var dataAccessBtn = new ButtonCtrl( Messages.getString("dataaccessButtonText"), ButtonCtrl.LARGE );
-      daBtnContainer.appendChild( dataAccessBtn.getRoot() );
-      dataAccessBtn.setOnClickCallback(dataaccessBtnCallback, null);
-        
+		var isAdminXmlDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, "isAdministrator", undefined, null);
+		if ( undefined !== isAdminXmlDoc )
+				{
+					var node = XmlUtil.selectSingleNode(isAdminXmlDoc, "//isadmin/@value");
+					if ( node )
+					{
+						if(XmlUtil.getNodeTextOrEmptyString(node) == "true")
+					    {
+					       var daBtnContainer = document.getElementById( "dataaccessButton" );
+						   var dataAccessBtn = new ButtonCtrl( Messages.getString("dataaccessButtonText"), ButtonCtrl.LARGE );
+						   daBtnContainer.appendChild( dataAccessBtn.getRoot() );
+						   dataAccessBtn.setOnClickCallback(dataaccessBtnCallback, null);
+						}
+					}
+		}
+
       var wiz = null;
       var msgCtrl = new MessageCtrl();
       gLogger = new Logger();
