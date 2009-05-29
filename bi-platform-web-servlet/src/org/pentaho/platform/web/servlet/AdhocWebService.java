@@ -91,6 +91,7 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -330,6 +331,8 @@ public class AdhocWebService extends ServletBase {
       deleteWaqrReport(parameterProvider, outputStream, userSession, wrapWithSoap);
     } else if ("getJFreePaperSizes".equals(component)) { //$NON-NLS-1$
       getJFreePaperSizes(parameterProvider, outputStream, userSession, wrapWithSoap);
+    } else if ("isAdministrator".equals(component)) { //$NON-NLS-1$
+      isAdministrator(outputStream, userSession, wrapWithSoap);
     } else {
       throw new RuntimeException(Messages.getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
     }
@@ -1984,6 +1987,16 @@ public class AdhocWebService extends ServletBase {
     return baseName;
   }
 
+  public void isAdministrator(OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSoap) {
+    
+    try {
+      WebServiceUtil.writeDocument(outputStream, buildResponse(SecurityHelper.isPentahoAdministrator(userSession)), wrapWithSoap);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
   // should be moved to AdhocWebServiceTest, but the solvable problem of calling
   // private methods needs to be addressed. don't have time at the moment, dude.
   // to run this, you need to have -ea on the JVM command line
@@ -2026,4 +2039,14 @@ public class AdhocWebService extends ServletBase {
     System.out.println( "looks like it worked." );
 
   }
+  private Document buildResponse(boolean value) {
+    Document document = DocumentHelper.createDocument();
+    Element root = document.addElement("adhoc-webservice");
+    Element isAdminElement = DocumentHelper.createElement("isadmin");
+    isAdminElement.setText(Boolean.toString(value));
+    isAdminElement.addAttribute("value", Boolean.toString(value));
+    root.add(isAdminElement);
+    return document;
+  }
+
 }
