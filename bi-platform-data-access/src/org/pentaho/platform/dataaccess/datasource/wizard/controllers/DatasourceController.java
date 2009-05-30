@@ -69,6 +69,10 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   private XulDeck datasourceDeck = null;
 
+  XulButton relationalButton = null;
+  
+  XulButton csvButton = null;
+  
   public DatasourceController() {
 
   }
@@ -86,6 +90,8 @@ public class DatasourceController extends AbstractXulEventHandler {
     datasourceDialog = (XulDialog) document.getElementById("datasourceDialog");//$NON-NLS-1$
     okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     cancelButton = (XulButton) document.getElementById("datasourceDialog_cancel"); //$NON-NLS-1$
+    relationalButton = (XulButton) document.getElementById("relationalButton"); //$NON-NLS-1$
+    csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.ONE_WAY);
     final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
@@ -129,6 +135,42 @@ public class DatasourceController extends AbstractXulEventHandler {
       }
     };
     bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.setBindingType(Binding.Type.ONE_WAY);
+    BindingConvertor<DatasourceType, Boolean> relationalToggleButtonConvertor = new BindingConvertor<DatasourceType, Boolean>() {
+
+        @Override
+        public Boolean sourceToTarget(DatasourceType value) {
+          if(DatasourceType.SQL == value) {
+        	  return true;
+          } else {
+        	  return false;
+          }
+        }
+
+        @Override
+        public DatasourceType targetToSource(Boolean value) {
+          return null;
+        }
+      };
+
+      BindingConvertor<DatasourceType, Boolean> csvToggleButtonConvertor = new BindingConvertor<DatasourceType, Boolean>() {
+
+          @Override
+          public Boolean sourceToTarget(DatasourceType value) {
+            if(DatasourceType.CSV == value) {
+          	  return true;
+            } else {
+          	  return false;
+            }
+          }
+
+          @Override
+          public DatasourceType targetToSource(Boolean value) {
+            return null;
+          }
+        };
+    bf.createBinding(datasourceModel, "datasourceType", relationalButton, "disabled", relationalToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "datasourceType", csvButton, "disabled", csvToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
 
     okButton.setDisabled(true);
     // Setting the Button Panel background to white

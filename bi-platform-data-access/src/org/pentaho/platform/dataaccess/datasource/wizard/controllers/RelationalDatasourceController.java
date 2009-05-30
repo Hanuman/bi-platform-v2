@@ -82,6 +82,11 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   private XulButton applyButton = null;
 
+  private XulTreeCol columnNameTreeCol = null;
+  private XulTreeCol columnTypeTreeCol = null;
+  //private XulTreeCol columnFormatTreeCol = null;
+
+  
   public RelationalDatasourceController() {
 
   }
@@ -110,7 +115,9 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     removeConnectionButton = (XulButton) document.getElementById("removeConnection"); //$NON-NLS-1$
     editQueryButton = (XulButton) document.getElementById("editQuery"); //$NON-NLS-1$
     previewButton = (XulButton) document.getElementById("preview"); //$NON-NLS-1$
-
+    columnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol"); //$NON-NLS-1$
+    columnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol"); //$NON-NLS-1$
+    //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$
 
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel.getRelationalModel(), "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
@@ -214,7 +221,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   }
   public void generateModel() {
       if (validateInputs()) {
-        datasourceModel.getRelationalModel().setBusinessData(null);
         query.setDisabled(true);
         try {
           showWaitingDialog("Generating Metadata Model", "Please wait ....");
@@ -230,7 +236,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                 public void success(BusinessData businessData) {
                   try {
                     hideWaitingDialog();
+                    datasourceModel.getRelationalModel().setBusinessData(null);                    
                     query.setDisabled(false);
+                    // Setting the editable property to true so that the table can be populated with correct cell types                    
+                    columnNameTreeCol.setEditable(true);
+                    columnTypeTreeCol.setEditable(true);
+                    //columnFormatTreeCol.setEditable(true);
                     datasourceModel.getRelationalModel().setBusinessData(businessData);
                   } catch (Exception xe) {
                     xe.printStackTrace();

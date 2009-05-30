@@ -1,6 +1,5 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
-import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
@@ -11,6 +10,7 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
+import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -41,6 +41,10 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   XulTextbox selectedFile = null;
 
   XulCheckbox headersPresent = null;
+  private XulTreeCol columnNameTreeCol = null;
+  private XulTreeCol columnTypeTreeCol = null;
+  //private XulTreeCol columnFormatTreeCol = null;
+
 
   public CsvDatasourceController() {
 
@@ -58,9 +62,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     headersPresent = (XulCheckbox) document.getElementById("headersPresent"); //$NON-NLS-1$
     datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
     selectedFile = (XulTextbox) document.getElementById("selectedFile"); //$NON-NLS-1$
+    columnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol"); //$NON-NLS-1$
+    columnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol"); //$NON-NLS-1$
+    //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
-    final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
+    final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
     try {
       domainBinding.fireSourceChanged();
 
@@ -93,8 +100,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   private void generateModel() {
     if (validateIputForCsv()) {
       try {
-        // Clear out the model for data
-        datasourceModel.getCsvModel().setBusinessData(null);
         showWaitingDialog("Generating Metadata Model", "Please wait ....");
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
             // TODO Binding for the check box is not working. Need to investigate
@@ -109,6 +114,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
               public void success(BusinessData businessData) {
                 try {
                   hideWaitingDialog();
+                  // Clear out the model for data
+                  datasourceModel.getCsvModel().setBusinessData(null);
+                  // Setting the editable property to true so that the table can be populated with correct cell types
+                  columnNameTreeCol.setEditable(true);
+                  columnTypeTreeCol.setEditable(true);
+                  //columnFormatTreeCol.setEditable(true);                  
                   datasourceModel.getCsvModel().setBusinessData(businessData);
                 } catch (Exception xe) {
                   xe.printStackTrace();
