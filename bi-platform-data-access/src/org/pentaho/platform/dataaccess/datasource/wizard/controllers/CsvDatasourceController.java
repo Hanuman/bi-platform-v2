@@ -62,9 +62,9 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     headersPresent = (XulCheckbox) document.getElementById("headersPresent"); //$NON-NLS-1$
     datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
     selectedFile = (XulTextbox) document.getElementById("selectedFile"); //$NON-NLS-1$
-    columnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol"); //$NON-NLS-1$
-    columnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol"); //$NON-NLS-1$
-    //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$    
+    columnNameTreeCol = (XulTreeCol) document.getElementById("csvColumnNameTreeCol"); //$NON-NLS-1$
+    columnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol"); //$NON-NLS-1$
+    //columnFormatTreeCol = (XulTreeCol) document.getElementById("csvColumnFormatTreeCol"); //$NON-NLS-1$    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
@@ -119,7 +119,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
                   // Setting the editable property to true so that the table can be populated with correct cell types
                   columnNameTreeCol.setEditable(true);
                   columnTypeTreeCol.setEditable(true);
-                  //columnFormatTreeCol.setEditable(true);                  
+                  //columnFormatTreeCol.setEditable(true); 
+                  csvDataTable.update();
                   datasourceModel.getCsvModel().setBusinessData(businessData);
                 } catch (Exception xe) {
                   xe.printStackTrace();
