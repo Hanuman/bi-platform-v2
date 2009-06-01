@@ -18,6 +18,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
@@ -25,12 +26,17 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
+import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.containers.XulDeck;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
+import org.pentaho.ui.xul.containers.XulTree;
+import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
 public class DatasourceController extends AbstractXulEventHandler {
+  public static final int DEFAULT_TABLE_ROW_COUNT = 8;
+  
   private XulDialog datasourceDialog;
 
   private XulDialog waitingDialog = null;
@@ -73,12 +79,18 @@ public class DatasourceController extends AbstractXulEventHandler {
   
   XulButton csvButton = null;
   
+  private XulTree modelDataTable = null;
+  
+  private XulTree csvDataTable = null;
+  
   public DatasourceController() {
 
   }
 
   public void init() {
     datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
+    csvDataTable = (XulTree) document.getElementById("csvDataTable");
+    modelDataTable = (XulTree) document.getElementById("modelDataTable");
     buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
@@ -116,8 +128,14 @@ public class DatasourceController extends AbstractXulEventHandler {
       public Integer sourceToTarget(DatasourceType value) {
         Integer returnValue = null;
         if (DatasourceType.SQL == value) {
+          if(modelDataTable.getRows() == 0) {
+            buildRelationalEmptyTable(); 
+          }
           returnValue = 0;
         } else if (DatasourceType.CSV == value) {
+          if(csvDataTable.getRows() == 0) {
+            buildCsvEmptyTable(); 
+          }
           returnValue = 1;
         } else if (DatasourceType.NONE == value) {
           return 0;
@@ -130,8 +148,14 @@ public class DatasourceController extends AbstractXulEventHandler {
         DatasourceType type = null;
         if (value == 0) {
           type = DatasourceType.SQL;
+          if(modelDataTable.getRows() == 0) {
+            buildRelationalEmptyTable(); 
+          }
         } else if (value == 1) {
           type = DatasourceType.CSV;
+          if(csvDataTable.getRows() == 0) {
+            buildCsvEmptyTable(); 
+          }
         }
         return type;
       }
@@ -424,5 +448,47 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   public void hideWaitingDialog() {
     waitingDialog.hide();
+  }
+
+  private void buildCsvEmptyTable() {
+    // Create the tree children and setting the data
+    try {
+      int count = csvDataTable.getColumns().getColumnCount();
+      for (int i = 0; i < DEFAULT_TABLE_ROW_COUNT; i++) {
+        XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+
+        for (int j = 0; j < count+4; j++) {
+          XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
+          cell.setLabel(" ");
+          row.addCell(cell);
+        }
+
+        csvDataTable.addTreeRow(row);
+      }
+      csvDataTable.update();
+    } catch(XulException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  private void buildRelationalEmptyTable() {
+    // Create the tree children and setting the data
+    try {
+      int count = modelDataTable.getColumns().getColumnCount();
+      for (int i = 0; i < DEFAULT_TABLE_ROW_COUNT; i++) {
+        XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+
+        for (int j = 0; j < count; j++) {
+          XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
+          cell.setLabel(" ");
+          row.addCell(cell);
+        }
+
+        modelDataTable.addTreeRow(row);
+      }
+      modelDataTable.update();
+    } catch(XulException e) {
+      e.printStackTrace();
+    }
   }
 }
