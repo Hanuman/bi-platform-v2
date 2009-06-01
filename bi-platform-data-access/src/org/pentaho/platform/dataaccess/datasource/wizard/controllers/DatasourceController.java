@@ -119,6 +119,8 @@ public class DatasourceController extends AbstractXulEventHandler {
           returnValue = 0;
         } else if (DatasourceType.CSV == value) {
           returnValue = 1;
+        } else if (DatasourceType.NONE == value) {
+          return 0;
         }
         return returnValue;
       }
