@@ -33,6 +33,7 @@ import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalModel;
+import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
@@ -246,27 +247,31 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     }
     // need to get the correct DatabaseMeta
     SqlPhysicalModel sqlModel = (SqlPhysicalModel)queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
-    String jndiName = sqlModel.getDatasource();
-    
-    // this is temporary until we can get a database meta from the metadata model
-    DatabaseMeta databaseMeta = new DatabaseMeta(
-        jndiName, 
-        "MYSQL", 
-        "JNDI", "", "", "", "", "");
-
-    SQLConnection connection = retrieveThinConnection(jndiName);
+    DatabaseMeta databaseMeta = null;
+    SQLConnection connection = null;
     try {
-      if ((connection == null) || !connection.initialized()) {
-        getLogger().error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
-        return null;
-      }
-      
-      DatabaseInterface databaseInterface = retrieveThinDatabaseInterface(connection);
-      databaseInterface.setAccessType(databaseMeta.getAccessType());
-      databaseInterface.setDatabaseName(jndiName);
-      databaseInterface.setName(jndiName);
-      databaseMeta.setDatabaseInterface(databaseInterface);
-      
+    if (sqlModel.getDatasource().getType() == DataSourceType.JNDI) {
+      String jndiName = sqlModel.getDatasource().getDatabaseName();
+      // this is temporary until we can get a database meta from the metadata model
+      databaseMeta = new DatabaseMeta(
+          jndiName, 
+          "MYSQL", 
+          "JNDI", "", "", "", "", "");
+  
+      connection = retrieveThinConnection(jndiName);
+        if ((connection == null) || !connection.initialized()) {
+          getLogger().error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+          return null;
+        }
+        
+        DatabaseInterface databaseInterface = retrieveThinDatabaseInterface(connection);
+        databaseInterface.setAccessType(databaseMeta.getAccessType());
+        databaseInterface.setDatabaseName(jndiName);
+        databaseInterface.setName(jndiName);
+        databaseMeta.setDatabaseInterface(databaseInterface);
+    } else {
+      // TODO: Direct JDBC
+    }
       try {    
         mqlQuery = ThinModelConverter.convertToLegacy(queryObject, databaseMeta);
       } catch (Exception e) {
