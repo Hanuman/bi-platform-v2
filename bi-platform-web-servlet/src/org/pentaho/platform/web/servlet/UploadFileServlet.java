@@ -18,14 +18,17 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.util.UUIDUtil;
 import org.pentaho.platform.web.servlet.messages.Messages;
+import org.safehaus.uuid.UUID;
 
 public class UploadFileServlet extends HttpServlet implements Servlet {
 
   private static final long serialVersionUID = 8305367618713715640L;
   private static final long MAX_FILE_SIZE = 300000;
   private static final long MAX_FOLDER_SIZE = 900000;
-  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ; 
+  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;
+  public static final String CSV_EXT = ".csv"; //$NON-NLS-1$
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
       try {
@@ -45,11 +48,9 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
         return;                
       }
       byte[] fileContents = uploadItem.get();
-      String filename = uploadItem.getName();
-      int index = filename.lastIndexOf(File.separatorChar);
-      if(index > 0) {
-        filename = filename.substring(index);
-      }
+      UUID id = UUIDUtil.getUUID();
+      String filename = id.toString() + CSV_EXT;
+      
       if(doesFileExists(new File(path+filename))) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0002_FILE_ALREADY_EXIST"));
         return;                        
