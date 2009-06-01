@@ -35,8 +35,8 @@ import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
 public class DatasourceController extends AbstractXulEventHandler {
-  public static final int DEFAULT_TABLE_ROW_COUNT = 8;
-  
+  public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;
+  public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 10;
   private XulDialog datasourceDialog;
 
   private XulDialog waitingDialog = null;
@@ -454,10 +454,10 @@ public class DatasourceController extends AbstractXulEventHandler {
     // Create the tree children and setting the data
     try {
       int count = csvDataTable.getColumns().getColumnCount();
-      for (int i = 0; i < DEFAULT_TABLE_ROW_COUNT; i++) {
+      for (int i = 0; i < DEFAULT_CSV_TABLE_ROW_COUNT; i++) {
         XulTreeRow row = (XulTreeRow) document.createElement("treerow");
 
-        for (int j = 0; j < count+4; j++) {
+        for (int j = 0; j < count; j++) {
           XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
           cell.setLabel(" ");
           row.addCell(cell);
@@ -475,7 +475,7 @@ public class DatasourceController extends AbstractXulEventHandler {
     // Create the tree children and setting the data
     try {
       int count = modelDataTable.getColumns().getColumnCount();
-      for (int i = 0; i < DEFAULT_TABLE_ROW_COUNT; i++) {
+      for (int i = 0; i < DEFAULT_RELATIONAL_TABLE_ROW_COUNT; i++) {
         XulTreeRow row = (XulTreeRow) document.createElement("treerow");
 
         for (int j = 0; j < count; j++) {

@@ -144,8 +144,8 @@
   </dialog>
 
   
-  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="190" height="50">
-        <label width="180" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
+  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="230" height="50">
+        <label width="220" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   </dialog>
 
   <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="75" height="65" buttonalign="center">
