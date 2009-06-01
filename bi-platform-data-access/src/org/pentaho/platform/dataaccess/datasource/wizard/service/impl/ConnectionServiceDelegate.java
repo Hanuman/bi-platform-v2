@@ -4,8 +4,9 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
-import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceException;
 import org.pentaho.platform.api.repository.datasource.IDatasource;
@@ -16,11 +17,13 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
+import org.pentaho.platform.repository.messages.Messages;
 
 public class ConnectionServiceDelegate {
   
   private IDataAccessPermissionHandler dataAccessPermHandler;
   private IDatasourceMgmtService datasourceMgmtSvc;
+  private static final Log logger = LogFactory.getLog(ConnectionServiceDelegate.class);
   
   public ConnectionServiceDelegate() {
   }
@@ -36,11 +39,9 @@ public class ConnectionServiceDelegate {
         Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
         dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
       } catch (Exception e) {
-        // TODO: error(Messages.getErrorString("DashboardRenderer.ERROR_0024_SQL_PERMISSIONS_INIT_ERROR", sqlExecClassName), e); //$NON-NLS-1$
-        e.printStackTrace();
-        
-        // TODO: Unhardcode once this is an actual plugin
-        dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
+    	  logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR",e.getLocalizedMessage()),e);        
+          // TODO: Unhardcode once this is an actual plugin
+          dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
       }
 
       
@@ -54,9 +55,8 @@ public class ConnectionServiceDelegate {
   
   public List<IConnection> getConnections() throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     
     List<IConnection> connectionList = new ArrayList<IConnection>();
@@ -65,29 +65,29 @@ public class ConnectionServiceDelegate {
         connectionList.add(convertTo(datasource));
       }
     } catch(DatasourceMgmtServiceException dme) {
-      throw new ConnectionServiceException("Unable to get connection list " + dme.getLocalizedMessage(), dme); 
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0002_UNABLE_TO_GET_CONNECTION_LIST",dme.getLocalizedMessage()));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0002_UNABLE_TO_GET_CONNECTION_LIST",dme.getLocalizedMessage()),dme);
     }
     return connectionList;
   }
 
   public IConnection getConnectionByName(String name) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     try {
       return convertTo(datasourceMgmtSvc.getDatasource(name));
     } catch(DatasourceMgmtServiceException dme) {
-      throw new ConnectionServiceException("Unable to get connection: " + name + " " + dme.getLocalizedMessage(), dme);  
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name, dme.getLocalizedMessage()));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name, dme.getLocalizedMessage()),dme);
     }
   }
   
   public Boolean addConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
 
     try {
@@ -96,15 +96,15 @@ public class ConnectionServiceDelegate {
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      throw new ConnectionServiceException("Unable to add connection: " + connection.getName() + " "  + e.getLocalizedMessage(), e);  
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(), e.getLocalizedMessage()));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(), e.getLocalizedMessage()),e);      
     }
   }
 
   public Boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     try {
       HibernateUtil.beginTransaction();
@@ -112,15 +112,15 @@ public class ConnectionServiceDelegate {
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      throw new ConnectionServiceException("Unable to update connection: " + connection.getName() + " "  + e.getLocalizedMessage(),e);  
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(), e.getLocalizedMessage()));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(), e.getLocalizedMessage()),e);            
     }
   }
   
   public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     try {
       HibernateUtil.beginTransaction();
@@ -128,14 +128,14 @@ public class ConnectionServiceDelegate {
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      throw new ConnectionServiceException("Unable to delete connection: " + connection.getName() + " " +  e.getLocalizedMessage(),e);  
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",connection.getName(), e.getLocalizedMessage()));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",connection.getName(), e.getLocalizedMessage()),e);            
     }
   }
   public Boolean deleteConnection(String name) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return null;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
 
     try {
@@ -144,15 +144,15 @@ public class ConnectionServiceDelegate {
       HibernateUtil.commitTransaction();
       return true;
     } catch(Exception e) {
-      throw new ConnectionServiceException("Unable to delete connection: " + name + " " +  e.getLocalizedMessage(),e);  
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0007_UNABLE_TO_TEST_CONNECTION",name, e.getLocalizedMessage()));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0007_UNABLE_TO_TEST_CONNECTION",name, e.getLocalizedMessage()),e);            
     }
   }
   
   public boolean testConnection(IConnection connection) throws ConnectionServiceException {
     if (!hasDataAccessPermission()) {
-      // TODO: log
-      System.out.println("NO PERMISSION");
-      return false;
+        logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     IPentahoConnection pentahoConnection = null;
       pentahoConnection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
