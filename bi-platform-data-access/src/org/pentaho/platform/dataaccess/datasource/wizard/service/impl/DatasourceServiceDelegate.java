@@ -73,8 +73,8 @@ public class DatasourceServiceDelegate {
         Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
         dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
       } catch (Exception e) {
+        dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
         // TODO: error(Messages.getErrorString("DashboardRenderer.ERROR_0024_SQL_PERMISSIONS_INIT_ERROR", sqlExecClassName), e); //$NON-NLS-1$
-        e.printStackTrace();
       }
       
     }
