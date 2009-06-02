@@ -11,7 +11,6 @@ import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.AbstractXulDialogController;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
@@ -33,6 +32,7 @@ import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeRow;
+import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
 public class DatasourceController extends AbstractXulDialogController<IDatasource> {
   public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;

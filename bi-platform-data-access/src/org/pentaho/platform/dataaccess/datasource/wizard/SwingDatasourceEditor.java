@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.DialogController;
 import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.HasDialogController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
@@ -27,6 +26,7 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.binding.DefaultBindingFactory;
 import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
+import org.pentaho.ui.xul.util.DialogController;
 
 public class SwingDatasourceEditor implements HasDialogController<IDatasource> {
 

@@ -1,7 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.DialogController.DialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.SwingDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
@@ -14,6 +13,8 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.binding.DefaultBindingFactory;
 import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
+import org.pentaho.ui.xul.util.DialogController;
+import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 /**
  * @author mlowery

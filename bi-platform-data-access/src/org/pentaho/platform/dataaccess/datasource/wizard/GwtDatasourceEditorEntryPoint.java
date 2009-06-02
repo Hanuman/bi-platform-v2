@@ -1,13 +1,13 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.DialogController.DialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.XulServiceCallback;
+import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;

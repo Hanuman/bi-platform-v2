@@ -16,6 +16,9 @@ import org.pentaho.ui.xul.components.XulMessageBox;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.dom.Document;
+import org.pentaho.ui.xul.util.AbstractXulDialogController;
+import org.pentaho.ui.xul.util.DialogController;
+import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 public class DatasourceSelectionDialogController extends AbstractXulDialogController<IDatasource> {
 
