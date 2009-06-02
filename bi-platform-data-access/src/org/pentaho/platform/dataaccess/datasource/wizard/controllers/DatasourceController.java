@@ -1,6 +1,5 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.Category;
@@ -10,9 +9,10 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.AbstractXulDialogController;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
-import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceDialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -33,11 +33,11 @@ import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeRow;
-import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
-public class DatasourceController extends AbstractXulEventHandler {
+public class DatasourceController extends AbstractXulDialogController<IDatasource> {
   public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;
   public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 10;
+
   private XulDialog datasourceDialog;
 
   private XulDialog waitingDialog = null;
@@ -49,8 +49,6 @@ public class DatasourceController extends AbstractXulEventHandler {
   public static final int RELATIONAL_DECK = 0;
 
   public static final int CSV_DECK = 1;
-
-  private List<DatasourceDialogListener> listeners = new ArrayList<DatasourceDialogListener>();
 
   private DatasourceModel datasourceModel;
 
@@ -75,6 +73,11 @@ public class DatasourceController extends AbstractXulEventHandler {
   private XulHbox buttonBox = null;
 
   private XulDeck datasourceDeck = null;
+  
+  /**
+   * The datasource being edited.
+   */
+  private IDatasource datasource;
 
   XulButton relationalButton = null;
   
@@ -214,10 +217,6 @@ public class DatasourceController extends AbstractXulEventHandler {
     }
   }
 
-  public void showDatasourceDialog() {
-    datasourceDialog.show();
-  }
-
   public void setBindingFactory(BindingFactory bf) {
     this.bf = bf;
   }
@@ -235,33 +234,29 @@ public class DatasourceController extends AbstractXulEventHandler {
   }
 
   public ConnectionModel getConnectionModel() {
-
     return this.connectionModel;
   }
 
   public String getName() {
-    return "datasourceController";
+    return "datasourceController"; //$NON-NLS-1$
   }
 
-  public void closeDatasourceDialog() {
-    this.datasourceDialog.hide();
-    for (DatasourceDialogListener listener : listeners) {
-      listener.onDialogCancel();
-    }
-  }
-
-  public void saveModel() {
-
+  private void saveModel() throws Exception {
     if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
       saveRelationalModel();
     } else if (datasourceModel.getDatasourceType() == DatasourceType.CSV) {
       saveCsvModel();
     }
   }
+  
+  private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {
+    openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
+        + xe.getLocalizedMessage());
+    
+  }
 
-  private void saveCsvModel() {
+  private void saveCsvModel() throws DatasourceServiceException {
     List<CsvModelDataRow> dataRows = datasourceModel.getCsvModel().getDataRows();
-    try {
       // Get the domain from the business data
       BusinessData businessData = datasourceModel.getCsvModel().getBusinessData();
       if (businessData != null) {
@@ -282,23 +277,16 @@ public class DatasourceController extends AbstractXulEventHandler {
           }
           saveCsvModel(domain, false);
         } else {
-          openErrorDialog("Error occurred", "Domain model is null. There is nothing to save");
+          throw new RuntimeException("Domain model is null. There is nothing to save");
         }
       } else {
-        openErrorDialog("Error occurred", "Business data is null. There is nothing to save");
+        throw new RuntimeException("Domain model is null. There is nothing to save");
+
       }
-    } catch (Exception xe) {
-      displayErrorMessage(xe);
-    }
   }
 
-  public void exitDatasourceDialog() {
-    this.datasourceDialog.hide();
-  }
-
-  private void saveRelationalModel() {
+  private void saveRelationalModel() throws DatasourceServiceException {
     List<ModelDataRow> dataRows = datasourceModel.getRelationalModel().getDataRows();
-    try {
       // Get the domain from the business data
       BusinessData businessData = datasourceModel.getRelationalModel().getBusinessData();
       if (businessData != null) {
@@ -319,55 +307,38 @@ public class DatasourceController extends AbstractXulEventHandler {
           }
           saveRelationalModel(businessData, false);
         } else {
-          openErrorDialog("Error occurred", "Domain model is null. There is nothing to save");
+          throw new RuntimeException("Domain model is null. There is nothing to save");
         }
       } else {
-        openErrorDialog("Error occurred", "Business data is null. There is nothing to save");
+        throw new RuntimeException("Domain model is null. There is nothing to save");
       }
 
-    } catch (Exception xe) {
-      displayErrorMessage(xe);
-    }
   }
 
-  private void saveRelationalModel(BusinessData businessData, boolean overwrite) {
-    try {
+  private void saveRelationalModel(BusinessData businessData, boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveModel(businessData, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          displayErrorMessage(error);
+          handleSaveError(datasourceModel, error);
         }
 
         public void success(Boolean value) {
-          datasourceDialog.hide();
-          for (DatasourceDialogListener listener : listeners) {
-            listener.onDialogFinish(datasourceModel.getRelationalModel().getDatasource());
-          }
+          datasource = datasourceModel.getRelationalModel().getDatasource();
         }
       });
-    } catch (DatasourceServiceException e) {
-      displayErrorMessage(e);
-    }
   }
 
-  private void saveCsvModel(Domain domain, boolean overwrite) {
-    try {
+  private void saveCsvModel(Domain domain, boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveInlineEtlModel(domain, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          displayErrorMessage(error);
+          handleSaveError(datasourceModel, error);
         }
 
         public void success(Boolean value) {
-          datasourceDialog.hide();
-          for (DatasourceDialogListener listener : listeners) {
-            listener.onDialogFinish(datasourceModel.getDatasource());
-          }
+          datasource = datasourceModel.getDatasource();
         }
       });
-    } catch (DatasourceServiceException e) {
-      displayErrorMessage(e);
-    }
   }
 
   public void selectSql() {
@@ -396,18 +367,6 @@ public class DatasourceController extends AbstractXulEventHandler {
 
   public void setService(DatasourceService service) {
     this.service = service;
-  }
-
-  public void addDatasourceDialogListener(DatasourceDialogListener listener) {
-    if (listeners.contains(listener) == false) {
-      listeners.add(listener);
-    }
-  }
-
-  public void removeDatasourceDialogListener(DatasourceDialogListener listener) {
-    if (listeners.contains(listener)) {
-      listeners.remove(listener);
-    }
   }
 
   public void openErrorDialog(String title, String message) {
@@ -445,7 +404,27 @@ public class DatasourceController extends AbstractXulEventHandler {
     waitingDialog.hide();
   }
 
-  private void buildCsvEmptyTable() {
+  @Override
+  protected XulDialog getDialog() {
+    return datasourceDialog;  
+  }
+
+  @Override
+  protected IDatasource getDialogResult() {
+    return datasource;  
+  }
+
+  @Override
+  public void onDialogAccept() {
+    try {
+      saveModel();
+      super.onDialogAccept();
+    } catch (Exception xe) {
+      handleSaveError(datasourceModel, xe);
+    }
+  }
+  
+    private void buildCsvEmptyTable() {
     // Create the tree children and setting the data
     try {
       int count = csvDataTable.getColumns().getColumnCount();

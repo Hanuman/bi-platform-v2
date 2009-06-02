@@ -3,7 +3,7 @@
 <window id="datasourceEditorWindow" title="${connectionFrame.TITLE}" orient="vertical"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul"
   height="600" width="800"
-  onload="connectionController.init(), datasourceController.init(), csvDatasourceController.init(), relationalDatasourceController.init(), datasourceController.showDatasourceDialog()">
+  onload="connectionController.init(), datasourceController.init(), csvDatasourceController.init(), relationalDatasourceController.init()">
 
   <dialog id="connectionDialog" buttonlabelaccept="${connectionDialog.OK}" buttonlabelcancel="${connectionDialog.CANCEL}"
     buttons="accept,cancel" ondialogaccept="connectionController.addConnection()"
@@ -11,32 +11,31 @@
     title="${connectionDialog.Title}" width="350" height="400">
     <groupbox flex="1">
         <hbox flex="1">
-            <spacer width="10"/>
+    		<spacer width="10"/>
             <vbox flex="1">
-                <label value="${connectionDialog.ConnectionName}" tooltiptext="${connectionDialog.ConnectionNameToolTip}"/>
-                <textbox id="connectionname" multiline="false" width="300" disabled="false"/>
-                <label value="${connectionDialog.DriverClass}" tooltiptext="${connectionDialog.DriverClassToolTip}"/>
+		        <label value="${connectionDialog.ConnectionName}" tooltiptext="${connectionDialog.ConnectionNameToolTip}"/>
+		        <textbox id="connectionname" multiline="false" width="300" disabled="false"/>
+		        <label value="${connectionDialog.DriverClass}" tooltiptext="${connectionDialog.DriverClassToolTip}"/>
                 <textbox id="driverClass" multiline="false" width="300"/>            
-                <label value="${connectionDialog.Username}" tooltiptext="${connectionDialog.UsernameToolTip}"/>
-                <textbox id="username" multiline="false" width="300" />
-                <label value="${connectionDialog.Password}" tooltiptext="${connectionDialog.PasswordToolTip}"/>
-                <textbox id="password" multiline="false" width="300" type="password" />
-                <label value="${connectionDialog.URL}" tooltiptext="${connectionDialog.URLToolTip}"/>
-                <textbox id="url" multiline="false" width="300" />
-                <spacer flex="1"/>
-                <hbox>
-                    <spacer flex="1"/>
-                    <button id="testButton" label="${connectionDialog.TEST}" tooltiptext="${connectionDialog.testButtonToolTip}" onclick="connectionController.testConnection()"  disabled="false" align="top"/>
-                </hbox>
-            </vbox>
-            <spacer width="10"/>            
+		        <label value="${connectionDialog.Username}" tooltiptext="${connectionDialog.UsernameToolTip}"/>
+		        <textbox id="username" multiline="false" width="300" />
+		        <label value="${connectionDialog.Password}" tooltiptext="${connectionDialog.PasswordToolTip}"/>
+		        <textbox id="password" multiline="false" width="300" type="password" />
+		        <label value="${connectionDialog.URL}" tooltiptext="${connectionDialog.URLToolTip}"/>
+		        <textbox id="url" multiline="false" width="300" />
+		        <spacer flex="1"/>
+		        <hbox>
+		        	<spacer flex="1"/>
+		        	<button id="testButton" label="${connectionDialog.TEST}" tooltiptext="${connectionDialog.testButtonToolTip}" onclick="connectionController.testConnection()"  disabled="false" align="top"/>
+		        </hbox>
+	        </vbox>
+			<spacer width="10"/>	        
         </hbox>
     </groupbox>
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
-    buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.exitDatasourceDialog()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
+    buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
     <groupbox flex="1">
-    
       <hbox id="buttonBox">
           <button id="relationalButton" image="images/relational_selected.png"  tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="left"/>
           <button id="csvButton" image="images/csv.png" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="left"/>
@@ -45,76 +44,75 @@
       <vbox>
         <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
         <hbox>
-            <textbox id="datasourcename" width="237" multiline="false"/>
-            <spacer flex="1"/>
+        	<textbox id="datasourcename" width="237" multiline="false"/>
+         	<spacer flex="1"/>
         </hbox>
       </vbox>
       <groupbox flex="1">
-          <deck id="datasourceDeck" flex="1">
-              <vbox flex="1">
+	      <deck id="datasourceDeck" flex="1">
+		      <vbox flex="1">
                     
                     <hbox flex="2">
-                    <vbox flex="1">
-                      <hbox>
+				  	<vbox flex="1">
+			          <hbox>
                         <label value="Connection" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
-                        <spacer flex="1"/>
-                        <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="relationalDatasourceController.editConnection()"  disabled="true"/>
-                        <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
-                        <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
-                      </hbox>
+			            <spacer flex="1"/>
+			            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="relationalDatasourceController.editConnection()"  disabled="true"/>
+			            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
+			            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
+			          </hbox>
                       <listbox id="connectionList" rows="7" flex="1" pen:binding="name"/>
-                    </vbox>
-                    
-                    <spacer width="10"/>
-                    <vbox flex="1">
-                        <hbox>
-                            <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
-                            <spacer flex="1"/>
-                            <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>
-                        </hbox>
+			        </vbox>
+			        <spacer width="10"/>
+			        <vbox flex="1">
+			            <hbox>
+			                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
+			                <spacer flex="1"/>
+			                <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>
+			            </hbox>
                         <textbox flex="1" id="query" multiline="true" />
-                        <hbox>
-                            <spacer flex="1"/>
-                            <label value="Limit:" height="16"/>
-                            <textbox id="previewLimit" value="10" height="16" width="20"/>
-                            <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="false" height="16"/>
-                            <button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="false" height="16"/>                
-                        </hbox>
-                    </vbox>
-                    </hbox>
-                  <label value="${datasourceDialog.Metadata}"/>
+			            <hbox>
+			                <spacer flex="1"/>
+			                <label value="Limit:" height="16"/>
+					        <textbox id="previewLimit" value="10" height="16" width="20"/>
+			                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="false" height="16"/>
+							<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="false" height="16"/>                
+			            </hbox>
+			        </vbox>
+			      </hbox>
+	  			  <label value="${datasourceDialog.Metadata}"/>
                   <vbox flex="3">
-                    <tree flex="1" id="modelDataTable" seltype="single">
-                            <treecols id="modelDataTableCols">
-                                <treecol id="relationalColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
-                                <treecol id="relationalColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
-                                <!--<treecol id="relationalColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
-                                <treecol id="relationalSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
-                            </treecols>
-								<treechildren id="modelDataRows"/>
-                    </tree>
-                  </vbox>
-              </vbox>
-              <vbox flex="1">
-                  <label value="${datasourceDialog.UploadFile}"/>
-                  <vbox>
-                      <pen:fileupload action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
-                  </vbox>
-                  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false"/>
-                  <vbox flex="1">
-                      <tree flex="1" id="csvDataTable" seltype="single">
-                                <treecols id="csvDataTableCols">
-                                    <treecol id="csvColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
-                                    <treecol id="csvColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
-                                    <!--<treecol id="csvColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
-                                    <treecol id="csvSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
-                                </treecols>
+					<tree flex="1" id="modelDataTable" seltype="single">
+							<treecols id="modelDataTableCols">
+								<treecol id="relationalColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
+								<treecol id="relationalColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
+								<!--<treecol id="relationalColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
+								<treecol id="relationalSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
+							</treecols>
+							    <treechildren id="modelDataRows"/>
+					</tree>
+				  </vbox>
+			  </vbox>
+			  <vbox flex="1">
+			      <label value="${datasourceDialog.UploadFile}"/>
+			      <vbox>
+				      <pen:fileupload action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
+			      </vbox>
+				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false"/>
+				  <vbox flex="1">
+					  <tree flex="1" id="csvDataTable" seltype="single">
+								<treecols id="csvDataTableCols">
+									<treecol id="csvColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
+									<treecol id="csvColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
+									<!--<treecol id="csvColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
+									<treecol id="csvSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
+								</treecols>
 								<treechildren id="csvModelDataRows"/>
-                      </tree>
-                  </vbox>
-              </vbox>
-          </deck>   
-      </groupbox>       
+					  </tree>
+			  	  </vbox>
+			  </vbox>
+		  </deck>	
+	  </groupbox>	    
    </groupbox>
   </dialog>
   
@@ -123,10 +121,10 @@
     title="${previewResultsDialog.title}" width="340" height="400">
         <tree flex="1" id="previewResultsTable" width ="400" height="350" seltype="single">
               <treecols>
-                    <treecol label="Preview" flex="1" />
-              </treecols>
+		   			<treecol label="Preview" flex="1" />
+		      </treecols>
               <treechildren />
-        </tree>    
+		</tree>    
   </dialog>
     
     
@@ -151,22 +149,22 @@
         <label width="180" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   </dialog>
 
-  <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="75" height="65" buttonalign="center">
+  <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="350" height="200" buttonalign="center">
         <label id="errorLabel" value="${errorDialog.errorOccurred}"/>
   </dialog>
-  <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="75" height="65" buttonalign="center">
+  <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="350" height="200" buttonalign="center">
         <label id="successLabel" value="${successDialog.successMessage}"/>
   </dialog>
   <dialog id="applyQueryConfirmationDialog" buttonlabelaccept="${applyQueryConfirmationDialog.OK}" buttonlabelcancel="${applyQueryConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeApplyQueryConfirmationDialog()"
-      ondialogaccept="relationalDatasourceController.generateModel()" buttonalign="right" title="${applyQueryConfirmationDialog.title}" 
-        xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
+	  ondialogaccept="relationalDatasourceController.generateModel()" buttonalign="right" title="${applyQueryConfirmationDialog.title}" 
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
         <label value="${applyQueryConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
   <dialog id="regenerateModelConfirmationDialog" buttonlabelaccept="${regenerateModelConfirmationDialog.OK}" buttonlabelcancel="${regenerateModelConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeApplyQueryConfirmationDialog()"
-      ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${regenerateModelConfirmationDialog.title}" 
-        xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
+	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${regenerateModelConfirmationDialog.title}" 
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
         <label value="${regenerateModelConfirmationDialog.confirmMessage}"/>
       </vbox>

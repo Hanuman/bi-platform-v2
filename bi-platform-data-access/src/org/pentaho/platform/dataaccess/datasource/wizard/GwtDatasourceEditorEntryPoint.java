@@ -1,45 +1,38 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.DialogController.DialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
- *
- * Default implementation usable by standard web applications or other GWT apps through
- * pure Javascript
- *
+ * Creates the singleton datasource editor and sets up native JavaScript functions to show the editor.
  */
-public class JavascriptDatasourceEditor implements EntryPoint{
+public class GwtDatasourceEditorEntryPoint implements EntryPoint {
 
   private GwtDatasourceEditor editor;
   private DatasourceService datasourceService;
   private ConnectionService connectionService;
 
   public void onModuleLoad() {
-    editor = new GwtDatasourceEditor();
-    datasourceService = new org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl();
-    connectionService = new org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl();
-    
-    editor.setConnectionService(connectionService);
-    editor.setDatasourceService(datasourceService);
+    datasourceService = new DatasourceServiceGwtImpl();
+    connectionService = new ConnectionServiceGwtImpl();
+    editor = new GwtDatasourceEditor(datasourceService, connectionService);
     setupNativeHooks(this);
-    
   }
 
-  private native void setupNativeHooks(JavascriptDatasourceEditor editor)/*-{
-
+  private native void setupNativeHooks(GwtDatasourceEditorEntryPoint editor)/*-{
     $wnd.openDatasourceEditor= function(callback) {
-      editor.@org.pentaho.platform.dataaccess.datasource.wizard.JavascriptDatasourceEditor::show(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);
+      editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::show(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);
     }
   }-*/;
-
-
 
   /**
    * Entry-point from Javascript, responds to provided callback with the following:
@@ -52,8 +45,14 @@ public class JavascriptDatasourceEditor implements EntryPoint{
    *
    */
   private void show(final JavaScriptObject callback){
-    final DatasourceDialogListener listener = new DatasourceDialogListener(){
-      public void onDialogFinish(final IDatasource datasource) {
+    final DialogListener<IDatasource> listener = new DialogListener<IDatasource>(){
+      public void onDialogCancel() {
+        editor.getDialogController().hideDialog();
+        notifyCallbackCancel(callback);
+        editor.getDialogController().removeDialogListener(this);
+      }
+
+      public void onDialogAccept(final IDatasource datasource) {
         datasourceService.addDatasource(datasource, new XulServiceCallback<Boolean>(){
           public void success(Boolean value) {
             WAQRTransport transport = WAQRTransport.createFromMetadata(datasource.getBusinessData().getDomain());
@@ -64,16 +63,11 @@ public class JavascriptDatasourceEditor implements EntryPoint{
             notifyCallbackError(callback, throwable.getMessage());
           }
         });
-      }
 
-      public void onDialogCancel() {
-        editor.hide();
-        notifyCallbackCancel(callback);
-        editor.removeDatasourceDialogListener(this);
       }
     };
-    editor.addDatasourceDialogListener(listener);
-    editor.show();
+    editor.getDialogController().addDialogListener(listener);
+    editor.getDialogController().showDialog();
   }
 
   private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value, WAQRTransport transport)/*-{

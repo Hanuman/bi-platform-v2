@@ -10,9 +10,7 @@
       a:visited{color:#551a8b}
       a:active{color:#ff0000}
     </style>
-    <link rel='stylesheet' href='Mantle.css'>
-    <link rel='stylesheet' href='connectionFrame.css'>
-    <script language='javascript' src='org.pentaho.platform.dataaccess.datasource.DatasourceEditor.nocache.js'></script>
+    <script language='javascript' src='org.pentaho.platform.dataaccess.datasource.DatasourceSelectionDialog.nocache.js'></script>
   </head>
 
   <body>
@@ -22,20 +20,10 @@
 
     <script type="text/javascript">
 
-      function showDatasourceEditor(){
-        openDatasourceEditor(new function(){
-          this.onOk = function(json, mqlStr){
-            alert(json+"\n\n\n"+mqlStr);
-          }
-          this.onError = function(err){
-            alert(err);
-          }
-          this.onCancel = function(){
-            alert("Canceled");
-          }
-        });
+      function showDialog() {
+        alert('mat was here');
       }
     </script>
-    <input type="button" onclick="showDatasourceEditor()" value="Test"/>
+    <input type="button" onclick="showDatasourceSelectionDialog()" value="Test"/>
   </body>
 </html>

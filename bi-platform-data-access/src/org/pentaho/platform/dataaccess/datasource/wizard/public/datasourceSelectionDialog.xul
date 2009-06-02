@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window id="datasourceListWindow" title="Datasource List Dialog Demo" orient="vertical"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul"
+  height="600" width="800" onload="datasourceSelectionDialogController.init()">
+
+  <!-- this button for demo purposes only -->
+  <hbox>
+    <button label="Open Datasource List Dialog" tooltiptext="Open Datasource Selection Dialog" onclick="datasourceSelectionDialogController.showDialog()" />
+  </hbox>
+
+  <dialog id="datasourceSelectionDialog" buttonlabelaccept="OK" buttonlabelcancel="Cancel" buttons="accept,cancel"
+    buttonalign="right" title="Select a datasource" width="350" height="400"
+    ondialogaccept="datasourceSelectionDialogController.onDialogAccept()" ondialogcancel="datasourceSelectionDialogController.onDialogCancel()">
+    <vbox flex="1">
+      <hbox>
+        <label value="Datasources" tooltiptext="Datasources" />
+        <spacer flex="1" />
+        <button image="images/add.png" tooltiptext="Add" pen:disabledimage="images/add_disable.png"
+          disabled="false" onclick="datasourceSelectionDialogController.addDatasource()" />
+        <button image="images/remove.png" tooltiptext="Remove" pen:disabledimage="images/remove_disabled.png"
+          disabled="true" />
+      </hbox>
+      <listbox id="datasourceListbox" rows="6" pen:binding="datasourceName" seltype="single">
+      </listbox>
+    </vbox>
+  </dialog>
+
+</window>

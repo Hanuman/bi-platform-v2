@@ -5,6 +5,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.DialogController;
+import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.HasDialogController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
@@ -25,15 +28,19 @@ import org.pentaho.ui.xul.binding.DefaultBindingFactory;
 import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
 
-public class SwingDatasourceEditor {
+public class SwingDatasourceEditor implements HasDialogController<IDatasource> {
 
   private static Log log = LogFactory.getLog(SwingDatasourceEditor.class);
   
-  public SwingDatasourceEditor(){
+  private XulRunner runner;
+  
+  private DatasourceController datasourceController;
+  
+  public SwingDatasourceEditor(final DatasourceService datasourceService, final ConnectionService connectionService) {
     try{
       XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/connectionFrame.xul");
     
-      final XulRunner runner = new SwingXulRunner();
+      runner = new SwingXulRunner();
       runner.addContainer(container);
       
       
@@ -41,7 +48,7 @@ public class SwingDatasourceEditor {
       bf.setDocument(container.getDocumentRoot());
       
     
-      final DatasourceController datasourceController = new DatasourceController();
+      datasourceController = new DatasourceController();
       datasourceController.setBindingFactory(bf);
       container.addEventHandler(datasourceController);
       
@@ -57,13 +64,11 @@ public class SwingDatasourceEditor {
       connectionController.setBindingFactory(bf);
       container.addEventHandler(connectionController);
       
-      ConnectionService service = new ConnectionServiceDebugImpl();
-      connectionController.setService(service);
+      connectionController.setService(connectionService);
 
-      DatasourceService datasourceService = new DatasourceServiceDebugImpl();
       datasourceController.setService(datasourceService);
       try {
-      service.getConnections(new XulServiceCallback<List<IConnection>>(){
+      connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
           System.out.println(error.getLocalizedMessage());
@@ -83,7 +88,6 @@ public class SwingDatasourceEditor {
           
           try{
             runner.initialize();
-            runner.start();
           } catch(XulException e){
             log.error("error starting Xul application", e);
           }
@@ -100,8 +104,17 @@ public class SwingDatasourceEditor {
     }
   }
   
-  public static void main(String[] args){
-    new SwingDatasourceEditor();
+  public static void main(String[] args) throws XulException {
+    ConnectionService connectionService = new ConnectionServiceDebugImpl();
+    DatasourceService datasourceService = new DatasourceServiceDebugImpl();
+
+    SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);
+    editor.runner.start(); // shows the root window
+    editor.getDialogController().showDialog();
+  }
+
+  public DialogController<IDatasource> getDialogController() {
+    return datasourceController;
   }
   
 }
