@@ -7,25 +7,35 @@ import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 
-public class Datasource implements IDatasource, Serializable{
+public class Datasource implements IDatasource, Serializable {
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
+
   private String selectedFile;
+
   private boolean headersPresent;
+
   private String datasourceName;
+
   private String query;
+
   private List<IConnection> connections;
+
   private IConnection selectedConnection;
+
   private DatasourceType type;
+
   private String previewLimit;
+
   private BusinessData businessData;
-  public Datasource(){
-    
+
+  public Datasource() {
+
   }
 
-  public Datasource(IDatasource datasource){
+  public Datasource(IDatasource datasource) {
     setDatasourceName(datasource.getDatasourceName());
     setQuery(datasource.getQuery());
     setConnections(datasource.getConnections());
@@ -54,10 +64,10 @@ public class Datasource implements IDatasource, Serializable{
   public String getPreviewLimit() {
     return previewLimit;
   }
-  
+
   public IConnection getConnection(String name) {
-    for(IConnection connection:connections) {
-      if(connection.getName().equals(name)) {
+    for (IConnection connection : connections) {
+      if (connection.getName().equals(name)) {
         return connection;
       }
     }
@@ -73,13 +83,14 @@ public class Datasource implements IDatasource, Serializable{
   }
 
   public void setConnections(List<IConnection> connections) {
-   connections.clear();
-   connections.addAll(connections);
+    connections.clear();
+    connections.addAll(connections);
   }
 
   public DatasourceType getDatasourceType() {
     return type;
   }
+
   public IConnection getSelectedConnection() {
     return selectedConnection;
   }
@@ -97,7 +108,7 @@ public class Datasource implements IDatasource, Serializable{
   }
 
   public void setDatasourceType(DatasourceType type) {
-    this.type = type; 
+    this.type = type;
   }
 
   public void setHeadersPresent(boolean headersPresent) {
@@ -105,7 +116,7 @@ public class Datasource implements IDatasource, Serializable{
   }
 
   public void setSelectedFile(String selectedFile) {
-    this.selectedFile = selectedFile; 
+    this.selectedFile = selectedFile;
   }
 
   public String getSelectedFile() {
@@ -124,5 +135,9 @@ public class Datasource implements IDatasource, Serializable{
     this.type = type;
   }
 
+  @Override
+  public String toString() {
+    return datasourceName;
+  }
 
 }
