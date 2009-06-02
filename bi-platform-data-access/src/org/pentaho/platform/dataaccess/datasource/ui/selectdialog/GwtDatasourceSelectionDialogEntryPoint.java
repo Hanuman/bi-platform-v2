@@ -23,7 +23,7 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
     datasourceService = new DatasourceServiceGwtImpl();
     connectionService = new ConnectionServiceGwtImpl();
     editor = new GwtDatasourceEditor(datasourceService, connectionService);
-    selectDialog = new GwtDatasourceSelectionDialog(datasourceService, editor.getDialogController());
+    selectDialog = new GwtDatasourceSelectionDialog(datasourceService, editor);
     setupNativeHooks(this);
   }
 
@@ -34,6 +34,6 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
   }-*/;
 
   private void show(final JavaScriptObject callback) {
-    selectDialog.getDialogController().showDialog();
+    selectDialog.showDialog();
   }
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.HasDialogController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
@@ -31,7 +30,7 @@ import com.google.gwt.core.client.GWT;
  * GWT implementation of a datasource editor. Constructor takes all external dependencies. Dialog is shown/hidden via
  * the <code>DialogController</code>.
  */
-public class GwtDatasourceEditor implements IXulLoaderCallback, HasDialogController<IDatasource> {
+public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController<IDatasource> {
 
   DatasourceController datasourceController = new DatasourceController();
   private CsvDatasourceController csvDatasourceController = new CsvDatasourceController();
@@ -171,9 +170,30 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, HasDialogControl
   }
 
   /**
-   * Specified by <code>HasDialogController</code>.
+   * Specified by <code>DialogController</code>.
    */
-  public DialogController<IDatasource> getDialogController() {
-    return datasourceController;
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceController.addDialogListener(listener);  
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void hideDialog() {
+    datasourceController.hideDialog();  
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceController.removeDialogListener(listener);
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void showDialog() {
+    datasourceController.showDialog();  
   }
 }

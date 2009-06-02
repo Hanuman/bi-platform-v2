@@ -14,12 +14,11 @@ import org.pentaho.ui.xul.binding.DefaultBindingFactory;
 import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
 import org.pentaho.ui.xul.util.DialogController;
-import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 /**
  * @author mlowery
  */
-public class SwingDatasourceSelectionDialog implements HasDialogController<IDatasource> {
+public class SwingDatasourceSelectionDialog implements DialogController<IDatasource> {
 
   private XulRunner runner;
 
@@ -56,8 +55,29 @@ public class SwingDatasourceSelectionDialog implements HasDialogController<IData
     runner.initialize();
   }
 
-  public DialogController<IDatasource> getDialogController() {
-    return datasourceSelectionDialogController;
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceSelectionDialogController.addDialogListener(listener);
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void hideDialog() {
+    datasourceSelectionDialogController.hideDialog();
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceSelectionDialogController.removeDialogListener(listener);
+  }
+
+  public void showDialog() {
+    datasourceSelectionDialogController.showDialog();
   }
 
   /**
@@ -68,9 +88,8 @@ public class SwingDatasourceSelectionDialog implements HasDialogController<IData
     DatasourceService datasourceService = new DatasourceServiceDebugImpl();
 
     SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);
-    SwingDatasourceSelectionDialog selectDialog = new SwingDatasourceSelectionDialog(datasourceService, editor
-        .getDialogController());
-    selectDialog.getDialogController().showDialog();
+    SwingDatasourceSelectionDialog selectDialog = new SwingDatasourceSelectionDialog(datasourceService, editor);
+    selectDialog.showDialog();
   }
 
 }

@@ -1,7 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
@@ -12,20 +11,18 @@ import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 import org.pentaho.ui.xul.util.DialogController;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 
-public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, HasDialogController<IDatasource> {
+public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogController<IDatasource> {
 
   // ~ Static fields/initializers ======================================================================================
 
   // ~ Instance fields =================================================================================================
 
   private DatasourceSelectionDialogController datasourceSelectionDialogController;
-  
+
   private DialogController<IDatasource> datasourceDialogController;
-  
+
   private DatasourceService datasourceService;
 
   // ~ Constructors ====================================================================================================
@@ -81,8 +78,32 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, HasDial
     }
   }
 
-  public DialogController<IDatasource> getDialogController() {
-    return datasourceSelectionDialogController;
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceSelectionDialogController.addDialogListener(listener);
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void hideDialog() {
+    datasourceSelectionDialogController.hideDialog();
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceSelectionDialogController.removeDialogListener(listener);
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void showDialog() {
+    datasourceSelectionDialogController.showDialog();
   }
 
 }

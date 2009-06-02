@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.ui.selectdialog.HasDialogController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
@@ -28,7 +27,7 @@ import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
 import org.pentaho.ui.xul.util.DialogController;
 
-public class SwingDatasourceEditor implements HasDialogController<IDatasource> {
+public class SwingDatasourceEditor implements DialogController<IDatasource> {
 
   private static Log log = LogFactory.getLog(SwingDatasourceEditor.class);
   
@@ -110,11 +109,35 @@ public class SwingDatasourceEditor implements HasDialogController<IDatasource> {
 
     SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);
     editor.runner.start(); // shows the root window
-    editor.getDialogController().showDialog();
+    editor.showDialog();
   }
 
-  public DialogController<IDatasource> getDialogController() {
-    return datasourceController;
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceController.addDialogListener(listener);  
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void hideDialog() {
+    datasourceController.hideDialog();  
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    datasourceController.removeDialogListener(listener);
+  }
+
+  /**
+   * Specified by <code>DialogController</code>.
+   */
+  public void showDialog() {
+    datasourceController.showDialog();  
   }
   
 }
