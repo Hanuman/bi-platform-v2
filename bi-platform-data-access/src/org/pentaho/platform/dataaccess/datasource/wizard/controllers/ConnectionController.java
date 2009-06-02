@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.ConnectionDialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -172,9 +173,7 @@ public class ConnectionController extends AbstractXulEventHandler {
     try {
       service.testConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          System.out.println(message);
-          error.printStackTrace();
-          saveConnectionConfirmationDialog.show();
+           saveConnectionConfirmationDialog.show();
         }
 
         public void success(Boolean value) {
@@ -194,15 +193,11 @@ public class ConnectionController extends AbstractXulEventHandler {
     try {
       service.testConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          System.out.println(message);
-          error.printStackTrace();
-          openErrorDialog("Connection Test Not Successful", "Unable to test the connection"
-              + error.getLocalizedMessage());
+          displayErrorMessage(error);
         }
 
         public void success(Boolean value) {
           try {
-
             if (value) {
               openSuccesDialog("Connection Test Successful", "Successfully tested the connection");
             } else {
@@ -210,12 +205,12 @@ public class ConnectionController extends AbstractXulEventHandler {
             }
 
           } catch (Exception e) {
-            openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
+            displayErrorMessage(e);
           }
         }
       });
     } catch (Exception e) {
-      openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
+      displayErrorMessage(e);
     }
   }
 
@@ -226,8 +221,7 @@ public class ConnectionController extends AbstractXulEventHandler {
           new XulServiceCallback<Boolean>() {
 
         public void error(String message, Throwable error) {
-          System.out.println(message);
-          error.printStackTrace();
+          displayErrorMessage(error);
         }
 
         public void success(Boolean value) {
@@ -248,12 +242,12 @@ public class ConnectionController extends AbstractXulEventHandler {
             }
 
           } catch (Exception e) {
-            e.printStackTrace();
+            displayErrorMessage(e);
           }
         }
       });
     } catch (ConnectionServiceException cse) {
-      openErrorDialog("Connection Not Deleted", "Unable to deleted the connection" + cse.getLocalizedMessage());
+      displayErrorMessage(cse);
     }
   }
 
@@ -266,15 +260,12 @@ public class ConnectionController extends AbstractXulEventHandler {
       try {
         service.addConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {  
           public void error(String message, Throwable error) {
-            System.out.println(message);
-            error.printStackTrace();
-            openErrorDialog("Connection Not saved", "Unable to save the connection " + error.getLocalizedMessage());
+            displayErrorMessage(error);
           }
           public void success(Boolean value) {
             try {
               dialog.hide();
               if (value) {
-                openSuccesDialog("Connection Saved", "Successfully saved the connection");
                 datasourceModel.getRelationalModel().addConnection(connectionModel.getConnection());
                 datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
               } else {
@@ -282,21 +273,19 @@ public class ConnectionController extends AbstractXulEventHandler {
               }
   
             } catch (Exception e) {
-              e.printStackTrace();
+              displayErrorMessage(e);
             }
           }
         });
       } catch(ConnectionServiceException cse) {
-        openErrorDialog("Connection Not saved", "Unable to save the connection"+ cse.getLocalizedMessage());
+        displayErrorMessage(cse);
       }
     } else {
       try {
         service.updateConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
   
           public void error(String message, Throwable error) {
-            System.out.println(message);
-            error.printStackTrace();
-            openErrorDialog("Connection Not Updated", "Unable to update the connection " + error.getLocalizedMessage());
+            displayErrorMessage(error);
           }
   
           public void success(Boolean value) {
@@ -315,7 +304,7 @@ public class ConnectionController extends AbstractXulEventHandler {
           }
         });
       } catch(ConnectionServiceException cse) {
-        openErrorDialog("Connection Not updated", "Unable to update the connection"+ cse.getLocalizedMessage());
+        displayErrorMessage(cse);
       }
     }
   }
@@ -338,5 +327,11 @@ public class ConnectionController extends AbstractXulEventHandler {
     if (listeners.contains(listener)) {
       listeners.remove(listener);
     }
+  }
+
+  public void displayErrorMessage(Throwable th) {
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th));
+    errorDialog.show();
   }
 }

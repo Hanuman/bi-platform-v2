@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -108,7 +109,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
               public void error(String message, Throwable error) {
                 hideWaitingDialog();
-                openErrorDialog("Error occurred", "Unable to generate the model. " + error.getLocalizedMessage());
+                displayErrorMessage(error);
               }
 
               public void success(BusinessData businessData) {
@@ -129,7 +130,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
             });
       } catch (DatasourceServiceException e) {
         hideWaitingDialog();
-        openErrorDialog("Error occurred", "Unable to retrieve business data. " + e.getLocalizedMessage());
+        displayErrorMessage(e);
       }
     } else {
       openErrorDialog("Missing Input", "Some of the required inputs are missing");
@@ -187,5 +188,10 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   public void closeRegenerateModelConfirmationDialog() {
     regenerateModelConfirmationDialog.hide();
+  }
+  public void displayErrorMessage(Throwable th) {
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th));
+    errorDialog.show();
   }
 }

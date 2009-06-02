@@ -17,7 +17,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
-import org.pentaho.platform.repository.messages.Messages;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 
 public class ConnectionServiceDelegate {
   

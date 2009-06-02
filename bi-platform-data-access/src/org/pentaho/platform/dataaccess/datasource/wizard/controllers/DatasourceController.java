@@ -11,6 +11,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceDialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
@@ -287,8 +288,7 @@ public class DatasourceController extends AbstractXulEventHandler {
         openErrorDialog("Error occurred", "Business data is null. There is nothing to save");
       }
     } catch (Exception xe) {
-      openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
-          + xe.getLocalizedMessage());
+      displayErrorMessage(xe);
     }
   }
 
@@ -326,8 +326,7 @@ public class DatasourceController extends AbstractXulEventHandler {
       }
 
     } catch (Exception xe) {
-      openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
-          + xe.getLocalizedMessage());
+      displayErrorMessage(xe);
     }
   }
 
@@ -336,8 +335,7 @@ public class DatasourceController extends AbstractXulEventHandler {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveModel(businessData, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          openErrorDialog("Error occurred", "Unable to save model: " + datasourceModel.getDatasourceName()
-              + error.getLocalizedMessage());
+          displayErrorMessage(error);
         }
 
         public void success(Boolean value) {
@@ -348,8 +346,7 @@ public class DatasourceController extends AbstractXulEventHandler {
         }
       });
     } catch (DatasourceServiceException e) {
-      openErrorDialog("Error occurred", "Unable to save model: " + datasourceModel.getDatasourceName()
-          + e.getLocalizedMessage());
+      displayErrorMessage(e);
     }
   }
 
@@ -358,8 +355,7 @@ public class DatasourceController extends AbstractXulEventHandler {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveInlineEtlModel(domain, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          openErrorDialog("Error occurred", "Unable to save model: " + datasourceModel.getDatasourceName()
-              + error.getLocalizedMessage());
+          displayErrorMessage(error);
         }
 
         public void success(Boolean value) {
@@ -370,8 +366,7 @@ public class DatasourceController extends AbstractXulEventHandler {
         }
       });
     } catch (DatasourceServiceException e) {
-      openErrorDialog("Error occurred", "Unable to save model: " + datasourceModel.getDatasourceName()
-          + e.getLocalizedMessage());
+      displayErrorMessage(e);
     }
   }
 
@@ -490,5 +485,10 @@ public class DatasourceController extends AbstractXulEventHandler {
     } catch(XulException e) {
       e.printStackTrace();
     }
+  }
+  public void displayErrorMessage(Throwable th) {
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th));
+    errorDialog.show();
   }
 }

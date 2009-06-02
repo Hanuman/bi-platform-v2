@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
@@ -24,6 +27,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.CsvModelManagementService;
@@ -35,7 +39,7 @@ import org.pentaho.pms.service.ModelManagementServiceException;
 public class DatasourceServiceInMemoryDelegate {
 
   public static final IMetadataDomainRepository METADATA_DOMAIN_REPO = new InMemoryMetadataDomainRepository();
-
+  private static final Log logger = LogFactory.getLog(DatasourceServiceInMemoryDelegate.class);
 
   private List<IDatasource> datasources = new ArrayList<IDatasource>();
   private IModelManagementService modelManagementService;
@@ -174,6 +178,27 @@ public class DatasourceServiceInMemoryDelegate {
     }
     
   }
+
+  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+    Connection conn = null;
+    try {
+      conn = getDataSourceConnection(connection);
+    } catch (DatasourceServiceException dme) {
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
+    } finally {
+      try {
+        if (conn != null) {
+          conn.close();
+        }
+      } catch (SQLException e) {
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),e); //$NON-NLS-1$
+      }
+    }
+    return true;
+  }
+
   
   /**
    * NOTE: caller is responsible for closing connection
@@ -187,52 +212,40 @@ public class DatasourceServiceInMemoryDelegate {
 
     String driverClass = connection.getDriverClass();
     if (StringUtils.isEmpty(driverClass)) {
-      throw new DatasourceServiceException("Connection attempt failed"); //$NON-NLS-1$  
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED"));
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
     }
     Class<?> driverC = null;
 
     try {
       driverC = Class.forName(driverClass);
     } catch (ClassNotFoundException e) {
-      throw new DatasourceServiceException("Driver not found in the class path. Driver was " + driverClass, e); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
     }
     if (!Driver.class.isAssignableFrom(driverC)) {
-      throw new DatasourceServiceException("Driver not found in the class path. Driver was " + driverClass); //$NON-NLS-1$    }
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
     }
     Driver driver = null;
     
     try {
       driver = driverC.asSubclass(Driver.class).newInstance();
     } catch (InstantiationException e) {
-      throw new DatasourceServiceException("Unable to instance the driver", e); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     } catch (IllegalAccessException e) {
-      throw new DatasourceServiceException("Unable to instance the driver", e); //$NON-NLS-1$    }
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     }
     try {
       DriverManager.registerDriver(driver);
       conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
       return conn;
     } catch (SQLException e) {
-      throw new DatasourceServiceException("Unable to connect", e); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
     }
-  }
-
-  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
-    Connection conn = null;
-    try {
-      conn = getDataSourceConnection(connection);
-    } catch (DatasourceServiceException dme) {
-      throw new DatasourceServiceException(dme.getMessage(), dme);
-    } finally {
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        throw new DatasourceServiceException(e);
-      }
-    }
-    return true;
   }
 
   /**
@@ -272,7 +285,8 @@ public class DatasourceServiceInMemoryDelegate {
     DatabaseMeta dbMeta = new DatabaseMeta(databaseName, databaseType, "JDBC", hostname, databaseName, port, connection.getUsername(), connection.getPassword()); //$NON-NLS-1$
     return new SQLDataSource(dbMeta, query);
     } catch(Exception e) {
-      throw new DatasourceServiceException(e);
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.DatasourceServiceInMemoryDelegate.ERROR_0020_UNABLE_TO_GET_DATASOURCE",e.getLocalizedMessage()),e);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.DatasourceServiceInMemoryDelegate.ERROR_0020_UNABLE_TO_GET_DATASOURCE",e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
   }
 
@@ -291,8 +305,9 @@ public class DatasourceServiceInMemoryDelegate {
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       
       return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mmse) {
-      throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
+    } catch(ModelManagementServiceException mme) {
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()),mme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()), mme); //$NON-NLS-1$
     }
   }
 
@@ -312,14 +327,18 @@ public class DatasourceServiceInMemoryDelegate {
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mmse) {
-      throw new DatasourceServiceException(mmse.getLocalizedMessage(), mmse);
+    } catch(ModelManagementServiceException mme) {
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()),mme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()), mme); //$NON-NLS-1$
     } catch(DomainStorageException dse) {
-      throw new DatasourceServiceException("Unable to store domain" + domain.getName(), dse); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",modelName),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", modelName), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      throw new DatasourceServiceException("Domain already exist" + domain.getName(), dae); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",modelName),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", modelName), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
-      throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$     
     }   
   }
   
@@ -332,15 +351,19 @@ public class DatasourceServiceInMemoryDelegate {
    */  
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException {
     Boolean returnValue = false;
+    LocalizedString domainName = businessData.getDomain().getName();   
     try {
     getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
     returnValue = true;
     } catch(DomainStorageException dse) {
-      throw new DatasourceServiceException("Unable to store domain" + businessData.getDomain().getName(), dse); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString()),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName.toString()), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      throw new DatasourceServiceException("Domain already exist" + businessData.getDomain().getName(), dae); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName.toString()),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName.toString()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
-      throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$     
     }
     return returnValue;
   }
@@ -367,48 +390,6 @@ public class DatasourceServiceInMemoryDelegate {
   public void setMetadataDomainRepository(IMetadataDomainRepository metadataDomainRepository) {
     this.metadataDomainRepository = metadataDomainRepository;
   }
-
-  /**
-   * NOTE: caller is responsible for closing connection
-   * 
-   * @param ds
-   * @return
-   * @throws DataSourceManagementException
-   */
-  private static Connection getConnection(IConnection connection) throws ConnectionServiceException {
-    Connection conn = null;
-
-    String driverClass = connection.getDriverClass();
-    if (StringUtils.isEmpty(driverClass)) {
-      throw new ConnectionServiceException("Connection attempt failed"); //$NON-NLS-1$  
-    }
-    Class<?> driverC = null;
-
-    try {
-      driverC = Class.forName(driverClass);
-    } catch (ClassNotFoundException e) {
-      throw new ConnectionServiceException("Driver not found in the class path. Driver was " + driverClass, e); //$NON-NLS-1$
-    }
-    if (!Driver.class.isAssignableFrom(driverC)) {
-      throw new ConnectionServiceException("Driver not found in the class path. Driver was " + driverClass); //$NON-NLS-1$    }
-    }
-    Driver driver = null;
-    
-    try {
-      driver = driverC.asSubclass(Driver.class).newInstance();
-    } catch (InstantiationException e) {
-      throw new ConnectionServiceException("Unable to instance the driver", e); //$NON-NLS-1$
-    } catch (IllegalAccessException e) {
-      throw new ConnectionServiceException("Unable to instance the driver", e); //$NON-NLS-1$    }
-    }
-    try {
-      DriverManager.registerDriver(driver);
-      conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
-      return conn;
-    } catch (SQLException e) {
-      throw new ConnectionServiceException("Unable to connect", e); //$NON-NLS-1$
-    }
-  }
   
   public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
     try  {
@@ -417,20 +398,25 @@ public class DatasourceServiceInMemoryDelegate {
       List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
       return  new BusinessData(domain, data);
       } catch(Exception e) {
-        throw new DatasourceServiceException("Unable to generate the model" + e.getLocalizedMessage());
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()), e); //$NON-NLS-1$
       }
   }
 
   public Boolean saveInlineEtlModel(Domain modelName, boolean overwrite) throws DatasourceServiceException  {
+    LocalizedString domainName = modelName.getName();   
     try {
       getMetadataDomainRepository().storeDomain(modelName, overwrite);
       return true;
     } catch(DomainStorageException dse) {
-      throw new DatasourceServiceException("Unable to store domain" + modelName.getName(), dse); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString()),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName.toString()), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      throw new DatasourceServiceException("Domain already exist" + modelName.getName(), dae); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName.toString()),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName.toString()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
-      throw new DatasourceServiceException("Domain ID is null", dne); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
     }
   }
   

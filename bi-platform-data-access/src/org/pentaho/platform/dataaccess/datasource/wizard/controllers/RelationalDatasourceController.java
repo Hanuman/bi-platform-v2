@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -230,7 +231,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                 public void error(String message, Throwable error) {
                   hideWaitingDialog();
                   query.setDisabled(false);
-                  openErrorDialog("Error occurred", "Unable to retrieve business data. " + error.getLocalizedMessage());
+                  displayErrorMessage(error);
                 }
 
                 public void success(BusinessData businessData) {
@@ -251,7 +252,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         } catch (DatasourceServiceException e) {
           hideWaitingDialog();
           query.setDisabled(false);
-          openErrorDialog("Error occurred", "Unable to retrieve business data. " + e.getLocalizedMessage());
+          displayErrorMessage(e);
         }
       } else {
         openErrorDialog("Missing Input", "Some of the required inputs are missing");
@@ -316,7 +317,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
           public void error(String message, Throwable error) {
             hideWaitingDialog();
-            openErrorDialog("Preview Failed", "Unable to preview data: " + error.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$ 
+            displayErrorMessage(error);
           }
 
           public void success(SerializedResultSet rs) {
@@ -392,7 +393,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
               }
             } catch (Exception e) {
               hideWaitingDialog();
-              openErrorDialog("Preview Failed", "Unable to preview data: " + e.getLocalizedMessage());
+              displayErrorMessage(e);
             }
           }
         });
@@ -447,5 +448,11 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   public void hideWaitingDialog() {
     waitingDialog.hide();
+  }
+  
+  public void displayErrorMessage(Throwable th) {
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th));
+    errorDialog.show();
   }
 }

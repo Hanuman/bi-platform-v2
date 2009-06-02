@@ -34,7 +34,7 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
-import org.pentaho.platform.repository.messages.Messages;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.CsvModelManagementService;
@@ -76,7 +76,7 @@ public class DatasourceServiceDelegate {
         Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
         dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
       } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR",e.getLocalizedMessage()),e);        
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
           // TODO: Unhardcode once this is an actual plugin
           dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
       }
@@ -272,7 +272,7 @@ public class DatasourceServiceDelegate {
     String driverClass = connection.getDriverClass();
     if (StringUtils.isEmpty(driverClass)) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED"));
-      throw new DatasourceServiceException(Messages.getErrorString("ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
     }
     Class<?> driverC = null;
 
@@ -316,14 +316,16 @@ public class DatasourceServiceDelegate {
     try {
       conn = getDataSourceConnection(connection);
     } catch (DatasourceServiceException dme) {
-      throw new DatasourceServiceException(dme.getMessage(), dme);
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
     } finally {
       try {
         if (conn != null) {
           conn.close();
         }
       } catch (SQLException e) {
-        throw new DatasourceServiceException(e);
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),e); //$NON-NLS-1$
       }
     }
     return true;
