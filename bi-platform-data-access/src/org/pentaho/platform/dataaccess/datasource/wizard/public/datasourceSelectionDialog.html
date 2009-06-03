@@ -20,10 +20,16 @@
 
     <script type="text/javascript">
 
-      function showDialog() {
-        alert('mat was here');
+      var callback = new function() {
+        function onFinish(domainId, modelId) {
+          alert('got domainId='+domainId+', modelId='+modelId);
+        }
+
+        function onCancel() {
+          // do nothing
+        }
       }
     </script>
-    <input type="button" onclick="showDatasourceSelectionDialog()" value="Test"/>
+    <input type="button" onclick="showDatasourceSelectionDialog(callback)" value="Test"/>
   </body>
 </html>

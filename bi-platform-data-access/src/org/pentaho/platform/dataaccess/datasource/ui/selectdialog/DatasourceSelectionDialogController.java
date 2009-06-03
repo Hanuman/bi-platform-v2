@@ -1,13 +1,12 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
+import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
@@ -18,7 +17,8 @@ import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 import org.pentaho.ui.xul.util.DialogController;
-import org.pentaho.ui.xul.util.DialogController.DialogListener;
+
+import com.google.gwt.user.client.Window;
 
 public class DatasourceSelectionDialogController extends AbstractXulDialogController<IDatasource> {
 
@@ -123,26 +123,26 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   }
 
   private void refreshDatasources() {
-    // datasourceService.getDatasources(new XulServiceCallback<List<IDatasource>>() {
-    //
-    // public void error(final String message, final Throwable error) {
-    // System.out.println(message);
-    // }
-    //
-    // public void success(final List<IDatasource> datasourceList) {
-    // DatasourceSelectionDialogController.this.datasourceSelectionDialogModel.setDatasources(datasourceList);
-    // }
-    //
-    // });
+     datasourceService.getDatasources(new XulServiceCallback<List<IDatasource>>() {
+    
+     public void error(final String message, final Throwable error) {
+     System.out.println(message);
+     }
+    
+     public void success(final List<IDatasource> datasourceList) {
+     DatasourceSelectionDialogController.this.datasourceSelectionDialogModel.setDatasources(datasourceList);
+     }
+    
+     });
     // test code......
-    List<IDatasource> datasourceList = new ArrayList<IDatasource>();
-    IDatasource ds = new Datasource();
-    ds.setDatasourceName("hello");
-    datasourceList.add(ds);
-    ds = new Datasource();
-    ds.setDatasourceName("goodbye");
-    datasourceList.add(ds);
-    DatasourceSelectionDialogController.this.datasourceSelectionDialogModel.setDatasources(datasourceList);
+//    List<IDatasource> datasourceList = new ArrayList<IDatasource>();
+//    IDatasource ds = new Datasource();
+//    ds.setDatasourceName("hello");
+//    datasourceList.add(ds);
+//    ds = new Datasource();
+//    ds.setDatasourceName("goodbye");
+//    datasourceList.add(ds);
+//    DatasourceSelectionDialogController.this.datasourceSelectionDialogModel.setDatasources(datasourceList);
   }
 
   /**
@@ -181,18 +181,19 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
   public void setDatasourceDialogController(final DialogController<IDatasource> datasourceDialogController) {
     this.datasourceDialogController = datasourceDialogController;
+  }
+
+  public void addDatasource() {
     datasourceDialogController.addDialogListener(new DialogListener<IDatasource>() {
       public void onDialogAccept(final IDatasource datasource) {
+        Window.alert("user accepted");
         refreshDatasources();
       }
 
       public void onDialogCancel() {
-        // nothing to do
+        Window.alert("user cancelled");
       }
     });
-  }
-
-  public void addDatasource() {
     datasourceDialogController.showDialog();
   }
 

@@ -241,11 +241,15 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     return "datasourceController"; //$NON-NLS-1$
   }
 
-  private void saveModel() throws Exception {
-    if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
-      saveRelationalModel();
-    } else if (datasourceModel.getDatasourceType() == DatasourceType.CSV) {
-      saveCsvModel();
+  public void saveModel() {
+    try {
+      if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
+        saveRelationalModel();
+      } else if (datasourceModel.getDatasourceType() == DatasourceType.CSV) {
+        saveCsvModel();
+      }
+    } catch (Exception e) {
+      handleSaveError(datasourceModel, e);
     }
   }
   
@@ -416,12 +420,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   @Override
   public void onDialogAccept() {
-    try {
-      saveModel();
-      super.onDialogAccept();
-    } catch (Exception xe) {
-      handleSaveError(datasourceModel, xe);
-    }
+    saveModel();
+    super.onDialogAccept();
   }
   
     private void buildCsvEmptyTable() {
