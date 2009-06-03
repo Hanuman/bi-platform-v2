@@ -1,16 +1,20 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -18,6 +22,7 @@ import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
+import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
@@ -29,8 +34,12 @@ import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeCols;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+import org.pentaho.ui.xul.util.TreeCellEditor;
+import org.pentaho.ui.xul.util.TreeCellEditorListener;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
+  private DatasourceMessages datasourceMessages;
+  
   private XulDialog connectionDialog;
 
   private XulDialog removeConfirmationDialog;
@@ -86,7 +95,10 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   private XulTreeCol columnNameTreeCol = null;
   private XulTreeCol columnTypeTreeCol = null;
   //private XulTreeCol columnFormatTreeCol = null;
-
+  XulDialog aggregationEditorDialog = null;
+  XulDialog sampleDataDialog = null;
+  CustomAggregateCellEditor aggregationCellEditor = null;
+  CustomSampleDataCellEditor sampleDataCellEditor = null;
   
   public RelationalDatasourceController() {
 
@@ -95,6 +107,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public void init() {
     applyButton = (XulButton) document.getElementById("apply"); //$NON-NLS-1$
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
+    aggregationEditorDialog = (XulDialog) document.getElementById("relationalAggregationEditorDialog");
+    aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog);
+    modelDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);
+    sampleDataDialog = (XulDialog) document.getElementById("relationalSampleDataDialog");
+    sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
+    modelDataTable.registerCellEditor("sample-data-cell-editor", aggregationCellEditor);
+
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
     applyQueryConfirmationDialog = (XulDialog) document.getElementById("applyQueryConfirmationDialog"); //$NON-NLS-1$
@@ -224,7 +243,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       if (validateInputs()) {
         query.setDisabled(true);
         try {
-          showWaitingDialog("Generating Metadata Model", "Please wait ....");
+          showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
           service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel().getSelectedConnection(),
               datasourceModel.getRelationalModel().getQuery(), datasourceModel.getRelationalModel().getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
@@ -255,7 +274,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
           displayErrorMessage(e);
         }
       } else {
-        openErrorDialog("Missing Input", "Some of the required inputs are missing");
+        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
       }
   }
   private boolean validateInputs() {
@@ -307,11 +326,10 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public void displayPreview() {
 
     if (!validateInputs()) {
-      openErrorDialog("Missing Input", "Some of the required inputs are missing"); //$NON-NLS-2$
+      openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
     } else {
       try {
-        showWaitingDialog("Generating Preview Data", "Please wait ....");
-
+        showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_PREVIEW_DATA"), datasourceMessages.getString("DatasourceController.WAIT"));
         service.doPreview(datasourceModel.getRelationalModel().getSelectedConnection(), datasourceModel.getRelationalModel().getQuery(), datasourceModel
             .getRelationalModel().getPreviewLimit(), new XulServiceCallback<SerializedResultSet>() {
 
@@ -399,7 +417,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         });
       } catch (DatasourceServiceException e) {
         hideWaitingDialog();
-        openErrorDialog("Preview Failed", "Unable to preview data: " + e.getLocalizedMessage());
+        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("RelationalDatasourceController.ERROR_0001_UNABLE_TO_PREVIEW_DATA",e.getLocalizedMessage()));
       }
     }
   }
@@ -454,5 +472,158 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
     errorLabel.setValue(ExceptionParser.getErrorMessage(th));
     errorDialog.show();
+  }
+  /**
+   * @param datasourceMessages the datasourceMessages to set
+   */
+  public void setDatasourceMessages(DatasourceMessages datasourceMessages) {
+    this.datasourceMessages = datasourceMessages;
+  }
+
+  /**
+   * @return the datasourceMessages
+   */
+  public DatasourceMessages getDatasourceMessages() {
+    return datasourceMessages;
+  }
+  
+  public void closeAggregationEditorDialog() {
+   aggregationCellEditor.hide(); 
+  }
+  
+  public void saveAggregationValues() {
+    aggregationCellEditor.notifyListeners();
+  }
+
+  public void closeSampleDataDialog() {
+    sampleDataCellEditor.hide(); 
+  }
+
+  private class CustomAggregateCellEditor implements TreeCellEditor {
+    XulDialog dialog = null;
+    TreeCellEditorListener listener = null;
+
+    public CustomAggregateCellEditor(XulDialog dialog) {
+      super();
+      this.dialog = dialog;
+    }
+
+    @Override
+    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
+      this.listener = listener;
+    }
+
+    @Override
+    public Object getValue() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void hide() {
+      dialog.hide();
+    }
+
+    @Override
+    public void setValue(Object val) {
+      // Create the list of check box in XulDialog
+      ArrayList<AggregationType> aggregationList = (ArrayList<AggregationType>) val;
+      AggregationType[] aggregationTypeArray = AggregationType.values();
+      for(int i=0;i<aggregationTypeArray.length;i++) {
+        XulCheckbox aggregationCheckBox;
+        try {
+          aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
+          aggregationCheckBox.setLabel(aggregationTypeArray[i].name());
+          if(aggregationList.contains(aggregationTypeArray[i])) {
+            aggregationCheckBox.setChecked(true);
+          } else {
+            aggregationCheckBox.setChecked(false);
+          }
+          dialog.addChild(aggregationCheckBox);
+        } catch (XulException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+
+    @Override
+    public void show(int row, int col, Object boundObj, String columnBinding) {
+      dialog.show();
+    }
+    
+    public void notifyListeners() {
+      hide();  
+      // Construct a new array list of aggregation based on what user selected
+      // pass it to listener
+      ArrayList<AggregationType> aggregationTypeList = new ArrayList<AggregationType>(); 
+      for(XulComponent component: dialog.getChildNodes()) {
+        XulCheckbox checkbox = (XulCheckbox) component;
+        aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+      }
+      this.listener.onCellEditorClosed(aggregationTypeList);
+    }
+  }
+  
+  
+  private class CustomSampleDataCellEditor implements TreeCellEditor {
+    XulDialog dialog = null;
+    TreeCellEditorListener listener = null;
+
+    public CustomSampleDataCellEditor(XulDialog dialog) {
+      super();
+      this.dialog = dialog;
+    }
+
+    @Override
+    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
+      this.listener = listener;
+    }
+
+    @Override
+    public Object getValue() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void hide() {
+      dialog.hide();
+    }
+
+    @Override
+    public void setValue(Object val) {
+
+    }
+
+    @Override
+    public void show(int row, int col, Object boundObj, String columnBinding) {
+      XulTree sampleDataTree = null;
+      XulTreeCols treeCols = null;
+      XulTreeCol treeCol = null;
+      try {
+        sampleDataTree = (XulTree) document.createElement("tree");
+        treeCols = (XulTreeCols) document.createElement("treecols");
+        treeCol = (XulTreeCol) document.createElement("treecol");
+        treeCol.setLabel("Sample Data");
+        treeCol.setFlex(1);
+        treeCols.addColumn(treeCol);
+        sampleDataTree.addChild(treeCols);
+        CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
+        for(String sampleData : csvModelDataRow.getSampleDataList()) {
+          XulTreeRow treeRow = (XulTreeRow) document.createElement("treerow");
+          XulTreeCell treeCell = (XulTreeCell) document.createElement("treecell");
+          treeCell.setLabel(sampleData);
+          treeRow.addCell(treeCell);
+          sampleDataTree.addTreeRow(treeRow);
+        }
+        sampleDataTree.update();
+        dialog.addChild(sampleDataTree);
+      } catch (XulException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      dialog.show();
+    }
   }
 }

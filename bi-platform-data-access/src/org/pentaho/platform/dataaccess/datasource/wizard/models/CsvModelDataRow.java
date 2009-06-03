@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
@@ -17,18 +18,34 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
   private List<DataType> dataTypes = new ArrayList<DataType>();
   private DataType selectedDataType;
   private String locale;
+  private List<AggregationType> aggregationList = new ArrayList<AggregationType>() {
+
+    @Override
+    public String toString() {
+      StringBuffer buffer = new StringBuffer();
+      for(int i=0;i<this.size();i++) {
+        buffer.append(this.get(i));
+        if(i<this.size()-1) {
+          buffer.append(',');  
+        }
+      }
+      return buffer.toString();
+    }
+    
+  };
   //private List<DataFormatType> dataFormatTypes = new ArrayList<DataFormatType>();
   //private DataFormatType selectedDataFormatType;
   
   // Commenting out data format for now
  public CsvModelDataRow(LogicalColumn col, List<String> columnData,String locale) {
-    this.selectedDataType = col.getDataType();
-    //this.selectedDataFormatType = DataFormatType.CURRENCY;
-    this.columnName = col.getName().getString(locale);
+    setSelectedDataType(col.getDataType());
+    //setSelectedDataFormatType(DataFormatType.CURRENCY);
+    setAggregationList(col.getAggregationList());
+    setColumnName(col.getName().getString(locale));
     if(columnData.size() > 0) {
-      this.sampleData = columnData.get(0);
-      this.sampleDataList = columnData;
-    }    
+      setSampleData(columnData.get(0));
+      setSampleDataList(columnData);
+    }
   }
 
   public String getColumnName() {
@@ -88,6 +105,20 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
       v.add(t);
     }
     return v;
+  }
+  /**
+   * @param aggregationList the aggregationList to set
+   */
+  public void setAggregationList(List<AggregationType> aggregationList) {
+    this.aggregationList.clear();
+    this.aggregationList.addAll(aggregationList);
+  }
+
+  /**
+   * @return the aggregationList
+   */
+  public List<AggregationType> getAggregationList() {
+    return aggregationList;
   }
 
   

@@ -6,4 +6,6 @@
   <tree id="csvModelDataTable" height="250"/>  
   <listbox id="connectionList" width="240" height="117"/>
   <textbox id="datasourcename" width="237"/>
+  <textbox flex="0" id="query"    rows="6" cols="80" width="360" />
+  <listbox id="connectionList" flex="0"/>
 </overlay>

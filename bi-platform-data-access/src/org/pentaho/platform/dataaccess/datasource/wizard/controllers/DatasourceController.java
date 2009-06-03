@@ -12,6 +12,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
+import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -37,7 +38,7 @@ import org.pentaho.ui.xul.util.AbstractXulDialogController;
 public class DatasourceController extends AbstractXulDialogController<IDatasource> {
   public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;
   public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 10;
-
+  private DatasourceMessages datasourceMessages;
   private XulDialog datasourceDialog;
 
   private XulDialog waitingDialog = null;
@@ -86,12 +87,16 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   private XulTree modelDataTable = null;
   
   private XulTree csvDataTable = null;
+  private XulHbox databaseButtonBox = null;
+  private XulHbox csvButtonBox = null;
   
   public DatasourceController() {
 
   }
 
   public void init() {
+    databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
+    csvButtonBox = (XulHbox) document.getElementById("csvButtonBox");
     datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
@@ -205,6 +210,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     okButton.setDisabled(true);
     // Setting the Button Panel background to white
     buttonBox.setBgcolor("#FFFFFF");
+    datasourceDialog.setBgcolor("#FFFFFF");
+    selectSql();
     datasourceModel.setDatasourceType(DatasourceType.SQL);
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
@@ -281,11 +288,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
           }
           saveCsvModel(domain, false);
         } else {
-          throw new RuntimeException("Domain model is null. There is nothing to save");
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
         }
       } else {
-        throw new RuntimeException("Domain model is null. There is nothing to save");
-
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
       }
   }
 
@@ -311,10 +317,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
           }
           saveRelationalModel(businessData, false);
         } else {
-          throw new RuntimeException("Domain model is null. There is nothing to save");
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
         }
       } else {
-        throw new RuntimeException("Domain model is null. There is nothing to save");
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
       }
 
   }
@@ -347,6 +353,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   public void selectSql() {
     datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
+    databaseButtonBox.setBgcolor("#CCCCCC");
+    csvButtonBox.setBgcolor("#FFFFFF");
   }
 
   public void selectOlap() {
@@ -355,6 +363,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   public void selectCsv() {
     datasourceDeck.setSelectedIndex(CSV_DECK);
+    csvButtonBox.setBgcolor("#CCCCCC");
+    databaseButtonBox.setBgcolor("#FFFFFF");
   }
 
   public void selectMql() {
@@ -422,6 +432,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   public void onDialogAccept() {
     saveModel();
     super.onDialogAccept();
+    datasourceModel.clearModel();
+    connectionModel.clearModel();
   }
   
     private void buildCsvEmptyTable() {
@@ -469,5 +481,19 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
     errorLabel.setValue(ExceptionParser.getErrorMessage(th));
     errorDialog.show();
+  }
+
+  /**
+   * @param datasourceMessages the datasourceMessages to set
+   */
+  public void setDatasourceMessages(DatasourceMessages datasourceMessages) {
+    this.datasourceMessages = datasourceMessages;
+  }
+
+  /**
+   * @return the datasourceMessages
+   */
+  public DatasourceMessages getDatasourceMessages() {
+    return datasourceMessages;
   }
 }

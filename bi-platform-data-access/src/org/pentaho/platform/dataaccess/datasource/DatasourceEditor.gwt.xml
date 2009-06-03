@@ -41,7 +41,8 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/UploadFileServlet*"/>
         <exclude name="**/UploadFileDebugServlet*"/>
         <exclude name="**/IDataAccessPermissionHandler*"/>
-        <exclude name="**/SimpleDataAccessPermissionHandler*"/>                
+        <exclude name="**/SimpleDataAccessPermissionHandler*"/>
+        <exclude name="**/Messages*"/>                
     </source>
    <public path="wizard/public"/>
     <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint"/>

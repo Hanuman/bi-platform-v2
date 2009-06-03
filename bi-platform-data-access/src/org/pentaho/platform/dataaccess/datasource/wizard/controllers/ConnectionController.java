@@ -6,6 +6,7 @@ import java.util.List;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.ConnectionDialogListener;
+import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
@@ -23,7 +24,8 @@ import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
 public class ConnectionController extends AbstractXulEventHandler {
   private XulDialog dialog;
-
+  private DatasourceMessages datasourceMessages;
+  
   private ConnectionService service;
 
   private List<ConnectionDialogListener> listeners = new ArrayList<ConnectionDialogListener>();
@@ -199,9 +201,9 @@ public class ConnectionController extends AbstractXulEventHandler {
         public void success(Boolean value) {
           try {
             if (value) {
-              openSuccesDialog("Connection Test Successful", "Successfully tested the connection");
+              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_TEST_SUCCESS"));
             } else {
-              openErrorDialog("Connection Test Not Successful", "Unable to test the connection");
+              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0003_CONNECTION_TEST_FAILED"));              
             }
 
           } catch (Exception e) {
@@ -227,7 +229,7 @@ public class ConnectionController extends AbstractXulEventHandler {
         public void success(Boolean value) {
           try {
                 if (value) {
-                  openSuccesDialog("Connection Deleted", "Successfully deleted the connection");
+                  openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_DELETED"));
                   datasourceModel.getRelationalModel().deleteConnection(
                       datasourceModel.getRelationalModel().getSelectedConnection().getName());
                   List<IConnection> connections = datasourceModel.getRelationalModel().getConnections();
@@ -238,7 +240,7 @@ public class ConnectionController extends AbstractXulEventHandler {
                   }
 
             } else {
-              openErrorDialog("Connection Not Deleted", "Unable to delete the connection");
+              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0002_UNABLE_TO_DELETE_CONNECTION"));              
             }
 
           } catch (Exception e) {
@@ -269,7 +271,7 @@ public class ConnectionController extends AbstractXulEventHandler {
                 datasourceModel.getRelationalModel().addConnection(connectionModel.getConnection());
                 datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
               } else {
-                openErrorDialog("Connection Not saved", "Unable to save the connection");
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0001_UNABLE_TO_ADD_CONNECTION"));
               }
   
             } catch (Exception e) {
@@ -292,11 +294,11 @@ public class ConnectionController extends AbstractXulEventHandler {
             try {
               dialog.hide();
               if (value) {
-                openSuccesDialog("Connection Updated", "Successfully updated the connection");
+                openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_UPDATED"));
                 datasourceModel.getRelationalModel().updateConnection(connectionModel.getConnection());
                 datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
               } else {
-                openErrorDialog("Connection Not updated", "Unable to updated the connection");
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0004_UNABLE_TO_UPDATE_CONNECTION"));              
               }
   
             } catch (Exception e) {
@@ -333,5 +335,19 @@ public class ConnectionController extends AbstractXulEventHandler {
     errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
     errorLabel.setValue(ExceptionParser.getErrorMessage(th));
     errorDialog.show();
+  }
+  
+  /**
+   * @param datasourceMessages the datasourceMessages to set
+   */
+  public void setDatasourceMessages(DatasourceMessages datasourceMessages) {
+    this.datasourceMessages = datasourceMessages;
+  }
+
+  /**
+   * @return the datasourceMessages
+   */
+  public DatasourceMessages getDatasourceMessages() {
+    return datasourceMessages;
   }
 }
