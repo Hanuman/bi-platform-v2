@@ -34,7 +34,7 @@
     </groupbox>
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
-    buttons="accept,cancel" ondialogaccept="datasourceController.saveModel()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
+    buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
     <groupbox flex="1">
       <hbox id="buttonBox">
           <button id="relationalButton" image="images/relational_selected.png"  tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="left"/>
