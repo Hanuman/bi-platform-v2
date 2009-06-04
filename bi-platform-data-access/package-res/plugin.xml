@@ -3,7 +3,7 @@
 <plugin title="Pentaho Data Access">
    <static-paths>
      <!-- this translates to /pentaho/content/data-access-plugin/resources/* -->
-     <static-path url="/data-access-plugin/resources" localFolder="resources"/>
+     <static-path url="/data-access/resources" localFolder="resources"/>
    </static-paths>
    
    <bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl"/>
