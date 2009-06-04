@@ -508,23 +508,19 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       this.dialog = dialog;
     }
 
-    @Override
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
       this.listener = listener;
     }
 
-    @Override
     public Object getValue() {
       // TODO Auto-generated method stub
       return null;
     }
 
-    @Override
     public void hide() {
       dialog.hide();
     }
 
-    @Override
     public void setValue(Object val) {
       // Create the list of check box in XulDialog
       ArrayList<AggregationType> aggregationList = (ArrayList<AggregationType>) val;
@@ -547,7 +543,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       }
     }
 
-    @Override
     public void show(int row, int col, Object boundObj, String columnBinding) {
       dialog.show();
     }
@@ -575,28 +570,22 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       this.dialog = dialog;
     }
 
-    @Override
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
       this.listener = listener;
     }
 
-    @Override
     public Object getValue() {
       // TODO Auto-generated method stub
       return null;
     }
 
-    @Override
     public void hide() {
       dialog.hide();
     }
 
-    @Override
     public void setValue(Object val) {
 
     }
-
-    @Override
     public void show(int row, int col, Object boundObj, String columnBinding) {
       XulTree sampleDataTree = null;
       XulTreeCols treeCols = null;
