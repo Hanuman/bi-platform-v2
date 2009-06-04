@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -23,9 +24,9 @@ import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
@@ -36,12 +37,16 @@ import org.pentaho.pms.service.IModelQueryService;
 import org.pentaho.pms.service.JDBCModelManagementService;
 import org.pentaho.pms.service.ModelManagementServiceException;
 
+/*
+ * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
+ * lower-level BusinessData instances. (BusinessData instances are stored in IDatasources.) They are not currently being
+ * kept in sync. I propose that the service only deals with IDatasources from a caller perspective.
+ */
 public class DatasourceServiceInMemoryDelegate {
 
   public static final IMetadataDomainRepository METADATA_DOMAIN_REPO = new InMemoryMetadataDomainRepository();
   private static final Log logger = LogFactory.getLog(DatasourceServiceInMemoryDelegate.class);
 
-  private List<IDatasource> datasources = new ArrayList<IDatasource>();
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
@@ -55,10 +60,22 @@ public class DatasourceServiceInMemoryDelegate {
   }
   
   public List<IDatasource> getDatasources() {
+    List<IDatasource> datasources = new ArrayList<IDatasource>();
+    Set<String> domainIds = metadataDomainRepository.getDomainIds();
+    for (String domainId : domainIds) {
+      Domain domain = metadataDomainRepository.getDomain(domainId);
+      BusinessData bs = new BusinessData();
+      bs.setDomain(domain);
+      Datasource ds = new Datasource();
+      ds.setBusinessData(bs);
+      ds.setDatasourceName(domain.getId());
+      datasources.add(ds);
+    }
     return datasources;
   }
+  
   public IDatasource getDatasourceByName(String name) {
-    for(IDatasource datasource:datasources) {
+    for(IDatasource datasource:getDatasources()) {
       if(datasource.getDatasourceName().equals(name)) {
         return datasource;
       }
@@ -66,10 +83,11 @@ public class DatasourceServiceInMemoryDelegate {
     return null;
   }
   public Boolean addDatasource(IDatasource datasource) {
-    datasources.add(datasource);
+    getDatasources().add(datasource);
     return true;
   }
   public Boolean updateDatasource(IDatasource datasource) {
+    List<IDatasource> datasources = getDatasources();
     for(IDatasource datasrc:datasources) {
       if(datasrc.getDatasourceName().equals(datasource.getDatasourceName())) {
         datasources.remove(datasrc);
@@ -79,10 +97,13 @@ public class DatasourceServiceInMemoryDelegate {
     return true;
   }
   public Boolean deleteDatasource(IDatasource datasource) {
+    List<IDatasource> datasources = getDatasources();
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }
+  
   public Boolean deleteDatasource(String name) {
+    List<IDatasource> datasources = getDatasources();
     for(IDatasource datasource:datasources) {
       if(datasource.getDatasourceName().equals(name)) {
         return deleteDatasource(datasource);

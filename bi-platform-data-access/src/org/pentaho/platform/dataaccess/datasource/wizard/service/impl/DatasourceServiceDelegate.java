@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,15 +27,16 @@ import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.CsvModelManagementService;
@@ -43,10 +45,14 @@ import org.pentaho.pms.service.IModelQueryService;
 import org.pentaho.pms.service.JDBCModelManagementService;
 import org.pentaho.pms.service.ModelManagementServiceException;
 
+/*
+ * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
+ * lower-level BusinessData instances. (BusinessData instances are stored in IDatasources.) They are not currently being
+ * kept in sync. I propose that the service only deals with IDatasources from a caller perspective.
+ */
 public class DatasourceServiceDelegate {
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
-  private List<IDatasource> datasources = new ArrayList<IDatasource>();
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
@@ -91,6 +97,17 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
+    List<IDatasource> datasources = new ArrayList<IDatasource>();
+    Set<String> domainIds = metadataDomainRepository.getDomainIds();
+    for (String domainId : domainIds) {
+      Domain domain = metadataDomainRepository.getDomain(domainId);
+      BusinessData bs = new BusinessData();
+      bs.setDomain(domain);
+      Datasource ds = new Datasource();
+      ds.setBusinessData(bs);
+      ds.setDatasourceName(domain.getId());
+      datasources.add(ds);
+    }
     return datasources;
   }
   
@@ -99,7 +116,7 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
-    for(IDatasource datasource:datasources) {
+    for(IDatasource datasource:getDatasources()) {
       if(datasource.getDatasourceName().equals(name)) {
         return datasource;
       }
@@ -112,7 +129,7 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
-    datasources.add(datasource);
+    getDatasources().add(datasource);
     return true;
   }
   
@@ -125,6 +142,7 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
+    List<IDatasource> datasources = getDatasources();
     for(IDatasource datasrc:datasources) {
       if(datasrc.getDatasourceName().equals(datasource.getDatasourceName())) {
         datasources.remove(datasrc);
@@ -138,6 +156,7 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
+    List<IDatasource> datasources = getDatasources();
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }
@@ -146,6 +165,7 @@ public class DatasourceServiceDelegate {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         return null;
     }
+    List<IDatasource> datasources = getDatasources();
     for(IDatasource datasource:datasources) {
       if(datasource.getDatasourceName().equals(name)) {
         return deleteDatasource(datasource);
@@ -258,7 +278,31 @@ public class DatasourceServiceDelegate {
     }
     
   }
-  
+
+  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+    if (!hasDataAccessPermission()) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+    }
+    Connection conn = null;
+    try {
+      conn = getDataSourceConnection(connection);
+    } catch (DatasourceServiceException dme) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
+    } finally {
+      try {
+        if (conn != null) {
+          conn.close();
+        }
+      } catch (SQLException e) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),e); //$NON-NLS-1$
+      }
+    }
+    return true;
+  }
+
   /**
    * NOTE: caller is responsible for closing connection
    * 
@@ -305,30 +349,6 @@ public class DatasourceServiceDelegate {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
     }
-  }
-
-  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-    }
-    Connection conn = null;
-    try {
-      conn = getDataSourceConnection(connection);
-    } catch (DatasourceServiceException dme) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
-    } finally {
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),e); //$NON-NLS-1$
-      }
-    }
-    return true;
   }
 
   /**

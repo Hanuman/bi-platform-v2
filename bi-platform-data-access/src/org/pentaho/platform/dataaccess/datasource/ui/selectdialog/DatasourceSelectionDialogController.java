@@ -186,12 +186,10 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   public void addDatasource() {
     datasourceDialogController.addDialogListener(new DialogListener<IDatasource>() {
       public void onDialogAccept(final IDatasource datasource) {
-        Window.alert("user accepted");
         refreshDatasources();
       }
 
       public void onDialogCancel() {
-        Window.alert("user cancelled");
       }
     });
     datasourceDialogController.showDialog();

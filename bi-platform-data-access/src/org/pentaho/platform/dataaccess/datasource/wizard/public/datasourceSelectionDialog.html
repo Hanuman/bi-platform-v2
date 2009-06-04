@@ -21,12 +21,12 @@
     <script type="text/javascript">
 
       var callback = new function() {
-        function onFinish(domainId, modelId) {
+    	  this.onFinish = function(domainId, modelId) {
           alert('got domainId='+domainId+', modelId='+modelId);
         }
 
-        function onCancel() {
-          // do nothing
+        this.onCancel = function() {
+        	alert('cancelled');
         }
       }
     </script>
