@@ -6,6 +6,7 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
+import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
 import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
@@ -25,12 +26,17 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
 
   private DatasourceService datasourceService;
 
+  private AsyncConstructorListener constructorListener;
+
+  private boolean initialized;
+
   // ~ Constructors ====================================================================================================
 
   public GwtDatasourceSelectionDialog(final DatasourceService datasourceService,
-      final DialogController<IDatasource> datasourceDialogController) {
+      final DialogController<IDatasource> datasourceDialogController, final AsyncConstructorListener constructorListener) {
     this.datasourceDialogController = datasourceDialogController;
     this.datasourceService = datasourceService;
+    this.constructorListener = constructorListener;
     try {
       AsyncXulLoader.loadXulFromUrl("datasourceSelectionDialog.xul", "datasourceSelectionDialog", this); //$NON-NLS-1$//$NON-NLS-2$
     } catch (Exception e) {
@@ -73,8 +79,19 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
 
       runner.start();
 
+      initialized = true;
+
+      if (constructorListener != null) {
+        constructorListener.asyncConstructorDone();
+      }
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private void checkInitialized() {
+    if (!initialized) {
+      throw new IllegalStateException("You must wait until the constructor listener is notified."); //$NON-NLS-1$
     }
   }
 
@@ -82,6 +99,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
    * Specified by <code>DialogController</code>.
    */
   public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    checkInitialized();
     datasourceSelectionDialogController.addDialogListener(listener);
   }
 
@@ -89,6 +107,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
    * Specified by <code>DialogController</code>.
    */
   public void hideDialog() {
+    checkInitialized();
     datasourceSelectionDialogController.hideDialog();
   }
 
@@ -96,6 +115,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
    * Specified by <code>DialogController</code>.
    */
   public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    checkInitialized();
     datasourceSelectionDialogController.removeDialogListener(listener);
   }
 
@@ -103,6 +123,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
    * Specified by <code>DialogController</code>.
    */
   public void showDialog() {
+    checkInitialized();
     datasourceSelectionDialogController.showDialog();
   }
 

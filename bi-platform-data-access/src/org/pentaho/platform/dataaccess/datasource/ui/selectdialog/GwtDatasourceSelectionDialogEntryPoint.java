@@ -6,6 +6,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServi
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
+import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -24,8 +25,8 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
   public void onModuleLoad() {
     datasourceService = new DatasourceServiceGwtImpl();
     connectionService = new ConnectionServiceGwtImpl();
-    editor = new GwtDatasourceEditor(datasourceService, connectionService);
-    selectDialog = new GwtDatasourceSelectionDialog(datasourceService, editor);
+    editor = new GwtDatasourceEditor(datasourceService, connectionService, null);
+    selectDialog = new GwtDatasourceSelectionDialog(datasourceService, editor, null);
     setupNativeHooks(this);
   }
 

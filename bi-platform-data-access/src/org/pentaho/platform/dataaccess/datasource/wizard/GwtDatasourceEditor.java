@@ -20,6 +20,7 @@ import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
+import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
 import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
@@ -43,8 +44,11 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   private ConnectionModel connectionModel = new ConnectionModel();
   private DatasourceMessages datasourceMessages = new GwtDatasourceMessages();
   private GwtXulDomContainer container;
+  private AsyncConstructorListener constructorListener;
+  private boolean initialized;
   
-  public GwtDatasourceEditor(final DatasourceService datasourceService, final ConnectionService connectionService) {
+  public GwtDatasourceEditor(final DatasourceService datasourceService, final ConnectionService connectionService, final AsyncConstructorListener constructorListener) {
+    this.constructorListener = constructorListener;
     setDatasourceService(datasourceService);
     setConnectionService(connectionService);
     AsyncXulLoader.loadXulFromUrl("connectionFrame.xul", "connectionFrame", this); //$NON-NLS-1$//$NON-NLS-2$
@@ -82,10 +86,12 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
 
  
   public void addConnectionDialogListener(ConnectionDialogListener listener){
+    checkInitialized();
     connectionController.addConnectionDialogListener(listener);
   }
   
   public void removeConnectionDialogListener(ConnectionDialogListener listener){
+    checkInitialized();
     connectionController.removeConnectionDialogListener(listener);
   }
   
@@ -147,10 +153,20 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
       connectionController.setDatasourceModel(datasourceModel);
       runner.initialize();
       runner.start();
+      initialized = true;
+      if (constructorListener != null) {
+        constructorListener.asyncConstructorDone();
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
 
+  }
+  
+  private void checkInitialized() {
+    if (!initialized) {
+      throw new IllegalStateException("You must wait until the constructor listener is notified."); //$NON-NLS-1$
+    }
   }
 
   private void setConnectionService(ConnectionService service){
@@ -167,10 +183,12 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   }
 
   public DatasourceModel getDatasourceModel() {
+    checkInitialized();
     return datasourceModel;
   }
   
   public ConnectionModel getConnectionModel() {
+    checkInitialized();
     return connectionModel;
   }
 
@@ -178,6 +196,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
    * Specified by <code>DialogController</code>.
    */
   public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    checkInitialized();
     datasourceController.addDialogListener(listener);  
   }
 
@@ -185,6 +204,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
    * Specified by <code>DialogController</code>.
    */
   public void hideDialog() {
+    checkInitialized();
     datasourceController.hideDialog();  
   }
 
@@ -192,6 +212,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
    * Specified by <code>DialogController</code>.
    */
   public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+    checkInitialized();
     datasourceController.removeDialogListener(listener);
   }
 
@@ -199,6 +220,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
    * Specified by <code>DialogController</code>.
    */
   public void showDialog() {
+    checkInitialized();
     reloadConnections();
     datasourceController.showDialog();  
   }

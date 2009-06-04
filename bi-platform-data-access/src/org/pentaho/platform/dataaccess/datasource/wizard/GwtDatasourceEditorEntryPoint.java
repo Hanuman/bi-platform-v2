@@ -24,7 +24,7 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
   public void onModuleLoad() {
     datasourceService = new DatasourceServiceGwtImpl();
     connectionService = new ConnectionServiceGwtImpl();
-    editor = new GwtDatasourceEditor(datasourceService, connectionService);
+    editor = new GwtDatasourceEditor(datasourceService, connectionService, null);
     setupNativeHooks(this);
   }
 
