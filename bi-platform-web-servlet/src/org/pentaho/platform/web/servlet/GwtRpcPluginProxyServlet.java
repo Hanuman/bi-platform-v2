@@ -22,26 +22,21 @@ package org.pentaho.platform.web.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IContentGenerator;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
-import org.pentaho.platform.util.web.HttpUtil;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
@@ -104,7 +99,17 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
       RPCRequest rpcRequest = RPC.decodeRequest(payload, null, this);
       onAfterRequestDeserialized(rpcRequest);
-      return RPC.invokeAndEncodeResponse(targetBean, rpcRequest.getMethod(), rpcRequest.getParameters(), rpcRequest
+      // don't require the server side to implement the service interface
+      Method method = rpcRequest.getMethod();
+      try {
+    	  Method m = targetBean.getClass().getMethod(method.getName(), method.getParameterTypes());
+    	  if (m != null) {
+    	  method = m;
+    	  }
+      } catch (Exception e ) {
+    	  e.printStackTrace();
+      }
+      return RPC.invokeAndEncodeResponse(targetBean, method, rpcRequest.getParameters(), rpcRequest
           .getSerializationPolicy());
     } catch (IncompatibleRemoteServiceException ex) {
       log("An IncompatibleRemoteServiceException was thrown while processing this call.", ex);
@@ -148,7 +153,12 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, null);
     IContentGenerator aPluginClass = null;
     try {
+      // TODO: fix me
+      // this assumes that the path maps to a content generator, not a static type.
       aPluginClass = pluginManager.getContentGenerator(contentGeneratorId, PentahoSessionHolder.getSession());
+      if (aPluginClass == null && contentGeneratorId.endsWith("-res")) {
+    	  aPluginClass = pluginManager.getContentGenerator(contentGeneratorId.substring(0, contentGeneratorId.length() - 4), PentahoSessionHolder.getSession());
+      }
     } catch (ObjectFactoryException e1) {
       log("could not find a content generator by id '"+contentGeneratorId+"'", e1);
     }
@@ -160,6 +170,8 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     InputStream is = resLoader.getResourceAsStream(aPluginClass.getClass(), serializationPolicyPath);
     if (is == null) {
       log("failed to get serialization policy file '" + serializationPolicyPath + "' from the plugin resource loader");
+      // look in the resources folder
+      is = resLoader.getResourceAsStream(aPluginClass.getClass(), "resources/" + serializationPolicyPath);
     }
 
     try {
