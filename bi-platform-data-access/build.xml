@@ -24,7 +24,7 @@
       <fileset dir="${package.resdir}" />
     </copy>
     <copy todir="${approot.stage.dir}/resources/gwt">
-      <fileset dir="${gwt.output.dir}">
+      <fileset dir="${gwt.output.dir}/DatasourceEditor">
         <exclude name=".gwt-tmp/" />
         <exclude name="*-aux/" />
         <exclude name="WEB-INF/" />
