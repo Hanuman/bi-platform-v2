@@ -334,6 +334,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         public void success(Boolean value) {
           datasource = datasourceModel.getRelationalModel().getDatasource();
+          saveModelDone();
         }
       });
   }
@@ -347,6 +348,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         public void success(Boolean value) {
           datasource = datasourceModel.getDatasource();
+          saveModelDone();
         }
       });
   }
@@ -430,7 +432,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   @Override
   public void onDialogAccept() {
-    saveModel();
+    saveModel(); 
+  }
+  
+  private void saveModelDone() {
     super.onDialogAccept();
     datasourceModel.clearModel();
     connectionModel.clearModel();
