@@ -111,7 +111,11 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
    */
   public void setAggregationList(List<AggregationType> aggregationList) {
     this.aggregationList.clear();
-    this.aggregationList.addAll(aggregationList);
+    if(aggregationList != null && aggregationList.size() > 0) {
+      this.aggregationList.addAll(aggregationList);
+    } else {
+      this.aggregationList.add(AggregationType.NONE);
+    }
   }
 
   /**

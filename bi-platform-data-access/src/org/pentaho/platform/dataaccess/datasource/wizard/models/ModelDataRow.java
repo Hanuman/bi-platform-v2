@@ -119,8 +119,11 @@ public class ModelDataRow extends XulEventSourceAdapter{
    */
   public void setAggregationList(List<AggregationType> aggregationList) {
     this.aggregationList.clear();
-    //this.aggregationList.addAll(aggregationList);
-    this.aggregationList.addAll(Arrays.asList(AggregationType.values()));
+    if(aggregationList != null && aggregationList.size() > 0) {
+      this.aggregationList.addAll(aggregationList);
+    } else {
+      this.aggregationList.add(AggregationType.NONE);
+    }
   }
 
   /**

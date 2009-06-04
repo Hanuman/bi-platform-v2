@@ -210,7 +210,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     okButton.setDisabled(true);
     // Setting the Button Panel background to white
     buttonBox.setBgcolor("#FFFFFF");
-    datasourceDialog.setBgcolor("#FFFFFF");
     selectSql();
     datasourceModel.setDatasourceType(DatasourceType.SQL);
     try {

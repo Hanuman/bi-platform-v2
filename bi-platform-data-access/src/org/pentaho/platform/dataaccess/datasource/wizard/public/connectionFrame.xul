@@ -93,8 +93,8 @@
 								<treecol id="relationalColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 								<treecol id="relationalColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
 								<!--<treecol id="relationalColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
-								<treecol id="relationalAggregationListCol" label="${datasourceDialog.aggregation}" flex="1" pen:binding="aggregationList" type="aggregation-cell-editor"/>
-								<treecol id="relationalSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" pen:binding="sampleData"/>
+								<treecol id="relationalAggregationListCol" label="${datasourceDialog.aggregation}" flex="1" editable="true" pen:binding="aggregationList" type="aggregation-cell-editor"/>
+								<treecol id="relationalSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" editable="true" pen:binding="sampleData" type="sample-data-cell-editor"/>
 							</treecols>
 							    <treechildren id="modelDataRows"/>
 					</tree>
@@ -112,8 +112,8 @@
 									<treecol id="csvColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 									<treecol id="csvColumnTypeTreeCol" label="${datasourceDialog.type}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataTypes" pen:binding="selectedDataType"/>
 									<!--<treecol id="csvColumnFormatTreeCol" label="${datasourceDialog.format}" flex="1" type="combobox" editable="false" pen:combobinding="bindingDataFormatTypes" pen:binding="selectedDataFormatType"/>-->
-									<treecol id="csvAggregationListCol" label="${datasourceDialog.aggregation}" flex="1" pen:binding="aggregationList" type="aggregation-cell-editor"/>
-									<treecol id="csvSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" type="sample-data-cell-editor" pen:binding="sampleData"/>
+									<treecol id="csvAggregationListCol" label="${datasourceDialog.aggregation}" flex="1" editable="true" pen:binding="aggregationList" type="aggregation-cell-editor"/>
+									<treecol id="csvSampleDataTreeCol" label="${datasourceDialog.sample}" flex="1" editable="true" type="sample-data-cell-editor" pen:binding="sampleData"/>
 								</treecols>
 								<treechildren id="csvModelDataRows"/>
 					  </tree>
@@ -153,19 +153,19 @@
   </dialog>
 
   
-  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="190" height="50">
-        <label width="180" id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
+  <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="220" height="40">
+        <label id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   </dialog>
 
-  <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="350" height="200" buttonalign="center">
+  <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="300" height="100" buttonalign="center">
         <label id="errorLabel" value="${errorDialog.errorOccurred}"/>
   </dialog>
-  <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="350" height="200" buttonalign="center">
+  <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="300" height="100" buttonalign="center">
         <label id="successLabel" value="${successDialog.successMessage}"/>
   </dialog>
   <dialog id="applyQueryConfirmationDialog" buttonlabelaccept="${applyQueryConfirmationDialog.OK}" buttonlabelcancel="${applyQueryConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="relationalDatasourceController.generateModel()" buttonalign="right" title="${applyQueryConfirmationDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
        <vbox>
         <label value="${applyQueryConfirmationDialog.confirmMessage}"/>
       </vbox>
@@ -182,15 +182,27 @@
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.OK}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
+	  <tree height="160" width="160" id="csvSampleDataTable" seltype="single">
+		<treecols id="csvSampleDataCols">
+			<treecol id="csvSampleDataCol" label="${csvSampleDataCol.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
+		</treecols>
+		<treechildren id="csvSampleDataRows"/>
+	  </tree>  		
   </dialog>
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="320" width="180">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="140">
+  		<spacer width="10"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.OK}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="320" width="180">
-  		
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
+	  <tree height="160" width="160" id="relationalSampleDataTable" seltype="single">
+		<treecols id="relationalSampleDataCols">
+			<treecol id="relationalSampleDataCol" label="${relationalSampleDataCol.displayName}" pen:binding="columnName" flex="1" editable="false" type="text"/>
+		</treecols>
+		<treechildren id="relationalSampleDataRows"/>
+	  </tree>  		
   </dialog>
   
    </window>

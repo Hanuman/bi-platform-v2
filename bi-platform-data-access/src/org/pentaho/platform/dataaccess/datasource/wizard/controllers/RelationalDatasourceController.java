@@ -10,8 +10,8 @@ import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -28,7 +28,10 @@ import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
+import org.pentaho.ui.xul.containers.XulGrid;
 import org.pentaho.ui.xul.containers.XulListbox;
+import org.pentaho.ui.xul.containers.XulRow;
+import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeCols;
@@ -36,8 +39,11 @@ import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorListener;
+import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
+  public static final int MAX_SAMPLE_DATA_ROWS = 5;
+
   private DatasourceMessages datasourceMessages;
   
   private XulDialog connectionDialog;
@@ -94,25 +100,33 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   private XulTreeCol columnNameTreeCol = null;
   private XulTreeCol columnTypeTreeCol = null;
-  //private XulTreeCol columnFormatTreeCol = null;
+  //private XulTreeCol columnFormatTreeCol = null;\
+  XulTree sampleDataTree = null;
   XulDialog aggregationEditorDialog = null;
   XulDialog sampleDataDialog = null;
   CustomAggregateCellEditor aggregationCellEditor = null;
   CustomSampleDataCellEditor sampleDataCellEditor = null;
-  
+  //private XulRows rows = null;
+  //private XulGrid grid = null;  
+  CustomAggregationCellRenderer aggregationCellRenderer = null;
   public RelationalDatasourceController() {
 
   }
 
   public void init() {
+    //rows = (XulRows) document.getElementById("relationalSampleDataRows");//$NON-NLS-1$
+    //grid = (XulGrid) document.getElementById("relationalSampleDataGrid");//$NON-NLS-1$
     applyButton = (XulButton) document.getElementById("apply"); //$NON-NLS-1$
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
+    sampleDataTree = (XulTree) document.getElementById("relationalSampleDataTable");
     aggregationEditorDialog = (XulDialog) document.getElementById("relationalAggregationEditorDialog");
     aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog);
     modelDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);
+    aggregationCellRenderer = new CustomAggregationCellRenderer();
+    modelDataTable.registerCellRenderer("aggregation-cell-editor", aggregationCellRenderer);
     sampleDataDialog = (XulDialog) document.getElementById("relationalSampleDataDialog");
     sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
-    modelDataTable.registerCellEditor("sample-data-cell-editor", aggregationCellEditor);
+    modelDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);
 
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
@@ -242,6 +256,9 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public void generateModel() {
       if (validateInputs()) {
         query.setDisabled(true);
+        if(applyQueryConfirmationDialog.isVisible()) {
+          applyQueryConfirmationDialog.hide();
+        }
         try {
           showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
           service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel().getSelectedConnection(),
@@ -506,6 +523,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     public CustomAggregateCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
+      dialog.setBgcolor("#FFFFFF");
     }
 
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
@@ -553,8 +571,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       // pass it to listener
       ArrayList<AggregationType> aggregationTypeList = new ArrayList<AggregationType>(); 
       for(XulComponent component: dialog.getChildNodes()) {
-        XulCheckbox checkbox = (XulCheckbox) component;
-        aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+        if(component instanceof XulCheckbox) {
+          XulCheckbox checkbox = (XulCheckbox) component;
+          if(checkbox.isChecked()) {
+            aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+          }
+        }
       }
       this.listener.onCellEditorClosed(aggregationTypeList);
     }
@@ -568,6 +590,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
+      dialog.setBgcolor("#FFFFFF");
     }
 
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
@@ -587,32 +610,45 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
     }
     public void show(int row, int col, Object boundObj, String columnBinding) {
-      XulTree sampleDataTree = null;
-      XulTreeCols treeCols = null;
-      XulTreeCol treeCol = null;
-      try {
-        sampleDataTree = (XulTree) document.createElement("tree");
-        treeCols = (XulTreeCols) document.createElement("treecols");
-        treeCol = (XulTreeCol) document.createElement("treecol");
-        treeCol.setLabel("Sample Data");
-        treeCol.setFlex(1);
-        treeCols.addColumn(treeCol);
-        sampleDataTree.addChild(treeCols);
-        CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
-        for(String sampleData : csvModelDataRow.getSampleDataList()) {
-          XulTreeRow treeRow = (XulTreeRow) document.createElement("treerow");
-          XulTreeCell treeCell = (XulTreeCell) document.createElement("treecell");
-          treeCell.setLabel(sampleData);
-          treeRow.addCell(treeCell);
-          sampleDataTree.addTreeRow(treeRow);
-        }
-        sampleDataTree.update();
-        dialog.addChild(sampleDataTree);
-      } catch (XulException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      ModelDataRow modelDataRow = (ModelDataRow)boundObj;
+      XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
+      column.setLabel(modelDataRow.getSampleData());
+      List<String> values = modelDataRow.getSampleDataList();
+      List<String> sampleDataList = new ArrayList<String>();
+      for(int i=1;i<MAX_SAMPLE_DATA_ROWS && i<modelDataRow.getSampleDataList().size();i++) {
+        sampleDataList.add(values.get(i));
       }
+      sampleDataTree.setElements(sampleDataList);
+      sampleDataTree.update();
       dialog.show();
     }
+  }
+  private class CustomAggregationCellRenderer implements TreeCellRenderer {
+
+    public Object getNativeComponent() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    public String getText(Object value) {
+      List<AggregationType> aggregationList = new ArrayList<AggregationType>();
+      StringBuffer buffer = new StringBuffer();
+      if(value instanceof List) {
+        aggregationList.addAll((List) value);
+        for(int i=0;i<aggregationList.size();i++) {
+        buffer.append(aggregationList.get(i));
+          if(i<aggregationList.size()-1) {
+          buffer.append(',');  
+          }
+        }
+      }
+      return buffer.toString();
+    }
+
+    public boolean supportsNativeComponent() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+    
   }
 }

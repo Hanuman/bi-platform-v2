@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -18,17 +19,19 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
-import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
+import org.pentaho.ui.xul.containers.XulGrid;
+import org.pentaho.ui.xul.containers.XulRow;
+import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
-import org.pentaho.ui.xul.containers.XulTreeCols;
-import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorListener;
+import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class CsvDatasourceController extends AbstractXulEventHandler {
+  public static final int MAX_SAMPLE_DATA_ROWS = 5;
   private DatasourceMessages datasourceMessages;
   private DatasourceService service;
   private XulDialog regenerateModelConfirmationDialog = null;
@@ -61,20 +64,30 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   XulDialog aggregationEditorDialog = null;
   XulDialog sampleDataDialog = null;
+  XulTree sampleDataTree = null;
   CustomAggregateCellEditor aggregationCellEditor = null;
   CustomSampleDataCellEditor sampleDataCellEditor = null;
+  CustomAggregationCellRenderer aggregationCellRenderer = null;
+  //private XulRows rows = null;
+  //private XulGrid grid = null;  
+
   public CsvDatasourceController() {
 
   }
 
   public void init() {
+    //rows = (XulRows) document.getElementById("csvSampleDataRows");//$NON-NLS-1$
+    //grid = (XulGrid) document.getElementById("csvSampleDataGrid");//$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
+    sampleDataTree = (XulTree) document.getElementById("csvSampleDataTable");
     aggregationEditorDialog = (XulDialog) document.getElementById("csvAggregationEditorDialog");
     aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog);
     csvDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);
+    aggregationCellRenderer = new CustomAggregationCellRenderer();
+    csvDataTable.registerCellRenderer("aggregation-cell-editor", aggregationCellRenderer);
     sampleDataDialog = (XulDialog) document.getElementById("csvSampleDataDialog");
     sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
-    csvDataTable.registerCellEditor("sample-data-cell-editor", aggregationCellEditor);
+    csvDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);
     regenerateModelConfirmationDialog = (XulDialog) document.getElementById("regenerateModelConfirmationDialog"); //$NON-NLS-1$
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
     waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$    
@@ -255,6 +268,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     public CustomAggregateCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
+      dialog.setBgcolor("#FFFFFF");
     }
 
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
@@ -302,8 +316,10 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       // pass it to listener
       ArrayList<AggregationType> aggregationTypeList = new ArrayList<AggregationType>(); 
       for(XulComponent component: dialog.getChildNodes()) {
-        XulCheckbox checkbox = (XulCheckbox) component;
-        aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+        if(component instanceof XulCheckbox) {
+          XulCheckbox checkbox = (XulCheckbox) component;
+          aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+        }
       }
       this.listener.onCellEditorClosed(aggregationTypeList);
     }
@@ -317,6 +333,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
+      dialog.setBgcolor("#FFFFFF");
     }
 
     public void addTreeCellEditorListener(TreeCellEditorListener listener) {
@@ -337,32 +354,46 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     }
 
     public void show(int row, int col, Object boundObj, String columnBinding) {
-      XulTree sampleDataTree = null;
-      XulTreeCols treeCols = null;
-      XulTreeCol treeCol = null;
-      try {
-        sampleDataTree = (XulTree) document.createElement("tree");
-        treeCols = (XulTreeCols) document.createElement("treecols");
-        treeCol = (XulTreeCol) document.createElement("treecol");
-        treeCol.setLabel("Sample Data");
-        treeCol.setFlex(1);
-        treeCols.addColumn(treeCol);
-        sampleDataTree.addChild(treeCols);
-        CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
-        for(String sampleData : csvModelDataRow.getSampleDataList()) {
-          XulTreeRow treeRow = (XulTreeRow) document.createElement("treerow");
-          XulTreeCell treeCell = (XulTreeCell) document.createElement("treecell");
-          treeCell.setLabel(sampleData);
-          treeRow.addCell(treeCell);
-          sampleDataTree.addTreeRow(treeRow);
-        }
-        sampleDataTree.update();
-        dialog.addChild(sampleDataTree);
-      } catch (XulException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
+      XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
+      column.setLabel(csvModelDataRow.getSampleData());
+      List<String> values = csvModelDataRow.getSampleDataList();
+      List<String> sampleDataList = new ArrayList<String>();
+      for(int i=1;i<MAX_SAMPLE_DATA_ROWS && i<csvModelDataRow.getSampleDataList().size();i++) {
+        sampleDataList.add(values.get(i));
       }
+      sampleDataTree.setElements(sampleDataList);
+      sampleDataTree.update();
       dialog.show();
     }
+  }
+  
+  private class CustomAggregationCellRenderer implements TreeCellRenderer {
+
+    public Object getNativeComponent() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    public String getText(Object value) {
+      List<AggregationType> aggregationList = new ArrayList<AggregationType>();
+      StringBuffer buffer = new StringBuffer();
+      if(value instanceof List) {
+        aggregationList.addAll((List) value);
+        for(int i=0;i<aggregationList.size();i++) {
+        buffer.append(aggregationList.get(i));
+          if(i<aggregationList.size()-1) {
+          buffer.append(',');  
+          }
+        }
+      }
+      return buffer.toString();
+    }
+
+    public boolean supportsNativeComponent() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+    
   }
 }
