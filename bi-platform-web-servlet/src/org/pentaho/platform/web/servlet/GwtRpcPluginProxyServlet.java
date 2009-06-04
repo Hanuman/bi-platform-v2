@@ -151,13 +151,16 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     String contentGeneratorId = relativePath.substring(1, relativePath.indexOf('/', 1)); //exact the first element of the path
     //now lookup the plugin by the content generator id
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, null);
-    IContentGenerator aPluginClass = null;
+    Object aPluginClass = null;
     try {
       // TODO: fix me
       // this assumes that the path maps to a content generator, not a static type.
       aPluginClass = pluginManager.getContentGenerator(contentGeneratorId, PentahoSessionHolder.getSession());
       if (aPluginClass == null && contentGeneratorId.endsWith("-res")) {
     	  aPluginClass = pluginManager.getContentGenerator(contentGeneratorId.substring(0, contentGeneratorId.length() - 4), PentahoSessionHolder.getSession());
+      }
+      if (aPluginClass == null) {
+        aPluginClass = perThreadTargetBean.get();
       }
     } catch (ObjectFactoryException e1) {
       log("could not find a content generator by id '"+contentGeneratorId+"'", e1);
