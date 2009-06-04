@@ -77,7 +77,7 @@ public class DatasourceServiceDelegate {
       String dataAccessClassName = null;
       try {
         IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
         Class<?> clazz = Class.forName(dataAccessClassName);
         Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
         dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
