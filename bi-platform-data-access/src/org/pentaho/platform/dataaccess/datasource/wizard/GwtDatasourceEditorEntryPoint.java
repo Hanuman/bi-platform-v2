@@ -47,9 +47,7 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
   private void show(final JavaScriptObject callback){
     final DialogListener<IDatasource> listener = new DialogListener<IDatasource>(){
       public void onDialogCancel() {
-        editor.hideDialog();
         notifyCallbackCancel(callback);
-        editor.removeDialogListener(this);
       }
 
       public void onDialogAccept(final IDatasource datasource) {
