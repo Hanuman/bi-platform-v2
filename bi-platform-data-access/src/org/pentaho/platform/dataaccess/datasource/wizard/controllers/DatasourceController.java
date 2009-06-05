@@ -28,6 +28,7 @@ import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
+import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDeck;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
@@ -89,13 +90,30 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   private XulTree csvDataTable = null;
   private XulHbox databaseButtonBox = null;
   private XulHbox csvButtonBox = null;
-  
+  private XulTreeCol relationalAggregationListCol;
+  private XulTreeCol relationalSampleDataTreeCol;
+  private XulTreeCol csvAggregationListCol;
+  private XulTreeCol csvSampleDataTreeCol;
+  private XulTreeCol relationalColumnNameTreeCol = null;
+  private XulTreeCol relationalColumnTypeTreeCol = null;
+  private XulTreeCol csvColumnNameTreeCol = null;
+  private XulTreeCol csvColumnTypeTreeCol = null;
+
   public DatasourceController() {
 
   }
 
   public void init() {
     databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
+    relationalAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
+    relationalSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalSampleDataTreeCol");
+    relationalColumnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol");
+    relationalColumnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol");
+    csvColumnNameTreeCol = (XulTreeCol) document.getElementById("csvColumnNameTreeCol");
+    csvColumnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol");
+    
+    csvAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
+    csvSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
     csvButtonBox = (XulHbox) document.getElementById("csvButtonBox");
     datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
@@ -438,10 +456,16 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     super.onDialogAccept();
     datasourceModel.clearModel();
     connectionModel.clearModel();
+    buildRelationalEmptyTable();
   }
   
     private void buildCsvEmptyTable() {
     // Create the tree children and setting the data
+    csvAggregationListCol.setEditable(false);
+    csvSampleDataTreeCol.setEditable(false);
+    csvColumnNameTreeCol.setEditable(false);
+    csvColumnTypeTreeCol.setEditable(false);    
+    csvDataTable.update();
     try {
       int count = csvDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_CSV_TABLE_ROW_COUNT; i++) {
@@ -456,6 +480,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         csvDataTable.addTreeRow(row);
       }
       csvDataTable.update();
+      csvAggregationListCol.setEditable(true);
+      csvSampleDataTreeCol.setEditable(true);
+      csvDataTable.update();
+      
     } catch(XulException e) {
       e.printStackTrace();
     }
@@ -463,6 +491,11 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   
   private void buildRelationalEmptyTable() {
     // Create the tree children and setting the data
+    relationalAggregationListCol.setEditable(false);
+    relationalSampleDataTreeCol.setEditable(false);
+    relationalColumnNameTreeCol.setEditable(false);
+    relationalColumnTypeTreeCol.setEditable(false);
+    modelDataTable.update();
     try {
       int count = modelDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_RELATIONAL_TABLE_ROW_COUNT; i++) {
@@ -477,6 +510,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         modelDataTable.addTreeRow(row);
       }
       modelDataTable.update();
+      relationalAggregationListCol.setEditable(true);
+      relationalSampleDataTreeCol.setEditable(true);
+      modelDataTable.update();
+      
     } catch(XulException e) {
       e.printStackTrace();
     }
