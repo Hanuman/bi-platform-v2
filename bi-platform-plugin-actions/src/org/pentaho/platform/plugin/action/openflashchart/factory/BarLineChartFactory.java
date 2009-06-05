@@ -19,10 +19,10 @@ package org.pentaho.platform.plugin.action.openflashchart.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import ofc4j.model.axis.Axis;
-import ofc4j.model.axis.YAxis;
-import ofc4j.model.elements.Element;
-import ofc4j.model.elements.LineChart;
+import jofc2.model.axis.Axis;
+import jofc2.model.axis.YAxis;
+import jofc2.model.elements.Element;
+import jofc2.model.elements.LineChart;
 
 import org.apache.commons.logging.Log;
 import org.dom4j.Node;

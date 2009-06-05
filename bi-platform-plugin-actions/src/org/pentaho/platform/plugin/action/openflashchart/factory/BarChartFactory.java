@@ -19,16 +19,16 @@ package org.pentaho.platform.plugin.action.openflashchart.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import ofc4j.model.axis.Axis;
-import ofc4j.model.elements.BarChart;
-import ofc4j.model.elements.Element;
-import ofc4j.model.elements.HorizontalBarChart;
-import ofc4j.model.elements.SketchBarChart;
-import ofc4j.model.elements.StackedBarChart;
-import ofc4j.model.elements.BarChart.Style;
-import ofc4j.model.elements.StackedBarChart.Stack;
-import ofc4j.model.elements.StackedBarChart.StackKey;
-import ofc4j.model.elements.StackedBarChart.StackValue;
+import jofc2.model.axis.Axis;
+import jofc2.model.elements.BarChart;
+import jofc2.model.elements.Element;
+import jofc2.model.elements.HorizontalBarChart;
+import jofc2.model.elements.SketchBarChart;
+import jofc2.model.elements.StackedBarChart;
+import jofc2.model.elements.BarChart.Style;
+import jofc2.model.elements.StackedBarChart.Stack;
+import jofc2.model.elements.StackedBarChart.Key;
+import jofc2.model.elements.StackedBarChart.StackValue;
 
 import org.dom4j.Node;
 
@@ -174,7 +174,7 @@ public class BarChartFactory extends AbstractChartFactory {
       
       // set the onclick event to the base url template
       if (null != baseURLTemplate) {
-        sbc.setOn_click(baseURLTemplate);
+        sbc.setOnClick(baseURLTemplate);
       }
       
       if (alpha != null) {
@@ -182,10 +182,12 @@ public class BarChartFactory extends AbstractChartFactory {
       }
     }
 
-    StackKey key = new StackKey();
+    Key key = new Key(getColor(col), getColumnHeader(col), null);
+/*
     String text = getColumnHeader(col);
     key.setText(text);
     key.setColour(getColor(col));
+*/    
     sbc.addKeys(key);
     
     for (int row = 0; row < getRowCount(); row++) {
@@ -234,7 +236,7 @@ public class BarChartFactory extends AbstractChartFactory {
   
       // set the onclick event to the base url template
       if (null != baseURLTemplate) {
-        bc.setOn_click(baseURLTemplate);
+        bc.setOnClick(baseURLTemplate);
       }
 
       if (alpha != null) {
@@ -261,7 +263,7 @@ public class BarChartFactory extends AbstractChartFactory {
 
     // set the onclick event to the base url template
     if (null != baseURLTemplate) {
-      hbc.setOn_click(baseURLTemplate);
+      hbc.setOnClick(baseURLTemplate);
     }
     
     if (alpha != null) {

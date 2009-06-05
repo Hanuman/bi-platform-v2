@@ -16,7 +16,8 @@
  */
 package org.pentaho.platform.plugin.action.openflashchart.factory;
 
-import ofc4j.model.elements.LineChart;
+import jofc2.model.elements.LineChart;
+import jofc2.model.elements.LineChart.Style.Type;
 
 import org.dom4j.Node;
 
@@ -28,7 +29,7 @@ public class LineChartFactory extends AbstractChartFactory {
   private static final String DOT_WIDTH_NODE_LOC = "dot-width"; //$NON-NLS-1$
 
   // defaults
-  private static final LineChart.Style LINECHART_STYLE_DEFAULT = LineChart.Style.NORMAL;
+  private static final LineChart.Style LINECHART_STYLE_DEFAULT = new LineChart.Style(Type.ANCHOR);
   
   // line related members
   protected LineChart.Style linechartstyle;
@@ -75,7 +76,7 @@ public class LineChartFactory extends AbstractChartFactory {
 
     // set the onclick event to the base url template
     if (null != baseURLTemplate) {
-      lc.setOn_click(baseURLTemplate);
+      lc.setOnClick(baseURLTemplate);
     }
     
     if (alpha != null) {
@@ -93,11 +94,11 @@ public class LineChartFactory extends AbstractChartFactory {
 
     if (getValue(temp) != null) {
       if ("dot".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = LineChart.Style.DOT;
+        linechartstyle = new LineChart.Style(Type.DOT);
       else if ("normal".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = LineChart.Style.NORMAL;
+        linechartstyle = new LineChart.Style(Type.ANCHOR);
       else if ("hollow".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = LineChart.Style.HOLLOW;
+        linechartstyle = new LineChart.Style(Type.HALLOW_DOT);
       else
         linechartstyle = LINECHART_STYLE_DEFAULT;
     } else {

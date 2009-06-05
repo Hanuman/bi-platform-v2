@@ -16,8 +16,8 @@
  */
 package org.pentaho.platform.plugin.action.openflashchart.factory;
 
-import ofc4j.model.elements.Element;
-import ofc4j.model.elements.PieChart;
+import jofc2.model.elements.Element;
+import jofc2.model.elements.PieChart;
 
 import org.dom4j.Node;
 
@@ -44,9 +44,10 @@ public class PieChartFactory extends AbstractChartFactory {
       // Labels are already set - use them
       String label = (String) chart.getXAxis().getLabels().getLabels().get(row);
       
-      slices[row] = new PieChart.Slice(d, label, label);
+      slices[row] = new PieChart.Slice(d, label);
+      slices[row].setText(label);
       if (tooltipText != null) {
-        slices[row].setTooltip(tooltipText);
+        slices[row].setTip(tooltipText);
       }
     }
 
