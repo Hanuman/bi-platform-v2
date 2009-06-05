@@ -329,6 +329,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
                 ModelDataRow row = dataRows.get(i++);
                 logicalColumn.setDataType(row.getSelectedDataType());
                 logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+                logicalColumn.setAggregationList(row.getAggregationList());
               }
             }
           }
@@ -479,7 +480,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         csvDataTable.addTreeRow(row);
       }
-      csvDataTable.update();
       csvAggregationListCol.setEditable(true);
       csvSampleDataTreeCol.setEditable(true);
       csvDataTable.update();
@@ -509,7 +509,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         modelDataTable.addTreeRow(row);
       }
-      modelDataTable.update();
       relationalAggregationListCol.setEditable(true);
       relationalSampleDataTreeCol.setEditable(true);
       modelDataTable.update();

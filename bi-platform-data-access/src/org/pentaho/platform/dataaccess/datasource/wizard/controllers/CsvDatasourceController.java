@@ -27,7 +27,7 @@ import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 import org.pentaho.ui.xul.util.TreeCellEditor;
-import org.pentaho.ui.xul.util.TreeCellEditorListener;
+import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class CsvDatasourceController extends AbstractXulEventHandler {
@@ -263,7 +263,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   private class CustomAggregateCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
-    TreeCellEditorListener listener = null;
+    TreeCellEditorCallback callback = null;
 
     public CustomAggregateCellEditor(XulDialog dialog) {
       super();
@@ -271,9 +271,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       dialog.setBgcolor("#FFFFFF");
     }
 
-    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
-      this.listener = listener;
-    }
 
     public Object getValue() {
       // TODO Auto-generated method stub
@@ -285,6 +282,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     }
 
     public void setValue(Object val) {
+      // Clear the dialog box with all the existing checkboxes if any
+      for(XulComponent component: dialog.getChildNodes()) {
+        if(component instanceof XulCheckbox) {
+          dialog.removeComponent(component);
+        }
+      }
       // Create the list of check box in XulDialog
       ArrayList<AggregationType> aggregationList = (ArrayList<AggregationType>) val;
       AggregationType[] aggregationTypeArray = AggregationType.values();
@@ -306,7 +309,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       }
     }
 
-    public void show(int row, int col, Object boundObj, String columnBinding) {
+    public void show(int row, int col, Object boundObj, String columnBinding,TreeCellEditorCallback callback) {
+      this.callback = callback;
       dialog.show();
     }
     
@@ -321,23 +325,19 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
           aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
         }
       }
-      this.listener.onCellEditorClosed(aggregationTypeList);
+      this.callback.onCellEditorClosed(aggregationTypeList);
     }
   }
   
   
   private class CustomSampleDataCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
-    TreeCellEditorListener listener = null;
+    TreeCellEditorCallback callback = null;
 
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
       dialog.setBgcolor("#FFFFFF");
-    }
-
-    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
-      this.listener = listener;
     }
 
     public Object getValue() {
@@ -353,7 +353,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
     }
 
-    public void show(int row, int col, Object boundObj, String columnBinding) {
+    public void show(int row, int col, Object boundObj, String columnBinding,TreeCellEditorCallback callback) {
+      this.callback = callback;
       CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
       XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
       column.setLabel(csvModelDataRow.getSampleData());

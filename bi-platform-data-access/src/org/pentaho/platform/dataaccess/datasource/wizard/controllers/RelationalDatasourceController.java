@@ -38,7 +38,7 @@ import org.pentaho.ui.xul.containers.XulTreeCols;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 import org.pentaho.ui.xul.util.TreeCellEditor;
-import org.pentaho.ui.xul.util.TreeCellEditorListener;
+import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
@@ -518,16 +518,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   private class CustomAggregateCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
-    TreeCellEditorListener listener = null;
+    TreeCellEditorCallback callback = null;
 
     public CustomAggregateCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
       dialog.setBgcolor("#FFFFFF");
-    }
-
-    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
-      this.listener = listener;
     }
 
     public Object getValue() {
@@ -540,6 +536,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     }
 
     public void setValue(Object val) {
+      // Clear the dialog box with all the existing checkboxes if any
+      for(XulComponent component: dialog.getChildNodes()) {
+        if(component instanceof XulCheckbox) {
+          dialog.removeChild(component);
+        }
+      }
       // Create the list of check box in XulDialog
       ArrayList<AggregationType> aggregationList = (ArrayList<AggregationType>) val;
       AggregationType[] aggregationTypeArray = AggregationType.values();
@@ -561,7 +563,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       }
     }
 
-    public void show(int row, int col, Object boundObj, String columnBinding) {
+    public void show(int row, int col, Object boundObj, String columnBinding, TreeCellEditorCallback callback) {
+      this.callback = callback;
       dialog.show();
     }
     
@@ -578,23 +581,19 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
           }
         }
       }
-      this.listener.onCellEditorClosed(aggregationTypeList);
+      this.callback.onCellEditorClosed(aggregationTypeList);
     }
   }
   
   
   private class CustomSampleDataCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
-    TreeCellEditorListener listener = null;
+    TreeCellEditorCallback callback = null;
 
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
       dialog.setBgcolor("#FFFFFF");
-    }
-
-    public void addTreeCellEditorListener(TreeCellEditorListener listener) {
-      this.listener = listener;
     }
 
     public Object getValue() {
@@ -609,7 +608,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     public void setValue(Object val) {
 
     }
-    public void show(int row, int col, Object boundObj, String columnBinding) {
+    public void show(int row, int col, Object boundObj, String columnBinding, TreeCellEditorCallback callback) {
+      this.callback = callback;
       ModelDataRow modelDataRow = (ModelDataRow)boundObj;
       XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
       column.setLabel(modelDataRow.getSampleData());
