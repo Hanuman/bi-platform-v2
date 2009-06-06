@@ -285,7 +285,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       // Clear the dialog box with all the existing checkboxes if any
       for(XulComponent component: dialog.getChildNodes()) {
         if(component instanceof XulCheckbox) {
-          dialog.removeComponent(component);
+          dialog.removeChild(component);
         }
       }
       // Create the list of check box in XulDialog
@@ -322,7 +322,9 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       for(XulComponent component: dialog.getChildNodes()) {
         if(component instanceof XulCheckbox) {
           XulCheckbox checkbox = (XulCheckbox) component;
-          aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+          if(checkbox.isChecked()) {
+            aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+          }
         }
       }
       this.callback.onCellEditorClosed(aggregationTypeList);
@@ -398,3 +400,4 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     
   }
 }
+

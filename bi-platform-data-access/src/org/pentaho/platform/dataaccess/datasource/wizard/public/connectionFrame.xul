@@ -74,7 +74,7 @@
 			            <hbox>
 			                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
 			                <spacer flex="1"/>
-			                <button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>
+			                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
 			            </hbox>
                         <textbox flex="1" id="query" rows="6" cols="80" width="360" multiline="true" />
 			            <hbox>
@@ -102,10 +102,12 @@
 			  </vbox>
 			  <vbox flex="1">
 			      <label value="${datasourceDialog.UploadFile}"/>
-			      <vbox>
-				      <pen:fileupload action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
+			      <vbox height="50">
+				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
 			      </vbox>
 				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false"/>
+				  <spacer height="5"/>				  
+				  <label value="${datasourceDialog.Metadata}"/>
 				  <vbox flex="1">
 					  <tree flex="1" id="csvDataTable" seltype="single">
 								<treecols id="csvDataTableCols">
