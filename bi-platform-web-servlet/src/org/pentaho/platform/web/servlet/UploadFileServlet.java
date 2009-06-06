@@ -26,24 +26,30 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
 
   private static final long serialVersionUID = 8305367618713715640L;
   private static final long MAX_FILE_SIZE = 300000;
-  private static final long MAX_FOLDER_SIZE = 900000;
+  private static final long MAX_FOLDER_SIZE = 3000000;
   public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;
   public static final String CSV_EXT = ".csv"; //$NON-NLS-1$
+  public static final String EXCEL_EXT = ".excel"; //$NON-NLS-1$
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
       try {
+        // Retrieving the file upload defaults from pentaho.xml
+        String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$ 
+        String maxFileLimit = PentahoSystem.getSystemSetting("file-upload-defaults/max-file-limit", String.valueOf(MAX_FILE_SIZE));  //$NON-NLS-1$    
+        String maxFolderLimit = PentahoSystem.getSystemSetting("file-upload-defaults/max-folder-limit", String.valueOf(MAX_FOLDER_SIZE));  //$NON-NLS-1$
+        
       response.setContentType("text/plain");
       FileItem uploadItem = getFileItem(request);
       if (uploadItem == null) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0001_NO_FILE_TO_UPLOAD"));
         return;
       }
-      if(MAX_FILE_SIZE < uploadItem.getSize()) {
+      if(Long.parseLong(maxFileLimit) < uploadItem.getSize()) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0003_FILE_TOO_BIG"));
         return;        
       }
-      String path = PentahoSystem.getApplicationContext().getSolutionPath(RELATIVE_UPLOAD_FILE_PATH);
-      if(uploadItem.getSize() + getFolderSize(new File(path)) > MAX_FOLDER_SIZE) {
+      String path = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
+      if(uploadItem.getSize() + getFolderSize(new File(path)) > Long.parseLong(maxFolderLimit)) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
         return;                
       }
