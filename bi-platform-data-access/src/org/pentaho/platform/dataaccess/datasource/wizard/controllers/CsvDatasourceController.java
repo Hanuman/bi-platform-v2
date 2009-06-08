@@ -68,16 +68,14 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   CustomAggregateCellEditor aggregationCellEditor = null;
   CustomSampleDataCellEditor sampleDataCellEditor = null;
   CustomAggregationCellRenderer aggregationCellRenderer = null;
-  //private XulRows rows = null;
-  //private XulGrid grid = null;  
+  private XulDialog applyCsvConfirmationDialog = null;
 
   public CsvDatasourceController() {
 
   }
 
   public void init() {
-    //rows = (XulRows) document.getElementById("csvSampleDataRows");//$NON-NLS-1$
-    //grid = (XulGrid) document.getElementById("csvSampleDataGrid");//$NON-NLS-1$
+    applyCsvConfirmationDialog = (XulDialog) document.getElementById("applyCsvConfirmationDialog"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
     sampleDataTree = (XulTree) document.getElementById("csvSampleDataTable");
     aggregationEditorDialog = (XulDialog) document.getElementById("csvAggregationEditorDialog");
@@ -139,8 +137,24 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     this.service = service;
   }
 
+  public void applyCsv() {
+    if(datasourceModel.getCsvModel().getBusinessData() != null) {
+      applyCsvConfirmationDialog.show();
+    } else {
+      generateModel();
+    }    
+  }
+  
+  public void closeApplyCsvConfirmationDialog() {
+    applyCsvConfirmationDialog.hide();
+  }
+
+  
   private void generateModel() {
     if (validateIputForCsv()) {
+      if(applyCsvConfirmationDialog.isVisible()) {
+        applyCsvConfirmationDialog.hide();
+      }
       try {
         showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
@@ -162,7 +176,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
                   columnNameTreeCol.setEditable(true);
                   columnTypeTreeCol.setEditable(true);
                   //columnFormatTreeCol.setEditable(true); 
-                  csvDataTable.update();
                   datasourceModel.getCsvModel().setBusinessData(businessData);
                 } catch (Exception xe) {
                   xe.printStackTrace();
@@ -185,7 +198,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
 
   public void uploadSuccess(String results){
     datasourceModel.getCsvModel().setSelectedFile(results);
-    generateModel();    
+    applyCsv();
   }
   
   public void uploadFailure(Throwable t){ 

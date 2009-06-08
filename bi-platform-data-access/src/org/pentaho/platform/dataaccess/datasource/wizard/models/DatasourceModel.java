@@ -83,7 +83,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
    */
   public void clearModel() {
     setDatasourceName("");
-    setDatasourceType(DatasourceType.NONE);
+    setDatasourceType(DatasourceType.SQL);
     relationalModel.clearModel();
     csvModel.clearModel();
   }

@@ -172,6 +172,14 @@
         <label value="${applyQueryConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
+  <dialog id="applyCsvConfirmationDialog" buttonlabelaccept="${applyCsvConfirmationDialog.OK}" buttonlabelcancel="${applyCsvConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyCsvConfirmationDialog()"
+	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${applyCsvConfirmationDialog.title}" 
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
+       <vbox>
+        <label value="${applyCsvConfirmationDialog.confirmMessage}"/>
+      </vbox>
+  </dialog>
+  
   <dialog id="regenerateModelConfirmationDialog" buttonlabelaccept="${regenerateModelConfirmationDialog.OK}" buttonlabelcancel="${regenerateModelConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${regenerateModelConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
@@ -184,7 +192,7 @@
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
   		<spacer width="10"/>
   </dialog>
-  <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.OK}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
+  <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
 	  <tree height="160" width="160" id="csvSampleDataTable" seltype="single">
 		<treecols id="csvSampleDataCols">
@@ -198,7 +206,7 @@
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="140">
   		<spacer width="10"/>
   </dialog>
-  <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.OK}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
+  <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
 	  <tree height="160" width="160" id="relationalSampleDataTable" seltype="single">
 		<treecols id="relationalSampleDataCols">

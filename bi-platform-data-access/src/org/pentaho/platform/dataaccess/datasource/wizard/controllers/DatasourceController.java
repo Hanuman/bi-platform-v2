@@ -1,11 +1,13 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
@@ -277,10 +279,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     }
   }
   
-  private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {
-    openErrorDialog("Error occurred", "Unable to save model. " + datasourceModel.getDatasourceName()
-        + xe.getLocalizedMessage());
-    
+  private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {  
+    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage()));    
   }
 
   private void saveCsvModel() throws DatasourceServiceException {
@@ -300,15 +300,18 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
                 CsvModelDataRow row = dataRows.get(i++);
                 logicalColumn.setDataType(row.getSelectedDataType());
                 logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
+                List<AggregationType> aggregationList = new ArrayList<AggregationType>();
+                aggregationList.addAll(row.getAggregationList());
+                logicalColumn.setAggregationList(aggregationList);                
               }
             }
           }
           saveCsvModel(domain, false);
         } else {
-          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
         }
       } else {
-        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
       }
   }
 
@@ -329,18 +332,19 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
                 ModelDataRow row = dataRows.get(i++);
                 logicalColumn.setDataType(row.getSelectedDataType());
                 logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
-                logicalColumn.setAggregationList(row.getAggregationList());
+                List<AggregationType> aggregationList = new ArrayList<AggregationType>();
+                aggregationList.addAll(row.getAggregationList());
+                logicalColumn.setAggregationList(aggregationList);
               }
             }
           }
           saveRelationalModel(businessData, false);
         } else {
-          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
         }
       } else {
-        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0001_NULL_MODEL"));
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
       }
-
   }
 
   private void saveRelationalModel(BusinessData businessData, boolean overwrite) throws DatasourceServiceException {
