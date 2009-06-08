@@ -150,7 +150,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   }
 
   
-  private void generateModel() {
+  public void generateModel() {
     if (validateIputForCsv()) {
       if(applyCsvConfirmationDialog.isVisible()) {
         applyCsvConfirmationDialog.hide();
