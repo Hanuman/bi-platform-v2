@@ -174,7 +174,7 @@ public class ChartComponent {
       }
       
       // Make sure chart engine is loaded
-      loadChartModel();
+      loadChartEngine();
       // Set chart engine on chartModel for the ChartFactory to use
       chartModel.setChartEngine(chartEngine);
       
