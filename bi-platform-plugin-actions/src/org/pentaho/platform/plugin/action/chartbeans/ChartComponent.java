@@ -74,7 +74,7 @@ public class ChartComponent {
   
   protected IPentahoResultSet resultSet = null;
   
-  protected Integer chartEngine = null;
+  protected Integer chartEngine = ChartModel.CHART_ENGINE_UNDEFINED;
   
   protected Exception bootException = null;
   
@@ -173,10 +173,15 @@ public class ChartComponent {
         }
       }
       
+      // Make sure chart engine is loaded
+      loadChartModel();
+      // Set chart engine on chartModel for the ChartFactory to use
+      chartModel.setChartEngine(chartEngine);
+      
       InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       if (is == null) {
-        if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_JFREE){
+        if(chartEngine == ChartModel.CHART_ENGINE_JFREE){
           BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
           Graphics2D graphics = image.createGraphics();
           graphics.setFont(new Font("serif", Font.BOLD, 20));
@@ -195,7 +200,7 @@ public class ChartComponent {
         }
       } else {
         // Wrap output as necessary
-        if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH){
+        if(chartEngine == ChartModel.CHART_ENGINE_OPENFLASH){
           // Convert stream to string, insert into HTML fragment and re-stream it
           StringBuilder sb = new StringBuilder();
           int c = 0;
@@ -318,7 +323,7 @@ public class ChartComponent {
       }
     }
 
-    loadChartModel();
+    loadChartEngine();
     
     if(chartModel == null){
       return false;
@@ -401,31 +406,66 @@ public class ChartComponent {
    * @return mime type
    */
   public String getMimeType(){
-    loadChartModel();
+    loadChartEngine();
     
-    if(chartModel != null){
-      switch(chartModel.getChartEngine()){
-        
-        case ChartModel.CHART_ENGINE_JFREE: {
-          if(outputType.equalsIgnoreCase("jpg")){ //$NON-NLS-1$
-            return "image/jpg"; //$NON-NLS-1$
-          } else if(outputType.equalsIgnoreCase("png")){ //$NON-NLS-1$
-            return "image/png"; //$NON-NLS-1$
-          }
-          
-          //Default JFREE action
-          outputType = "png"; //$NON-NLS-1$
+    switch(chartEngine){
+      
+      case ChartModel.CHART_ENGINE_JFREE: {
+        if(outputType.equalsIgnoreCase("jpg")){ //$NON-NLS-1$
+          return "image/jpg"; //$NON-NLS-1$
+        } else if(outputType.equalsIgnoreCase("png")){ //$NON-NLS-1$
           return "image/png"; //$NON-NLS-1$
         }
         
-        case ChartModel.CHART_ENGINE_OPENFLASH: {
-          outputType = "html"; //$NON-NLS-1$
-          return "text/html"; //$NON-NLS-1$
-        }
+        //Default JFREE action
+        outputType = "png"; //$NON-NLS-1$
+        return "image/png"; //$NON-NLS-1$
+      }
+      
+      case ChartModel.CHART_ENGINE_OPENFLASH: {
+        outputType = "html"; //$NON-NLS-1$
+        return "text/html"; //$NON-NLS-1$
       }
     }
 
+    // Final component default is OFC
     return "text/html"; //$NON-NLS-1$
+  }
+  
+  /**
+   * Sets the chart engine based on the order of precedence:
+   * 1) Chart Definition
+   * 2) Action Sequence
+   * 3) System Setting
+   * 4) Hard Coded
+   */
+  protected void loadChartEngine(){
+    loadChartModel();
+    
+    if(chartModel != null){
+      if(chartModel.getChartEngine() != ChartModel.CHART_ENGINE_UNDEFINED){
+        this.chartEngine = chartModel.getChartEngine();
+        // Defined in ChartModel, escape
+        return;
+      }
+    }
+    
+    if(this.chartEngine != ChartModel.CHART_ENGINE_UNDEFINED){
+      // Engine set on Action Sequence, escape
+      return;
+    }
+    
+    // Load default value from system setting or take hard coded
+    
+    // Hard coded final fall back is Open Flash Chart
+    String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", //$NON-NLS-1$ //$NON-NLS-2$
+        ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH)); 
+    
+    if(defaultChartEngine == null){
+      defaultChartEngine = ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH);
+    }
+    
+    this.chartEngine = ChartModel.getChartEngineIdFromFriendlyName(defaultChartEngine); 
   }
   
   protected void loadChartModel(){
@@ -437,10 +477,6 @@ public class ChartComponent {
           chartModel = ChartSerializer.deSerialize(chartModelXml, ChartSerializationFormat.XML);
         }
       }
-    }
-    
-    if ((chartModel != null) && (chartEngine != null)) {
-      chartModel.setChartEngine(chartEngine);
     }
   }
   
@@ -505,7 +541,8 @@ public class ChartComponent {
    * @return
    */
   public String getChartEngine() {
-    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine != null ? chartEngine : chartModel.getChartEngine());
+    loadChartEngine();
+    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine);
   }
 
   /**

@@ -176,6 +176,13 @@ public class ChartBeansGeneratorUtil {
 
     ActionSequenceDocument doc = createActionSequenceDocument(defaultParameterMap.keySet());
     runActionSequence(pentahoSession, parameterProviders, outputHandler, doc);
+    
+    try {
+      out.flush();
+      out.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -306,6 +313,21 @@ public class ChartBeansGeneratorUtil {
     ChartModel chartModel = ChartSerializer.deSerialize(serializedChartModel, ChartSerializationFormat.JSON);
 
     String html = null;
+    
+    if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_UNDEFINED){
+      // Load default value from system setting or take hard coded
+      
+      // Hard coded final fall back is Open Flash Chart
+      String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", //$NON-NLS-1$ //$NON-NLS-2$
+          ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH)); 
+      
+      if(defaultChartEngine == null){
+        defaultChartEngine = ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH);
+      }
+      
+      chartModel.setChartEngine(ChartModel.getChartEngineIdFromFriendlyName(defaultChartEngine));
+      
+    }
 
     if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_JFREE) {
       final String SOLUTION_TMP_DIR = "system/tmp/"; //$NON-NLS-1$
