@@ -2,6 +2,16 @@
 <html>
 </head>
 <body bgcolor="white">
-Contains XulEventHandler classes for the Xul MQL Editor
+<p>Various Class Relationships</p>
+<p>
+DatasourceController -> 
+DatasourceService (XUL client only) -> 
+DatasourceServiceGwtImpl -> 
+DatasourceGwtServiceAsync (GWT client only) ->
+wire ->
+DatasourceGwtService (GWT server only) ->
+DatasourceGwtServlet ->
+DatasourceServiceDelegate
+</p>
 </body>
 </html>
