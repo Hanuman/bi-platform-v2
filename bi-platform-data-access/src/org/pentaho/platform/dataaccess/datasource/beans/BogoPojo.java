@@ -2,12 +2,16 @@ package org.pentaho.platform.dataaccess.datasource.beans;
 
 import java.io.Serializable;
 
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.model.concept.security.Security;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+
 /*
  * This class is a workaround for GWT. GWT is not able to compile these classes are they have been used in a map
  * http://code.google.com/p/google-web-toolkit/issues/detail?id=3521
@@ -20,6 +24,9 @@ public class BogoPojo implements Serializable{
   AggregationType aggType;
   TargetColumnType targetColumnType;
   LocaleType localeType;
+  RowLevelSecurity rowLevelSecurity;
+  SecurityOwner securityOwner;
+  Security security;
   
   public TargetTableType getTargetTableType() {
     return targetTableType;
@@ -56,5 +63,23 @@ public class BogoPojo implements Serializable{
   }
   public LocaleType getLocaleType() {
     return localeType;
+  }
+  public void setRowLevelSecurity(RowLevelSecurity rowLevelSecurity) {
+    this.rowLevelSecurity = rowLevelSecurity;
+  }
+  public RowLevelSecurity getRowLevelSecurity() {
+    return rowLevelSecurity;
+  }
+  public void setSecurityOwner(SecurityOwner securityOwner) {
+    this.securityOwner = securityOwner;
+  }
+  public SecurityOwner getSecurityOwner() {
+    return securityOwner;
+  }
+  public void setSecurity(Security security) {
+    this.security = security;
+  }
+  public Security getSecurity() {
+    return security;
   }
 }
