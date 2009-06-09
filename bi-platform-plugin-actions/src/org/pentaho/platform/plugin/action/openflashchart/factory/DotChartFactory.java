@@ -44,7 +44,7 @@ public class DotChartFactory extends AbstractChartFactory {
     for (int row = 0; row < getRowCount(); row++) {
       Element e = null;
       String text = getRowHeader(row);        
-      ScatterChart sc = new ScatterChart(); //$NON-NLS-1$
+      ScatterChart sc = new ScatterChart(ScatterChart.Style.NORMAL); //$NON-NLS-1$
       sc.setColour(getColor(row));
       Number x = (Number)getValueAt(row, 0);
       Number y = (Number)getValueAt(row, 1);
