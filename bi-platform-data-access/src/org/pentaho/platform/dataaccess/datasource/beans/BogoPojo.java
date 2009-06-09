@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
+import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
@@ -27,6 +28,7 @@ public class BogoPojo implements Serializable{
   RowLevelSecurity rowLevelSecurity;
   SecurityOwner securityOwner;
   Security security;
+  FieldType fieldType;
   
   public TargetTableType getTargetTableType() {
     return targetTableType;
@@ -81,5 +83,11 @@ public class BogoPojo implements Serializable{
   }
   public Security getSecurity() {
     return security;
+  }
+  public void setFieldType(FieldType fieldType) {
+    this.fieldType = fieldType;
+  }
+  public FieldType getFieldType() {
+    return fieldType;
   }
 }
