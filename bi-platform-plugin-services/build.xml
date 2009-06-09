@@ -51,6 +51,7 @@
         <src path="versionchecker/src" />
         <src path="plugin-mgr/src" />
         <src path="webservices/src" />
+    	<src path="metadata/src" />
     </javac>
   </target>
 
@@ -77,6 +78,7 @@
           <fileset dir="versionchecker/src" excludes="**/*.java" />
           <fileset dir="plugin-mgr/src" excludes="**/*.java" />
           <fileset dir="webservices/src" excludes="**/*.java" />
+    	  <fileset dir="metadata/src" excludes="**/*.java" />
         </copy>
       </then>
     </if>
@@ -98,6 +100,7 @@
       <fileset dir="versionchecker/src" />
       <fileset dir="plugin-mgr/src" />
       <fileset dir="webservices/src" />
+      <fileset dir="metadata/src" />
     </jar>
   </target>
 
@@ -117,6 +120,7 @@
       <fileset dir="versionchecker/src" />
       <fileset dir="plugin-mgr/src" />
       <fileset dir="webservices/src" />
+      <fileset dir="metadata/src" />
     </tar>
   </target>
 
@@ -141,6 +145,7 @@
       <src path="versionchecker/test-src" />
       <src path="plugin-mgr/test-src" />
       <src path="webservices/test-src" />
+      <src path="metadata/test-src" />
     </javac>
   </target>
 
@@ -176,6 +181,9 @@
           <include name="**/*Test.java" />
         </fileset>
         <fileset dir="webservices/test-src" casesensitive="yes">
+          <include name="**/*Test.java" />
+        </fileset>
+        <fileset dir="metadata/test-src" casesensitive="yes">
           <include name="**/*Test.java" />
         </fileset>
       </batchtest>
@@ -238,6 +246,9 @@
         <fileset dir="webservices/test-src" casesensitive="yes">
           <include name="**/*Test.java" />
         </fileset>
+        <fileset dir="metadata/test-src" casesensitive="yes">
+          <include name="**/*Test.java" />
+        </fileset>
       </batchtest>
     </junit>
 
@@ -278,6 +289,9 @@
         <fileset dir="webservices/src">
           <include name="**/*.java" />
         </fileset>
+        <fileset dir="metadata/src">
+          <include name="**/*.java" />
+        </fileset>
     </cobertura-report>
   </target>
 
@@ -310,6 +324,9 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="webservices/src">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="metadata/src">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
@@ -348,6 +365,7 @@
         <pathelement path="versionchecker/src" />
         <pathelement path="plugin-mgr/src" />
         <pathelement path="webservices/src" />
+      	<pathelement path="metadata/src" />
       </sourcepath>
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
       <classpath refid="classpath" />

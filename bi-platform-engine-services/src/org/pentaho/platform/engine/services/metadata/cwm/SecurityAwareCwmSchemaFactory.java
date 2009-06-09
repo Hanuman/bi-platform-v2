@@ -34,6 +34,11 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
 
+/**
+ * This class is no longer used, it has been replaced with MetadataDomainRepository.
+ * 
+ *@deprecated
+ */
 public class SecurityAwareCwmSchemaFactory extends PlatformCWMSchemaFactory implements IPentahoInitializer {
   private static final Log logger = LogFactory.getLog(SecurityAwareCwmSchemaFactory.class);
 

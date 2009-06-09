@@ -17,51 +17,20 @@
  */
 package org.pentaho.platform.plugin.action.pentahometadata;
 
-import java.sql.SQLException;
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.actionsequence.dom.ActionInputConstant;
 import org.pentaho.actionsequence.dom.IActionInput;
 import org.pentaho.actionsequence.dom.IActionOutput;
 import org.pentaho.actionsequence.dom.actions.MQLAction;
-import org.pentaho.commons.connection.IPentahoConnection;
-import org.pentaho.commons.connection.IPentahoMetaData;
-import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.di.core.database.DatabaseInterface;
-import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.metadata.model.InlineEtlPhysicalModel;
-import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
-import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
-import org.pentaho.metadata.query.model.Query;
-import org.pentaho.metadata.query.model.util.QueryXmlHelper;
-import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.metadata.util.ThinModelConverter;
-import org.pentaho.platform.engine.core.audit.MessageTypes;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.plugin.action.messages.Messages;
-import org.pentaho.platform.plugin.action.sql.SQLLookupRule;
-import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
-import org.pentaho.platform.plugin.services.connections.sql.SQLResultSet;
-import org.pentaho.platform.util.logging.SimpleLogger;
-import org.pentaho.platform.util.messages.LocaleHelper;
-import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
-import org.pentaho.pms.mql.MQLQuery;
-import org.pentaho.pms.mql.MQLQueryFactory;
-import org.pentaho.pms.mql.MappedQuery;
-import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
-public class MQLRelationalDataComponent extends SQLLookupRule {
+public class MQLRelationalDataComponent extends ComponentBase {
 
   private static final long serialVersionUID = -6376955619869902045L;
 
+  /*
   private MQLQuery mqlQuery;
 
   private MappedQuery mappedQuery;
@@ -74,12 +43,12 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
   public MQLQuery getMqlQuery() {
     return mqlQuery;
   }
-
+*/
   @Override
   public Log getLogger() {
     return LogFactory.getLog(MQLRelationalDataComponent.class);
   }
-
+  
   private boolean initialize() {
     return true;
   }
@@ -108,6 +77,7 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
    * 
    * @return sql
    */
+  /*
   @Override
   public String getQuery() {
     MQLAction mqlAction = (MQLAction) getActionDefinition();
@@ -304,6 +274,7 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     
     return localConnection;
   }
+  */
   
   /**
    * determines the PDI database interface of a given connection object
@@ -311,6 +282,7 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
    * @param conn
    * @return
    */
+  /*
   protected DatabaseInterface retrieveThinDatabaseInterface(final SQLConnection conn) {
     String prod = null;
     try {
@@ -342,10 +314,37 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     }
     return null;
   }
-  
+  */
   @Override
   public boolean executeAction() {
+    MetadataQueryComponent component = new MetadataQueryComponent();
+    // setup component
+    MQLAction actionDefinition = (MQLAction) getActionDefinition();
+    
+    String mql = actionDefinition.getQuery().getStringValue();
+    
+    component.setQuery(mql);
+    
+    if (actionDefinition.getMaxRows() != ActionInputConstant.NULL_INPUT) {
+      component.setMaxRows(actionDefinition.getMaxRows().getIntValue());
+    }
 
+    if (actionDefinition.getQueryTimeout() != ActionInputConstant.NULL_INPUT) {
+      component.setTimeout(actionDefinition.getQueryTimeout().getIntValue());
+    }
+    
+    boolean success =  component.execute(); 
+
+    if (success) {
+      IActionOutput actionOutput = actionDefinition.getOutputResultSet();
+      if (actionOutput != null) {
+        actionOutput.setValue(component.getResultSet());
+      }
+    }
+    
+    return success;
+  }
+  /*
     long start = new Date().getTime();
 
     boolean result = super.executeAction();
@@ -431,13 +430,14 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     }
     return null;
   }
-
+*/
   /**
    * determines the PDI database interface of a given connection object
    * 
    * @param conn
    * @return
    */
+  /*
   protected DatabaseInterface getDatabaseInterface(final SQLConnection conn) {
     String prod = null;
     try {
@@ -477,5 +477,19 @@ public class MQLRelationalDataComponent extends SQLLookupRule {
     return metadata;
 
   }
-  
+  */
+
+  @Override
+  public void done() {
+  }
+
+  @Override
+  public boolean init() {
+    return true;
+  }
+
+  @Override
+  protected boolean validateSystemSettings() {
+    return true;
+  }
 }

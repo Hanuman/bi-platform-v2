@@ -24,8 +24,6 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener;
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService;
-import org.pentaho.platform.engine.services.metadata.PMDSystemListener;
-import org.pentaho.platform.engine.services.metadata.cwm.SecurityAwareCwmSchemaFactory;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener;
 import org.pentaho.platform.plugin.action.kettle.KettleSystemListener;
@@ -34,6 +32,7 @@ import org.pentaho.platform.plugin.outputs.FileOutputHandler;
 import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.connections.xquery.XQConnection;
+import org.pentaho.platform.plugin.services.metadata.MetadataDomainRepository;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
@@ -128,9 +127,8 @@ public class PentahoBoot extends PentahoSystemBoot {
     IPentahoObjectFactory objectFactory = getObjectFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( "ICwmSchemaFactory", SecurityAwareCwmSchemaFactory.class.getName(), Scope.SESSION ); //$NON-NLS-1$
+      factory.defineObject( "IMetadataDomainRepository", MetadataDomainRepository.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
     }
-    addLifecycleListener( new PMDSystemListener() );
   }
   
   /**

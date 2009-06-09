@@ -68,11 +68,17 @@ import org.pentaho.jfreereport.castormodel.reportspec.ReportSpec;
 import org.pentaho.jfreereport.wizard.utility.CastorUtility;
 import org.pentaho.jfreereport.wizard.utility.report.ReportGenerationUtility;
 import org.pentaho.jfreereport.wizard.utility.report.ReportSpecUtility;
-import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.Alignment;
+import org.pentaho.metadata.model.concept.types.Color;
+import org.pentaho.metadata.model.concept.types.ColumnWidth;
+import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.Font;
+import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.ILogger;
@@ -93,7 +99,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.WebServiceUtil;
-import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.uifoundation.component.xml.PMDUIComponent;
@@ -107,21 +112,7 @@ import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.servlet.messages.Messages;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
-import org.pentaho.pms.mql.MQLQuery;
-import org.pentaho.pms.mql.MQLQueryFactory;
-import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptInterface;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
-import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
-import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
-import org.pentaho.pms.schema.concept.types.color.ColorSettings;
-import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
-import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
-import org.pentaho.pms.schema.concept.types.font.FontSettings;
 
 
 /*
@@ -503,7 +494,7 @@ public class AdhocWebService extends ServletBase {
   }
 
   // TODO, isn't there a utility class or something this method can be moved to?
-  private static String getJFreeColorString(final ColorSettings color) {
+  private static String getJFreeColorString(final Color color) {
     if (color == null) {
       return "#FF0000"; //$NON-NLS-1$
     }
@@ -575,13 +566,12 @@ public class AdhocWebService extends ServletBase {
     return runtimeContext;
   }
 
-  private static final Map<Integer,String> METADATA_TYPE_TO_REPORT_SPEC_TYPE = new HashMap<Integer,String>();
+  private static final Map<DataType, String> METADATA_TYPE_TO_REPORT_SPEC_TYPE = new HashMap<DataType, String>();
   static {
-    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(new Integer(DataTypeSettings.DATA_TYPE_NUMERIC),
-        ReportSpecUtility.NUMBER_FIELD);
-    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(new Integer(DataTypeSettings.DATA_TYPE_DATE), ReportSpecUtility.DATE_FIELD);
-    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(new Integer(DataTypeSettings.DATA_TYPE_STRING),
-        ReportSpecUtility.STRING_FIELD);
+    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(DataType.NUMERIC, ReportSpecUtility.NUMBER_FIELD);
+    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(DataType.DATE, ReportSpecUtility.DATE_FIELD);
+    AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.put(DataType.STRING, ReportSpecUtility.STRING_FIELD);
+
   }
 
   private static boolean isDefaultStringProperty( final String property )
@@ -663,26 +653,9 @@ public class AdhocWebService extends ServletBase {
       thinException = e;
     }
     
-    BusinessModel model = null;
+    LogicalModel model = null;
     if (queryObject != null) {
-      try {
-        SchemaMeta schemaMeta = ThinModelConverter.convertToLegacy(queryObject.getDomain());
-        for (BusinessModel bizmodel : schemaMeta.getBusinessModels()) {
-          if (bizmodel.getId().equals(queryObject.getLogicalModel().getId())) {
-            model = bizmodel;
-          }
-        }
-      } catch (Exception e) {
-        logger.error("AdhocWebService.ERROR_0020_FAILED_TO_CONVERT_THIN_MODEL", e);
-      }
-    } else {
-      MetadataPublisher.loadAllMetadata(userSession, false);
-      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", userSession); //$NON-NLS-1$
-  
-      MQLQuery mql = MQLQueryFactory.getMQLQuery(xml, null, LocaleHelper.getLocale().toString(), cwmSchemaFactory);
-  
-      model = mql.getModel();
-    
+      model = queryObject.getLogicalModel();
     }
     if (model == null) {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
@@ -701,12 +674,12 @@ public class AdhocWebService extends ServletBase {
     // ========== begin column width stuff
     
     // make copies of the business columns; in the next step we're going to fill out any missing column widths
-    BusinessColumn[] columns = new BusinessColumn[reportSpec.getField().length]; 
+    LogicalColumn[] columns = new LogicalColumn[reportSpec.getField().length];
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
-      BusinessColumn column = model.findBusinessColumn(name);
-      columns[i] = (BusinessColumn) column.clone();
+      LogicalColumn column = model.findLogicalColumn(name);
+      columns[i] = (LogicalColumn)column.clone();
     }
     
     boolean columnWidthUnitsConsistent = AdhocWebService.areMetadataColumnUnitsConsistent( reportSpec, model );
@@ -735,12 +708,10 @@ public class AdhocWebService extends ServletBase {
         
         // fill in columns without column widths
         for (int i = 0; i < columns.length; i++) {
-          ConceptInterface metadataConcept = columns[i].getConcept();
-          ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+          ColumnWidth property = (ColumnWidth)columns[i].getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
           if (property == null) {
-            ConceptPropertyInterface newProperty = DefaultPropertyID.getDefaultEmptyProperty(ConceptPropertyType.COLUMN_WIDTH, DefaultPropertyID.COLUMN_WIDTH.getId()); 
-            newProperty.setValue(new ColumnWidth(ColumnWidth.TYPE_WIDTH_PERCENT, defaultWidth));
-            metadataConcept.addProperty(newProperty);
+            property = new ColumnWidth(WidthType.PERCENT, defaultWidth);
+            columns[i].setProperty(DefaultPropertyID.COLUMN_WIDTH.getId(), property);
           }
         }
       }
@@ -752,9 +723,9 @@ public class AdhocWebService extends ServletBase {
       // now scale down if necessary
       if (columnWidthScaleFactor < 1.0) {
         for (int i = 0; i < columns.length; i++) {
-          ConceptInterface metadataConcept = columns[i].getConcept();
-          ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
-          ((ColumnWidth) property.getValue()).setWidth(new BigDecimal(columnWidthScaleFactor * ((ColumnWidth) property.getValue()).getWidth().doubleValue()));
+          ColumnWidth property = (ColumnWidth)columns[i].getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+          ColumnWidth newProperty = new ColumnWidth(property.getType(), columnWidthScaleFactor * property.getWidth());
+          columns[i].setProperty(DefaultPropertyID.COLUMN_WIDTH.getId(), newProperty);
         }
       }
       
@@ -764,15 +735,16 @@ public class AdhocWebService extends ServletBase {
     
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
-      String name = field.getName();
-      BusinessColumn column = columns[i];
+      LogicalColumn column = columns[i];
       
       AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent);
       
       // Template properties have the lowest priority, merge them last
       if (bUseTemplate) {
-        Element templateDefaults = (Element) reportSpecTypeToElement.get(AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE
-            .get(new Integer(column.getDataType().getType()))); // sorry, this is ugly as hell
+        Element templateDefaults = null;
+        if (column.getDataType() != null) {
+          templateDefaults = (Element) reportSpecTypeToElement.get(AdhocWebService.METADATA_TYPE_TO_REPORT_SPEC_TYPE.get(column.getDataType())); // sorry, this is ugly as hell
+        }
         /*
          * NOTE: this merge of the template with the node's properties only sets the following properties:
          * format, fontname, fontsize, color, alignment, vertical-alignment, 
@@ -893,23 +865,19 @@ public class AdhocWebService extends ServletBase {
   private static final Set<Integer> PERCENT_SET;
   static {
     Set<Integer> tmp = new HashSet<Integer>();
-    tmp.add(ColumnWidth.TYPE_WIDTH_PERCENT);
+    tmp.add(ColumnWidth.WidthType.PERCENT.ordinal());
     PERCENT_SET = Collections.unmodifiableSet( tmp );
   }
   
-  private static int getSumOfMetadataColumnWidths( ReportSpec reportSpec, BusinessModel model ) {
+  private static int getSumOfMetadataColumnWidths( ReportSpec reportSpec, LogicalModel model ) {
     int sum = 0;
-    
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
-      BusinessColumn column = model.findBusinessColumn(name);
-      ConceptInterface metadataConcept = column.getConcept();
-
-      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      LogicalColumn column = model.findLogicalColumn(name);
+      ColumnWidth property = (ColumnWidth)column.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property != null) {
-        ColumnWidth columnWidth = (ColumnWidth)property.getValue();
-        sum += columnWidth.getWidth().intValue();
+        sum += (int)property.getWidth();
       }
     }
 
@@ -919,18 +887,17 @@ public class AdhocWebService extends ServletBase {
   /**
    * Returns the number of columns for which no column width is specified.
    */
-  private static int getMissingColumnWidthCount( ReportSpec reportSpec, BusinessModel model ) {
+  private static int getMissingColumnWidthCount( ReportSpec reportSpec, LogicalModel model ) {    
     int count = 0;
     
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
-      BusinessColumn column = model.findBusinessColumn(name);
-      ConceptInterface metadataConcept = column.getConcept();
-
-      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      LogicalColumn column = model.findLogicalColumn(name);
+      org.pentaho.metadata.model.concept.types.ColumnWidth property = (org.pentaho.metadata.model.concept.types.ColumnWidth)
+      column.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property == null) {
-        count += 1;
+        count++;
       }
     }
 
@@ -946,19 +913,17 @@ public class AdhocWebService extends ServletBase {
    * @param model
    * @return
    */
-  private static boolean areMetadataColumnUnitsConsistent( ReportSpec reportSpec, BusinessModel model ) {
+  private static boolean areMetadataColumnUnitsConsistent( ReportSpec reportSpec, LogicalModel model ) {
     Set<Integer> unitsSet = new HashSet<Integer>();
     
     for (int i = 0; i < reportSpec.getField().length; i++) {
       Field field = reportSpec.getField()[i];
       String name = field.getName();
-      BusinessColumn column = model.findBusinessColumn(name);
-      ConceptInterface metadataConcept = column.getConcept();
-
-      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      LogicalColumn column = model.findLogicalColumn(name);
+      org.pentaho.metadata.model.concept.types.ColumnWidth property = (org.pentaho.metadata.model.concept.types.ColumnWidth)
+      column.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property != null) {
-        ColumnWidth columnWidth = (ColumnWidth)property.getValue();
-        unitsSet.add( columnWidth.getType() );
+        unitsSet.add( property.getType().ordinal());
       }
     }
 
@@ -976,26 +941,20 @@ public class AdhocWebService extends ServletBase {
    * @param column
    * @param columnWidthUnitsConsistent this value should always be the result of a call to areMetadataColumnUnitsConsistent()
    */
-  private static void applyMetadata( final Field field, final BusinessColumn column, 
+  private static void applyMetadata( final Field field, final LogicalColumn column, 
       boolean columnWidthUnitsConsistent ) {
-    ConceptInterface metadataConcept = column.getConcept();
 
     if ( columnWidthUnitsConsistent ) {
-      // get column width from metadata, and add to report def
-      ConceptPropertyInterface property = metadataConcept.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
+      ColumnWidth property = (ColumnWidth)column.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
       if ( property != null) {
-        double width = ((ColumnWidth)property.getValue()).getWidth().doubleValue();
-        field.setWidth( new BigDecimal( width ) );
-        field.setIsWidthPercent( ((ColumnWidth)property.getValue()).getType() == ColumnWidth.TYPE_WIDTH_PERCENT );
+        field.setWidth( new BigDecimal( property.getWidth() ) );
+        field.setIsWidthPercent( property.getType() == ColumnWidth.WidthType.PERCENT);
         field.setWidthLocked( true );
       }
     }
     
     // WAQR doesn't set font properties, so if metadata font properties are available, they win
-    FontSettings font = null;
-    if (metadataConcept.getProperty(DefaultPropertyID.FONT.getId()) != null) {
-      font = (FontSettings) metadataConcept.getProperty(DefaultPropertyID.FONT.getId()).getValue();
-    }
+    Font font = (Font)column.getProperty(DefaultPropertyID.FONT.getId());
 
     // set font size, name, and style
     if (font != null) {
@@ -1016,69 +975,53 @@ public class AdhocWebService extends ServletBase {
     
     if ( AdhocWebService.isNotSetStringProperty( field.getHorizontalAlignment() ))
     {
-      AlignmentSettings alignment = null;
-      ConceptPropertyInterface horizontalAlignProp = metadataConcept.getProperty(DefaultPropertyID.ALIGNMENT.getId());
-      if (horizontalAlignProp != null) {
-        alignment = (AlignmentSettings) horizontalAlignProp.getValue();
-
-        if (alignment != null) {
-          if (alignment.getType() == AlignmentSettings.TYPE_ALIGNMENT_LEFT) {
-            field.setHorizontalAlignment("left"); //$NON-NLS-1$
-          } else if (alignment.getType() == AlignmentSettings.TYPE_ALIGNMENT_RIGHT) {
-            field.setHorizontalAlignment("right"); //$NON-NLS-1$
-          } else if (alignment.getType() == AlignmentSettings.TYPE_ALIGNMENT_CENTERED) {
-            field.setHorizontalAlignment("center"); //$NON-NLS-1$
-          }
+      Alignment alignment = (Alignment)column.getProperty(DefaultPropertyID.ALIGNMENT.getId());
+      if (alignment != null) {
+        if (alignment == Alignment.LEFT) {
+          field.setHorizontalAlignment("left"); //$NON-NLS-1$
+        } else if (alignment == Alignment.RIGHT) {
+          field.setHorizontalAlignment("right"); //$NON-NLS-1$
+        } else if (alignment == Alignment.CENTERED) {
+          field.setHorizontalAlignment("center"); //$NON-NLS-1$
         }
       }
     }
     if ( AdhocWebService.isNotSetStringProperty( field.getVerticalAlignment() ))
     {
-      String valignSetting = null;
-      ConceptPropertyInterface valignProp = metadataConcept.getProperty( AdhocWebService.METADATA_PROPERTY_ID_VERTICAL_ALIGNMENT );
-      if ( valignProp != null) {
-        valignSetting = (String)valignProp.getValue();
+      String valignSetting = (String)column.getProperty(AdhocWebService.METADATA_PROPERTY_ID_VERTICAL_ALIGNMENT);
+      if ( valignSetting != null) {
         field.setVerticalAlignment( valignSetting );
       }
     }
 
     // WAQR doesn't set color properties, so if metadata font properties are available, they win
-    ColorSettings color = null;
-    if (metadataConcept.getProperty(DefaultPropertyID.COLOR_BG.getId()) != null) {
-      color = (ColorSettings) metadataConcept.getProperty(DefaultPropertyID.COLOR_BG.getId()).getValue();
-    }
-
+    Color color = (Color)column.getProperty(DefaultPropertyID.COLOR_BG.getId());
     if (color != null) {
       String htmlColor = AdhocWebService.getJFreeColorString(color);
       field.setBackgroundColor(htmlColor);
       field.setUseBackgroundColor(true);
     }
 
-    color = null;
-    if (metadataConcept.getProperty(DefaultPropertyID.COLOR_FG.getId()) != null) {
-      color = (ColorSettings) metadataConcept.getProperty(DefaultPropertyID.COLOR_FG.getId()).getValue();
-    }
-
+    color = (Color)column.getProperty(DefaultPropertyID.COLOR_FG.getId());
     if (color != null) {
       String htmlColor = AdhocWebService.getJFreeColorString(color);
       field.setFontColor(htmlColor);
     }
 
-    String metaDataDisplayName = column.getDisplayName(LocaleHelper.getLocale().toString());
+    String metaDataDisplayName = column.getName(LocaleHelper.getLocale().toString());
 
     if (field.getIsDetail()) {
       field.setDisplayName(metaDataDisplayName);
     } else {
       String reportSpecDisplayName = field.getDisplayName();
       if (AdhocWebService.isDefaultStringProperty(reportSpecDisplayName)) {
-        String displayName = column.getDisplayName(LocaleHelper.getLocale().toString());
+        String displayName = column.getName(LocaleHelper.getLocale().toString());
         field.setDisplayName(displayName + ": $(" + field.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$           
       }
     }
     if ( AdhocWebService.isDefaultStringProperty( field.getFormat() )) {
-      ConceptPropertyInterface cpi = metadataConcept.getProperty(DefaultPropertyID.MASK.getId());
-      if (cpi != null ) {
-        String format = (String)cpi.getValue();
+      String format = (String)column.getProperty(DefaultPropertyID.MASK.getId());
+      if (format != null ) {
         if ( !StringUtils.isEmpty( format ) )
         { 
           field.setFormat( format );
@@ -2002,35 +1945,35 @@ public class AdhocWebService extends ServletBase {
   // to run this, you need to have -ea on the JVM command line
   public static void main( String[] args ) {
     Set<Integer> invalid = new HashSet<Integer>();
-    invalid.add( ColumnWidth.TYPE_WIDTH_PERCENT );
-    invalid.add( ColumnWidth.TYPE_WIDTH_CM );
-    invalid.add( ColumnWidth.TYPE_WIDTH_INCHES );
-    invalid.add( ColumnWidth.TYPE_WIDTH_POINTS );
+    invalid.add( ColumnWidth.WidthType.PERCENT.ordinal() );
+    invalid.add( ColumnWidth.WidthType.CM.ordinal() );
+    invalid.add( ColumnWidth.WidthType.INCHES.ordinal() );
+    invalid.add( ColumnWidth.WidthType.POINTS.ordinal() );
     assert !isSetConsistent( invalid ) : "invalid set should fail"; //$NON-NLS-1$
 
     Set<Integer> invalid2 = new HashSet<Integer>();
-    invalid2.add( ColumnWidth.TYPE_WIDTH_PERCENT );
-    invalid2.add( ColumnWidth.TYPE_WIDTH_CM );
-    invalid2.add( ColumnWidth.TYPE_WIDTH_POINTS );
+    invalid2.add( ColumnWidth.WidthType.PERCENT.ordinal() );
+    invalid2.add( ColumnWidth.WidthType.CM.ordinal() );
+    invalid2.add( ColumnWidth.WidthType.POINTS.ordinal() );
     assert !isSetConsistent( invalid2 ) : "invalid2 set should fail"; //$NON-NLS-1$
     
     Set<Integer> validPercent = new HashSet<Integer>();
-    validPercent.add( ColumnWidth.TYPE_WIDTH_PERCENT );
+    validPercent.add( ColumnWidth.WidthType.PERCENT.ordinal() );
     assert isSetConsistent( validPercent ) : "validPercent set should succeed"; //$NON-NLS-1$
 
     Set<Integer> validMeasures = new HashSet<Integer>();
-    validMeasures.add( ColumnWidth.TYPE_WIDTH_CM );
-    validMeasures.add( ColumnWidth.TYPE_WIDTH_INCHES );
-    validMeasures.add( ColumnWidth.TYPE_WIDTH_POINTS );
+    validMeasures.add( ColumnWidth.WidthType.CM.ordinal() );
+    validMeasures.add( ColumnWidth.WidthType.INCHES.ordinal() );
+    validMeasures.add( ColumnWidth.WidthType.POINTS.ordinal() );
     assert isSetConsistent( validMeasures ) : "validMeasures set should succeed"; //$NON-NLS-1$
 
     Set<Integer> validMeasures2    = new HashSet<Integer>();
-    validMeasures2.add( ColumnWidth.TYPE_WIDTH_INCHES );
-    validMeasures2.add( ColumnWidth.TYPE_WIDTH_POINTS );
+    validMeasures2.add( ColumnWidth.WidthType.INCHES.ordinal() );
+    validMeasures2.add( ColumnWidth.WidthType.POINTS.ordinal() );
     assert isSetConsistent( validMeasures2 ) : "validMeasures2 set should succeed"; //$NON-NLS-1$
 
     Set<Integer> validMeasures3    = new HashSet<Integer>();
-    validMeasures3.add( ColumnWidth.TYPE_WIDTH_POINTS );
+    validMeasures3.add( ColumnWidth.WidthType.POINTS.ordinal() );
     assert isSetConsistent( validMeasures3 ) : "validMeasures3 set should succeed"; //$NON-NLS-1$
 
     Set<Integer> validEmtpy = new HashSet<Integer>();

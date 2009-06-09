@@ -27,6 +27,9 @@ import org.pentaho.pms.schema.security.SecurityService;
 /**
  * @author wseyler
  *
+ * This class is no longer used, it has been replaced with MetadataDomainRepository.
+ *
+ * @deprecated
  */
 public class PlatformCWMSchemaFactory extends CwmSchemaFactory {
   private SecurityService securityService = null;

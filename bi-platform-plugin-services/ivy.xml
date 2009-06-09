@@ -82,6 +82,7 @@
     <dependency org="pentaho" name="pentaho-xul-html" rev="${dependency.pentaho-xul.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-versionchecker" rev="${dependency.pentaho-versionchecker.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
       
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" conf="default->default"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" conf="default->default"/>

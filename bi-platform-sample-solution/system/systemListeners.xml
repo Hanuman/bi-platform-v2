@@ -15,7 +15,6 @@
         <bean id="kettleSystemListener" class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener" />
         <bean id="mondrianSystemListener" class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener" />
         <bean id="quartzSystemListener" class="org.pentaho.platform.scheduler.QuartzSystemListener" />
-        <bean id="metadataSystemListener" class="org.pentaho.platform.engine.services.metadata.PMDSystemListener" />
         <bean id="versionCheckerSystemListener" class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
           <property name="repeatIntervalSeconds">
             <value>86400</value>

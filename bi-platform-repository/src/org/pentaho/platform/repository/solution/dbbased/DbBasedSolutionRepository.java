@@ -42,6 +42,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclPublisher;
 import org.pentaho.platform.api.engine.IAclVoter;
@@ -67,7 +68,6 @@ import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleSession;
 import org.pentaho.platform.engine.services.actionsequence.SequenceDefinition;
-import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
@@ -128,7 +128,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     String action = buildDirectoryPath(solutionName, actionPath, sequenceName);
 
     if ((action == null) || (action.length() == 0)) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID"));
+      error(Messages.getErrorString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
       return null;
     }
 
@@ -173,7 +173,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       if (file != null) {
         putRepositoryObjectInCache(documentPath, file);
       } else {
-        SolutionRepositoryBase.logger.warn(Messages.getString("SolutionRepository.WARN_0004_DOCUMENT_NOT_FOUND",
+        SolutionRepositoryBase.logger.warn(Messages.getString("SolutionRepository.WARN_0004_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
             documentPath));
         return null; //If it's still null then it doesn't exist
       }
@@ -1084,7 +1084,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         try {
           rtn = (RepositoryFile) qry.uniqueResult();
         } catch (HibernateException ex) {
-          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", path), ex);
+          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", path), ex); //$NON-NLS-1$
           throw ex;
         }
         return rtn;
@@ -1446,7 +1446,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if( (res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && 
             (fileName != null) && 
             (fileName.toLowerCase().endsWith(".xmi")) ) {
-        MetadataPublisher.loadMetadata(path, getSession(), true);
+
+      IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
+      // this call forces a check for new domains
+      repo.getDomainIds();
     }
     return res;
   }

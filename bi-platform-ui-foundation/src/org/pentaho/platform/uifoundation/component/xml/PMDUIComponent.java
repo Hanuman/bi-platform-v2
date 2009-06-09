@@ -18,45 +18,30 @@
 package org.pentaho.platform.uifoundation.component.xml;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.types.LocaleType;
+import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.engine.services.solution.SolutionHelper;
-import org.pentaho.platform.uifoundation.component.BaseUIComponent;
 import org.pentaho.platform.uifoundation.messages.Messages;
 import org.pentaho.platform.util.messages.LocaleHelper;
-import org.pentaho.pms.core.CWM;
-import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
-import org.pentaho.pms.schema.BusinessCategory;
-import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
-import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
-import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
-import org.pentaho.pms.util.UniqueList;
 
 public class PMDUIComponent extends XmlComponent {
 
@@ -127,15 +112,6 @@ public class PMDUIComponent extends XmlComponent {
     Element modelsNode = root.addElement("models"); //$NON-NLS-1$
     if (domainName == null) {
       try {
-        MetadataPublisher.loadAllMetadata(getSession(), false);
-        String domains[] = CWM.getDomainNames();
-        for (String element : domains) {
-          addDomainModels(element, modelsNode, root);
-        }
-        
-        // Thin model
-        
-          
         for (String domain : getMetadataRepository().getDomainIds()) {
           addThinDomainModels(domain, modelsNode, root);
         }
@@ -146,56 +122,11 @@ public class PMDUIComponent extends XmlComponent {
       }
 
     } else {
-      addDomainModels(domainName, modelsNode, root);
+      addThinDomainModels(domainName, modelsNode, root);
     }
     return doc;
   }
-  
-  private void addDomainModels(final String domain, final Element modelsNode, final Element root) {
 
-    CWM cwm = null;
-    try {
-      cwm = CWM.getInstance(domain, false);
-    } catch (Throwable t) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domain)); //$NON-NLS-1$ //$NON-NLS-2$
-      error(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR") + domain, t); //$NON-NLS-1$
-      return;
-    }
-
-    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
-
-    SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-
-    String locale = LocaleHelper.getLocale().toString();
-    String locales[] = schemaMeta.getLocales().getLocaleCodes();
-
-    locale = LocaleHelper.getClosestLocale( locale, locales );
-    schemaMeta.setActiveLocale(locale);
-    List models = schemaMeta.getBusinessModels().getList();
-
-    Iterator it = models.iterator();
-    Element modelNode;
-    while (it.hasNext()) {
-      BusinessModel model = (BusinessModel) it.next();
-      modelNode = modelsNode.addElement("model"); //$NON-NLS-1$
-      modelNode.addElement("domain_id").setText(domain); //$NON-NLS-1$
-      if (model.getId() != null) {
-        modelNode.addElement("model_id").setText(model.getId()); //$NON-NLS-1$
-      }
-      if (model.getDisplayName(locale) != null) {
-        modelNode.addElement("model_name").setText(model.getDisplayName(locale)); //$NON-NLS-1$
-      }
-      if (model.getDescription(locale) != null) {
-        modelNode.addElement("model_description").setText(model.getDescription(locale)); //$NON-NLS-1$
-      }
-    }
-    if (BaseUIComponent.debug) {
-
-    }
-    return;
-  }
-
-  
   private void addThinDomainModels(final String domain, final Element modelsNode, final Element root) {
 
     IMetadataDomainRepository repo = getMetadataRepository();
@@ -249,41 +180,23 @@ public class PMDUIComponent extends XmlComponent {
       return doc;
     }
 
-    SchemaMeta schemaMeta = null;
     Element modelNode = root.addElement("model"); //$NON-NLS-1$
     
     // because it's lighter weight, check the thin model
     Domain domain = getMetadataRepository().getDomain(domainName);
-    if (domain != null) {
-      try {
-        schemaMeta = ThinModelConverter.convertToLegacy(domain);
-      } catch (Throwable t) {
-        root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
-        error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", domainName), t); //$NON-NLS-1$
-        t.printStackTrace();
-        return doc;
-      }
-    } else {
-      MetadataPublisher.loadMetadata(domainName, getSession(), false);
-      CWM cwm = null;
-      try {
-        cwm = CWM.getInstance(domainName, false);
-      } catch (Throwable t) {
-        root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
-        error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", domainName), t); //$NON-NLS-1$
-        t.printStackTrace();
-        return doc;
-      }
-      CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
-      schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
+    if (domain == null) {
+      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
+      return doc;
     }
     String locale = LocaleHelper.getLocale().toString();
-    String locales[] = schemaMeta.getLocales().getLocaleCodes();
-
+    String locales[] = new String[domain.getLocales().size()];
+    for (int i = 0; i < domain.getLocales().size(); i++) {
+      locales[i] = domain.getLocales().get(i).getCode();
+    }
+    
     locale = LocaleHelper.getClosestLocale( locale, locales );
-    schemaMeta.setActiveLocale(locale);
-
-    BusinessModel model = schemaMeta.findModel(modelId); // This is the business view that was selected.
+    LogicalModel model = domain.findLogicalModel(modelId); 
+    
     if (model == null) {
       root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
       error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$
@@ -293,44 +206,29 @@ public class PMDUIComponent extends XmlComponent {
     if (model.getId() != null) {
       modelNode.addElement("model_id").setText(model.getId()); //$NON-NLS-1$
     }
-    if (model.getDisplayName(locale) != null) {
-      modelNode.addElement("model_name").setText(model.getDisplayName(locale)); //$NON-NLS-1$
+    if (model.getName(locale) != null) {
+      modelNode.addElement("model_name").setText(model.getName(locale)); //$NON-NLS-1$
     }
     if (model.getDescription(locale) != null) {
       modelNode.addElement("model_description").setText(model.getDescription(locale)); //$NON-NLS-1$
     }
 
-    BusinessCategory rootCategory = model.getRootCategory();
-    UniqueList uniqueCategories = rootCategory.getBusinessCategories();
-    List childCategories = uniqueCategories.getList();
-
-    Iterator it = childCategories.iterator();
-
     Element tableNode;
-    // BusinessTable table;
-    BusinessCategory businessView;
 
-    BusinessColumn column;
-    List columns;
-    Iterator columnsIterator;
-
-    while (it.hasNext()) {
-      businessView = (BusinessCategory) it.next();
+    for (Category category : model.getCategories()) {
       tableNode = modelNode.addElement("view"); //$NON-NLS-1$
-      if (businessView.getId() != null) {
-        tableNode.addElement("view_id").setText(businessView.getId()); //$NON-NLS-1$
+      if (category.getId() != null) {
+        tableNode.addElement("view_id").setText(category.getId()); //$NON-NLS-1$
       }
-      if (businessView.getDisplayName(locale) != null) {
-        tableNode.addElement("view_name").setText(businessView.getDisplayName(locale)); //$NON-NLS-1$
+      if (category.getName(locale) != null) {
+        tableNode.addElement("view_name").setText(category.getName(locale)); //$NON-NLS-1$
       }
-      if (businessView.getDescription(locale) != null) {
-        tableNode.addElement("view_description").setText(businessView.getDescription(locale)); //$NON-NLS-1$
+      if (category.getDescription(locale) != null) {
+        tableNode.addElement("view_description").setText(category.getDescription(locale)); //$NON-NLS-1$
       }
-      columns = businessView.getBusinessColumns().getList();
-      columnsIterator = columns.iterator();
-      while (columnsIterator.hasNext()) {
-        column = (BusinessColumn) columnsIterator.next();
-        if (column.isHidden()) {
+      for (LogicalColumn column : category.getLogicalColumns()) {
+        Boolean hidden = (Boolean)column.getProperty("hidden"); //$NON-NLS-1$
+        if (hidden != null && hidden) {
           continue;
         }
         addColumn(column, tableNode, locale);
@@ -339,28 +237,30 @@ public class PMDUIComponent extends XmlComponent {
 
     return doc;
   }
-
-  public void addColumn(final BusinessColumn column, final Element tableNode, final String locale) {
+  
+  public void addColumn(final LogicalColumn column, final Element tableNode, final String locale) {
     Element columnNode = tableNode.addElement("column"); //$NON-NLS-1$
 
     if (column.getId() != null) {
       columnNode.addElement("column_id").setText(column.getId()); //$NON-NLS-1$
     }
-    if (column.getDisplayName(locale) != null) {
-      columnNode.addElement("column_name").setText(column.getDisplayName(locale)); //$NON-NLS-1$
+    if (column.getName(locale) != null) {
+      columnNode.addElement("column_name").setText(column.getName(locale)); //$NON-NLS-1$
     }
     if (column.getDescription(locale) != null) {
       columnNode.addElement("column_description").setText(column.getDescription(locale)); //$NON-NLS-1$
     }
-    if (column.getFieldTypeDesc() != null) {
+    if (column.getFieldType() != null) {
       // TODO this should take a locale
-      columnNode.addElement("column_field_type").setText(column.getFieldTypeDesc()); //$NON-NLS-1$
+      String desc = column.getFieldType().getDescription();
+      desc = org.pentaho.pms.messages.Messages.getString(desc);
+      columnNode.addElement("column_field_type").setText(desc); //$NON-NLS-1$
     }
-    DataTypeSettings dataType = column.getDataType();
+    DataType dataType = column.getDataType();
     if (dataType != null) {
-      columnNode.addElement("column_type").setText(dataType.getCode()); //$NON-NLS-1$
+      columnNode.addElement("column_type").setText(dataType.getName()); //$NON-NLS-1$
     }
-    if (column.getConcept().getProperty("lookup") != null) { //$NON-NLS-1$
+    if (column.getProperty("lookup") != null) { //$NON-NLS-1$
       columnNode.addElement("column_lookup").setText("true"); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
@@ -389,31 +289,22 @@ public class PMDUIComponent extends XmlComponent {
       return doc;
     }
 
-    MetadataPublisher.loadMetadata(domainName, getSession(), false);
-    CWM cwm = null;
-    try {
-      cwm = CWM.getInstance(domainName, false);
-    } catch (Throwable t) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
-      error(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName), t); //$NON-NLS-1$
-      return doc;
-    }
-    CwmSchemaFactoryInterface cwmSchemaFactory = PentahoSystem.get(CwmSchemaFactoryInterface.class, "ICwmSchemaFactory", getSession()); //$NON-NLS-1$
-    SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-
+    Domain domain = getMetadataRepository().getDomain(domainName);
     String locale = LocaleHelper.getLocale().toString();
-    String locales[] = schemaMeta.getLocales().getLocaleCodes();
+    String locales[] = new String[domain.getLocales().size()];
+    for (int i = 0; i < domain.getLocales().size(); i++) {
+      locales[i] = domain.getLocales().get(i).getCode();
+    }
 
     locale = LocaleHelper.getClosestLocale( locale, locales );
-    schemaMeta.setActiveLocale(locale);
 
-    BusinessModel model = schemaMeta.findModel(modelId); // This is the business view that was selected.
+    LogicalModel model = domain.findLogicalModel(modelId); // This is the business view that was selected.
     if (model == null) {
       root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
-    BusinessColumn column = model.findBusinessColumn(columnId);
+    LogicalColumn column = model.findLogicalColumn(columnId);
     if (column == null) {
       root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_COLUMN_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
@@ -421,21 +312,29 @@ public class PMDUIComponent extends XmlComponent {
 
     // Temporary hack to get the BusinessCategory. When fixed properly, you should be able to interrogate the
     // business column thingie for it's containing BusinessCategory.
-    BusinessCategory rootCat = model.getRootCategory();
-    BusinessCategory view = rootCat.findBusinessCategoryForBusinessColumn(column);
+    Category view = null;
+    for (Category category : model.getCategories()) {
+      for (LogicalColumn col : category.getLogicalColumns()) {
+        if (col.getId().equals(column.getId())) {
+          view = category;
+          break;
+        }
+      }
+    }
+    
     if (view == null) {
       root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_VIEW_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
     String mql = "<mql><domain_type>relational</domain_type><domain_id>" + domainName + "</domain_id><model_id>" + modelId + "</model_id>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    if (column.getConcept().getProperty("lookup") == null) { //$NON-NLS-1$
+    if (column.getProperty("lookup") == null) { //$NON-NLS-1$
       mql += "<selection><view>" + view.getId() + "</view><column>" + column.getId() + "</column></selection>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       mql += "<orders><order><direction>asc</direction><view_id>" + view.getId() + "</view_id><column_id>" + column.getId() + "</column_id></order></orders>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     } else {
 
-      String lookup = column.getConcept().getProperty("lookup").getValue().toString(); //$NON-NLS-1$
+      String lookup = (String)column.getProperty("lookup"); //$NON-NLS-1$
       // assume model and view are the same...
       StringTokenizer tokenizer1 = new StringTokenizer(lookup, ";"); //$NON-NLS-1$
       while (tokenizer1.hasMoreTokens()) {
@@ -469,10 +368,9 @@ public class PMDUIComponent extends XmlComponent {
               rowElement = dataElement.addElement("COLUMN-HDR-ROW"); //$NON-NLS-1$
               for (int columnNo = 0; columnNo < columnHeaders[rowNo].length; columnNo++) {
                 Object nameAttr = results.getMetaData().getAttribute(rowNo, columnNo, "name"); //$NON-NLS-1$
-                if ((nameAttr != null) && (nameAttr instanceof ConceptPropertyLocalizedString)) {
-                  ConceptPropertyLocalizedString str = (ConceptPropertyLocalizedString) nameAttr;
-                  LocalizedStringSettings settings = (LocalizedStringSettings) str.getValue();
-                  String name = settings.getString(LocaleHelper.getLocale().toString());
+                if ((nameAttr != null) && (nameAttr instanceof LocalizedString)) {
+                  LocalizedString str = (LocalizedString) nameAttr;
+                  String name = str.getLocalizedString(LocaleHelper.getLocale().toString());
                   if (name != null) {
                     rowElement.addElement("COLUMN-HDR-ITEM").setText(name); //$NON-NLS-1$
                   } else {
@@ -541,21 +439,6 @@ public class PMDUIComponent extends XmlComponent {
 
   public void setColumnId(final String columnId) {
     this.columnId = columnId;
-  }
-
-  private class MetaObjectComparator implements Comparator {
-    private String localeString;
-
-    public MetaObjectComparator(final String locale) {
-      this.localeString = locale;
-    }
-
-    public int compare(final Object obj1, final Object obj2) {
-      ConceptUtilityInterface cui1 = (ConceptUtilityInterface) obj1;
-      ConceptUtilityInterface cui2 = (ConceptUtilityInterface) obj2;
-      return cui1.getDisplayName(this.localeString).compareTo(cui2.getDisplayName(this.localeString));
-    }
-
   }
 
 }
