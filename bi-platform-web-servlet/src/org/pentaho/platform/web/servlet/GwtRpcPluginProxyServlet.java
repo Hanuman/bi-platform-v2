@@ -158,7 +158,9 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
     String servletContextPath = modulePath.substring(appContextPath.length());
 
-    String pluginContextPath = servletContextPath.substring(servletContextPath.indexOf('/', 1)); //remove '/content' from the beginning of the path
+    //We will use the pluginContextPath to determine the service plugin for the serialization policy file
+    //
+    String pluginContextPath = servletContextPath.substring(servletContextPath.indexOf('/', 1));
 
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
 
@@ -212,6 +214,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     }
 
     //if null, the default serialization policy will apply
+    //Note: caching is handled by the parent class
     return serializationPolicy;
   }
 }
