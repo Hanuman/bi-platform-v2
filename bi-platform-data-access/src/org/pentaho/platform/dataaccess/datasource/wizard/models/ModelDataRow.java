@@ -1,20 +1,18 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.models;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 
 public class ModelDataRow extends XulEventSourceAdapter{
 
-  
+  public static final int MAX_COL_SIZE = 15;
   private String columnName, sampleData;
   private List<DataType> dataTypes = new ArrayList<DataType>();
   private List<String> sampleDataList;
@@ -29,8 +27,12 @@ public class ModelDataRow extends XulEventSourceAdapter{
       StringBuffer buffer = new StringBuffer();
       for(int i=0;i<this.size();i++) {
         buffer.append(this.get(i));
-        if(i<this.size()-1) {
+        if(i<this.size()-1 && (buffer.length()
+            + this.get(i+1).name().length() < MAX_COL_SIZE)) {
           buffer.append(',');  
+        } else {
+          buffer.append(" ...");
+          break;
         }
       }
       return buffer.toString();

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.Alignment;
+import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
@@ -43,7 +45,7 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
-
+  public static final int MAX_COL_SIZE = 15;
   private DatasourceMessages datasourceMessages;
   
   private XulDialog connectionDialog;
@@ -154,9 +156,27 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$
 
     bf.setBindingType(Binding.Type.ONE_WAY);
-    bf.createBinding(datasourceModel.getRelationalModel(), "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel.getRelationalModel(), "validated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
-    
+    bf.createBinding(datasourceModel, "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "validated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
+
+    BindingConvertor<String, Boolean> widgetBindingConvertor = new BindingConvertor<String, Boolean>() {
+
+      @Override
+      public Boolean sourceToTarget(String value) {
+        return !((value == null) || value.length() <= 0);
+      }
+
+      @Override
+      public String targetToSource(Boolean value) {
+        return null;
+      }
+
+    };
+
+
+    bf.createBinding(datasourceName, "value", connections, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceName, "value", query, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceName, "value", modelDataTable, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
       @Override
@@ -396,6 +416,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
                   treeCol.setFlex(1);
+                  treeCol.setWidth(300);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
@@ -549,7 +570,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         XulCheckbox aggregationCheckBox;
         try {
           aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
-          aggregationCheckBox.setLabel(aggregationTypeArray[i].name());
+          aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[i].getDescription()));
+          aggregationCheckBox.setID(aggregationTypeArray[i].name());
           if(aggregationList.contains(aggregationTypeArray[i])) {
             aggregationCheckBox.setChecked(true);
           } else {
@@ -577,7 +599,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         if(component instanceof XulCheckbox) {
           XulCheckbox checkbox = (XulCheckbox) component;
           if(checkbox.isChecked()) {
-            aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+            aggregationTypeList.add(AggregationType.valueOf(checkbox.getID()));
           }
         }
       }
@@ -636,9 +658,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       if(value instanceof List) {
         aggregationList.addAll((List) value);
         for(int i=0;i<aggregationList.size();i++) {
-        buffer.append(aggregationList.get(i));
-          if(i<aggregationList.size()-1) {
-          buffer.append(',');  
+        buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
+          if(i<aggregationList.size()-1 && (buffer.length()
+              + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE)) {
+          buffer.append(", ");  
+          } else {
+            buffer.append(" ...");
+            break;
           }
         }
       }

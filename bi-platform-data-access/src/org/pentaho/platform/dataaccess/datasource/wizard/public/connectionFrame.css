@@ -1,0 +1,51 @@
+.checkbox label{
+	padding-left:3px;
+  	font-family: Helvetica, Arial, sans-serif;
+  	font-size: 0.85em;
+}
+
+.xul-label{
+  white-space: nowrap;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
+}
+
+.gwt-label{
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
+}
+
+.gwt-TextBox{
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
+}
+.gwt-ScrollTable .headerTable td {
+  font-weight: normal;
+  color: #000000;
+  border-right: 1px solid #848484;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
+}
+
+.custom-list-item {
+  white-space: nowrap;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
+}
+
+aggregation-dialog-checkbox-label {
+	padding-left:3px;
+  	font-family: Helvetica, Arial, sans-serif;
+  	font-size: 0.65em;
+}
+
+.gwt-DialogBox .Caption {
+background-color:#D3D3D3;
+background-image:url(style/images/subtoolbar_bg.png);
+border-bottom:1px solid #848484;
+color:black;
+cursor:move;
+font-size:0.85em;
+padding:6px 0 6px 5px;
+text-align:left;
+}

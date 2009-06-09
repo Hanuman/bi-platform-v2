@@ -61,28 +61,28 @@
                     <hbox flex="2">
 				  	<vbox flex="1">
 			          <hbox>
-                        <label value="Connection" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
+                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
 			            <spacer flex="1"/>
 			            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="relationalDatasourceController.editConnection()"  disabled="true"/>
 			            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disable.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
 			            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
 			          </hbox>
-                      <listbox id="connectionList" rows="7" pen:binding="name"/>
+                      <listbox id="connectionList" rows="7" pen:binding="name" disabled="true"/>
 			        </vbox>
 			        <spacer width="10"/>
 			        <vbox flex="1">
 			            <hbox>
 			                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
-			                <spacer flex="1"/>
+			                <!--<spacer flex="1"/>-->
 			                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
 			            </hbox>
-                        <textbox flex="1" id="query" rows="6" cols="80" width="360" multiline="true" />
+                        <textbox flex="1" id="query" rows="6" cols="80" width="360" multiline="true" disabled="true"/>
 			            <hbox>
 			                <spacer flex="1"/>
 			                <label value="Limit:" height="16"/>
 					        <textbox id="previewLimit" value="10" height="16" width="20"/>
-			                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="false" height="16"/>
-							<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="false" height="16"/>                
+			                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="true" height="16"/>
+							<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="true" height="16"/>                
 			            </hbox>
 			        </vbox>
 			      </hbox>
@@ -105,7 +105,7 @@
 			      <vbox height="50">
 				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
 			      </vbox>
-				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false"/>
+				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true"/>
 				  <spacer height="5"/>				  
 				  <label value="${datasourceDialog.Metadata}"/>
 				  <vbox flex="1">
@@ -126,19 +126,21 @@
    </groupbox>
   </dialog>
   
-  <dialog id="previewResultsDialog" buttonlabelaccept="${previewResultsDialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
+  <dialog id="previewResultsDialog" buttonlabelaccept="${dialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
     ondialogaccept="relationalDatasourceController.closePreviewResultsDialog()" buttonalign="right"
     title="${previewResultsDialog.title}" width="340" height="400">
-        <tree flex="1" id="previewResultsTable" width ="400" height="350" seltype="single">
-              <treecols>
-		   			<treecol label="Preview" flex="1" />
-		      </treecols>
-              <treechildren />
-		</tree>    
+    	<pen:scrollbox width="340">
+	        <tree flex="1" id="previewResultsTable" seltype="single">
+	              <treecols>
+			   			<treecol label="Preview" flex="1" />
+			      </treecols>
+	              <treechildren />
+			</tree>    
+		</pen:scrollbox>
   </dialog>
     
     
-  <dialog id="removeConfirmationDialog" buttonlabelaccept="${removeConfirmationDialog.OK}" buttonlabelcancel="${removeConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeRemoveConfirmationDialog()"
+  <dialog id="removeConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeRemoveConfirmationDialog()"
   ondialogaccept="connectionController.deleteConnection()" buttonalign="right" title="${removeConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
@@ -146,7 +148,7 @@
       </vbox>
   </dialog>
   
-    <dialog id="saveConnectionConfirmationDialog" buttonlabelaccept="${saveConnectionConfirmationDialog.OK}" buttonlabelcancel="${saveConnectionConfirmationDialog.CANCEL}" buttons="accept,cancel" ondialogcancel="connectionController.closeSaveConnectionConfirmationDialog()"
+    <dialog id="saveConnectionConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept,cancel" ondialogcancel="connectionController.closeSaveConnectionConfirmationDialog()"
   ondialogaccept="connectionController.saveConnection()" buttonalign="right" title="${saveConnectionConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
        <vbox>
@@ -165,14 +167,14 @@
   <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="300" height="100" buttonalign="center">
         <label id="successLabel" value="${successDialog.successMessage}"/>
   </dialog>
-  <dialog id="applyQueryConfirmationDialog" buttonlabelaccept="${applyQueryConfirmationDialog.OK}" buttonlabelcancel="${applyQueryConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeApplyQueryConfirmationDialog()"
+  <dialog id="applyQueryConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="relationalDatasourceController.generateModel()" buttonalign="right" title="${applyQueryConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
        <vbox>
         <label value="${applyQueryConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
-  <dialog id="applyCsvConfirmationDialog" buttonlabelaccept="${applyCsvConfirmationDialog.OK}" buttonlabelcancel="${applyCsvConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyCsvConfirmationDialog()"
+  <dialog id="applyCsvConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyCsvConfirmationDialog()"
 	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${applyCsvConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
        <vbox>
@@ -180,21 +182,27 @@
       </vbox>
   </dialog>
   
-  <dialog id="regenerateModelConfirmationDialog" buttonlabelaccept="${regenerateModelConfirmationDialog.OK}" buttonlabelcancel="${regenerateModelConfirmationDialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyQueryConfirmationDialog()"
+  <dialog id="regenerateModelConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${regenerateModelConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
        <vbox>
         <label value="${regenerateModelConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
+  <dialog id="clearModelWarningDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeClearModelWarningDialog()"
+	  ondialogaccept="datasourceController.switchDeck()" buttonalign="right" title="${clearModelWarningDialog.title}" 
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
+       <vbox>
+        <label value="${clearModelWarningDialog.warningMessage}"/>
+      </vbox>
+  </dialog>
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
-  		<spacer width="10"/>
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="200">
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
-	  <tree height="160" width="160" id="csvSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="200">
+	  <tree height="140" width="200" id="csvSampleDataTable" seltype="single">
 		<treecols id="csvSampleDataCols">
 			<treecol id="csvSampleDataCol" label="${csvSampleDataCol.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 		</treecols>
@@ -203,12 +211,11 @@
   </dialog>
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="140">
-  		<spacer width="10"/>
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="210" width="170">
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="160">
-	  <tree height="160" width="160" id="relationalSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="200">
+	  <tree height="140" width="200" id="relationalSampleDataTable" seltype="single">
 		<treecols id="relationalSampleDataCols">
 			<treecol id="relationalSampleDataCol" label="${relationalSampleDataCol.displayName}" pen:binding="columnName" flex="1" editable="false" type="text"/>
 		</treecols>

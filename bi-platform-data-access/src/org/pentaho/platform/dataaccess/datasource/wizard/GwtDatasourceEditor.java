@@ -220,8 +220,11 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
    * Specified by <code>DialogController</code>.
    */
   public void showDialog() {
-    checkInitialized();
-    reloadConnections();
+
+    if(datasourceModel.getRelationalModel().getConnections() == null || datasourceModel.getRelationalModel().getConnections().size() <= 0) {
+      checkInitialized();
+      reloadConnections();
+    }
     datasourceController.showDialog();  
   }
 }

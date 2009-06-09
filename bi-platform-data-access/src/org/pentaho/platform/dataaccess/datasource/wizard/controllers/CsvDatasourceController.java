@@ -32,6 +32,7 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class CsvDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
+  public static final int MAX_COL_SIZE = 15;
   private DatasourceMessages datasourceMessages;
   private DatasourceService service;
   private XulDialog regenerateModelConfirmationDialog = null;
@@ -308,7 +309,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         XulCheckbox aggregationCheckBox;
         try {
           aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
-          aggregationCheckBox.setLabel(aggregationTypeArray[i].name());
+          aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[i].getDescription()));
+          aggregationCheckBox.setID(aggregationTypeArray[i].name());
           if(aggregationList.contains(aggregationTypeArray[i])) {
             aggregationCheckBox.setChecked(true);
           } else {
@@ -336,7 +338,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         if(component instanceof XulCheckbox) {
           XulCheckbox checkbox = (XulCheckbox) component;
           if(checkbox.isChecked()) {
-            aggregationTypeList.add(AggregationType.valueOf(checkbox.getLabel()));
+            aggregationTypeList.add(AggregationType.valueOf(checkbox.getID()));
           }
         }
       }
@@ -397,13 +399,19 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       if(value instanceof List) {
         aggregationList.addAll((List) value);
         for(int i=0;i<aggregationList.size();i++) {
-        buffer.append(aggregationList.get(i));
-          if(i<aggregationList.size()-1) {
-          buffer.append(',');  
+        buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
+        
+          if(i<aggregationList.size()-1 && (buffer.length()
+              + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE)) {
+          buffer.append(", ");  
+          } else {
+            buffer.append(" ...");
+            break;
           }
         }
       }
       return buffer.toString();
+
     }
 
     public boolean supportsNativeComponent() {

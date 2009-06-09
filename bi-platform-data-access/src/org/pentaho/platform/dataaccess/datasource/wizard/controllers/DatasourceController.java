@@ -100,12 +100,15 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   private XulTreeCol relationalColumnTypeTreeCol = null;
   private XulTreeCol csvColumnNameTreeCol = null;
   private XulTreeCol csvColumnTypeTreeCol = null;
-
+  private XulDialog clearModelWarningDialog = null;
+  private DatasourceType deckValueSelected = null;
+  private boolean clearModelWarningShown = false;
   public DatasourceController() {
 
   }
 
   public void init() {
+    clearModelWarningDialog = (XulDialog) document.getElementById("clearModelWarningDialog");//$NON-NLS-1$
     databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
     relationalAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
     relationalSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalSampleDataTreeCol");
@@ -152,19 +155,12 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     BindingConvertor<DatasourceType, Integer> deckIndexConvertor = new BindingConvertor<DatasourceType, Integer>() {
-
       @Override
       public Integer sourceToTarget(DatasourceType value) {
         Integer returnValue = null;
         if (DatasourceType.SQL == value) {
-          if(modelDataTable.getRows() == 0) {
-            buildRelationalEmptyTable(); 
-          }
           returnValue = 0;
         } else if (DatasourceType.CSV == value) {
-          if(csvDataTable.getRows() == 0) {
-            buildCsvEmptyTable(); 
-          }
           returnValue = 1;
         } else if (DatasourceType.NONE == value) {
           return 0;
@@ -177,14 +173,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         DatasourceType type = null;
         if (value == 0) {
           type = DatasourceType.SQL;
-          if(modelDataTable.getRows() == 0) {
-            buildRelationalEmptyTable(); 
-          }
-        } else if (value == 1) {
+         } else if (value == 1) {
           type = DatasourceType.CSV;
-          if(csvDataTable.getRows() == 0) {
-            buildCsvEmptyTable(); 
-          }
         }
         return type;
       }
@@ -267,6 +257,24 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     return "datasourceController"; //$NON-NLS-1$
   }
 
+  private void showClearModelWarningDialog(DatasourceType value) {
+    deckValueSelected = value;
+    clearModelWarningDialog.show();
+  }
+  public void closeClearModelWarningDialog() {
+    clearModelWarningDialog.hide();
+    clearModelWarningShown = false;
+  }
+  public void switchDeck() {
+    closeClearModelWarningDialog();
+    if(deckValueSelected == DatasourceType.SQL) {
+      moveToRelationalDeck();
+      datasourceModel.getCsvModel().clearModel();      
+    } else if(deckValueSelected == DatasourceType.CSV) {
+      moveToCsvDeck();
+      datasourceModel.getRelationalModel().clearModel();
+    }
+  }
   public void saveModel() {
     try {
       if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
@@ -376,9 +384,12 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
 
   public void selectSql() {
-    datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
-    databaseButtonBox.setBgcolor("#CCCCCC");
-    csvButtonBox.setBgcolor("#FFFFFF");
+    if(!clearModelWarningShown  && datasourceModel.getCsvModel().getBusinessData() != null) {
+      showClearModelWarningDialog(DatasourceType.SQL);
+      clearModelWarningShown = true;
+    } else {
+      moveToRelationalDeck();
+    }
   }
 
   public void selectOlap() {
@@ -386,9 +397,13 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
 
   public void selectCsv() {
-    datasourceDeck.setSelectedIndex(CSV_DECK);
-    csvButtonBox.setBgcolor("#CCCCCC");
-    databaseButtonBox.setBgcolor("#FFFFFF");
+    if(!clearModelWarningShown  && datasourceModel.getRelationalModel().getQuery() != null
+        && datasourceModel.getRelationalModel().getQuery().length() > 0) {
+      showClearModelWarningDialog(DatasourceType.CSV);
+      clearModelWarningShown = true;
+    } else {
+      moveToCsvDeck();
+    }
   }
 
   public void selectMql() {
@@ -399,6 +414,22 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   }
 
+  private void moveToCsvDeck() {
+    datasourceDeck.setSelectedIndex(CSV_DECK);
+    csvButtonBox.setBgcolor("#CCCCCC");
+    databaseButtonBox.setBgcolor("#FFFFFF");
+    if(csvDataTable.getRows() == 0) {
+      buildCsvEmptyTable(); 
+    }
+  }
+  private void moveToRelationalDeck() {
+    datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
+    databaseButtonBox.setBgcolor("#CCCCCC");
+    csvButtonBox.setBgcolor("#FFFFFF");
+    if(modelDataTable.getRows() == 0) {
+      buildRelationalEmptyTable(); 
+    }
+  }
   public DatasourceService getService() {
     return service;
   }
@@ -457,6 +488,14 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     saveModel(); 
   }
   
+  @Override
+  public void onDialogCancel() {
+    super.onDialogCancel();
+    datasourceModel.clearModel();
+    connectionModel.clearModel();
+    buildRelationalEmptyTable();    
+  }
+
   private void saveModelDone() {
     super.onDialogAccept();
     datasourceModel.clearModel();
@@ -471,6 +510,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     csvColumnNameTreeCol.setEditable(false);
     csvColumnTypeTreeCol.setEditable(false);    
     csvDataTable.update();
+    csvDataTable.suppressLayout(true);
     try {
       int count = csvDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_CSV_TABLE_ROW_COUNT; i++) {
@@ -484,6 +524,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         csvDataTable.addTreeRow(row);
       }
+      csvDataTable.suppressLayout(false);
       csvAggregationListCol.setEditable(true);
       csvSampleDataTreeCol.setEditable(true);
       csvDataTable.update();
@@ -500,6 +541,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     relationalColumnNameTreeCol.setEditable(false);
     relationalColumnTypeTreeCol.setEditable(false);
     modelDataTable.update();
+    modelDataTable.suppressLayout(true);
     try {
       int count = modelDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_RELATIONAL_TABLE_ROW_COUNT; i++) {
@@ -513,6 +555,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
         modelDataTable.addTreeRow(row);
       }
+      modelDataTable.suppressLayout(false);
       relationalAggregationListCol.setEditable(true);
       relationalSampleDataTreeCol.setEditable(true);
       modelDataTable.update();

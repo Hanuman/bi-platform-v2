@@ -12,7 +12,7 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class CsvModelDataRow extends XulEventSourceAdapter{
 
-  
+  public static final int MAX_COL_SIZE = 15;
   private String columnName, sampleData;
   private List<String> sampleDataList;
   private List<DataType> dataTypes = new ArrayList<DataType>();
@@ -25,8 +25,12 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
       StringBuffer buffer = new StringBuffer();
       for(int i=0;i<this.size();i++) {
         buffer.append(this.get(i));
-        if(i<this.size()-1) {
+        if(i<this.size()-1 && (buffer.length()
+            + this.get(i+1).name().length() < MAX_COL_SIZE)) {
           buffer.append(',');  
+        } else {
+          buffer.append(" ...");
+          break;
         }
       }
       return buffer.toString();

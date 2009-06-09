@@ -228,17 +228,8 @@ public class RelationalModel extends XulEventSourceAdapter{
     setPreviewLimit("10");
     setQuery("");
     setSelectedConnection(null);
-    clearConnections();
   }
 
-  private void clearConnections() {
-    for (int i = 0; i < connections.size(); i++) {
-      List<IConnection> previousValue = getPreviousValue();
-      connections.remove(i);
-      this.firePropertyChange("connections", previousValue, connections); //$NON-NLS-1$
-    }
-  }
-  
   public void addRelationalModelValidationListener(IRelationalModelValidationListener listener) {
     if (relationalModelValidationListeners == null) {
       relationalModelValidationListeners = new RelationalModelValidationListenerCollection();
