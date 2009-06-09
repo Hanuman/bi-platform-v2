@@ -29,7 +29,7 @@
     <content-type type="xgecho" mime-type="text/html">
     <title>GWT Echo Config</title>
     <description>GWT Echo Config File</description>
-    <icon-url>content/echo-res/echo.jpg</icon-url>
+    <icon-url>content/gecho-res/echo.jpg</icon-url>
     <meta-provider>org.pentaho.samples.gecho.GEchoContentTypeMetaProvider</meta-provider>
     <operations>
       <operation>
