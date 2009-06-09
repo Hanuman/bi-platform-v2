@@ -19,14 +19,23 @@
 </xsl:template>
 
 <xsl:template match="cell">
-  <span nowrap="nowrap" class="cell-{@style}">
+   <span nowrap="nowrap" >
+   <xsl:choose>
+     <xsl:when test="not(contains('odd,even,rot,gelb,gruen',@style))"> <!-- for any style other than odd,even,rot,gruen,gelb -->
+      <xsl:attribute name="class"><xsl:text>cell-red</xsl:text></xsl:attribute> <!-- hack to force cascade of non-color styles -->
+      <xsl:attribute name="style"><xsl:text>background-color:</xsl:text><xsl:value-of select="@style"/></xsl:attribute>
+   </xsl:when>
+   <xsl:otherwise>
+     <xsl:attribute name="class"><xsl:text>cell-</xsl:text><xsl:value-of select="@style" /></xsl:attribute>
+   </xsl:otherwise>
+   </xsl:choose>
     <xsl:call-template name="render-label">
       <xsl:with-param name="label">
         <xsl:value-of select="@value"/>
       </xsl:with-param>
     </xsl:call-template>
   </span>
-</xsl:template>
+ </xsl:template>
 
 
 <xsl:template name="render-label">

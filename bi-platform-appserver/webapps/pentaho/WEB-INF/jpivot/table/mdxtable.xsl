@@ -117,8 +117,17 @@
 
 
 <xsl:template match="cell">
-  <td nowrap="nowrap" class="cell-{@style}">
-    <xsl:apply-templates select="drill-through"/>
+  <td nowrap="nowrap">
+    <xsl:choose> 
+    <xsl:when test="not(contains('odd,even,rot,gelb,gruen',@style))"> <!-- for any style other than odd,even,rot,gruen,gelb -->
+      <xsl:attribute name="class"><xsl:text>cell-red</xsl:text></xsl:attribute> <!-- hack to force cascade of non-color styles -->
+      <xsl:attribute name="style"><xsl:text>background-color:</xsl:text><xsl:value-of select="@style"/></xsl:attribute>
+   </xsl:when>
+   <xsl:otherwise>
+     <xsl:attribute name="class"><xsl:text>cell-</xsl:text><xsl:value-of select="@style" /></xsl:attribute>
+   </xsl:otherwise>
+   </xsl:choose>
+   <xsl:apply-templates select="drill-through"/>
     <xsl:call-template name="render-label">
       <xsl:with-param name="label">
         <xsl:value-of select="@value"/>
