@@ -142,8 +142,8 @@ public class GenericServlet extends ServletBase {
         headerParams.setParameter(name, value);
       }
 
-      if (pathInfo != null && pluginManager.isResourceLoadable(pathInfo) != null) {
-        IPlatformPlugin plugin = pluginManager.isResourceLoadable(pathInfo);
+      if (pathInfo != null && pluginManager.getServicePlugin(pathInfo) != null) {
+        IPlatformPlugin plugin = pluginManager.getServicePlugin(pathInfo);
 
         boolean cacheOn = "true".equals(pluginManager.getPluginSetting(plugin, "settings/cache", "false"));
         String maxAge = (String)pluginManager.getPluginSetting(plugin, "settings/max-age", null);

@@ -149,12 +149,33 @@ public interface IPluginManager {
   public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue);
   
   /**
-   * Returns the plugin for a given resource path which can handle the loading of said resource.
-   * If no plugin can handle the resource path, null is returned.
-   * @param path the path to the plugin resource
-   * @return the plugin which owns the resource
+   * @deprecated This is a poorly named method, use {@link #getServicePlugin(String)} instead.
    */
   public IPlatformPlugin isResourceLoadable(String path);
+  
+  /**
+   * Returns the plugin that can handle a request for the resource at "path".  A plugin is 
+   * determined to be able to serve the request if it either a content generator or a static resource
+   * of the plugin is configured to handle the path.  In other words,
+   * if a plugin has a static resource of "/my-plugin/resources", then a request to 
+   * "/my-plugin/resources/images/file.png" can be handled by the plugin.
+   * If ultimately, no plugin can handle the resource path, <code>null</code> is returned.
+   * @param path the path to the plugin resource
+   * @return the plugin which owns the resource or <code>null</code> if one cannot be found
+   */
+  public IPlatformPlugin getServicePlugin(String path);
+  
+  /**
+   * Returns the classloader instance that was assigned by the plugin manager to load all 
+   * classes for the specified plugin.  Used in combination with 
+   * {@link #getServicePlugin(String)}, this method can provide you with a way to load resources 
+   * from a plugin when all you have is a request URL/path, such as in a servlet environment.
+   * @param plugin the plugin for which we want to get the assigned classloader
+   * @return the classloader assigned to this plugin, or <code>null</code> if the plugin is not
+   * known by the plugin manager, or for some reason a classloader was not assigned to the plugin
+   * (an error condition).
+   */
+  public ClassLoader getClassLoader(IPlatformPlugin plugin);
   
   /**
    * Returns and InputStream to the specified resource path.

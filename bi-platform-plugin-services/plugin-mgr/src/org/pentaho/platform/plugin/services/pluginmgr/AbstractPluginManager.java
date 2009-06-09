@@ -54,7 +54,7 @@ public abstract class AbstractPluginManager implements IPluginManager {
   protected Map<String, List<IContentGeneratorInfo>> contentGeneratorInfoByTypeMap = Collections
       .synchronizedMap(new HashMap<String, List<IContentGeneratorInfo>>());
 
-  protected Map<String, IContentGeneratorInfo> contentInfoMap = Collections
+  protected Map<String, IContentGeneratorInfo> contentGeneratorInfoByIdMap = Collections
       .synchronizedMap(new HashMap<String, IContentGeneratorInfo>());
 
   protected Map<String, IContentInfo> contentTypeByExtension = Collections
@@ -92,7 +92,7 @@ public abstract class AbstractPluginManager implements IPluginManager {
   }
 
   public IContentGeneratorInfo getContentGeneratorInfo(String id, IPentahoSession session) {
-    IContentGeneratorInfo contentId = contentInfoMap.get(id);
+    IContentGeneratorInfo contentId = contentGeneratorInfoByIdMap.get(id);
     return contentId;
   }
 

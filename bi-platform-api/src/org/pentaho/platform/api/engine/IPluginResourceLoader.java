@@ -110,9 +110,13 @@ public interface IPluginResourceLoader {
    *  
    * @param pluginClass
    * @param namePattern  a resource name pattern supporting wildcards
-   * @return a list of URLs to the matching resources
+   * @return a list of URLs to the matching resources or empty list if none are found
    */
   public List<URL> findResources(Class<?> pluginClass, String namePattern);
+  /**
+   * @see #findResources(Class, String)
+   */
+  public List<URL> findResources(ClassLoader classLoader, String namePattern);
 
   /**
    * Retrieves a localized resource bundle for the plugin represented by pluginClass.

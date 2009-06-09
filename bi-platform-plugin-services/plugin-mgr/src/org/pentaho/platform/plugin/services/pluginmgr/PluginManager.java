@@ -67,7 +67,7 @@ public class PluginManager extends AbstractPluginManager {
     overlaysCache.clear();
     menuCustomizationsCache.clear();
     classLoaderMap.clear();
-    contentInfoMap.clear();
+    contentGeneratorInfoByIdMap.clear();
     contentGeneratorInfoByTypeMap.clear();
     contentTypeByExtension.clear();
     objectFactory.init(null, null);
@@ -318,6 +318,10 @@ public class PluginManager extends AbstractPluginManager {
     }
     return loader;
   }
+  
+  public ClassLoader getClassLoader(IPlatformPlugin plugin) {
+    return classLoaderMap.get(plugin.getSourceDescription());
+  }
 
   private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader)
       throws PlatformPluginRegistrationException {
@@ -363,7 +367,7 @@ public class PluginManager extends AbstractPluginManager {
                       "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", cgInfo.getFileInfoGeneratorClassname(), cgInfo.getType()), e); //$NON-NLS-1$
         }
       }
-      contentInfoMap.put(cgInfo.getId(), cgInfo);
+      contentGeneratorInfoByIdMap.put(cgInfo.getId(), cgInfo);
 
       List<IContentGeneratorInfo> generatorList = contentGeneratorInfoByTypeMap.get(cgInfo.getType());
       if (generatorList == null) {
@@ -494,14 +498,32 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public IPlatformPlugin isResourceLoadable(String path) {
+    return getServicePlugin(path);
+  }
+  
+  public IPlatformPlugin getServicePlugin(String path) {
+    //normalize path for comparison
+    path = (path.startsWith("/"))?path.substring(1):path;
+    
     for (IPlatformPlugin plugin : plugins) {
       Map<String, String> resourceMap = plugin.getStaticResourceMap();
       for (String url : resourceMap.keySet()) {
-        if (path.startsWith(url, 1) || path.startsWith(url)) {
+        //normalize static url for comparison
+        url = (url.startsWith("/"))?url.substring(1):url;
+        if (path.startsWith(url)) {
+          return plugin;
+        }
+      }
+      
+      for(IContentGeneratorInfo contentGenerator : plugin.getContentGenerators()) {
+        String cgId = contentGenerator.getId();
+        //content generator ids cannot start with '/', so no need to normalize cg ids
+        if (path.startsWith(cgId)) {
           return plugin;
         }
       }
     }
+    
     return null;
   }
 

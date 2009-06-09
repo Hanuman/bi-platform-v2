@@ -211,6 +211,11 @@ public class PluginResourceLoader implements IPluginResourceLoader {
   }
   
   public List<URL> findResources(Class<?> clazz, String namePattern) {
+    ClassLoader classLoader = getClassLoader(clazz);
+    return findResources(classLoader, namePattern);
+  }
+  
+  public List<URL> findResources(ClassLoader classLoader, String namePattern) {
 
     String dirPattern = "", filePattern = "*"; //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -230,7 +235,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     IOFileFilter fileFilter = new WildcardFileFilter(filePattern);
     IOFileFilter dirFilter = TrueFileFilter.INSTANCE;
 
-    Collection<?> files = FileUtils.listFiles(new File(getPluginDir(getClassLoader(clazz)), dirPattern), fileFilter,
+    Collection<?> files = FileUtils.listFiles(new File(getPluginDir(classLoader), dirPattern), fileFilter,
         dirFilter);
     Iterator<?> fileIter = files.iterator();
     List<URL> urls = new ArrayList<URL>(files.size());

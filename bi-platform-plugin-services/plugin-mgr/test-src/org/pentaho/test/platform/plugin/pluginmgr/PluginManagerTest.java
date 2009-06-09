@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -390,6 +391,31 @@ public class PluginManagerTest {
     assertEquals("menuCust12label", menuCust.getLabel());
   }
   
+  @Test
+  public void test13_getServicePlugin() {
+    microPlatform.define(IPluginProvider.class, Tst13PluginProvider.class);
+    microPlatform.init();
+    
+    pluginManager.reload(session);
+    
+    //test exact match to content generator
+    IPlatformPlugin plugin1 = pluginManager.getServicePlugin("test13cgId");
+    assertNotNull("Should have found a plugin to serve resource 'test13id'", plugin1);
+    //test inexact match to content generator
+    plugin1 = pluginManager.getServicePlugin("/test13cgId/blah/blah");
+    assertNotNull("Should have found a plugin to serve resource '/test13cgId/blah/blah'", plugin1);
+    
+    
+    //test exact match to a plugin static resource
+    IPlatformPlugin plugin2 = pluginManager.getServicePlugin("/test/13/static/url");
+    assertNotNull("Should have found a plugin to serve resource '/test/13/static/url'", plugin2);
+    //test inexact match to a plugin static resource
+    plugin2 = pluginManager.getServicePlugin("/test/13/static/url/blah/blah/blah");
+    assertNotNull("Should have found a plugin to serve resource '/test/13/static/url/blah/blah/blah'", plugin2);
+    
+    assertEquals("The service plugin should have been the same for both paths", plugin1, plugin2);
+  }
+  
   private String getContentAsString(IContentGenerator cg) throws Exception {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     IOutputHandler outputHandler = new SimpleOutputHandler(out, false);
@@ -589,6 +615,26 @@ public class PluginManagerTest {
         
       });
       
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst13PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test13Plugin");
+
+      ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
+      cg1.setDescription("test 9 plugin description");
+      cg1.setId("test13cgId");
+      cg1.setType("test13type");
+      cg1.setTitle("Test Generator 13");
+      cg1.setUrl("/test13url");
+      cg1.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
+      p.addContentGenerator(cg1);
+      
+      p.addStaticResourcePath("/test/13/static/url", "/tmp");
+
       return Arrays.asList((IPlatformPlugin) p);
     }
   }

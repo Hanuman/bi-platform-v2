@@ -26,16 +26,19 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.pentaho.platform.api.engine.IContentGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
-import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
+import org.pentaho.platform.web.servlet.messages.Messages;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -48,6 +51,8 @@ import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
   private static final long serialVersionUID = -7652708468110168124L;
+
+  private static final Log logger = LogFactory.getLog(GwtRpcPluginProxyServlet.class);
 
   private static final ThreadLocal<Object> perThreadTargetBean = new ThreadLocal<Object>();
 
@@ -62,7 +67,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     HttpServletRequest request = getThreadLocalRequest();
     //path info will give us what we want with 
     String requestPathInfo = request.getPathInfo();
-    if (requestPathInfo.startsWith("/")) {
+    if (requestPathInfo.startsWith("/")) { //$NON-NLS-1$
       requestPathInfo = requestPathInfo.substring(1);
     }
     return requestPathInfo;
@@ -74,16 +79,17 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
     String dispatchKey = getDispatchKey();
     if (!pluginManager.isBeanRegistered(dispatchKey)) {
-      log("Could not locate a plugin bean to service gwt rpc request with key: " + dispatchKey);
-      return RPC.encodeResponseForFailure(null, new Throwable(
-          "Could not locate a plugin bean to service gwt rpc request with key " + dispatchKey));
+      String errMsg = Messages.getString("GwtRpcPluginProxyServlet.ERROR_0001_PLUGIN_BEAN_NOT_FOUND", dispatchKey); //$NON-NLS-1$
+      logger.error(errMsg);
+      return RPC.encodeResponseForFailure(null, new Throwable(errMsg));
     }
 
     Object targetBean = null;
     try {
       targetBean = pluginManager.getBean(dispatchKey);
     } catch (PluginBeanException e) {
-      log("Failed to get a reference to plugin service bean " + dispatchKey, e);
+      logger.error(
+          Messages.getString("GwtRpcPluginProxyServlet.ERROR_0002_FAILED_TO_GET_BEAN_REFERENCE", dispatchKey), e); //$NON-NLS-1$
       return RPC.encodeResponseForFailure(null, e);
     }
 
@@ -102,17 +108,18 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       // don't require the server side to implement the service interface
       Method method = rpcRequest.getMethod();
       try {
-    	  Method m = targetBean.getClass().getMethod(method.getName(), method.getParameterTypes());
-    	  if (m != null) {
-    	  method = m;
-    	  }
-      } catch (Exception e ) {
-    	  e.printStackTrace();
+        Method m = targetBean.getClass().getMethod(method.getName(), method.getParameterTypes());
+        if (m != null) {
+          method = m;
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
       return RPC.invokeAndEncodeResponse(targetBean, method, rpcRequest.getParameters(), rpcRequest
           .getSerializationPolicy());
     } catch (IncompatibleRemoteServiceException ex) {
-      log("An IncompatibleRemoteServiceException was thrown while processing this call.", ex);
+      logger.error(Messages.getString(
+          "GwtRpcPluginProxyServlet.ERROR_0003_RPC_INVOCATION_FAILED", targetBean.getClass().getName()), ex); //$NON-NLS-1$
       return RPC.encodeResponseForFailure(null, ex);
     } finally {
       //reset the context classloader
@@ -125,82 +132,86 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
   @Override
   protected SerializationPolicy doGetSerializationPolicy(HttpServletRequest request, String moduleBaseURL,
       String strongName) {
+    /*
+     * The request path is broken up for processing like so:
+     * Ex: given a request for serialization file at '/pentaho/content/data-access/resources/gwt/{strongName}'
+     * 
+     *  * appContextPath = '/pentaho'
+     *  * servletContextPath = '/content/data-access/resources/gwt/{strongName}'
+     *  * pluginContextPath = '/data-access/resources/gwt/{strongName}'
+     */
 
-    // The request can tell you the path of the web app relative to the
-    // container root.
-    String contextPath = request.getContextPath();
+    SerializationPolicy serializationPolicy = null;
+
+    String appContextPath = request.getContextPath();
 
     String modulePath = null;
     if (moduleBaseURL != null) {
       try {
         modulePath = new URL(moduleBaseURL).getPath();
       } catch (MalformedURLException ex) {
-        // log the information, we will default
-        log("Malformed moduleBaseURL: " + moduleBaseURL, ex);
+        logger.error(Messages.getString("GwtRpcPluginProxyServlet.ERROR_0004_MALFORMED_URL", moduleBaseURL), ex); //$NON-NLS-1$
+        //cannot proceed, default serialization policy will apply
+        return null;
       }
-    }
-    
-    String contextRelativePath = modulePath.substring(contextPath.length());
-
-    SerializationPolicy serializationPolicy = null;
-    
-    //get the content generator id from the request so we can track down the plugin related to the client
-    //NOTE: this technique requires all clients of gwtrpc plugin beans to be plugins themselves, otherwise we cannot
-    //locate their serialization policy files
-    String relativePath = contextRelativePath.substring(contextRelativePath.indexOf('/', 1)); //remove '/content' from the beginning of the path
-    String contentGeneratorId = relativePath.substring(1, relativePath.indexOf('/', 1)); //exact the first element of the path
-    //now lookup the plugin by the content generator id
-    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, null);
-    Object aPluginClass = null;
-    try {
-      // TODO: fix me
-      // this assumes that the path maps to a content generator, not a static type.
-      aPluginClass = pluginManager.getContentGenerator(contentGeneratorId, PentahoSessionHolder.getSession());
-      if (aPluginClass == null && contentGeneratorId.endsWith("-res")) {
-    	  aPluginClass = pluginManager.getContentGenerator(contentGeneratorId.substring(0, contentGeneratorId.length() - 4), PentahoSessionHolder.getSession());
-      }
-      if (aPluginClass == null) {
-        aPluginClass = perThreadTargetBean.get();
-      }
-    } catch (ObjectFactoryException e1) {
-      log("could not find a content generator by id '"+contentGeneratorId+"'", e1);
-    }
-    
-    //now that we have the plugin class, we can load the resources in that plugin
-    String resourceDir = relativePath.substring(contentGeneratorId.length()+2); // leaves us with e.g. 'resources/gwt/'
-    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, PentahoSessionHolder.getSession());
-    String serializationPolicyPath = SerializationPolicyLoader.getSerializationPolicyFileName(resourceDir + strongName);
-    InputStream is = resLoader.getResourceAsStream(aPluginClass.getClass(), serializationPolicyPath);
-    if (is == null) {
-      log("failed to get serialization policy file '" + serializationPolicyPath + "' from the plugin resource loader");
-      // look in the resources folder
-      is = resLoader.getResourceAsStream(aPluginClass.getClass(), "resources/" + serializationPolicyPath);
     }
 
-    try {
-      if (is != null) {
-        try {
-          serializationPolicy = SerializationPolicyLoader.loadFromStream(is, null);
-        } catch (ParseException e) {
-          log("PTO ERROR: Failed to parse the policy file '" + serializationPolicyPath + "'", e);
-        } catch (IOException e) {
-          log("PTO ERROR: Could not read the policy file '" + serializationPolicyPath + "'", e);
-        }
+    String servletContextPath = modulePath.substring(appContextPath.length());
+
+    String pluginContextPath = servletContextPath.substring(servletContextPath.indexOf('/', 1)); //remove '/content' from the beginning of the path
+
+    IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
+
+    //The plugin manager can tell us which plugin handles requests like the one for the serialization file
+    //
+    IPlatformPlugin servicePlugin = pluginManager.getServicePlugin(pluginContextPath);
+
+    if (servicePlugin == null) {
+      logger.error(Messages.getString("GwtRpcPluginProxyServlet.ERROR_0005_FAILED_TO_FIND_PLUGIN", appContextPath)); //$NON-NLS-1$
+    } else {
+      ClassLoader servicePluginClassloader = pluginManager.getClassLoader(servicePlugin);
+      IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, PentahoSessionHolder
+          .getSession());
+      String serializationPolicyFile = SerializationPolicyLoader.getSerializationPolicyFileName(strongName);
+
+      InputStream rpcFileInputStream = null;
+
+      //We know what plugin is supposed to have the serialization policy file, now go find it
+      //in the plugin's filesystem
+      //
+      List<URL> urls = resLoader.findResources(servicePluginClassloader, serializationPolicyFile);
+      if (urls.size() < 1) {
+        logger.error(Messages.getString(
+            "GwtRpcPluginProxyServlet.ERROR_0006_FAILED_TO_FIND_FILE", serializationPolicyFile)); //$NON-NLS-1$
+      } else if (urls.size() > 1) {
+        logger.warn(Messages.getString(
+            "GwtRpcPluginProxyServlet.WARN_MULTIPLE_RESOURCES_FOUND", serializationPolicyFile)); //$NON-NLS-1$
       } else {
-        String message = "PTO ERROR: The serialization policy file '" + serializationPolicyPath
-            + "' was not found; did you forget to include it in this deployment?";
-        log(message, null);
-      }
-    } finally {
-      if (is != null) {
         try {
-          is.close();
+          rpcFileInputStream = urls.get(0).openStream();
+
+          if (rpcFileInputStream != null) {
+            serializationPolicy = SerializationPolicyLoader.loadFromStream(rpcFileInputStream, null);
+          }
+
         } catch (IOException e) {
-          // Ignore this error
+          logger.error(Messages.getString(
+              "GwtRpcPluginProxyServlet.ERROR_0007_FAILED_TO_OPEN_FILE", serializationPolicyFile), e); //$NON-NLS-1$
+        } catch (ParseException e) {
+          logger.error(Messages.getString(
+              "GwtRpcPluginProxyServlet.ERROR_0008_FAILED_TO_PARSE_FILE", serializationPolicyFile), e); //$NON-NLS-1$
+        } finally {
+          if (rpcFileInputStream != null) {
+            try {
+              rpcFileInputStream.close();
+            } catch (IOException e) { //do nothing }
+            }
+          }
         }
       }
     }
 
+    //if null, the default serialization policy will apply
     return serializationPolicy;
   }
 }
