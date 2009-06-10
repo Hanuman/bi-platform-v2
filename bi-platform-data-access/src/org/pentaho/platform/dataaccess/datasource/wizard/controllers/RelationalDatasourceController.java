@@ -422,7 +422,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
                   treeCol.setFlex(1);
-                  treeCol.setWidth(30);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
