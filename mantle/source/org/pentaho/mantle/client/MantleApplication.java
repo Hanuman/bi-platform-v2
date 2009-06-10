@@ -22,6 +22,7 @@ package org.pentaho.mantle.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pentaho.gwt.widgets.client.dialogs.GlassPane;
 import org.pentaho.gwt.widgets.client.dialogs.GlassPaneNativeListener;
@@ -122,8 +123,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem saveAsMenuItem;
   private PentahoMenuItem propertiesMenuItem;
 
-  private ResourceBundle supportedLanguages;
-  
   public boolean isAdministrator = false;
   
 
@@ -166,24 +165,14 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
    * This is the entry point method.
    */
   public void onModuleLoad() {
-
     // just some quick sanity setting of the platform effective locale based on the override
-    // which comes from the url paramter
+    // which comes from the url parameter
     if (!StringUtils.isEmpty(Window.Location.getParameter("locale"))) {
       MantleServiceCache.getService().setLocaleOverride(Window.Location.getParameter("locale"), null);
     }
-
-    IResourceBundleLoadCallback messageCallback = new IResourceBundleLoadCallback() {
-      public void bundleLoaded(String bundleName) {
-        // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-        ResourceBundle messages = new ResourceBundle();
-        messages.setSupportedLocales(supportedLanguages.getMap());
-        messages.loadBundle("messages/", "messages", true, MantleApplication.this); //$NON-NLS-1$ //$NON-NLS-2$
-        Messages.setResourceBundle(messages); 
-      }
-    };
-
-    supportedLanguages = new ResourceBundle("messages/", "supported_locales", false, messageCallback); //$NON-NLS-1$ //$NON-NLS-2$
+    ResourceBundle messages = new ResourceBundle();
+    Messages.setResourceBundle(messages); 
+    messages.loadBundle("messages/", "messages", true, MantleApplication.this); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {
@@ -588,10 +577,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
           toolsMenu.addItem(Messages.getString("refresh"), adminMenu); //$NON-NLS-1$
           toolsMenu.addSeparator();
 
-          if (supportedLanguages != null && supportedLanguages.getKeys() != null && !supportedLanguages.getKeys().isEmpty()) {
+          Map<String,String> supportedLanguages = Messages.getResourceBundle().getSupportedLanguages();
+          if (supportedLanguages != null && supportedLanguages.keySet() != null && !supportedLanguages.isEmpty()) {
             MenuBar langMenu = new MantleMenuBar(true);
-            for (String lang : supportedLanguages.getKeys()) {
-              langMenu.addItem(supportedLanguages.getString(lang), new SwitchLocaleCommand(lang)); //$NON-NLS-1$
+            for (String lang : supportedLanguages.keySet()) {
+              langMenu.addItem(supportedLanguages.get(lang), new SwitchLocaleCommand(lang)); //$NON-NLS-1$
             }
             toolsMenu.addItem(Messages.getString("languages"), langMenu); //$NON-NLS-1$
             toolsMenu.addSeparator();

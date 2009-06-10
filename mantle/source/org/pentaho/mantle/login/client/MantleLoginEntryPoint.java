@@ -18,8 +18,8 @@ package org.pentaho.mantle.login.client;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
-import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
+import org.pentaho.gwt.widgets.client.utils.i18n.IResourceBundleLoadCallback;
+import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
 import org.pentaho.mantle.login.client.messages.Messages;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCallback {
+public class MantleLoginEntryPoint implements EntryPoint, IResourceBundleLoadCallback {
 
   private MantleLoginDialog loginDialog;
   private String returnLocation;
@@ -40,8 +40,9 @@ public class MantleLoginEntryPoint implements EntryPoint, IMessageBundleLoadCall
   };
 
   public void onModuleLoad() {
-    // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-    Messages.setMessageBundle(new MessageBundle("messages/", "MantleLoginMessages", this)); //$NON-NLS-1$ //$NON-NLS-2$
+    ResourceBundle messages = new ResourceBundle();
+    Messages.setResourceBundle(messages); 
+    messages.loadBundle("messages/", "MantleLoginMessages", true, MantleLoginEntryPoint.this); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {
