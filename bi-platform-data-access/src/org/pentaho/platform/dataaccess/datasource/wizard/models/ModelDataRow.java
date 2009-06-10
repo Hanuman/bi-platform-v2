@@ -18,33 +18,16 @@ public class ModelDataRow extends XulEventSourceAdapter{
   private List<String> sampleDataList;
   private DataType selectedDataType;
   private String locale;
+  private Aggregation aggregation;
   //private List<DataFormatType> dataFormatTypes = new ArrayList<DataFormatType>();
   //private DataFormatType selectedDataFormatType;
-  private List<AggregationType> aggregationList = new ArrayList<AggregationType>() {
 
-    @Override
-    public String toString() {
-      StringBuffer buffer = new StringBuffer();
-      for(int i=0;i<this.size();i++) {
-        buffer.append(this.get(i));
-        if(i<this.size()-1 && (buffer.length()
-            + this.get(i+1).name().length() < MAX_COL_SIZE)) {
-          buffer.append(',');  
-        } else {
-          buffer.append(" ...");
-          break;
-        }
-      }
-      return buffer.toString();
-    }
-    
-  };
 
   // Commenting out data format for now
   public ModelDataRow(LogicalColumn col, List<String> columnData, String locale) {
     setSelectedDataType(col.getDataType());
     //setSelectedDataFormatType(DataFormatType.CURRENCY);
-    setAggregationList(col.getAggregationList());
+    setAggregation(new Aggregation(col.getAggregationList(), AggregationType.NONE));
     setColumnName(col.getName().getString(locale));
     if(columnData.size() > 0) {
       setSampleData(columnData.get(0));
@@ -116,24 +99,16 @@ public class ModelDataRow extends XulEventSourceAdapter{
     return v;
   }
 
-  /**
-   * @param aggregationList the aggregationList to set
-   */
-  public void setAggregationList(List<AggregationType> aggregationList) {
-    this.aggregationList.clear();
-    if(aggregationList != null && aggregationList.size() > 0) {
-      this.aggregationList.addAll(aggregationList);
-    } else {
-      this.aggregationList.add(AggregationType.NONE);
-    }
+
+  public void setAggregation(Aggregation aggregation) {
+    this.aggregation = aggregation;
   }
 
-  /**
-   * @return the aggregationList
-   */
-  public List<AggregationType> getAggregationList() {
-    return aggregationList;
+
+  public Aggregation getAggregation() {
+    return aggregation;
   }
+
   //public List<DataFormatType> getDataFormatTypes() {
   //  return dataFormatTypes;
   //}

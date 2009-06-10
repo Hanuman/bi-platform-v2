@@ -11,6 +11,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
@@ -18,6 +19,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulComponent;
+import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
@@ -26,6 +28,7 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
+import org.pentaho.ui.xul.components.XulListitem;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.components.XulTreeCol;
@@ -38,6 +41,7 @@ import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeCols;
 import org.pentaho.ui.xul.containers.XulTreeRow;
+import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
@@ -111,6 +115,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   //private XulRows rows = null;
   //private XulGrid grid = null;  
   CustomAggregationCellRenderer aggregationCellRenderer = null;
+  private XulVbox relationalAggregationEditorVbox = null;
   public RelationalDatasourceController() {
 
   }
@@ -118,11 +123,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public void init() {
     //rows = (XulRows) document.getElementById("relationalSampleDataRows");//$NON-NLS-1$
     //grid = (XulGrid) document.getElementById("relationalSampleDataGrid");//$NON-NLS-1$
+    relationalAggregationEditorVbox = (XulVbox) document.getElementById("relationalAggregationEditorVbox"); //$NON-NLS-1$
     applyButton = (XulButton) document.getElementById("apply"); //$NON-NLS-1$
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
     sampleDataTree = (XulTree) document.getElementById("relationalSampleDataTable");
     aggregationEditorDialog = (XulDialog) document.getElementById("relationalAggregationEditorDialog");
-    aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog);
+    aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog, datasourceMessages, document, bf);
     modelDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);
     aggregationCellRenderer = new CustomAggregationCellRenderer();
     modelDataTable.registerCellRenderer("aggregation-cell-editor", aggregationCellRenderer);
@@ -416,7 +422,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
                   treeCol.setFlex(1);
-                  treeCol.setWidth(300);
+                  treeCol.setWidth(30);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
@@ -537,75 +543,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     sampleDataCellEditor.hide(); 
   }
 
-  private class CustomAggregateCellEditor implements TreeCellEditor {
-    XulDialog dialog = null;
-    TreeCellEditorCallback callback = null;
-
-    public CustomAggregateCellEditor(XulDialog dialog) {
-      super();
-      this.dialog = dialog;
-      dialog.setBgcolor("#FFFFFF");
-    }
-
-    public Object getValue() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    public void hide() {
-      dialog.hide();
-    }
-
-    public void setValue(Object val) {
-      // Clear the dialog box with all the existing checkboxes if any
-      for(XulComponent component: dialog.getChildNodes()) {
-        if(component instanceof XulCheckbox) {
-          dialog.removeChild(component);
-        }
-      }
-      // Create the list of check box in XulDialog
-      ArrayList<AggregationType> aggregationList = (ArrayList<AggregationType>) val;
-      AggregationType[] aggregationTypeArray = AggregationType.values();
-      for(int i=0;i<aggregationTypeArray.length;i++) {
-        XulCheckbox aggregationCheckBox;
-        try {
-          aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
-          aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[i].getDescription()));
-          aggregationCheckBox.setID(aggregationTypeArray[i].name());
-          if(aggregationList.contains(aggregationTypeArray[i])) {
-            aggregationCheckBox.setChecked(true);
-          } else {
-            aggregationCheckBox.setChecked(false);
-          }
-          dialog.addChild(aggregationCheckBox);
-        } catch (XulException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    }
-
-    public void show(int row, int col, Object boundObj, String columnBinding, TreeCellEditorCallback callback) {
-      this.callback = callback;
-      dialog.show();
-    }
-    
-    public void notifyListeners() {
-      hide();  
-      // Construct a new array list of aggregation based on what user selected
-      // pass it to listener
-      ArrayList<AggregationType> aggregationTypeList = new ArrayList<AggregationType>(); 
-      for(XulComponent component: dialog.getChildNodes()) {
-        if(component instanceof XulCheckbox) {
-          XulCheckbox checkbox = (XulCheckbox) component;
-          if(checkbox.isChecked()) {
-            aggregationTypeList.add(AggregationType.valueOf(checkbox.getID()));
-          }
-        }
-      }
-      this.callback.onCellEditorClosed(aggregationTypeList);
-    }
-  }
   
   
   private class CustomSampleDataCellEditor implements TreeCellEditor {
@@ -653,10 +590,10 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     }
 
     public String getText(Object value) {
-      List<AggregationType> aggregationList = new ArrayList<AggregationType>();
       StringBuffer buffer = new StringBuffer();
-      if(value instanceof List) {
-        aggregationList.addAll((List) value);
+      if(value instanceof Aggregation) {
+        Aggregation aggregation = (Aggregation) value;
+        List<AggregationType> aggregationList = aggregation.getAggregationList();
         for(int i=0;i<aggregationList.size();i++) {
         buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
           if(i<aggregationList.size()-1 && (buffer.length()

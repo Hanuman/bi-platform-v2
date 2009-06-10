@@ -309,8 +309,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
                 logicalColumn.setDataType(row.getSelectedDataType());
                 logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
                 List<AggregationType> aggregationList = new ArrayList<AggregationType>();
-                aggregationList.addAll(row.getAggregationList());
+                aggregationList.addAll(row.getAggregation().getAggregationList());
                 logicalColumn.setAggregationList(aggregationList);                
+                logicalColumn.setAggregationType(row.getAggregation().getDefaultAggregationType());                
               }
             }
           }
@@ -341,8 +342,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
                 logicalColumn.setDataType(row.getSelectedDataType());
                 logicalColumn.setName(new LocalizedString(domain.getLocales().get(0).getCode(), row.getColumnName()));
                 List<AggregationType> aggregationList = new ArrayList<AggregationType>();
-                aggregationList.addAll(row.getAggregationList());
+                aggregationList.addAll(row.getAggregation().getAggregationList());
                 logicalColumn.setAggregationList(aggregationList);
+                logicalColumn.setAggregationType(row.getAggregation().getDefaultAggregationType());
               }
             }
           }

@@ -11,32 +11,13 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 
 public class CsvModelDataRow extends XulEventSourceAdapter{
-
   public static final int MAX_COL_SIZE = 15;
   private String columnName, sampleData;
   private List<String> sampleDataList;
   private List<DataType> dataTypes = new ArrayList<DataType>();
   private DataType selectedDataType;
   private String locale;
-  private List<AggregationType> aggregationList = new ArrayList<AggregationType>() {
-
-    @Override
-    public String toString() {
-      StringBuffer buffer = new StringBuffer();
-      for(int i=0;i<this.size();i++) {
-        buffer.append(this.get(i));
-        if(i<this.size()-1 && (buffer.length()
-            + this.get(i+1).name().length() < MAX_COL_SIZE)) {
-          buffer.append(',');  
-        } else {
-          buffer.append(" ...");
-          break;
-        }
-      }
-      return buffer.toString();
-    }
-    
-  };
+  private Aggregation aggregation;
   //private List<DataFormatType> dataFormatTypes = new ArrayList<DataFormatType>();
   //private DataFormatType selectedDataFormatType;
   
@@ -44,7 +25,7 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
  public CsvModelDataRow(LogicalColumn col, List<String> columnData,String locale) {
     setSelectedDataType(col.getDataType());
     //setSelectedDataFormatType(DataFormatType.CURRENCY);
-    setAggregationList(col.getAggregationList());
+    setAggregation(new Aggregation(col.getAggregationList(), AggregationType.NONE));
     setColumnName(col.getName().getString(locale));
     if(columnData.size() > 0) {
       setSampleData(columnData.get(0));
@@ -110,25 +91,14 @@ public class CsvModelDataRow extends XulEventSourceAdapter{
     }
     return v;
   }
-  /**
-   * @param aggregationList the aggregationList to set
-   */
-  public void setAggregationList(List<AggregationType> aggregationList) {
-    this.aggregationList.clear();
-    if(aggregationList != null && aggregationList.size() > 0) {
-      this.aggregationList.addAll(aggregationList);
-    } else {
-      this.aggregationList.add(AggregationType.NONE);
-    }
+
+  public void setAggregation(Aggregation aggregation) {
+    this.aggregation = aggregation;
   }
 
-  /**
-   * @return the aggregationList
-   */
-  public List<AggregationType> getAggregationList() {
-    return aggregationList;
+  public Aggregation getAggregation() {
+    return aggregation;
   }
-
   
   //public List<DataFormatType> getDataFormatTypes() {
   //  return dataFormatTypes;
