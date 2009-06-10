@@ -6,6 +6,7 @@ import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.Font;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
@@ -29,7 +30,16 @@ public class BogoPojo implements Serializable{
   SecurityOwner securityOwner;
   Security security;
   FieldType fieldType;
+  Font font;
   
+  public Font getFont() {
+  
+    return font;
+  }
+  public void setFont(Font font) {
+  
+    this.font = font;
+  }
   public TargetTableType getTargetTableType() {
     return targetTableType;
   }
