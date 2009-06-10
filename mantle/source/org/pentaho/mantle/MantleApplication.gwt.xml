@@ -9,6 +9,7 @@
     <inherits name='com.googlecode.gwtx.Java'/> 
 	
 	<inherits name='org.pentaho.platform.repository.usersettings.pojo.UserSettings'/>
+    <inherits name='org.pentaho.gwt.widgets.Widgets'/>
     <inherits name='org.pentaho.mantle.login.MantleLogin' />
 
     <set-property name="gwt.suppressNonStaticFinalFieldWarnings" value="true" /> 
