@@ -29,9 +29,9 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
-import org.pentaho.gwt.widgets.client.utils.IMessageBundleLoadCallback;
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
-import org.pentaho.gwt.widgets.client.utils.StringUtils;
+import org.pentaho.gwt.widgets.client.utils.i18n.IResourceBundleLoadCallback;
+import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.commands.AboutCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
@@ -97,7 +97,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class MantleApplication implements EntryPoint, IPerspectiveCallback, SolutionBrowserListener, IMessageBundleLoadCallback {
+public class MantleApplication implements EntryPoint, IPerspectiveCallback, SolutionBrowserListener, IResourceBundleLoadCallback {
 
   public static boolean showAdvancedFeatures = false;
 
@@ -122,7 +122,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem saveAsMenuItem;
   private PentahoMenuItem propertiesMenuItem;
 
-  private MessageBundle supportedLanguages;
+  private ResourceBundle supportedLanguages;
   
   public boolean isAdministrator = false;
   
@@ -172,15 +172,18 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     if (!StringUtils.isEmpty(Window.Location.getParameter("locale"))) {
       MantleServiceCache.getService().setLocaleOverride(Window.Location.getParameter("locale"), null);
     }
-    
-    IMessageBundleLoadCallback messageCallback = new IMessageBundleLoadCallback() {
+
+    IResourceBundleLoadCallback messageCallback = new IResourceBundleLoadCallback() {
       public void bundleLoaded(String bundleName) {
-        supportedLanguages = new MessageBundle("messages/", "supported_locales", MantleApplication.this);
+        // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
+        ResourceBundle messages = new ResourceBundle();
+        messages.setSupportedLocales(supportedLanguages.getMap());
+        messages.loadBundle("messages/", "messages", true, MantleApplication.this); //$NON-NLS-1$ //$NON-NLS-2$
+        Messages.setResourceBundle(messages); 
       }
     };
-    
-    // after the Messages are loaded, IMessageBundleLoadCallback is fired and we can proceed
-    Messages.setMessageBundle(new MessageBundle("messages/", "messages", messageCallback)); //$NON-NLS-1$ //$NON-NLS-2$
+
+    supportedLanguages = new ResourceBundle("messages/", "supported_locales", false, messageCallback); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public void bundleLoaded(String bundleName) {

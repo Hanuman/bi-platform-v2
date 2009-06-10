@@ -16,11 +16,11 @@
  */
 package org.pentaho.mantle.client.messages;
 
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
+import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
 
 public class Messages {
 
-  private static MessageBundle messageBundle;
+  private static ResourceBundle messageBundle;
 
   public static String getString(String key) {
     if (messageBundle == null) {
@@ -33,14 +33,14 @@ public class Messages {
     if (messageBundle == null) {
       return key;
     }
-    return messageBundle.getString(key, parameters);
+    return messageBundle.getString(key, null, parameters);
   }
 
-  public static MessageBundle getMessageBundle() {
+  public static ResourceBundle getResourceBundle() {
     return messageBundle;
   }
 
-  public static void setMessageBundle(MessageBundle messageBundle) {
+  public static void setResourceBundle(ResourceBundle messageBundle) {
     Messages.messageBundle = messageBundle;
   }
 
