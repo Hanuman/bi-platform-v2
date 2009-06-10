@@ -74,6 +74,31 @@ public class Datasource implements IDatasource, Serializable {
     return null;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((datasourceName == null) ? 0 : datasourceName.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Datasource other = (Datasource) obj;
+    if (datasourceName == null) {
+      if (other.datasourceName != null)
+        return false;
+    } else if (!datasourceName.equals(other.datasourceName))
+      return false;
+    return true;
+  }
+
   public List<IConnection> getConnections() {
     return connections;
   }
