@@ -98,6 +98,7 @@ public class DatasourceServiceInMemoryDelegate {
   }
   public Boolean deleteDatasource(IDatasource datasource) {
     List<IDatasource> datasources = getDatasources();
+    metadataDomainRepository.removeDomain(datasource.getDatasourceName());
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }

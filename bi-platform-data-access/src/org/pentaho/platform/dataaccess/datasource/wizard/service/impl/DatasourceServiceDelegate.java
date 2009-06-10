@@ -157,6 +157,7 @@ public class DatasourceServiceDelegate {
         return null;
     }
     List<IDatasource> datasources = getDatasources();
+    metadataDomainRepository.removeDomain(datasource.getDatasourceName());
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }

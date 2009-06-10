@@ -16,13 +16,21 @@
       <hbox>
         <label value="Datasources" tooltiptext="Datasources" />
         <spacer flex="1" />
-        <button image="images/add.png" tooltiptext="Add" pen:disabledimage="images/add_disable.png"
-          disabled="false" onclick="datasourceSelectionDialogController.addDatasource()" />
-        <button image="images/remove.png" tooltiptext="Remove" pen:disabledimage="images/remove_disabled.png"
-          disabled="true" />
+        <button id="addDatasource" image="images/add.png" tooltiptext="Add" pen:disabledimage="images/add_disabled.png"
+          disabled="true" onclick="datasourceSelectionDialogController.addDatasource()" />
+        <button id="removeDatasource" image="images/remove.png" tooltiptext="Remove" pen:disabledimage="images/remove_disabled.png"
+          disabled="true" onclick="datasourceSelectionDialogController.removeDatasourceConfirm()" />
       </hbox>
       <listbox id="datasourceListbox" rows="6" pen:binding="datasourceName" seltype="single">
       </listbox>
+    </vbox>
+  </dialog>
+
+  <dialog id="removeDatasourceConfirmationDialog" buttonlabelaccept="Remove" buttonlabelcancel="Cancel" buttons="accept, cancel"
+    ondialogcancel="datasourceSelectionDialogController.removeDatasourceCancel()" ondialogaccept="datasourceSelectionDialogController.removeDatasourceAccept()"
+    buttonalign="right" title="Remove Datasource" height="200" width="300">
+    <vbox>
+      <label value="Are you sure you want to remove this datasource?" />
     </vbox>
   </dialog>
 
