@@ -5,12 +5,14 @@ import java.io.Serializable;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
-import org.pentaho.metadata.model.concept.types.FieldType;
-import org.pentaho.metadata.model.concept.types.Font;
-import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.Font;
+import org.pentaho.metadata.model.concept.types.JoinType;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -33,7 +35,21 @@ public class BogoPojo implements Serializable{
   FieldType fieldType;
   Font font;
   TableType tableType;
+  RelationshipType relationshipType;
+  JoinType joinType;
   
+  public JoinType getJoinType() {
+    return joinType;
+  }
+  public void setJoinType(JoinType joinType) {
+    this.joinType = joinType;
+  }
+  public RelationshipType getRelationshipType() {
+    return relationshipType;
+  }
+  public void setRelationshipType(RelationshipType relationshipType) {
+    this.relationshipType = relationshipType;
+  }
   public TableType getTableType() {
     return tableType;
   }
