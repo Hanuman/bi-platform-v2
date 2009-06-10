@@ -169,7 +169,7 @@ public class PentahoResourceLoader implements ResourceLoader {
     return null;
   }
 
-  public ResourceKey deserialize(String stringKey) throws ResourceKeyCreationException {
+  public ResourceKey deserialize(ResourceKey bundleKey, String stringKey) throws ResourceKeyCreationException {
     return null;
   }
 
@@ -177,7 +177,7 @@ public class PentahoResourceLoader implements ResourceLoader {
     return false;
   }
 
-  public String serialize(ResourceKey key) throws ResourceException {
+  public String serialize(ResourceKey resourceKey, ResourceKey key) throws ResourceException {
     return null;
   }
 
