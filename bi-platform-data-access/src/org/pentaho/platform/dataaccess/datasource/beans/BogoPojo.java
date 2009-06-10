@@ -6,6 +6,9 @@ import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.Alignment;
+import org.pentaho.metadata.model.concept.types.Color;
+import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.Font;
@@ -37,7 +40,28 @@ public class BogoPojo implements Serializable{
   TableType tableType;
   RelationshipType relationshipType;
   JoinType joinType;
+  Alignment alignment;
+  Color color;
+  ColumnWidth columnWidth;
   
+  public Alignment getAlignment() {
+    return alignment;
+  }
+  public void setAlignment(Alignment alignment) {
+    this.alignment = alignment;
+  }
+  public Color getColor() {
+    return color;
+  }
+  public void setColor(Color color) {
+    this.color = color;
+  }
+  public ColumnWidth getColumnWidth() {
+    return columnWidth;
+  }
+  public void setColumnWidth(ColumnWidth columnWidth) {
+    this.columnWidth = columnWidth;
+  }
   public JoinType getJoinType() {
     return joinType;
   }
