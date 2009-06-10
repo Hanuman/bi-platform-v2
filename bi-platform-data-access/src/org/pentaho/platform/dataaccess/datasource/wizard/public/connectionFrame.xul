@@ -198,7 +198,7 @@
   </dialog>
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="200">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="220">
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
