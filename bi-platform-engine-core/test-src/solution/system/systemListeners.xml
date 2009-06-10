@@ -41,7 +41,6 @@ VersionCheckSystemListener.
 						</props>
 					</property>
 				</bean>
-				<bean class="org.pentaho.platform.engine.services.metadata.PMDSystemListener"/>
 				<bean class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
 					<property name="repeatIntervalSeconds">
 						<value>86400</value>

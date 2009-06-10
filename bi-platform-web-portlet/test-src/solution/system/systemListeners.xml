@@ -14,7 +14,6 @@ VersionCheckSystemListener.
 	<bean id="systemListenersList" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
-				<bean class="org.pentaho.platform.engine.services.metadata.PMDSystemListener"/>
 			</list>
 		</constructor-arg>
 	</bean>
