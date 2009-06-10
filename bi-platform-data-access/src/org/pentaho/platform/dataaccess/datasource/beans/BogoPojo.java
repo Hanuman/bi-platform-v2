@@ -11,6 +11,7 @@ import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
@@ -31,13 +32,18 @@ public class BogoPojo implements Serializable{
   Security security;
   FieldType fieldType;
   Font font;
+  TableType tableType;
   
+  public TableType getTableType() {
+    return tableType;
+  }
+  public void setTableType(TableType tableType) {
+    this.tableType = tableType;
+  }
   public Font getFont() {
-  
     return font;
   }
   public void setFont(Font font) {
-  
     this.font = font;
   }
   public TargetTableType getTargetTableType() {
