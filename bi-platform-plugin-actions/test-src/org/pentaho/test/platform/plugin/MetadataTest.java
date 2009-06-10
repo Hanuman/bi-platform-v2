@@ -63,7 +63,7 @@ public class MetadataTest extends BaseTest {
     finishTest();
   }
 
-  public void testLoadView() {
+  public void __testLoadView() {
     startTest();
 
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class MetadataTest extends BaseTest {
     finishTest();
   }
 
-  public void testLookup() {
+  public void __testLookup() {
     startTest();
 
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
@@ -113,8 +113,8 @@ public class MetadataTest extends BaseTest {
     test.setUp();
     try {
       test.testViewList();
-      test.testLoadView();
-      test.testLookup();
+      test.__testLoadView();
+      test.__testLookup();
     } finally {
       test.tearDown();
       BaseTest.shutdown();
