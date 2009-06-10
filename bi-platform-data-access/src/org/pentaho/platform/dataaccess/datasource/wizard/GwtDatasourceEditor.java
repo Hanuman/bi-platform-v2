@@ -225,6 +225,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
       checkInitialized();
       reloadConnections();
     }
+    datasourceController.initialize();
     datasourceController.showDialog();  
   }
 }

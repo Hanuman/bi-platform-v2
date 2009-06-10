@@ -21,6 +21,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
@@ -35,6 +36,7 @@ import org.pentaho.ui.xul.containers.XulDeck;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
 import org.pentaho.ui.xul.containers.XulTree;
+import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
@@ -220,8 +222,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     okButton.setDisabled(true);
     // Setting the Button Panel background to white
     buttonBox.setBgcolor("#FFFFFF");
-    selectSql();
-    datasourceModel.setDatasourceType(DatasourceType.SQL);
+    initialize();
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
       // call initializes the entire UI.
@@ -233,6 +234,13 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     }
   }
 
+  public void initialize() {
+    datasourceModel.clearModel();
+    connectionModel.clearModel();
+    buildRelationalEmptyTable();    
+    selectSql();
+    datasourceModel.setDatasourceType(DatasourceType.SQL);
+  }
   public void setBindingFactory(BindingFactory bf) {
     this.bf = bf;
   }
@@ -490,19 +498,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     saveModel(); 
   }
   
-  @Override
-  public void onDialogCancel() {
-    super.onDialogCancel();
-    datasourceModel.clearModel();
-    connectionModel.clearModel();
-    buildRelationalEmptyTable();    
-  }
-
   private void saveModelDone() {
     super.onDialogAccept();
-    datasourceModel.clearModel();
-    connectionModel.clearModel();
-    buildRelationalEmptyTable();
   }
   
     private void buildCsvEmptyTable() {
@@ -513,6 +510,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     csvColumnTypeTreeCol.setEditable(false);    
     csvDataTable.update();
     csvDataTable.suppressLayout(true);
+    XulTreeChildren treeChildren = csvDataTable.getRootChildren();
+    if(treeChildren != null) {
+      treeChildren.removeAll();
+    }
     try {
       int count = csvDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_CSV_TABLE_ROW_COUNT; i++) {
@@ -544,6 +545,11 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     relationalColumnTypeTreeCol.setEditable(false);
     modelDataTable.update();
     modelDataTable.suppressLayout(true);
+     XulTreeChildren treeChildren = modelDataTable.getRootChildren();
+    if(treeChildren != null) {
+      treeChildren.removeAll();
+    }
+
     try {
       int count = modelDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_RELATIONAL_TABLE_ROW_COUNT; i++) {
