@@ -21,6 +21,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
@@ -40,8 +41,8 @@ import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
 public class DatasourceController extends AbstractXulDialogController<IDatasource> {
-  public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 6;
-  public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 8;
+  public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;
+  public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 10;
   private DatasourceMessages datasourceMessages;
   private XulDialog datasourceDialog;
 
@@ -187,9 +188,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         @Override
         public Boolean sourceToTarget(DatasourceType value) {
           if(DatasourceType.SQL == value) {
-        	  return true;
+            return true;
           } else {
-        	  return false;
+            return false;
           }
         }
 
@@ -204,9 +205,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
           @Override
           public Boolean sourceToTarget(DatasourceType value) {
             if(DatasourceType.CSV == value) {
-          	  return true;
+              return true;
             } else {
-          	  return false;
+              return false;
             }
           }
 
