@@ -44,7 +44,7 @@
       <vbox>
         <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
         <hbox>
-        	<textbox id="datasourcename" width="237" multiline="false"/>
+        	<textbox id="datasourcename" width="225" multiline="false"/>
          	<spacer flex="1"/>
         </hbox>
       </vbox>
