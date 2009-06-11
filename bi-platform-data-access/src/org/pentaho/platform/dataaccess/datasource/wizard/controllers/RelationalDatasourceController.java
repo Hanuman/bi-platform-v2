@@ -395,10 +395,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
               XulTreeChildren treeChildren = previewResultsTable.getRootChildren();
               if(treeChildren != null) {
                 treeChildren.removeAll();
-/*                List<XulComponent> treeChildrenList = treeChildren.getChildNodes();
-                for (int i = 0; i < treeChildrenList.size(); i++) {
-                  treeChildren.removeItem(i);
-                }*/
               }
               // Remove all the existing columns
               int curTreeColCount = previewResultsTable.getColumns().getColumnCount();
