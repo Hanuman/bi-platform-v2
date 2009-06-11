@@ -160,6 +160,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
    */
   @SuppressWarnings("unchecked")
   protected void getOperationsSection( AxisService axisService, StringBuilder sb ) {
+    String serviceUrl = getWebServiceExecuteUrl();
     
     // write out the operations
     Iterator it = axisService.getOperations();
@@ -176,7 +177,15 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
       // TODO localize these?
       while ( it.hasNext() ) {
         AxisOperation axisOperation = (AxisOperation) it.next();
-        sb.append( axisOperation.getName().getLocalPart() );
+        String opName = axisOperation.getName().getLocalPart();
+        
+        String opUrl = serviceUrl+axisService.getName()+"/"+opName;
+        
+        sb.append( "<a href=\"" ) //$NON-NLS-1$
+        .append( opUrl )
+        .append( "\">" ).append( opName ) //$NON-NLS-1$
+        .append( "</a>" ); //$NON-NLS-1$
+        
         if( it.hasNext() ) {
           sb.append( "<br/>" ); //$NON-NLS-1$
         }
