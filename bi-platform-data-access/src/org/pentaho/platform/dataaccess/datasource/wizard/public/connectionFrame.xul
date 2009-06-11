@@ -34,19 +34,13 @@
     </groupbox>
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
-    buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="625" height="640" buttonalign="right">
+    buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="530" buttonalign="right">
     <groupbox flex="1">
-      <hbox id="buttonBox" height="60" align="center">
-          <hbox id="databaseButtonBox" height="60">
-    	      <button id="relationalButton" image="images/database.png"  tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="middle"/>
-              <label value="${datasourceDialog.Database}"/>    	      
-          </hbox>
-          <hbox id="csvButtonBox" height="60" align="center">
- 	         <button id="csvButton" image="images/csv.png" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="middle"/>
-             <label value="${datasourceDialog.Csv}"/>
-          </hbox>          
-          <spacer flex="1"/>
-      </hbox>
+      <hbox>
+	      <button id="relationalButton" image="images/database.png"  label="${datasourceDialog.Database}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="middle"/>
+    	  <button id="csvButton" image="images/csv.png" label="${datasourceDialog.Csv}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="middle"/>
+    	  <spacer flex="1"/>
+      </hbox>            
       <vbox>
         <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
         <hbox>
@@ -103,7 +97,7 @@
 			  <vbox flex="1">
 			      <label value="${datasourceDialog.UploadFile}"/>
 			      <vbox height="50">
-				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"/>
+				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="20" width = "200"/>
 			      </vbox>
 				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true"/>
 				  <spacer height="5"/>				  

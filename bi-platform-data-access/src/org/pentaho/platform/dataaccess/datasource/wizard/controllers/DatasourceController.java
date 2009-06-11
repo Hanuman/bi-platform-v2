@@ -41,8 +41,8 @@ import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
 public class DatasourceController extends AbstractXulDialogController<IDatasource> {
-  public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 8;
-  public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 10;
+  public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 5;
+  public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 7;
   private DatasourceMessages datasourceMessages;
   private XulDialog datasourceDialog;
 
@@ -220,8 +220,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     bf.createBinding(datasourceModel, "datasourceType", csvButton, "disabled", csvToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
 
     okButton.setDisabled(true);
-    // Setting the Button Panel background to white
-    buttonBox.setBgcolor("#FFFFFF");
     initialize();
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
@@ -426,16 +424,12 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   private void moveToCsvDeck() {
     datasourceDeck.setSelectedIndex(CSV_DECK);
-    csvButtonBox.setBgcolor("#CCCCCC");
-    databaseButtonBox.setBgcolor("#FFFFFF");
     if(csvDataTable.getRows() == 0) {
       buildCsvEmptyTable(); 
     }
   }
   private void moveToRelationalDeck() {
     datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
-    databaseButtonBox.setBgcolor("#CCCCCC");
-    csvButtonBox.setBgcolor("#FFFFFF");
     if(modelDataTable.getRows() == 0) {
       buildRelationalEmptyTable(); 
     }
