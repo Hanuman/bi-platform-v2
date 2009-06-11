@@ -2,7 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard;
 
 import java.util.List;
 
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
+import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
@@ -116,7 +116,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
       
       container = (GwtXulDomContainer) runner.getXulDomContainers().get(0);
       AsyncXulLoader.loadOverlayFromUrl("connectionFrame-gwt-overlay.xul", "connectionFrame", container, this); //$NON-NLS-1$//$NON-NLS-2$
-      datasourceMessages.setMessageBundle((MessageBundle) container.getResourceBundles().get(0));
+      datasourceMessages.setMessageBundle((ResourceBundle) container.getResourceBundles().get(0));
       GwtBindingFactory bf = new GwtBindingFactory(container.getDocumentRoot());
       
       EventHandlerWrapper wrapper = GWT.create(DatasourceController.class);

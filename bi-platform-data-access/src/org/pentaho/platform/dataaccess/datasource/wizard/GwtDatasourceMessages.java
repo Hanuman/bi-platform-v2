@@ -1,14 +1,14 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
-import org.pentaho.gwt.widgets.client.utils.MessageBundle;
+import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
 
 public class GwtDatasourceMessages implements DatasourceMessages{
-  MessageBundle messageBundle;
+  ResourceBundle messageBundle;
   
   public GwtDatasourceMessages() {
     
   }
-  public GwtDatasourceMessages(MessageBundle messageBundle){
+  public GwtDatasourceMessages(ResourceBundle messageBundle){
     this.messageBundle = messageBundle;
   }
 
@@ -23,13 +23,13 @@ public class GwtDatasourceMessages implements DatasourceMessages{
     if (this.messageBundle == null) {
       return key;
     }
-    return this.messageBundle.getString(key, parameters);
+    return this.messageBundle.getString(key, key, parameters);
   }
 
-  public MessageBundle getMessageBundle() {
+  public ResourceBundle getMessageBundle() {
     return this.messageBundle;
   }
-  public void setMessageBundle(MessageBundle messageBundle) {
+  public void setMessageBundle(ResourceBundle messageBundle) {
     this.messageBundle = messageBundle;
   }
 }
