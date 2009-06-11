@@ -1,5 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
@@ -46,6 +47,8 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   private XulButton removeDatasourceButton;
 
   private XulListbox datasourceListbox;
+  
+  private Binding removeDatasourceButtonBinding; 
 
   // ~ Constructors ====================================================================================================
 
@@ -59,17 +62,23 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
    * Sets up bindings.
    */
   public void init() {
+    internalInit();    
     datasourceService.isAdministrator(new XulServiceCallback<Boolean>() {
       public void error(final String message, final Throwable error) {
         showMessagebox("Error", error.getLocalizedMessage()); //$NON-NLS-1$
       }
 
       public void success(final Boolean administrator) {
+        // now we have admin status; update add datasource and remove datasource buttons' enabled status
         DatasourceSelectionDialogController.this.administrator = administrator;
-        internalInit();
+        addDatasourceButton.setDisabled(!administrator);
+        try {
+          removeDatasourceButtonBinding.fireSourceChanged();
+        } catch (Exception e) {
+          showMessagebox("Error", e.getLocalizedMessage()); //$NON-NLS-1$
+        }
       }
     });
-
   }
 
   private void internalInit() {
@@ -83,8 +92,6 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       addDatasourceButton = (XulButton) safeGetElementById(document, "addDatasource"); //$NON-NLS-1$
       removeDatasourceButton = (XulButton) safeGetElementById(document, "removeDatasource"); //$NON-NLS-1$
 
-      addDatasourceButton.setDisabled(!administrator);
-
       bf.setBindingType(Binding.Type.ONE_WAY);
       bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel,
           "datasources", datasourceListbox, "elements"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -97,7 +104,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       BindingConvertor<Integer, Boolean> acceptButtonConvertor = new BindingConvertor<Integer, Boolean>() {
         @Override
         public Boolean sourceToTarget(final Integer value) {
-          return value > -1 && administrator;
+          return value > -1;
         }
 
         @Override
@@ -121,7 +128,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
           throw new UnsupportedOperationException();
         }
       };
-      bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel, "selectedIndex", //$NON-NLS-1$
+      removeDatasourceButtonBinding = bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel, "selectedIndex", //$NON-NLS-1$
           removeDatasourceButton, "!disabled", removeDatasourceButtonConvertor); //$NON-NLS-1$
 
       datasourceListbox.setSelectedIndex(-1);
