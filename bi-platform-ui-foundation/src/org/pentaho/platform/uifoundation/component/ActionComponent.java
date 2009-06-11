@@ -88,8 +88,7 @@ public class ActionComponent extends BaseUIComponent {
     return true;
   }
 
-  @Override
-  public String getContent(final String mimeType) {
+  protected ByteArrayOutputStream getContentAsStream(final String mimeType) {
     IPentahoSession userSession = getSession();
 
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -114,7 +113,12 @@ public class ActionComponent extends BaseUIComponent {
         context.dispose();
       }
     }
-
+    return outputStream;
+  }
+  
+  @Override
+  public String getContent(final String mimeType) {
+    ByteArrayOutputStream outputStream = getContentAsStream(mimeType);
     // TODO test the return result
     String result = ""; //$NON-NLS-1$
     try {
