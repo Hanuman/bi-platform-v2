@@ -110,7 +110,7 @@ public class AxisUtil {
    */
   public static AxisService createService(WebServiceDefinition ws, AxisConfiguration axisConfig) throws AxisFault {
     Class<?> serviceClass = ws.getServiceClass();
-    String serviceName = ws.getName();
+    String serviceName = ws.getId();
 
     if (axisConfig.getService(serviceName) != null) {
       axisConfig.removeService(serviceName);

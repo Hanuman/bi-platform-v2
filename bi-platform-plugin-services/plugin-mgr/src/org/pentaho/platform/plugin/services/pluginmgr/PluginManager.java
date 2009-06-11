@@ -280,6 +280,7 @@ public class PluginManager extends AbstractPluginManager {
   private WebServiceDefinition toWebServiceDefinition(IPlatformPlugin.WebServiceDefinition pws, IPlatformPlugin plugin)
       throws PlatformPluginRegistrationException {
     WebServiceDefinition wsDef = new WebServiceDefinition();
+    wsDef.setId(pws.id);
     wsDef.setTitle(pws.title);
     wsDef.setDescription(pws.description);
     if (!this.isBeanRegistered(pws.serviceBeanId)) {

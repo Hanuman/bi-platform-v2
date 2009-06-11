@@ -150,7 +150,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
         loadService( wsDef );
       } catch (Exception e) {
         //Axis cannot handle a typed exception from this method, we must just log the error and continue on
-        error( Messages.getErrorString( "AbstractAxisConfigurator.ERROR_0001_COULD_NOT_LOAD_SERVICE", wsDef.getName() ), e ); //$NON-NLS-1$
+        error( Messages.getErrorString( "AbstractAxisConfigurator.ERROR_0001_COULD_NOT_LOAD_SERVICE", wsDef.getId() ), e ); //$NON-NLS-1$
       }
     }
       
@@ -164,7 +164,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
   protected void loadService( WebServiceDefinition wsDef) throws Exception {
 
     // first create the service
-    String serviceName = wsDef.getName();
+    String serviceId = wsDef.getId();
     AxisService axisService = AxisUtil.createService( wsDef, getAxisConfiguration());
 
     // add any additional transports
@@ -177,7 +177,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
     AxisUtil.createServiceWsdl( axisService, wsDef, getAxisConfiguration() );
     
     // add the wrapper to the service list
-    services.put( serviceName, wsDef );
+    services.put( serviceId, wsDef );
     
     // start the service
     axisConfig.addService(axisService);

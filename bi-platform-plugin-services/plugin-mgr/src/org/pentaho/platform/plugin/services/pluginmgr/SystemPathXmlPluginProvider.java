@@ -200,6 +200,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
       IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
 
+      pws.id = getProperty(node, "id"); //$NON-NLS-1$
       pws.title = getProperty(node, "title"); //$NON-NLS-1$
       pws.description = getProperty(node, "description"); //$NON-NLS-1$
       
@@ -216,10 +217,10 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         }
       }
 
-      if (pws.title != null && pws.serviceBeanId != null) {
+      if (pws.serviceBeanId != null) {
         plugin.addWebservice(pws);
       } else {
-        PluginMessageLogger.add(Messages.getString("PluginManager.WEBSERVICE_NOT_REGISTERED", pws.title, pws.serviceBeanId)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getString("PluginManager.WEBSERVICE_NOT_REGISTERED")); //$NON-NLS-1$
       }
     }
   }

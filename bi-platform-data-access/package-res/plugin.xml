@@ -10,6 +10,8 @@
    <bean id="datasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
    
   <webservice
+    id="ConnectionService"
+    type="ws,gwt-rpc"
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
     ref="connectionService">

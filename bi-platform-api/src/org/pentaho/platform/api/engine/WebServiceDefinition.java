@@ -22,19 +22,21 @@ package org.pentaho.platform.api.engine;
 
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
+
 public class WebServiceDefinition {
   
   private Class<?> serviceClass;
   private Collection<Class<?>> extraClasses;
-  private String title, description;
+  private String title, description, id;
   private boolean enabled = true;
   
   /**
-   * Returns the name of this web service. This should not be localized
-   * @return Name
+   * Returns the unique id of this web service. This should not be localized
+   * @return a unique id for this web service
    */
-  public String getName() {
-    return getServiceClass().getSimpleName();
+  public String getId() {
+    return (StringUtils.isEmpty(id))?getServiceClass().getSimpleName():id;
   }
   
   /**
@@ -77,6 +79,10 @@ public class WebServiceDefinition {
   public void setTitle(String title) {
     this.title = title;
   }
+  
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public void setDescription(String description) {
     this.description = description;
@@ -93,11 +99,11 @@ public class WebServiceDefinition {
 
   /**
    * Returns the localized title for this web service. This is shown on the 
-   * services list page.
-   * @return Title
+   * services list page.  Defaults to service id if not set.
+   * @return natural language name for the service
    */
   public String getTitle() {
-    return title;
+    return (StringUtils.isEmpty(title))?getId():title;
   }
 
 }

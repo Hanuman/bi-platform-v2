@@ -134,12 +134,13 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
   }
   
   public class WebServiceDefinition {
-    public String title, description;
+    public String id, title, description;
     public String serviceBeanId;
     public Collection<String> extraClasses = new ArrayList<String>();
     
     public WebServiceDefinition() { }
-    public WebServiceDefinition(String title, String description, String serviceBeanId, Collection<String> extraClasses) {
+    public WebServiceDefinition(String id, String title, String description, String serviceBeanId, Collection<String> extraClasses) {
+      this.id = id;
       this.title = title;
       this.description = description;
       this.serviceBeanId = serviceBeanId;
