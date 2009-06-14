@@ -37,14 +37,14 @@
     buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="530" buttonalign="right">
     <groupbox flex="1">
       <hbox>
-	      <button id="relationalButton" image="images/database.png"  label="${datasourceDialog.Database}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="middle"/>
-    	  <button id="csvButton" image="images/csv.png" label="${datasourceDialog.Csv}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="middle"/>
+	      <button id="relationalButton" image="images/database.png"  label="${datasourceDialog.Database}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="middle" pen:classname="tabButton"/>
+    	  <button id="csvButton" image="images/csv.png" label="${datasourceDialog.Csv}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="middle" pen:classname="tabButton"/>
     	  <spacer flex="1"/>
       </hbox>            
       <vbox>
         <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
         <hbox>
-        	<textbox id="datasourcename" width="225" multiline="false"/>
+        	<textbox id="datasourcename" width="177" multiline="false"/>
          	<spacer flex="1"/>
         </hbox>
       </vbox>
@@ -61,7 +61,7 @@
 			            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
 			            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
 			          </hbox>
-                      <listbox id="connectionList" rows="7" pen:binding="name" disabled="true"/>
+                      <listbox id="connectionList" rows="6" pen:binding="name" disabled="true"/>
 			        </vbox>
 			        <spacer width="10"/>
 			        <vbox flex="1">
@@ -70,7 +70,7 @@
 			                <!--<spacer flex="1"/>-->
 			                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
 			            </hbox>
-                        <textbox flex="1" id="query" rows="6" cols="80" width="360" multiline="true" disabled="true"/>
+                        <textbox flex="1" id="query" rows="5" cols="80" width="360" multiline="true" disabled="true"/>
 			            <hbox>
 			                <spacer flex="1"/>
 			                <label value="Limit:" height="16"/>
@@ -96,8 +96,8 @@
 			  </vbox>
 			  <vbox flex="1">
 			      <label value="${datasourceDialog.UploadFile}"/>
-			      <vbox height="50">
-				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="20" width = "200"/>
+			      <vbox height="25">
+				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "226"/>
 			      </vbox>
 				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true"/>
 				  <spacer height="5"/>				  

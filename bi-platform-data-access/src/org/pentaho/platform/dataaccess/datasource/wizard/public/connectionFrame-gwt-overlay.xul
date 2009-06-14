@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul">
-  <listbox id="connectionList" width="240" height="117"/>
-  <textbox id="datasourcename" width="225"/>
+  <listbox id="connectionList" width="240" height="10"/>
   <textbox flex="0" id="query"    rows="6" cols="80" width="360" />
-  <listbox id="connectionList" flex="0"/>
+  <tree flex="0" height="175" id="modelDataTable"/>
+  <tree flex="0" height="220" id="csvDataTable"/>
 </overlay>

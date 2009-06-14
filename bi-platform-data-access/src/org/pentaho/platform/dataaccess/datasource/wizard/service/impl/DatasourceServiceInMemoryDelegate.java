@@ -1,5 +1,10 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -8,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +35,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.CsvModelManagementService;
@@ -46,7 +53,8 @@ public class DatasourceServiceInMemoryDelegate {
 
   public static final IMetadataDomainRepository METADATA_DOMAIN_REPO = new InMemoryMetadataDomainRepository();
   private static final Log logger = LogFactory.getLog(DatasourceServiceInMemoryDelegate.class);
-
+  public static final String DEFAULT_UPLOAD_FILEPATH_FILE_NAME = "debug_upload_filepath.properties"; //$NON-NLS-1$
+  public static final String UPLOAD_FILE_PATH = "upload.file.path"; //$NON-NLS-1$
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
@@ -439,6 +447,19 @@ public class DatasourceServiceInMemoryDelegate {
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
+    }
+  }
+  public String getUploadFilePath() throws DatasourceServiceException {
+    try {
+      URL url = ClassLoader.getSystemResource(DEFAULT_UPLOAD_FILEPATH_FILE_NAME);
+      URI uri = url.toURI();
+      File file = new File(uri);
+      FileInputStream fis = new FileInputStream(file);
+      Properties properties = new Properties();
+      properties.load(fis);
+      return (String) properties.get( UPLOAD_FILE_PATH );
+    } catch (Exception e) {
+      throw new DatasourceServiceException(e);
     }
   }
   

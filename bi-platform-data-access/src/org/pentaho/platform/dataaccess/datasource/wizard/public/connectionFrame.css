@@ -49,3 +49,20 @@ font-size:0.85em;
 padding:6px 0 6px 5px;
 text-align:left;
 }
+
+.gwt-Button {
+  font-size: 0.85em;
+  background-color: #ddd;
+}
+.gwt-Button:down {
+  cursor:pointer;
+}
+.gwt-Button:hover {
+  background-color: #ffcc99;
+  cursor:hand;
+}
+.gwt-Button:disabled {
+  color: #888;
+  background-color: #ccc;
+  cursor:none;
+}

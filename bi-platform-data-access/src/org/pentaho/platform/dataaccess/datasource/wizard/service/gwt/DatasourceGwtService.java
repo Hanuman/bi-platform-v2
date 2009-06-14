@@ -10,6 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.user.client.rpc.RemoteService;
      
@@ -27,6 +28,7 @@ public interface DatasourceGwtService extends RemoteService{
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException;
   public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException;
   public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException ;
+  public String getUploadFilePath() throws DatasourceServiceException ;
   public Boolean isAdministrator();
   public BogoPojo gwtWorkaround(BogoPojo pojo);
 }

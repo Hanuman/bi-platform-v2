@@ -82,5 +82,8 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
   public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveInlineEtlModel(modelName, overwrite);
   }
-  
+
+  public String getUploadFilePath() throws DatasourceServiceException {
+    return SERVICE.getUploadFilePath();
+  }
 }

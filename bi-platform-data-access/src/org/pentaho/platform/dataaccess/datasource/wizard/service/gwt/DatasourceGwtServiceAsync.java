@@ -9,6 +9,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -26,6 +27,7 @@ public interface DatasourceGwtServiceAsync {
   void saveModel(BusinessData businessData, Boolean overwrite, AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
   void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
+  void getUploadFilePath(AsyncCallback<String> callback) throws DatasourceServiceException ;
   void isAdministrator(AsyncCallback<Boolean> callback);
   void gwtWorkaround (BogoPojo pojo, AsyncCallback<BogoPojo> callback);
 

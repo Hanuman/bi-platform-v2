@@ -81,6 +81,10 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
   public void isAdministrator(XulServiceCallback<Boolean> callback) {
     callback.success(SERVICE.isAdministrator());
   }
+
+  public void getUploadFilePath(XulServiceCallback<String> callback) throws DatasourceServiceException {
+    callback.success(SERVICE.getUploadFilePath());
+  }
 }
 
   

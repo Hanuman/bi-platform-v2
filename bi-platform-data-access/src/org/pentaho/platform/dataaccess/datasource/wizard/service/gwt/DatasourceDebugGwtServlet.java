@@ -77,4 +77,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
     return SERVICE.isAdministrator();
   }
 
+  public String getUploadFilePath() throws DatasourceServiceException {
+    return SERVICE.getUploadFilePath();
+  }
+
 }

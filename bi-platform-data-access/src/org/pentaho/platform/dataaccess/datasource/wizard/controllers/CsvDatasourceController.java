@@ -119,7 +119,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
-    headersPresent.setChecked(true);
   }
   
   public void setSelectedCsvDataRow(int row){
@@ -168,7 +167,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
             // TODO Binding for the check box is not working. Need to investigate
-            .getSelectedFile(), /*datasourceModel.getCsvModel().isHeadersPresent()*/ headersPresent.isChecked(), "\"", ",",
+            // TODO Are we going to expose the delimeter and enclosure to the UI
+            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent() /*headersPresent.isChecked()*/, "\"", ",",
             new XulServiceCallback<BusinessData>() {
 
               public void error(String message, Throwable error) {

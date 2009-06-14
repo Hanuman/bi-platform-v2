@@ -1,5 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -57,6 +58,7 @@ public class DatasourceServiceDelegate {
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
   private IPentahoSession session;
+  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;  
   private static final Log logger = LogFactory.getLog(DatasourceServiceDelegate.class);
 
   public DatasourceServiceDelegate() {
@@ -548,6 +550,10 @@ public class DatasourceServiceDelegate {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
     }
+  }
+  public String getUploadFilePath() throws DatasourceServiceException {
+    String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
+    return PentahoSystem.getApplicationContext().getSolutionPath(relativePath);    
   }
   public boolean isAdministrator() {
     if(getSession() != null) {

@@ -265,4 +265,18 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
     });
   }
+
+  public void getUploadFilePath(final XulServiceCallback<String> callback) throws DatasourceServiceException {
+    SERVICE.getUploadFilePath(new AsyncCallback<String>() {
+
+      public void onFailure(Throwable arg0) {
+        callback.error("error getting the upload file path: ", arg0); //$NON-NLS-1$
+      }
+
+      public void onSuccess(String arg0) {
+        callback.success(arg0);
+      }
+
+    });
+  }
 }
