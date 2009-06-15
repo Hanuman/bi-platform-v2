@@ -21,6 +21,7 @@
 package org.pentaho.platform.plugin.services.connections.sql;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
@@ -53,7 +54,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
   private static final Log log = LogFactory.getLog(SQLResultSet.class);
 
   private IPentahoMetaData metadata;
-
+  
   /**
    * 
    */
@@ -251,7 +252,18 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
   public Object getValueAt(final int row, final int column) {
     if (nativeResultSet != null) {
       try {
-        nativeResultSet.absolute(row + 1);
+        /*
+         * Following code courtesy of contribution from Rui Goncalves
+         * BISERVER-3213
+         */
+        int curNativeRow = nativeResultSet.getRow();
+        if (curNativeRow != (row + 1)) {
+          if (curNativeRow == row) {
+            nativeResultSet.next();
+          } else {
+            nativeResultSet.absolute(row + 1);
+          }
+        }
         return nativeResultSet.getObject(column + 1);
       } catch (SQLException ex) {
         SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0002_GET_VALUE"), ex); //$NON-NLS-1$
@@ -259,8 +271,8 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
       }
     }
     return null;
-  }
-
+  }   
+  
   public IPentahoResultSet memoryCopy() {
     try {
       IPentahoMetaData meta = getMetaData();
