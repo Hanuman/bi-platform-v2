@@ -195,5 +195,7 @@ public class PentahoTableDataFactory implements DataFactory, Cloneable {
 		boolean queryExecutable = tables.containsKey(query);
 		return queryExecutable;
 	}
-
+	
+	public void cancelRunningQuery() {
+	}
 }
