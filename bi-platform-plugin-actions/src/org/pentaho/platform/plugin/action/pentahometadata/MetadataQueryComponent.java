@@ -18,6 +18,10 @@
 package org.pentaho.platform.plugin.action.pentahometadata;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +37,7 @@ import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
@@ -59,6 +64,17 @@ public class MetadataQueryComponent {
   
   String xmlHelperClass = "org.pentaho.metadata.query.model.util.QueryXmlHelper"; //$NON-NLS-1$
   String sqlGeneratorClass = "org.pentaho.metadata.query.impl.sql.SqlGenerator"; //$NON-NLS-1$
+  
+  Map<String,Object> inputs = null;
+  
+  /*
+   * The list of inputs to this component, used when resolving parameter values.
+   * 
+   * @param inputs map of inputs
+   */
+  public void setInputs(Map<String,Object> inputs) {
+    this.inputs = inputs;
+  }
   
   public void setQuery(String query) {
     this.query = query;
@@ -126,21 +142,42 @@ public class MetadataQueryComponent {
       return false;
     }
 
+    // determine parameter values
+    Map<String, Object> parameters = null;
+    if (queryObject.getParameters() != null) {
+      for (Parameter param : queryObject.getParameters()) {
+        if (parameters == null) {
+          parameters = new HashMap<String, Object>();
+        }
+        
+        Object value = null;
+        if (inputs != null) {
+          value = inputs.get(param.getName());
+        }
+        if (value != null) {
+          // convert object to correct type based on input here?
+          parameters.put(param.getName(), value);
+        } else {
+          parameters.put(param.getName(), param.getDefaultValue());
+        }
+      }
+    }
+    
     IPhysicalModel physicalModel = queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
     if (physicalModel instanceof SqlPhysicalModel) {
-      return executeSqlPhysicalModel(queryObject, repo);
+      return executeSqlPhysicalModel(queryObject, repo, parameters);
     } else if (physicalModel instanceof InlineEtlPhysicalModel) {
-      return executeInlineEtlPhysicalModel(queryObject, repo);
+      return executeInlineEtlPhysicalModel(queryObject, repo, parameters);
     } else {
       logger.error("Physical model not supported " + physicalModel); //$NON-NLS-1$
       return false;
     }
   }
   
-  public boolean executeInlineEtlPhysicalModel(Query queryObject, IMetadataDomainRepository repo) {
+  public boolean executeInlineEtlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
     try {
-      resultSet = executor.executeQuery(queryObject);
+      resultSet = executor.executeQuery(queryObject, parameters);
       return true;
     } catch (Exception e ) {
       logger.error("error", e); //$NON-NLS-1$
@@ -148,7 +185,7 @@ public class MetadataQueryComponent {
     }
   }
   
-  public boolean executeSqlPhysicalModel(Query queryObject, IMetadataDomainRepository repo) {
+  public boolean executeSqlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     // need to get the correct DatabaseMeta
     SqlPhysicalModel sqlModel = (SqlPhysicalModel)queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
     
@@ -175,11 +212,10 @@ public class MetadataQueryComponent {
       DatabaseInterface databaseInterface = retrieveDatabaseInterface(sqlConnection);
       databaseMeta.setDatabaseInterface(databaseInterface);
       
-      
       MappedQuery mappedQuery = null;
       try {
         SqlGenerator sqlGenerator = createSqlGenerator();
-        mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, databaseMeta);
+        mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, databaseMeta, parameters, true);
       } catch (Exception e) {
         // TODO
         logger.error("error", e); //$NON-NLS-1$ 
@@ -193,17 +229,32 @@ public class MetadataQueryComponent {
         sqlConnection.setMaxRows(maxRows);
       }
       
-      // TODO: forwardOnly ?
-      // SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY
-      
       IPentahoResultSet localResultSet = null;
       String sql = mappedQuery.getQuery();
       logger.debug("SQL: " + sql); //$NON-NLS-1$
+
+      // populate prepared sql params
+      List<Object> sqlParams = null;
+      if (mappedQuery.getParamList() != null) {
+        sqlParams = new ArrayList<Object>();
+        for (String param : mappedQuery.getParamList()) {
+          sqlParams.add(parameters.get(param));
+        }
+      }
+      
       try {
         if (!useForwardOnlyResultSet) {
-          localResultSet = sqlConnection.executeQuery(sql);
+          if (sqlParams != null) {
+            localResultSet = sqlConnection.prepareAndExecuteQuery(sql, sqlParams);
+          } else {
+            localResultSet = sqlConnection.executeQuery(sql);
+          }
         } else {
-          localResultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+          if (sqlParams != null) {
+            localResultSet = sqlConnection.prepareAndExecuteQuery(query, sqlParams, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+          } else {
+            localResultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+          }
         }
         IPentahoMetaData metadata = mappedQuery.generateMetadata(localResultSet.getMetaData());
         if (live) {
