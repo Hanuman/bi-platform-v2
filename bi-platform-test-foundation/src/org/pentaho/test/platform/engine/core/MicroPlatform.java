@@ -17,9 +17,12 @@
  */
 package org.pentaho.test.platform.engine.core;
 
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 
 /**
  * A self-contained and very easy to configure platform initializer which requires
@@ -47,8 +50,7 @@ public class MicroPlatform {
 
   private String solutionPath, baseUrl;
 
-  private SimpleObjectFactory factory = new SimpleObjectFactory();
-  
+  private IPentahoDefinableObjectFactory factory = new StandaloneObjectFactory();
 
   public MicroPlatform(String solutionPath) {
     this(solutionPath, "http://localhost:8080/pentaho");
@@ -77,7 +79,12 @@ public class MicroPlatform {
   }
 
   public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass) {
-    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName());
+    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
+    return this;
+  }
+  
+  public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
+    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), scope);
     return this;
   }
 }
