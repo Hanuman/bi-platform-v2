@@ -6,4 +6,8 @@
     <!--   
     <data-access-users></data-access-users>
      -->
+    <!-- roles with datasource view permissions -->
+    <data-access-view-roles>Authenticated,Admin</data-access-view-roles>
+    <!-- users with datasource view permissions -->
+    <data-access-view-users>suzy</data-access-view-users>
 </settings>

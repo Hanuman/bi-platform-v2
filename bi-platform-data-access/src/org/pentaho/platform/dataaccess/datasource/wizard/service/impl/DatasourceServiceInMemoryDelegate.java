@@ -3,6 +3,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
@@ -27,6 +28,7 @@ import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -36,6 +38,7 @@ import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.CsvModelManagementService;
@@ -121,6 +124,19 @@ public class DatasourceServiceInMemoryDelegate {
     return false;
   }
 
+  public Boolean deleteModel(String domainId, String modelName) {
+    metadataDomainRepository.removeModel(domainId, modelName);
+    return true;
+  }
+  
+  protected List<String> getPermittedRoleList() {
+    DebugDataAccessViewPermissionHandler  dataAccessViewPermHandler = new DebugDataAccessViewPermissionHandler();
+    return dataAccessViewPermHandler.getPermittedRoleList(PentahoSessionHolder.getSession());
+  }
+  protected List<String> getPermittedUserList() {
+    DebugDataAccessViewPermissionHandler  dataAccessViewPermHandler = new DebugDataAccessViewPermissionHandler();
+    return dataAccessViewPermHandler.getPermittedUserList(PentahoSessionHolder.getSession());
+  }
   
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
     Connection conn = null;
@@ -331,7 +347,9 @@ public class DatasourceServiceInMemoryDelegate {
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
-      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       
       return new BusinessData(domain, data);
@@ -353,7 +371,9 @@ public class DatasourceServiceInMemoryDelegate {
     Domain domain = null;
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
-      domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+      domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       return new BusinessData(domain, data);
@@ -424,7 +444,10 @@ public class DatasourceServiceInMemoryDelegate {
   public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
     try  {
       CsvModelManagementService service = new CsvModelManagementService();
-      Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+
+      Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
       List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
       return  new BusinessData(domain, data);
       } catch(Exception e) {

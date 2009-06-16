@@ -22,6 +22,7 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/ConnectionDebugGwtServlet*"/>
         <exclude name="**/DatasourceDebugGwtServlet*"/>
         <exclude name="**/SwingDatasourceEditor*"/>
+        <exclude name="**/SwingDatasourceSelectionDialog*"/>
         <exclude name="**/ConnectionServiceDelegate*"/>
         <exclude name="**/ConnectionServiceBeanImpl*"/>
         <exclude name="**/DatasourceServiceBeanImpl*"/>
@@ -42,6 +43,9 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/UploadFileDebugServlet*"/>
         <exclude name="**/IDataAccessPermissionHandler*"/>
         <exclude name="**/SimpleDataAccessPermissionHandler*"/>
+        <exclude name="**/IDataAccessViewPermissionHandler*"/>
+        <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>
+        <exclude name="**/DebugDataAccessViewPermissionHandler*"/>        
         <exclude name="**/Messages*"/>                
     </source>
    <public path="wizard/public"/>

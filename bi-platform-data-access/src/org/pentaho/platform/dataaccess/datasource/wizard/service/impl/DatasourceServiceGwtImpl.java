@@ -279,4 +279,18 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
     });
   }
+
+  public void deleteModel(String domainId, String modelName, final XulServiceCallback<Boolean> callback) {
+    SERVICE.deleteModel(domainId, modelName, new AsyncCallback<Boolean>() {
+
+      public void onFailure(Throwable arg0) {
+        callback.error("error deleting the model: ", arg0); //$NON-NLS-1$
+      }
+
+      public void onSuccess(Boolean arg0) {
+        callback.success(arg0);
+      }
+
+    });
+  }
 }

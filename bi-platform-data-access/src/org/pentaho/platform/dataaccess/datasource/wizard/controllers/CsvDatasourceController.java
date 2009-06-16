@@ -12,22 +12,14 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.ui.xul.XulComponent;
-import org.pentaho.ui.xul.XulEventSourceAdapter;
-import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
-import org.pentaho.ui.xul.components.XulListitem;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
-import org.pentaho.ui.xul.containers.XulGrid;
-import org.pentaho.ui.xul.containers.XulListbox;
-import org.pentaho.ui.xul.containers.XulRow;
-import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -38,6 +30,7 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 public class CsvDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
   public static final int MAX_COL_SIZE = 15;
+  public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
   private DatasourceService service;
   private XulDialog regenerateModelConfirmationDialog = null;
@@ -338,9 +331,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
           if(i<aggregationList.size()-1 && (buffer.length()
               + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE)) {
-          buffer.append(", ");  
+          buffer.append(COMMA);  
           } else {
-            buffer.append(" ...");
             break;
           }
         }

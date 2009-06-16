@@ -85,6 +85,10 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
   public void getUploadFilePath(XulServiceCallback<String> callback) throws DatasourceServiceException {
     callback.success(SERVICE.getUploadFilePath());
   }
+
+  public void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) {
+    callback.success(SERVICE.deleteModel(domainId, modelName));
+  }
 }
 
   

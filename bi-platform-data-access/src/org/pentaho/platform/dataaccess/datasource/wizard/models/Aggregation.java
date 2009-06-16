@@ -31,7 +31,6 @@ public class Aggregation  extends XulEventSourceAdapter{
             + this.get(i+1).name().length() < MAX_COL_SIZE)) {
           buffer.append(',');  
         } else {
-          buffer.append(" ...");
           break;
         }
       }

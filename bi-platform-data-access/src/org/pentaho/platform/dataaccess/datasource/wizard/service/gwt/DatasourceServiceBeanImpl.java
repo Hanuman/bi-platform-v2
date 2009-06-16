@@ -86,4 +86,8 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
   public String getUploadFilePath() throws DatasourceServiceException {
     return SERVICE.getUploadFilePath();
   }
+
+  public Boolean deleteModel(String domainId, String modelName) {
+    return SERVICE.deleteModel(domainId, modelName);
+  }
 }

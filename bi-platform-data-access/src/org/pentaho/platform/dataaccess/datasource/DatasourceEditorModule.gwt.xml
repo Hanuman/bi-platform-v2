@@ -18,6 +18,7 @@
         <exclude name="**/ConnectionDebugGwtServlet*"/>
         <exclude name="**/DatasourceDebugGwtServlet*"/>
         <exclude name="**/SwingDatasourceEditor*"/>
+        <exclude name="**/SwingDatasourceSelectionDialog*"/>        
         <exclude name="**/ConnectionServiceDelegate*"/>
         <exclude name="**/ConnectionServiceBeanImpl*"/>
         <exclude name="**/DatasourceServiceBeanImpl*"/>
@@ -37,7 +38,10 @@
         <exclude name="**/UploadFileServlet*"/>
         <exclude name="**/UploadFileDebugServlet*"/>        
         <exclude name="**/IDataAccessPermissionHandler*"/>
-        <exclude name="**/SimpleDataAccessPermissionHandler*"/>                
+        <exclude name="**/SimpleDataAccessPermissionHandler*"/>    
+        <exclude name="**/IDataAccessViewPermissionHandler*"/>
+        <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>   
+        <exclude name="**/DebugDataAccessViewPermissionHandler*"/>                         
         <exclude name="**/Messages*"/>
         
     </source>

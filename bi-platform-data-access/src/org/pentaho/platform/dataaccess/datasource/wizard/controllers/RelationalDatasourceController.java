@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
-import org.pentaho.metadata.model.concept.types.Alignment;
-import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
@@ -19,24 +17,18 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulComponent;
-import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
-import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
-import org.pentaho.ui.xul.components.XulListitem;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
-import org.pentaho.ui.xul.containers.XulGrid;
 import org.pentaho.ui.xul.containers.XulListbox;
-import org.pentaho.ui.xul.containers.XulRow;
-import org.pentaho.ui.xul.containers.XulRows;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeCols;
@@ -50,8 +42,8 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 public class RelationalDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
   public static final int MAX_COL_SIZE = 15;
+  public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
-  
   private XulDialog connectionDialog;
 
   private XulDialog removeConfirmationDialog;
@@ -597,9 +589,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
           if(i<aggregationList.size()-1 && (buffer.length()
               + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE)) {
-          buffer.append(", ");  
+          buffer.append(COMMA);  
           } else {
-            buffer.append(" ...");
             break;
           }
         }

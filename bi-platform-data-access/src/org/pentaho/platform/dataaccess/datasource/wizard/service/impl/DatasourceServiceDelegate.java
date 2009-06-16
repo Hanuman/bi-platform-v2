@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
@@ -54,6 +59,7 @@ import org.pentaho.pms.service.ModelManagementServiceException;
 public class DatasourceServiceDelegate {
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
+  private IDataAccessViewPermissionHandler dataAccessViewPermHandler;
   private IModelManagementService modelManagementService;
   private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
@@ -93,7 +99,49 @@ public class DatasourceServiceDelegate {
     return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
   }
   
-  
+  protected List<String> getPermittedRoleList() {
+    if (dataAccessViewPermHandler == null) {
+      String dataAccessViewClassName = null;
+      try {
+        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        Class<?> clazz = Class.forName(dataAccessViewClassName);
+        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+      } catch (Exception e) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
+          // TODO: Unhardcode once this is an actual plugin
+          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
+      }
+      
+    }
+    if(dataAccessViewPermHandler == null) {
+      return null;
+    }
+    return dataAccessViewPermHandler.getPermittedRoleList(PentahoSessionHolder.getSession());
+  }
+  protected List<String> getPermittedUserList() {
+    if (dataAccessViewPermHandler == null) {
+      String dataAccessViewClassName = null;
+      try {
+        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        Class<?> clazz = Class.forName(dataAccessViewClassName);
+        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+      } catch (Exception e) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
+          // TODO: Unhardcode once this is an actual plugin
+          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
+      }
+      
+    }
+    if(dataAccessViewPermHandler == null) {
+      return null;
+    }
+    return dataAccessViewPermHandler.getPermittedUserList(PentahoSessionHolder.getSession());
+  }
+
   public List<IDatasource> getDatasources() {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -175,6 +223,15 @@ public class DatasourceServiceDelegate {
       }
     }
     return false;
+  }
+  
+  public Boolean deleteModel(String domainId, String modelName) {
+    if (!hasDataAccessPermission()) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+      return null;
+    }
+    metadataDomainRepository.removeModel(domainId, modelName);
+    return true;
   }
 
   
@@ -413,8 +470,10 @@ public class DatasourceServiceDelegate {
       IDataSource dataSource = constructIDataSource(connection, query);
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
           connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
-      
-      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), sqlConnection.getNativeConnection(), query);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+        || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), sqlConnection.getNativeConnection()
+          , query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       
       return new BusinessData(domain, data);
@@ -439,10 +498,13 @@ public class DatasourceServiceDelegate {
     Domain domain = null;
     try {
       IDataSource dataSource = constructIDataSource(connection, query);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
           connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
       domain = getModelManagementService().generateModel(modelName, connection.getName(),
-          sqlConnection.getNativeConnection(), query);
+          sqlConnection.getNativeConnection(), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
       List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return new BusinessData(domain, data);
@@ -475,8 +537,8 @@ public class DatasourceServiceDelegate {
     Boolean returnValue = false;
     LocalizedString domainName = businessData.getDomain().getName();    
     try {
-    getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
-    returnValue = true;
+      getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
+      returnValue = true;
     } catch(DomainStorageException dse) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString()),dse);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName.toString()), dse); //$NON-NLS-1$      
@@ -521,7 +583,11 @@ public class DatasourceServiceDelegate {
 
     try  {
     CsvModelManagementService service = new CsvModelManagementService();
-    Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+    Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+    || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+
+    Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure,securityEnabled,
+        getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
     List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
     return  new BusinessData(domain, data);
     } catch(Exception e) {

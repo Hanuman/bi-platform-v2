@@ -32,6 +32,9 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
     $wnd.openDatasourceEditor= function(callback) {
       editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::show(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);
     }
+    $wnd.deleteModel=function(domainId, modelName, callback) {
+      editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::deleteModel(Ljava/lang/String;Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(domainId, modelName, callback);
+    }
   }-*/;
 
   /**
@@ -68,10 +71,35 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
     editor.showDialog();
   }
 
+  /**
+   * Deletes the selected model
+   *
+   *    onOk(Boolean value);
+   *    onCancel();
+   *    onError(String errorMessage);
+   *
+   * @param callback
+   *
+   */
+  private void deleteModel(String domainId, String modelName, final JavaScriptObject callback) {
+    datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
+      public void success(Boolean value) {
+        notifyCallbackSuccess(callback, value);
+      }
+
+      public void error(String s, Throwable throwable) {
+        notifyCallbackError(callback, throwable.getMessage());
+      }
+    });
+  }
   private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value, WAQRTransport transport)/*-{
     callback.onFinish(value, transport);
   }-*/;
 
+  private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value)/*-{
+  callback.onFinish(value);
+  }-*/;
+  
   private native void notifyCallbackError(JavaScriptObject callback, String error)/*-{
     callback.onError(error);
   }-*/;
