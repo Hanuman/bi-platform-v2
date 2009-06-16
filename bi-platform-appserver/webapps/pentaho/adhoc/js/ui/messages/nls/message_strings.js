@@ -203,5 +203,7 @@ step3_div:"Customize Selections",
 step4_div:"Report Settings",
 IS_NULL: "Is Null",
 IS_NOT_NULL: "Is not Null",
-dataaccessButtonText:"Create Datasource"
+dataaccessAddButtonText:"Add",
+dataaccessDeleteButtonText:"Delete",
+deleteModelWarningMessage:"Deleting selected model will cause all the reports and other artifacts associated with this to not work. Are you sure you want to continue?"	
 }
