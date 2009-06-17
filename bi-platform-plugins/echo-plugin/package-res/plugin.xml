@@ -18,18 +18,19 @@
   1. Echo Web Service 
   Here we are exposing the EchoService java bean as a webservice 
   -->
-  <bean id="echoService" class="org.pentaho.samples.EchoService"/>
   <webservice 
+    id="echoService"
+    type="xml"
     title="Echo Service" 
     description="A sample webservice that echos an input"
-    ref="echoService"/>
+    class="org.pentaho.samples.EchoService"/>
   
   <!-- 
   2. Echo Content Type and Content Generation
      Here we are configuring the system to recognize our new .xecho file type and make it runnable in PUC.
      We are telling the platform to run our content generator, EchoContentGenerator, when an xecho file is "invoked" in PUC.  
   -->
-    <content-type type="xecho" mime-type="text/html">
+  <content-type type="xecho" mime-type="text/html">
     <title>Echo Config</title>
     <description>Echo Config File</description>
     <icon-url>content/echo-res/echo.jpg</icon-url>
