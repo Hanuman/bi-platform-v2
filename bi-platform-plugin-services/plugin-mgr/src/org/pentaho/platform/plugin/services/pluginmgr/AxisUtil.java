@@ -39,7 +39,7 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 import org.xml.sax.InputSource;
@@ -47,7 +47,7 @@ import org.xml.sax.InputSource;
 import com.ibm.wsdl.factory.WSDLFactoryImpl;
 
 public class AxisUtil {
-  public static Definition getWsdlDefinition(AxisConfiguration axisConfig, WebServiceDefinition webservice)
+  public static Definition getWsdlDefinition(AxisConfiguration axisConfig, WebServiceConfig webservice)
       throws Exception {
 
     String wsdlStr = getWsdl(axisConfig, webservice);
@@ -60,7 +60,7 @@ public class AxisUtil {
     return def;
   }
 
-  public static String getWsdl(AxisConfiguration axisConfig, WebServiceDefinition webservice) throws Exception {
+  public static String getWsdl(AxisConfiguration axisConfig, WebServiceConfig webservice) throws Exception {
     Class<?> serviceClass = webservice.getServiceClass();
     String name = serviceClass.getSimpleName();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -108,7 +108,7 @@ public class AxisUtil {
    * @return
    * @throws AxisFault
    */
-  public static AxisService createService(WebServiceDefinition ws, AxisConfiguration axisConfig) throws AxisFault {
+  public static AxisService createService(WebServiceConfig ws, AxisConfiguration axisConfig) throws AxisFault {
     Class<?> serviceClass = ws.getServiceClass();
     String serviceName = ws.getId();
 
@@ -150,7 +150,7 @@ public class AxisUtil {
    * @param wrapper
    * @throws Exception
    */
-  public static void createServiceWsdl(AxisService axisService, WebServiceDefinition wsDef, AxisConfiguration axisConfig) throws Exception {
+  public static void createServiceWsdl(AxisService axisService, WebServiceConfig wsDef, AxisConfiguration axisConfig) throws Exception {
     // specific that we are generating the WSDL
     Parameter useOriginalwsdl = new Parameter();
     useOriginalwsdl.setName("useOriginalwsdl"); //$NON-NLS-1$
@@ -167,7 +167,7 @@ public class AxisUtil {
     axisService.addParameter(wsdl);
   }
   
-  public static WebServiceDefinition getSourceDefinition(AxisService axisService, SystemSolutionAxisConfigurator axisConfigurator) {
+  public static WebServiceConfig getSourceDefinition(AxisService axisService, SystemSolutionAxisConfigurator axisConfigurator) {
     return axisConfigurator.getWebServiceDefinition(axisService.getName());
   }
   

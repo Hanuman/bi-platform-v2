@@ -28,7 +28,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
@@ -99,7 +99,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
   protected void getTitleSection( AxisService axisService, AxisConfiguration axisConfiguration, StringBuilder sb ) {
 
     // get the wrapper for the web service so we can get the localized title and description
-    WebServiceDefinition wsDef = AxisUtil.getSourceDefinition(axisService, (SystemSolutionAxisConfigurator)axisConfiguration.getConfigurator());
+    WebServiceConfig wsDef = AxisUtil.getSourceDefinition(axisService, (SystemSolutionAxisConfigurator)axisConfiguration.getConfigurator());
 
     sb.append( "<table>\n<tr>\n<td colspan=\"2\"><h2>" ).append( wsDef.getTitle() ).append( "</h2></td></tr>\n<tr><td>" ); //$NON-NLS-1$ //$NON-NLS-2$
 

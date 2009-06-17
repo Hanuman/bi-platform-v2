@@ -49,11 +49,12 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IServiceManager;
+import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
@@ -84,7 +85,7 @@ public class AxisWebServiceManagerTest {
 
   StandaloneSession session;
 
-  IServiceManager serviceManager;
+  IServiceTypeManager serviceManager;
 
   @Before
   public void init0() {
@@ -101,14 +102,14 @@ public class AxisWebServiceManagerTest {
   public void testWebserviceRegistration() throws Exception {
     microPlatform.init();
 
-    WebServiceDefinition wsDfn = new WebServiceDefinition();
+    WebServiceConfig wsDfn = new WebServiceConfig();
     wsDfn.setDescription("testDescription");
     wsDfn.setEnabled(true);
     wsDfn.setTitle("testTitle");
     wsDfn.setDescription("testDescription");
     wsDfn.setServiceClass(EchoServiceBean.class);
-    serviceManager.defineService(wsDfn);
-    serviceManager.initServices(session);
+    serviceManager.registerService(wsDfn);
+    serviceManager.initServices();
 
     IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
 

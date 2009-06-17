@@ -10,7 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDelegate;
-import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 
 public class DatasourceServiceBeanImpl implements DatasourceGwtService {
 

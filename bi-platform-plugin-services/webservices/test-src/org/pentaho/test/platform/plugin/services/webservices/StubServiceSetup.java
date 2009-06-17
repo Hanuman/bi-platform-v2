@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 
 
@@ -67,7 +67,7 @@ public class StubServiceSetup extends SystemSolutionAxisConfigurator {
   
   @Override
   public boolean setEnabled( String name, boolean enabled ) {
-    WebServiceDefinition wrapper = getWebServiceDefinition( name );
+    WebServiceConfig wrapper = getWebServiceDefinition( name );
     wrapper.setEnabled(enabled);
     //FIXME: service is not available through the definition bean
 //    AxisService axisService = wrapper.getService( );
@@ -76,8 +76,8 @@ public class StubServiceSetup extends SystemSolutionAxisConfigurator {
   }
   
   @Override
-  protected List<WebServiceDefinition> getWebServiceDefinitions() {
-    List<WebServiceDefinition> wrappers = new ArrayList<WebServiceDefinition>();
+  protected List<WebServiceConfig> getWebServiceDefinitions() {
+    List<WebServiceConfig> wrappers = new ArrayList<WebServiceConfig>();
     wrappers.add( new StubServiceWrapper() );
     wrappers.add( new StubService2Wrapper() );
     wrappers.add( new StubService3Wrapper() );

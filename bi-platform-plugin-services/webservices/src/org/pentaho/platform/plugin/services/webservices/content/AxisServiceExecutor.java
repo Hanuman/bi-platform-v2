@@ -36,8 +36,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.webservices.AxisServletHooks;
-import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**

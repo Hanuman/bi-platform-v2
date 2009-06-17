@@ -18,12 +18,8 @@
 package org.pentaho.platform.plugin.services.metadata;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,16 +40,15 @@ import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.FileBasedMetadataDomainRepository;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.RowLevelSecurityHelper;
-import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
-import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 /**

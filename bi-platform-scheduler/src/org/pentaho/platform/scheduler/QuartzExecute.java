@@ -44,6 +44,7 @@ import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoBase;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.BaseRequestHandler;
@@ -227,9 +228,7 @@ public class QuartzExecute extends PentahoBase implements Job {
             rt.dispose();
           }
           // Destroy the session: it was only created to execute this job.
-          if (executeSession != null) {
-            executeSession.destroy();
-          }
+          PentahoSessionHolder.removeSession();
         }
       } else {
         // use content generator to execute
@@ -272,9 +271,7 @@ public class QuartzExecute extends PentahoBase implements Job {
           }
         } finally {
           // Destroy the session: it was only created to execute this job.
-          if (executeSession != null) {
-            executeSession.destroy();
-          }
+          PentahoSessionHolder.removeSession();
         }
 
       }

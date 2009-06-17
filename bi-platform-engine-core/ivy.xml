@@ -28,6 +28,7 @@
 
 		<!--  external test dependencies -->
         <dependency org="junit"               name="junit"               rev="4.4"   conf="test->default"/>
+        <dependency org="org.jmock" name="jmock-junit4" rev="2.5.1" conf="test->default" />
         
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections"      rev="${dependency.pentaho-connections.revision}" changing="true"/>

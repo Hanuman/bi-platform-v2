@@ -24,19 +24,25 @@ import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 
-public class WebServiceDefinition {
+public class WebServiceConfig {
   
   private Class<?> serviceClass;
   private Collection<Class<?>> extraClasses;
   private String title, description, id;
-  private boolean enabled = true;
+  private ServiceType serviceType;
+  private boolean enabled = true; //does this really belong here, or in the service manager? 
+  public enum ServiceType { GWT, XML };
   
   /**
    * Returns the unique id of this web service. This should not be localized
    * @return a unique id for this web service
    */
   public String getId() {
-    return (StringUtils.isEmpty(id))?getServiceClass().getSimpleName():id;
+    return id;
+  }
+  
+  public void setId(String id) {
+    this.id = id;
   }
   
   /**
@@ -67,7 +73,6 @@ public class WebServiceDefinition {
     return serviceClass;
   }
 
-
   public void setServiceClass(Class<?> serviceClass) {
     this.serviceClass = serviceClass;
   }
@@ -75,17 +80,18 @@ public class WebServiceDefinition {
   public void setExtraClasses(Collection<Class<?>> extraClasses) {
     this.extraClasses = extraClasses;
   }
-
-  public void setTitle(String title) {
-    this.title = title;
+  
+  /**
+   * Returns the localized title for this web service. This is shown on the 
+   * services list page.  Defaults to service id if not set.
+   * @return natural language name for the service
+   */
+  public String getTitle() {
+    return (StringUtils.isEmpty(title))?getId():title;
   }
   
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   /**
@@ -96,14 +102,16 @@ public class WebServiceDefinition {
   public String getDescription() {
     return description;
   }
-
-  /**
-   * Returns the localized title for this web service. This is shown on the 
-   * services list page.  Defaults to service id if not set.
-   * @return natural language name for the service
-   */
-  public String getTitle() {
-    return (StringUtils.isEmpty(title))?getId():title;
+  
+  public void setDescription(String description) {
+    this.description = description;
+  }
+  
+  public ServiceType getServiceType() {
+    return serviceType;
   }
 
+  public void setServiceType(ServiceType serviceType) {
+    this.serviceType = serviceType;
+  }
 }

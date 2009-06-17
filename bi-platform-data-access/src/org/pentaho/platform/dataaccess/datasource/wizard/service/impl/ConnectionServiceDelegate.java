@@ -13,11 +13,11 @@ import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 
 public class ConnectionServiceDelegate {
   

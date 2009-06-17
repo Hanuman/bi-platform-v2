@@ -61,6 +61,16 @@ public class StandaloneSession extends BaseSession {
   public StandaloneSession(final String name, final String id, final Locale locale) {
     super(name, id, locale);
     attributes = new HashMap();
+    /*
+     * We are binding this session to the thread here so this non request-based session
+     * will be available to callers via PentahoSessionHolder.getSession().  We do not 
+     * call setSession from other subclasses of IPentahoSession because they already have
+     * mechanisms for binding themselves to the PentahoSessionHolder with J2EE constructs
+     * such as ServletRequestListener.  See PentahoHttpRequestListener.  Since the 
+     * StandaloneSession is created manually and not through the J2EE container, we must
+     * bind it to the thread explicitly.
+     */
+    PentahoSessionHolder.setSession(this);
   }
 
   public Iterator getAttributeNames() {

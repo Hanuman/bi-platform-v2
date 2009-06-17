@@ -13,9 +13,11 @@
   <bean id="genericBean" class="java.lang.Object" />
   
   <webservice 
+    type="xml,gwt"
     title="%TestWS1.TITLE%" 
     description="A test webservice"
     class="org.pentaho.test.platform.engine.core.EchoServiceBean">
+    <extra class="java.lang.String"/>
   </webservice>
   <!-- webservice 
     title="%TestWS.TITLE%" 

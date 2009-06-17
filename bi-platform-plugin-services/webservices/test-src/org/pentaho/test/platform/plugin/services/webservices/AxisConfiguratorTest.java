@@ -23,7 +23,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 

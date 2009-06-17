@@ -33,7 +33,6 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -176,6 +175,8 @@ public class SystemPathPluginProviderTest {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
     List<IPlatformPlugin> plugins = provider.getPlugins(new StandaloneSession());
     
+    System.out.println(PluginMessageLogger.getAll());
+    
     IPlatformPlugin plugin = (IPlatformPlugin) CollectionUtils
     .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
@@ -184,18 +185,22 @@ public class SystemPathPluginProviderTest {
     
     Object wsobj = CollectionUtils.find(webservices, new Predicate() {
       public boolean evaluate(Object object) {
-        WebServiceDefinition ws = (WebServiceDefinition)object;
-        boolean ret = ws.getTitle().equals("%TestWS1.TITLE%");
+        IPlatformPlugin.WebServiceDefinition ws = (IPlatformPlugin.WebServiceDefinition)object;
+        boolean ret = ws.title.equals("%TestWS1.TITLE%");
         return ret;
       }
     });
+    
     assertNotNull("Webservice \"%TestWS1.TITLE%\" should have been loaded", wsobj);
     
-    WebServiceDefinition wsDfn = (WebServiceDefinition)wsobj;
+    IPlatformPlugin.WebServiceDefinition wsDfn = (IPlatformPlugin.WebServiceDefinition)wsobj;
     
-    assertEquals("org.pentaho.test.platform.engine.core.EchoServiceBean", wsDfn.getServiceClass().getName());
-    
-    System.out.println(PluginMessageLogger.getAll());
+    assertEquals("org.pentaho.test.platform.engine.core.EchoServiceBean", wsDfn.serviceClass);
+    assertEquals("xml", wsDfn.types[0]);
+    assertEquals("gwt", wsDfn.types[1]);
+    assertEquals("A test webservice", wsDfn.description);
+    assertEquals(1, wsDfn.extraClasses.size());
+    assertEquals("java.lang.String", wsDfn.extraClasses.iterator().next());
   }
 
   @Test

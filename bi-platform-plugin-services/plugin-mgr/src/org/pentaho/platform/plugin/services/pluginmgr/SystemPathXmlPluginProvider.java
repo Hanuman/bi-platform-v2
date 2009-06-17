@@ -201,26 +201,32 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
 
       pws.id = getProperty(node, "id"); //$NON-NLS-1$
+      String type = getProperty(node, "type"); //$NON-NLS-1$
+      if(!StringUtils.isEmpty(type)) {
+        pws.types = type.split(","); //$NON-NLS-1$
+      }
       pws.title = getProperty(node, "title"); //$NON-NLS-1$
       pws.description = getProperty(node, "description"); //$NON-NLS-1$
       
       //TODO: add support for inline service class definition
       pws.serviceBeanId = getProperty(node, "ref"); //$NON-NLS-1$
+      pws.serviceClass = getProperty(node, "class"); //$NON-NLS-1$
 
       Collection<String> extraClasses = new ArrayList<String>();
       List<?> extraNodes = node.selectNodes("extra"); //$NON-NLS-1$
       for (Object extra : extraNodes) {
         Element extraElement = (Element) extra;
-        String extraClass = XmlDom4JHelper.getNodeText("class", extraElement); //$NON-NLS-1$
+        String extraClass = getProperty(extraElement, "class"); //$NON-NLS-1$
         if (extraClasses != null) {
           extraClasses.add(extraClass);
         }
       }
+      pws.extraClasses = extraClasses;
 
-      if (pws.serviceBeanId != null) {
-        plugin.addWebservice(pws);
+      if (pws.serviceBeanId == null && pws.serviceClass == null) {
+        PluginMessageLogger.add(Messages.getString("PluginManager.NO_SERVICE_CLASS_FOUND")); //$NON-NLS-1$
       } else {
-        PluginMessageLogger.add(Messages.getString("PluginManager.WEBSERVICE_NOT_REGISTERED")); //$NON-NLS-1$
+        plugin.addWebservice(pws);
       }
     }
   }

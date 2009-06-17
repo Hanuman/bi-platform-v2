@@ -6,14 +6,16 @@
      <static-path url="/data-access/resources" localFolder="resources"/>
    </static-paths>
    
-   <bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl" />
-   <bean id="datasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
+   <!-- bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl" /-->
+   <webservice 
+    id="datasourceService" 
+    type="gwt"
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
    
   <webservice
-    id="ConnectionService"
-    type="ws,gwt-rpc"
+    id="connectionService"
+    type="xml,gwt"
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
-    ref="connectionService">
-  </webservice>
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl"/>
 </plugin>

@@ -20,10 +20,10 @@ package org.pentaho.test.platform.plugin.services.webservices;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 
 
-public class StubServiceWrapper extends WebServiceDefinition {
+public class StubServiceWrapper extends WebServiceConfig {
 
   public Class<?> getServiceClass() {
     return StubService.class;

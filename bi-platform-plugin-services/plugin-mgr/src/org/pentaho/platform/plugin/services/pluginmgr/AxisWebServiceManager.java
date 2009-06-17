@@ -22,13 +22,13 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 
-public class AxisWebServiceManager implements IServiceManager {
+public class AxisWebServiceManager extends AbstractServiceTypeManager {
   
   public static ConfigurationContext currentAxisConfigContext;
 
@@ -39,15 +39,16 @@ public class AxisWebServiceManager implements IServiceManager {
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#defineService(org.pentaho.platform.plugin.services.pluginmgr.WebServiceDefinition)
    */
-  public void defineService( WebServiceDefinition wsDefinition ) {
-    configurator.addService(wsDefinition);
+  public void registerService(final WebServiceConfig wsConfig ) {
+    configurator.addService(wsConfig);
+    registeredServiceConfigs.add(wsConfig);
   }
   
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#initServices()
    */
-  public void initServices(IPentahoSession session) throws ServiceInitializationException {
-    configurator.setSession(session);
+  public void initServices() throws ServiceInitializationException {
+    configurator.setSession(PentahoSessionHolder.getSession());
     AxisConfigurator axisConfigurator = configurator;
     
     //create the axis configuration and make it accessible to content generators via static member
@@ -66,4 +67,12 @@ public class AxisWebServiceManager implements IServiceManager {
     axisConfigurator.loadServices();
   }
 
+  public Object getServiceBean(String serviceId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public ServiceType getSupportedServiceType() {
+    return ServiceType.XML;
+  }
 }

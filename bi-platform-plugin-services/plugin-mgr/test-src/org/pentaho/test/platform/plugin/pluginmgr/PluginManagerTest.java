@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,20 +48,26 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IServiceManager;
+import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
+import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.GwtRpcServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
@@ -70,10 +75,12 @@ import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvide
 import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
+import org.pentaho.test.platform.engine.core.EchoServiceBean;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 import org.pentaho.test.platform.plugin.services.webservices.MimeTypeListener;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
+
 
 @SuppressWarnings("nls")
 public class PluginManagerTest {
@@ -83,6 +90,8 @@ public class PluginManagerTest {
   StandaloneSession session;
 
   IPluginManager pluginManager;
+  
+  
 
   @Before
   public void init0() {
@@ -90,11 +99,10 @@ public class PluginManagerTest {
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
-    microPlatform.define(IServiceManager.class, AxisWebServiceManager.class);
+    microPlatform.define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL);
 
     session = new StandaloneSession();
     pluginManager = new PluginManager();
-
   }
 
   @Test
@@ -261,7 +269,7 @@ public class PluginManagerTest {
     MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
     mp.define(ISolutionEngine.class, SolutionEngine.class);
     mp.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
-    mp.define(IServiceManager.class, AxisWebServiceManager.class);
+    mp.define(IServiceManager.class, DefaultServiceManager.class);
     mp.define(IPluginProvider.class, Tst8PluginProvider.class).init();
 
     //reload should register the beans
@@ -414,6 +422,34 @@ public class PluginManagerTest {
     assertNotNull("Should have found a plugin to serve resource '/test/13/static/url/blah/blah/blah'", plugin2);
     
     assertEquals("The service plugin should have been the same for both paths", plugin1, plugin2);
+  }
+  
+  @Test
+  public void test14_webservice_registration() {
+    microPlatform.define(IPluginProvider.class, Tst14PluginProvider.class);
+    
+    microPlatform.init();
+    
+    //register the gwt service handler
+    IServiceTypeManager gwtHandler = new GwtRpcServiceManager();
+    PentahoSystem.get(IServiceManager.class, session).setServiceTypeManagers(Arrays.asList(gwtHandler));
+    
+    PluginMessageLogger.clear();
+    
+    pluginManager.reload(session);
+    
+    //print messages before assert so we can see what went wrong if assert fails
+    System.out.println(PluginMessageLogger.prettyPrint());
+    
+    assertEquals("Errors occurred during webservice registration (see log)", 0, PluginMessageLogger.count("PluginManager.ERR"));
+    //at this point we know that no errors were logged, but we need to make sure the service was registered 
+    //with the service manager.  We'll use a mock service manager to test this, since the default service manager
+    //is a heavy Axis-backed impl, requiring an http server
+    
+    WebServiceConfig config = gwtHandler.getServiceConfig("EchoServiceBean");
+    assertNotNull("The GWT service manager should have a service registered by name 'EchoServiceBean'", config);
+    assertEquals(ServiceType.GWT, config.getServiceType());
+    assertEquals(EchoServiceBean.class, config.getServiceClass());
   }
   
   private String getContentAsString(IContentGenerator cg) throws Exception {
@@ -638,5 +674,20 @@ public class PluginManagerTest {
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
+  
+  public static class Tst14PluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("test14Plugin");
+      IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
+      pws.types = new String[]{"gwt"};
+      pws.title = "ws14title";
+      pws.description = "ws14description";
+      pws.serviceClass = "org.pentaho.test.platform.engine.core.EchoServiceBean";
+      p.addWebservice(pws);
 
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
 }

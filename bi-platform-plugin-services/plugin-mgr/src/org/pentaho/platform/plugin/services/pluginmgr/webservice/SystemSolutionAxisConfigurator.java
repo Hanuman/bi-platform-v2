@@ -26,7 +26,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.messages.Messages;
@@ -49,7 +49,7 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
 
   private static final Log logger = LogFactory.getLog(SystemSolutionAxisConfigurator.class);
 
-  protected List<WebServiceDefinition> wsDfns = new ArrayList<WebServiceDefinition>();
+  protected List<WebServiceConfig> wsDfns = new ArrayList<WebServiceConfig>();
   
   public SystemSolutionAxisConfigurator() {
     super();
@@ -89,12 +89,12 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
     return true;
   }
   
-  public void addService( WebServiceDefinition ws ) {
+  public void addService( WebServiceConfig ws ) {
     wsDfns.add(ws);
   }
   
   @Override
-  protected List<WebServiceDefinition> getWebServiceDefinitions() {
+  protected List<WebServiceConfig> getWebServiceDefinitions() {
 
     return wsDfns;
   }

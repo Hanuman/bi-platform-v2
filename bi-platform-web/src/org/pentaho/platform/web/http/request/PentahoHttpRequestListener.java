@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 
 /**
@@ -41,7 +41,7 @@ public class PentahoHttpRequestListener implements ServletRequestListener {
     if(logger.isTraceEnabled()) {
       logger.trace("unbinding session "+PentahoSessionHolder.getSession()+" from request: "+sre.getServletRequest());
     }
-    PentahoSessionHolder.setSession(null);
+    PentahoSessionHolder.removeSession();
   }
 
   public void requestInitialized(ServletRequestEvent sre) {

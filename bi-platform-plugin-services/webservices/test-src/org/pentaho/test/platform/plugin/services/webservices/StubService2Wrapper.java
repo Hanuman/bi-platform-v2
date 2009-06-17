@@ -19,10 +19,10 @@ package org.pentaho.test.platform.plugin.services.webservices;
 
 import java.util.Collection;
 
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 
 
-public class StubService2Wrapper extends WebServiceDefinition {
+public class StubService2Wrapper extends WebServiceConfig {
 
   public StubService2Wrapper() {
     setEnabled( false );

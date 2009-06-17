@@ -19,6 +19,7 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,10 +45,12 @@ import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+import org.pentaho.platform.api.engine.ServiceException;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -126,7 +129,7 @@ public class PluginManager extends AbstractPluginManager {
 
     IServiceManager svcManager = PentahoSystem.get(IServiceManager.class, null);
     try {
-      svcManager.initServices(session);
+      svcManager.initServices();
     } catch (ServiceInitializationException e) {
       String msg = Messages.getErrorString("PluginManager.ERROR_0022_SERVICE_INITIALIZATION_FAILED"); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, e);
@@ -189,7 +192,7 @@ public class PluginManager extends AbstractPluginManager {
 
     //service registry must take place after bean registry since
     //a service class may be configured as a plugin bean
-    registerServices(plugin);
+    registerServices(plugin, loader);
 
     PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
     try {
@@ -256,52 +259,95 @@ public class PluginManager extends AbstractPluginManager {
     for (BeanDefinition def : plugin.getBeans()) {
       //register by classname if id is null
       def.beanId = (def.beanId == null) ? def.classname : def.beanId;
-      if (objectFactory.objectDefined(def.beanId)) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
-            "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", def.beanId, plugin.getName())); //$NON-NLS-1$
-      }
-      //right now we support only prototype scope for beans
-      objectFactory.defineObject(def.beanId, def.classname, Scope.LOCAL, loader);
+      registerClass(plugin, def.beanId, def.classname, loader);
     }
   }
 
-  private void registerServices(IPlatformPlugin plugin) throws PlatformPluginRegistrationException {
+  /*
+   * A utility method that wraps plugin class registration with proper error handling and messaging
+   */
+  private void registerClass(IPlatformPlugin plugin, String id, String classname, ClassLoader loader)
+      throws PlatformPluginRegistrationException {
+    if (objectFactory.objectDefined(id)) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", id, plugin.getName())); //$NON-NLS-1$
+    }
+    //right now we support only prototype scope for beans
+    objectFactory.defineObject(id, classname, Scope.LOCAL, loader);
+  }
+
+  private void registerServices(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
     IServiceManager svcManager = PentahoSystem.get(IServiceManager.class, null);
 
     for (IPlatformPlugin.WebServiceDefinition pws : plugin.getWebservices()) {
-      svcManager.defineService(toWebServiceDefinition(pws, plugin));
+      for (WebServiceConfig ws : createServiceConfigs(pws, plugin, loader)) {
+        try {
+          svcManager.registerService(ws);
+        } catch (ServiceException e) {
+          throw new PlatformPluginRegistrationException("Failed to register service for plugin "+plugin.getName(), e);
+        }
+      }
     }
   }
 
   /* 
-   * A util method to convert plugin version of webservice definition to the official engine version
+   * A utility method to convert plugin version of webservice definition to the official engine version
    * consumable by an IServiceManager 
    */
-  private WebServiceDefinition toWebServiceDefinition(IPlatformPlugin.WebServiceDefinition pws, IPlatformPlugin plugin)
-      throws PlatformPluginRegistrationException {
-    WebServiceDefinition wsDef = new WebServiceDefinition();
-    wsDef.setId(pws.id);
-    wsDef.setTitle(pws.title);
-    wsDef.setDescription(pws.description);
-    if (!this.isBeanRegistered(pws.serviceBeanId)) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0020_NO_SERVICE_CLASS_REGISTERED", pws.serviceBeanId)); //$NON-NLS-1$
-    }
+  private Collection<WebServiceConfig> createServiceConfigs(IPlatformPlugin.WebServiceDefinition pws,
+      IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
+    Collection<WebServiceConfig> services = new ArrayList<WebServiceConfig>();
 
-    try {
-      wsDef.setServiceClass(this.loadClass(pws.serviceBeanId));
+    //Set the service type (one service config instance created per service type)
+    //
+    for (String type : pws.types) {
+      WebServiceConfig ws = new WebServiceConfig();
+      ws.setServiceType(ServiceType.valueOf(type.toUpperCase()));
+      ws.setTitle(pws.title);
+      ws.setDescription(pws.description);
+      String serviceClassName = (StringUtils.isEmpty(pws.serviceClass)) ? pws.serviceBeanId : pws.serviceClass;
 
-      ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-      for (String extraClass : pws.extraClasses) {
-        classes.add(this.getBean(extraClass).getClass());
+      String serviceId;
+      if (!StringUtils.isEmpty(pws.id)) {
+        serviceId = pws.id;
+      }else {
+        serviceId = serviceClassName;
+        if(serviceClassName.indexOf('.') > 0) {
+          serviceId = serviceClassName.substring(serviceClassName.lastIndexOf('.')+1);
+        }
       }
-      wsDef.setExtraClasses(classes);
-    } catch (PluginBeanException e) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0021_SERVICE_CLASS_LOAD_FAILED" + pws.serviceBeanId, pws.title), e); //$NON-NLS-1$
+      ws.setId(serviceId);
+
+      //Register the service class
+      //
+      final String serviceClassKey = ws.getServiceType() + "-" + ws.getId() + "/" + serviceClassName; //$NON-NLS-1$ //$NON-NLS-2$
+      registerClass(plugin, serviceClassKey, serviceClassName, loader);
+
+      if (!this.isBeanRegistered(serviceClassKey)) {
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+            "PluginManager.ERROR_0020_NO_SERVICE_CLASS_REGISTERED", serviceClassKey)); //$NON-NLS-1$
+      }
+
+      //Load/set the service class and supporting types
+      //
+      try {
+        ws.setServiceClass(loadClass(serviceClassKey));
+
+        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        if (pws.extraClasses != null) {
+          for (String extraClass : pws.extraClasses) {
+            classes.add(loadClass(extraClass));
+          }
+        }
+        ws.setExtraClasses(classes);
+      } catch (PluginBeanException e) {
+        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+            "PluginManager.ERROR_0021_SERVICE_CLASS_LOAD_FAILED", serviceClassKey), e); //$NON-NLS-1$
+      }
+      services.add(ws);
     }
 
-    return wsDef;
+    return services;
   }
 
   private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
@@ -319,7 +365,7 @@ public class PluginManager extends AbstractPluginManager {
     }
     return loader;
   }
-  
+
   public ClassLoader getClassLoader(IPlatformPlugin plugin) {
     return classLoaderMap.get(plugin.getSourceDescription());
   }
@@ -387,7 +433,9 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public Object getBean(String beanId) throws PluginBeanException {
-    assert (beanId != null);
+    if (beanId == null) {
+      throw new IllegalArgumentException("beanId cannot be null"); //$NON-NLS-1$
+    }
     if (objectFactory.objectDefined(beanId)) {
       Object bean = null;
       try {
@@ -406,21 +454,24 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public Class<?> loadClass(String beanId) throws PluginBeanException {
-    assert (beanId != null);
+    if (beanId == null) {
+      throw new IllegalArgumentException("beanId cannot be null"); //$NON-NLS-1$
+    }
     if (objectFactory.objectDefined(beanId)) {
-      Object bean = null;
       try {
         return objectFactory.getImplementingClass(beanId);
       } catch (Throwable ex) { // Catching throwable on purpose
         throw new PluginBeanException(ex);
       }
     } else {
-      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
+      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED", beanId)); //$NON-NLS-1$
     }
   }
 
   public boolean isBeanRegistered(String beanId) {
-    assert (beanId != null);
+    if (beanId == null) {
+      throw new IllegalArgumentException("beanId cannot be null"); //$NON-NLS-1$
+    }
     return objectFactory.objectDefined(beanId);
   }
 
@@ -463,7 +514,7 @@ public class PluginManager extends AbstractPluginManager {
     return fileInfo;
   }
 
-  private IFileInfo getLegacyFileInfo(IFileInfoGenerator fileInfoGenerator, IPentahoSession session,
+  private static IFileInfo getLegacyFileInfo(IFileInfoGenerator fileInfoGenerator, IPentahoSession session,
       ISolutionFile solutionFile) {
     IFileInfo fileInfo = null;
     try {
@@ -501,22 +552,22 @@ public class PluginManager extends AbstractPluginManager {
   public IPlatformPlugin isResourceLoadable(String path) {
     return getServicePlugin(path);
   }
-  
+
   public IPlatformPlugin getServicePlugin(String path) {
     //normalize path for comparison
-    path = (path.startsWith("/"))?path.substring(1):path;
-    
+    path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
+
     for (IPlatformPlugin plugin : plugins) {
       Map<String, String> resourceMap = plugin.getStaticResourceMap();
       for (String url : resourceMap.keySet()) {
         //normalize static url for comparison
-        url = (url.startsWith("/"))?url.substring(1):url;
+        url = (url.startsWith("/")) ? url.substring(1) : url; //$NON-NLS-1$
         if (path.startsWith(url)) {
           return plugin;
         }
       }
-      
-      for(IContentGeneratorInfo contentGenerator : plugin.getContentGenerators()) {
+
+      for (IContentGeneratorInfo contentGenerator : plugin.getContentGenerators()) {
         String cgId = contentGenerator.getId();
         //content generator ids cannot start with '/', so no need to normalize cg ids
         if (path.startsWith(cgId)) {
@@ -524,7 +575,7 @@ public class PluginManager extends AbstractPluginManager {
         }
       }
     }
-    
+
     return null;
   }
 
