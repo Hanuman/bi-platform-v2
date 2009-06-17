@@ -71,6 +71,8 @@
 		<dependency org="javax.xml" name="jaxrpc-api" rev="1.1" />
 		<dependency org="jcommon-logging-log4jlog" name="jcommon-logging-log4jlog" rev="1.0.2" />
 		<dependency org="poi" name="poi" rev="3.0.1-jdk122-final-20071014" />
+	    <dependency org="joda-time" name="joda-time" rev="1.6" transitive="false"/>
+	    <dependency org="commons-math" name="commons-math" rev="1.1" transitive="false"/>
 
 <!-- SAXON -->
 		<dependency org="net.sf.saxon" name="saxon" rev="8.5.1" />
