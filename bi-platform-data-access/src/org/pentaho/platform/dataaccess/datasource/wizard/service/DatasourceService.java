@@ -9,8 +9,6 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.ui.xul.XulServiceCallback;
 
-import com.google.gwt.user.client.ui.FormPanel;
-
 public interface DatasourceService {
   void getDatasources(XulServiceCallback<List<IDatasource>> callback);
   void getDatasourceByName(String name, XulServiceCallback<IDatasource> callback);
@@ -18,7 +16,7 @@ public interface DatasourceService {
   void deleteDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback);
   void updateDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback);
   void deleteDatasource(String name, XulServiceCallback<Boolean> callback);
-  void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback);
+  void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) throws DatasourceServiceException;
   void doPreview(IConnection connection, String query, String previewLimit, XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException;
   void doPreview(IDatasource datasource, XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException;
   void generateModel(String modelName, IConnection connection, String query, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;

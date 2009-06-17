@@ -112,6 +112,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
+    datasourceModel.getCsvModel().setHeadersPresent(true);
   }
   
   public void setSelectedCsvDataRow(int row){

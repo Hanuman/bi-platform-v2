@@ -4,6 +4,7 @@ import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -82,15 +83,19 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
    *
    */
   private void deleteModel(String domainId, String modelName, final JavaScriptObject callback) {
-    datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
-      public void success(Boolean value) {
-        notifyCallbackSuccess(callback, value);
-      }
+    try {
+      datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
+        public void success(Boolean value) {
+          notifyCallbackSuccess(callback, value);
+        }
 
-      public void error(String s, Throwable throwable) {
-        notifyCallbackError(callback, throwable.getMessage());
-      }
-    });
+        public void error(String s, Throwable throwable) {
+          notifyCallbackError(callback, throwable.getMessage());
+        }
+      });
+    } catch (DatasourceServiceException e) {
+      notifyCallbackError(callback, e.getMessage());
+    }
   }
   private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value, WAQRTransport transport)/*-{
     callback.onFinish(value, transport);
