@@ -124,8 +124,16 @@ public class DatasourceServiceInMemoryDelegate {
     return false;
   }
 
-  public Boolean deleteModel(String domainId, String modelName) {
-    metadataDomainRepository.removeModel(domainId, modelName);
+  public Boolean deleteModel(String domainId, String modelName) { // throws DatasourceServiceException {
+    try {
+      metadataDomainRepository.removeModel(domainId, modelName);
+    } catch(DomainStorageException dse) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainId),dse);
+      return false; // throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainId), dse); //$NON-NLS-1$      
+    } catch(DomainIdNullException dne) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
+      return false; // throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
+    }
     return true;
   }
   

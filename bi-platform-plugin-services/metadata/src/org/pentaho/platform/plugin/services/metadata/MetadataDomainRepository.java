@@ -18,8 +18,12 @@
 package org.pentaho.platform.plugin.services.metadata;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,9 +38,13 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.repository.DomainAlreadyExistsException;
+import org.pentaho.metadata.repository.DomainIdNullException;
+import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.FileBasedMetadataDomainRepository;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.RowLevelSecurityHelper;
+import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -46,6 +54,7 @@ import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
+import org.pentaho.platform.util.messages.LocaleHelper;
 
 /**
  * This is the platform implementation of the IMetadataDomainRepository.
@@ -57,6 +66,8 @@ import org.pentaho.platform.plugin.services.webservices.PentahoSessionHolder;
  */
 public class MetadataDomainRepository extends FileBasedMetadataDomainRepository {
   
+  private static final String LEGACY_LOCATION = "__LEGACY_LOCATION_"; //$NON-NLS-1$
+
   protected final Log logger = LogFactory.getLog(MetadataDomainRepository.class);
   
   public static String XMI_FILENAME = "metadata.xmi"; //$NON-NLS-1$
@@ -107,6 +118,18 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     reloadLegacyDomains(true);
   }
   
+  public synchronized void removeDomain(String domainId) {
+    // determine if domain is legacy or not
+    Domain domain = domains.get(domainId);
+    
+    if (domain.getProperty(LEGACY_LOCATION) != null) {
+      // this is an xmi based domain, remove it
+      removeLegacyDomain(domainId);
+    } else {
+      super.removeDomain(domainId);
+    }
+  }
+  
   public Domain getDomain(String id) {
     Domain domain = super.getDomain(id);
     if (domain == null) {
@@ -116,6 +139,11 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     } else {
       return domain;
     }
+  }
+ 
+  public synchronized void removeLegacyDomain(String domainId) {
+    ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
+    repo.removeSolutionFile(domainId + "/" + XMI_FILENAME);
   }
   
   @SuppressWarnings("unchecked")
@@ -151,6 +179,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       try {
         xmiInputStream = repo.getResourceInputStream(resourceName, true);
         Domain domain = new XmiParser().parseXmi(xmiInputStream);
+        domain.setProperty(LEGACY_LOCATION, resourceName); //$NON-NLS-1$
         domain.setId(solution);
         domains.put(solution, domain);
       } catch (Throwable t) {
@@ -161,6 +190,43 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       return result;
     }
     return result;
+  }
+  
+  public synchronized void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+    if (domain.getId() == null) {
+      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+    }
+
+    if (!overwrite && domains != null && domains.get(domain.getId()) != null) {
+      throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+    }
+
+    if (domain.getProperty(LEGACY_LOCATION) != null) {
+      storeLegacyDomain(domain, overwrite);
+    } else {
+      super.storeDomain(domain, overwrite);
+    }
+  }
+  
+  public synchronized void storeLegacyDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+
+    if (domain.getId() == null) {
+      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+    }
+    
+    // only allow editing vs. creation
+    if (!overwrite) {
+      throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+    }
+    
+    XmiParser parser = new XmiParser();
+    String xmi = parser.generateXmi(domain);
+    try {
+      ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
+      repo.addSolutionFile(domain.getId(), "", XMI_FILENAME, xmi.getBytes(LocaleHelper.getSystemEncoding()), true); //$NON-NLS-1$
+    } catch (Exception e) {
+      throw new DomainStorageException("Failed to store legacy domain", e); //$NON-NLS-1$
+    }
   }
 
   
