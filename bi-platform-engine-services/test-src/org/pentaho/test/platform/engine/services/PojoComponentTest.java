@@ -293,7 +293,7 @@ public class PojoComponentTest extends BaseTest {
 	            IRuntimeContext runtimeContext = solutionEngine.execute( 
 	                xactionStr, "test", "invalid class setting test", false, true, null, false, new HashMap(), null, null, new SimpleUrlFactory(""), new ArrayList()); //$NON-NLS-1$ //$NON-NLS-2$
 	            assertNotNull( "RuntimeContext is null", runtimeContext );
-	            assertEquals( "Action sequence succeeded", runtimeContext.getStatus(), IRuntimeContext.RUNTIME_STATUS_FAILURE );
+	            assertEquals( "Action sequence succeeded", IRuntimeContext.RUNTIME_STATUS_FAILURE, runtimeContext.getStatus() );
 	        } catch (Exception e) {
 	          // we should not get here
 	          e.printStackTrace();
