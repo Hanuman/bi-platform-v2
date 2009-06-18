@@ -71,6 +71,7 @@ import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.servlet.messages.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -191,6 +192,10 @@ public class SolutionRepositoryService extends ServletBase {
       String[] filters = SolutionRepositoryService.getFilters(request);
       Document doc = getSolutionRepositoryDoc(userSession, filters);
       WebServiceUtil.writeDocument(outputStream, doc, wrapWithSOAP);
+    } else if ("getSolutionRepositoryFileDetails".equals(component)) { //$NON-NLS-1$
+        String fullPath = request.getParameter("fullPath"); //$NON-NLS-1$
+        Document doc = getSolutionRepositoryFileDetails(userSession, fullPath);
+        WebServiceUtil.writeDocument(outputStream, doc, wrapWithSOAP);
     } else if ("createNewFolder".equals(component)) { //$NON-NLS-1$
       String solution = request.getParameter("solution"); //$NON-NLS-1$
       String path = request.getParameter("path"); //$NON-NLS-1$
@@ -316,55 +321,66 @@ public class SolutionRepositoryService extends ServletBase {
   }
 
   private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository,
-      Element parentElement, ISolutionFile parentFile, String[] filters) {
-    ISolutionFile children[] = parentFile.listFiles();
-    for (ISolutionFile childSolutionFile : children) {
-      if (!accept(isAdministrator, repository, childSolutionFile)) {
-        // we don't want this file, skip to the next one
-        continue;
+      Node parentNode, ISolutionFile file, String[] filters) {
+    if (!accept(isAdministrator, repository, file)) {
+      // we don't want this file, skip to the next one
+      return;
+    }
+
+    String name = file.getFileName();
+    if (name.startsWith(".")) {
+      // these are hidden files of some type that are never shown
+      // we don't want this file, skip to the next one
+      return;
+    }
+    
+    if (file.isDirectory()) {
+      // we always process directories
+        
+      // MDD 10/16/2008 Not always.. what about 'system'
+      if (file.getFileName().startsWith("system")) {
+        // skip the system dir, we DO NOT ever want this to hit the client
+        return;
       }
-
-      String name = childSolutionFile.getFileName();
-      if (name.startsWith(".")) {
-        // these are hidden files of some type that are never shown
-        // we don't want this file, skip to the next one
-        continue;
+      
+      // maintain legacy behavior
+      if (repository.getRootFolder().getFullPath().equals(file.getFullPath())) {
+        // never output the root folder as part of the repo doc; skip root and process its children
+        ISolutionFile[] children = file.listFiles();
+        for (ISolutionFile childSolutionFile : children) {
+          processRepositoryFile(session, isAdministrator, repository, parentNode, childSolutionFile, filters);
+        }
+        return;
       }
-      if (childSolutionFile.isDirectory()) {
-        // we always process directories
+      
+      Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");
+      parentNode.appendChild(child);
+      try {
+        String localizedName = repository.getLocalizedFileProperty(file, "name");
+        child
+            .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
+      } catch (Exception e) {
+        child.setAttribute("localized-name", name); //$NON-NLS-1$
+      }
+      try {
+        String visible = repository.getLocalizedFileProperty(file, "visible");
+        child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
+      } catch (Exception e) {
+        e.printStackTrace();
+        child.setAttribute("visible", "false"); //$NON-NLS-1$
+      }
+      String description = repository.getLocalizedFileProperty(file, "description");
+      child.setAttribute("description", description == null || "".equals(description) ? name : description);
+      child.setAttribute("name", name); //$NON-NLS-1$
+      child.setAttribute("isDirectory", "true"); //$NON-NLS-1$
+      child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$
 
-        // MDD 10/16/2008 Not always.. what about 'system'
-        if (childSolutionFile.getFileName().startsWith("system")) {
-          // skip the system dir, we DO NOT ever want this to hit the client
-          continue;
-        }
-
-        Element child = parentElement.getOwnerDocument().createElement("file");
-        parentElement.appendChild(child);
-        try {
-          String localizedName = repository.getLocalizedFileProperty(childSolutionFile, "name");
-          child
-              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
-        } catch (Exception e) {
-          child.setAttribute("localized-name", name); //$NON-NLS-1$
-        }
-        try {
-          String visible = repository.getLocalizedFileProperty(childSolutionFile, "visible");
-          child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible);
-        } catch (Exception e) {
-          e.printStackTrace();
-          child.setAttribute("visible", "false"); //$NON-NLS-1$
-        }
-        String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
-        child.setAttribute("description", description == null || "".equals(description) ? name : description);
-        child.setAttribute("name", name); //$NON-NLS-1$
-        child.setAttribute("isDirectory", "true"); //$NON-NLS-1$
-        child.setAttribute("lastModifiedDate", "" + childSolutionFile.getLastModified()); //$NON-NLS-1$
+        
+      ISolutionFile[] children = file.listFiles();
+      for (ISolutionFile childSolutionFile : children) {
         processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
-        // we have finished processing this so skip to the next one
-        continue;
       }
-
+    } else {     
       int lastPoint = name.lastIndexOf('.');
       String extension = ""; //$NON-NLS-1$
       if (lastPoint != -1) {
@@ -376,7 +392,7 @@ public class SolutionRepositoryService extends ServletBase {
       boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
       boolean isPlugin = false;
       // see if there is a plugin for this file type
-      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session); //$NON-NLS-1$
+      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
       if (pluginManager != null) {
         Set<String> types = pluginManager.getContentTypes();
         isPlugin = types != null && types.contains(extension);
@@ -384,15 +400,15 @@ public class SolutionRepositoryService extends ServletBase {
       }
 
       if (addFile) {
-        Element child = parentElement.getOwnerDocument().createElement("file");
-        parentElement.appendChild(child);
+        Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");
+        parentNode.appendChild(child);
         IFileInfo fileInfo = null;
         try {
             // the visibility flag for action-sequences is controlled by
             // /action-sequence/documentation/result-type
             // and we should no longer be looking at 'visible' because it was
             // never actually used!
-            String visible = "none".equals(repository.getLocalizedFileProperty(childSolutionFile, "documentation/result-type")) ? "false" : "true";
+            String visible = "none".equals(repository.getLocalizedFileProperty(file, "documentation/result-type")) ? "false" : "true";
             child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");
         } catch (Exception e) {
           child.setAttribute("visible", "true"); //$NON-NLS-1$
@@ -403,7 +419,7 @@ public class SolutionRepositoryService extends ServletBase {
         } else if (name.endsWith(".url")) {
 
           // add special props
-          String props = new String(childSolutionFile.getData());
+          String props = new String(file.getData());
           StringTokenizer tokenizer = new StringTokenizer(props, "\n");
           while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
@@ -423,11 +439,11 @@ public class SolutionRepositoryService extends ServletBase {
           // must be a plugin - make it look like a URL
           try {
             // get the file info object for this file
-            InputStream inputStream = repository.getResourceInputStream(childSolutionFile.getFullPath(), true);
-            fileInfo = pluginManager.getFileInfo(extension, session, childSolutionFile, inputStream);
+            InputStream inputStream = repository.getResourceInputStream(file.getFullPath(), true);
+            fileInfo = pluginManager.getFileInfo(extension, session, file, inputStream);
             String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
             String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-            String solution = childSolutionFile.getSolutionPath();
+            String solution = file.getSolutionPath();
             String path = ""; //$NON-NLS-1$
             if (solution.startsWith(ISolutionRepository.SEPARATOR+"")) {
               solution = solution.substring(1);
@@ -471,11 +487,11 @@ public class SolutionRepositoryService extends ServletBase {
         try {
           String localizedName = null;
           if (name.endsWith(".url")) {
-            localizedName = repository.getLocalizedFileProperty(childSolutionFile, "url_name");
+            localizedName = repository.getLocalizedFileProperty(file, "url_name");
           } else if (fileInfo != null) {
             localizedName = fileInfo.getTitle();
           } else {
-            localizedName = repository.getLocalizedFileProperty(childSolutionFile, "title");
+            localizedName = repository.getLocalizedFileProperty(file, "title");
           }
           child
               .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName);
@@ -485,8 +501,8 @@ public class SolutionRepositoryService extends ServletBase {
         try {
           // only folders, urls and xactions have descriptions
           if (name.endsWith(".url")) {
-            String url_description = repository.getLocalizedFileProperty(childSolutionFile, "url_description");
-            String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
+            String url_description = repository.getLocalizedFileProperty(file, "url_description");
+            String description = repository.getLocalizedFileProperty(file, "description");
             if (url_description == null && description == null) {
               child.setAttribute("description", name);
             } else {
@@ -494,7 +510,7 @@ public class SolutionRepositoryService extends ServletBase {
                   : url_description);
             }
           } else if (name.endsWith(".xaction")) {
-            String description = repository.getLocalizedFileProperty(childSolutionFile, "description");
+            String description = repository.getLocalizedFileProperty(file, "description");
             child.setAttribute("description", description == null || "".equals(description) ? name : description);
           } else if (fileInfo != null) {
             child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
@@ -507,10 +523,10 @@ public class SolutionRepositoryService extends ServletBase {
 
         // add permissions for each file/folder
         child.setAttribute("name", name); //$NON-NLS-1$
-        child.setAttribute("isDirectory", "" + childSolutionFile.isDirectory()); //$NON-NLS-1$
-        child.setAttribute("lastModifiedDate", "" + childSolutionFile.getLastModified()); //$NON-NLS-1$
+        child.setAttribute("isDirectory", "" + file.isDirectory()); //$NON-NLS-1$
+        child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$
       }
-    }
+    } // else isfile
   }
 
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters)
@@ -523,6 +539,23 @@ public class SolutionRepositoryService extends ServletBase {
     root.setAttribute("path", rootFile.getFullPath());
     boolean isAdministrator = SecurityHelper.isPentahoAdministrator(session);
     processRepositoryFile(session, isAdministrator, repository, root, rootFile, filters);
+    return document;
+  }
+  
+  /**
+   * Returns an XML snippet consisting of a single <code>file</code> element. The <code>file</code> element is the same 
+   * as would have been returned by <code>getSolutionRepositoryDoc</code>.
+   * @param session current session
+   * @return doc
+   * @throws ParserConfigurationException
+   */
+  public org.w3c.dom.Document getSolutionRepositoryFileDetails(IPentahoSession session, String fullPath)
+      throws ParserConfigurationException {
+    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
+    ISolutionFile rootFile = repository.getFileByPath(fullPath);
+    org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+    boolean isAdministrator = SecurityHelper.isPentahoAdministrator(session);
+    processRepositoryFile(session, isAdministrator, repository, document, rootFile, new String[0]);
     return document;
   }
 
