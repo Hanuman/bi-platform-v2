@@ -35,6 +35,7 @@ import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.engine.core.system.PentahoBase;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
+import org.pentaho.platform.util.logging.Logger;
 
 public abstract class AbstractAxisConfigurator extends PentahoBase implements AxisConfigurator {
 
@@ -150,7 +151,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
         loadService( wsDef );
       } catch (Exception e) {
         //Axis cannot handle a typed exception from this method, we must just log the error and continue on
-        error( Messages.getErrorString( "AbstractAxisConfigurator.ERROR_0001_COULD_NOT_LOAD_SERVICE", wsDef.getId() ), e ); //$NON-NLS-1$
+        Logger.error(getClass().getName(), Messages.getErrorString( "AbstractAxisConfigurator.ERROR_0001_COULD_NOT_LOAD_SERVICE", wsDef.getId() ), e ); //$NON-NLS-1$
       }
     }
       
