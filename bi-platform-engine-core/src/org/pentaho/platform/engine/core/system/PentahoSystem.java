@@ -467,7 +467,8 @@ public class PentahoSystem {
    * {@link PentahoSystem#get(Class, String, IPentahoSession)}.
    */
   public static <T> T get(Class<T> interfaceClass, final IPentahoSession session) {
-    return get(interfaceClass, interfaceClass.getSimpleName(), session);
+    IPentahoSession curSession = (session == null)?PentahoSessionHolder.getSession():session;
+    return get(interfaceClass, interfaceClass.getSimpleName(), curSession);
   }
   
   /**
@@ -490,7 +491,8 @@ public class PentahoSystem {
         Logger.warn( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.WARN_OBJECT_NOT_CONFIGURED", key)); //$NON-NLS-1$
         return null;
       }
-      return pentahoObjectFactory.get( interfaceClass, key, session );
+      IPentahoSession curSession = (session == null)?PentahoSessionHolder.getSession():session;
+      return pentahoObjectFactory.get( interfaceClass, key, curSession );
     } catch (ObjectFactoryException e) {
       //something went wrong, we need to log this
       Logger.error( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.ERROR_0026_COULD_NOT_RETRIEVE_CONFIGURED_OBJECT", key), e); //$NON-NLS-1$
