@@ -47,6 +47,10 @@ import org.xml.sax.InputSource;
 import com.ibm.wsdl.factory.WSDLFactoryImpl;
 
 public class AxisUtil {
+  
+  public static String WS_EXECUTE_SERVICE_ID="ws-run"; //$NON-NLS-1$
+  public static String WSDL_SERVICE_ID="ws-wsdl"; //$NON-NLS-1$
+  
   public static Definition getWsdlDefinition(AxisConfiguration axisConfig, WebServiceConfig webservice)
       throws Exception {
 
@@ -89,18 +93,6 @@ public class AxisUtil {
     return new String(out.toByteArray());
   }
   
-  /**
-   * Currently webservice content generators are wired up by a plugin.  This following method
-   * generate a urls for executing webservices.  This methods are tightly bound to the 
-   * content generator specifications in the default-plugin of the system solution.
-   */
-  public static String getWebServiceExecuteUrl() {
-    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
-    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-run", null); //$NON-NLS-1$
-    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-    return url;
-  }
-
   /**
    * Create a web service from a web service wrapper. The concrete subclass
    * providers the wrappers via getWebServiceWrappers()
@@ -169,6 +161,31 @@ public class AxisUtil {
   
   public static WebServiceConfig getSourceDefinition(AxisService axisService, SystemSolutionAxisConfigurator axisConfigurator) {
     return axisConfigurator.getWebServiceDefinition(axisService.getName());
+  }
+
+  /**
+   * Currently webservice content generators are wired up by a plugin.  The following methods
+   * generate urls for executing web service and wsdl generation.  These methods are tightly bound to the 
+   * content generator specifications in the default-plugin of the system solution.
+   */
+  public static String getWebServiceExecuteUrl() {
+    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
+    String relUrl = pluginMgr.getContentGeneratorIdForType(WS_EXECUTE_SERVICE_ID, null);
+    if(relUrl == null) {
+      throw new IllegalStateException("No content generator with id \""+WS_EXECUTE_SERVICE_ID+"\" configured to process web service requests");  //$NON-NLS-1$//$NON-NLS-2$
+    }
+    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+    return url;
+  }
+
+  public static String getWebServiceWsdlUrl() {
+    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
+    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-wsdl", null); //$NON-NLS-1$
+    if(relUrl == null) {
+      throw new IllegalStateException("No content generator with id \""+WSDL_SERVICE_ID+"\" configured to process web service requests"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+    return url;
   }
   
 }
