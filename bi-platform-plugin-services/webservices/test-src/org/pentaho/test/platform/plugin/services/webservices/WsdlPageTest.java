@@ -17,19 +17,20 @@
 */
 package org.pentaho.test.platform.plugin.services.webservices;
 
+import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
@@ -40,11 +41,10 @@ import org.pentaho.platform.plugin.services.webservices.content.AxisServiceWsdlG
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
-public class WsdlPageTest extends TestCase {
+public class WsdlPageTest {
 
-  public WsdlPageTest() {
-  }
-
+  @Test
+  @Ignore
 	  public void testRender() throws Exception {
 		  
 	    StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -119,7 +119,8 @@ public class WsdlPageTest extends TestCase {
 	    		assertTrue( "Exception occurred", false ); //$NON-NLS-1$
 	    	}
 	  }
-
+  @Test
+  @Ignore
 	   public void testMissingPathParamProvider() throws Exception {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -159,6 +160,8 @@ public class WsdlPageTest extends TestCase {
 	        }
 	    }
 
+	   @Test
+	   @Ignore
 	    public void testMissingServiceName() throws Exception {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
@@ -200,6 +203,8 @@ public class WsdlPageTest extends TestCase {
 	        }
 	    }
 
+     @Test
+     @Ignore
 	    public void testBadServiceName() throws Exception {
 	      
 	      StandaloneSession session = new StandaloneSession( "test" ); //$NON-NLS-1$
