@@ -17,16 +17,16 @@ public class SimpleDataAccessViewPermissionHandler implements IDataAccessViewPer
     Authentication auth = SecurityHelper.getAuthentication(session, true);
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
     String roles = null;
-    
+
     try {
-      roles = resLoader.getPluginSetting(getClass(), "settings/data-access-view-roles" ); //$NON-NLS-1$
+      roles = resLoader.getPluginSetting(getClass(), "settings/data-access-view-roles"); //$NON-NLS-1$
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     if (roles != null) {
       String roleArr[] = roles.split(","); //$NON-NLS-1$
-  
+
       for (String role : roleArr) {
         for (GrantedAuthority userRole : auth.getAuthorities()) {
           if (role != null && role.trim().equals(userRole.getAuthority())) {
@@ -40,17 +40,15 @@ public class SimpleDataAccessViewPermissionHandler implements IDataAccessViewPer
 
   public List<String> getPermittedUserList(IPentahoSession session) {
     List<String> userList = new ArrayList<String>();
-    Authentication auth = SecurityHelper.getAuthentication(session, true);
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
     String users = null;
-        
+
     try {
-      users = resLoader.getPluginSetting(getClass(), "settings/data-access-view-users" ); //$NON-NLS-1$
+      users = resLoader.getPluginSetting(getClass(), "settings/data-access-view-users"); //$NON-NLS-1$
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    
     if (users != null) {
       String userArr[] = users.split(","); //$NON-NLS-1$
       for (String user : userArr) {
@@ -59,8 +57,22 @@ public class SimpleDataAccessViewPermissionHandler implements IDataAccessViewPer
         }
       }
     }
-    
+
     return userList;
   }
 
+  public int getDefaultAcls(IPentahoSession session) {
+    IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+    String defaultAclsAsString = null;
+    int defaultAcls = -1;
+    try {
+      defaultAclsAsString = resLoader.getPluginSetting(getClass(), "settings/data-access-default-view-acls"); //$NON-NLS-1$
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    if (defaultAclsAsString != null && defaultAclsAsString.length() > 0) {
+      defaultAcls = Integer.parseInt(defaultAclsAsString);
+    }
+    return defaultAcls;
+  }
 }

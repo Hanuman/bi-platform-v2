@@ -45,7 +45,9 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/SimpleDataAccessPermissionHandler*"/>
         <exclude name="**/IDataAccessViewPermissionHandler*"/>
         <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>
-        <exclude name="**/DebugDataAccessViewPermissionHandler*"/>        
+        <exclude name="**/DebugDataAccessViewPermissionHandler*"/>
+        <exclude name="**/DatasourceInMemoryServiceHelper*"/>
+        <exclude name="**/DatasourceServiceHelper*"/>
         <exclude name="**/Messages*"/>                
     </source>
    <public path="wizard/public"/>

@@ -1,28 +1,34 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
-import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.util.InlineEtlModelGenerator;
+import org.pentaho.metadata.util.SQLModelGenerator;
+import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
@@ -32,19 +38,13 @@ import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
-import org.pentaho.pms.schema.v3.physical.IDataSource;
-import org.pentaho.pms.schema.v3.physical.SQLDataSource;
-import org.pentaho.pms.service.CsvModelManagementService;
-import org.pentaho.pms.service.IModelManagementService;
-import org.pentaho.pms.service.IModelQueryService;
-import org.pentaho.pms.service.JDBCModelManagementService;
-import org.pentaho.pms.service.ModelManagementServiceException;
 
 /*
  * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
@@ -55,15 +55,12 @@ public class DatasourceServiceDelegate {
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
   private IDataAccessViewPermissionHandler dataAccessViewPermHandler;
-  private IModelManagementService modelManagementService;
-  private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
   private IPentahoSession session;
   public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;  
   private static final Log logger = LogFactory.getLog(DatasourceServiceDelegate.class);
 
   public DatasourceServiceDelegate() {
-    modelManagementService =  new JDBCModelManagementService();
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
   }
 
@@ -137,6 +134,27 @@ public class DatasourceServiceDelegate {
     return dataAccessViewPermHandler.getPermittedUserList(PentahoSessionHolder.getSession());
   }
 
+  protected int getDefaultAcls() {
+    if (dataAccessViewPermHandler == null) {
+      String dataAccessViewClassName = null;
+      try {
+        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        Class<?> clazz = Class.forName(dataAccessViewClassName);
+        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+      } catch (Exception e) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
+          // TODO: Unhardcode once this is an actual plugin
+          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
+      }
+      
+    }
+    if(dataAccessViewPermHandler == null) {
+      return -1;
+    }
+    return dataAccessViewPermHandler.getDefaultAcls(PentahoSessionHolder.getSession());
+  }
   public List<IDatasource> getDatasources() {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -249,7 +267,7 @@ public class DatasourceServiceDelegate {
     SerializedResultSet serializedResultSet = null;
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
 
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -296,7 +314,7 @@ public class DatasourceServiceDelegate {
     ResultSet rs = null;
     SerializedResultSet serializedResultSet = null;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
 
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -349,7 +367,7 @@ public class DatasourceServiceDelegate {
     }
     Connection conn = null;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
     } catch (DatasourceServiceException dme) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
@@ -366,95 +384,6 @@ public class DatasourceServiceDelegate {
     return true;
   }
 
-  /**
-   * NOTE: caller is responsible for closing connection
-   * 
-   * @param ds
-   * @return
-   * @throws DatasourceServiceException
-   */
-  private static Connection getDataSourceConnection(IConnection connection) throws DatasourceServiceException {
-    Connection conn = null;
-
-    String driverClass = connection.getDriverClass();
-    if (StringUtils.isEmpty(driverClass)) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED"));
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
-    }
-    Class<?> driverC = null;
-
-    try {
-      driverC = Class.forName(driverClass);
-    } catch (ClassNotFoundException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
-    }
-    if (!Driver.class.isAssignableFrom(driverC)) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
-    }
-    Driver driver = null;
-    
-    try {
-      driver = driverC.asSubclass(Driver.class).newInstance();
-    } catch (InstantiationException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    } catch (IllegalAccessException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    }
-    try {
-      DriverManager.registerDriver(driver);
-      conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
-      return conn;
-    } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
-    }
-  }
-
-  /**
-   * Construct the IDataSource from IConnection and a SQL query
-   * This is a temporary fix. We need to figure out a better way of doing. Will be gone once we implement the thin version of common database dialog
-   * @param IConnection connection, String query
-   * @return IDataSource
-   * @throws DatasourceServiceException
-   */
-  private IDataSource constructIDataSource(IConnection connection, String query) throws DatasourceServiceException{
-    final String SLASH = "/"; //$NON-NLS-1$
-    final String DOUBLE_SLASH = "//";//$NON-NLS-1$
-    final String COLON = ":";//$NON-NLS-1$
-    String databaseType = null;
-    String databaseName = null;
-    String hostname = null;
-    String port = null;
-    String url = connection.getUrl();
-    try {
-    int lastIndexOfSlash = url.lastIndexOf(SLASH); 
-    if((lastIndexOfSlash >= 0) &&( lastIndexOfSlash +SLASH.length() <=url.length())) {
-      databaseName = url.substring(lastIndexOfSlash+SLASH.length() ,url.length());
-    }
-    int lastIndexOfDoubleSlash =  url.lastIndexOf(DOUBLE_SLASH);
-    int indexOfColonFromDoubleSlash = url.indexOf(COLON,lastIndexOfDoubleSlash);
-    if(lastIndexOfDoubleSlash >=  0 && lastIndexOfDoubleSlash+DOUBLE_SLASH.length() <= url.length()) {
-      hostname = url.substring(lastIndexOfDoubleSlash+DOUBLE_SLASH.length(), indexOfColonFromDoubleSlash);
-    }
-    if(indexOfColonFromDoubleSlash >=0 && indexOfColonFromDoubleSlash + SLASH.length() <= url.length() &&  lastIndexOfSlash >=0 && lastIndexOfSlash <= url.length()) {
-      port = url.substring(indexOfColonFromDoubleSlash + SLASH.length(), lastIndexOfSlash);
-    }
-    if(connection.getDriverClass().equals("org.hsqldb.jdbcDriver")) {//$NON-NLS-1$
-      databaseType = "Hypersonic";//$NON-NLS-1$
-    } else if(connection.getDriverClass().equals("com.mysql.jdbc.Driver") || connection.getDriverClass().equals("org.git.mm.mysql.Driver")){ //$NON-NLS-1$ //$NON-NLS-2$ 
-      databaseType="MySql"; //$NON-NLS-1$
-    }
-    DatabaseMeta dbMeta = new DatabaseMeta(databaseName, databaseType, "JDBC", hostname, databaseName, port, connection.getUsername(), connection.getPassword()); //$NON-NLS-1$
-    return new SQLDataSource(dbMeta, query);
-    } catch(Exception e) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0015_UNKNOWN_ERROR"),e);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_UNKNOWN_ERROR"), e); //$NON-NLS-1$
-    }
-  }
 
   /**
    * This method gets the business data which are the business columns, columns types and sample preview data
@@ -470,19 +399,19 @@ public class DatasourceServiceDelegate {
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     try {
-      IDataSource dataSource = constructIDataSource(connection, query);
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
           connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-        || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), sqlConnection.getNativeConnection()
-          , query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
-      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
-      
+        || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), sqlConnection.getNativeConnection(),
+          query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
+            ,getDefaultAcls(),(getSession() != null) ? getSession().getName(): null); 
+      Domain domain = sqlModelGenerator.generate();
+      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
       return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mmse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mmse.getLocalizedMessage()),mmse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), mmse); //$NON-NLS-1$
+    } catch(SQLModelGeneratorException smge) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), smge); //$NON-NLS-1$
     }
   }
 
@@ -500,20 +429,18 @@ public class DatasourceServiceDelegate {
     }
     Domain domain = null;
     try {
-      IDataSource dataSource = constructIDataSource(connection, query);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
 
       SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
           connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
-      domain = getModelManagementService().generateModel(modelName, connection.getName(),
-          sqlConnection.getNativeConnection(), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
-      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), sqlConnection.getNativeConnection(),
+          query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
+            ,getDefaultAcls(),(getSession() != null) ? getSession().getName(): null); 
+      domain = sqlModelGenerator.generate();
+      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mmse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mmse.getLocalizedMessage()),mmse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), mmse); //$NON-NLS-1$
     } catch(DomainStorageException dse) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domain.getName().toString()),dse);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domain.getName().toString()), dse); //$NON-NLS-1$      
@@ -522,7 +449,10 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domain.getName().toString()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$
+    } catch(SQLModelGeneratorException smge) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), smge); //$NON-NLS-1$
     }
   }
   /**
@@ -554,22 +484,6 @@ public class DatasourceServiceDelegate {
     }
     return returnValue;
   }
-  public void setModelManagementService(IModelManagementService modelManagementService) {
-    this.modelManagementService = modelManagementService;
-  }
-
-  public IModelManagementService getModelManagementService() {
-    return modelManagementService;
-  }
-
-  public void setModelQueryService(IModelQueryService modelQueryService) {
-    this.modelQueryService = modelQueryService;
-  }
-
-  public IModelQueryService getModelQueryService() {
-    return modelQueryService;
-  }
-  
   public IMetadataDomainRepository getMetadataDomainRepository() {
     return metadataDomainRepository;
   }
@@ -578,20 +492,22 @@ public class DatasourceServiceDelegate {
     this.metadataDomainRepository = metadataDomainRepository;
   }
 
-  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
+  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
 
     try  {
-    CsvModelManagementService service = new CsvModelManagementService();
     Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
     || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-
-    Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure,securityEnabled,
-        getPermittedRoleList(),getPermittedUserList(), (getSession() != null) ? getSession().getName(): null );
-    List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
+    InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
+        relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
+          getPermittedRoleList(),getPermittedUserList(),
+            getDefaultAcls(), (getSession() != null) ? getSession().getName(): null);
+    Domain domain  = inlineEtlModelGenerator.generate();
+    List<List<String>> data = DatasourceServiceHelper.getCsvDataSample(relativeFilePath, headersPresent,
+        delimiter, enclosure, 5);
     return  new BusinessData(domain, data);
     } catch(Exception e) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);

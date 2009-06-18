@@ -18,7 +18,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
@@ -26,6 +25,9 @@ import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.metadata.util.InlineEtlModelGenerator;
+import org.pentaho.metadata.util.SQLModelGenerator;
+import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -33,15 +35,9 @@ import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.pms.schema.v3.physical.IDataSource;
-import org.pentaho.pms.schema.v3.physical.SQLDataSource;
-import org.pentaho.pms.service.CsvModelManagementService;
-import org.pentaho.pms.service.IModelManagementService;
-import org.pentaho.pms.service.IModelQueryService;
-import org.pentaho.pms.service.JDBCModelManagementService;
-import org.pentaho.pms.service.ModelManagementServiceException;
 
 /*
  * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
@@ -54,14 +50,10 @@ public class DatasourceServiceInMemoryDelegate {
   private static final Log logger = LogFactory.getLog(DatasourceServiceInMemoryDelegate.class);
   public static final String DEFAULT_UPLOAD_FILEPATH_FILE_NAME = "debug_upload_filepath.properties"; //$NON-NLS-1$
   public static final String UPLOAD_FILE_PATH = "upload.file.path"; //$NON-NLS-1$
-  private IModelManagementService modelManagementService;
-  private IModelQueryService modelQueryService;
   private IMetadataDomainRepository metadataDomainRepository;
   
   
   public DatasourceServiceInMemoryDelegate() {
-    modelManagementService =  new JDBCModelManagementService();
-    
     // this needs to share the same one as MQL editor...
     metadataDomainRepository = METADATA_DOMAIN_REPO;
   }
@@ -141,6 +133,10 @@ public class DatasourceServiceInMemoryDelegate {
     DebugDataAccessViewPermissionHandler  dataAccessViewPermHandler = new DebugDataAccessViewPermissionHandler();
     return dataAccessViewPermHandler.getPermittedUserList(PentahoSessionHolder.getSession());
   }
+  protected int getDefaultAcls() {
+    DebugDataAccessViewPermissionHandler  dataAccessViewPermHandler = new DebugDataAccessViewPermissionHandler();
+    return dataAccessViewPermHandler.getDefaultAcls(PentahoSessionHolder.getSession()); 
+  }
   
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
     Connection conn = null;
@@ -149,7 +145,7 @@ public class DatasourceServiceInMemoryDelegate {
     SerializedResultSet serializedResultSet = null;
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
 
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -190,7 +186,7 @@ public class DatasourceServiceInMemoryDelegate {
     ResultSet rs = null;
     SerializedResultSet serializedResultSet = null;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
 
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -232,7 +228,7 @@ public class DatasourceServiceInMemoryDelegate {
   public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
     Connection conn = null;
     try {
-      conn = getDataSourceConnection(connection);
+      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
     } catch (DatasourceServiceException dme) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
@@ -249,96 +245,7 @@ public class DatasourceServiceInMemoryDelegate {
     return true;
   }
 
-  
-  /**
-   * NOTE: caller is responsible for closing connection
-   * 
-   * @param ds
-   * @return
-   * @throws DatasourceServiceException
-   */
-  private static Connection getDataSourceConnection(IConnection connection) throws DatasourceServiceException {
-    Connection conn = null;
 
-    String driverClass = connection.getDriverClass();
-    if (StringUtils.isEmpty(driverClass)) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED"));
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
-    }
-    Class<?> driverC = null;
-
-    try {
-      driverC = Class.forName(driverClass);
-    } catch (ClassNotFoundException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
-    }
-    if (!Driver.class.isAssignableFrom(driverC)) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
-    }
-    Driver driver = null;
-    
-    try {
-      driver = driverC.asSubclass(Driver.class).newInstance();
-    } catch (InstantiationException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    } catch (IllegalAccessException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    }
-    try {
-      DriverManager.registerDriver(driver);
-      conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
-      return conn;
-    } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0013_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
-    }
-  }
-
-  /**
-   * Construct the IDataSource from IConnection and a SQL query
-   * This is a temporary fix. We need to figure out a better way of doing. Will be gone once we implement the thin version of common database dialog
-   * @param IConnection connection, String query
-   * @return IDataSource
-   * @throws DatasourceServiceException
-   */
-  private IDataSource constructIDataSource(IConnection connection, String query) throws DatasourceServiceException{
-    final String SLASH = "/"; //$NON-NLS-1$
-    final String DOUBLE_SLASH = "//";//$NON-NLS-1$
-    final String COLON = ":";//$NON-NLS-1$
-    String databaseType = null;
-    String databaseName = null;
-    String hostname = null;
-    String port = null;
-    String url = connection.getUrl();
-    try {
-    int lastIndexOfSlash = url.lastIndexOf(SLASH); 
-    if((lastIndexOfSlash >= 0) &&( lastIndexOfSlash +SLASH.length() <=url.length())) {
-      databaseName = url.substring(lastIndexOfSlash+SLASH.length() ,url.length());
-    }
-    int lastIndexOfDoubleSlash =  url.lastIndexOf(DOUBLE_SLASH);
-    int indexOfColonFromDoubleSlash = url.indexOf(COLON,lastIndexOfDoubleSlash);
-    if(lastIndexOfDoubleSlash >=  0 && lastIndexOfDoubleSlash+DOUBLE_SLASH.length() <= url.length()) {
-      hostname = url.substring(lastIndexOfDoubleSlash+DOUBLE_SLASH.length(), indexOfColonFromDoubleSlash);
-    }
-    if(indexOfColonFromDoubleSlash >=0 && indexOfColonFromDoubleSlash + SLASH.length() <= url.length() &&  lastIndexOfSlash >=0 && lastIndexOfSlash <= url.length()) {
-      port = url.substring(indexOfColonFromDoubleSlash + SLASH.length(), lastIndexOfSlash);
-    }
-    if(connection.getDriverClass().equals("org.hsqldb.jdbcDriver")) {//$NON-NLS-1$
-      databaseType = "Hypersonic";//$NON-NLS-1$
-    } else if(connection.getDriverClass().equals("com.mysql.jdbc.Driver") || connection.getDriverClass().equals("org.git.mm.mysql.Driver")){ //$NON-NLS-1$ //$NON-NLS-2$ 
-      databaseType="MySql"; //$NON-NLS-1$
-    }
-    DatabaseMeta dbMeta = new DatabaseMeta(databaseName, databaseType, "JDBC", hostname, databaseName, port, connection.getUsername(), connection.getPassword()); //$NON-NLS-1$
-    return new SQLDataSource(dbMeta, query);
-    } catch(Exception e) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.DatasourceServiceInMemoryDelegate.ERROR_0020_UNABLE_TO_GET_DATASOURCE",e.getLocalizedMessage()),e);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.DatasourceServiceInMemoryDelegate.ERROR_0020_UNABLE_TO_GET_DATASOURCE",e.getLocalizedMessage()), e); //$NON-NLS-1$
-    }
-  }
 
   /**
    * This method gets the business data which are the business columns, columns types and sample preview data
@@ -350,16 +257,17 @@ public class DatasourceServiceInMemoryDelegate {
   
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
     try {
-      IDataSource dataSource = constructIDataSource(connection, query);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-      Domain domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
-      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
-      
+        || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), DatasourceInMemoryServiceHelper.getDataSourceConnection(connection),
+          query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
+            ,getDefaultAcls(),"joe"); 
+      Domain domain = sqlModelGenerator.generate();
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
       return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mme) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()),mme);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()), mme); //$NON-NLS-1$
+    } catch(SQLModelGeneratorException smge) {
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), smge); //$NON-NLS-1$
     }
   }
 
@@ -373,17 +281,20 @@ public class DatasourceServiceInMemoryDelegate {
    */  
   public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     Domain domain = null;
-    try {
-      IDataSource dataSource = constructIDataSource(connection, query);
-      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-      || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-      domain = getModelManagementService().generateModel(modelName, connection.getName(), getDataSourceConnection(connection), query,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
-      getMetadataDomainRepository().storeDomain(domain, overwrite);
-      List<List<String>> data = getModelManagementService().getDataSample(dataSource, Integer.parseInt(previewLimit));
-      return new BusinessData(domain, data);
-    } catch(ModelManagementServiceException mme) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()),mme);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",mme.getLocalizedMessage()), mme); //$NON-NLS-1$
+      try {
+        Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+        || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
+
+        SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), DatasourceInMemoryServiceHelper.getDataSourceConnection(connection),
+            query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
+              ,getDefaultAcls(),"joe"); 
+        domain = sqlModelGenerator.generate();
+        List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
+        getMetadataDomainRepository().storeDomain(domain, overwrite);
+        return new BusinessData(domain, data);
+    } catch(SQLModelGeneratorException smge) {
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()), smge); //$NON-NLS-1$
     } catch(DomainStorageException dse) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",modelName),dse);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", modelName), dse); //$NON-NLS-1$      
@@ -421,22 +332,7 @@ public class DatasourceServiceInMemoryDelegate {
     }
     return returnValue;
   }
-  public void setModelManagementService(IModelManagementService modelManagementService) {
-    this.modelManagementService = modelManagementService;
-  }
 
-  public IModelManagementService getModelManagementService() {
-    return modelManagementService;
-  }
-
-  public void setModelQueryService(IModelQueryService modelQueryService) {
-    this.modelQueryService = modelQueryService;
-  }
-
-  public IModelQueryService getModelQueryService() {
-    return modelQueryService;
-  }
-  
   public IMetadataDomainRepository getMetadataDomainRepository() {
     return metadataDomainRepository;
   }
@@ -445,15 +341,19 @@ public class DatasourceServiceInMemoryDelegate {
     this.metadataDomainRepository = metadataDomainRepository;
   }
   
-  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException {
+  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
     try  {
-      CsvModelManagementService service = new CsvModelManagementService();
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-
-      Domain domain  = service.generateModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure,securityEnabled, getPermittedRoleList(),getPermittedUserList(), "joe");
-      List<List<String>> data = service.getDataSample(relativeFilePath, headersPresent, delimeter, enclosure, 5);
+      InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
+          relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
+            getPermittedRoleList(),getPermittedUserList(),
+              getDefaultAcls(), "joe");
+      Domain domain  = inlineEtlModelGenerator.generate();
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getCsvDataSample(relativeFilePath, headersPresent,
+          delimiter, enclosure, 5);
       return  new BusinessData(domain, data);
+
       } catch(Exception e) {
         logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()), e); //$NON-NLS-1$

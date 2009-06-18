@@ -10,4 +10,6 @@
     <data-access-view-roles>Authenticated,Admin</data-access-view-roles>
     <!-- users with datasource view permissions -->
     <data-access-view-users>suzy</data-access-view-users>
+    <!-- default view acls for user or role -->
+    <data-access-default-view-acls>31</data-access-default-view-acls>
 </settings>

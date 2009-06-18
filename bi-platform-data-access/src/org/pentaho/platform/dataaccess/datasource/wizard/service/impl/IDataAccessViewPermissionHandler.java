@@ -34,4 +34,13 @@ public interface IDataAccessViewPermissionHandler {
    */
   
   List<String> getPermittedUserList(IPentahoSession session);
+  /**
+   * This method returns the default acls for permitted role and user
+   * 
+   * @param session pentaho session
+   * @return int default acls
+   */
+  
+  int getDefaultAcls(IPentahoSession session);
+  
 }

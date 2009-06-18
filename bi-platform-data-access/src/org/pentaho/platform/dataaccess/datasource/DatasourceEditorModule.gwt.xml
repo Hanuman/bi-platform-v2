@@ -41,7 +41,9 @@
         <exclude name="**/SimpleDataAccessPermissionHandler*"/>    
         <exclude name="**/IDataAccessViewPermissionHandler*"/>
         <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>   
-        <exclude name="**/DebugDataAccessViewPermissionHandler*"/>                         
+        <exclude name="**/DebugDataAccessViewPermissionHandler*"/> 
+        <exclude name="**/DatasourceInMemoryServiceHelper*"/>
+        <exclude name="**/DatasourceServiceHelper*"/>                                
         <exclude name="**/Messages*"/>
         
     </source>
