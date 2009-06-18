@@ -33,6 +33,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -81,6 +82,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunGet1() throws Exception {
     setupAxis();
     
@@ -151,6 +153,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunGet2() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
@@ -214,6 +217,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunGet3() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
@@ -275,6 +279,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunGet4() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
@@ -339,6 +344,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunGet5() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
@@ -401,6 +407,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunPost1() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
@@ -468,6 +475,7 @@ public class AxisServiceExecutorTest {
   }
 
   @Test
+  @Ignore
   public void testRunPut1() throws Exception {
     
     StandaloneSession session = new StandaloneSession( "test" ); 
