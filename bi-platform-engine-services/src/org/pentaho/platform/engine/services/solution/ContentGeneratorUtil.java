@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pentaho.platform.api.engine.IContentGenerator;
+import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
@@ -32,7 +33,6 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
-import org.pentaho.test.platform.engine.core.MimeTypeListener;
 
 public class ContentGeneratorUtil {
   /**
@@ -53,7 +53,19 @@ public class ContentGeneratorUtil {
     SimpleUrlFactory urlFactory = new SimpleUrlFactory(baseUrl + "?"); //$NON-NLS-1$
     List<String> messages = new ArrayList<String>();
     cg.setOutputHandler(outputHandler);
-    MimeTypeListener mimeTypeListener = new MimeTypeListener();
+    IMimeTypeListener mimeTypeListener = new IMimeTypeListener() {
+      public String mimeType = null;
+      
+      public String name = null;
+    
+    public void setMimeType(String mimeType) {
+      this.mimeType = mimeType;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+    };
     outputHandler.setMimeTypeListener(mimeTypeListener);
     cg.setMessagesList(messages);
     cg.setParameterProviders(parameterProviders);
