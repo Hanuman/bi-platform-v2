@@ -38,7 +38,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
@@ -58,7 +58,7 @@ public class PluginAdapterTest {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginManager.class, PluginManager.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
-    microPlatform.define(IServiceManager.class, AxisWebServiceManager.class);
+    microPlatform.define(IServiceManager.class, DefaultServiceManager.class);
 
     session = new StandaloneSession();
 
