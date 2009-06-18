@@ -49,23 +49,31 @@ public class MicroPlatform {
   private SimpleSystemSettings settings = new SimpleSystemSettings();
 
   private String solutionPath, baseUrl;
-
-  private IPentahoDefinableObjectFactory factory = new StandaloneObjectFactory();
+  private IPentahoDefinableObjectFactory factory;
 
   public MicroPlatform(String solutionPath) {
-    this(solutionPath, "http://localhost:8080/pentaho");
+    this(solutionPath, "http://localhost:8080/pentaho/");
   }
   
   public MicroPlatform(String solutionPath, String baseUrl) {
+    this(solutionPath, baseUrl, new StandaloneObjectFactory());
+  }
+  
+  public MicroPlatform(String solutionPath, IPentahoDefinableObjectFactory factory) {
+    this(solutionPath, "http://localhost:8080/pentaho/", factory);
+  }
+  
+  public MicroPlatform(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
     this.solutionPath = solutionPath;
     this.baseUrl = baseUrl;
+    this.factory = factory;
     PentahoSystem.setObjectFactory(factory);
   }
 
   public void init() {
     PentahoSystem.setSystemSettingsService(settings);
 
-      StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, ""); //$NON-NLS-1$
+      StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, "");
       applicationContext.setBaseUrl(baseUrl);
       boolean success = PentahoSystem.init(applicationContext);
       if(!success) {
@@ -78,11 +86,24 @@ public class MicroPlatform {
     return this;
   }
 
+  /**
+   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @return  the current {@link MicroPlatform} instance, for chaining
+   */
   public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass) {
     factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
     return this;
   }
   
+  /**
+   * Define an arbitrarily scoped object
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @param scope  the scope of the object
+   * @return  the current {@link MicroPlatform} instance, for chaining
+   */
   public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
     factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), scope);
     return this;
