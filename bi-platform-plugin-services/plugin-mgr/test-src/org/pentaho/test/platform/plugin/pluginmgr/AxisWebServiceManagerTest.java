@@ -17,12 +17,7 @@
  */
 package org.pentaho.test.platform.plugin.pluginmgr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -30,53 +25,36 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IContentGenerator;
-import org.pentaho.platform.api.engine.IContentGeneratorInfo;
-import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPlatformPlugin;
-import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.api.engine.IPluginOperation;
-import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
-import org.pentaho.platform.api.engine.ObjectFactoryException;
-import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
-import org.pentaho.platform.api.engine.PluginBeanException;
+import org.pentaho.platform.api.engine.ServiceInitializationException;
 import org.pentaho.platform.api.engine.WebServiceConfig;
-import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
-import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
-import org.pentaho.platform.engine.core.solution.ContentInfo;
-import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
-import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
-import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
 import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 import org.pentaho.test.platform.plugin.services.webservices.MimeTypeListener;
-import org.pentaho.ui.xul.IMenuCustomization;
-import org.pentaho.ui.xul.XulOverlay;
 
 @SuppressWarnings("nls")
 public class AxisWebServiceManagerTest {
@@ -85,30 +63,39 @@ public class AxisWebServiceManagerTest {
 
   StandaloneSession session;
 
-  IServiceTypeManager serviceManager;
+  IServiceManager serviceManager;
 
   @Before
-  public void init0() {
+  public void init0() throws ServiceInitializationException {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/AxisWebServiceManagerTest/");
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
-
-    session = new StandaloneSession();
-    serviceManager = new AxisWebServiceManager();
-
+    microPlatform.define(IPluginManager.class, PluginManager.class, Scope.GLOBAL);
+    microPlatform.define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL);
+    
+    serviceManager = new DefaultServiceManager();
+    IServiceTypeManager axisManager = new AxisWebServiceManager();
+    serviceManager.setServiceTypeManagers(Arrays.asList(axisManager));
+    
+    new StandaloneSession();
   }
 
   @Test
   public void testWebserviceRegistration() throws Exception {
     microPlatform.init();
 
-    WebServiceConfig wsDfn = new WebServiceConfig();
-    wsDfn.setDescription("testDescription");
-    wsDfn.setEnabled(true);
-    wsDfn.setTitle("testTitle");
-    wsDfn.setDescription("testDescription");
-    wsDfn.setServiceClass(EchoServiceBean.class);
-    serviceManager.registerService(wsDfn);
+    WebServiceConfig config = new WebServiceConfig();
+    String serviceId = "echoService";
+    config.setId(serviceId);
+    config.setServiceType(ServiceType.XML);
+    config.setDescription("testDescription");
+    config.setEnabled(true);
+    config.setTitle("testTitle");
+    config.setDescription("testDescription");
+    config.setServiceClass(EchoServiceBean.class);
+    
+    serviceManager.registerService(config);
+    
     serviceManager.initServices();
 
     IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
@@ -116,7 +103,7 @@ public class AxisWebServiceManagerTest {
     String html = getContentAsString(serviceLister);
     System.out.println(html);
     
-    assertTrue("EchoService was not listed", StringUtils.contains(html, "EchoService"));
+    assertTrue("EchoService was not listed", StringUtils.contains(html, serviceId));
   }
   
   private String getContentAsString(IContentGenerator cg) throws Exception {
@@ -135,7 +122,7 @@ public class AxisWebServiceManagerTest {
     outputHandler.setMimeTypeListener(mimeTypeListener);
     cg.setMessagesList(messages);
     cg.setParameterProviders(parameterProviders);
-    cg.setSession(session);
+    cg.setSession(PentahoSessionHolder.getSession());
     cg.setUrlFactory(urlFactory);
     cg.createContent();
     String content = new String(out.toByteArray());
