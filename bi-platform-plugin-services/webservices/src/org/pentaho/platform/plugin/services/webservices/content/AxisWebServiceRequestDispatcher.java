@@ -27,11 +27,11 @@ import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 
 /**
- * This class demultiplexes requests coming from GenericServlet and determines which AxisService should be invoked.
+ * This class dispatches requests coming from GenericServlet and determines which AxisService should be invoked.
  * It then passes this information, along with all the Axis content, to a subclass to do the execution.
  * @author jamesdixon
  */
-public abstract class AxisWebServiceDemultiplexer extends AbstractAxisServiceContentGenerator {
+public abstract class AxisWebServiceRequestDispatcher extends AbstractAxisServiceContentGenerator {
   
   /**
    * Parses the path parameter to find the web service name, makes sure it is 

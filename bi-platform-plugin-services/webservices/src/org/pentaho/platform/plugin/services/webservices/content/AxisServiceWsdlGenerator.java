@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * @author jamesdixon
  *
  */
-public class AxisServiceWsdlGenerator extends AxisWebServiceDemultiplexer {
+public class AxisServiceWsdlGenerator extends AxisWebServiceRequestDispatcher {
   
   private static final long serialVersionUID = -163750511475038584L;
 

@@ -47,7 +47,7 @@ import org.pentaho.platform.plugin.services.webservices.messages.Messages;
  * @author jamesdixon
  *
  */
-public class AxisServiceExecutor extends AxisWebServiceDemultiplexer implements OutTransportInfo {
+public class AxisServiceExecutor extends AxisWebServiceRequestDispatcher implements OutTransportInfo {
   
   private static final long serialVersionUID = -8815968682881342687L;
 
