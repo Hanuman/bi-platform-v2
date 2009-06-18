@@ -36,6 +36,8 @@ public class ServiceManagerTest {
     config.setServiceClass(EchoServiceBean.class);
     config.setServiceType(ServiceType.GWT);
     serviceManager.registerService(config);
+    
+    assertNotNull(serviceManager.getServiceConfig(ServiceType.GWT, "testId"));
   }
   
   @Test

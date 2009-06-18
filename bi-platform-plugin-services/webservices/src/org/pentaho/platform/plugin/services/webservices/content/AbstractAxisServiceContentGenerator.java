@@ -38,8 +38,6 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
@@ -50,6 +48,7 @@ import org.pentaho.platform.plugin.services.webservices.messages.Messages;
  * handing over to a subclass for processing of the request.
  * @author jamesdixon
  */
+@SuppressWarnings("serial")
 public abstract class AbstractAxisServiceContentGenerator extends SimpleContentGenerator {
   
   @Override
@@ -165,24 +164,6 @@ public abstract class AbstractAxisServiceContentGenerator extends SimpleContentG
     }
 
     AxisEngine.sendFault(faultContext);
-  }
-  
-  /**
-   * Currently webservice content generators are wired up by a plugin.  The following methods
-   * generate urls for executing and wsdl generation.  These methods are tightly bound to the 
-   * content generator specifications in the default-plugin of the system solution.
-   */
-  public static String getWebServiceExecuteUrl() {
-    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
-    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-run", null); //$NON-NLS-1$
-    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-    return url;
-  }
-  public static String getWebServiceWsdlUrl() {
-    IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
-    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-wsdl", null); //$NON-NLS-1$
-    String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-    return url;
   }
 
 }

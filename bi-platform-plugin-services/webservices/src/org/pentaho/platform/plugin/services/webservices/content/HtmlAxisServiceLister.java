@@ -131,7 +131,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
    */
   protected void getWsdlSection( AxisService axisService, StringBuilder sb ) {
     // write out the WSDL URL
-    String wsdlUrl = getWebServiceWsdlUrl();
+    String wsdlUrl = AxisUtil.getWebServiceWsdlUrl();
     sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_WSDL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
    */
   protected void getRunSection( AxisService axisService, StringBuilder sb ) {
     // write out the execution URL
-    String serviceUrl = getWebServiceExecuteUrl();
+    String serviceUrl = AxisUtil.getWebServiceExecuteUrl();
     sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_URL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
@@ -160,7 +160,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
    */
   @SuppressWarnings("unchecked")
   protected void getOperationsSection( AxisService axisService, StringBuilder sb ) {
-    String serviceUrl = getWebServiceExecuteUrl();
+    String serviceUrl = AxisUtil.getWebServiceExecuteUrl();
     
     // write out the operations
     Iterator it = axisService.getOperations();
@@ -179,7 +179,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
         AxisOperation axisOperation = (AxisOperation) it.next();
         String opName = axisOperation.getName().getLocalPart();
         
-        String opUrl = serviceUrl+axisService.getName()+"/"+opName;
+        String opUrl = serviceUrl+axisService.getName()+"/"+opName; //$NON-NLS-1$
         
         sb.append( "<a href=\"" ) //$NON-NLS-1$
         .append( opUrl )

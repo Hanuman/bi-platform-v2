@@ -24,6 +24,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
 
 /**
  * Writes the WSDL for a Axis web service to the output stream provided
@@ -40,7 +41,7 @@ public class AxisServiceWsdlGenerator extends AxisWebServiceRequestDispatcher {
    */
   @Override
   public void createServiceContent( AxisService axisService, String operationName, AxisConfiguration axisConfiguration, ConfigurationContext context, OutputStream out ) throws Exception {
-    axisService.printWSDL(out, getWebServiceExecuteUrl() );
+    axisService.printWSDL(out, AxisUtil.getWebServiceExecuteUrl() );
   }
 
   @Override

@@ -34,6 +34,16 @@ public class AxisWebServiceManager extends AbstractServiceTypeManager {
 
   public static AxisConfiguration currentAxisConfiguration;
   
+  
+  public void setExecuteServiceId(String executeServiceId) {
+    AxisUtil.WS_EXECUTE_SERVICE_ID=executeServiceId;
+  }
+
+  public void setWsdlServiceId(String wsdlServiceId) {
+    AxisUtil.WSDL_SERVICE_ID=wsdlServiceId;
+  }
+
+  
   private SystemSolutionAxisConfigurator configurator = new SystemSolutionAxisConfigurator();
   
   /* (non-Javadoc)

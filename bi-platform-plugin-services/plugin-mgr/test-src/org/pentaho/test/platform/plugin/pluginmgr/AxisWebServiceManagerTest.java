@@ -19,114 +19,148 @@ package org.pentaho.test.platform.plugin.pluginmgr;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IContentGenerator;
-import org.pentaho.platform.api.engine.IOutputHandler;
-import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
+import org.pentaho.platform.api.engine.IPlatformPlugin.WebServiceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.services.solution.ContentGeneratorUtil;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
-import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
-import org.pentaho.test.platform.plugin.services.webservices.MimeTypeListener;
 
 @SuppressWarnings("nls")
 public class AxisWebServiceManagerTest {
 
   private MicroPlatform microPlatform;
 
-  StandaloneSession session;
-
-  IServiceManager serviceManager;
-
   @Before
+  /*
+   * Wire up an in-memory platform to register and expose plug-in web services.
+   */
   public void init0() throws ServiceInitializationException {
+    //set solution path to a place that hosts an axis config file
     microPlatform = new MicroPlatform("plugin-mgr/test-res/AxisWebServiceManagerTest/");
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
     microPlatform.define(IPluginManager.class, PluginManager.class, Scope.GLOBAL);
     microPlatform.define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL);
-    
-    serviceManager = new DefaultServiceManager();
-    IServiceTypeManager axisManager = new AxisWebServiceManager();
-    serviceManager.setServiceTypeManagers(Arrays.asList(axisManager));
-    
-    new StandaloneSession();
-  }
+    microPlatform.define(IPluginProvider.class, TstPluginProvider.class);
 
-  @Test
-  public void testWebserviceRegistration() throws Exception {
+    IServiceTypeManager axisManager = new AxisWebServiceManager();
+    PentahoSystem.get(IServiceManager.class).setServiceTypeManagers(Arrays.asList(axisManager));
+
     microPlatform.init();
 
-    WebServiceConfig config = new WebServiceConfig();
-    String serviceId = "echoService";
-    config.setId(serviceId);
-    config.setServiceType(ServiceType.XML);
-    config.setDescription("testDescription");
-    config.setEnabled(true);
-    config.setTitle("testTitle");
-    config.setDescription("testDescription");
-    config.setServiceClass(EchoServiceBean.class);
-    
-    serviceManager.registerService(config);
-    
-    serviceManager.initServices();
+    new StandaloneSession();
+
+    PentahoSystem.get(IPluginManager.class).reload(PentahoSessionHolder.getSession());
+  }
+
+  /*
+   * The following tests are checking that the HtmlServiceLister (content generator) outputs
+   * the correct meta information about the services defined in the test plugin.
+   * They are integration tests in the sense that all the work of registering the plugin
+   * that defines the services and content generators is done by actual platform 
+   * modules as it would normally happen, and is not mocked for these tests.
+   */
+  
+  @Test
+  public void testExecuteUrlListed() throws Exception {
 
     IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
 
-    String html = getContentAsString(serviceLister);
+    String html = ContentGeneratorUtil.getContentAsString(serviceLister);
     System.out.println(html);
-    
-    assertTrue("EchoService was not listed", StringUtils.contains(html, serviceId));
+
+    assertTrue("Run URL is missing", html.contains("/content/ws-run/echoService"));
   }
   
-  private String getContentAsString(IContentGenerator cg) throws Exception {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    IOutputHandler outputHandler = new SimpleOutputHandler(out, false);
-
-//    String baseUrl = "http://testhost:testport/testcontent";
-    String baseUrl = "http://localhost:8080/pentaho/";
-    Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
-    SimpleParameterProvider requestParams = new SimpleParameterProvider();
-    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParams);
-    SimpleUrlFactory urlFactory = new SimpleUrlFactory(baseUrl + "?");
-    List<String> messages = new ArrayList<String>();
-    cg.setOutputHandler(outputHandler);
-    MimeTypeListener mimeTypeListener = new MimeTypeListener();
-    outputHandler.setMimeTypeListener(mimeTypeListener);
-    cg.setMessagesList(messages);
-    cg.setParameterProviders(parameterProviders);
-    cg.setSession(PentahoSessionHolder.getSession());
-    cg.setUrlFactory(urlFactory);
-    cg.createContent();
-    String content = new String(out.toByteArray());
-    return content;
+  @Test
+  public void testWsdlUrlListed() throws Exception {
+    IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
+    
+    String html = ContentGeneratorUtil.getContentAsString(serviceLister);
+    System.out.println(html);
+    
+    assertTrue("WSDL URL is missing", html.contains("/content/ws-wsdl/echoService"));
+  }
+  
+  @Test
+  public void testListingPageStyled() throws Exception {
+    IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
+    
+    String html = ContentGeneratorUtil.getContentAsString(serviceLister);
+    System.out.println(html);
+    
+    assertTrue("style is missing", html.contains(".h1"));
+    assertTrue("style is missing", html.contains("text/css"));
+  }
+  
+  @Test
+  public void testMetaInf() throws Exception {
+    IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
+    
+    String html = ContentGeneratorUtil.getContentAsString(serviceLister);
+    System.out.println(html);
+    
+    assertTrue("title is not displayed", html.contains("junit echo service"));
   }
 
+
+
+  public static class TstPluginProvider implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("testPlugin");
+
+      ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
+      cg1.setDescription("Mock web service execution generator");
+      cg1.setId("ws-run");
+      cg1.setType("ws-run"); //type is used as the key to verify that there is a cg that can handle a ws request
+      cg1.setTitle("Mock web service execution generator");
+      cg1.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
+      p.addContentGenerator(cg1);
+
+      ContentGeneratorInfo cg2 = new ContentGeneratorInfo();
+      cg2.setDescription("Mock WSDL generator");
+      cg2.setId("ws-wsdl");
+      cg2.setType("ws-wsdl"); //type is used as the key to verify that there is a cg that can handle a wsdl request
+      cg2.setTitle("Mock WSDL generator");
+      cg2.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
+      p.addContentGenerator(cg2);
+
+      WebServiceDefinition ws = new WebServiceDefinition();
+      ws.id = "echoService";
+      ws.serviceClass = EchoServiceBean.class.getName();
+      ws.types = new String[] { "xml" };
+      ws.title = "junit echo service";
+      p.addWebservice(ws);
+
+      return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
 }

@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -72,7 +71,6 @@ import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
-import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
@@ -372,21 +370,6 @@ public class PluginManagerTest {
     assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
   }
 
-  @Ignore
-  @Test
-  public void test11_WebserviceRegistration() throws Exception {
-    microPlatform.define(IPluginProvider.class, Tst11PluginProvider.class);
-    microPlatform.init();
-
-    pluginManager.reload(session);
-
-    IContentGenerator serviceLister = new StyledHtmlAxisServiceLister();
-
-    System.out.println(getContentAsString(serviceLister));
-    
-    fail("make this a proper test.  It should probably be moved into a AxisWebServiceManagerTest");
-  }
-  
   @Test
   public void test12_MenuCustomizationRegistration() {
     microPlatform.define(IPluginProvider.class, Tst12PluginProvider.class);
@@ -452,28 +435,6 @@ public class PluginManagerTest {
     assertEquals(EchoServiceBean.class, config.getServiceClass());
   }
   
-  private String getContentAsString(IContentGenerator cg) throws Exception {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    IOutputHandler outputHandler = new SimpleOutputHandler(out, false);
-
-    String baseUrl = "http://testhost:testport/testcontent";
-    Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
-    SimpleParameterProvider requestParams = new SimpleParameterProvider();
-    parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParams);
-    SimpleUrlFactory urlFactory = new SimpleUrlFactory(baseUrl + "?");
-    List<String> messages = new ArrayList<String>();
-    cg.setOutputHandler(outputHandler);
-    MimeTypeListener mimeTypeListener = new MimeTypeListener();
-    outputHandler.setMimeTypeListener(mimeTypeListener);
-    cg.setMessagesList(messages);
-    cg.setParameterProviders(parameterProviders);
-    cg.setSession(session);
-    cg.setUrlFactory(urlFactory);
-    cg.createContent();
-    String content = new String(out.toByteArray());
-    return content;
-  }
-
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
 
@@ -689,5 +650,6 @@ public class PluginManagerTest {
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
+  
   
 }
