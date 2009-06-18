@@ -465,6 +465,18 @@ public class PentahoSystem {
    * A convenience method for retrieving Pentaho system objects from the object factory.
    * Looks up an object by using the name of the <code>interfaceClass</code> as the object key in 
    * {@link PentahoSystem#get(Class, String, IPentahoSession)}.
+   * NOTE: session will be derived for you by using PentahoSessionHolder, so a session must already
+   * have been bound to the thread local in PentahoSessionHolder in order for you to be able to 
+   * access session-bound objects.
+   */
+  public static <T> T get(Class<T> interfaceClass) {
+    return get(interfaceClass, interfaceClass.getSimpleName(), PentahoSessionHolder.getSession());
+  }
+  
+  /**
+   * A convenience method for retrieving Pentaho system objects from the object factory.
+   * Looks up an object by using the name of the <code>interfaceClass</code> as the object key in 
+   * {@link PentahoSystem#get(Class, String, IPentahoSession)}.
    */
   public static <T> T get(Class<T> interfaceClass, final IPentahoSession session) {
     IPentahoSession curSession = (session == null)?PentahoSessionHolder.getSession():session;
