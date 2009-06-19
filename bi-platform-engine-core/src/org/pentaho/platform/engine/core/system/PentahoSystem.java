@@ -287,6 +287,7 @@ public class PentahoSystem {
     IPentahoSession session = null;
     try {
       session = pentahoObjectFactory.get(IPentahoSession.class, "systemStartupSession", null); //$NON-NLS-1$
+      PentahoSessionHolder.setSession(session);
       PentahoSystem.notifySystemListenersOfStartup(session);
     }
     catch (ObjectFactoryException e) {
