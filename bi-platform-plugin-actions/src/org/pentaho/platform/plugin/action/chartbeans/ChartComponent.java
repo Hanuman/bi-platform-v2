@@ -45,6 +45,8 @@ import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
 import org.pentaho.chart.plugin.ChartProcessingException;
 import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
+import org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin;
+import org.pentaho.chart.plugin.openflashchart.OpenFlashChartPlugin;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
@@ -74,7 +76,7 @@ public class ChartComponent {
   
   protected IPentahoResultSet resultSet = null;
   
-  protected Integer chartEngine = ChartModel.CHART_ENGINE_UNDEFINED;
+  protected String chartEngine;
   
   protected Exception bootException = null;
   
@@ -176,12 +178,12 @@ public class ChartComponent {
       // Make sure chart engine is loaded
       loadChartEngine();
       // Set chart engine on chartModel for the ChartFactory to use
-      chartModel.setChartEngine(chartEngine);
+      chartModel.setChartEngineId(chartEngine);
       
       InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       if (is == null) {
-        if(chartEngine == ChartModel.CHART_ENGINE_JFREE){
+        if(JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)){
           BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
           Graphics2D graphics = image.createGraphics();
           graphics.setFont(new Font("serif", Font.BOLD, 20));
@@ -200,7 +202,7 @@ public class ChartComponent {
         }
       } else {
         // Wrap output as necessary
-        if(chartEngine == ChartModel.CHART_ENGINE_OPENFLASH){
+        if(OpenFlashChartPlugin.PLUGIN_ID.equals(chartEngine)){
           // Convert stream to string, insert into HTML fragment and re-stream it
           StringBuilder sb = new StringBuilder();
           int c = 0;
@@ -408,24 +410,19 @@ public class ChartComponent {
   public String getMimeType(){
     loadChartEngine();
     
-    switch(chartEngine){
-      
-      case ChartModel.CHART_ENGINE_JFREE: {
-        if(outputType.equalsIgnoreCase("jpg")){ //$NON-NLS-1$
-          return "image/jpg"; //$NON-NLS-1$
-        } else if(outputType.equalsIgnoreCase("png")){ //$NON-NLS-1$
-          return "image/png"; //$NON-NLS-1$
-        }
-        
-        //Default JFREE action
-        outputType = "png"; //$NON-NLS-1$
+    if (JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)) {
+      if(outputType.equalsIgnoreCase("jpg")){ //$NON-NLS-1$
+        return "image/jpg"; //$NON-NLS-1$
+      } else if(outputType.equalsIgnoreCase("png")){ //$NON-NLS-1$
         return "image/png"; //$NON-NLS-1$
       }
       
-      case ChartModel.CHART_ENGINE_OPENFLASH: {
-        outputType = "html"; //$NON-NLS-1$
-        return "text/html"; //$NON-NLS-1$
-      }
+      //Default JFREE action
+      outputType = "png"; //$NON-NLS-1$
+      return "image/png"; //$NON-NLS-1$
+    } else if (OpenFlashChartPlugin.PLUGIN_ID.equals(chartEngine)) {
+      outputType = "html"; //$NON-NLS-1$
+      return "text/html"; //$NON-NLS-1$
     }
 
     // Final component default is OFC
@@ -443,14 +440,14 @@ public class ChartComponent {
     loadChartModel();
     
     if(chartModel != null){
-      if(chartModel.getChartEngine() != ChartModel.CHART_ENGINE_UNDEFINED){
-        this.chartEngine = chartModel.getChartEngine();
+      if(chartModel.getChartEngineId() != null){
+        this.chartEngine = chartModel.getChartEngineId();
         // Defined in ChartModel, escape
         return;
       }
     }
     
-    if(this.chartEngine != ChartModel.CHART_ENGINE_UNDEFINED){
+    if(this.chartEngine != null){
       // Engine set on Action Sequence, escape
       return;
     }
@@ -458,14 +455,13 @@ public class ChartComponent {
     // Load default value from system setting or take hard coded
     
     // Hard coded final fall back is Open Flash Chart
-    String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", //$NON-NLS-1$ //$NON-NLS-2$
-        ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH)); 
+    String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", OpenFlashChartPlugin.PLUGIN_ID); //$NON-NLS-1$ //$NON-NLS-2$
     
     if(defaultChartEngine == null){
-      defaultChartEngine = ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH);
+      defaultChartEngine = OpenFlashChartPlugin.PLUGIN_ID;
     }
     
-    this.chartEngine = ChartModel.getChartEngineIdFromFriendlyName(defaultChartEngine); 
+    this.chartEngine = defaultChartEngine; 
   }
   
   protected void loadChartModel(){
@@ -542,23 +538,15 @@ public class ChartComponent {
    */
   public String getChartEngine() {
     loadChartEngine();
-    return ChartModel.getChartEngineFriendlyNameFromId(chartEngine);
+    return chartEngine;
   }
 
-  /**
-   * Set the chart engine to render the chart
-   * @param chartEngine Integer value of chart engine
-   */
-  public void setChartEngine(int chartEngine) {
-    this.chartEngine = chartEngine;
-  }
-  
   /**
    * Set the chart engine to render the chart
    * @param chartEngine Value of "JFreeChart" or "OpenFlashChart"
    */
   public void setChartEngine(String chartEngine) {
-    this.chartEngine = ChartModel.getChartEngineIdFromFriendlyName(chartEngine);
+    this.chartEngine = chartEngine;
   }
   
   public void setOutputType(String outputType) {

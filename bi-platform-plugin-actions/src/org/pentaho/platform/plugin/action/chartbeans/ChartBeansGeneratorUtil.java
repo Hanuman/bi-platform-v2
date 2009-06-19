@@ -42,6 +42,8 @@ import org.pentaho.chart.model.ChartDataDefinition;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
+import org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin;
+import org.pentaho.chart.plugin.openflashchart.OpenFlashChartPlugin;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -314,22 +316,21 @@ public class ChartBeansGeneratorUtil {
 
     String html = null;
     
-    if(chartModel.getChartEngine() == ChartModel.CHART_ENGINE_UNDEFINED){
+    if(chartModel.getChartEngineId() == null){
       // Load default value from system setting or take hard coded
       
       // Hard coded final fall back is Open Flash Chart
-      String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", //$NON-NLS-1$ //$NON-NLS-2$
-          ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH)); 
-      
+      String defaultChartEngine = PentahoSystem.getSystemSetting("chartbeans/chartbeans_config.xml", "default-chart-engine", OpenFlashChartPlugin.PLUGIN_ID);//$NON-NLS-1$ //$NON-NLS-2$
+           
       if(defaultChartEngine == null){
-        defaultChartEngine = ChartModel.getChartEngineFriendlyNameFromId(ChartModel.CHART_ENGINE_OPENFLASH);
+        defaultChartEngine = OpenFlashChartPlugin.PLUGIN_ID;
       }
       
-      chartModel.setChartEngine(ChartModel.getChartEngineIdFromFriendlyName(defaultChartEngine));
+      chartModel.setChartEngineId(defaultChartEngine);
       
     }
 
-    if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_JFREE) {
+    if (JFreeChartPlugin.PLUGIN_ID.equals(chartModel.getChartEngineId())) {
       final String SOLUTION_TMP_DIR = "system/tmp/"; //$NON-NLS-1$
       File chartFileOnServer = new File(new File(PentahoSystem.getApplicationContext().getFileOutputPath(
           SOLUTION_TMP_DIR)), java.util.UUID.randomUUID().toString());
@@ -348,7 +349,7 @@ public class ChartBeansGeneratorUtil {
           PentahoSystem.getApplicationContext().getBaseUrl(), chartFileOnServer.getName() });
       html = ChartBeansGeneratorUtil.mergeStaticImageHtmlTemplate(imageUrl);
 
-    } else if (chartModel.getChartEngine() == ChartModel.CHART_ENGINE_OPENFLASH) {
+    } else if (OpenFlashChartPlugin.PLUGIN_ID.equals(chartModel.getChartEngineId())) {
 
       ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
       ChartBeansGeneratorUtil.internalCreateChart(userSession, parameterMap, serializedChartDataDefinition, serializedChartModel,
