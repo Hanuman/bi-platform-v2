@@ -650,7 +650,9 @@ public class AdhocWebService extends ServletBase {
     try {
       queryObject = helper.fromXML(repo, xml);
     } catch (Exception e) {
-      thinException = e;
+      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      error(msg, e);
+      throw new AdhocWebServiceException(msg, e);
     }
     
     LogicalModel model = null;
