@@ -30,6 +30,7 @@ import org.pentaho.platform.api.engine.ServiceException;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
 import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
+import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
 
 public class DefaultServiceManager implements IServiceManager {
@@ -41,7 +42,7 @@ public class DefaultServiceManager implements IServiceManager {
       ServiceType type = handler.getSupportedServiceType();
       if (type == null) {
         throw new IllegalArgumentException(
-            "Trying to register a service manager for type 'null'.  Please use a valid service type");
+            Messages.getErrorString("DefaultServiceManager.ERROR_0001")); //$NON-NLS-1$
       }
       serviceManagerMap.put(type, handler);
       Logger.info(getClass().toString(),
@@ -54,23 +55,21 @@ public class DefaultServiceManager implements IServiceManager {
     ServiceType type = config.getServiceType();
     IServiceTypeManager mgr = serviceManagerMap.get(type);
     if (mgr == null) {
-      String availableTypes = StringUtils.join(serviceManagerMap.keySet().iterator(), ",");
-      throw new ServiceException("Failed to register service '" + config.getId() + "'.  "
-          + "No service manager found for service type '" + type.toString() + "'.  Available service types are: ["
-          + availableTypes + "]");
+      String availableTypes = StringUtils.join(serviceManagerMap.keySet().iterator(), Messages.getString(",")); //$NON-NLS-1$
+      throw new ServiceException(Messages.getErrorString("DefaultServiceManager.ERROR_0002", config.getId(), type.toString(), availableTypes)); //$NON-NLS-1$
     }
     serviceManagerMap.get(config.getServiceType()).registerService(config);
   }
 
   private static void validate(WebServiceConfig config) {
     if(StringUtils.isEmpty(config.getId())) {
-      throw new IllegalStateException("web service id not set");
+      throw new IllegalStateException("web service id not set"); //$NON-NLS-1$
     }
     if(config.getServiceClass() == null) {
-      throw new IllegalStateException("service class not set");
+      throw new IllegalStateException("service class not set"); //$NON-NLS-1$
     }
     if(config.getServiceType() == null) {
-      throw new IllegalStateException("service type not set");
+      throw new IllegalStateException("service type not set"); //$NON-NLS-1$
     }
   }
 
