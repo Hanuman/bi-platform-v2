@@ -19,35 +19,10 @@
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.pentaho.platform.api.engine.ServiceException;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 
 public class GwtRpcServiceManager extends AbstractServiceTypeManager {
-
-  private Map<String, Class<?>> serviceClassMap = new HashMap<String, Class<?>>();
-
-  public void registerService(WebServiceConfig wsConfig) {
-    serviceClassMap.put(wsConfig.getId(), wsConfig.getServiceClass());
-    registeredServiceConfigs.add(wsConfig);
-  }
-
-  public Object getServiceBean(String serviceId) throws ServiceException {
-    Object serviceBean;
-    try {
-      //FIXME: do some caching here, don't instance the bean every time
-      serviceBean = serviceClassMap.get(serviceId).newInstance();
-    } catch (InstantiationException e) {
-      throw new ServiceException(e);
-    } catch (IllegalAccessException e) {
-      throw new ServiceException(e);
-    }
-    return serviceBean;
-  }
 
   public void initServices() throws ServiceInitializationException {
   }

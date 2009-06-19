@@ -21,13 +21,23 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.pentaho.platform.api.engine.IServiceTypeManager;
+import org.pentaho.platform.api.engine.ServiceException;
 import org.pentaho.platform.api.engine.WebServiceConfig;
 
 public abstract class AbstractServiceTypeManager implements IServiceTypeManager {
   
   protected Collection<WebServiceConfig> registeredServiceConfigs = new ArrayList<WebServiceConfig>();
+  protected Map<String, Class<?>> serviceClassMap = new HashMap<String, Class<?>>();
+  protected Map<String, Object> serviceInstanceMap = new HashMap<String, Object>();
+  
+  public void registerService(WebServiceConfig wsConfig) {
+    serviceClassMap.put(wsConfig.getId(), wsConfig.getServiceClass());
+    registeredServiceConfigs.add(wsConfig);
+  }
   
   public WebServiceConfig getServiceConfig(String serviceId) {
     for(WebServiceConfig config : registeredServiceConfigs) {
@@ -36,5 +46,19 @@ public abstract class AbstractServiceTypeManager implements IServiceTypeManager 
       }
     }
     return null;
+  }
+
+  public Object getServiceBean(String serviceId) throws ServiceException {
+    Object serviceInstance = serviceInstanceMap.get(serviceId);
+    if (serviceInstance == null) {
+      try {
+        serviceInstance = serviceClassMap.get(serviceId).newInstance();
+      } catch (InstantiationException e) {
+        throw new ServiceException(e);
+      } catch (IllegalAccessException e) {
+        throw new ServiceException(e);
+      }
+    }
+    return serviceInstance;
   }
 }

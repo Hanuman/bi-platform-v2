@@ -29,57 +29,50 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
 
 public class AxisWebServiceManager extends AbstractServiceTypeManager {
-  
+
   public static ConfigurationContext currentAxisConfigContext;
 
   public static AxisConfiguration currentAxisConfiguration;
-  
-  
+
   public void setExecuteServiceId(String executeServiceId) {
-    AxisUtil.WS_EXECUTE_SERVICE_ID=executeServiceId;
+    AxisUtil.WS_EXECUTE_SERVICE_ID = executeServiceId;
   }
 
   public void setWsdlServiceId(String wsdlServiceId) {
-    AxisUtil.WSDL_SERVICE_ID=wsdlServiceId;
+    AxisUtil.WSDL_SERVICE_ID = wsdlServiceId;
   }
 
-  
   private SystemSolutionAxisConfigurator configurator = new SystemSolutionAxisConfigurator();
-  
+
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#defineService(org.pentaho.platform.plugin.services.pluginmgr.WebServiceDefinition)
    */
-  public void registerService(final WebServiceConfig wsConfig ) {
+  public void registerService(final WebServiceConfig wsConfig) {
+    super.registerService(wsConfig);
     configurator.addService(wsConfig);
-    registeredServiceConfigs.add(wsConfig);
   }
-  
+
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#initServices()
    */
   public void initServices() throws ServiceInitializationException {
     configurator.setSession(PentahoSessionHolder.getSession());
     AxisConfigurator axisConfigurator = configurator;
-    
+
     //create the axis configuration and make it accessible to content generators via static member
     ConfigurationContext configContext = null;
     try {
-      configContext = ConfigurationContextFactory.createConfigurationContext( axisConfigurator );
+      configContext = ConfigurationContextFactory.createConfigurationContext(axisConfigurator);
     } catch (AxisFault e) {
       throw new ServiceInitializationException(e);
     }
     configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
-    
+
     currentAxisConfigContext = configContext;
     currentAxisConfiguration = configContext.getAxisConfiguration();
-    
+
     //now load the services
     axisConfigurator.loadServices();
-  }
-
-  public Object getServiceBean(String serviceId) {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   public ServiceType getSupportedServiceType() {
