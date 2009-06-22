@@ -34,7 +34,7 @@
     </groupbox>
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
-    buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="530" buttonalign="right">
+    buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="540" buttonalign="right">
     
     <vbox flex="1">
       <hbox>
@@ -96,26 +96,26 @@
 				  </vbox>
 			  </vbox>
 			  <vbox flex="1">
-			  	  <groupbox id="fileGroupbox" width="520" height="80">
+			  	  <groupbox id="fileGroupbox">
 			  	  	<caption label="${datasourceDialog.File}" />
 			  	  	<vbox>
 				  	  	<pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "240"/>
 						<hbox>
 					  		<label value="${datasourceDialog.Delimiter}"/>
-					  		<spacer width="42"/>
+					  		<spacer width="62"/>
 					  		<label value="${datasourceDialog.Enclosure}"/>
 					  		<spacer flex="1"/>
 						</hbox>			  	  	
 						<hbox>
-						    <menulist flex="1" label="Delimeter" id="delimiterList" pen:binding="name" width="120">
+						    <menulist width="100" label="Delimeter" id="delimiterList" pen:binding="name">
 	              				<menupopup />
 	            			</menulist>
 	            			<spacer width="20"/>
-						    <menulist flex="2" label="Enclosure" id="enclosureList" pen:binding="name" width="300">
+						    <menulist width="100" label="Enclosure" id="enclosureList" pen:binding="name">
 	              				<menupopup />
 	            			</menulist>
 	            			<spacer width="20"/>
-							<checkbox  flex="3" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
+							<checkbox  width="100" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
 						</hbox>
 					</vbox>			  	  	
 			  	  </groupbox>
