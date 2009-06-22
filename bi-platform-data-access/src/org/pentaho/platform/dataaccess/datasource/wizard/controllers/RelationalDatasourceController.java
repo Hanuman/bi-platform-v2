@@ -41,7 +41,9 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
-  public static final int MAX_COL_SIZE = 15;
+  public static final int MAX_COL_SIZE = 12;
+  public static final String EMPTY_STRING = "";
+  
   public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
   private XulDialog connectionDialog;
@@ -104,6 +106,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   XulDialog sampleDataDialog = null;
   CustomAggregateCellEditor aggregationCellEditor = null;
   CustomSampleDataCellEditor sampleDataCellEditor = null;
+  CustomSampleDataCellRenderer sampleDataCellRenderer = null;
   //private XulRows rows = null;
   //private XulGrid grid = null;  
   CustomAggregationCellRenderer aggregationCellRenderer = null;
@@ -127,7 +130,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     sampleDataDialog = (XulDialog) document.getElementById("relationalSampleDataDialog");
     sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
     modelDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);
-
+    sampleDataCellRenderer = new CustomSampleDataCellRenderer();
+    modelDataTable.registerCellRenderer("sample-data-cell-editor", sampleDataCellRenderer);
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
     applyQueryConfirmationDialog = (XulDialog) document.getElementById("applyQueryConfirmationDialog"); //$NON-NLS-1$
@@ -413,7 +417,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                 try {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
-                  treeCol.setFlex(1);
+                  //treeCol.setFlex(1);
+                  //treeCol.setWidth(30);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
@@ -603,5 +608,33 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       return false;
     }
     
+  }
+  
+  private class CustomSampleDataCellRenderer implements TreeCellRenderer {
+
+    public Object getNativeComponent() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    public String getText(Object value) {
+      StringBuffer buffer = new StringBuffer();
+      if(value instanceof String) {
+        String sampleData = (String) value;
+        if(sampleData != null && sampleData.length() > 0) {
+          if(sampleData.length() <= MAX_COL_SIZE) {
+            return sampleData;
+          } else {
+            return EMPTY_STRING; 
+          }
+        }
+      }
+      return EMPTY_STRING;
+    }
+
+    public boolean supportsNativeComponent() {
+      // TODO Auto-generated method stub
+      return false;
+    }
   }
 }

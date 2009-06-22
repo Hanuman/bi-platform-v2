@@ -235,7 +235,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   public void initialize() {
     datasourceModel.clearModel();
     connectionModel.clearModel();
-    buildRelationalEmptyTable();    
+    /*buildRelationalEmptyTable();*/    
     selectSql();
     datasourceModel.setDatasourceType(DatasourceType.SQL);
   }
@@ -424,15 +424,16 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   private void moveToCsvDeck() {
     datasourceDeck.setSelectedIndex(CSV_DECK);
-    if(csvDataTable.getRows() == 0) {
+    csvDataTable.update();
+    /*if(csvDataTable.getRows() == 0) {
       buildCsvEmptyTable(); 
-    }
+    }*/
   }
   private void moveToRelationalDeck() {
     datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
-    if(modelDataTable.getRows() == 0) {
+    /*if(modelDataTable.getRows() == 0) {
       buildRelationalEmptyTable(); 
-    }
+    }*/
   }
   public DatasourceService getService() {
     return service;

@@ -24,6 +24,7 @@ import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulMenupopup;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.dom.Document;
+import org.pentaho.ui.xul.gwt.AbstractGwtXulContainer;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 
@@ -124,8 +125,10 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       mainAggregateBox.addComponent(rightAggregateBox);
       groupBox.setCaption(datasourceMessages.getString("aggregationEditorDialog.available"));
       groupBox.addChild(mainAggregateBox);
+      groupBox.setHeight(110);
+      groupBox.setWidth(200);
+      ((AbstractGwtXulContainer) groupBox).layout();
       dialog.addChild(groupBox);
-      dialog.addChild(mainAggregateBox);
       XulLabel label = (XulLabel) document.createElement("label");
       label.setValue(datasourceMessages.getString("aggregationEditorDialog.default"));
       listbox = (XulMenuList) document.createElement("menulist");

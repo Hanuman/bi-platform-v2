@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.platform.dataaccess.datasource.Delimiter;
+import org.pentaho.platform.dataaccess.datasource.Enclosure;
+import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
@@ -14,12 +17,15 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServi
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
+import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
+import org.pentaho.ui.xul.components.XulMenuList;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
+import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -29,46 +35,38 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class CsvDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
-  public static final int MAX_COL_SIZE = 15;
+  public static final int MAX_COL_SIZE = 12;
+  public static final String EMPTY_STRING = "";
   public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
   private DatasourceService service;
   private XulDialog regenerateModelConfirmationDialog = null;
   private XulDialog waitingDialog = null;
-
   private XulLabel waitingDialogLabel = null;
-
   private DatasourceModel datasourceModel;
-
-  BindingFactory bf;
-  
-  XulTextbox datasourceName = null;
-
+  private BindingFactory bf;
+  private XulTextbox datasourceName = null;
   private XulDialog errorDialog;
-
   private XulDialog successDialog;
-
   private XulLabel errorLabel = null;
-
   private XulLabel successLabel = null;
-
   private XulTree csvDataTable = null;
-
-  XulTextbox selectedFile = null;
-
-  XulCheckbox headersPresent = null;
+  private XulTextbox selectedFile = null;
+  private XulCheckbox headersPresent = null;
   private XulTreeCol columnNameTreeCol = null;
   private XulTreeCol columnTypeTreeCol = null;
   //private XulTreeCol columnFormatTreeCol = null;
-
-  XulDialog aggregationEditorDialog = null;
-  XulDialog sampleDataDialog = null;
-  XulTree sampleDataTree = null;
-  CustomAggregateCellEditor aggregationCellEditor = null;
-  CustomSampleDataCellEditor sampleDataCellEditor = null;
-  CustomAggregationCellRenderer aggregationCellRenderer = null;
+  private XulDialog aggregationEditorDialog = null;
+  private XulDialog sampleDataDialog = null;
+  private XulTree sampleDataTree = null;
+  private CustomAggregateCellEditor aggregationCellEditor = null;
+  private CustomSampleDataCellEditor sampleDataCellEditor = null;
+  private CustomAggregationCellRenderer aggregationCellRenderer = null;
   private XulDialog applyCsvConfirmationDialog = null;
   private XulVbox csvAggregationEditorVbox = null;
+  private CustomSampleDataCellRenderer sampleDataCellRenderer = null;
+  private XulMenuList delimiterList = null;
+  private XulMenuList enclosureList = null;
 
   public CsvDatasourceController() {
 
@@ -87,6 +85,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     sampleDataDialog = (XulDialog) document.getElementById("csvSampleDataDialog");
     sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
     csvDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);
+    sampleDataCellRenderer = new CustomSampleDataCellRenderer();
+    csvDataTable.registerCellRenderer("sample-data-cell-editor", sampleDataCellRenderer);
     regenerateModelConfirmationDialog = (XulDialog) document.getElementById("regenerateModelConfirmationDialog"); //$NON-NLS-1$
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
     waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$    
@@ -99,10 +99,78 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     selectedFile = (XulTextbox) document.getElementById("selectedFile"); //$NON-NLS-1$
     columnNameTreeCol = (XulTreeCol) document.getElementById("csvColumnNameTreeCol"); //$NON-NLS-1$
     columnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol"); //$NON-NLS-1$
+    delimiterList = (XulMenuList) document.getElementById("delimiterList"); //$NON-NLS-1$
+    enclosureList = (XulMenuList) document.getElementById("enclosureList"); //$NON-NLS-1$
+    
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("csvColumnFormatTreeCol"); //$NON-NLS-1$    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
+    bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");
+    bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");
+    BindingConvertor<Integer, Enclosure> indexToEnclosureConverter = new BindingConvertor<Integer, Enclosure>() {
+
+      @Override
+      public Enclosure sourceToTarget(Integer value) {
+        if(value == 0) {
+          return Enclosure.NONE;
+        } else if(value == 1) {
+          return Enclosure.SINGLEQUOTE;
+        } else if(value == 2) {
+          return Enclosure.DOUBLEQUOTE;
+        }
+        return Enclosure.NONE;
+      }
+
+      @Override
+      public Integer targetToSource(Enclosure value) {
+        if(value == Enclosure.NONE) {
+          return 0;
+        } else if(value == Enclosure.SINGLEQUOTE) {
+          return 1;
+        } else if(value == Enclosure.DOUBLEQUOTE) {
+          return 2;
+        }
+        return 0;
+      }
+    };
+
+    BindingConvertor<Integer, Delimiter> indexToDelimiterConverter = new BindingConvertor<Integer, Delimiter>() {
+
+      @Override
+      public Delimiter sourceToTarget(Integer value) {
+        if(value == 0) {
+          return Delimiter.NONE;
+        } else if(value == 1) {
+          return Delimiter.COMMA;
+        } else if(value == 2) {
+          return Delimiter.TAB;
+        } else if(value == 3) {
+          return Delimiter.SEMICOLON;
+        } else if(value == 4) {
+          return Delimiter.SPACE;
+        }
+        return Delimiter.NONE;
+      }
+
+      @Override
+      public Integer targetToSource(Delimiter value) {
+        if(value == Delimiter.NONE) {
+          return 0;
+        } else if(value == Delimiter.COMMA) {
+          return 1;
+        } else if(value == Delimiter.TAB) {
+          return 2;
+        } else if(value == Delimiter.SEMICOLON) {
+          return 3;
+        } else if(value == Delimiter.SPACE) {
+          return 4;
+        }
+        return 0;
+      }
+    };    
+    bf.createBinding(enclosureList, "selectedIndex", datasourceModel.getCsvModel(), "enclosure", indexToEnclosureConverter);
+    bf.createBinding(delimiterList, "selectedIndex", datasourceModel.getCsvModel(), "delimiter", indexToDelimiterConverter);
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(csvDataTable, "selectedIndex", this, "selectedCsvDataRow");
     try {
@@ -113,6 +181,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       e.printStackTrace();
     }
     datasourceModel.getCsvModel().setHeadersPresent(true);
+    datasourceModel.getCsvModel().setEnclosureList();
+    datasourceModel.getCsvModel().setDelimiterList();
   }
   
   public void setSelectedCsvDataRow(int row){
@@ -160,9 +230,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       try {
         showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
-            // TODO Binding for the check box is not working. Need to investigate
-            // TODO Are we going to expose the delimeter and enclosure to the UI
-            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent() /*headersPresent.isChecked()*/, "\"", ",",
+            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), datasourceModel.getCsvModel().getEnclosure().getValue(), datasourceModel.getCsvModel().getDelimiter().getValue(),
             new XulServiceCallback<BusinessData>() {
 
               public void error(String message, Throwable error) {
@@ -345,7 +413,34 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       // TODO Auto-generated method stub
       return false;
     }
-    
+  }
+  
+  private class CustomSampleDataCellRenderer implements TreeCellRenderer {
+
+    public Object getNativeComponent() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    public String getText(Object value) {
+      StringBuffer buffer = new StringBuffer();
+      if(value instanceof String) {
+        String sampleData = (String) value;
+        if(sampleData != null && sampleData.length() > 0) {
+          if(sampleData.length() <= MAX_COL_SIZE) {
+            return sampleData;
+          } else {
+            return EMPTY_STRING; 
+          }
+        }
+      }
+      return EMPTY_STRING;
+    }
+
+    public boolean supportsNativeComponent() {
+      // TODO Auto-generated method stub
+      return false;
+    }
   }
 }
 

@@ -35,7 +35,8 @@
   </dialog>
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
     buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="530" buttonalign="right">
-    <groupbox flex="1">
+    
+    <vbox flex="1">
       <hbox>
 	      <button id="relationalButton" image="images/database.png"  label="${datasourceDialog.Database}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.RelationalImageToolTip}" onclick="datasourceController.selectSql()"  disabled="false" align="middle" pen:classname="tabButton"/>
     	  <button id="csvButton" image="images/csv.png" label="${datasourceDialog.Csv}" dir="forward" orient="horizontal" tooltiptext="${datasourceDialog.CsvImageToolTip}" onclick="datasourceController.selectCsv()"  disabled="false" align="middle" pen:classname="tabButton"/>
@@ -48,7 +49,7 @@
          	<spacer flex="1"/>
         </hbox>
       </vbox>
-      <groupbox flex="1">
+      <vbox flex="1">
 	      <deck id="datasourceDeck" flex="1">
 		      <vbox flex="1">
                     
@@ -95,12 +96,29 @@
 				  </vbox>
 			  </vbox>
 			  <vbox flex="1">
-			      <label value="${datasourceDialog.UploadFile}"/>
-			      <vbox height="25">
-				      <pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "226"/>
-			      </vbox>
-				  <checkbox  id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
-				  <spacer height="5"/>				  
+			  	  <groupbox id="fileGroupbox" width="520" height="80">
+			  	  	<caption label="${datasourceDialog.File}" />
+			  	  	<vbox>
+				  	  	<pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "240"/>
+						<hbox>
+					  		<label value="${datasourceDialog.Delimiter}"/>
+					  		<spacer width="42"/>
+					  		<label value="${datasourceDialog.Enclosure}"/>
+					  		<spacer flex="1"/>
+						</hbox>			  	  	
+						<hbox>
+						    <menulist flex="1" label="Delimeter" id="delimiterList" pen:binding="name" width="120">
+	              				<menupopup />
+	            			</menulist>
+	            			<spacer width="20"/>
+						    <menulist flex="2" label="Enclosure" id="enclosureList" pen:binding="name" width="300">
+	              				<menupopup />
+	            			</menulist>
+	            			<spacer width="20"/>
+							<checkbox  flex="3" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
+						</hbox>
+					</vbox>			  	  	
+			  	  </groupbox>
 				  <label value="${datasourceDialog.Metadata}"/>
 				  <vbox flex="1">
 					  <tree flex="1" id="csvDataTable" seltype="single">
@@ -116,21 +134,19 @@
 			  	  </vbox>
 			  </vbox>
 		  </deck>	
-	  </groupbox>	    
-   </groupbox>
+	  </vbox>	    
+   </vbox>
   </dialog>
   
   <dialog id="previewResultsDialog" buttonlabelaccept="${dialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
     ondialogaccept="relationalDatasourceController.closePreviewResultsDialog()" buttonalign="right"
     title="${previewResultsDialog.title}" width="340" height="400">
-    	<pen:scrollbox width="340">
-	        <tree flex="1" id="previewResultsTable" seltype="single">
-	              <treecols>
-			   			<treecol label="Preview" flex="1" />
-			      </treecols>
-	              <treechildren />
-			</tree>    
-		</pen:scrollbox>
+        <tree flex="1" id="previewResultsTable" seltype="single">
+              <treecols>
+		   			<treecol label="Preview" flex="1" />
+		      </treecols>
+              <treechildren />
+		</tree>    
   </dialog>
     
     
@@ -192,7 +208,7 @@
   </dialog>
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="220">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="250">
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
@@ -206,7 +222,7 @@
   </dialog>
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="200" width="220">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="250">
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 

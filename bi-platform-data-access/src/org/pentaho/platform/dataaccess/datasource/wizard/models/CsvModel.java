@@ -7,6 +7,8 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.platform.dataaccess.datasource.Delimiter;
+import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
@@ -17,8 +19,38 @@ public class CsvModel extends XulEventSourceAdapter{
   private boolean headersPresent = false;
   private List<CsvModelDataRow> dataRows = new ArrayList<CsvModelDataRow>();
   private String selectedFile = null;
-
+  private Enclosure enclosure;
+  private Delimiter delimiter;
+  private List<String> enclosureList;
+  private List<String> delimiterList;
+  
   public CsvModel() {
+  }
+
+  public List<String> getEnclosureList() {
+    return enclosureList;
+  }
+
+  public void setEnclosureList() {
+    enclosureList = new ArrayList<String>();
+    Enclosure[] enclosureArray = Enclosure.values();
+    for(int i=0;i<enclosureArray.length;i++) {
+      enclosureList.add(enclosureArray[i].getName());
+    }
+    this.firePropertyChange("enclosureList", null, enclosureList); //$NON-NLS-1$
+  }
+
+  public List<String> getDelimiterList() {
+    return delimiterList;
+  }
+
+  public void setDelimiterList() {
+    delimiterList = new ArrayList<String>();
+    Delimiter[] delimiterArray = Delimiter.values();
+    for(int i=0;i<delimiterArray.length;i++) {
+      delimiterList.add(delimiterArray[i].getName());
+    }
+    this.firePropertyChange("delimiterList", null, delimiterList); //$NON-NLS-1$
   }
 
   public BusinessData getBusinessData() {
@@ -124,6 +156,24 @@ public class CsvModel extends XulEventSourceAdapter{
     }
     return column;
   }
+  
+  
+  public Enclosure getEnclosure() {
+    return enclosure;
+  }
+
+  public void setEnclosure(Enclosure enclosure) {
+    this.enclosure = enclosure;
+  }
+
+  public Delimiter getDelimiter() {
+    return delimiter;
+  }
+
+  public void setDelimiter(Delimiter delimiter) {
+    this.delimiter = delimiter;
+  }
+
   /*
    * Clears out the model
    */
