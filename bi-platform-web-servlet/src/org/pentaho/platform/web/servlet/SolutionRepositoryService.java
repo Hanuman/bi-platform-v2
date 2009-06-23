@@ -475,6 +475,12 @@ public class SolutionRepositoryService extends ServletBase {
               }
             }
             child.setAttribute("url", url); //$NON-NLS-1$
+            
+            String paramServiceUrl = PentahoSystem.getApplicationContext().getBaseUrl() 
+              + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            
+            child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
+            
           } catch (FileNotFoundException e) {
             logger.warn(e.getMessage(), e);
           } catch (Throwable t) {
