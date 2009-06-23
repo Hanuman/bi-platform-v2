@@ -16,8 +16,7 @@
  */
 package org.pentaho.platform.plugin.action.openflashchart.factory;
 
-import jofc2.model.elements.LineChart;
-import jofc2.model.elements.LineChart.Style.Type;
+import ofc4j.model.elements.LineChart;
 
 import org.dom4j.Node;
 
@@ -29,14 +28,10 @@ public class LineChartFactory extends AbstractChartFactory {
   private static final String DOT_WIDTH_NODE_LOC = "dot-width"; //$NON-NLS-1$
 
   // defaults
-  // This cannot be a new LineChart.Style, as the instances of LineChart.Style
-  // must be unique for XStream to parse them properly...
-  private static final LineChart.Style.Type LINECHART_STYLE_DEFAULT = Type.ANCHOR;
+  private static final LineChart.Style LINECHART_STYLE_DEFAULT = LineChart.Style.NORMAL;
   
-
-  
-  // line related members
-  protected LineChart.Style.Type linechartstyle;
+  // line related members 
+  protected LineChart.Style linechartstyle;
   protected Integer linechartwidth;
   protected Integer dotwidth;
   
@@ -55,7 +50,7 @@ public class LineChartFactory extends AbstractChartFactory {
   }
   
   public LineChart getLineChartFromColumn(int col) {
-    LineChart lc = new LineChart(getStyleInstance(linechartstyle));
+    LineChart lc = new LineChart(this.linechartstyle);
     for (int row = 0; row < getRowCount(); row++) {
       double d = ((Number) getValueAt(row, col)).doubleValue();
       LineChart.Dot dot = new LineChart.Dot(d);
@@ -80,7 +75,7 @@ public class LineChartFactory extends AbstractChartFactory {
 
     // set the onclick event to the base url template
     if (null != baseURLTemplate) {
-      lc.setOnClick(baseURLTemplate);
+      lc.setOn_click(baseURLTemplate);
     }
     
     if (alpha != null) {
@@ -98,11 +93,11 @@ public class LineChartFactory extends AbstractChartFactory {
 
     if (getValue(temp) != null) {
       if ("dot".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = Type.SOLID_DOT;
+        linechartstyle = LineChart.Style.DOT;
       else if ("normal".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = Type.ANCHOR;
+        linechartstyle = LineChart.Style.NORMAL;
       else if ("hollow".equals(getValue(temp))) //$NON-NLS-1$
-        linechartstyle = Type.HALLOW_DOT;
+        linechartstyle = LineChart.Style.HOLLOW;
       else
         linechartstyle = LINECHART_STYLE_DEFAULT;
     } else {
@@ -119,9 +114,5 @@ public class LineChartFactory extends AbstractChartFactory {
     if (getValue(temp) != null) {
       dotwidth = Integer.parseInt(getValue(temp));
     } 
-  }
-  
-  private LineChart.Style getStyleInstance(LineChart.Style.Type type){
-    return new LineChart.Style(type);
   }
 }

@@ -16,23 +16,22 @@
  */
 package org.pentaho.platform.plugin.action.openflashchart.factory;
 
-import jofc2.model.elements.AreaHollowChart;
-import jofc2.model.elements.AreaLineChart;
-import jofc2.model.elements.LineChart;
-import jofc2.model.elements.LineChart.Style.Type;
+import ofc4j.model.elements.AreaHollowChart;
+import ofc4j.model.elements.AreaLineChart;
+import ofc4j.model.elements.LineChart;
 
 public class AreaChartFactory extends LineChartFactory {
-
+ 
   @Override
   public LineChart getLineChartFromColumn(int col) {
     LineChart ac = null;
-    if(linechartstyle.getType() != Type.HALLOW_DOT.getType()) {
+    if(linechartstyle != LineChart.Style.HOLLOW) {
       AreaLineChart ahc = new AreaLineChart();
-      ahc.setFillColor(getColor(col));
+      ahc.setFill(getColor(col));
       ac = ahc;
     } else {
       AreaHollowChart ahc = new AreaHollowChart();
-      ahc.setFillColor(getColor(col));
+      ahc.setFill(getColor(col));
       ac = ahc;
     }
 
@@ -56,7 +55,7 @@ public class AreaChartFactory extends LineChartFactory {
 
     // set the onclick event to the base url template
     if (null != baseURLTemplate) {
-      ac.setOnClick(baseURLTemplate);
+      ac.setOn_click(baseURLTemplate);
     }
     if (alpha != null) {
       ac.setAlpha(alpha);

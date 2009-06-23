@@ -19,13 +19,13 @@ package org.pentaho.platform.plugin.action.openflashchart.factory;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import jofc2.model.Chart;
-import jofc2.model.Text;
-import jofc2.model.axis.Axis;
-import jofc2.model.axis.XAxis;
-import jofc2.model.axis.YAxis;
-import jofc2.model.elements.Element;
-
+import ofc4j.model.Chart;
+import ofc4j.model.Text;
+import ofc4j.model.axis.Axis;
+import ofc4j.model.axis.XAxis;
+import ofc4j.model.axis.YAxis;
+import ofc4j.model.elements.Element;
+ 
 import org.apache.commons.logging.Log;
 import org.dom4j.Node;
 import org.pentaho.commons.connection.IPentahoDataTypes;
@@ -393,7 +393,7 @@ public abstract class AbstractChartFactory implements IChartFactory {
     if (HORIZONTAL_ORIENTATION.equals(orientation)) {
       YAxis yaxis = new YAxis();
       if (labels != null) {
-        yaxis.setLabels(labels);
+        yaxis.addLabels(labels);
       }
       yaxis.setStroke(domainStroke);
       yaxis.setColour(domainColor);

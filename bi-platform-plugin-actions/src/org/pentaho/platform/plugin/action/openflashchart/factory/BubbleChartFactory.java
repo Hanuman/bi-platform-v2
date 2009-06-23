@@ -20,8 +20,8 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 
-import jofc2.model.elements.Element;
-import jofc2.model.elements.ScatterChart;
+import ofc4j.model.elements.Element;
+import ofc4j.model.elements.ScatterChart;
 
 import org.dom4j.Node;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -31,7 +31,7 @@ public class BubbleChartFactory extends AbstractChartFactory {
   private static final String MAX_BUBBLE_SIZE_NODE_LOC = "max-bubble-size"; //$NON-NLS-1$
   private static final String BUBBLE_LABEL_Z_FORMAT_NODE_LOC = "bubble-label-z-format"; //$NON-NLS-1$
   private static final String BUBBLE_LABEL_CONTENT_NODE_LOC = "bubble-label-content"; //$NON-NLS-1$
-
+ 
   // scatter / bubble members
   private Number bubbleMaxX;
   private int maxBubbleSize = 100;
@@ -60,7 +60,7 @@ public class BubbleChartFactory extends AbstractChartFactory {
       Element e = null;
       String text = getRowHeader(row);        
 
-      ScatterChart sc = new ScatterChart(); //$NON-NLS-1$
+      ScatterChart sc = new ScatterChart(""); //$NON-NLS-1$
       sc.setColour(getColor(row));
       Number x = (Number)getValueAt(row, 0);
       Number y = (Number)getValueAt(row, 1);

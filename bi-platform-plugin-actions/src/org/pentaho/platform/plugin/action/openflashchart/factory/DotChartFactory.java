@@ -19,8 +19,8 @@ package org.pentaho.platform.plugin.action.openflashchart.factory;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 
-import jofc2.model.elements.Element;
-import jofc2.model.elements.ScatterChart;
+import ofc4j.model.elements.Element;
+import ofc4j.model.elements.ScatterChart;
 
 import org.dom4j.Node;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -37,14 +37,14 @@ public class DotChartFactory extends AbstractChartFactory {
     if (getColumnCount() < 2) {
       throw new RuntimeException(Messages.getErrorString("DotChartFactory.ERROR_0001_XY_COLUMN_COUNT")); //$NON-NLS-1$
     }
-  }
+  } 
   
   @Override
   protected void createElements() {
     for (int row = 0; row < getRowCount(); row++) {
       Element e = null;
       String text = getRowHeader(row);        
-      ScatterChart sc = new ScatterChart(ScatterChart.Style.NORMAL); //$NON-NLS-1$
+      ScatterChart sc = new ScatterChart(""); //$NON-NLS-1$
       sc.setColour(getColor(row));
       Number x = (Number)getValueAt(row, 0);
       Number y = (Number)getValueAt(row, 1);
