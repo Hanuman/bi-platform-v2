@@ -12,6 +12,7 @@ import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Creates the singleton datasource editor and sets up native JavaScript functions to show the editor.

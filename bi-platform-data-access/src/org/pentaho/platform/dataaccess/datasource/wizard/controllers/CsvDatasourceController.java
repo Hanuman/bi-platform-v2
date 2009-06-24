@@ -10,6 +10,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
+import org.pentaho.platform.dataaccess.datasource.wizard.WaitingDialog;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -39,6 +40,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   public static final String EMPTY_STRING = "";
   public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
+  private WaitingDialog waitingDialogBox;
   private DatasourceService service;
   private XulDialog regenerateModelConfirmationDialog = null;
   private XulDialog waitingDialog = null;
@@ -300,6 +302,16 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     }
   }
 
+ /* public void showWaitingDialog(String title, String message) {
+    getWaitingDialog().setTitle(title);
+    getWaitingDialog().setMessage(message);
+    getWaitingDialog().show();
+  }
+
+  public void hideWaitingDialog() {
+    getWaitingDialog().hide();
+  }
+*/
   public void showWaitingDialog(String title, String message) {
     waitingDialog.setTitle(title);
     waitingDialogLabel.setValue(message);
@@ -310,7 +322,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   public void hideWaitingDialog() {
     waitingDialog.hide();
   }
-
+  
   public void closeRegenerateModelConfirmationDialog() {
     regenerateModelConfirmationDialog.hide();
   }
@@ -324,6 +336,20 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
    */
   public void setDatasourceMessages(DatasourceMessages datasourceMessages) {
     this.datasourceMessages = datasourceMessages;
+  }
+
+  /**
+   * @return the waitingDialog
+   */
+  public WaitingDialog getWaitingDialog() {
+    return this.waitingDialogBox;
+  }
+
+  /**
+   * @param waitingDialog the waitingDialog to set
+   */
+  public void setWaitingDialog(WaitingDialog waitingDialog) {
+    this.waitingDialogBox = waitingDialog;
   }
 
   /**

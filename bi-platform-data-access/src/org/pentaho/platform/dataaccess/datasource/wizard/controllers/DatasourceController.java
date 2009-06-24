@@ -35,6 +35,7 @@ import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDeck;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulHbox;
+import org.pentaho.ui.xul.containers.XulTabbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeRow;
@@ -52,9 +53,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   private DatasourceService service;
 
-  public static final int RELATIONAL_DECK = 0;
+  public static final int RELATIONAL_TAB = 0;
 
-  public static final int CSV_DECK = 1;
+  public static final int CSV_TAB = 1;
 
   private DatasourceModel datasourceModel;
 
@@ -76,24 +77,24 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   private XulLabel successLabel = null;
 
-  private XulHbox buttonBox = null;
+  //private XulHbox buttonBox = null;
 
-  private XulDeck datasourceDeck = null;
+  //private XulDeck datasourceDeck = null;
   
   /**
    * The datasource being edited.
    */
   private IDatasource datasource;
 
-  XulButton relationalButton = null;
+  //XulButton relationalButton = null;
   
-  XulButton csvButton = null;
+  //XulButton csvButton = null;
   
   private XulTree modelDataTable = null;
   
   private XulTree csvDataTable = null;
-  private XulHbox databaseButtonBox = null;
-  private XulHbox csvButtonBox = null;
+  //private XulHbox databaseButtonBox = null;
+  //private XulHbox csvButtonBox = null;
   private XulTreeCol relationalAggregationListCol;
   private XulTreeCol relationalSampleDataTreeCol;
   private XulTreeCol csvAggregationListCol;
@@ -103,15 +104,16 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   private XulTreeCol csvColumnNameTreeCol = null;
   private XulTreeCol csvColumnTypeTreeCol = null;
   private XulDialog clearModelWarningDialog = null;
-  private DatasourceType deckValueSelected = null;
+  private DatasourceType tabValueSelected = null;
   private boolean clearModelWarningShown = false;
+  private XulTabbox datasourceTabbox = null;
   public DatasourceController() {
 
   }
 
   public void init() {
     clearModelWarningDialog = (XulDialog) document.getElementById("clearModelWarningDialog");//$NON-NLS-1$
-    databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
+    //databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
     relationalAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
     relationalSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalSampleDataTreeCol");
     relationalColumnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol");
@@ -121,11 +123,11 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     
     csvAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
     csvSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
-    csvButtonBox = (XulHbox) document.getElementById("csvButtonBox");
-    datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
+    //csvButtonBox = (XulHbox) document.getElementById("csvButtonBox");
+    //datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
     modelDataTable = (XulTree) document.getElementById("modelDataTable");
-    buttonBox = (XulHbox) document.getElementById("buttonBox");
+    //buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
@@ -136,8 +138,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     datasourceDialog = (XulDialog) document.getElementById("datasourceDialog");//$NON-NLS-1$
     okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     cancelButton = (XulButton) document.getElementById("datasourceDialog_cancel"); //$NON-NLS-1$
-    relationalButton = (XulButton) document.getElementById("relationalButton"); //$NON-NLS-1$
-    csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
+    //relationalButton = (XulButton) document.getElementById("relationalButton"); //$NON-NLS-1$
+    //csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
+    datasourceTabbox = (XulTabbox) document.getElementById("datasourceDialogTabbox"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.ONE_WAY);
     final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
@@ -181,7 +184,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         return type;
       }
     };
-    bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    //bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "datasourceType", datasourceTabbox, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.ONE_WAY);
     BindingConvertor<DatasourceType, Boolean> relationalToggleButtonConvertor = new BindingConvertor<DatasourceType, Boolean>() {
 
@@ -216,8 +220,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
             return null;
           }
         };
-    bf.createBinding(datasourceModel, "datasourceType", relationalButton, "disabled", relationalToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "datasourceType", csvButton, "disabled", csvToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+//    bf.createBinding(datasourceModel, "datasourceType", relationalButton, "disabled", relationalToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+//    bf.createBinding(datasourceModel, "datasourceType", csvButton, "disabled", csvToggleButtonConvertor);//$NON-NLS-1$ //$NON-NLS-2$
 
     okButton.setDisabled(true);
     initialize();
@@ -264,7 +268,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
 
   private void showClearModelWarningDialog(DatasourceType value) {
-    deckValueSelected = value;
+    tabValueSelected = value;
     clearModelWarningDialog.show();
   }
   public void closeClearModelWarningDialog() {
@@ -273,11 +277,11 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
   public void switchDeck() {
     closeClearModelWarningDialog();
-    if(deckValueSelected == DatasourceType.SQL) {
-      moveToRelationalDeck();
+    if(tabValueSelected == DatasourceType.SQL) {
+      moveToRelationalTab();
       datasourceModel.getCsvModel().clearModel();      
-    } else if(deckValueSelected == DatasourceType.CSV) {
-      moveToCsvDeck();
+    } else if(tabValueSelected == DatasourceType.CSV) {
+      moveToCsvTab();
       datasourceModel.getRelationalModel().clearModel();
     }
   }
@@ -396,7 +400,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       showClearModelWarningDialog(DatasourceType.SQL);
       clearModelWarningShown = true;
     } else {
-      moveToRelationalDeck();
+      moveToRelationalTab();
     }
   }
 
@@ -410,7 +414,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       showClearModelWarningDialog(DatasourceType.CSV);
       clearModelWarningShown = true;
     } else {
-      moveToCsvDeck();
+      moveToCsvTab();
     }
   }
 
@@ -422,15 +426,16 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   }
 
-  private void moveToCsvDeck() {
-    datasourceDeck.setSelectedIndex(CSV_DECK);
+  private void moveToCsvTab() {
+    //datasourceTabbox.setSelectedIndex(CSV_TAB);
     csvDataTable.update();
     /*if(csvDataTable.getRows() == 0) {
       buildCsvEmptyTable(); 
     }*/
   }
-  private void moveToRelationalDeck() {
-    datasourceDeck.setSelectedIndex(RELATIONAL_DECK);
+  private void moveToRelationalTab() {
+    modelDataTable.update();
+    //datasourceTabbox.setSelectedIndex(RELATIONAL_TAB);
     /*if(modelDataTable.getRows() == 0) {
       buildRelationalEmptyTable(); 
     }*/
@@ -465,17 +470,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     if (!successDialog.isHidden()) {
       successDialog.hide();
     }
-  }
-
-  public void showWaitingDialog(String title, String message) {
-    waitingDialog.setTitle(title);
-    waitingDialogLabel.setValue(message);
-    waitingDialog.show();
-
-  }
-
-  public void hideWaitingDialog() {
-    waitingDialog.hide();
   }
 
   @Override

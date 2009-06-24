@@ -9,6 +9,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
+import org.pentaho.platform.dataaccess.datasource.wizard.WaitingDialog;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
@@ -47,7 +48,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public static final String COMMA = ",";
   private DatasourceMessages datasourceMessages;
   private XulDialog connectionDialog;
-
+  private WaitingDialog waitingDialogBox;
   private XulDialog removeConfirmationDialog;
 
   private XulDialog waitingDialog = null;
@@ -418,7 +419,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
                   //treeCol.setFlex(1);
-                  //treeCol.setWidth(30);
+                  treeCol.setWidth(columns[i].length() + 100);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
@@ -497,6 +498,17 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     }
   }
 
+/*  public void showWaitingDialog(String title, String message) {
+    getWaitingDialog().setTitle(title);
+    getWaitingDialog().setMessage(message);
+    getWaitingDialog().show();
+  }
+
+  public void hideWaitingDialog() {
+    getWaitingDialog().hide();
+  }
+*/
+  
   public void showWaitingDialog(String title, String message) {
     waitingDialog.setTitle(title);
     waitingDialogLabel.setValue(message);
@@ -526,6 +538,20 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public DatasourceMessages getDatasourceMessages() {
     return datasourceMessages;
   }
+
+  /**
+   * @return the waitingDialog
+   */
+  public WaitingDialog getWaitingDialog() {
+    return this.waitingDialogBox;
+  }
+
+  /**
+   * @param waitingDialog the waitingDialog to set
+   */
+  public void setWaitingDialog(WaitingDialog waitingDialog) {
+    this.waitingDialogBox = waitingDialog;
+  }
   
   public void closeAggregationEditorDialog() {
    aggregationCellEditor.hide(); 
@@ -539,8 +565,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     sampleDataCellEditor.hide(); 
   }
 
-  
-  
+ 
   private class CustomSampleDataCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
     TreeCellEditorCallback callback = null;

@@ -39,17 +39,6 @@ aggregation-dialog-checkbox-label {
   	font-size: 0.65em;
 }
 
-.gwt-DialogBox .Caption {
-background-color:#D3D3D3;
-background-image:url(style/images/subtoolbar_bg.png);
-border-bottom:1px solid #848484;
-color:black;
-cursor:move;
-font-size:0.85em;
-padding:6px 0 6px 5px;
-text-align:left;
-}
-
 .gwt-Button {
   font-size: 0.85em;
   background-color: #ddd;
@@ -66,3 +55,152 @@ text-align:left;
   background-color: #ccc;
   cursor:none;
 }
+
+.waiting .waiting-indicator {
+  background: white;
+  color: #444;
+  font: bold 13px tahoma, arial, helvetica;
+  padding: 10px;
+  margin: 0;
+  height: auto;
+}
+
+.waiting .waiting-indicator-img {
+  background: white;
+  margin-right:8px;
+  float:left;
+  vertical-align:top;
+}
+
+.waiting-msg {
+  background: white;
+  font: normal 10px arial, tahoma, sans-serif;
+}
+
+.modalDialogPageBackground {
+  opacity: 0.20;
+  background-color:  #000000;
+  /* Transparency for IE */
+  background-image: expression('url(wait-background.gif)');
+  background-color: expression('transparent');
+  /*
+  opacity: 0.20;
+  position: expression('absolute');
+  height: expression(document.documentElement.scrollHeight+'px');
+  width: expression(document.documentElement.scrollWidth+'px');
+  */
+	cursor: wait;
+} 
+
+
+.waitingDialog{
+  position: absolute;
+  left: 44%;
+  top: 44%;
+  padding: 15px 8px;
+  z-index: 20001;
+  height: auto;
+  border: 1px solid #ccc;
+  background: white;
+}
+.waitingDialog_table{
+  color: #444;
+  background-image: url(large-loading.gif);
+  background-position: left center;
+  background-repeat: no-repeat;
+  font: bold 13px tahoma, arial, helvetica;
+}
+
+.waitingDialog_title{
+
+  color: #444;
+  font: bold 16px tahoma, arial, helvetica;
+  margin-left: 40px;
+  padding-bottom: 3px;
+}
+
+.waitingDialog_msg{
+  font: normal 13px arial, tahoma, sans-serif;
+  margin-left: 40px;
+
+}
+
+
+.gwt-TabPanel {
+  margin-top: 0px;
+}
+
+.gwt-TabPanelBottom {
+		background-color:#EDEDED;
+		border-top-color:#A0AF21;
+}
+
+.gwt-TabBar {
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+  border-style: none;
+}
+
+.gwt-TabBar .gwt-TabBarRest {
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+  padding: 3px 8px 3px 8px;
+  cursor: pointer;
+  color: black;
+  font-color: black;
+  cursor: hand;
+  background-color: #CACACA;
+  border-color:#848484;
+  border-style:solid;
+  border-width: 1px 1px 0px 1px;
+  margin-right: 2px;
+  outline: 0px;
+  -moz-user-focus: none;   
+  user-focus: none;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+  color: white;
+  padding: 3px 8px 3px 8px;
+  cursor: default;
+  background-color:#A0AF21;
+  border-color:#95A22C;
+  border-style:solid;
+  border-width: 1px 1px 0px 1px;
+  margin-right: 2px;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected div{
+  color: white;
+}
+
+.gwt-TabBar .gwt-TabBarItem div{
+  font-color: black;
+}
+
+.gwt-TabBar .gwt-TabBarItemCloseIcon-selected {
+  cursor: pointer;
+  cursor: hand;
+}
+
+.gwt-DialogBox {
+  background-color: #EDEDED;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #777777;
+  border-bottom: 2px solid #777777;
+  border-left: 2px solid #CCCCCC;
+  padding: 0px;
+}
+
+.gwt-DialogBox .Caption {
+  background-color: #C2CFA2;
+  background-image: none;
+  color: #000000;
+  cursor: move;
+  text-align: left;
+  padding: 2px 5px 2px 5px; /* top right bottom left */
+}
+
+

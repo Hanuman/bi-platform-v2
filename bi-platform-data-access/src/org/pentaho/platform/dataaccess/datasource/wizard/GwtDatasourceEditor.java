@@ -43,6 +43,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   private DatasourceModel datasourceModel = new DatasourceModel();
   private ConnectionModel connectionModel = new ConnectionModel();
   private DatasourceMessages datasourceMessages = new GwtDatasourceMessages();
+  private WaitingDialog waitingDialog;
   private GwtXulDomContainer container;
   private AsyncConstructorListener constructorListener;
   private boolean initialized;
@@ -122,18 +123,21 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
       EventHandlerWrapper wrapper = GWT.create(DatasourceController.class);
       datasourceController.setBindingFactory(bf);
       datasourceController.setDatasourceMessages(datasourceMessages);
+      waitingDialog = new GwtWaitingDialog(datasourceMessages.getString("waitingDialog.previewLoading"),datasourceMessages.getString("waitingDialog.generatingPreview"));
       wrapper.setHandler(datasourceController);      
       container.addEventHandler(wrapper);
 
       wrapper = GWT.create(CsvDatasourceController.class);
       csvDatasourceController.setBindingFactory(bf);
       csvDatasourceController.setDatasourceMessages(datasourceMessages);
+      csvDatasourceController.setWaitingDialog(waitingDialog);
       wrapper.setHandler(csvDatasourceController);      
       container.addEventHandler(wrapper);
 
       wrapper = GWT.create(RelationalDatasourceController.class);
       relationalDatasourceController.setBindingFactory(bf);
       relationalDatasourceController.setDatasourceMessages(datasourceMessages);
+      relationalDatasourceController.setWaitingDialog(waitingDialog);
       wrapper.setHandler(relationalDatasourceController);      
       container.addEventHandler(wrapper);
 

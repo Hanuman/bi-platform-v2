@@ -542,7 +542,7 @@ public class DatasourceServiceDelegate {
   }
   public boolean isAdministrator() {
     if(getSession() != null) {
-      return SecurityHelper.isPentahoAdministrator(getSession());
+      return (SecurityHelper.isPentahoAdministrator(getSession()) || hasDataAccessPermission());
     } else {
       return false;
     }
