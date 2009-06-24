@@ -746,7 +746,7 @@
 <script src="adhoc/js/ui/RepositoryBrowser.js" type="text/javascript"></script>
 <script src="js/pivot/PivotRepositoryBrowserController.js" type="text/javascript"></script>
 
-<script type="text/javascript">
+<script type="text/javascript"><!--
     
     var controller = null;
     var newActionName = null;
@@ -825,12 +825,13 @@
         }
       }
       
-      if (window.top != null && window.top.mantle_initialized) {
+//      if (window.top != null && window.top.mantle_initialized) { // Uncomment this line and the close brace to enable these buttons when in window only mode
         var tmpSaveButton = document.getElementById('folder-down');
         var tmpSaveAsButton = document.getElementById('folder-up');
         tmpSaveButton.parentNode.parentNode.removeChild(tmpSaveButton.parentNode);
         tmpSaveAsButton.parentNode.parentNode.removeChild(tmpSaveAsButton.parentNode);
-      }
+//      }  // Uncomment this if above if is uncommented
+
       window.pivot_initialized = true;
        <%    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { %>
                try {
@@ -860,7 +861,7 @@
       controller.save();
     }
 
-  </script>
+  --></script>
 
 <%-- ****************************************************************************************** --%>
 <%-- ****************************************************************************************** --%>
