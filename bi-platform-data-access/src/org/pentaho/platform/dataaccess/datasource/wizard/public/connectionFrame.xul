@@ -116,7 +116,7 @@
 					            			</menulist>
 										</vbox>
 										<spacer width="20"/>
-										<vbox width="100">
+										<vbox width="150">
 									  		<label value="${datasourceDialog.Enclosure}"/>
 										    <menulist flex="1" label="Enclosure" id="enclosureList" pen:binding="name">
 					              				<menupopup />

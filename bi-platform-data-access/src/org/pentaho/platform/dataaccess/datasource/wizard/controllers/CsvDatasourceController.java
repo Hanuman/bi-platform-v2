@@ -103,10 +103,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     columnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol"); //$NON-NLS-1$
     delimiterList = (XulMenuList) document.getElementById("delimiterList"); //$NON-NLS-1$
     enclosureList = (XulMenuList) document.getElementById("enclosureList"); //$NON-NLS-1$
+    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
     
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("csvColumnFormatTreeCol"); //$NON-NLS-1$    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");

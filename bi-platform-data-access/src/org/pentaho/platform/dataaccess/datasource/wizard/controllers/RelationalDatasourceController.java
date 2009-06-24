@@ -159,7 +159,9 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     columnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol"); //$NON-NLS-1$
     columnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol"); //$NON-NLS-1$
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$
-
+    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
+    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
+    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$    
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel, "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "validated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$

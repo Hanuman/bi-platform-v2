@@ -141,8 +141,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     //relationalButton = (XulButton) document.getElementById("relationalButton"); //$NON-NLS-1$
     //csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
     datasourceTabbox = (XulTabbox) document.getElementById("datasourceDialogTabbox"); //$NON-NLS-1$
-    bf.setBindingType(Binding.Type.ONE_WAY);
+    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
