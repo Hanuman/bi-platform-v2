@@ -98,9 +98,9 @@ public class ChartComponent {
   
   protected String title = null;  
 
-  private static final String DEFAULT_FLASH_LOC = "openflashchart"; //$NON-NLS-1$
+  private String flashPath = "openflashchart"; //$NON-NLS-1$
   
-  private static final String DEFAULT_FLASH_SWF = "open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$s
+  private String flashSwf = "open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$s
 
   /**
    * Initialize ChartBeans engine
@@ -212,7 +212,8 @@ public class ChartComponent {
             sb.append((char)c);
           }
           
-          String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), PentahoSystem.getApplicationContext().getBaseUrl() + DEFAULT_FLASH_LOC + "/" + DEFAULT_FLASH_SWF);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+          String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), 
+                                PentahoSystem.getApplicationContext().getBaseUrl() + flashPath + "/" + flashSwf);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
           
           is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
         }
@@ -555,5 +556,13 @@ public class ChartComponent {
 
   public void setScalingFactor(Double scalingFactor) {
     this.scalingFactor = scalingFactor;
+  }
+  
+  public void setSwfPath(String path){
+    flashPath = path;
+  }
+  
+  public void setSwfName(String name){
+    flashSwf = name;
   }
 }
