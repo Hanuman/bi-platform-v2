@@ -4,5 +4,5 @@
   <listbox id="connectionList" width="240" height="10"/>
   <textbox flex="0" id="query"    rows="6" cols="80" width="360" />
   <tree flex="0" height="160" id="modelDataTable"/>
-  <tree flex="0" height="207" id="csvDataTable"/>
+  <tree flex="0" height="184" id="csvDataTable"/>
 </overlay>
