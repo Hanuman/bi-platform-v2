@@ -36,6 +36,7 @@ import org.pentaho.actionsequence.dom.IActionSequenceDocument;
 import org.pentaho.actionsequence.dom.ActionSequenceDocument;
 import org.pentaho.actionsequence.dom.IActionSequenceInput;
 import org.pentaho.actionsequence.dom.IActionSequenceOutput;
+import org.pentaho.actionsequence.dom.actions.ActionDefinition;
 import org.pentaho.actionsequence.dom.actions.MQLAction;
 import org.pentaho.actionsequence.dom.actions.PojoAction;
 import org.pentaho.chart.model.ChartDataDefinition;
@@ -290,7 +291,8 @@ public class ChartBeansGeneratorUtil {
     mqlAction.setComponentDefinition("live", Boolean.TRUE.toString()); //$NON-NLS-1$
     mqlAction.setComponentDefinition("display-names", Boolean.FALSE.toString()); //$NON-NLS-1$
 
-    PojoAction pojoAction = (PojoAction) actionSequenceDocument.addAction(PojoAction.class);
+    ActionDefinition pojoAction = (ActionDefinition) actionSequenceDocument.addAction(ActionDefinition.class);
+    pojoAction.setComponentName("ChartBeansComponent"); //$NON-NLS-1$
     pojoAction.setActionInputValue("chart-model-json", chartModelJsonInput); //$NON-NLS-1$
     pojoAction.addInput("chartdata", RESULTSET_TYPE); //$NON-NLS-1$
     pojoAction.setActionInputValue("chart-width", chartWidthInput); //$NON-NLS-1$
@@ -299,7 +301,6 @@ public class ChartBeansGeneratorUtil {
     pojoAction.setActionInputValue("category-column", categoryColumnInput); //$NON-NLS-1$
     pojoAction.setActionInputValue("value-column", valueColumnInput); //$NON-NLS-1$
     pojoAction.setActionInputValue("scaling-factor", scalingFactorInput); //$NON-NLS-1$
-    pojoAction.setComponentDefinition("class", "org.pentaho.platform.plugin.action.chartbeans.ChartComponent"); //$NON-NLS-1$ //$NON-NLS-2$
     pojoAction.addOutput("outputstream", CONTENT_TYPE); //$NON-NLS-1$
 
     return actionSequenceDocument;
