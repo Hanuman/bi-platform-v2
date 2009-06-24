@@ -46,25 +46,14 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 7;
   private DatasourceMessages datasourceMessages;
   private XulDialog datasourceDialog;
-
-  private XulDialog waitingDialog = null;
-
-  private XulLabel waitingDialogLabel = null;
-
   private DatasourceService service;
-
   public static final int RELATIONAL_TAB = 0;
-
   public static final int CSV_TAB = 1;
-
   private DatasourceModel datasourceModel;
-
   private ConnectionModel connectionModel;
-
   BindingFactory bf;
-
-  XulTextbox datasourceName = null;
-
+  XulTextbox csvDatasourceName = null;
+  XulTextbox relationalDatasourceName = null;
   XulButton okButton = null;
 
   XulButton cancelButton = null;
@@ -130,11 +119,10 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     //buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
-    waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
-    waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$    
     successDialog = (XulDialog) document.getElementById("successDialog"); //$NON-NLS-1$
     successLabel = (XulLabel) document.getElementById("successLabel");//$NON-NLS-1$    
-    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
+    csvDatasourceName = (XulTextbox) document.getElementById("csvDatasourceName"); //$NON-NLS-1$
+    relationalDatasourceName = (XulTextbox) document.getElementById("relationalDatasourceName"); //$NON-NLS-1$
     datasourceDialog = (XulDialog) document.getElementById("datasourceDialog");//$NON-NLS-1$
     okButton = (XulButton) document.getElementById("datasourceDialog_accept"); //$NON-NLS-1$
     cancelButton = (XulButton) document.getElementById("datasourceDialog_cancel"); //$NON-NLS-1$
@@ -142,7 +130,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     //csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
     datasourceTabbox = (XulTabbox) document.getElementById("datasourceDialogTabbox"); //$NON-NLS-1$
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", relationalDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "datasourceName", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(relationalDatasourceName, "value", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
@@ -276,7 +266,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     clearModelWarningDialog.hide();
     clearModelWarningShown = false;
   }
-  public void switchDeck() {
+  public void switchTab() {
     closeClearModelWarningDialog();
     if(tabValueSelected == DatasourceType.SQL) {
       moveToRelationalTab();

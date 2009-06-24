@@ -46,7 +46,7 @@
 							<vbox>
 						      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
 						      <hbox>
-						        	<textbox id="datasourcename" width="177" multiline="false"/>
+						        	<textbox id="relationalDatasourceName" width="177" multiline="false"/>
 						    	  	<spacer flex="1"/>
 						      </hbox>
 						    </vbox>
@@ -99,7 +99,7 @@
 						  	  <vbox>
 							      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
 							      <hbox>
-							        	<textbox id="datasourcename" width="177" multiline="false"/>
+							        	<textbox id="csvDatasourceName" width="177" multiline="false"/>
 							    	  	<spacer flex="1"/>
 							      </hbox>
 							  </vbox>
@@ -214,7 +214,7 @@
       </vbox>
   </dialog>
   <dialog id="clearModelWarningDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeClearModelWarningDialog()"
-	  ondialogaccept="datasourceController.switchDeck()" buttonalign="right" title="${clearModelWarningDialog.title}" 
+	  ondialogaccept="datasourceController.switchTab()" buttonalign="right" title="${clearModelWarningDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
        <vbox>
         <label value="${clearModelWarningDialog.warningMessage}"/>
@@ -226,8 +226,8 @@
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="200">
-	  <tree height="140" width="200" id="csvSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="300">
+	  <tree height="140" width="300" id="csvSampleDataTable" seltype="single">
 		<treecols id="csvSampleDataCols">
 			<treecol id="csvSampleDataCol" label="${csvSampleDataCol.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 		</treecols>
@@ -240,8 +240,8 @@
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="200">
-	  <tree height="140" width="200" id="relationalSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="300">
+	  <tree height="140" width="300" id="relationalSampleDataTable" seltype="single">
 		<treecols id="relationalSampleDataCols">
 			<treecol id="relationalSampleDataCol" label="${relationalSampleDataCol.displayName}" pen:binding="columnName" flex="1" editable="false" type="text"/>
 		</treecols>

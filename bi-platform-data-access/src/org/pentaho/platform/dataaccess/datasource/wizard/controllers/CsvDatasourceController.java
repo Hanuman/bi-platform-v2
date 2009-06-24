@@ -103,12 +103,11 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     columnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol"); //$NON-NLS-1$
     delimiterList = (XulMenuList) document.getElementById("delimiterList"); //$NON-NLS-1$
     enclosureList = (XulMenuList) document.getElementById("enclosureList"); //$NON-NLS-1$
-    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
+    datasourceName = (XulTextbox) document.getElementById("csvDatasourceName"); //$NON-NLS-1$
     
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("csvColumnFormatTreeCol"); //$NON-NLS-1$    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(), "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");
@@ -187,6 +186,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     datasourceModel.getCsvModel().setHeadersPresent(true);
     datasourceModel.getCsvModel().setEnclosureList();
     datasourceModel.getCsvModel().setDelimiterList();
+    datasourceModel.getCsvModel().setDelimiter(Delimiter.COMMA);
+    datasourceModel.getCsvModel().setEnclosure(Enclosure.DOUBLEQUOTE);
   }
   
   public void setSelectedCsvDataRow(int row){
@@ -430,6 +431,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       }
       sampleDataTree.setElements(sampleDataList);
       sampleDataTree.update();
+      dialog.setTitle(csvModelDataRow.getColumnName());
       dialog.show();
     }
   }
@@ -480,7 +482,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
           if(sampleData.length() <= MAX_COL_SIZE) {
             return sampleData;
           } else {
-            return EMPTY_STRING; 
+            return sampleData.substring(0, MAX_COL_SIZE);
           }
         }
       }

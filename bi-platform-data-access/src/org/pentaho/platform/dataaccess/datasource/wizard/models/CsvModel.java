@@ -163,7 +163,9 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
   public void setEnclosure(Enclosure enclosure) {
+    Enclosure previousValue = this.enclosure;
     this.enclosure = enclosure;
+    this.firePropertyChange("enclosure", previousValue, enclosure); //$NON-NLS-1$
   }
 
   public Delimiter getDelimiter() {
@@ -171,7 +173,9 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
   public void setDelimiter(Delimiter delimiter) {
+    Delimiter previousValue = this.delimiter;
     this.delimiter = delimiter;
+    this.firePropertyChange("delimiter", previousValue, delimiter); //$NON-NLS-1$
   }
 
   /*
@@ -181,6 +185,8 @@ public class CsvModel extends XulEventSourceAdapter{
     setBusinessData(null);
     setDataRows(null);
     setSelectedFile(null);
+    setDelimiter(Delimiter.COMMA);
+    setEnclosure(Enclosure.DOUBLEQUOTE);
   }
 
   public void addCsvModelValidationListener(ICsvModelValidationListener listener) {

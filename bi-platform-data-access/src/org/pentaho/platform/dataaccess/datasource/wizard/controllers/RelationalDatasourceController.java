@@ -143,7 +143,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$    
     successDialog = (XulDialog) document.getElementById("successDialog"); //$NON-NLS-1$
     successLabel = (XulLabel) document.getElementById("successLabel");//$NON-NLS-1$
-    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
+    datasourceName = (XulTextbox) document.getElementById("relationalDatasourceName"); //$NON-NLS-1$
     connections = (XulListbox) document.getElementById("connectionList"); //$NON-NLS-1$
     query = (XulTextbox) document.getElementById("query"); //$NON-NLS-1$
     connectionDialog = (XulDialog) document.getElementById("connectionDialog");//$NON-NLS-1$
@@ -159,9 +159,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     columnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol"); //$NON-NLS-1$
     columnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol"); //$NON-NLS-1$
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$
-    datasourceName = (XulTextbox) document.getElementById("datasourcename"); //$NON-NLS-1$
-    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$    
+
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel, "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "validated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
@@ -235,7 +233,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     bf.createBinding(datasourceModel.getRelationalModel(), "query", query, "value"); //$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "datasourceName", datasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
 
     try {
       // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
@@ -622,6 +619,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       }
       sampleDataTree.setElements(sampleDataList);
       sampleDataTree.update();
+      dialog.setTitle(modelDataRow.getColumnName());
       dialog.show();
     }
   }
@@ -665,14 +663,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     }
 
     public String getText(Object value) {
-      StringBuffer buffer = new StringBuffer();
       if(value instanceof String) {
         String sampleData = (String) value;
         if(sampleData != null && sampleData.length() > 0) {
           if(sampleData.length() <= MAX_COL_SIZE) {
             return sampleData;
           } else {
-            return EMPTY_STRING; 
+            return sampleData.substring(0, MAX_COL_SIZE); 
           }
         }
       }
