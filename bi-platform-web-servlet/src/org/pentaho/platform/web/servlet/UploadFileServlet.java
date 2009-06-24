@@ -67,7 +67,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       outputStream.close();
       response.getWriter().write(new String(path+filename));
       } catch(Exception e) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0005_UNKNOW_ERROR",e.getLocalizedMessage()));
+        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0005_UNKNOWN_ERROR",e.getLocalizedMessage()));
       }
  }
 
