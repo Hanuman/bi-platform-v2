@@ -222,7 +222,7 @@
   </dialog>
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="250">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="250">
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
@@ -236,7 +236,7 @@
   </dialog>
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="250">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="250">
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
