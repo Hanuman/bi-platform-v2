@@ -52,6 +52,16 @@ ConstraintCtrl = function( operator, columnName, comparator, condition,
 	td = document.createElement( "td" );
 	tr.appendChild( td );
 	select = this.createComparisonElem( comparatorAr );
+  
+	td.appendChild( select );
+	
+	// ctrl 4 user value
+	td = document.createElement( "td" );
+	tr.appendChild( td );
+	textInput = document.createElement( "input" );
+	textInput.onfocus = function() { this.select();};
+	td.appendChild( textInput );
+
   //Hook up check for comparators that don't need a right-hand value
   select.onchange = function(){
     if(BVItem.SINGLE_COMPARATORS[this.value]){
@@ -62,7 +72,6 @@ ConstraintCtrl = function( operator, columnName, comparator, condition,
     }
   };
   
-	td.appendChild( select );
 	if ( comparator != undefined )
 	{
 		select.value = comparator;		// -------------------------
@@ -74,13 +83,6 @@ ConstraintCtrl = function( operator, columnName, comparator, condition,
       textInput.disabled = false;
     }
 	}
-	
-	// ctrl 4 user value
-	td = document.createElement( "td" );
-	tr.appendChild( td );
-	textInput = document.createElement( "input" );
-	textInput.onfocus = function() { this.select();};
-	td.appendChild( textInput );
 	
 	textInput.type = "text";
 	textInput.readOnly = bTextReadOnly;
