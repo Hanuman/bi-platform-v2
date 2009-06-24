@@ -260,15 +260,37 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         displayErrorMessage(e);
       }
     } else {
-      openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
+      openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"), getMissingInputs());
     }
   }
 
   private boolean validateIputForCsv() {
     return (datasourceModel.getCsvModel().getSelectedFile() != null && (datasourceModel.getDatasourceName() != null && datasourceModel
-        .getDatasourceName().length() > 0));
+        .getDatasourceName().length() > 0) && (datasourceModel.getCsvModel().getDelimiter()
+            != Delimiter.NONE) && (datasourceModel.getCsvModel().getEnclosure() != Enclosure.NONE));
   }
 
+  private String getMissingInputs() {
+    StringBuffer buffer = new StringBuffer();
+    if(datasourceModel.getCsvModel().getSelectedFile() == null
+        && datasourceModel.getCsvModel().getSelectedFile().length() <= 0) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.File"));
+      buffer.append(" \n");
+    }
+    if(datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <=0) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
+      buffer.append(" \n");
+    }
+    if(datasourceModel.getCsvModel().getDelimiter() == null  || datasourceModel.getCsvModel().getDelimiter() == Delimiter.NONE) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Delimiter"));
+      buffer.append(" \n");
+    }
+    if(datasourceModel.getCsvModel().getEnclosure() == null  || datasourceModel.getCsvModel().getEnclosure() == Enclosure.NONE) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Enclosure"));
+      buffer.append(" \n");
+    }
+    return buffer.toString();
+  }
   public void uploadSuccess(String results){
     datasourceModel.getCsvModel().setSelectedFile(results);
     applyCsv();

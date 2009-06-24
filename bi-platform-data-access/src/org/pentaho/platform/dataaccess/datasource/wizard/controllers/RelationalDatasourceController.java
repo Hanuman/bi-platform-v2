@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.platform.dataaccess.datasource.Delimiter;
+import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
@@ -314,7 +316,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
           displayErrorMessage(e);
         }
       } else {
-        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
+        openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"), getMissingInputs());
       }
   }
   private boolean validateInputs() {
@@ -322,6 +324,24 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         && (datasourceModel.getRelationalModel().getQuery() != null && datasourceModel.getRelationalModel().getQuery().length() > 0) && (datasourceModel
         .getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0));
   }
+  
+  private String getMissingInputs() {
+    StringBuffer buffer = new StringBuffer();
+    if(datasourceModel.getRelationalModel().getSelectedConnection() == null) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Connection"));
+      buffer.append(" \n");
+    }
+    if(datasourceModel.getRelationalModel().getQuery() == null && datasourceModel.getRelationalModel().getQuery().length() <= 0) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Query"));
+      buffer.append(" \n");
+    }
+    if(datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <=0) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
+      buffer.append(" \n");
+    }
+    return buffer.toString();
+  }
+  
   public void editQuery() {
 
   }

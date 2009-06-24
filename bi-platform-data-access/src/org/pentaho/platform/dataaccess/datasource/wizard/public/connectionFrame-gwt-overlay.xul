@@ -3,6 +3,6 @@
 <overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul">
   <listbox id="connectionList" width="240" height="10"/>
   <textbox flex="0" id="query"    rows="6" cols="80" width="360" />
-  <tree flex="0" height="185" id="modelDataTable"/>
-  <tree flex="0" height="195" id="csvDataTable"/>
+  <tree flex="0" height="160" id="modelDataTable"/>
+  <tree flex="0" height="207" id="csvDataTable"/>
 </overlay>

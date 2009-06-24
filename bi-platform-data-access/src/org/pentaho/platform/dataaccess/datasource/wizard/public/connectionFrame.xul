@@ -106,7 +106,8 @@
 						  	  <groupbox id="fileGroupbox" width="500">
 						  	  	<caption label="${datasourceDialog.File}" />
 						  	  	<vbox>
-							  	  	<pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "350"/>
+							  	  	<pen:fileupload action="../UploadService" buttonlabelupload="${datasourceDialog.APPLY}" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
+							  	  	<spacer height="10"/>
 							  	  	<hbox>
 										<vbox width="100">
 											<label value="${datasourceDialog.Delimiter}"/>
