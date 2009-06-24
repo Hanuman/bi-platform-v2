@@ -151,8 +151,8 @@
   
   <dialog id="previewResultsDialog" buttonlabelaccept="${dialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
     ondialogaccept="relationalDatasourceController.closePreviewResultsDialog()" buttonalign="right"
-    title="${previewResultsDialog.title}" width="350" height="350">
-        <tree id="previewResultsTable" seltype="single" width="345" height="300">
+    title="${previewResultsDialog.title}" width="400" height="320">
+        <tree id="previewResultsTable" seltype="single" width="395" height="270">
               <treecols>
 		   			<treecol label="Preview" flex="1" />
 		      </treecols>
