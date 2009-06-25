@@ -20,7 +20,9 @@ import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
+import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulCheckbox;
+import org.pentaho.ui.xul.components.XulFileUpload;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulMenuList;
 import org.pentaho.ui.xul.components.XulTextbox;
@@ -69,12 +71,16 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
   private CustomSampleDataCellRenderer sampleDataCellRenderer = null;
   private XulMenuList delimiterList = null;
   private XulMenuList enclosureList = null;
+  private XulFileUpload fileUpload = null;
+  private XulButton applyCsvButton = null;
 
   public CsvDatasourceController() {
 
   }
 
   public void init() {
+    fileUpload = (XulFileUpload) document.getElementById("fileUpload"); //$NON-NLS-1$
+    applyCsvButton = (XulButton) document.getElementById("applyCsvButton"); //$NON-NLS-1$
     csvAggregationEditorVbox = (XulVbox) document.getElementById("csvAggregationEditorVbox"); //$NON-NLS-1$
     applyCsvConfirmationDialog = (XulDialog) document.getElementById("applyCsvConfirmationDialog"); //$NON-NLS-1$
     csvDataTable = (XulTree) document.getElementById("csvDataTable");
@@ -111,6 +117,21 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");
     bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");
+    bf.createBinding(datasourceModel.getCsvModel(), "selectedFile", fileUpload, "selectedFile");
+    BindingConvertor<String, Boolean> buttonConverter = new BindingConvertor<String, Boolean>() {
+
+      @Override
+      public Boolean sourceToTarget(String value) {
+        return (value != null && value.length() > 0);
+      }
+
+      @Override
+      public String targetToSource(Boolean value) {
+        return null;
+      }
+    };
+    
+    bf.createBinding(datasourceModel, "datasourceName", applyCsvButton, "!disabled", buttonConverter);
     BindingConvertor<Integer, Enclosure> indexToEnclosureConverter = new BindingConvertor<Integer, Enclosure>() {
 
       @Override
@@ -214,6 +235,10 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     this.service = service;
   }
 
+  public void submitCsv() {
+    fileUpload.submit();
+  }
+  
   public void applyCsv() {
     if(datasourceModel.getCsvModel().getBusinessData() != null) {
       applyCsvConfirmationDialog.show();
@@ -450,10 +475,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         List<AggregationType> aggregationList = aggregation.getAggregationList();
         for(int i=0;i<aggregationList.size();i++) {
         buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
-          if(i<aggregationList.size()-1 && (buffer.length()
-              + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE)) {
-          buffer.append(COMMA);  
-          } else {
+        if(buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
+          buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
+          if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() < MAX_COL_SIZE))) {
+            buffer.append(COMMA);  
+          }
+        } else {
             break;
           }
         }

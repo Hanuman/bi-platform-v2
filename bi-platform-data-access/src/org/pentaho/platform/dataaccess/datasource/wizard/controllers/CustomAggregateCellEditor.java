@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.binding.Binding;
+import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulCheckbox;
@@ -76,6 +78,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
 
   public void setValue(Object val) {
     // Clear the dialog box with all the existing checkboxes if any
+    AggregationType currentAggregationType = null;
     for (XulComponent component : dialog.getChildNodes()) {
       if (!(component instanceof XulButton)) {
         dialog.removeChild(component);
@@ -83,6 +86,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     }
     // Create the list of check box in XulDialog
     aggregation = (Aggregation) val;
+    currentAggregationType = aggregation.getDefaultAggregationType();
     aggregationCheckboxList.clear();
     List<AggregationType> aggregationList = aggregation.getAggregationList();
     AggregationType[] aggregationTypeArray = AggregationType.values();
@@ -138,9 +142,29 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       listbox.setBinding("name");
       dialog.addChild(label);
       dialog.addChild(listbox);
-      bf.setBindingType(Binding.Type.ONE_WAY);
+      bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
       Binding binding = bf.createBinding(aggregation, "aggregationList", listbox, "elements");
-      bf.createBinding(aggregation, "defaultAggregationType", listbox, "selectedIndex");
+      BindingConvertor<AggregationType, Integer> aggregationTypeToIntegerConverter = new BindingConvertor<AggregationType, Integer>() {
+
+        @Override
+        public Integer sourceToTarget(AggregationType value) {
+          int index = 0;
+          for(Object obj:listbox.getElements()) {
+            if(obj.toString().equals(value.toString())) {
+              break;
+            }
+            index++;
+          }
+          return index;
+        }
+
+        @Override
+        public AggregationType targetToSource(Integer value) {
+          return AggregationType.valueOf(listbox.getSelectedItem());
+        }
+
+      };
+      bf.createBinding(aggregation, "defaultAggregationType", listbox, "selectedIndex", aggregationTypeToIntegerConverter);
       try {
         binding.fireSourceChanged();
       } catch (IllegalArgumentException e) {
@@ -148,6 +172,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       } catch (InvocationTargetException e) {
         throw new XulException(e);
       }
+      aggregation.setDefaultAggregationType(currentAggregationType);
 
     } catch (XulException e) {
       // TODO Auto-generated catch block

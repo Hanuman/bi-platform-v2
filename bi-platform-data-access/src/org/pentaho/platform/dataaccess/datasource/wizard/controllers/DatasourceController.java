@@ -150,7 +150,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     };
 
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    BindingConvertor<DatasourceType, Integer> deckIndexConvertor = new BindingConvertor<DatasourceType, Integer>() {
+    BindingConvertor<DatasourceType, Integer> tabIndexConvertor = new BindingConvertor<DatasourceType, Integer>() {
       @Override
       public Integer sourceToTarget(DatasourceType value) {
         Integer returnValue = null;
@@ -176,7 +176,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       }
     };
     //bf.createBinding(datasourceModel, "datasourceType", datasourceDeck, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "datasourceType", datasourceTabbox, "selectedIndex", deckIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel, "datasourceType", datasourceTabbox, "selectedIndex", tabIndexConvertor);//$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.ONE_WAY);
     BindingConvertor<DatasourceType, Boolean> relationalToggleButtonConvertor = new BindingConvertor<DatasourceType, Boolean>() {
 
@@ -258,24 +258,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     return "datasourceController"; //$NON-NLS-1$
   }
 
-  private void showClearModelWarningDialog(DatasourceType value) {
-    tabValueSelected = value;
-    clearModelWarningDialog.show();
-  }
-  public void closeClearModelWarningDialog() {
-    clearModelWarningDialog.hide();
-    clearModelWarningShown = false;
-  }
-  public void switchTab() {
-    closeClearModelWarningDialog();
-    if(tabValueSelected == DatasourceType.SQL) {
-      moveToRelationalTab();
-      datasourceModel.getCsvModel().clearModel();      
-    } else if(tabValueSelected == DatasourceType.CSV) {
-      moveToCsvTab();
-      datasourceModel.getRelationalModel().clearModel();
-    }
-  }
   public void saveModel() {
     try {
       if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
@@ -386,27 +368,62 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       });
   }
 
-  public void selectSql() {
-    if(!clearModelWarningShown  && datasourceModel.getCsvModel().getBusinessData() != null) {
-      showClearModelWarningDialog(DatasourceType.SQL);
-      clearModelWarningShown = true;
-    } else {
-      moveToRelationalTab();
+
+  private void showClearModelWarningDialog(DatasourceType value) {
+    tabValueSelected = value;
+    clearModelWarningDialog.show();
+  }
+  public void closeClearModelWarningDialog() {
+    clearModelWarningDialog.hide();
+    clearModelWarningShown = false;
+  }
+  public void switchTab() {
+    closeClearModelWarningDialog();
+    if(tabValueSelected == DatasourceType.SQL) {
+      modelDataTable.update();
+      datasourceModel.getCsvModel().clearModel();
+      datasourceModel.setDatasourceType(DatasourceType.SQL);      
+    } else if(tabValueSelected == DatasourceType.CSV) {
+      csvDataTable.update();
+      datasourceModel.getRelationalModel().clearModel();
+      datasourceModel.setDatasourceType(DatasourceType.CSV);
     }
+  }
+  
+  public Boolean beforeTabSwitch(Integer tabIndex) {
+    if(RELATIONAL_TAB == tabIndex) {
+      if(!clearModelWarningShown  && datasourceModel.getCsvModel().getBusinessData() != null) {
+        showClearModelWarningDialog(DatasourceType.SQL);
+        clearModelWarningShown = true;
+        return false;
+      } else {
+        return true;
+      }
+    } else if(CSV_TAB == tabIndex) {
+      if(!clearModelWarningShown  && datasourceModel.getRelationalModel().getQuery() != null
+          && datasourceModel.getRelationalModel().getQuery().length() > 0) {
+        showClearModelWarningDialog(DatasourceType.CSV);
+        clearModelWarningShown = true;
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return true;
+  }
+
+  public void selectCsv() {
+    csvDataTable.update();
+    datasourceModel.setDatasourceType(DatasourceType.CSV);
   }
 
   public void selectOlap() {
 
   }
-
-  public void selectCsv() {
-    if(!clearModelWarningShown  && datasourceModel.getRelationalModel().getQuery() != null
-        && datasourceModel.getRelationalModel().getQuery().length() > 0) {
-      showClearModelWarningDialog(DatasourceType.CSV);
-      clearModelWarningShown = true;
-    } else {
-      moveToCsvTab();
-    }
+  
+  public void selectSql() {
+    modelDataTable.update();
+    datasourceModel.setDatasourceType(DatasourceType.SQL);      
   }
 
   public void selectMql() {
@@ -417,21 +434,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   }
 
-  private void moveToCsvTab() {
-    datasourceModel.setDatasourceType(DatasourceType.CSV);
-    csvDataTable.update();
-    /*if(csvDataTable.getRows() == 0) {
-      buildCsvEmptyTable(); 
-    }*/
-  }
-  private void moveToRelationalTab() {
-    datasourceModel.setDatasourceType(DatasourceType.SQL); 
-    modelDataTable.update();
-    //datasourceTabbox.setSelectedIndex(RELATIONAL_TAB);
-    /*if(modelDataTable.getRows() == 0) {
-      buildRelationalEmptyTable(); 
-    }*/
-  }
   public DatasourceService getService() {
     return service;
   }

@@ -63,6 +63,7 @@ public class Aggregation  extends XulEventSourceAdapter{
 
   public void setDefaultAggregationType(AggregationType defaultAggregationType) {
     this.defaultAggregationType = defaultAggregationType;
+    firePropertyChange("defaultAggregationType", null, defaultAggregationType);
   }
 
   public AggregationType getDefaultAggregationType() {
