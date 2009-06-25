@@ -418,13 +418,14 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
 
   private void moveToCsvTab() {
-    //datasourceTabbox.setSelectedIndex(CSV_TAB);
+    datasourceModel.setDatasourceType(DatasourceType.CSV);
     csvDataTable.update();
     /*if(csvDataTable.getRows() == 0) {
       buildCsvEmptyTable(); 
     }*/
   }
   private void moveToRelationalTab() {
+    datasourceModel.setDatasourceType(DatasourceType.SQL); 
     modelDataTable.update();
     //datasourceTabbox.setSelectedIndex(RELATIONAL_TAB);
     /*if(modelDataTable.getRows() == 0) {
