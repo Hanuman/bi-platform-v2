@@ -214,13 +214,35 @@ public class PentahoSystemBoot {
     startupActions.add( startupAction );
   }
 
-  public void defineObject(String arg0, String arg1, Scope arg2) throws OperationNotSupportedException {
+  public PentahoSystemBoot define(String arg0, String arg1, Scope arg2) throws OperationNotSupportedException {
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( arg0, arg1, arg2 ); 
     } else {
-      throw new OperationNotSupportedException();
+      throw new OperationNotSupportedException("define is only supported by IPentahoDefinableObjectFactory");
     }
+    return this;
+  }
+  
+  /**
+   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   */
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) {
+    define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
+  }
+  
+  /**
+   * Define an arbitrarily scoped object
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @param scope  the scope of the object
+   * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   */
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
+    return define(interfaceClass.getSimpleName(), implClass.getName(), scope);
   }
   
 }
