@@ -229,8 +229,9 @@ public class PentahoSystemBoot {
    * @param interfaceClass  the key to retrieval of this object
    * @param implClass  the actual type that is served back to you when requested.
    * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   * @throws OperationNotSupportedException 
    */
-  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) {
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) throws OperationNotSupportedException {
     define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
   }
   
@@ -240,8 +241,9 @@ public class PentahoSystemBoot {
    * @param implClass  the actual type that is served back to you when requested.
    * @param scope  the scope of the object
    * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   * @throws OperationNotSupportedException 
    */
-  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) throws OperationNotSupportedException {
     return define(interfaceClass.getSimpleName(), implClass.getName(), scope);
   }
   

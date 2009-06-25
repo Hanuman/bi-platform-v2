@@ -50,9 +50,9 @@ public class BootTest extends TestCase {
     
     assertTrue( "object factory not definable", factory instanceof IPentahoDefinableObjectFactory );
     
-    boot.defineObject( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
-    boot.defineObject("MyObject", Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
-    boot.defineObject("MyObject", Object2.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define("MyObject", Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define("MyObject", Object2.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
 
     assertFalse( boot.isInitialized() );
 
@@ -78,8 +78,8 @@ public class BootTest extends TestCase {
   public void testBootListeners() throws Exception {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
-    boot.defineObject( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
-    boot.defineObject( "systemStartupSession" , StandaloneSession.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define( "systemStartupSession" , StandaloneSession.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
     
     TestLifecycleListener lifecycleListener1 = new TestLifecycleListener();
     TestLifecycleListener lifecycleListener2 = new TestLifecycleListener();
@@ -127,7 +127,7 @@ public class BootTest extends TestCase {
   public void testBootActions() throws Exception {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
-    boot.defineObject( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+    boot.define( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
     
     TestStartupAction startupAction1 = new TestStartupAction();
     TestStartupAction startupAction2 = new TestStartupAction();
@@ -186,7 +186,7 @@ public class BootTest extends TestCase {
     boot.setObjectFactory(objectFactory);
     
     try {
-      boot.defineObject( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
+      boot.define( ISolutionEngine.class.getSimpleName() , Object1.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL );
       assertFalse( true );
     } catch (Exception e) {
       assertTrue( true );
