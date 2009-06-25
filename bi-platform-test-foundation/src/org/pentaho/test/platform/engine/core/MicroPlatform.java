@@ -98,6 +98,17 @@ public class MicroPlatform {
   }
   
   /**
+   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @return  the current {@link MicroPlatform} instance, for chaining
+   */
+  public MicroPlatform define(String alias, Class<?> implClass) {
+    factory.defineObject(alias, implClass.getName(), Scope.LOCAL);
+    return this;
+  }
+  
+  /**
    * Define an arbitrarily scoped object
    * @param interfaceClass  the key to retrieval of this object
    * @param implClass  the actual type that is served back to you when requested.
