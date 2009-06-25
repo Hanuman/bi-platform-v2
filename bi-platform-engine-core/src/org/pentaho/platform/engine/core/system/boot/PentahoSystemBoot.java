@@ -232,7 +232,7 @@ public class PentahoSystemBoot {
    * @throws OperationNotSupportedException 
    */
   public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) throws OperationNotSupportedException {
-    define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
+    return define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
   }
   
   /**
