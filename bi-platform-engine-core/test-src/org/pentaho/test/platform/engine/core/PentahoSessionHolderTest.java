@@ -25,7 +25,8 @@ public class PentahoSessionHolderTest {
     assertNull("session should be null at first", PentahoSessionHolder.getSession());
     
     StandaloneSession session = new StandaloneSession();
-    assertSame("StandaloneSession is supposed to insert itself into the session holder", session, PentahoSessionHolder.getSession());
+    PentahoSessionHolder.setSession(session);
+    assertSame("StandaloneSession was not set as the thread-bound session", session, PentahoSessionHolder.getSession());
     
     PentahoSessionHolder.removeSession();
     assertNull("session should be null after a remove", PentahoSessionHolder.getSession());
