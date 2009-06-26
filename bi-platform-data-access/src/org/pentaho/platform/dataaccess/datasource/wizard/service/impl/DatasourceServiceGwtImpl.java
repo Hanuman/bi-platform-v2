@@ -129,40 +129,9 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
     });
   }
-
-  public void deleteDatasource(String name, final XulServiceCallback<Boolean> callback) {
-    SERVICE.deleteDatasource(name, new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error deleting connection: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(Boolean arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
   public void doPreview(IConnection connection, String query, String previewLimit,
       final XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException {
     SERVICE.doPreview(connection, query, previewLimit, new AsyncCallback<SerializedResultSet>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error doing preview: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(SerializedResultSet arg0) {
-        callback.success(arg0);
-      }
-
-    });
-
-  }
-
-  public void doPreview(IDatasource datasource, final XulServiceCallback<SerializedResultSet> callback)
-      throws DatasourceServiceException {
-    SERVICE.doPreview(datasource, new AsyncCallback<SerializedResultSet>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error doing preview: ", arg0);//$NON-NLS-1$

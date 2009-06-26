@@ -224,20 +224,7 @@ public class DatasourceServiceDelegate {
     datasources.remove(datasources.indexOf(datasource));
     return true;
   }
-  public Boolean deleteDatasource(String name) {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    List<IDatasource> datasources = getDatasources();
-    for(IDatasource datasource:datasources) {
-      if(datasource.getDatasourceName().equals(name)) {
-        return deleteDatasource(datasource);
-      }
-    }
-    return false;
-  }
-  
+
   public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -304,62 +291,6 @@ public class DatasourceServiceDelegate {
 
   }
   
-  public SerializedResultSet doPreview(IConnection connection, String query) throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-    }
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-    SerializedResultSet serializedResultSet = null;
-    try {
-      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
-
-      if (!StringUtils.isEmpty(query)) {
-        stmt = conn.createStatement();
-        ResultSetConverter rsc = new ResultSetConverter(stmt.executeQuery(query));
-        serializedResultSet =  new SerializedResultSet(rsc.getColumnTypeNames(), rsc.getMetaData(), rsc.getResultSet());
-      } else {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0008_QUERY_NOT_VALID"));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0008_QUERY_NOT_VALID")); //$NON-NLS-1$
-      }
-    } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()),e);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED"), e); //$NON-NLS-1$
-    } finally {
-      try {
-        if (rs != null) {
-          rs.close();
-        }
-        if (stmt != null) {
-          stmt.close();
-        }
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-          logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()),e);
-          throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0010_PREVIEW_FAILED"),e);
-      }
-    }
-    return serializedResultSet;
-
-  }
-  public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-    }
-    String limit = datasource.getPreviewLimit();
-    if(limit != null && limit.length() > 0) {
-      return doPreview(datasource.getSelectedConnection(), datasource.getQuery(), limit);
-    } else {
-      return doPreview(datasource.getSelectedConnection(), datasource.getQuery());  
-    }
-    
-  }
-
   public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));

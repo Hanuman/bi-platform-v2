@@ -102,16 +102,6 @@ public class DatasourceServiceInMemoryDelegate {
     return true;
   }
   
-  public Boolean deleteDatasource(String name) {
-    List<IDatasource> datasources = getDatasources();
-    for(IDatasource datasource:datasources) {
-      if(datasource.getDatasourceName().equals(name)) {
-        return deleteDatasource(datasource);
-      }
-    }
-    return false;
-  }
-
   public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException {
     try {
       metadataDomainRepository.removeModel(domainId, modelName);
@@ -178,51 +168,6 @@ public class DatasourceServiceInMemoryDelegate {
     }
     return serializedResultSet;
 
-  }
-  
-  public SerializedResultSet doPreview(IConnection connection, String query) throws DatasourceServiceException{
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-    SerializedResultSet serializedResultSet = null;
-    try {
-      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
-
-      if (!StringUtils.isEmpty(query)) {
-        stmt = conn.createStatement();
-        ResultSetConverter rsc = new ResultSetConverter(stmt.executeQuery(query));
-        serializedResultSet =  new SerializedResultSet(rsc.getColumnTypeNames(), rsc.getMetaData(), rsc.getResultSet());
-      } else {
-        throw new DatasourceServiceException("Query is not valid"); //$NON-NLS-1$
-      }
-    } catch (SQLException e) {
-      throw new DatasourceServiceException("Query validation failed", e); //$NON-NLS-1$
-    } finally {
-      try {
-        if (rs != null) {
-          rs.close();
-        }
-        if (stmt != null) {
-          stmt.close();
-        }
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        throw new DatasourceServiceException(e);
-      }
-    }
-    return serializedResultSet;
-
-  }
-  public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException {
-    String limit = datasource.getPreviewLimit();
-    if(limit != null && limit.length() > 0) {
-      return doPreview(datasource.getSelectedConnection(), datasource.getQuery(), limit);
-    } else {
-      return doPreview(datasource.getSelectedConnection(), datasource.getQuery());  
-    }
-    
   }
 
   public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {

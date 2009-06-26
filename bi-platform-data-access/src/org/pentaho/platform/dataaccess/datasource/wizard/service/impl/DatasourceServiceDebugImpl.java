@@ -41,20 +41,10 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
   public void deleteDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback) {
     callback.success(SERVICE.deleteDatasource(datasource));
   }
-  public void deleteDatasource(String name, XulServiceCallback<Boolean> callback) {
-    callback.success(SERVICE.deleteDatasource(name));
-  }
-
   public void doPreview(IConnection connection, String query, String previewLimit, XulServiceCallback<SerializedResultSet> callback)
       throws DatasourceServiceException {
     callback.success(SERVICE.doPreview(connection, query, previewLimit));
   }
-
-  public void doPreview(IDatasource datasource, XulServiceCallback<SerializedResultSet> callback)
-      throws DatasourceServiceException {
-    callback.success(SERVICE.doPreview(datasource));
-  }
-
   public void generateModel(String modelName, IConnection connection, String query, String previewLimit,
       XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
    callback.success(SERVICE.generateModel(modelName, connection, query, previewLimit));

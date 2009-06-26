@@ -28,17 +28,9 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
     return SERVICE.deleteDatasource(datasource);
   }
 
-  public Boolean deleteDatasource(String name) {
-    return SERVICE.deleteDatasource(name);
-  }
-
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit)
       throws DatasourceServiceException {
     return SERVICE.doPreview(connection, query, previewLimit);
-  }
-
-  public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException {
-    return SERVICE.doPreview(datasource);
   }
 
   public IDatasource getDatasourceByName(String name) {

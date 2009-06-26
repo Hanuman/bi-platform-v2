@@ -15,10 +15,8 @@ public interface DatasourceService {
   void addDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback);
   void deleteDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback);
   void updateDatasource(IDatasource datasource, XulServiceCallback<Boolean> callback);
-  void deleteDatasource(String name, XulServiceCallback<Boolean> callback);
   void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) throws DatasourceServiceException;
   void doPreview(IConnection connection, String query, String previewLimit, XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException;
-  void doPreview(IDatasource datasource, XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException;
   void generateModel(String modelName, IConnection connection, String query, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;
   void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;  
   void saveModel(BusinessData businessData, Boolean overwrite, XulServiceCallback<Boolean> callback) throws DatasourceServiceException ;

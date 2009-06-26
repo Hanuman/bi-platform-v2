@@ -20,10 +20,8 @@ public interface DatasourceGwtService extends RemoteService{
   public Boolean addDatasource(IDatasource datasource);
   public Boolean deleteDatasource(IDatasource datasource);
   public Boolean updateDatasource(IDatasource datasource);
-  public Boolean deleteDatasource(String name);
   public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException;
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException;
-  public SerializedResultSet doPreview(IDatasource datasource) throws DatasourceServiceException;
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException;
   public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit) throws DatasourceServiceException;  
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException;
