@@ -784,9 +784,9 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     // try to create an instance of the component class specified in the
     // action document
     
-    String shortName = actionDefinition.getComponentName().trim();
+    String componentAlias = actionDefinition.getComponentName().trim();
     
-    String componentClassName = RuntimeContext.getComponentClassName(shortName, this);
+    String componentClassName = RuntimeContext.getComponentClassName(componentAlias, this);
 
     Element componentDefinition = (Element) actionDefinition.getComponentSection();
     setCurrentComponent(componentClassName);
@@ -813,10 +813,19 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        */
 
       // Explicitly using the short name instead of the fully layed out class name
-      if ( (pluginManager != null) && (pluginManager.isBeanRegistered(shortName)) ) {
-        componentTmp = pluginManager.getBean(shortName);
+      if ( (pluginManager != null) && (pluginManager.isBeanRegistered(componentAlias)) ) {
+        if (RuntimeContext.debug) {
+          this.debug("Component alias "+componentAlias+" will be resolved by the plugin manager."); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        componentTmp = pluginManager.getBean(componentAlias);
+        if (RuntimeContext.debug) {
+          this.debug("Component found in a plugin, class is: "+componentTmp.getClass().getName()); //$NON-NLS-1$
+        }
       }
       
+      if (RuntimeContext.debug) {
+        this.debug("Component alias "+componentAlias+" will be resolved by the platform"); //$NON-NLS-1$ //$NON-NLS-2$
+      }
       // Ok - the plugin didn't load - try the old route
       if (componentTmp == null) {
         componentClass = Class.forName(componentClassName);
