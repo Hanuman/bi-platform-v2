@@ -19,9 +19,8 @@ package org.pentaho.test.platform.engine.core;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
-import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 
 /**
@@ -45,47 +44,40 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
  * @author aphillips
  */
 @SuppressWarnings("nls")
-public class MicroPlatform {
-  private SimpleSystemSettings settings = new SimpleSystemSettings();
-
-  private String solutionPath, baseUrl;
-  private IPentahoDefinableObjectFactory factory;
+public class MicroPlatform extends PentahoSystemBoot {
+  private String baseUrl;
 
   public MicroPlatform(String solutionPath) {
     this(solutionPath, "http://localhost:8080/pentaho/");
   }
-  
+
   public MicroPlatform(String solutionPath, String baseUrl) {
     this(solutionPath, baseUrl, new StandaloneObjectFactory());
   }
-  
+
   public MicroPlatform(String solutionPath, IPentahoDefinableObjectFactory factory) {
     this(solutionPath, "http://localhost:8080/pentaho/", factory);
   }
-  
+
   public MicroPlatform(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
-    this.solutionPath = solutionPath;
     this.baseUrl = baseUrl;
-    this.factory = factory;
-    PentahoSystem.setObjectFactory(factory);
+    setFilePath(solutionPath);
+    setObjectFactory(factory);
   }
 
   public void init() {
-    PentahoSystem.setSystemSettingsService(settings);
-
-      StandaloneApplicationContext applicationContext = new StandaloneApplicationContext(solutionPath, "");
-      applicationContext.setBaseUrl(baseUrl);
-      boolean success = PentahoSystem.init(applicationContext);
-      if(!success) {
-        throw new RuntimeException("platform initialization failed");
-      }
+    boolean success = start();
+    //TODO: //    applicationContext.setBaseUrl(baseUrl);
+    if (!success) {
+      throw new RuntimeException("platform initialization failed");
+    }
   }
 
   public MicroPlatform set(String settingName, String settingVal) {
-    settings.addSetting(settingName, settingVal);
+    ((SimpleSystemSettings)getSettingsProvider()).addSetting(settingName, settingVal);
     return this;
   }
-
+  
   /**
    * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
    * @param interfaceClass  the key to retrieval of this object
@@ -93,30 +85,16 @@ public class MicroPlatform {
    * @return  the current {@link MicroPlatform} instance, for chaining
    */
   public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass) {
-    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
-    return this;
+    return (MicroPlatform)define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
   }
   
   /**
    * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
-   * @param interfaceClass  the key to retrieval of this object
+   * @param key  the key to retrieval of this object
    * @param implClass  the actual type that is served back to you when requested.
    * @return  the current {@link MicroPlatform} instance, for chaining
    */
-  public MicroPlatform define(String alias, Class<?> implClass) {
-    factory.defineObject(alias, implClass.getName(), Scope.LOCAL);
-    return this;
-  }
-  
-  /**
-   * Define an arbitrarily scoped object
-   * @param interfaceClass  the key to retrieval of this object
-   * @param implClass  the actual type that is served back to you when requested.
-   * @param scope  the scope of the object
-   * @return  the current {@link MicroPlatform} instance, for chaining
-   */
-  public MicroPlatform define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
-    factory.defineObject(interfaceClass.getSimpleName(), implClass.getName(), scope);
-    return this;
+  public MicroPlatform define(String key, Class<?> implClass) {
+    return (MicroPlatform)define(key, implClass.getName(), Scope.LOCAL);
   }
 }

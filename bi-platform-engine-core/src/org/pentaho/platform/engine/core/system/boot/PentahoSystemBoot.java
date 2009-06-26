@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.OperationNotSupportedException;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
@@ -93,8 +92,9 @@ public class PentahoSystemBoot {
     try {
       initialized = PentahoSystem.init( new StandaloneApplicationContext(filePath, "") ); //$NON-NLS-1$
     } catch (Exception e) {
-      // this should have been logged already
+      e.printStackTrace();
     }
+
     return initialized;
   }
 
@@ -214,25 +214,22 @@ public class PentahoSystemBoot {
     startupActions.add( startupAction );
   }
 
-  public PentahoSystemBoot define(String arg0, String arg1, Scope arg2) throws OperationNotSupportedException {
+  /**
+   * Define an arbitrarily scoped object
+   * @param key  the key to retrieval of this object
+   * @param implClassName  the actual type that is served back to you when requested.
+   * @param scope  the scope of the object
+   * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   * @throws NoSuchMethodError if the object factory does not support runtime object definition 
+   */
+  public PentahoSystemBoot define(String key, String implClassName, Scope scope) {
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( arg0, arg1, arg2 ); 
+      factory.defineObject( key, implClassName, scope ); 
     } else {
-      throw new OperationNotSupportedException("define is only supported by IPentahoDefinableObjectFactory");
+      throw new NoSuchMethodError("define is only supported by IPentahoDefinableObjectFactory"); //$NON-NLS-1$
     }
     return this;
-  }
-  
-  /**
-   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
-   * @param interfaceClass  the key to retrieval of this object
-   * @param implClass  the actual type that is served back to you when requested.
-   * @return  the current {@link PentahoSystemBoot} instance, for chaining
-   * @throws OperationNotSupportedException 
-   */
-  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) throws OperationNotSupportedException {
-    return define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
   }
   
   /**
@@ -241,10 +238,22 @@ public class PentahoSystemBoot {
    * @param implClass  the actual type that is served back to you when requested.
    * @param scope  the scope of the object
    * @return  the current {@link PentahoSystemBoot} instance, for chaining
-   * @throws OperationNotSupportedException 
+   * @throws NoSuchMethodError if the object factory does not support runtime object definition
    */
-  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) throws OperationNotSupportedException {
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
     return define(interfaceClass.getSimpleName(), implClass.getName(), scope);
+  }
+  
+  /**
+   * Define an arbitrarily scoped object
+   * @param key  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @param scope  the scope of the object
+   * @return  the current {@link PentahoSystemBoot} instance, for chaining
+   * @throws NoSuchMethodError if the object factory does not support runtime object definition
+   */
+  public PentahoSystemBoot define(String key, Class<?> implClass, Scope scope) {
+    return define(key, implClass.getName(), scope);
   }
   
 }
