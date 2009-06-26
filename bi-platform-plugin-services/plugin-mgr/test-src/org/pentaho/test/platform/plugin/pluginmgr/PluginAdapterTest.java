@@ -21,8 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.ILogger;
@@ -64,7 +62,7 @@ public class PluginAdapterTest {
 
     pluginAdapter = new PluginAdapter();
 
-    PentahoSystem.setAdministrationPlugins(Arrays.asList((IPentahoPublisher) pluginAdapter));
+    microPlatform.addAdminAction(pluginAdapter);
 
     microPlatform.init();
   }
