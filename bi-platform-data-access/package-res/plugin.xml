@@ -9,7 +9,7 @@
    <!-- bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl" /-->
    <webservice 
     id="datasourceService" 
-    type="gwt"
+    type="xml,gwt"
     class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
    
   <webservice
