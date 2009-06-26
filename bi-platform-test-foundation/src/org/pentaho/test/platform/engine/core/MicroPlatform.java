@@ -24,6 +24,10 @@ import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 
 /**
+ * This class is a convenience wrapper class around {@link PentahoSystemBoot} to aid
+ * in simple integration/unit testing against the BI platform. Please first think about 
+ * making any changes to {@link PentahoSystemBoot} before changing {@link MicroPlatform}.
+ * 
  * A self-contained and very easy to configure platform initializer which requires
  * zero sidecar files.  Yes, that means no xml of any kind.
  * Use it in your tests like this:
@@ -42,6 +46,7 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
  * }
  * </pre>
  * @author aphillips
+ * @see PentahoSystemBoot
  */
 @SuppressWarnings("nls")
 public class MicroPlatform extends PentahoSystemBoot {
