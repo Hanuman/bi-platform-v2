@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
+import org.pentaho.platform.api.engine.IPentahoPublisher;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
 import org.pentaho.platform.api.engine.ISystemSettings;
@@ -45,6 +46,9 @@ public class PentahoSystemBoot {
   
   // list of startup actions to execute
   private List<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
+  
+  // list of admin plugins (aka publishers)
+  private List<IPentahoPublisher> adminActions = new ArrayList<IPentahoPublisher>();
   
   private String filePath;
   
@@ -87,6 +91,7 @@ public class PentahoSystemBoot {
     PentahoSystem.setSystemListeners( lifecycleListeners );
     PentahoSystem.setSystemSettingsService( settingsProvider );
     PentahoSystem.setSessionStartupActions(startupActions);
+    PentahoSystem.setAdministrationPlugins(adminActions);
     // initialize the system
     initialized = false;
     try {
@@ -123,6 +128,18 @@ public class PentahoSystemBoot {
    */
   public void setObjectFactory( IPentahoObjectFactory objectFactory) {
     this.objectFactory = objectFactory;
+  }
+  
+  /**
+   * Adds an administrative action to the system.
+   * @param adminAction
+   */
+  public void addAdminAction(final IPentahoPublisher adminAction) {
+    adminActions.add(adminAction);
+  }
+  
+  public void setAdminActions(final List<IPentahoPublisher> adminActions) {
+    this.adminActions = adminActions;
   }
 
   /**
