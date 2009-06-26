@@ -1,3 +1,7 @@
+.dialog > tbody > tr > td > div{
+  padding: 5px;
+}
+
 .checkbox label{
 	padding-left:3px;
   	font-family: Helvetica, Arial, sans-serif;
@@ -125,66 +129,6 @@ aggregation-dialog-checkbox-label {
 
 }
 
-
-.gwt-TabPanel {
-  margin-top: 0px;
-}
-
-.gwt-TabPanelBottom {
-		background-color:#EDEDED;
-		border-top-color:#A0AF21;
-}
-
-.gwt-TabBar {
-}
-
-.gwt-TabBar .gwt-TabBarFirst {
-  border-style: none;
-}
-
-.gwt-TabBar .gwt-TabBarRest {
-}
-
-.gwt-TabBar .gwt-TabBarItem {
-  padding: 3px 8px 3px 8px;
-  cursor: pointer;
-  color: black;
-  font-color: black;
-  cursor: hand;
-  background-color: #CACACA;
-  border-color:#848484;
-  border-style:solid;
-  border-width: 1px 1px 0px 1px;
-  margin-right: 2px;
-  outline: 0px;
-  -moz-user-focus: none;   
-  user-focus: none;
-}
-
-.gwt-TabBar .gwt-TabBarItem-selected {
-  color: white;
-  padding: 3px 8px 3px 8px;
-  cursor: default;
-  background-color:#A0AF21;
-  border-color:#95A22C;
-  border-style:solid;
-  border-width: 1px 1px 0px 1px;
-  margin-right: 2px;
-}
-
-.gwt-TabBar .gwt-TabBarItem-selected div{
-  color: white;
-}
-
-.gwt-TabBar .gwt-TabBarItem div{
-  font-color: black;
-}
-
-.gwt-TabBar .gwt-TabBarItemCloseIcon-selected {
-  cursor: pointer;
-  cursor: hand;
-}
-
 .gwt-DialogBox {
   background-color: #EDEDED;
   border-top: 2px solid #CCCCCC;
@@ -201,6 +145,159 @@ aggregation-dialog-checkbox-label {
   cursor: move;
   text-align: left;
   padding: 2px 5px 2px 5px; /* top right bottom left */
+  font-size: 0.85em
 }
+
+gwt-TabPanelBottom {
+  background-color: #d8d8d8;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #777777;
+  border-bottom: 2px solid #777777;
+  border-left: 2px solid #CCCCCC;
+}
+
+
+.gwt-TabBar {
+  background-image: url(images/tab_background.png);
+  background-repeat: repeat-x;
+  background-position:top center;
+  height: 37px;
+}
+
+.gwt-TabBar .tabWidget {
+  background-image: url(images/tabright.png);
+  background-position: 100% 0px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-TabBar .tabWidget-selected {
+  background-image: url(images/tabright.png);
+  background-position: 100% -42px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+  
+}
+
+.gwt-TabBar .tabWidget-hover {
+  background-image: url(images/tabright.png);
+  background-position: 100% -84px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;  
+}
+
+.gwt-TabBar .tabWidgetCap {
+  background-image: url(images/tableft.png);
+  background-position: 100% 0px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-TabBar .tabWidgetCap-selected {
+  background-image: url(images/tableft.png);
+  background-position: 100% -42px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+.gwt-TabBar .tabWidgetCap-hover {
+  background-image: url(images/tableft.png);
+  background-position: 100% -84px;
+  cursor: pointer;
+  cursor: hand;
+  height: 32px;
+  margin-top: 5px;
+}
+
+
+
+
+.gwt-Dialog-TabPanel .gwt-TabPanelBottom {
+  background-color: #e2e2e2;
+  border-left: 1px solid #8d8d8d;
+  border-bottom: 1px solid #8d8d8d;
+  border-right: 1px solid #8d8d8d;
+  padding: 5px;
+}
+
+.gwt-Dialog-TabBar {
+  background-image: url(images/dialog_tab_bg.png);
+  background-repeat: repeat-x;
+  height: 29px;
+}
+
+.gwt-Dialog-TabBar .tabWidget {
+  background-image: url(images/dialog_tab_right.png);
+  background-position: 100% 0px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 24px;
+  margin-top: 4px;
+}
+
+.gwt-Dialog-TabBar .tabWidget-selected {
+  background-image: url(images/dialog_tab_right.png);
+  background-position: 100% -42px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 24px;
+  margin-top: 4px;
+}
+
+.gwt-Dialog-TabBar .tabWidget-hover {
+  background-image: url(images/dialog_tab_right.png);
+  background-position: 100% -84px;
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 24px;
+  margin-top: 4px;  
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap {
+  background-image: url(images/dialog_tab_left.png);
+  background-position: 100% 0px;
+  cursor: pointer;
+  cursor: hand;
+  height: 25px;
+  margin-top: 4px;
+  width: 6px;
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap-selected {
+  background-image: url(images/dialog_tab_left.png);
+  background-position: 100% -42px;
+  cursor: pointer;
+  cursor: hand;
+  height: 25px;
+  margin-top: 4px;
+  width: 6px;
+}
+
+.gwt-Dialog-TabBar .tabWidgetCap-hover {
+  background-image: url(images/dialog_tab_left.png);
+  background-position: 100% -84px;
+  cursor: pointer;
+  cursor: hand;
+  height: 25px;
+  margin-top: 4px;
+  width: 6px;
+}
+
 
 

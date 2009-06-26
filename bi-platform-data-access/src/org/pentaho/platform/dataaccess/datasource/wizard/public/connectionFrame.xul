@@ -109,25 +109,25 @@
 							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
 							  	  	<spacer height="5"/>
 							  	  	<hbox>
-										<vbox width="100">
+										<vbox height="50" width="100">
 											<label value="${datasourceDialog.Delimiter}"/>
-										    <menulist flex="1" label="Delimeter" id="delimiterList" pen:binding="name">
+										    <menulist label="Delimeter" id="delimiterList" pen:binding="name">
 					              				<menupopup />
 					            			</menulist>
 										</vbox>
-										<spacer width="20"/>
-										<vbox width="130">
+										<spacer height="50" width="20"/>
+										<vbox height="50" width="130">
 									  		<label value="${datasourceDialog.Enclosure}"/>
-										    <menulist flex="1" label="Enclosure" id="enclosureList" pen:binding="name">
+										    <menulist label="Enclosure" id="enclosureList" pen:binding="name">
 					              				<menupopup />
 					            			</menulist>
 										</vbox>
-										<spacer width="20"/>
-										<vbox width="150">
+										<spacer height="50" width="20"/>
+										<vbox height="50" width="150">
 											<spacer flex="1"/>
-											<checkbox flex="1" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
+											<checkbox id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
 										</vbox>
-										<vbox width="30">
+										<vbox height="50" width="30">
 											<spacer flex="1"/>
 											<button id="applyCsvButton" label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="csvDatasourceController.submitCsv()"  disabled="true" height="16" width="30"/>
 										</vbox>										
