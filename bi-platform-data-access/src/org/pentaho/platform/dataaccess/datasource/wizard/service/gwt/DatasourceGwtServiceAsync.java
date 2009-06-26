@@ -22,7 +22,7 @@ public interface DatasourceGwtServiceAsync {
   void deleteModel(String domainId, String modelName, AsyncCallback<Boolean> callback);
   void doPreview(IConnection connection, String query, String previewLimit, AsyncCallback<SerializedResultSet> callback);
   void generateModel(String modelName, IConnection connection, String query, String previewLimit, AsyncCallback<BusinessData> callback) throws DatasourceServiceException;
-  void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, AsyncCallback<BusinessData> callback) throws DatasourceServiceException;
+  void generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, AsyncCallback<BusinessData> callback) throws DatasourceServiceException;
   void saveModel(BusinessData businessData, Boolean overwrite, AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
   void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,AsyncCallback<Boolean> callback) throws DatasourceServiceException ;

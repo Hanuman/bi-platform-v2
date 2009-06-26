@@ -23,7 +23,7 @@ public interface DatasourceGwtService extends RemoteService{
   public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException;
   public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException;
   public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException;
-  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit) throws DatasourceServiceException;  
+  public BusinessData generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit) throws DatasourceServiceException;  
   public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException;
   public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException;
   public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException ;

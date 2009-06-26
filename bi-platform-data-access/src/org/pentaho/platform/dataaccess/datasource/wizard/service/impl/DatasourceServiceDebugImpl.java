@@ -49,9 +49,9 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
       XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
    callback.success(SERVICE.generateModel(modelName, connection, query, previewLimit));
   }
-  public void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit,
+  public void generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit,
       XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
-   callback.success(SERVICE.saveModel(modelName, connection, query, overwrite, previewLimit));
+   callback.success(SERVICE.generateAndSaveModel(modelName, connection, query, overwrite, previewLimit));
   }
 
   public void saveModel(BusinessData businessData, Boolean overwrite, XulServiceCallback<Boolean> callback)

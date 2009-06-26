@@ -224,7 +224,7 @@ public class DatasourceServiceInMemoryDelegate {
    * @return BusinessData
    * @throws DatasourceServiceException
    */  
-  public BusinessData saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
+  public BusinessData generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     Domain domain = null;
       try {
         Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)

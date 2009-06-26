@@ -18,7 +18,7 @@ public interface DatasourceService {
   void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) throws DatasourceServiceException;
   void doPreview(IConnection connection, String query, String previewLimit, XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException;
   void generateModel(String modelName, IConnection connection, String query, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;
-  void saveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;  
+  void generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException;  
   void saveModel(BusinessData businessData, Boolean overwrite, XulServiceCallback<Boolean> callback) throws DatasourceServiceException ;
   void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,XulServiceCallback<Boolean> callback) throws DatasourceServiceException ;
