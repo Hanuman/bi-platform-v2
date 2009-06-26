@@ -145,16 +145,30 @@ aggregation-dialog-checkbox-label {
   cursor: move;
   text-align: left;
   padding: 2px 5px 2px 5px; /* top right bottom left */
-  font-size: 0.85em
+}
+
+
+.gwt-TabPanel {
+  margin-top: 0px;
+  padding:3px;
+  border-right: 1px solid #777777;
+  border-bottom: 1px solid #777777;
+  border-left: 1px solid #777777;
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+  border-style: none;
+  border-bottom: 1px solid #777777;
+  border-left: none;
+}
+
+.gwt-TabBar .gwt-TabBarRest {
+  border-bottom: 1px solid #777777;
+  border-right: none;
 }
 
 gwt-TabPanelBottom {
-  background-color: #d8d8d8;
-  border-top: 2px solid #CCCCCC;
-  border-right: 2px solid #777777;
-  border-bottom: 2px solid #777777;
-  border-left: 2px solid #CCCCCC;
-}
+ }
 
 
 .gwt-TabBar {
@@ -222,13 +236,9 @@ gwt-TabPanelBottom {
   margin-top: 5px;
 }
 
-
-
-
 .gwt-Dialog-TabPanel .gwt-TabPanelBottom {
   background-color: #e2e2e2;
   border-left: 1px solid #8d8d8d;
-  border-bottom: 1px solid #8d8d8d;
   border-right: 1px solid #8d8d8d;
   padding: 5px;
 }
@@ -252,6 +262,7 @@ gwt-TabPanelBottom {
 .gwt-Dialog-TabBar .tabWidget-selected {
   background-image: url(images/dialog_tab_right.png);
   background-position: 100% -42px;
+  border-bottom: none;
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
@@ -298,6 +309,3 @@ gwt-TabPanelBottom {
   margin-top: 4px;
   width: 6px;
 }
-
-
-
