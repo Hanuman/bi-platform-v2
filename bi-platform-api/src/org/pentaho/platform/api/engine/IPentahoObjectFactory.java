@@ -84,6 +84,7 @@ public interface IPentahoObjectFactory {
    * Provides the concrete Class defined for the given object key.
    * @param key  the object identifier, typically the interface name
    * @return  the type of object associated with key
+   * @throws RuntimeException of some type indicating a problem loading or finding the implementing class
    */
   public Class<?> getImplementingClass(String key);
 
