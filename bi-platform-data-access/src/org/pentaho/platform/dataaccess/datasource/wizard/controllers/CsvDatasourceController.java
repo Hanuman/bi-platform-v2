@@ -474,7 +474,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         Aggregation aggregation = (Aggregation) value;
         List<AggregationType> aggregationList = aggregation.getAggregationList();
         for(int i=0;i<aggregationList.size();i++) {
-        buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
         if(buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
           buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
           if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() < MAX_COL_SIZE))) {
