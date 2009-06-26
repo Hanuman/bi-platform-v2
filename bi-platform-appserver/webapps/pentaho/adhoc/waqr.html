@@ -183,14 +183,20 @@
     {
 
       /** initialize the dataaccess button */
-		var isAdminXmlDoc = WebServiceProxy.post( WebServiceProxy.ADHOC_WEBSERVICE_URL, "isAdministrator", undefined, null);
-		if ( undefined !== isAdminXmlDoc )
+				var returnValue= null;
+				var req = new XMLHttpRequest();
+				req.open('GET', '../content/ws-run/datasourceService/isAdministrator', true);
+				req.onreadystatechange = function (aEvt) {
+				  if (req.readyState == 4) {
+				     if(req.status == 200)
+				    	returnValue = req.responseXML.getElementsByTagName("return")[0].firstChild.nodeValue
+				  }
+				};
+				req.send(null);
+				if ( undefined !== returnValue )
 				{
-					var node = XmlUtil.selectSingleNode(isAdminXmlDoc, "//isadmin/@value");
   				    var daBtnContainer = document.getElementById( "dataaccessButton" );
-					if ( node )
-					{
-						if(XmlUtil.getNodeTextOrEmptyString(node) == "true")
+						if(returnValue == "true")
 					    {
 					       /** Creating Add datasource button */
 						   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE );
@@ -216,8 +222,7 @@
 						   td1.appendChild(dataAccessAddBtn.getRoot());
 						   td2.appendChild(dataAccessDeleteBtn.getRoot());
 						}
-					}
-		}
+		       }
 
       var wiz = null;
       var msgCtrl = new MessageCtrl();
