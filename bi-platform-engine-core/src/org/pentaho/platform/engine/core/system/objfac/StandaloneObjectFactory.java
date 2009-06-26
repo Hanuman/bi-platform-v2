@@ -52,9 +52,10 @@ public class StandaloneObjectFactory implements IPentahoDefinableObjectFactory {
     ObjectCreator creator = creators.get(key);
     try {
       return creator.createClass();
-    } catch (ObjectFactoryException e) {
-      return null;
+    } catch (Exception e) { //convert to a runtime exception per api
+      new RuntimeException("Failed to load implementing class for "+key, e); //$NON-NLS-1$
     }
+    return null;
   }
 
   public void init(String arg0, Object arg1) { 
