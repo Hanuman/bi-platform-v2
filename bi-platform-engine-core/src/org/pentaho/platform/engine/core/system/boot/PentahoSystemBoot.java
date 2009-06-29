@@ -96,6 +96,7 @@ public class PentahoSystemBoot {
    * @return
    */
   public boolean start() {
+    PentahoSystem.setObjectFactory( objectFactory );
     PentahoSystem.setSystemListeners( lifecycleListeners );
     PentahoSystem.setSystemSettingsService( settingsProvider );
     PentahoSystem.setSessionStartupActions(startupActions);
@@ -136,6 +137,8 @@ public class PentahoSystemBoot {
    */
   public void setObjectFactory( IPentahoObjectFactory objectFactory) {
     this.objectFactory = objectFactory;
+    //object factory needs to also be early here so clients that do not need to
+    //run the platform can have an object factory available
     PentahoSystem.setObjectFactory( objectFactory );
   }
   
