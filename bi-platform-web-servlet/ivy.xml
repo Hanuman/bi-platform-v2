@@ -30,7 +30,7 @@
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
 
         <!-- reporting -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
+    <dependency org="pentaho" name="pentaho-report-wizard-core" rev="${dependency.pentaho-report-wizard-core.revision}"
       changing="true" />
     <dependency org="saaj-ri" name="saaj-ri" rev="1.1_02" />
     <dependency org="org.codehaus.castor" name="castor" rev="1.0.5" transitive="false" />
@@ -66,7 +66,7 @@
     
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
       changing="true" />
-    <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-actionsequence-dom" rev="${dependency.pentaho-actionsequence-dom.revision}"
       changing="true" />
       
@@ -83,7 +83,7 @@
         <!--  testing dependencies -->
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     <dependency org="hsqldb"              name="hsqldb"              rev="1.8.0.7" conf="test->default"/>
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
+    <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
     <dependency org="com.mockrunner" name="mockrunner-servlet" rev="0.3.7" conf="test->default" />
     <dependency org="org.springframework" name="spring-mock" rev="2.0.6" conf="test->default">
