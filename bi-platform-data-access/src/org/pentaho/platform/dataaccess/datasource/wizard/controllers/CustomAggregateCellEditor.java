@@ -128,7 +128,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       mainAggregateBox.addComponent(rightAggregateBox);
       groupBox.setCaption(datasourceMessages.getString("aggregationEditorDialog.available"));
       groupBox.addChild(mainAggregateBox);
-      groupBox.setHeight(120);
+      groupBox.setHeight(130);
       groupBox.setWidth(200);
       ((AbstractGwtXulContainer) groupBox).layout();
       dialog.addChild(groupBox);
