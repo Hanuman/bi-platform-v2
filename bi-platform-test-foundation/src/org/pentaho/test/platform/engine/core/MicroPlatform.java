@@ -19,7 +19,6 @@ package org.pentaho.test.platform.engine.core;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.engine.core.system.SimpleSystemSettings;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 
@@ -76,11 +75,6 @@ public class MicroPlatform extends PentahoSystemBoot {
     if (!success) {
       throw new RuntimeException("platform initialization failed");
     }
-  }
-
-  public MicroPlatform set(String settingName, String settingVal) {
-    ((SimpleSystemSettings)getSettingsProvider()).addSetting(settingName, settingVal);
-    return this;
   }
   
   /**
