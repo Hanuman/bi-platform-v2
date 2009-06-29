@@ -412,10 +412,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
               XulTreeChildren treeChildren = previewResultsTable.getRootChildren();
               if(treeChildren != null) {
                 treeChildren.removeAll();
-/*                List<XulComponent> treeChildrenList = treeChildren.getChildNodes();
-                for (int i = 0; i < treeChildrenList.size(); i++) {
-                  treeChildren.removeItem(i);
-                }*/
               }
               // Remove all the existing columns
               int curTreeColCount = previewResultsTable.getColumns().getColumnCount();
@@ -438,8 +434,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
                 try {
                   XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
                   treeCol.setLabel(columns[i]);
-                  //treeCol.setFlex(1);
-                  treeCol.setWidth(columns[i].length() + 100);
+                  treeCol.setWidth(columns[i].length() + 120);
                   treeCols.addColumn(treeCol);
                 } catch (XulException e) {
 
