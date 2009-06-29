@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.Delimiter;
@@ -501,16 +502,15 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
     }
 
     public String getText(Object value) {
-      StringBuffer buffer = new StringBuffer();
       if(value instanceof String) {
-        String sampleData = (String) value;
-        if(sampleData != null && sampleData.length() > 0) {
-          if(sampleData.length() <= MAX_COL_SIZE) {
-            return sampleData;
-          } else {
-            return sampleData.substring(0, MAX_COL_SIZE);
-          }
+        return getSampleData((String) value);
+      } else if (value instanceof Vector){
+        Vector<String> vectorValue = (Vector<String>) value;
+        StringBuffer sampleDataBuffer = new StringBuffer();
+        for(int i=0;i<vectorValue.size();i++) {
+          sampleDataBuffer.append(vectorValue.get(i));
         }
+        return getSampleData(sampleDataBuffer.toString());
       }
       return EMPTY_STRING;
     }
@@ -519,6 +519,18 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       // TODO Auto-generated method stub
       return false;
     }
+    
+    private String getSampleData(String sampleData) {
+      if(sampleData != null && sampleData.length() > 0) {
+        if(sampleData.length() <= MAX_COL_SIZE) {
+          return sampleData;
+        } else {
+          return sampleData.substring(0, MAX_COL_SIZE); 
+        }
+      }
+      return EMPTY_STRING;
+    }
   }
 }
+
 
