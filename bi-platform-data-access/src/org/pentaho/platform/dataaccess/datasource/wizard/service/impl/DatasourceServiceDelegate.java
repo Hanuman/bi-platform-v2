@@ -471,7 +471,7 @@ public class DatasourceServiceDelegate {
     String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
     return PentahoSystem.getApplicationContext().getSolutionPath(relativePath);    
   }
-  public boolean isAdministrator() {
+  public Boolean hasPermission() {
     if(getSession() != null) {
       return (SecurityHelper.isPentahoAdministrator(getSession()) || hasDataAccessPermission());
     } else {

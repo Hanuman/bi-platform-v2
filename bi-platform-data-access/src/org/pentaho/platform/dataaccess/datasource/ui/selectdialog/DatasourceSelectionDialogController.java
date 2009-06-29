@@ -63,7 +63,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
    */
   public void init() {
     internalInit();    
-    datasourceService.isAdministrator(new XulServiceCallback<Boolean>() {
+    datasourceService.hasPermission(new XulServiceCallback<Boolean>() {
       public void error(final String message, final Throwable error) {
         showMessagebox("Error", error.getLocalizedMessage()); //$NON-NLS-1$
       }

@@ -57,9 +57,9 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
   public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveModel(businessData, overwrite);
   }
-  public Boolean isAdministrator() {
+  public Boolean hasPermission() {
     SERVICE.setSession(PentahoSessionHolder.getSession());
-    return SERVICE.isAdministrator();
+    return SERVICE.hasPermission();
   }
 
   public BogoPojo gwtWorkaround(BogoPojo pojo) {

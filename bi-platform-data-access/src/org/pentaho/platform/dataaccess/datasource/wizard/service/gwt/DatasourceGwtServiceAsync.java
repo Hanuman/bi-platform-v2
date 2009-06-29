@@ -27,7 +27,7 @@ public interface DatasourceGwtServiceAsync {
   void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,AsyncCallback<Boolean> callback) throws DatasourceServiceException ;
   void getUploadFilePath(AsyncCallback<String> callback) throws DatasourceServiceException ;
-  void isAdministrator(AsyncCallback<Boolean> callback);
+  void hasPermission(AsyncCallback<Boolean> callback);
   void gwtWorkaround (BogoPojo pojo, AsyncCallback<BogoPojo> callback);
 
 }

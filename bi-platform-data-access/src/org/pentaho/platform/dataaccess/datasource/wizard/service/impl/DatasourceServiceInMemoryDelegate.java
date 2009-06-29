@@ -335,7 +335,7 @@ public class DatasourceServiceInMemoryDelegate {
     }
   }
   
-  public Boolean isAdministrator() {
+  public Boolean hasPermission() {
     return true;
   }
 }

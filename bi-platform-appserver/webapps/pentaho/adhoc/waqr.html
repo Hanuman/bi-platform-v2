@@ -185,44 +185,41 @@
       /** initialize the dataaccess button */
 				var returnValue= null;
 				var req = new XMLHttpRequest();
-				req.open('GET', '../content/ws-run/datasourceService/isAdministrator', true);
+				req.open('GET', '../content/ws-run/datasourceService/hasPermission', true);
 				req.onreadystatechange = function (aEvt) {
 				  if (req.readyState == 4) {
-				     if(req.status == 200)
+				     if(req.status == 200) {
 				    	returnValue = req.responseXML.getElementsByTagName("return")[0].firstChild.nodeValue
+						if ( undefined !== returnValue ) {
+		  				    var daBtnContainer = document.getElementById( "dataaccessButton" );
+								if(returnValue == "true") {
+							       /** Creating Add datasource button */
+								   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE );
+								   dataAccessAddBtn.setOnClickCallback(dataaccessAddBtnCallback, null);
+								   /** Creating Delete datasource button */
+								   var dataAccessDeleteBtn = new ButtonCtrl( Messages.getString("dataaccessDeleteButtonText"), ButtonCtrl.LARGE );
+								   dataAccessDeleteBtn.setOnClickCallback(dataaccessDeleteBtnCallback, null);
+								   var table = document.createElement( "table" );
+								   daBtnContainer.appendChild(table);
+								   table.cellSpacing = "0";
+								   table.cellPadding = "2";
+								   table.border = "0";
+								   var tbody = document.createElement( "tbody" );
+								   table.appendChild( tbody );
+								   var tr = document.createElement( "tr" );
+								   tbody.appendChild( tr );
+								   var td1 = document.createElement( "td" );
+								   tr.appendChild( td1 );
+								   var td2 = document.createElement( "td" );
+								   tr.appendChild( td2 );
+								   td1.appendChild(dataAccessAddBtn.getRoot());
+								   td2.appendChild(dataAccessDeleteBtn.getRoot());
+								}
+				       }
+				  	}
 				  }
 				};
 				req.send(null);
-				if ( undefined !== returnValue )
-				{
-  				    var daBtnContainer = document.getElementById( "dataaccessButton" );
-						if(returnValue == "true")
-					    {
-					       /** Creating Add datasource button */
-						   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE );
-						   /*daBtnContainer.appendChild( dataAccessAddBtn.getRoot() );*/
-						   dataAccessAddBtn.setOnClickCallback(dataaccessAddBtnCallback, null);
-						   /** Creating Delete datasource button */
-						   var dataAccessDeleteBtn = new ButtonCtrl( Messages.getString("dataaccessDeleteButtonText"), ButtonCtrl.LARGE );
-						   /*daBtnContainer.appendChild( dataAccessDeleteBtn.getRoot() );*/
-						   dataAccessDeleteBtn.setOnClickCallback(dataaccessDeleteBtnCallback, null);
-						   var table = document.createElement( "table" );
-						   daBtnContainer.appendChild(table);
-						   table.cellSpacing = "0";
-						   table.cellPadding = "2";
-						   table.border = "0";
-						   var tbody = document.createElement( "tbody" );
-						   table.appendChild( tbody );
-						   var tr = document.createElement( "tr" );
-						   tbody.appendChild( tr );
-						   var td1 = document.createElement( "td" );
-						   tr.appendChild( td1 );
-						   var td2 = document.createElement( "td" );
-						   tr.appendChild( td2 );
-						   td1.appendChild(dataAccessAddBtn.getRoot());
-						   td2.appendChild(dataAccessDeleteBtn.getRoot());
-						}
-		       }
 
       var wiz = null;
       var msgCtrl = new MessageCtrl();

@@ -65,8 +65,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
     return SERVICE.saveInlineEtlModel(modelName, overwrite);
   } 
   
-  public Boolean isAdministrator() {
-    return SERVICE.isAdministrator();
+  public Boolean hasPermission() {
+    return SERVICE.hasPermission();
   }
 
   public String getUploadFilePath() throws DatasourceServiceException {

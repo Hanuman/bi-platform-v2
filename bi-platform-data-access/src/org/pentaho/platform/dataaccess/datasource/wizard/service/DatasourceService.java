@@ -23,7 +23,7 @@ public interface DatasourceService {
   void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, XulServiceCallback<BusinessData> callback) throws DatasourceServiceException ;
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,XulServiceCallback<Boolean> callback) throws DatasourceServiceException ;
   void getUploadFilePath(XulServiceCallback<String> callback) throws DatasourceServiceException ; 
-  void isAdministrator(XulServiceCallback<Boolean> callback);
+  void hasPermission(XulServiceCallback<Boolean> callback);
 }
 
   

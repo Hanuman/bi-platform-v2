@@ -28,7 +28,7 @@ public interface DatasourceGwtService extends RemoteService{
   public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException;
   public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException ;
   public String getUploadFilePath() throws DatasourceServiceException ;
-  public Boolean isAdministrator();
+  public Boolean hasPermission();
   public BogoPojo gwtWorkaround(BogoPojo pojo);
 }
 
