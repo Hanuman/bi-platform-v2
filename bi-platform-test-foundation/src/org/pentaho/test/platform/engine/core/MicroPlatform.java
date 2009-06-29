@@ -18,6 +18,7 @@
 package org.pentaho.test.platform.engine.core;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
+import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
@@ -51,6 +52,21 @@ import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 public class MicroPlatform extends PentahoSystemBoot {
   private String baseUrl;
 
+  /**
+   * Creates a minimal ready-to-run platform.  Use this constructor if you don't need to load
+   * any files from a solutions folder, i.e. you require only an in-memory platform.
+   */
+  public MicroPlatform() {
+    this(".");
+  }
+  
+  /**
+   * Creates a minimal ready-to-run platform with a specified solution path.  Use this constructor if
+   * your test needs to access system or other solution files from a particular directory.
+   * Note that MicroPlatform's default behavior is to load zero files from the filesystem.
+   * In fact, it is completely up to you to define a solution path at all.
+   * @param solutionPath full path to the pentaho_solutions folder 
+   */
   public MicroPlatform(String solutionPath) {
     this(solutionPath, "http://localhost:8080/pentaho/");
   }
@@ -67,8 +83,17 @@ public class MicroPlatform extends PentahoSystemBoot {
     this.baseUrl = baseUrl;
     setFilePath(solutionPath);
     setObjectFactory(factory);
+    
+    //we define a fake solu8tion engine here so validation will pass.
+    //A solution engine must be defined for the system to initialize
+    define(ISolutionEngine.class, null);
   }
 
+  /**
+   * Initializes the platform.  You only need to call this method if you need the runtime aspects of 
+   * the platform in your test.  If you only require the certain system objects to be defined, you may only
+   * need to create a MicroPlatform and define a few objects.  First try your test without calling {@link #init()}.
+   */
   public void init() {
     boolean success = start();
     //TODO: //    applicationContext.setBaseUrl(baseUrl);
