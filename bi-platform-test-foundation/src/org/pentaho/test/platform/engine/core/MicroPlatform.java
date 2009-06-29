@@ -83,10 +83,6 @@ public class MicroPlatform extends PentahoSystemBoot {
     this.baseUrl = baseUrl;
     setFilePath(solutionPath);
     setObjectFactory(factory);
-    
-    //we define a fake solu8tion engine here so validation will pass.
-    //A solution engine must be defined for the system to initialize
-    define(ISolutionEngine.class, null);
   }
 
   /**
