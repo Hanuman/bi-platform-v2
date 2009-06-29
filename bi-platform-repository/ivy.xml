@@ -62,9 +62,10 @@
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" conf="default->default"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" conf="default->default"/>        
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" conf="default->default"/>
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>
         
-        <!--  testing dependencies -->        
+        
+        <!--  testing dependencies -->  
+        <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>      
         <dependency org="junit"               name="junit"               rev="4.4" conf="test->default"/>
 		<dependency org="hsqldb"              name="hsqldb"              rev="1.8.0.7" conf="test->default"/>
 		<dependency org="simple-jndi"         name="simple-jndi"         rev="0.11.3" conf="test->default"/>
