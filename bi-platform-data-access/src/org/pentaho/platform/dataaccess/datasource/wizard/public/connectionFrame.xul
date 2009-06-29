@@ -108,30 +108,43 @@
 						  	  	<vbox>
 							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
 							  	  	<spacer height="5"/>
-							  	  	<hbox>
-										<vbox height="50" width="100">
+									<grid>
+									  <columns>
+									    <column flex="1" />
+									    <column flex="1" />
+									    <column flex="1" />
+									    <column flex="1" />
+									    <column flex="1" />
+									    <column flex="1" />
+									    <column flex="1" />									    
+									  </columns>
+									  <rows>
+									    <row>
 											<label value="${datasourceDialog.Delimiter}"/>
-										    <menulist label="Delimeter" id="delimiterList" pen:binding="name">
-					              				<menupopup />
-					            			</menulist>
-										</vbox>
-										<spacer height="50" width="20"/>
-										<vbox height="50" width="130">
+											<spacer flex="1"/>
 									  		<label value="${datasourceDialog.Enclosure}"/>
-										    <menulist label="Enclosure" id="enclosureList" pen:binding="name">
-					              				<menupopup />
-					            			</menulist>
-										</vbox>
-										<spacer height="50" width="20"/>
-										<vbox height="50" width="150">
 											<spacer flex="1"/>
-											<checkbox id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
-										</vbox>
-										<vbox height="50" width="30">
 											<spacer flex="1"/>
+											<spacer flex="1"/>
+											<spacer flex="1"/>											
+									    </row>
+									    <row>
+										    <menulist width="80" label="Delimeter" id="delimiterList" pen:binding="name">
+												<menupopup />
+											</menulist>
+											<spacer width="20"/>
+										    <menulist width="120" label="Enclosure" id="enclosureList" pen:binding="name">
+								  				<menupopup />
+											</menulist>
+											<spacer width="20"/>								
+											<hbox width="180">				
+												<checkbox flex="1" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
+											</hbox>
+											<spacer width="20"/>												
 											<button id="applyCsvButton" label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="csvDatasourceController.submitCsv()"  disabled="true" height="16" width="30"/>
-										</vbox>										
-									</hbox>							  	  	
+									    </row>
+									  </rows>
+									</grid>						  	  	
 								</vbox>			  	  	
 						  	  </groupbox>
 							  <label value="${datasourceDialog.Metadata}"/>
