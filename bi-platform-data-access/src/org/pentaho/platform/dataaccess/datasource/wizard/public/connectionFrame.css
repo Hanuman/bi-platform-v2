@@ -118,13 +118,13 @@ aggregation-dialog-checkbox-label {
 .waitingDialog_title{
 
   color: #444;
-  font: bold 16px tahoma, arial, helvetica;
+  font: bold 14px tahoma, arial, helvetica;
   margin-left: 40px;
   padding-bottom: 3px;
 }
 
 .waitingDialog_msg{
-  font: normal 13px arial, tahoma, sans-serif;
+  font: normal 12px arial, tahoma, sans-serif;
   margin-left: 40px;
 
 }
@@ -145,6 +145,7 @@ aggregation-dialog-checkbox-label {
   cursor: move;
   text-align: left;
   padding: 2px 5px 2px 5px; /* top right bottom left */
+  font: normal 14px tahoma, arial, helvetica;
 }
 
 .gwt-TabPanel .gwt-TabPanelBottom {

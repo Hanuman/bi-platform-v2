@@ -239,12 +239,12 @@
   </dialog>
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="250">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="250">
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="300">
-	  <tree height="140" width="300" id="csvSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="530">
+	  <tree height="140" width="530" id="csvSampleDataTable" seltype="single">
 		<treecols id="csvSampleDataCols">
 			<treecol id="csvSampleDataCol" label="${csvSampleDataCol.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 		</treecols>
@@ -253,12 +253,12 @@
   </dialog>
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="250">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="250">
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="300">
-	  <tree height="140" width="300" id="relationalSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="180" width="530">
+	  <tree height="140" width="530" id="relationalSampleDataTable" seltype="single">
 		<treecols id="relationalSampleDataCols">
 			<treecol id="relationalSampleDataCol" label="${relationalSampleDataCol.displayName}" pen:binding="columnName" flex="1" editable="false" type="text"/>
 		</treecols>
