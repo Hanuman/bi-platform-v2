@@ -152,7 +152,7 @@ aggregation-dialog-checkbox-label {
   border-left: 1px solid #8d8d8d;
   border-bottom: 1px solid #8d8d8d;
   border-right: 1px solid #8d8d8d;
-  padding: 0px;
+  padding: 3px;
 }
 
 .gwt-TabBar {
