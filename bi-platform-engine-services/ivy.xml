@@ -54,10 +54,10 @@
     <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}"/>
     
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4"/>
-    <dependency org="${ivy.artifact.group}" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
+    <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"/>
         
         <!--  internal test dependencies -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
+    <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
   </dependencies>
 </ivy-module>
