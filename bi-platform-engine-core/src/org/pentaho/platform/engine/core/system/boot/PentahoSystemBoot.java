@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoPublisher;
@@ -83,11 +83,19 @@ public class PentahoSystemBoot {
   }
   
   /**
+   * Override this method if you want to change the type and state of the application
+   * context used to initialize the system.
+   * @return an application context for system initialization
+   */
+  protected IApplicationContext createApplicationContext() {
+    return new StandaloneApplicationContext(filePath, ""); //$NON-NLS-1$
+  }
+  
+  /**
    * Starts the Pentaho platform using the defaults and options set
    * @return
    */
   public boolean start() {
-    PentahoSystem.setObjectFactory( objectFactory );
     PentahoSystem.setSystemListeners( lifecycleListeners );
     PentahoSystem.setSystemSettingsService( settingsProvider );
     PentahoSystem.setSessionStartupActions(startupActions);
@@ -95,7 +103,7 @@ public class PentahoSystemBoot {
     // initialize the system
     initialized = false;
     try {
-      initialized = PentahoSystem.init( new StandaloneApplicationContext(filePath, "") ); //$NON-NLS-1$
+      initialized = PentahoSystem.init( createApplicationContext() );
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -128,6 +136,7 @@ public class PentahoSystemBoot {
    */
   public void setObjectFactory( IPentahoObjectFactory objectFactory) {
     this.objectFactory = objectFactory;
+    PentahoSystem.setObjectFactory( objectFactory );
   }
   
   /**
