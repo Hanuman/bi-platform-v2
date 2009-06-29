@@ -17,9 +17,11 @@
  */
 package org.pentaho.test.platform.engine.core;
 
+import org.pentaho.platform.api.engine.IApplicationContext;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
+import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
 
@@ -91,11 +93,16 @@ public class MicroPlatform extends PentahoSystemBoot {
    * need to create a MicroPlatform and define a few objects.  First try your test without calling {@link #init()}.
    */
   public void init() {
-    boolean success = start();
-    //TODO: //    applicationContext.setBaseUrl(baseUrl);
-    if (!success) {
+    if (!start()) {
       throw new RuntimeException("platform initialization failed");
     }
+  }
+  
+  @Override
+  protected IApplicationContext createApplicationContext() {
+    StandaloneApplicationContext appCtxt = new StandaloneApplicationContext(getFilePath(), "");
+    appCtxt.setBaseUrl(baseUrl);
+    return appCtxt;
   }
   
   /**
