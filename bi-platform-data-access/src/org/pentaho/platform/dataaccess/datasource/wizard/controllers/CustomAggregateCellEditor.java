@@ -2,10 +2,11 @@ package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.ui.xul.XulComponent;
@@ -17,12 +18,10 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulCheckbox;
 import org.pentaho.ui.xul.components.XulLabel;
-import org.pentaho.ui.xul.components.XulListitem;
 import org.pentaho.ui.xul.components.XulMenuList;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulGroupbox;
 import org.pentaho.ui.xul.containers.XulHbox;
-import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulMenupopup;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.dom.Document;
@@ -143,14 +142,40 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       dialog.addChild(label);
       dialog.addChild(listbox);
       bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-      Binding binding = bf.createBinding(aggregation, "aggregationList", listbox, "elements");
+      BindingConvertor<List<AggregationType>, List<Object>> externalizedAggregationLabelConverter = new BindingConvertor<List<AggregationType>, List<Object>>() {
+        Map<String,AggregationType> aggregationLabelMap = null;
+        @Override
+        public List<Object> sourceToTarget(List<AggregationType> value) {
+          List<Object> returnValue = new ArrayList<Object>();
+          aggregationLabelMap = new HashMap<String,AggregationType>();
+          for(AggregationType aggType:value) {
+            aggregationLabelMap.put(datasourceMessages.getString(aggType.getDescription()),aggType);
+            returnValue.add(datasourceMessages.getString(aggType.getDescription()));
+          }
+          return returnValue;
+        }
+
+        @Override
+        public List<AggregationType> targetToSource(List<Object> value) {
+          List<AggregationType> returnValue = new ArrayList<AggregationType>();
+          for(Object currentValue:value) {
+            if(currentValue instanceof String && aggregationLabelMap != null) {
+              returnValue.add(aggregationLabelMap.get((String) currentValue));
+            }
+          }
+          return returnValue;
+        }
+
+      };      
+      Binding binding = bf.createBinding(aggregation, "aggregationList", listbox, "elements",externalizedAggregationLabelConverter);
       BindingConvertor<AggregationType, Integer> aggregationTypeToIntegerConverter = new BindingConvertor<AggregationType, Integer>() {
 
         @Override
         public Integer sourceToTarget(AggregationType value) {
           int index = 0;
           for(Object obj:listbox.getElements()) {
-            if(obj.toString().equals(value.toString())) {
+            
+            if(obj.toString().equals(datasourceMessages.getString(value.getDescription()))) {
               break;
             }
             index++;
@@ -160,10 +185,15 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
 
         @Override
         public AggregationType targetToSource(Integer value) {
-          return AggregationType.valueOf(listbox.getSelectedItem());
+          Map<String,AggregationType> aggregationLabelMap = null;
+          aggregationLabelMap = new HashMap<String,AggregationType>();
+          for(AggregationType aggType:aggregation.getAggregationList()) {
+            aggregationLabelMap.put(datasourceMessages.getString(aggType.getDescription()),aggType);
+          }
+          return aggregationLabelMap.get(listbox.getSelectedItem());
         }
 
-      };
+      };      
       bf.createBinding(aggregation, "defaultAggregationType", listbox, "selectedIndex", aggregationTypeToIntegerConverter);
       try {
         binding.fireSourceChanged();
@@ -210,7 +240,12 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     Object item = listbox.getSelectedItem();
     Aggregation aggregation = null; 
     if(item != null) {
-      aggregation = new Aggregation(aggregationTypeList, AggregationType.valueOf(item.toString()));
+      Map<String,AggregationType> aggregationLabelMap = null;
+      aggregationLabelMap = new HashMap<String,AggregationType>();
+      for(AggregationType aggType:AggregationType.values()) {
+        aggregationLabelMap.put(datasourceMessages.getString(aggType.getDescription()),aggType);
+      }
+      aggregation = new Aggregation(aggregationTypeList, aggregationLabelMap.get(item));
     }
     this.callback.onCellEditorClosed(aggregation);
   }
