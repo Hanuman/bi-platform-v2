@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.database.dialect.GenericDatabaseDialect;
 import org.pentaho.database.dialect.IDatabaseDialect;
 import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.database.service.DatabaseConnectionService;
@@ -170,12 +171,17 @@ public class ConnectionServiceInMemoryDelegate {
     try {
       IDatabaseDialect dialect = databaseConnectionService.getDialectService().getDialect(connection);
       org.pentaho.platform.dataaccess.datasource.beans.Connection conn = new org.pentaho.platform.dataaccess.datasource.beans.Connection();
-      String url = dialect.getURL(connection);
-      conn.setDriverClass(dialect.getNativeDriver());
+
       conn.setName(connection.getName());
-      conn.setUrl(url);
       conn.setUsername(connection.getUsername());
       conn.setPassword(connection.getPassword());
+      String url = dialect.getURL(connection);
+      conn.setUrl(url);
+      if (connection.getDatabaseType().getShortName().equals("GENERIC")) { //$NON-NLS-1$
+        conn.setDriverClass(connection.getAttributes().get(GenericDatabaseDialect.ATTRIBUTE_CUSTOM_DRIVER_CLASS));
+      } else {
+        conn.setDriverClass(dialect.getNativeDriver());
+      }
       return conn;
     } catch (KettleDatabaseException e) {
       throw new ConnectionServiceException(e);
