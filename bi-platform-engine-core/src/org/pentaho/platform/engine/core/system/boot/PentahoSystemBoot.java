@@ -196,6 +196,7 @@ public class PentahoSystemBoot {
    * @return
    */
   public void setSettingsProvider(final ISystemSettings settingsProvider) {
+    PentahoSystem.setSystemSettingsService( settingsProvider );
     this.settingsProvider = settingsProvider;
   }
 
