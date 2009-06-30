@@ -15,13 +15,11 @@ import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
@@ -32,9 +30,7 @@ import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCell;
 import org.pentaho.ui.xul.components.XulTreeCol;
-import org.pentaho.ui.xul.containers.XulDeck;
 import org.pentaho.ui.xul.containers.XulDialog;
-import org.pentaho.ui.xul.containers.XulHbox;
 import org.pentaho.ui.xul.containers.XulTabbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
@@ -50,7 +46,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   public static final int RELATIONAL_TAB = 0;
   public static final int CSV_TAB = 1;
   private DatasourceModel datasourceModel;
-  private ConnectionModel connectionModel;
+
   BindingFactory bf;
   XulTextbox csvDatasourceName = null;
   XulTextbox relationalDatasourceName = null;
@@ -229,7 +225,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   public void initialize() {
     datasourceModel.clearModel();
-    connectionModel.clearModel();
     /*buildRelationalEmptyTable();*/    
     selectSql();
     datasourceModel.setDatasourceType(DatasourceType.SQL);
@@ -244,14 +239,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   public DatasourceModel getDatasourceModel() {
     return this.datasourceModel;
-  }
-
-  public void setConnectionModel(ConnectionModel model) {
-    this.connectionModel = model;
-  }
-
-  public ConnectionModel getConnectionModel() {
-    return this.connectionModel;
   }
 
   public String getName() {

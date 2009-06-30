@@ -2,8 +2,10 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.util.List;
 
+import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServiceAsync;
 import org.pentaho.ui.xul.XulServiceCallback;
 
@@ -143,5 +145,30 @@ public class ConnectionServiceGwtImpl implements ConnectionService {
       }
 
     }); 
-  }  
+  }
+
+  public void convertFromConnection(final IConnection databaseConnection, final XulServiceCallback<IDatabaseConnection> callback)
+      throws ConnectionServiceException {
+    SERVICE.convertFromConnection(databaseConnection, new AsyncCallback<IDatabaseConnection>() {
+      public void onFailure(Throwable arg0) {
+        callback.error("error testing connection: ", arg0);
+      }
+      public void onSuccess(IDatabaseConnection arg0) {
+        callback.success(arg0);
+      }
+    }); 
+    
+  }
+
+  public void convertToConnection(final IDatabaseConnection databaseConnection, final XulServiceCallback<IConnection> callback)
+      throws ConnectionServiceException {
+    SERVICE.convertToConnection(databaseConnection, new AsyncCallback<IConnection>() {
+      public void onFailure(Throwable arg0) {
+        callback.error("error testing connection: ", arg0);
+      }
+      public void onSuccess(IConnection arg0) {
+        callback.success(arg0);
+      }
+    }); 
+  }
 }

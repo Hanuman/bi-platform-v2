@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 
 import java.util.List;
 
+import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
@@ -55,5 +56,13 @@ public class ConnectionServiceBeanImpl implements ConnectionGwtService {
 
   public Boolean testConnection(IConnection connection) throws ConnectionServiceException {
     return getService().testConnection(connection);    
+  }
+
+  public IDatabaseConnection convertFromConnection(IConnection connection) throws ConnectionServiceException {
+    return getService().convertFromConnection(connection);
+  }
+
+  public IConnection convertToConnection(IDatabaseConnection connection) throws ConnectionServiceException {
+    return getService().convertToConnection(connection);
   }
 }

@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.util.List;
 
+import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
@@ -34,6 +35,16 @@ public class ConnectionServiceDebugImpl implements ConnectionService{
   }
   public void testConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
     callback.success(SERVICE.testConnection(connection));
+  }
+
+  public void convertFromConnection(IConnection databaseConnection, XulServiceCallback<IDatabaseConnection> callback)
+      throws ConnectionServiceException {
+    callback.success(SERVICE.convertFromConnection(databaseConnection));
+  }
+
+  public void convertToConnection(IDatabaseConnection databaseConnection, XulServiceCallback<IConnection> callback)
+      throws ConnectionServiceException {
+    callback.success(SERVICE.convertToConnection(databaseConnection));
   }  
   
   

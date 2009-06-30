@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 
 import java.util.List;
 
+import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
@@ -62,5 +63,13 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
 
   public Boolean testConnection(IConnection connection)  throws ConnectionServiceException{
     return getService().testConnection(connection);
+  }
+
+  public IDatabaseConnection convertFromConnection(IConnection connection) throws ConnectionServiceException {
+    return getService().convertFromConnection(connection);
+  }
+
+  public IConnection convertToConnection(IDatabaseConnection connection) throws ConnectionServiceException {
+    return getService().convertToConnection(connection);
   }
 }

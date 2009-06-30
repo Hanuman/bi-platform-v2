@@ -9,7 +9,6 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionC
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
@@ -41,7 +40,6 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   private ConnectionService connectionService;
   private DatasourceService datasourceService;
   private DatasourceModel datasourceModel = new DatasourceModel();
-  private ConnectionModel connectionModel = new ConnectionModel();
   private DatasourceMessages datasourceMessages = new GwtDatasourceMessages();
   private WaitingDialog waitingDialog;
   private GwtXulDomContainer container;
@@ -143,17 +141,13 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
 
       
       wrapper = GWT.create(ConnectionController.class);
-      connectionController.setBindingFactory(bf);
       connectionController.setDatasourceMessages(datasourceMessages);      
       wrapper.setHandler(connectionController);      
       container.addEventHandler(wrapper);
 
-      datasourceController.setConnectionModel(connectionModel);
       datasourceController.setDatasourceModel(datasourceModel);
       csvDatasourceController.setDatasourceModel(datasourceModel);
-      relationalDatasourceController.setConnectionModel(connectionModel);
       relationalDatasourceController.setDatasourceModel(datasourceModel);
-      connectionController.setConnectionModel(connectionModel);
       connectionController.setDatasourceModel(datasourceModel);
       runner.initialize();
       runner.start();
@@ -176,6 +170,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   private void setConnectionService(ConnectionService service){
     this.connectionService = service;
     connectionController.setService(service);
+//    relationalDatasourceController.setConnectionService(service);
     reloadConnections();
   }
 
@@ -189,11 +184,6 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   public DatasourceModel getDatasourceModel() {
     checkInitialized();
     return datasourceModel;
-  }
-  
-  public ConnectionModel getConnectionModel() {
-    checkInitialized();
-    return connectionModel;
   }
 
   /**

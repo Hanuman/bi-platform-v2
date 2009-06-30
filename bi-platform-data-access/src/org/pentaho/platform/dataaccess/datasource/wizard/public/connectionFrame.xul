@@ -56,9 +56,9 @@
 						          <hbox>
 			                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
 						            <spacer flex="1"/>
-						            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="relationalDatasourceController.editConnection()"  disabled="true"/>
-						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="relationalDatasourceController.addConnection()"  disabled="false"/>
-						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="relationalDatasourceController.removeConnection()"  disabled="true"/>
+						            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="connectionController.showEditConnectionDialog()"  disabled="true"/>
+						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
+						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
 						          </hbox>
 			                      <listbox id="connectionList" rows="6" pen:binding="name" disabled="true"/>
 						        </vbox>

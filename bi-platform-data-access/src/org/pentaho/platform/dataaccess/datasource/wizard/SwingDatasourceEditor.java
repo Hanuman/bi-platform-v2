@@ -10,7 +10,6 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionC
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
@@ -60,7 +59,6 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
       container.addEventHandler(relationalDatasourceController);
 
       final ConnectionController connectionController = new ConnectionController();
-      connectionController.setBindingFactory(bf);
       container.addEventHandler(connectionController);
       
       connectionController.setService(connectionService);
@@ -75,14 +73,10 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
 
         public void success(List<IConnection> connections) {
           DatasourceModel datasourceModel = new DatasourceModel();
-          ConnectionModel connectionModel = new ConnectionModel();
           datasourceModel.getRelationalModel().setConnections(connections);
           datasourceController.setDatasourceModel(datasourceModel);
-          datasourceController.setConnectionModel(connectionModel);
           connectionController.setDatasourceModel(datasourceModel);
-          connectionController.setConnectionModel(connectionModel);
           csvDatasourceController.setDatasourceModel(datasourceModel);
-          relationalDatasourceController.setConnectionModel(connectionModel);
           relationalDatasourceController.setDatasourceModel(datasourceModel);
           
           try{

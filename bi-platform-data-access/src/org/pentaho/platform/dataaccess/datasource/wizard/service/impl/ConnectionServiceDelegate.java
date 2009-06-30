@@ -7,11 +7,20 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.database.dialect.IDatabaseDialect;
+import org.pentaho.database.model.IDatabaseConnection;
+import org.pentaho.database.service.DatabaseConnectionService;
+import org.pentaho.database.service.IDatabaseConnectionService;
+import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.IServiceManager;
+import org.pentaho.platform.api.engine.ServiceException;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.datasource.DatasourceMgmtServiceException;
 import org.pentaho.platform.api.repository.datasource.IDatasource;
 import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -197,5 +206,52 @@ public class ConnectionServiceDelegate {
     returnDatasource.setUrl(connection.getUrl());
     return returnDatasource;
   }
+  
+  
+  public IDatabaseConnection convertFromConnection(IConnection connection) throws ConnectionServiceException {
+    if (!hasDataAccessPermission()) {
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+    }
+    
+    try {
+      IServiceManager manager = PentahoSystem.get(IServiceManager.class);
+      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean(ServiceType.GWT, "databaseConnectionService");
+      IDatabaseConnection conn = service.createDatabaseConnection(connection.getDriverClass(), connection.getUrl());
+      conn.setName(connection.getName());
+      conn.setUsername(connection.getUsername());
+      conn.setPassword(connection.getPassword());
+      return conn;
+    } catch (ServiceException e) {
+      throw new ConnectionServiceException(e);
+    }
+  }
 
+  public IConnection convertToConnection(IDatabaseConnection connection) throws ConnectionServiceException {
+    if (!hasDataAccessPermission()) {
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+    }
+    
+    try {
+      IServiceManager manager = PentahoSystem.get(IServiceManager.class);
+
+      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean(ServiceType.GWT, "databaseConnectionService");
+      IDatabaseDialect dialect = service.getDialectService().getDialect(connection);
+      
+      Connection conn = new Connection();
+      String url = dialect.getURL(connection);
+      conn.setDriverClass(dialect.getNativeDriver());
+      conn.setName(connection.getName());
+      conn.setUrl(url);
+      conn.setUsername(connection.getUsername());
+      conn.setPassword(connection.getPassword());
+      return conn;
+      
+    } catch (KettleDatabaseException e) {
+      throw new ConnectionServiceException(e);
+    } catch (ServiceException e) {
+      throw new ConnectionServiceException(e);
+    }
+  }
 }

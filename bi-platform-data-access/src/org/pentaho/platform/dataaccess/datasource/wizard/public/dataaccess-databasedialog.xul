@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<overlay 
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <listitem id="advanced-item" removeelement="true"/>
+  <listitem id="pooling-item" removeelement="true"/>
+  <listitem id="cluster-item" removeelement="true"/>
+
+  <groupbox id="advanced-group-box" removeelement="true"/>
+  <groupbox id="pooling-group" removeelement="true"/>
+  <groupbox id="place-holder-box-2" removeelement="true"/>
+  
+  <!-- once we enable options, remove these overlays -->
+  <listitem id="options-item" removeelement="true"/>
+  <groupbox id="options-group-box" removeelement="true"/>  
+</overlay>

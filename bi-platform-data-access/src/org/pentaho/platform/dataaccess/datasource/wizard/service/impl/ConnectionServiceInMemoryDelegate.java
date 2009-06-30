@@ -11,14 +11,20 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.database.dialect.IDatabaseDialect;
+import org.pentaho.database.model.IDatabaseConnection;
+import org.pentaho.database.service.DatabaseConnectionService;
+import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 
-
 public class ConnectionServiceInMemoryDelegate {
 
   private String locale = Locale.getDefault().toString();
+  
+  // this should be a singleton
+  private DatabaseConnectionService databaseConnectionService = new DatabaseConnectionService();
 
   private List<IConnection> connectionList = new ArrayList<IConnection>();
   private static final Log logger = LogFactory.getLog(ConnectionServiceInMemoryDelegate.class);
@@ -151,4 +157,29 @@ public class ConnectionServiceInMemoryDelegate {
     }
     return false;
   }
+  
+  public IDatabaseConnection convertFromConnection(IConnection connection) throws ConnectionServiceException {
+    IDatabaseConnection conn = databaseConnectionService.createDatabaseConnection(connection.getDriverClass(), connection.getUrl());
+    conn.setName(connection.getName());
+    conn.setUsername(connection.getUsername());
+    conn.setPassword(connection.getPassword());
+    return conn;
+  }
+  
+  public IConnection convertToConnection(IDatabaseConnection connection) throws ConnectionServiceException {
+    try {
+      IDatabaseDialect dialect = databaseConnectionService.getDialectService().getDialect(connection);
+      org.pentaho.platform.dataaccess.datasource.beans.Connection conn = new org.pentaho.platform.dataaccess.datasource.beans.Connection();
+      String url = dialect.getURL(connection);
+      conn.setDriverClass(dialect.getNativeDriver());
+      conn.setName(connection.getName());
+      conn.setUrl(url);
+      conn.setUsername(connection.getUsername());
+      conn.setPassword(connection.getPassword());
+      return conn;
+    } catch (KettleDatabaseException e) {
+      throw new ConnectionServiceException(e);
+    }
+  }
+
 }

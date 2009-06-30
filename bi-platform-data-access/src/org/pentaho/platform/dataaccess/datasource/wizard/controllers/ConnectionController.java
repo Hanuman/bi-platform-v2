@@ -3,34 +3,33 @@ package org.pentaho.platform.dataaccess.datasource.wizard.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.database.model.IDatabaseConnection;
+import org.pentaho.database.model.IDatabaseType;
+import org.pentaho.database.util.DatabaseTypeHelper;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.ConnectionDialogListener;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
+import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel.EditType;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
+import org.pentaho.ui.database.event.DatabaseDialogListener;
+import org.pentaho.ui.database.gwt.GwtDatabaseDialog;
+import org.pentaho.ui.database.gwt.GwtXulAsyncDatabaseConnectionService;
 import org.pentaho.ui.xul.XulServiceCallback;
-import org.pentaho.ui.xul.binding.Binding;
-import org.pentaho.ui.xul.binding.BindingFactory;
-import org.pentaho.ui.xul.components.XulButton;
 import org.pentaho.ui.xul.components.XulLabel;
-import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.containers.XulDialog;
-import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
 
-public class ConnectionController extends AbstractXulEventHandler {
-  private XulDialog dialog;
+public class ConnectionController extends AbstractXulEventHandler implements DatabaseDialogListener {
+
   private DatasourceMessages datasourceMessages;
-  
+
   private ConnectionService service;
 
   private List<ConnectionDialogListener> listeners = new ArrayList<ConnectionDialogListener>();
-
-  private ConnectionModel connectionModel;
 
   private DatasourceModel datasourceModel;
 
@@ -46,70 +45,38 @@ public class ConnectionController extends AbstractXulEventHandler {
 
   private XulLabel successLabel = null;
 
-  BindingFactory bf;
+  GwtXulAsyncDatabaseConnectionService connService = new GwtXulAsyncDatabaseConnectionService();
 
-  XulTextbox name = null;
+  GwtDatabaseDialog databaseDialog;
 
-  XulTextbox driverClass = null;
+  DatabaseTypeHelper databaseTypeHelper;
 
-  XulTextbox username = null;
-
-  XulTextbox password = null;
-
-  XulTextbox url = null;
-
-  XulButton okBtn = null;
-
-  XulButton testBtn = null;
-
-  XulListbox driverClassList = null;
+  IConnection currentConnection;
 
   public ConnectionController() {
 
   }
 
   public void init() {
+
+    XulServiceCallback<List<IDatabaseType>> callback = new XulServiceCallback<List<IDatabaseType>>() {
+      public void error(String message, Throwable error) {
+      }
+
+      public void success(List<IDatabaseType> retVal) {
+        databaseTypeHelper = new DatabaseTypeHelper(retVal);
+        databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
+            "dataaccess-databasedialog.xul", ConnectionController.this); //$NON-NLS-1$
+      }
+    };
+    connService.getDatabaseTypes(callback);
+
     saveConnectionConfirmationDialog = (XulDialog) document.getElementById("saveConnectionConfirmationDialog"); //$NON-NLS-1$
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$
     successDialog = (XulDialog) document.getElementById("successDialog"); //$NON-NLS-1$
     successLabel = (XulLabel) document.getElementById("successLabel");//$NON-NLS-1$
-
-    name = (XulTextbox) document.getElementById("connectionname"); //$NON-NLS-1$
-    driverClass = (XulTextbox) document.getElementById("driverClass"); //$NON-NLS-1$
-
-    username = (XulTextbox) document.getElementById("username"); //$NON-NLS-1$
-    password = (XulTextbox) document.getElementById("password"); //$NON-NLS-1$
-    url = (XulTextbox) document.getElementById("url"); //$NON-NLS-1$
-    dialog = (XulDialog) document.getElementById("connectionDialog"); //$NON-NLS-1$
     removeConfirmationDialog = (XulDialog) document.getElementById("removeConfirmationDialog"); //$NON-NLS-1$
-    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    final Binding domainBinding = bf.createBinding(connectionModel, "name", name, "value"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "disableConnectionName", name, "disabled"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "driverClass", driverClass, "value"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "username", username, "value"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "password", password, "value"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "url", url, "value"); //$NON-NLS-1$  //$NON-NLS-2$
-    okBtn = (XulButton) document.getElementById("connectionDialog_accept"); //$NON-NLS-1$
-    testBtn = (XulButton) document.getElementById("testButton"); //$NON-NLS-1$
-    bf.setBindingType(Binding.Type.ONE_WAY);
-    bf.createBinding(connectionModel, "validated", okBtn, "!disabled"); //$NON-NLS-1$  //$NON-NLS-2$
-    bf.createBinding(connectionModel, "validated", testBtn, "!disabled"); //$NON-NLS-1$  //$NON-NLS-2$
-    okBtn.setDisabled(true);
-    testBtn.setDisabled(true);
-    try {
-      // Fires the population of the model listbox. This cascades down to the categories and columns. In essence, this
-      // call initializes the entire UI.
-      domainBinding.fireSourceChanged();
-
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
-    }
-  }
-
-  public void showDialog() {
-    dialog.show();
   }
 
   public void openErrorDialog(String title, String message) {
@@ -136,20 +103,8 @@ public class ConnectionController extends AbstractXulEventHandler {
     }
   }
 
-  public void setBindingFactory(BindingFactory bf) {
-    this.bf = bf;
-  }
-
   public void setDatasourceModel(DatasourceModel model) {
     this.datasourceModel = model;
-  }
-
-  public void setConnectionModel(ConnectionModel model) {
-    this.connectionModel = model;
-  }
-
-  public ConnectionModel getConnectionModel() {
-    return this.connectionModel;
   }
 
   public DatasourceModel getDatasourceModel() {
@@ -161,7 +116,6 @@ public class ConnectionController extends AbstractXulEventHandler {
   }
 
   public void closeDialog() {
-    dialog.hide();
     for (ConnectionDialogListener listener : listeners) {
       listener.onDialogCancel();
     }
@@ -173,11 +127,10 @@ public class ConnectionController extends AbstractXulEventHandler {
 
   public void addConnection() {
     try {
-      service.testConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
+      service.testConnection(currentConnection, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
            saveConnectionConfirmationDialog.show();
         }
-
         public void success(Boolean value) {
           if (value) {
             saveConnection();
@@ -193,7 +146,7 @@ public class ConnectionController extends AbstractXulEventHandler {
 
   public void testConnection() {
     try {
-      service.testConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
+      service.testConnection(currentConnection, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
           displayErrorMessage(error);
         }
@@ -201,9 +154,11 @@ public class ConnectionController extends AbstractXulEventHandler {
         public void success(Boolean value) {
           try {
             if (value) {
-              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_TEST_SUCCESS"));
+              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
+                  .getString("ConnectionController.CONNECTION_TEST_SUCCESS"));
             } else {
-              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0003_CONNECTION_TEST_FAILED"));              
+              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
+                  .getString("ConnectionController.ERROR_0003_CONNECTION_TEST_FAILED"));
             }
 
           } catch (Exception e) {
@@ -222,14 +177,15 @@ public class ConnectionController extends AbstractXulEventHandler {
       service.deleteConnection(datasourceModel.getRelationalModel().getSelectedConnection().getName(),
           new XulServiceCallback<Boolean>() {
 
-        public void error(String message, Throwable error) {
-          displayErrorMessage(error);
-        }
+            public void error(String message, Throwable error) {
+              displayErrorMessage(error);
+            }
 
-        public void success(Boolean value) {
-          try {
+            public void success(Boolean value) {
+              try {
                 if (value) {
-                  openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_DELETED"));
+                  openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
+                      .getString("ConnectionController.CONNECTION_DELETED"));
                   datasourceModel.getRelationalModel().deleteConnection(
                       datasourceModel.getRelationalModel().getSelectedConnection().getName());
                   List<IConnection> connections = datasourceModel.getRelationalModel().getConnections();
@@ -239,15 +195,16 @@ public class ConnectionController extends AbstractXulEventHandler {
                     datasourceModel.getRelationalModel().setSelectedConnection(null);
                   }
 
-            } else {
-              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0002_UNABLE_TO_DELETE_CONNECTION"));              
-            }
+                } else {
+                  openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
+                      .getString("ConnectionController.ERROR_0002_UNABLE_TO_DELETE_CONNECTION"));
+                }
 
-          } catch (Exception e) {
-            displayErrorMessage(e);
-          }
-        }
-      });
+              } catch (Exception e) {
+                displayErrorMessage(e);
+              }
+            }
+          });
     } catch (ConnectionServiceException cse) {
       displayErrorMessage(cse);
     }
@@ -260,52 +217,54 @@ public class ConnectionController extends AbstractXulEventHandler {
 
     if (RelationalModel.EditType.ADD.equals(datasourceModel.getRelationalModel().getEditType())) {
       try {
-        service.addConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {  
+        service.addConnection(currentConnection, new XulServiceCallback<Boolean>() {
           public void error(String message, Throwable error) {
             displayErrorMessage(error);
           }
+
           public void success(Boolean value) {
             try {
-              dialog.hide();
               if (value) {
-                datasourceModel.getRelationalModel().addConnection(connectionModel.getConnection());
-                datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
+                datasourceModel.getRelationalModel().addConnection(currentConnection);
+                datasourceModel.getRelationalModel().setSelectedConnection(currentConnection);
               } else {
-                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0001_UNABLE_TO_ADD_CONNECTION"));
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
+                    .getString("ConnectionController.ERROR_0001_UNABLE_TO_ADD_CONNECTION"));
               }
-  
+
             } catch (Exception e) {
               displayErrorMessage(e);
             }
           }
         });
-      } catch(ConnectionServiceException cse) {
+      } catch (ConnectionServiceException cse) {
         displayErrorMessage(cse);
       }
     } else {
       try {
-        service.updateConnection(connectionModel.getConnection(), new XulServiceCallback<Boolean>() {
-  
+        service.updateConnection(currentConnection, new XulServiceCallback<Boolean>() {
+
           public void error(String message, Throwable error) {
             displayErrorMessage(error);
           }
-  
+
           public void success(Boolean value) {
             try {
-              dialog.hide();
               if (value) {
-                openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages.getString("ConnectionController.CONNECTION_UPDATED"));
-                datasourceModel.getRelationalModel().updateConnection(connectionModel.getConnection());
-                datasourceModel.getRelationalModel().setSelectedConnection(connectionModel.getConnection());
+                openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
+                    .getString("ConnectionController.CONNECTION_UPDATED"));
+                datasourceModel.getRelationalModel().updateConnection(currentConnection);
+                datasourceModel.getRelationalModel().setSelectedConnection(currentConnection);
               } else {
-                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("ConnectionController.ERROR_0004_UNABLE_TO_UPDATE_CONNECTION"));              
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
+                    .getString("ConnectionController.ERROR_0004_UNABLE_TO_UPDATE_CONNECTION"));
               }
-  
+
             } catch (Exception e) {
             }
           }
         });
-      } catch(ConnectionServiceException cse) {
+      } catch (ConnectionServiceException cse) {
         displayErrorMessage(cse);
       }
     }
@@ -336,7 +295,7 @@ public class ConnectionController extends AbstractXulEventHandler {
     errorLabel.setValue(ExceptionParser.getErrorMessage(th));
     errorDialog.show();
   }
-  
+
   /**
    * @param datasourceMessages the datasourceMessages to set
    */
@@ -349,5 +308,60 @@ public class ConnectionController extends AbstractXulEventHandler {
    */
   public DatasourceMessages getDatasourceMessages() {
     return datasourceMessages;
+  }
+
+  public void onDialogAccept(IDatabaseConnection arg0) {
+    try {
+      service.convertToConnection(arg0, new XulServiceCallback<IConnection>() {
+        public void error(String message, Throwable error) {
+          displayErrorMessage(error);
+        }
+        public void success(IConnection retVal) {
+          currentConnection = retVal;
+          addConnection();
+        }
+      });
+    } catch (ConnectionServiceException e) {
+      displayErrorMessage(e);
+    }
+  }
+
+  public void onDialogCancel() {
+    // do nothing
+  }
+
+  public void onDialogReady() {
+    // TODO: enable the database edit and add buttons
+  }
+
+  public void showAddConnectionDialog() {
+    datasourceModel.getRelationalModel().setEditType(EditType.ADD);
+    databaseDialog.setDatabaseConnection(null);
+    databaseDialog.show();
+  }
+
+  public void showEditConnectionDialog() {
+    datasourceModel.getRelationalModel().setEditType(EditType.EDIT);
+    IConnection connection = datasourceModel.getRelationalModel().getSelectedConnection();
+    try {
+      service.convertFromConnection(connection, new XulServiceCallback<IDatabaseConnection>() {
+        public void error(String message, Throwable error) {
+          displayErrorMessage(error);
+        }
+
+        public void success(IDatabaseConnection conn) {
+          databaseDialog.setDatabaseConnection(conn);
+          databaseDialog.show();
+        }
+      });
+    } catch (ConnectionServiceException error) {
+      displayErrorMessage(error);
+    }
+  }
+
+  public void showRemoveConnectionDialog() {
+    // Display the warning message. 
+    // If ok then remove the connection from the list
+    removeConfirmationDialog.show();
   }
 }

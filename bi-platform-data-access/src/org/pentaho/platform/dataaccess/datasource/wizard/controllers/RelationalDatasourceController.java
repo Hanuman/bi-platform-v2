@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
-import org.pentaho.platform.dataaccess.datasource.Delimiter;
-import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
@@ -14,10 +12,8 @@ import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.WaitingDialog;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.ConnectionModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
-import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulComponent;
@@ -52,7 +48,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   private DatasourceMessages datasourceMessages;
   private XulDialog connectionDialog;
   private WaitingDialog waitingDialogBox;
-  private XulDialog removeConfirmationDialog;
 
   private XulDialog waitingDialog = null;
   
@@ -65,8 +60,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   private DatasourceService service;
 
   private DatasourceModel datasourceModel;
-
-  private ConnectionModel connectionModel;
 
   BindingFactory bf;
 
@@ -115,6 +108,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   //private XulGrid grid = null;  
   CustomAggregationCellRenderer aggregationCellRenderer = null;
   private XulVbox relationalAggregationEditorVbox = null;
+  
   public RelationalDatasourceController() {
 
   }
@@ -149,7 +143,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     query = (XulTextbox) document.getElementById("query"); //$NON-NLS-1$
     connectionDialog = (XulDialog) document.getElementById("connectionDialog");//$NON-NLS-1$
     previewResultsDialog = (XulDialog) document.getElementById("previewResultsDialog");//$NON-NLS-1$
-    removeConfirmationDialog = (XulDialog) document.getElementById("removeConfirmationDialog");//$NON-NLS-1$
     previewResultsTable = (XulTree) document.getElementById("previewResultsTable"); //$NON-NLS-1$
     previewResultsTreeCols = (XulTreeCols) document.getElementById("previewResultsTreeCols"); //$NON-NLS-1$
     previewLimit = (XulTextbox) document.getElementById("previewLimit"); //$NON-NLS-1$
@@ -258,15 +251,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
     return this.datasourceModel;
   }
 
-  public void setConnectionModel(ConnectionModel model) {
-    this.connectionModel = model;
-  }
-
-  public ConnectionModel getConnectionModel() {
-
-    return this.connectionModel;
-  }
-
   public String getName() {
     return "relationalDatasourceController";
   }
@@ -346,37 +330,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
 
   }
 
-  public void addConnection() {
-    
-    datasourceModel.getRelationalModel().setEditType(RelationalModel.EditType.ADD);
-    connectionModel.clearModel();
-    connectionModel.setDisableConnectionName(false);
-    showConnectionDialog();
-  }
-
-  public void editConnection() {
-    datasourceModel.getRelationalModel().setEditType(RelationalModel.EditType.ADD);
-    connectionModel.setDisableConnectionName(true);
-    connectionModel.setConnection(datasourceModel.getRelationalModel().getSelectedConnection());
-    showConnectionDialog();
-  }
-
-  public void removeConnection() {
-    // Display the warning message. If ok then remove the connection from the list
-    int index = connections.getSelectedIndex();
-    removeConfirmationDialog.show();
-  }
-
-  public void showConnectionDialog() {
-    connectionDialog.show();
-  }
-
   public void closeConnectionDialog() {
     connectionDialog.hide();
-  }
-
-  public void closeRemoveConfirmationDialog() {
-    removeConfirmationDialog.hide();
   }
 
   public void closeApplyQueryConfirmationDialog() {
@@ -489,6 +444,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
   public void setService(DatasourceService service) {
     this.service = service;
   }
+
   public void openErrorDialog(String title, String message) {
     errorDialog.setTitle(title);
     errorLabel.setValue(message);

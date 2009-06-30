@@ -18,4 +18,12 @@
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
     class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl"/>
+
+  <webservice
+    id="databaseConnectionService"
+    type="gwt"
+    title="Database Connection Service" 
+    description="This service is used with the database connection dialog"
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.DataAccessDatabaseConnectionService"/>
+
 </plugin>

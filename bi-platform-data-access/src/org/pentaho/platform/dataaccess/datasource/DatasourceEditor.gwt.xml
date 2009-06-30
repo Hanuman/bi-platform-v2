@@ -11,6 +11,7 @@ This module serves as the Debuging environment and default implementation for in
   <inherits name="org.pentaho.ui.xul.Gwt"/>
   <inherits name="org.pentaho.pms.schema.v3.Column"/>
   <inherits name="org.pentaho.metadata.Model"/>
+  <inherits name="org.pentaho.ui.database.DatabaseDialog"/>
     <source path="">
         <exclude name="**/MQLEditorDebugGwtServlet*"/>
         <exclude name="**/SwingMqlEditor*"/>
