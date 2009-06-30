@@ -58,6 +58,7 @@ public class MetadataQueryComponent {
   int timeout = -1;
   boolean live = false;
   boolean useForwardOnlyResultSet = false;
+  boolean logSql = false;
   
   IPentahoSession session = null;
   IPentahoResultSet resultSet = null;
@@ -74,6 +75,10 @@ public class MetadataQueryComponent {
    */
   public void setInputs(Map<String,Object> inputs) {
     this.inputs = inputs;
+  }
+  
+  public void setLogSql(boolean logSql) {
+    this.logSql = logSql;
   }
   
   public void setQuery(String query) {
@@ -232,6 +237,9 @@ public class MetadataQueryComponent {
       IPentahoResultSet localResultSet = null;
       String sql = mappedQuery.getQuery();
       logger.debug("SQL: " + sql); //$NON-NLS-1$
+      if (logSql) {
+        logger.info("SQL: " + sql);
+      }
 
       // populate prepared sql params
       List<Object> sqlParams = null;
