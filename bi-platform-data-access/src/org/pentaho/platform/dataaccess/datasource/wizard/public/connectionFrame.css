@@ -161,3 +161,40 @@ aggregation-dialog-checkbox-label {
   background-repeat: repeat-x;
   height: 29px;
 }
+
+.gwt-TabPanelBottom {
+  background-color: #e2e2e2;
+  border-left: 1px solid #8d8d8d;
+  border-bottom: 1px solid #8d8d8d;
+  border-right: 1px solid #8d8d8d;
+  padding: 3px 7px 3px 4px;
+}
+
+.gwt-TabBar {
+  background-image: url(images/dialog_tab_bg.png);
+  background-repeat: repeat-x;
+  height: 29px;
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+}
+
+.gwt-TabBar .gwt-TabBarRest {
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 24px;
+  margin-top: 4px;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+  margin-right: 2px;
+  cursor: pointer;
+  cursor: hand;
+  height: 24px;
+  margin-top: 4px;
+
+}
