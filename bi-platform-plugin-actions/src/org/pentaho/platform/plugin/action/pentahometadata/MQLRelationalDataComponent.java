@@ -17,6 +17,10 @@
  */
 package org.pentaho.platform.plugin.action.pentahometadata;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.actionsequence.dom.ActionInputConstant;
@@ -331,6 +335,21 @@ public class MQLRelationalDataComponent extends ComponentBase {
 
     if (actionDefinition.getQueryTimeout() != ActionInputConstant.NULL_INPUT) {
       component.setTimeout(actionDefinition.getQueryTimeout().getIntValue());
+    }
+    
+    // log the sql to info if set
+    if (actionDefinition.getInput("logSql") != null) { //$NON-NLS-1$
+      component.setLogSql("true".equals(actionDefinition.getInput("logSql").getStringValue())); //$NON-NLS-1$
+    }
+    
+    // TODO: We also need to pass in the component definitions
+    Set<String> inputNames = getInputNames();
+    if (inputNames != null) {
+      Map<String,Object> inputMap = new HashMap<String,Object>();
+      for (String inputName : inputNames) {
+        inputMap.put(inputName, getInputValue(inputName));
+      }
+      component.setInputs(inputMap);
     }
     
     boolean success =  component.execute(); 
