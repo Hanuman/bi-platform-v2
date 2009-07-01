@@ -17,8 +17,8 @@
     plugin. 
    -->
 	<beanConfig>   
-		<bean id="FlashEngine" class="org.pentaho.chart.plugin.openflashchart.OpenFlashChartPlugin"/>  
-		<bean id="JFreeEngine" class="org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin"/>
+		<bean id="FlashChartEngine" class="org.pentaho.chart.plugin.openflashchart.OpenFlashChartPlugin"/>  
+		<bean id="JFreeChartEngine" class="org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin"/>
 	</beanConfig> 
   
 </chartbeans-config>
