@@ -182,7 +182,7 @@ aggregation-dialog-checkbox-label {
 
 .gwt-TabBar .gwt-TabBarItem {
   background-color: #e2e2e2;
-  border-bottom:none;
+  border-bottom: 1px solid #8d8d8d;
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
