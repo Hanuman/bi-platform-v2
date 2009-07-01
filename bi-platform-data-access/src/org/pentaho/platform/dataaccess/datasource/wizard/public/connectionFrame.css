@@ -130,7 +130,6 @@ aggregation-dialog-checkbox-label {
 }
 
 .gwt-DialogBox {
-  background-color: #EDEDED;
   border-top: 2px solid #CCCCCC;
   border-right: 2px solid #777777;
   border-bottom: 2px solid #777777;
@@ -139,7 +138,6 @@ aggregation-dialog-checkbox-label {
 }
 
 .gwt-DialogBox .Caption {
-  background-color: #C2CFA2;
   background-image: none;
   color: #000000;
   cursor: move;
@@ -183,6 +181,8 @@ aggregation-dialog-checkbox-label {
 }
 
 .gwt-TabBar .gwt-TabBarItem {
+  background-color: #e2e2e2;
+  border-bottom:none;
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
@@ -191,10 +191,13 @@ aggregation-dialog-checkbox-label {
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
+  background-color: #e2e2e2;
+  border-bottom:none;
   margin-right: 2px;
   cursor: pointer;
   cursor: hand;
   height: 24px;
   margin-top: 4px;
-
+  font-weight:normal;
+  padding:0px;
 }
