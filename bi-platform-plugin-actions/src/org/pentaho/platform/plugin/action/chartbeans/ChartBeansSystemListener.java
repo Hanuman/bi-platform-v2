@@ -69,7 +69,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 	@SuppressWarnings("unchecked")
 	private List <IChartPlugin> initPlugins() throws Exception {
 		ArrayList<IChartPlugin> plugins = new ArrayList<IChartPlugin>();
-		HashMap<String, String> pluginMap = new HashMap<String, String>();
+		HashMap<String, Object> pluginMap = new HashMap<String, Object>();
 
 		List<Element> nodes = PentahoSystem.getSystemSettings().getSystemSettings(configFile, "bean"); //$NON-NLS-1$
 
@@ -81,7 +81,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 
 		Element node;
 		String id;
-		String plugin;
+		Object plugin;
 		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class);
 
 		for (int i = 0; i < nodes.size(); i++) {
@@ -92,7 +92,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 			// Now let's see if there is a plugin overriding this engine...
 			if ((null != pluginManager) && (pluginManager.isBeanRegistered(id))) {
 				try {
-					plugin = pluginManager.getBean(id).getClass().getName();
+				  plugin = pluginManager.getBean(id);
 					pluginMap.put(id, plugin);
 				} catch (PluginBeanException e) {
 					Logger.warn(ChartBeansSystemListener.class.getName(),
@@ -106,8 +106,11 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 		for (Object clazz : pluginMap.values()) {
 
 			try {
-				plugins.add((IChartPlugin) Class.forName(clazz.toString())
-						.newInstance());
+			  if (clazz instanceof String){
+	        plugins.add((IChartPlugin) Class.forName(clazz.toString()).newInstance());
+			  }else{
+			    plugins.add((IChartPlugin)clazz);
+			  }
 			} catch (Exception ex) {
 				Logger.warn(ChartBeansSystemListener.class.getName(),
 						Messages.getString("ChartBeansSystemListener.ERROR_0003_CLASS_CREATION_PROBLEM") + clazz, ex); //$NON-NLS-1$
