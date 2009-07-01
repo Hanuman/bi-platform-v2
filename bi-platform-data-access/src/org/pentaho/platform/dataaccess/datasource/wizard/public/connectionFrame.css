@@ -129,23 +129,6 @@ aggregation-dialog-checkbox-label {
 
 }
 
-.gwt-DialogBox {
-  border-top: 2px solid #CCCCCC;
-  border-right: 2px solid #777777;
-  border-bottom: 2px solid #777777;
-  border-left: 2px solid #CCCCCC;
-  padding: 0px;
-}
-
-.gwt-DialogBox .Caption {
-  background-image: none;
-  color: #000000;
-  cursor: move;
-  text-align: left;
-  padding: 2px 5px 2px 5px; /* top right bottom left */
-  font: normal 14px tahoma, arial, helvetica;
-}
-
 .gwt-TabPanel .gwt-TabPanelBottom {
   background-color: #e2e2e2;
   border-left: 1px solid #8d8d8d;
