@@ -15,16 +15,17 @@
 
   <!-- override the subfloor assemble target to do special plug-in assembly -->
   <target name="assemble" depends="gwt-compile,assemble.init">
-    <copy todir="${approot.stage.dir}/lib">
+    <copy todir="${approot.stage.dir}/lib" overwrite="true">
       <!-- fileset dir="${lib.dir}" excludes="pentaho-bi-platform-*.jar" / -->
       <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
       <!--fileset file="${gwt.sdk.dir}/gwt-user*.jar" /-->
+      <fileset file="${codegenlib.dir}/pentaho-database-gwt-${dependency.pentaho-database-gwt.revision}.jar" />
     </copy>
 
-    <copy todir="${approot.stage.dir}">
+    <copy todir="${approot.stage.dir}" overwrite="true">
       <fileset dir="${package.resdir}" />
     </copy>
-    <copy todir="${approot.stage.dir}/resources/gwt">
+    <copy todir="${approot.stage.dir}/resources/gwt" overwrite="true">
       <fileset dir="${gwt.output.dir}/DatasourceEditor">
         <exclude name=".gwt-tmp/" />
         <exclude name="*-aux/" />
