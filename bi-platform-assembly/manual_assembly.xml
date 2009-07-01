@@ -187,13 +187,6 @@
             <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
         </copy>
       
-        <!-- chartbeans files -->
-        
-    	<mkdir dir="${stage.dir}/pentaho-res/chartbeans"/>
-        <copy todir="${stage.dir}/pentaho-res/chartbeans">
-            <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/chartbeans/res" />
-        </copy>
-        
         <!-- log4j files -->
         
     	<copy todir="${stage.dir}/pentaho-res/log4j">
