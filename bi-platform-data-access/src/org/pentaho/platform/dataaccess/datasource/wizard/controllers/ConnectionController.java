@@ -364,4 +364,9 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     // If ok then remove the connection from the list
     removeConfirmationDialog.show();
   }
+  
+  public void closeRemoveConfirmationDialog() {
+    removeConfirmationDialog.hide();
+  }
+
 }

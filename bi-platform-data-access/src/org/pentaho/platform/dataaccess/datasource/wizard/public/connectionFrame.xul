@@ -178,7 +178,7 @@
   </dialog>
     
     
-  <dialog id="removeConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeRemoveConfirmationDialog()"
+  <dialog id="removeConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="connectionController.closeRemoveConfirmationDialog()"
   ondialogaccept="connectionController.deleteConnection()" buttonalign="right" title="${removeConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
        <vbox>
