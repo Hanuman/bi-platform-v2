@@ -449,7 +449,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       this.callback = callback;
       CsvModelDataRow csvModelDataRow = (CsvModelDataRow)boundObj;
       XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
-      column.setLabel(csvModelDataRow.getSampleData());
+      column.setLabel(csvModelDataRow.getColumnName());
       List<String> values = csvModelDataRow.getSampleDataList();
       List<String> sampleDataList = new ArrayList<String>();
       for(int i=1;i<MAX_SAMPLE_DATA_ROWS && i<csvModelDataRow.getSampleDataList().size();i++) {
@@ -457,7 +457,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       }
       sampleDataTree.setElements(sampleDataList);
       sampleDataTree.update();
-      dialog.setTitle(csvModelDataRow.getColumnName());
+      dialog.setTitle(datasourceMessages.getString("DatasourceController.SAMPLE_DATA"));      
       dialog.show();
     }
   }
@@ -477,7 +477,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
         for(int i=0;i<aggregationList.size();i++) {
         if(buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
           buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
-          if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() < MAX_COL_SIZE))) {
+          if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() + COMMA.length() < MAX_COL_SIZE))) {
             buffer.append(COMMA);  
           }
         } else {

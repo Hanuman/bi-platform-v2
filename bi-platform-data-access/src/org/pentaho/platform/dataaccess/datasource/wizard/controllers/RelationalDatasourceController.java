@@ -563,15 +563,15 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       this.callback = callback;
       ModelDataRow modelDataRow = (ModelDataRow)boundObj;
       XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
-      column.setLabel(modelDataRow.getSampleData());
+      column.setLabel(modelDataRow.getColumnName());
       List<String> values = modelDataRow.getSampleDataList();
       List<String> sampleDataList = new ArrayList<String>();
-      for(int i=1;i<MAX_SAMPLE_DATA_ROWS && i<modelDataRow.getSampleDataList().size();i++) {
+      for(int i=0;i<MAX_SAMPLE_DATA_ROWS && i<modelDataRow.getSampleDataList().size();i++) {
         sampleDataList.add(values.get(i));
       }
       sampleDataTree.setElements(sampleDataList);
       sampleDataTree.update();
-      dialog.setTitle(modelDataRow.getColumnName());
+      dialog.setTitle(datasourceMessages.getString("DatasourceController.SAMPLE_DATA"));
       dialog.show();
     }
   }
@@ -590,7 +590,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
         for(int i=0;i<aggregationList.size();i++) {
           if(buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
             buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
-            if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() < MAX_COL_SIZE))) {
+            if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() + COMMA.length() < MAX_COL_SIZE))) {
               buffer.append(COMMA);  
             }
           } else {
