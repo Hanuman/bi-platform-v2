@@ -41,7 +41,7 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
-  public static final int MAX_COL_SIZE = 12;
+  public static final int MAX_COL_SIZE = 13;
   public static final String EMPTY_STRING = "";
   
   public static final String COMMA = ",";
