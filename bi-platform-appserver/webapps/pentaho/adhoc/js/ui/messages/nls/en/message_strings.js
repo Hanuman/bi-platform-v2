@@ -200,4 +200,8 @@ step1_div:"Select Data Source",
 step2_div:"Make Selections",
 step3_div:"Customize Selections",
 step4_div:"Report Settings"
+dataaccessAddButtonText:"Add",
+dataaccessDeleteButtonText:"Delete",
+deleteModelWarningMessage:"All content associated to selected Data Source will no longer work."
+
 }
