@@ -1,4 +1,6 @@
-<project name="Open Platform Assembly" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
+<!-- In order for this build file to be referenced by name on import into other build files, 
+     it's much nicer to have a short name with no spaces. Please don't change it. -->
+<project name="Open_Assembly" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<!-- Define the default location of the common build file -->
 	<property name="common.build.file" value="./common.xml" description="This is the location of the standardized common.xml file" />
