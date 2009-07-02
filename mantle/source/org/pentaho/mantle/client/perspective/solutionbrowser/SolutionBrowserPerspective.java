@@ -1081,7 +1081,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             // consider caching the document
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
+            try {
             solutionTree.buildSolutionTree(solutionDocument);
+            } catch (Throwable t) {
+              Window.alert(t.getMessage());
+            }
             if (collapse) {
               for (TreeItem item : solutionTree.getAllNodes()) {
                 item.setState(false);

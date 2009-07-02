@@ -28,7 +28,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
-import org.pentaho.gwt.widgets.client.utils.StringUtils;
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
@@ -158,6 +158,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       FileTreeItem rootItem = new FileTreeItem();
       rootItem.setText(solutionRoot.getAttribute("path")); //$NON-NLS-1$
       rootItem.setTitle(solutionRoot.getAttribute("path")); //$NON-NLS-1$
+      rootItem.getElement().setId(solutionRoot.getAttribute("path"));
       killAllTextSelection(rootItem.getElement());
 
       // added so we can traverse the true names
@@ -329,6 +330,34 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
         String description = childElement.getAttribute("description"); //$NON-NLS-1$
         FileTreeItem childTreeItem = new FileTreeItem();
+
+        String id = null;
+        Element parent = childElement;
+        while (parent != null) {
+          if (StringUtils.isEmpty(parent.getAttribute("name"))) {
+            try {
+              parent = (Element)parent.getParentNode();
+            } catch (Throwable t) {
+              parent = null;
+            }
+            continue;
+          }
+          if (id != null) {
+            id = parent.getAttribute("name") + "/" + id;
+          } else {
+            id = parent.getAttribute("name");
+          }
+          if (parent.getParentNode() == null) {
+            break;
+          }
+          try {
+            parent = (Element)parent.getParentNode();
+          } catch (Throwable t) {
+            parent = null;
+          }
+        }
+        childTreeItem.getElement().setAttribute("id", id);
+        
         killAllTextSelection(childTreeItem.getElement());
         childTreeItem.setURL(childElement.getAttribute("url")); //$NON-NLS-1$
         if (showLocalizedFileNames) {
