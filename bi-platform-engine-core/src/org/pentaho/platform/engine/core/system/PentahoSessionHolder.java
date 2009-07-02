@@ -52,6 +52,9 @@ public class PentahoSessionHolder {
     IPentahoSession sess = perThreadSession.get();
     if (sess == null) {
       Logger.warn(PentahoSessionHolder.class.getName(), Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
+      System.out.println(Thread.currentThread().getStackTrace());
+      //TODO: remove this soon
+      new Exception("This is a temporary exception to find out possible violations of PentahoSessionHolder").printStackTrace();
     }
     return sess;
   }
