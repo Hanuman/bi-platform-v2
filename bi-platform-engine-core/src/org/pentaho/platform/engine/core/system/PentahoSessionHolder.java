@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.messages.Messages;
-import org.pentaho.platform.util.logging.Logger;
 
 /**
  * Stores the IPentahoSession session object for the current thread so that a
