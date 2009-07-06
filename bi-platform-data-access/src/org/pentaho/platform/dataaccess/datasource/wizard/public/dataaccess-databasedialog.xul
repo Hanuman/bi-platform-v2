@@ -12,4 +12,7 @@
   <!-- once we enable options, remove these overlays -->
   <listitem id="options-item" removeelement="true"/>
   <groupbox id="options-group-box" removeelement="true"/>  
+  <listbox id="connection-type-list" flex="0"/>
+  <listbox id="access-type-list" flex="0"/>
+  
 </overlay>
