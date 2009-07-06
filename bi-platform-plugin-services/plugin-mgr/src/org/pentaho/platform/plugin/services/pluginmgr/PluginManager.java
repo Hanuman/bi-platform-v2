@@ -300,6 +300,10 @@ public class PluginManager extends AbstractPluginManager {
 
     //Set the service type (one service config instance created per service type)
     //
+    if(pws.types == null || pws.types.length < 1) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0023_SERVICE_TYPE_UNSPECIFIED", pws.id)); //$NON-NLS-1$
+    }
     for (String type : pws.types) {
       WebServiceConfig ws = new WebServiceConfig();
       ws.setServiceType(ServiceType.valueOf(type.toUpperCase()));
