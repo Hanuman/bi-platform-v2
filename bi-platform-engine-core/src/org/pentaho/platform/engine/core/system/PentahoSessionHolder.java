@@ -21,6 +21,8 @@
  */
 package org.pentaho.platform.engine.core.system;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -35,6 +37,8 @@ import org.pentaho.platform.util.logging.Logger;
 public class PentahoSessionHolder {
 
   private static final ThreadLocal<IPentahoSession> perThreadSession = new InheritableThreadLocal<IPentahoSession>();
+  
+  private static Log logger = LogFactory.getLog(PentahoSessionHolder.class);
 
   /**
    * Sets an IPentahoSession for the current thread
@@ -51,8 +55,7 @@ public class PentahoSessionHolder {
   public static IPentahoSession getSession() {
     IPentahoSession sess = perThreadSession.get();
     if (sess == null) {
-      Logger.warn(PentahoSessionHolder.class.getName(), Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
-      System.out.println(Thread.currentThread().getStackTrace());
+      logger.warn(Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
       //TODO: remove this soon
       new Exception("This is a temporary exception to find out possible violations of PentahoSessionHolder").printStackTrace();
     }
