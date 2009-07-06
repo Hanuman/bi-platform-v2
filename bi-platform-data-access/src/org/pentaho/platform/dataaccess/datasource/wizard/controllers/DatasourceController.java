@@ -227,7 +227,6 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     datasourceModel.clearModel();
     /*buildRelationalEmptyTable();*/    
     selectSql();
-    datasourceModel.setDatasourceType(DatasourceType.SQL);
   }
   public void setBindingFactory(BindingFactory bf) {
     this.bf = bf;
