@@ -46,7 +46,7 @@
 							<vbox>
 						      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
 						      <hbox>
-						        	<textbox id="relationalDatasourceName" width="177" multiline="false"/>
+						        	<textbox id="relationalDatasourceName" width="200" multiline="false"/>
 						    	  	<spacer flex="1"/>
 						      </hbox>
 						    </vbox>
@@ -60,7 +60,7 @@
 						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
 						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
 						          </hbox>
-			                      <listbox id="connectionList" rows="6" pen:binding="name" disabled="true"/>
+			                      <listbox id="connectionList" height="100" width="200" pen:binding="name" disabled="true"/>
 						        </vbox>
 						        <spacer width="10"/>
 						        <vbox flex="1">
@@ -99,7 +99,7 @@
 						  	  <vbox>
 							      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
 							      <hbox>
-							        	<textbox id="csvDatasourceName" width="177" multiline="false"/>
+							        	<textbox id="csvDatasourceName" width="200" multiline="false"/>
 							    	  	<spacer flex="1"/>
 							      </hbox>
 							  </vbox>
