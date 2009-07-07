@@ -41,6 +41,8 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.util.DatabaseMetaUtil;
+import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
@@ -59,7 +61,7 @@ public class MetadataQueryComponent {
   boolean live = false;
   boolean useForwardOnlyResultSet = false;
   boolean logSql = false;
-  
+  boolean forceDbDialect = false;
   IPentahoSession session = null;
   IPentahoResultSet resultSet = null;
   
@@ -107,6 +109,10 @@ public class MetadataQueryComponent {
   
   public void setQueryModelSqlGenerator(String sqlGeneratorClass) {
     this.sqlGeneratorClass = sqlGeneratorClass;
+  }
+  
+  public void setForceDbDialect(boolean forceDbDialect) {
+    this.forceDbDialect = forceDbDialect;
   }
   
   @SuppressWarnings("unchecked")
@@ -179,7 +185,7 @@ public class MetadataQueryComponent {
     }
   }
   
-  public boolean executeInlineEtlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
+  protected boolean executeInlineEtlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
     try {
       resultSet = executor.executeQuery(queryObject, parameters);
@@ -190,37 +196,111 @@ public class MetadataQueryComponent {
     }
   }
   
-  public boolean executeSqlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
+  protected SQLConnection getConnection(DatabaseMeta databaseMeta) {
+    // use the connection specified in the query
+    SQLConnection localConnection = null;
+    try {
+      if (databaseMeta.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
+        String jndiName = databaseMeta.getDatabaseName();
+        if (jndiName != null) {
+          SimpleLogger simpleLogger = new SimpleLogger(this);
+          localConnection = (SQLConnection)PentahoConnectionFactory.getConnection(
+              IPentahoConnection.SQL_DATASOURCE, jndiName, session, simpleLogger);
+        }
+      }
+      if (localConnection == null) {
+        String driver = databaseMeta.getDriverClass();
+        String userId = databaseMeta.getUsername();
+        String password = databaseMeta.getPassword();
+        String connectionInfo = databaseMeta.getURL();
+        if ((driver == null) && (connectionInfo == null)) {
+          // TODO raise an error
+        }
+        SimpleLogger simpleLogger = new SimpleLogger(this);
+        localConnection = (SQLConnection)PentahoConnectionFactory.getConnection(
+            IPentahoConnection.SQL_DATASOURCE, driver,
+            connectionInfo, userId, password, session, simpleLogger);
+      }
+
+      // This no longer is functional, it used to work with the old MQLRelationalDataComponent
+      // try the parent to allow the connection to be overridden
+      // localConnection = getConnection(localConnection);
+      return localConnection;
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0006_EXECUTE_FAILED"), e); //$NON-NLS-1$
+    }
+    return null;
+  }
+
+  
+  protected DatabaseInterface getDatabaseInterface(final SQLConnection conn) {
+    String prod = null;
+    try {
+      prod = conn.getNativeConnection().getMetaData().getDatabaseProductName();
+      DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface(prod);
+      if (prod != null && di == null) {
+        logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0001_NO_DIALECT_DETECTED", prod)); //$NON-NLS-1$
+      }
+      return di;
+    } catch (SQLException e) {
+      logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0002_DIALECT_EXCEPTION", prod), e); //$NON-NLS-1$
+    }
+    return null;
+  }
+
+  
+  protected DatabaseMeta getActiveDatabaseMeta(DatabaseMeta databaseMeta) {
+    if (forceDbDialect) {
+      return databaseMeta;
+    }
+
+    // retrieve a temporary connection to determine if a dialect change is necessary
+    // for generating the MQL Query.
+    SQLConnection tempConnection = getConnection(databaseMeta);
+    try {
+  
+      // if the connection type is not of the current dialect, regenerate the query
+      DatabaseInterface di = getDatabaseInterface(tempConnection);
+
+      if ((di != null) && (databaseMeta.getDatabaseType() != di.getDatabaseType())) {
+        // we need to reinitialize our mqlQuery object and reset the query.
+        // note that using this di object wipes out connection info
+        DatabaseMeta meta = (DatabaseMeta)databaseMeta.clone();
+        DatabaseInterface di2 = (DatabaseInterface) di.clone();
+        di2.setAccessType(databaseMeta.getAccessType());
+        di2.setDatabaseName(databaseMeta.getDatabaseName());
+        meta.setDatabaseInterface(di2);
+        return meta;
+      } else {
+        return databaseMeta;
+      }
+    } finally {
+      if (tempConnection != null) {
+        tempConnection.close();
+      }
+    }
+    
+  }
+  
+  protected boolean executeSqlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     // need to get the correct DatabaseMeta
     SqlPhysicalModel sqlModel = (SqlPhysicalModel)queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
-    
-    // TODO support JDBC -> will do as part of the common database dialog story
-    
-    
-    String jndiName = sqlModel.getDatasource().getDatabaseName();
-    
-    // this is temporary until we can get a database meta from the metadata model
-    DatabaseMeta databaseMeta = new DatabaseMeta(
-        jndiName, 
-        "MYSQL", //$NON-NLS-1$
-        "JNDI", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-
+    DatabaseMeta databaseMeta = ThinModelConverter.convertToLegacy(sqlModel.getId(), sqlModel.getDatasource());
     // this connection needs closed
     boolean closeConnection = true;
-    SQLConnection sqlConnection = retrieveConnection(jndiName);
+    
+    DatabaseMeta activeDatabaseMeta = getActiveDatabaseMeta(databaseMeta); 
+    SQLConnection sqlConnection = getConnection(activeDatabaseMeta);
     try {
       if ((sqlConnection == null) || !sqlConnection.initialized()) {
         logger.error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
-      
-      DatabaseInterface databaseInterface = retrieveDatabaseInterface(sqlConnection);
-      databaseMeta.setDatabaseInterface(databaseInterface);
-      
+
       MappedQuery mappedQuery = null;
       try {
         SqlGenerator sqlGenerator = createSqlGenerator();
-        mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, databaseMeta, parameters, true);
+        mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, activeDatabaseMeta, parameters, true);
       } catch (Exception e) {
         // TODO
         logger.error("error", e); //$NON-NLS-1$ 
@@ -238,7 +318,7 @@ public class MetadataQueryComponent {
       String sql = mappedQuery.getQuery();
       logger.debug("SQL: " + sql); //$NON-NLS-1$
       if (logSql) {
-        logger.info("SQL: " + sql);
+        logger.info("SQL: " + sql); //$NON-NLS-1$
       }
 
       // populate prepared sql params
@@ -318,57 +398,4 @@ public class MetadataQueryComponent {
   public IPentahoResultSet getResultSet() {
     return resultSet;
   }
-  
-  
-  protected SQLConnection retrieveConnection(String jndiName) {
-    // use the connection specified in the query.
-    SQLConnection localConnection = null;
-    
-    // TODO: ILogger needed
-    SimpleLogger logger = new SimpleLogger(this);
-    localConnection = (SQLConnection)PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, jndiName,
-                session, logger);
-    
-    return localConnection;
-  }
-  
-  
-  /**
-   * determines the PDI database interface of a given connection object
-   * 
-   * @param conn
-   * @return
-   */
-  protected DatabaseInterface retrieveDatabaseInterface(final SQLConnection conn) {
-    String prod = null;
-    try {
-      prod = conn.getNativeConnection().getMetaData().getDatabaseProductName();
-
-      if (prod == null) {
-        return null;
-      }
-
-      prod = prod.toLowerCase();
-
-      // special case to map hsql to hypersonic
-      if (prod.indexOf("hsql") >= 0) { //$NON-NLS-1$
-        prod = "hypersonic"; //$NON-NLS-1$
-      }
-
-      // look through all available database dialects for a match
-      for (int i = 0; i < DatabaseMeta.getDatabaseInterfaces().length; i++) {
-        String typeDesc = DatabaseMeta.getDatabaseInterfaces()[i].getDatabaseTypeDesc().toLowerCase();
-        if (prod.indexOf(typeDesc) >= 0) {
-          return DatabaseMeta.getDatabaseInterfaces()[i];
-        }
-      }
-
-      logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0001_NO_DIALECT_DETECTED", prod)); //$NON-NLS-1$
-
-    } catch (SQLException e) {
-      logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0002_DIALECT_EXCEPTION", prod), e); //$NON-NLS-1$
-    }
-    return null;
-  }
-  
 }

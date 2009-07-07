@@ -17,6 +17,7 @@ import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -50,8 +51,10 @@ public class MetadataQueryComponentTest {
     try {
       IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
       Domain domain = getBasicDomain();
+      Domain domain2 = getJdbcDomain();
       // System.out.println(new SerializationService().serializeDomain(domain));
       repo.storeDomain(domain, true);
+      repo.storeDomain(domain2, true);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -152,13 +155,56 @@ public class MetadataQueryComponentTest {
       rs.closeConnection();
     }
   }
-
+  
+  @Test
+  public void testJdbcComponent() {
+    String mql = "<mql><domain_id>JDBCDOMAIN</domain_id><model_id>MODEL</model_id>" + 
+                 "<selections><selection>" +
+                 "<view>CATEGORY</view>" +
+                 "<column>LC_CUSTOMERNAME</column>" +
+                 "</selection>" +
+                 "</selections></mql>";
+    
+    MetadataQueryComponent component = new MetadataQueryComponent();
+    component.setQuery(mql);
+    component.execute();
+    
+    IPentahoResultSet rs = component.getResultSet();
+    try {
+      Assert.assertNotNull(rs);
+      Assert.assertEquals(1, rs.getColumnCount());
+      Assert.assertEquals(122, rs.getRowCount());
+      Object obj[];
+      while ((obj = rs.next()) != null) {
+        System.out.println(obj[0]);
+      }
+      
+    } finally {
+      rs.close();
+      rs.closeConnection();
+    }
+  }
+  
+  public Domain getJdbcDomain() {
+    Domain domain = getBasicDomain();
+    SqlDataSource dataSource = ((SqlPhysicalModel)domain.getPhysicalModels().get(0)).getDatasource();
+    dataSource.setType(DataSourceType.NATIVE);
+    dataSource.setDatabaseName("file:test-src/solution/system/data/sampledata");
+    dataSource.setUsername("pentaho_user");
+    dataSource.setPort("0");
+    dataSource.setPassword("password");
+    domain.setId("JDBCDOMAIN");
+    return domain;
+  }
   
   public Domain getBasicDomain() {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     SqlDataSource dataSource = new SqlDataSource();
     dataSource.setDatabaseName("SampleData");
+    dataSource.setDialectType("HYPERSONIC");
+    dataSource.setType(DataSourceType.JNDI);
+    
     model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
