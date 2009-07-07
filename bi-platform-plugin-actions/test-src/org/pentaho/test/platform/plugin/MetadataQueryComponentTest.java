@@ -65,7 +65,7 @@ public class MetadataQueryComponentTest {
 
   }
     
-  @Ignore @Test
+  @Test
   public void testParameters() {
     String mql = "<mql><domain_id>DOMAIN</domain_id><model_id>MODEL</model_id>" + 
                  "<parameters><parameter name=\"param1\" type=\"STRING\" defaultValue=\"A%\"/></parameters>" + 
@@ -123,7 +123,7 @@ public class MetadataQueryComponentTest {
     
   }
 
-  @Ignore @Test
+ @Test
   public void testComponent() {
     String mql = "<mql><domain_id>DOMAIN</domain_id><model_id>MODEL</model_id>" + 
                  "<selections><selection>" +
