@@ -42,72 +42,43 @@
 			    </tabs>
 			    <tabpanels id="datasourceDialogTabpanels">
 			    	<tabpanel id="datasourceDialogDatabaseTabPanel">
-					  <grid>
-						  <columns>
-						    <column flex="5" />
-						    <column flex="1" />
-							<column flex="10" />						    
-						  </columns>
-						  <rows>
-						    <row>
-						    	<label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
-						    	<spacer height="5"/>
-								<spacer flex="1"/>
-						    </row>
-						    <row>
-						    	<spacer height="10"/>
-								<spacer height="5"/>
-								<spacer height="10"/>
-						    </row>						    
-						    <row>
-								<textbox id="relationalDatasourceName" multiline="false"/>
-			    	  			<spacer height="10"/>
-			    	  			<spacer flex="1"/>
-			    	  		</row>
-						    <row>
-						    	<spacer height="10"/>
-								<spacer height="5"/>
-								<spacer height="10"/>
-						    </row>						    
-						    <row>
-								<hbox>
-                        			<label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
-			            			<spacer flex="1"/>
-			            			<button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="connectionController.showEditConnectionDialog()"  disabled="true"/>
-			            			<button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
-			            			<button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
-			          			</hbox>
-			          			<spacer height="5"/>
-					            <hbox>
-					                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
-					                <!--<spacer flex="1"/>-->
-					                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
-					            </hbox>
-			    	  		</row>
-						    <row>
-						    	<spacer height="2"/>
-								<spacer height="2"/>
-								<spacer height="2"/>
-						    </row>						    
-						    <row>
-								<listbox flex="1" id="connectionList" rows="5" pen:binding="name" disabled="true"/>
-								<spacer height="10"/>
-			    	  			<textbox flex="1" id="query" rows="5" cols="80" multiline="true" disabled="true"/>
-			    	  		</row>
-						    <row>
-			    	  			<spacer flex="1"/>
-			    	  			<spacer height="5"/>
-					            <hbox>
-					                <spacer flex="1"/>
-					                <label value="Limit:" height="16"/>
-							        <textbox id="previewLimit" value="10" height="16" width="20"/>
-					                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="true" height="16"/>
-									<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="true" height="16"/>                
-					            </hbox>
-			    	  		</row>
-						  </rows>
-					  </grid>	
-			       	  <vbox flex="1">
+			       		<vbox flex="1">
+							<vbox>
+						      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
+						      <hbox>
+						        	<textbox id="relationalDatasourceName" width="177" multiline="false"/>
+						    	  	<spacer flex="1"/>
+						      </hbox>
+						    </vbox>
+			       		
+		                    <hbox flex="2">
+							  	<vbox flex="1">
+						          <hbox>
+			                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
+						            <spacer flex="1"/>
+						            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="connectionController.showEditConnectionDialog()"  disabled="true"/>
+						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
+						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
+						          </hbox>
+			                      <listbox id="connectionList" rows="6" pen:binding="name" disabled="true"/>
+						        </vbox>
+						        <spacer width="10"/>
+						        <vbox flex="1">
+						            <hbox>
+						                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
+						                <!--<spacer flex="1"/>-->
+						                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
+						            </hbox>
+			                        <textbox flex="1" id="query" rows="5" cols="80" width="360" multiline="true" disabled="true"/>
+						            <hbox>
+						                <spacer flex="1"/>
+						                <label value="Limit:" height="16"/>
+								        <textbox id="previewLimit" value="10" height="16" width="20"/>
+						                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="true" height="16"/>
+										<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="true" height="16"/>                
+						            </hbox>
+						        </vbox>
+					        </hbox>
 			  			    <label value="${datasourceDialog.Metadata}"/>
 		                    <vbox flex="3">
 							  <tree flex="1" id="modelDataTable" seltype="single">
@@ -120,8 +91,8 @@
 									</treecols>
 									    <treechildren id="modelDataRows"/>
 							  </tree>
-						   </vbox>
-					  </vbox>
+						    </vbox>
+						  </vbox>
 					  </tabpanel>
 					  <tabpanel id="datasourceDialogCsvTabPanel">
 						  <vbox flex="1">
@@ -272,8 +243,8 @@
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="530">
-	  <tree height="185" width="530" id="csvSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="530">
+	  <tree height="195" width="530" id="csvSampleDataTable" seltype="single">
 		<treecols id="csvSampleDataCols">
 			<treecol id="csvSampleDataCol" label="${csvSampleDataCol.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
 		</treecols>
@@ -286,8 +257,8 @@
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
-  		xmlns:pen="http://www.pentaho.org/2008/xul" height="230" width="530">
-	  <tree height="185" width="530" id="relationalSampleDataTable" seltype="single">
+  		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="530">
+	  <tree height="195" width="530" id="relationalSampleDataTable" seltype="single">
 		<treecols id="relationalSampleDataCols">
 			<treecol id="relationalSampleDataCol" label="${relationalSampleDataCol.displayName}" pen:binding="columnName" flex="1" editable="false" type="text"/>
 		</treecols>
