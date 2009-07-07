@@ -85,15 +85,16 @@ public class StandaloneSession extends BaseSession {
   public void destroy() {
     // Clear out references to this session in attributes.
     // See BISERVER-2639 for details
-    for (Object o : attributes.values()) {
-      if (o instanceof ISessionContainer) {
-        ISessionContainer c = ((ISessionContainer) o);
-        // XXX: should synchronized check if the session is actually /this/ session
-        c.setSession(null);
+    if( attributes != null ) {
+      for (Object o : attributes.values()) {
+        if (o instanceof ISessionContainer) {
+          ISessionContainer c = ((ISessionContainer) o);
+          // XXX: should synchronized check if the session is actually /this/ session
+          c.setSession(null);
+        }
       }
+      attributes = null;
     }
-
-    attributes = null;
     super.destroy();
   }
 
