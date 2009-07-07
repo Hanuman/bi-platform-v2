@@ -261,7 +261,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       try {
         showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
         service.generateInlineEtlModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
-            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), datasourceModel.getCsvModel().getEnclosure().getValue(), datasourceModel.getCsvModel().getDelimiter().getValue(),
+            .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), datasourceModel.getCsvModel().getDelimiter().getValue(), datasourceModel.getCsvModel().getEnclosure().getValue(),
             new XulServiceCallback<BusinessData>() {
 
               public void error(String message, Throwable error) {
