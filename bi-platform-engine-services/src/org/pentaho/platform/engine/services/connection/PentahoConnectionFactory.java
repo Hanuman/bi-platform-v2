@@ -90,7 +90,7 @@ public class PentahoConnectionFactory {
       final ILogger logger) {
     Properties props = new Properties();
     if (driver != null) {
-      props.put(IPentahoConnection.CLASSNAME_KEY, driver);
+      props.put(IPentahoConnection.DRIVER_KEY, driver);
     }
     if (location != null) {
       props.put(IPentahoConnection.LOCATION_KEY, location);
