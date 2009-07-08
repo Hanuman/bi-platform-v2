@@ -360,7 +360,7 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
     if (runtimeContext.getInputNames().contains(path)) {
       return runtimeContext.getInputParameterStringValue(path);
     }
-    if (componentDefinitionMap.containsKey(path)) {
+    if (componentDefinitionMap != null && componentDefinitionMap.containsKey(path)) {
       return componentDefinitionMap.get(path);
     } else {
       // now check the component node from the action definition.
