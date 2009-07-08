@@ -54,9 +54,11 @@ public class PentahoSessionHolder {
   public static IPentahoSession getSession() {
     IPentahoSession sess = perThreadSession.get();
     if (sess == null) {
-      logger.warn(Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
-      //TODO: remove this soon
-      new Exception("This is a temporary exception to find out possible violations of PentahoSessionHolder").printStackTrace();
+      //In a perfect world, the platform should never be in a state where session is null, but we are not there yet.  Not all places
+      //that instance sessions use the PentahoSessionHolder yet, so we will not make a fuss here if session is null.  When PentahoSessionHolder
+      //is fully integrated with all sessions, then we should probably throw an exception here since in that case a null session means 
+      //the system is in an illegal state.
+      logger.debug(Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
     }
     return sess;
   }
