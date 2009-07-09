@@ -25,6 +25,7 @@ package org.pentaho.platform.repository.hibernate;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.naming.Context;
@@ -183,6 +184,21 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         HibernateUtil.log.info(Messages.getString("HIBUTIL.USER_HIBERNATEMANAGED")); //$NON-NLS-1$
         HibernateUtil.configuration.buildSessionFactory(); // Let hibernate Bind it
         // to JNDI...
+        
+        // BISERVER-2006: Below content is a community contribution see the JIRA case for more info
+        // -------- Begin Contribution --------
+        // Build the initial context to use when looking up the session
+        Properties contextProperties = new Properties();
+        if (configuration.getProperty("hibernate.jndi.url") != null) {
+          contextProperties.put(Context.PROVIDER_URL, configuration.getProperty("hibernate.jndi.url"));
+        }
+        
+        if (configuration.getProperty("hibernate.jndi.class") != null) {
+          contextProperties.put(Context.INITIAL_CONTEXT_FACTORY, configuration.getProperty("hibernate.jndi.class"));
+        }
+        iniCtx = new InitialContext(contextProperties);
+        // --------- End Contribution ---------
+        
       }
       Dialect.getDialect(HibernateUtil.configuration.getProperties());
       return true;
