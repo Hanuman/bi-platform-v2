@@ -253,8 +253,6 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
   
   @Override
   public boolean hasAccess(final int accessType, final IConcept aclHolder) {
-    if (true) return true;
-    
     if (aclHolder != null) {
       MetadataAclHolder newHolder = new MetadataAclHolder(aclHolder);
       int mappedActionOperation = ACCESS_TYPE_MAP[accessType];
