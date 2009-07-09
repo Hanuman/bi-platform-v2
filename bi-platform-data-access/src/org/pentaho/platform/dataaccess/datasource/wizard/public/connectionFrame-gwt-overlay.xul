@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul">
-  <textbox id="relationalDatasourceName" width="200"/>
-  <textbox id="csvDatasourceName" width="200"/>
-  <listbox id="connectionList" height="110" width="200"/>
-  <textbox flex="0" id="query" rows="6" cols="80" width="320" />
-  <tree flex="0" height="160" id="modelDataTable"/>
-  <tree flex="0" height="184" id="csvDataTable"/>
+  <textbox id="relationalDatasourceName" width="187"/>
+  <textbox id="csvDatasourceName" width="187"/>
+  <listbox id="connectionList" height="93" width="187"/>
+  <textbox flex="0" id="query" rows="6" cols="80" height="90" width="330" />
+  <tree flex="0" width="548" height="160" id="modelDataTable"/>
+  <tree flex="0" width="548" height="180" id="csvDataTable"/>
 </overlay>

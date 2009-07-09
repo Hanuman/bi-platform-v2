@@ -11,6 +11,7 @@
 .xul-label{
   white-space: nowrap;
   font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.85em;
 }
 
 .gwt-label{

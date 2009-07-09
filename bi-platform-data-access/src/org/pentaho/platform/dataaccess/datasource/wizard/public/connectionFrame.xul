@@ -51,8 +51,8 @@
 						      </hbox>
 						    </vbox>
 			       		
-		                    <hbox flex="2">
-							  	<vbox flex="1">
+		                    <hbox width="540">
+							  	<vbox width="187">
 						          <hbox>
 			                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
 						            <spacer flex="1"/>
@@ -60,16 +60,16 @@
 						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
 						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
 						          </hbox>
-			                      <listbox id="connectionList" height="100" width="200" pen:binding="name" disabled="true"/>
+			                      <listbox id="connectionList" pen:binding="name" disabled="true"/>
 						        </vbox>
 						        <spacer width="10"/>
-						        <vbox flex="1">
+						        <vbox width="330">
 						            <hbox>
 						                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
 						                <!--<spacer flex="1"/>-->
 						                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
 						            </hbox>
-			                        <textbox flex="1" id="query" rows="5" cols="80" width="360" multiline="true" disabled="true"/>
+			                        <textbox flex="1" id="query" rows="5" cols="80" multiline="true" disabled="true"/>
 						            <hbox>
 						                <spacer flex="1"/>
 						                <label value="Limit:" height="16"/>
