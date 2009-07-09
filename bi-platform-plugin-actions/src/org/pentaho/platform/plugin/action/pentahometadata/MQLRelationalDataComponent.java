@@ -338,7 +338,7 @@ public class MQLRelationalDataComponent extends ComponentBase {
     }
     
     // log the sql to info if set
-    if (actionDefinition.getInput("logSql") != null) { //$NON-NLS-1$
+    if ( isDefinedInput("logSql") ) { //$NON-NLS-1$
       component.setLogSql("true".equals(actionDefinition.getInput("logSql").getStringValue())); //$NON-NLS-1$
     }
     
