@@ -150,7 +150,28 @@
     <antcall target="ivy.download" />
   </target>
 
+  <!--=======================================================================
+      ivy.check-releasable
+      
+      Verifies that there are no SNAPSHOT dependencies defined in the ivy xml.
+      If there are SNAPSHOTS, fail the release build.
+      ====================================================================-->
+  <target name="ivy.check-releasable" depends="install-ivy, install-antcontrib">
+    <if>
+      <istrue value="${release}" />
+      <then>
+        <sequential>
+          <ivy:artifactproperty conf="*" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
 
+          <propertyselector property="violators" match="dep\..*SNAPSHOT.*" select="\0" casesensitive="false" />
+
+          <fail if="violators"
+                message="Release not possible, you have dependencies on non-released artifacts: ${violators}" />
+        </sequential>
+      </then>
+    </if>
+  </target>
+  
   <!--=======================================================================
 	    ivy.download
 	    
@@ -182,7 +203,7 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
+  <target name="resolve" depends="resolve-default, resolve-test, ivy.check-releasable" description="Retrieves all the dependent libraries" />
 
   <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy" >
   	<!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
