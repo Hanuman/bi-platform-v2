@@ -165,10 +165,8 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
-      ex.printStackTrace();
       throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB"), ex);
     } catch (ParseException ex) {
-      ex.printStackTrace();
       throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT"), ex);
     }
   }
