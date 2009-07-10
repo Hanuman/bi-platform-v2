@@ -1021,11 +1021,8 @@ public class AdhocWebService extends ServletBase {
     }
     if ( AdhocWebService.isDefaultStringProperty( field.getFormat() )) {
       String format = (String)column.getProperty(DefaultPropertyID.MASK.getId());
-      if (format != null ) {
-        if ( !StringUtils.isEmpty( format ) )
-        { 
-          field.setFormat( format );
-        }
+      if ( !StringUtils.isEmpty( format ) ) { 
+        field.setFormat( format );
       }
     }
   }
