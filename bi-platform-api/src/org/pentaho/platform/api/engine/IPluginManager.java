@@ -162,6 +162,7 @@ public interface IPluginManager {
    * If ultimately, no plugin can handle the resource path, <code>null</code> is returned.
    * @param path the path to the plugin resource
    * @return the plugin which owns the resource or <code>null</code> if one cannot be found
+   * @deprecated This method is going to change to return the plugin id rather than IPlatformPlugin
    */
   public IPlatformPlugin getServicePlugin(String path);
   
@@ -174,6 +175,7 @@ public interface IPluginManager {
    * @return the classloader assigned to this plugin, or <code>null</code> if the plugin is not
    * known by the plugin manager, or for some reason a classloader was not assigned to the plugin
    * (an error condition).
+   * @deprecated This method is going to change to accept the plugin id rather than IPlatformPlugin
    */
   public ClassLoader getClassLoader(IPlatformPlugin plugin);
   

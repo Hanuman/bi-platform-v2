@@ -36,6 +36,9 @@ import org.pentaho.ui.xul.XulOverlay;
  * <p>In addition to grouping extensions, an {@link IPlatformPlugin}
  * include some attributes that allow the platform to identify and use the plugin
  * appropriately.
+ * <p>
+ * <b>WARNING: This interface will be changing and may go away entirely by the next major
+ * release</b> 
  * 
  * @author jdixon
  */
@@ -132,6 +135,9 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
     }
   }
   
+  /**
+   * This class will become a Java bean in it's own file by the next major release
+   */
   public class WebServiceDefinition {
     public String id, title, description;
     public String[] types;
