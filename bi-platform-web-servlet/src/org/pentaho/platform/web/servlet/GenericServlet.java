@@ -119,10 +119,10 @@ public class GenericServlet extends ServletBase {
       pathParams.setParameter("httpresponse", response); //$NON-NLS-1$
       pathParams.setParameter("httprequest", request); //$NON-NLS-1$
       pathParams.setParameter("remoteaddr", request.getRemoteAddr()); //$NON-NLS-1$
-      if (PentahoSystem.debug)
+      if (PentahoSystem.debug) {
         debug("GenericServlet contentGeneratorId=" + contentGeneratorId); //$NON-NLS-1$
-      if (PentahoSystem.debug)
         debug("GenericServlet urlPath=" + urlPath); //$NON-NLS-1$
+      }
       IPentahoSession session = getPentahoSession(request);
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
       if (pluginManager == null) {
@@ -247,8 +247,9 @@ public class GenericServlet extends ServletBase {
       //	    	SimpleStreamSource input = new SimpleStreamSource( "input", contentType, in, null ); //$NON-NLS-1$
       // contentGenerator.setInput(input);
       contentGenerator.createContent();
-      if (PentahoSystem.debug)
+      if (PentahoSystem.debug) {
         debug("Generic Servlet content generate successfully"); //$NON-NLS-1$
+      }
 
     } catch (Exception e) {
       error(Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
