@@ -1,9 +1,9 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
@@ -19,7 +19,7 @@ import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 import org.pentaho.ui.xul.util.DialogController;
 
-public class DatasourceSelectionDialogController extends AbstractXulDialogController<IDatasource> {
+public class DatasourceSelectionDialogController extends AbstractXulDialogController<LogicalModelSummary> {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -94,7 +94,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
       bf.setBindingType(Binding.Type.ONE_WAY);
       bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel,
-          "datasources", datasourceListbox, "elements"); //$NON-NLS-1$ //$NON-NLS-2$
+          "logicalModelSummaries", datasourceListbox, "elements"); //$NON-NLS-1$ //$NON-NLS-2$
       bf.setBindingType(Binding.Type.ONE_WAY);
       bf.createBinding(datasourceListbox, "selectedIndex", //$NON-NLS-1$
           DatasourceSelectionDialogController.this.datasourceSelectionDialogModel, "selectedIndex"); //$NON-NLS-1$
@@ -175,20 +175,20 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   }
 
   private void refreshDatasources() {
-    datasourceService.getDatasources(new XulServiceCallback<List<IDatasource>>() {
+    datasourceService.getLogicalModels(new XulServiceCallback<List<LogicalModelSummary>>() {
 
       public void error(final String message, final Throwable error) {
         System.out.println(message);
       }
 
-      public void success(final List<IDatasource> datasourceList) {
-        datasourceSelectionDialogModel.setDatasources(datasourceList);
-        if (datasourceList.isEmpty()) {
+      public void success(final List<LogicalModelSummary> logicalModelSummaries) {
+        datasourceSelectionDialogModel.setLogicalModelSummaries(logicalModelSummaries);
+        if (logicalModelSummaries.isEmpty()) {
           datasourceListbox.setSelectedIndex(-1);
           datasourceSelectionDialogModel.setSelectedIndex(-1);
         } else {
-          datasourceListbox.setSelectedIndex(datasourceList.size() - 1);
-          datasourceSelectionDialogModel.setSelectedIndex(datasourceList.size() - 1);
+          datasourceListbox.setSelectedIndex(logicalModelSummaries.size() - 1);
+          datasourceSelectionDialogModel.setSelectedIndex(logicalModelSummaries.size() - 1);
         }
       }
 
@@ -224,10 +224,10 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
    * @return selected datasource or <code>null</code> if no selected datasource
    */
   @Override
-  protected IDatasource getDialogResult() {
+  protected LogicalModelSummary getDialogResult() {
     int selectedIndex = datasourceSelectionDialogModel.getSelectedIndex();
     if (selectedIndex > -1) {
-      return datasourceSelectionDialogModel.getDatasources().get(selectedIndex);
+      return datasourceSelectionDialogModel.getLogicalModelSummaries().get(selectedIndex);
     } else {
       return null;
     }
@@ -263,8 +263,8 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   }
 
   public void removeDatasourceAccept() {
-    IDatasource datasource = getDialogResult();
-    datasourceService.deleteDatasource(datasource, new XulServiceCallback<Boolean>() {
+    LogicalModelSummary logicalModelSummary = getDialogResult();
+    datasourceService.deleteModel(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId(), new XulServiceCallback<Boolean>() {
       public void error(String message, Throwable error) {
         showMessagebox("Error", error.getLocalizedMessage()); //$NON-NLS-1$
       }

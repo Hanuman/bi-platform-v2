@@ -7,13 +7,14 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DatasourceGwtServiceAsync {
+  void getLogicalModels(AsyncCallback<List<LogicalModelSummary>> callback);
   void getDatasources(AsyncCallback<List<IDatasource>> callback);
   void getDatasourceByName(String name, AsyncCallback<IDatasource> callback);
   void addDatasource(IDatasource datasource, AsyncCallback<Boolean> callback);

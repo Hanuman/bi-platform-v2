@@ -7,6 +7,7 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceInMemoryDelegate;
@@ -75,6 +76,10 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
 
   public Boolean deleteModel(String domainId, String modelName)  throws DatasourceServiceException {
     return SERVICE.deleteModel(domainId, modelName);
+  }
+
+  public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {
+    return SERVICE.getLogicalModels();
   }
 
 }

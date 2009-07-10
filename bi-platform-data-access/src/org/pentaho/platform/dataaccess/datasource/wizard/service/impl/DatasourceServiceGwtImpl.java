@@ -6,6 +6,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -15,10 +16,6 @@ import org.pentaho.ui.xul.XulServiceCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 
 public class DatasourceServiceGwtImpl implements DatasourceService {
   final static String ERROR = "ERROR:";
@@ -257,6 +254,20 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
       }
 
       public void onSuccess(Boolean arg0) {
+        callback.success(arg0);
+      }
+
+    });
+  }
+
+  public void getLogicalModels(final XulServiceCallback<List<LogicalModelSummary>> callback) {
+    SERVICE.getLogicalModels(new AsyncCallback<List<LogicalModelSummary>>() {
+
+      public void onFailure(Throwable arg0) {
+        callback.error("error getting logical models: ", arg0); //$NON-NLS-1$
+      }
+
+      public void onSuccess(List<LogicalModelSummary> arg0) {
         callback.success(arg0);
       }
 

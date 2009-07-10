@@ -21,7 +21,7 @@
         <button id="removeDatasource" image="images/remove.png" tooltiptext="Remove" pen:disabledimage="images/remove_disabled.png"
           disabled="true" onclick="datasourceSelectionDialogController.removeDatasourceConfirm()" />
       </hbox>
-      <listbox id="datasourceListbox" rows="6" pen:binding="datasourceName" seltype="single">
+      <listbox id="datasourceListbox" rows="6" pen:binding="modelName" seltype="single">
       </listbox>
     </vbox>
   </dialog>

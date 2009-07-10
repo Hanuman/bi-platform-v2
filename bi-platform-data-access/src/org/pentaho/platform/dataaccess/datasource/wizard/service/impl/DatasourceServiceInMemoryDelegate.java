@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
@@ -32,12 +31,14 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.util.messages.LocaleHelper;
 
 /*
  * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
@@ -337,5 +338,24 @@ public class DatasourceServiceInMemoryDelegate {
   
   public Boolean hasPermission() {
     return true;
+  }
+
+  public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {
+    List<LogicalModelSummary> logicalModelSummaries = new ArrayList<LogicalModelSummary>();
+    for (String domainId : getMetadataDomainRepository().getDomainIds()) {
+      Domain domain = getMetadataDomainRepository().getDomain(domainId);
+      
+      String locale = LocaleHelper.getLocale().toString();
+      String locales[] = new String[domain.getLocales().size()];
+      for (int i = 0; i < domain.getLocales().size(); i++) {
+        locales[i] = domain.getLocales().get(i).getCode();
+      }
+      locale = LocaleHelper.getClosestLocale( locale, locales );
+      
+      for (LogicalModel model : domain.getLogicalModels()) {
+        logicalModelSummaries.add(new LogicalModelSummary(domainId, model.getId(), model.getName().getString(locale)));
+      }
+    }
+    return logicalModelSummaries;
   }
 }

@@ -3,7 +3,7 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 /**
@@ -14,23 +14,23 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 public class DatasourceSelectionDialogModel extends XulEventSourceAdapter {
 
   /**
-   * A cached version of the datasources from the <code>DatasourceService</code>.
+   * A cached version of the logicalModelSummaries from the <code>DatasourceService</code>.
    */
-  private List<IDatasource> datasources;
+  private List<LogicalModelSummary> logicalModelSummaries;
 
   /**
    * The index of the selected datasource.
    */
   private int selectedIndex;
 
-  public void setDatasources(final List<IDatasource> datasources) {
-    final List<IDatasource> previousVal = this.datasources;
-    this.datasources = datasources == null ? null : new ArrayList<IDatasource>(datasources);
-    this.firePropertyChange("datasources", previousVal, datasources); //$NON-NLS-1$
+  public void setLogicalModelSummaries(final List<LogicalModelSummary> logicalModelSummaries) {
+    final List<LogicalModelSummary> previousVal = this.logicalModelSummaries;
+    this.logicalModelSummaries = logicalModelSummaries == null ? null : new ArrayList<LogicalModelSummary>(logicalModelSummaries);
+    this.firePropertyChange("logicalModelSummaries", previousVal, logicalModelSummaries); //$NON-NLS-1$
   }
 
-  public List<IDatasource> getDatasources() {
-    return this.datasources == null ? null : new ArrayList<IDatasource>(datasources);
+  public List<LogicalModelSummary> getLogicalModelSummaries() {
+    return this.logicalModelSummaries == null ? null : new ArrayList<LogicalModelSummary>(logicalModelSummaries);
   }
 
   public void setSelectedIndex(final int selectedIndex) {

@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
@@ -14,7 +15,7 @@ import org.pentaho.ui.xul.util.DialogController;
 
 import com.google.gwt.core.client.GWT;
 
-public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogController<IDatasource> {
+public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogController<LogicalModelSummary> {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -98,7 +99,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<LogicalModelSummary> listener) {
     checkInitialized();
     datasourceSelectionDialogController.addDialogListener(listener);
   }
@@ -114,7 +115,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<LogicalModelSummary> listener) {
     checkInitialized();
     datasourceSelectionDialogController.removeDialogListener(listener);
   }

@@ -1,12 +1,11 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
-import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.util.DialogController.DialogListener;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -37,13 +36,13 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
   }-*/;
 
   private void show(final JavaScriptObject callback) {
-    final DialogListener<IDatasource> listener = new DialogListener<IDatasource>(){
+    final DialogListener<LogicalModelSummary> listener = new DialogListener<LogicalModelSummary>(){
       public void onDialogCancel() {
         notifyCallbackCancel(callback);
       }
 
-      public void onDialogAccept(final IDatasource datasource) {
-        notifyCallbackSuccess(callback, datasource.getBusinessData().getDomain().getId(), datasource.getBusinessData().getDomain().getLogicalModels().get(0).getId());
+      public void onDialogAccept(final LogicalModelSummary logicalModelSummary) {
+        notifyCallbackSuccess(callback, logicalModelSummary.getDomainId(), logicalModelSummary.getModelId());
       }
     };
     selectDialog.addDialogListener(listener);

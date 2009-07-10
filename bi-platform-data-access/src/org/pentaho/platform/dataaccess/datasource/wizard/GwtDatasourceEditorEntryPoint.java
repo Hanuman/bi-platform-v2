@@ -84,19 +84,15 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
    *
    */
   private void deleteModel(String domainId, String modelName, final JavaScriptObject callback) {
-    try {
-      datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
-        public void success(Boolean value) {
-          notifyCallbackSuccess(callback, value);
-        }
+    datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
+      public void success(Boolean value) {
+        notifyCallbackSuccess(callback, value);
+      }
 
-        public void error(String s, Throwable throwable) {
-          notifyCallbackError(callback, throwable.getMessage());
-        }
-      });
-    } catch (DatasourceServiceException e) {
-      notifyCallbackError(callback, e.getMessage());
-    }
+      public void error(String s, Throwable throwable) {
+        notifyCallbackError(callback, throwable.getMessage());
+      }
+    });
   }
   private native void notifyCallbackSuccess(JavaScriptObject callback, Boolean value, WAQRTransport transport)/*-{
     callback.onFinish(value, transport);

@@ -1,6 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.SwingDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
@@ -18,7 +19,7 @@ import org.pentaho.ui.xul.util.DialogController;
 /**
  * @author mlowery
  */
-public class SwingDatasourceSelectionDialog implements DialogController<IDatasource> {
+public class SwingDatasourceSelectionDialog implements DialogController<LogicalModelSummary> {
 
   private XulRunner runner;
 
@@ -43,9 +44,9 @@ public class SwingDatasourceSelectionDialog implements DialogController<IDatasou
 
     datasourceSelectionDialogController.setDatasourceDialogController(datasourceDialogController);
 
-    datasourceSelectionDialogController.addDialogListener(new DialogListener<IDatasource>() {
-      public void onDialogAccept(IDatasource datasource) {
-        System.out.printf("OK (returned %s)\n", datasource);
+    datasourceSelectionDialogController.addDialogListener(new DialogListener<LogicalModelSummary>() {
+      public void onDialogAccept(LogicalModelSummary logicalModelSummary) {
+        System.out.printf("OK (returned %s)\n", logicalModelSummary);
       }
 
       public void onDialogCancel() {
@@ -58,7 +59,7 @@ public class SwingDatasourceSelectionDialog implements DialogController<IDatasou
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<LogicalModelSummary> listener) {
     datasourceSelectionDialogController.addDialogListener(listener);
   }
 
@@ -72,7 +73,7 @@ public class SwingDatasourceSelectionDialog implements DialogController<IDatasou
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<LogicalModelSummary> listener) {
     datasourceSelectionDialogController.removeDialogListener(listener);
   }
 

@@ -1,0 +1,76 @@
+package org.pentaho.platform.dataaccess.datasource.beans;
+
+import java.io.Serializable;
+
+import org.pentaho.ui.xul.XulEventSourceAdapter;
+
+/**
+ * A summary of a logical model consisting of domain id, model id, and localized model name. This thin object is for UI
+ * purposes only.
+ * 
+ * @author mlowery
+ */
+public class LogicalModelSummary extends XulEventSourceAdapter implements Serializable {
+
+  private static final long serialVersionUID = -2876155341724009295L;
+
+  /**
+   * The id of the domain to which this model belongs.
+   */
+  private String domainId;
+
+  /**
+   * The unique id of the model.
+   */
+  private String modelId;
+
+  /**
+   * The localized name of the model.
+   */
+  private String modelName;
+
+  /**
+   * Constructor. Required by GWT.
+   */
+  public LogicalModelSummary() {
+    super();
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param domainId
+   *          domain id
+   * @param modelId
+   *          model id
+   * @param modelName
+   *          localized model name
+   */
+  public LogicalModelSummary(final String domainId, final String modelId, final String modelName) {
+    super();
+    this.domainId = domainId;
+    this.modelId = modelId;
+    this.modelName = modelName;
+  }
+
+  public String getDomainId() {
+    return domainId;
+  }
+
+  public String getModelId() {
+    return modelId;
+  }
+
+  public String getModelName() {
+    return modelName;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder buf = new StringBuilder();
+    buf.append("LogicalModelSummary[").append("domainId=").append(domainId).append(", ").append("modelId=").append( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        modelId).append(", ").append("modelName=").append(modelName).append("]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    return buf.toString();
+  }
+
+}

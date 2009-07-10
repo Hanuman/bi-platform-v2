@@ -6,6 +6,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
@@ -76,8 +77,22 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
     callback.success(SERVICE.getUploadFilePath());
   }
 
-  public void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback)  throws DatasourceServiceException {
-    callback.success(SERVICE.deleteModel(domainId, modelName));
+  public void deleteModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) {
+    try {
+      Boolean res = SERVICE.deleteModel(domainId, modelName);
+      callback.success(res);
+    } catch (DatasourceServiceException e) {
+      callback.error(e.getLocalizedMessage(), e);
+    }
+  }
+
+  public void getLogicalModels(XulServiceCallback<List<LogicalModelSummary>> callback) {
+    try {
+      List<LogicalModelSummary> res = SERVICE.getLogicalModels();
+      callback.success(res);
+    } catch (DatasourceServiceException e) {
+      callback.error(e.getLocalizedMessage(), e);
+    }
   }
 }
 
