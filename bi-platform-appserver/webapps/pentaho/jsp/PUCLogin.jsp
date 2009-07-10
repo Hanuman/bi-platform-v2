@@ -433,7 +433,7 @@ A:hover {
 							onMouseOut="this.className='button'" align="right"
 							style="margin-top: 6px;"
 							onClick="window.open(window.location.href.replace('Login', '<%=PentahoSystem.getSystemSetting("documentation-url",
-							"docs/evaluating_pentaho_reporting_v20.pdf")%>'), '_blank');">
+							"docs/community_user_guide.pdf")%>'), '_blank');">
 							<tr>
 								<td width="7" height="27" class="button_left"><img
 									src="/pentaho-style/images/login/spacer.png" width="7"
