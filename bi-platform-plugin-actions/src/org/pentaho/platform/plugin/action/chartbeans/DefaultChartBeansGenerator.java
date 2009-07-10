@@ -396,7 +396,7 @@ public class DefaultChartBeansGenerator implements IChartBeansGenerator {
       final String IMAGE_URL_TEMPLATE = "{0}getImage?image={1}"; //$NON-NLS-1$
       final String imageUrl = MessageFormat.format(IMAGE_URL_TEMPLATE, new String[] {
           PentahoSystem.getApplicationContext().getBaseUrl(), chartFileOnServer.getName() });
-      html = ChartBeansGeneratorUtil.mergeStaticImageHtmlTemplate(imageUrl);
+      html = this.mergeStaticImageHtmlTemplate(imageUrl);
 
     } else if (OpenFlashChartPlugin.PLUGIN_ID.equals(chartModel.getChartEngineId())) {
 
