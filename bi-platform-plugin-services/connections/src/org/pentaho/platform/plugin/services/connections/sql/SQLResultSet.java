@@ -21,7 +21,6 @@
 package org.pentaho.platform.plugin.services.connections.sql;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
