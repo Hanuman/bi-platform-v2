@@ -139,7 +139,7 @@ AvailableItemsCtrl.prototype.handleItemMouseUp = function( thisTr, event, tableI
 // TODO sbarkdull, probably don't need the tableId, if so, modify adhoc-businessview.xsl to rm param
 AvailableItemsCtrl.prototype.handleItemMouseDown = function( thisTr, event, tableId, columnId )
 {
-	if ( !event.ctrlKey )
+	if ( !event.ctrlKey && !AvailableItemsCtrl.isItemSelected( thisTr ))
 	{
 		this.handleUnselectAll( event );
 	}
