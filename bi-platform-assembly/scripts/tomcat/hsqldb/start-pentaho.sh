@@ -5,7 +5,9 @@
 ##                                                                          ##
 ### ====================================================================== ###
 
-DIR=$(dirname $0)
+cd $(dirname $0)
+DIR=$PWD
+cd -
 
 if [ -e $DIR/promptuser.sh ]; then
   sh $DIR/promptuser.sh
