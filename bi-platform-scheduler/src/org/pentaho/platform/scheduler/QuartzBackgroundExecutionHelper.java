@@ -271,8 +271,9 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     IContentGenerator generator = null;
     try {
       generator = pluginManager.getContentGeneratorForType(type, userSession);
-    } catch (Throwable t) {
+    } catch (Exception ignored) {
       // don't let a bad plugin situation take us down
+      logger.warn(ignored.getMessage(), ignored);
     }
 
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, userSession);
