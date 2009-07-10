@@ -69,6 +69,9 @@ PentahoSystem which is initialized after Spring
         <ref bean="axisServiceManager"/>
       </list></property>
   </bean>
+  
+  <bean id="IChartBeansGenerator" class="org.pentaho.platform.plugin.action.chartbeans.DefaultChartBeansGenerator" scope="singleton" />
+  
   <bean id="gwtServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.GwtRpcServiceManager" scope="singleton"/>
   <bean id="axisServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager" scope="singleton"/>
   <bean id="systemStartupSession" class="org.pentaho.platform.engine.security.session.TrustedSystemStartupSession" scope="prototype" />
