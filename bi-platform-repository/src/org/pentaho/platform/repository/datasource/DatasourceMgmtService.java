@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -59,6 +60,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     if(newDatasource != null) {
       if (getDatasource(newDatasource.getName()) == null) {
         try {
+          session.setCacheMode(CacheMode.REFRESH);
           IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null);
           newDatasource.setPassword(passwordService.encrypt(newDatasource.getPassword()));
           session.save(newDatasource);
@@ -73,6 +75,8 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           session.evict(newDatasource);
           throw new DatasourceMgmtServiceException(Messages.getErrorString(
               "DatasourceMgmtService.ERROR_0001_UNABLE_TO_CREATE_DATASOURCE",newDatasource.getName()), ex );//$NON-NLS-1$
+        } finally {
+          session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
         throw new DuplicateDatasourceException(Messages.getErrorString(
@@ -82,6 +86,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       throw new DatasourceMgmtServiceException(Messages.getErrorString(
           "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
     }
+    session.setCacheMode(CacheMode.NORMAL);
     HibernateUtil.flushSession();
    }
   public void deleteDatasource(String jndiName) throws NonExistingDatasourceException, DatasourceMgmtServiceException {
@@ -97,9 +102,12 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     Session session = HibernateUtil.getSession();
       if (datasource != null) {
         try {
+          session.setCacheMode(CacheMode.REFRESH);
           session.delete(session.merge(datasource));
         } catch (HibernateException ex) {
           throw new DatasourceMgmtServiceException( ex.getMessage(), ex );
+        } finally {
+          session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
         throw new DatasourceMgmtServiceException(Messages.getErrorString(
@@ -113,6 +121,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     Session session = HibernateUtil.getSession();
     IDatasource datasource = null;
     try {
+      session.setCacheMode(CacheMode.REFRESH);
       IDatasource pentahoDatasource = (IDatasource) session.get(Datasource.class, jndiName);
       if(pentahoDatasource != null) {
         datasource = clone(pentahoDatasource);
@@ -129,12 +138,15 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     } catch (HibernateException ex) {
       throw new DatasourceMgmtServiceException(Messages.getErrorString(
         "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE"), ex);//$NON-NLS-1$
+    } finally {
+      session.setCacheMode(CacheMode.NORMAL);
     }
   }
 
   public List<IDatasource> getDatasources() throws DatasourceMgmtServiceException {
     Session session = HibernateUtil.getSession();
     try {
+      session.setCacheMode(CacheMode.REFRESH);
       String nameQuery = "org.pentaho.platform.repository.datasource.Datasource.findAllDatasources"; //$NON-NLS-1$
       Query qry = session.getNamedQuery(nameQuery).setCacheable(true);
       List<IDatasource> pentahoDatasourceList = qry.list();
@@ -155,6 +167,8 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     } catch (HibernateException ex) {
       throw new DatasourceMgmtServiceException(Messages.getErrorString(
         "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", ""), ex );//$NON-NLS-1$ //$NON-NLS-2$
+    } finally {
+      session.setCacheMode(CacheMode.NORMAL);
     }
   }
 
@@ -164,6 +178,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       IDatasource tmpDatasource = getDatasource(datasource.getName());
       if (tmpDatasource != null) {
         try {
+          session.setCacheMode(CacheMode.REFRESH);
           IPasswordService passwordService = PentahoSystem.getObjectFactory().get(IPasswordService.class, null); 
           // Store the new encrypted password in the datasource object
           datasource.setPassword(passwordService.encrypt(datasource.getPassword()));
@@ -177,6 +192,8 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
         } catch (HibernateException ex) {
           throw new DatasourceMgmtServiceException(Messages.getErrorString(
             "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", datasource.getName()), ex );//$NON-NLS-1$
+        } finally {
+          session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
         throw new NonExistingDatasourceException(Messages.getErrorString(
