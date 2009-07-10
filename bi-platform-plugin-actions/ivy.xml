@@ -115,10 +115,18 @@
 	
         <!-- metadata -->
     <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true" transitive="false" />
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
-    <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" />
 
-
+				<!-- kettle and dependencies -->	
+    <dependency org="pentaho.kettle"           name="kettle-engine" rev="${dependency.kettle.revision}" conf="default->default"/>
+    <dependency org="pentaho.kettle"           name="kettle-core"   rev="${dependency.kettle.revision}" conf="default->default"/>
+    <dependency org="pentaho.kettle"           name="kettle-db"     rev="${dependency.kettle.revision}" conf="default->default"/>
+    <dependency org="org.snmp4j"               name="snmp4j"        rev="1.9.3d"                        conf="default->default" transitive="false"/>
+    <dependency org="salesforce"               name="salesforce"    rev="1.0"                           conf="default->default" transitive="false"/>
+    <dependency org="rome"                     name="rome"          rev="0.9"                           conf="default->default" transitive="false"/>
+    <dependency org="georss-rome"              name="georss-rome"   rev="0.9.8"                         conf="default->default" transitive="false"/>
+    <dependency org="feed4j"                   name="feed4j"        rev="1.0"                           conf="default->default" transitive="false"/>
+    <dependency org="net.sourceforge.nekohtml" name="nekohtml"      rev="0.9.5"                         conf="default->default" transitive="false"/>
+    <dependency org="janino"                   name="janino"        rev="2.5.x"                         conf="default->default" transitive="false"/>
 
         <!-- olap -->
     <dependency org="pentaho" name="mondrian" rev="${dependency.mondrian.revision}">
