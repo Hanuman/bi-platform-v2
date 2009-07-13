@@ -39,6 +39,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  * 
  */
 
+@SuppressWarnings("nls")
 public class ChartbeansTest{
   protected class ChartbeansActionComponent extends ActionComponent{
 
@@ -148,8 +149,8 @@ public class ChartbeansTest{
   }
   
   protected File getOriginalFile(String fileName){
-    return new File(System.getProperty("user.dir") + "\\test-src\\solution\\test\\chartbeans" +  //$NON-NLS-1$//$NON-NLS-2$
-    "\\results\\" + fileName); //$NON-NLS-1$
+    return new File(System.getProperty("user.dir") + File.separator + "test-src" + File.separator + "solution" + File.separator + "test" + File.separator + "chartbeans" +  //$NON-NLS-1$//$NON-NLS-2$
+        File.separator + "results" + File.separator +  fileName); //$NON-NLS-1$
   }
   
 }
