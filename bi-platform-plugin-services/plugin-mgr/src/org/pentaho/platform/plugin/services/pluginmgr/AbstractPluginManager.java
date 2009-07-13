@@ -47,7 +47,7 @@ import org.pentaho.ui.xul.XulOverlay;
 public abstract class AbstractPluginManager implements IPluginManager {
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
-  protected List<IPlatformPlugin> plugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
+  protected List<IPlatformPlugin> registeredPlugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
   
   /* indexes and cached collections */
   

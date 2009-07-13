@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -425,6 +426,26 @@ public class PluginManagerTest {
     assertEquals(EchoServiceBean.class, config.getServiceClass());
   }
   
+  @Test
+  public void test15_pluginNameCollision_DistinctNames() {
+    microPlatform.define(IPluginProvider.class, Tst15PluginProvider_DistinctNames.class);
+    microPlatform.init();
+    
+    assertTrue(pluginManager.reload(session));
+    
+    System.out.println(PluginMessageLogger.prettyPrint());
+  }
+  
+  @Test
+  public void test15_pluginNameCollision_DupNames() {
+    microPlatform.define(IPluginProvider.class, Tst15PluginProvider_DupNames.class);
+    microPlatform.init();
+    
+    assertFalse(pluginManager.reload(session));
+    
+    System.out.println(PluginMessageLogger.prettyPrint());
+  }
+  
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
 
@@ -638,6 +659,38 @@ public class PluginManagerTest {
       p.addWebservice(pws);
 
       return Arrays.asList((IPlatformPlugin) p);
+    }
+  }
+  
+  public static class Tst15PluginProvider_DistinctNames implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
+      
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("distinctTest15Plugin1");
+      plugins.add(p);
+      
+      PlatformPlugin p2 = new PlatformPlugin();
+      p2.setName("distinctTest15Plugin2");
+      plugins.add(p2);
+      
+      return plugins;
+    }
+  }
+  public static class Tst15PluginProvider_DupNames implements IPluginProvider {
+    public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
+      List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
+      
+      PlatformPlugin p = new PlatformPlugin();
+      p.setName("dupTest15Plugin");
+      plugins.add(p);
+      
+      
+      PlatformPlugin p2 = new PlatformPlugin();
+      p2.setName("dupTest15Plugin");
+      plugins.add(p2);
+      
+      return plugins;
     }
   }
   
