@@ -88,6 +88,7 @@
         <prepared_component type="mdx-connection" mapping="conn0"/> 
       </action-outputs>
       <component-definition> 
+        <extended_column_names>false</extended_column_names> 
         <location><![CDATA[mondrian]]></location>  
         <jndi><![CDATA[SampleData]]></jndi> 
       </component-definition> 
