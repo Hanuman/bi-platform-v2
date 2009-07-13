@@ -14,9 +14,8 @@
     LocaleHelper.setLocaleOverride(effectiveLocale);
   }
 
-  File file = new File(getServletContext().getRealPath("mantle/messages/"));
-  URLClassLoader loader = new URLClassLoader(new URL[] {file.toURI().toURL()});
-  ResourceBundle properties = ResourceBundle.getBundle("messages", effectiveLocale, loader);
+  URLClassLoader loader = new URLClassLoader(new URL[] {application.getResource("/mantle/messages/")});
+  ResourceBundle properties = ResourceBundle.getBundle("messages", request.getLocale(), loader); 
 %>
 
 <html>
