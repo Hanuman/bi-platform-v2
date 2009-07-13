@@ -19,6 +19,7 @@ package org.pentaho.platform.web.http.filters;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -38,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 
@@ -150,12 +152,29 @@ public class ProxyTrustingFilter implements Filter {
           PentahoSystem.systemEntryPoint();
           try {
             IPentahoSession userSession = null;
+            boolean reset = false;
             IPentahoSession existingSession = (IPentahoSession) req.getSession().getAttribute(
                 IPentahoSession.PENTAHO_SESSION_KEY);
+            if ( existingSession != null ) { // We have an existing session...
+              // If the existing session isn't initialized, or if it's not our trust user, we need
+              // to abandon the existing session, and bind the new information into the HttpSession and
+              // to the Servlet Authentication objects.
+              if ( (existingSession.getName() == null) || (!(name.equals(existingSession.getName())) ) ) {
+                // req.getSession().removeAttribute(IPentahoSession.PENTAHO_SESSION_KEY); // Explicitly unbind it
+                // existingSession = null; // null it so that logic below will cause it to be bound
+                reset = true;
+              }
+            }
             IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
-            if ((existingSession == null) && (userDetailsRoleListService != null)) {
+            if (reset || ((existingSession == null) && (userDetailsRoleListService != null) )) {
               HttpSession httpSession = req.getSession();
-              userSession = userDetailsRoleListService.getEffectiveUserSession(name, null);
+              
+              userSession = userDetailsRoleListService.getEffectiveUserSession(name, null );
+              if (existingSession != null) {
+                copyAttributesBetweenSessions(userSession, existingSession);
+                userSession = existingSession;
+              }
+              
               Authentication auth = (Authentication) userSession.getAttribute(SecurityHelper.SESSION_PRINCIPAL);
               httpSession.setAttribute(IPentahoSession.PENTAHO_SESSION_KEY, userSession);
 
@@ -181,6 +200,7 @@ public class ProxyTrustingFilter implements Filter {
               authWrapper.setAuthentication(auth);
               httpSession.setAttribute(HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
                   authWrapper);
+              PentahoSessionHolder.setSession(userSession);
             }
 
           } finally {
@@ -198,6 +218,19 @@ public class ProxyTrustingFilter implements Filter {
     // String.valueOf( stopTime - startTime ) ) ); //$NON-NLS-1$
   }
 
+  private void copyAttributesBetweenSessions(IPentahoSession from, IPentahoSession to) {
+    // Clear
+    Iterator it = to.getAttributeNames();
+    while (it.hasNext()) {
+      to.removeAttribute((String)it.next());
+    }
+    it = from.getAttributeNames();
+    while (it.hasNext()) {
+      String attrName = (String)it.next();
+      to.setAttribute(attrName, from.getAttribute(attrName));
+    }
+  }
+  
   public void destroy() {
 
   }
