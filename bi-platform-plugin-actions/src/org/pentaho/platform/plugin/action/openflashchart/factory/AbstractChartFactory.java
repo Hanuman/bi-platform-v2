@@ -393,8 +393,17 @@ public abstract class AbstractChartFactory implements IChartFactory {
     if (HORIZONTAL_ORIENTATION.equals(orientation)) {
       YAxis yaxis = new YAxis();
       if (labels != null) {
-        yaxis.addLabels(labels);
+        // BISERVER-3075: must reverse the category labels on hbar
+        // charts due to bug in OFC2. 
+        String[] reversedLabels = new String[labels.length];
+        int reversedLabelCount = 0;
+        for (int i = reversedLabels.length-1; i >= 0; i--) {
+          reversedLabels[reversedLabelCount++] = labels[i];
+        }
+      
+        yaxis.setLabels(reversedLabels);
       }
+      
       yaxis.setStroke(domainStroke);
       yaxis.setColour(domainColor);
       yaxis.setGridColour(domainGridColor);
