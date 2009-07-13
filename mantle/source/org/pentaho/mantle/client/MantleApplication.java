@@ -327,6 +327,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(callback, title, okText, fileTypes);      
     }
     
+    $wnd.openFileDialogWithPath = function(callback, path, title, okText, fileTypes) { 
+      mantle.@org.pentaho.mantle.client.MantleApplication::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(callback, path, title, okText, fileTypes);      
+    }
+    
     $wnd.addGlassPaneListener = function(callback) { 
       mantle.@org.pentaho.mantle.client.MantleApplication::addGlassPaneListener(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
     }
@@ -771,6 +775,20 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   
   public void showOpenFileDialog(final JavaScriptObject obj, String title, String okText, String fileTypes){
     FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), title, okText, fileTypes.split(","));
+    dialog.addFileChooserListener(new FileChooserListener(){
+
+      public void fileSelected(String solution, String path, String name, String localizedFileName) {
+        notifyOpenFileCallback(obj, solution, path, name, localizedFileName);
+      }
+
+      public void fileSelectionChanged(String solution, String path, String name) {}
+      
+    });
+    dialog.show();
+  }
+
+  public void showOpenFileDialog(final JavaScriptObject obj, String path, String title, String okText, String fileTypes){
+    FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), path, title, okText, fileTypes.split(","));
     dialog.addFileChooserListener(new FileChooserListener(){
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
