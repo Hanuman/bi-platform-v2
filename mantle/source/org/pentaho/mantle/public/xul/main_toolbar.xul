@@ -7,8 +7,8 @@
     <toolbarspacer width="10"/>
     <toolbarbutton id="openButton" image="mantle/images/open_32.png" onclick="mainToolbarHandler.openClicked()" tooltiptext="${openEllipsis}"/>
     <toolbarspacer width="20"/>
-    <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" onclick="mainToolbarHandler.newAdhocClicked()" tooltiptext="${newAdhocReportEllipsis}"/>
-    <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" disabledimage="mantle/images/new_analysis_32_disabled.png" onclick="mainToolbarHandler.newAnalysisClicked()" tooltiptext="${newAnalysisViewEllipsis}"/>
+    <toolbarbutton id="newAdhocButton" image="mantle/images/new_report_32.png" onclick="mainToolbarHandler.newAdhocClicked()" tooltiptext="${newAdhocReport}"/>
+    <toolbarbutton id="newAnalysisButton" image="mantle/images/new_analysis_32.png" disabledimage="mantle/images/new_analysis_32_disabled.png" onclick="mainToolbarHandler.newAnalysisClicked()" tooltiptext="${newAnalysisView}"/>
     <toolbarspacer width="20"/>
     <toolbarbutton id="editContentButton" image="mantle/images/editContent_32.png" disabledimage="mantle/images/editContent_32_disabled.png"  onclick="mainToolbarHandler.editContentClicked()" tooltiptext="${editContent}" disabled="true" type="toggle" pen:visible="false"/>
     <toolbarspacer id="editButtonSpacer" width="20" pen:visible="false"/>
