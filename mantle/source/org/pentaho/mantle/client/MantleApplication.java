@@ -773,26 +773,21 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     this.solutionBrowserPerspective.setCurrentTabSaveEnabled(enable);
   }
   
-  public void showOpenFileDialog(final JavaScriptObject obj, String title, String okText, String fileTypes){
+  public void showOpenFileDialog(JavaScriptObject callback, String title, String okText, String fileTypes){
     FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), title, okText, fileTypes.split(","));
-    dialog.addFileChooserListener(new FileChooserListener(){
-
-      public void fileSelected(String solution, String path, String name, String localizedFileName) {
-        notifyOpenFileCallback(obj, solution, path, name, localizedFileName);
-      }
-
-      public void fileSelectionChanged(String solution, String path, String name) {}
-      
-    });
-    dialog.show();
+    openFileDialog(dialog, callback);
   }
 
-  public void showOpenFileDialog(final JavaScriptObject obj, String path, String title, String okText, String fileTypes){
+  public void showOpenFileDialog(JavaScriptObject callback, String path, String title, String okText, String fileTypes){
     FileDialog dialog = new FileDialog(this.solutionBrowserPerspective.getSolutionDocument(), path, title, okText, fileTypes.split(","));
+    openFileDialog(dialog, callback);
+  }
+  
+  private void openFileDialog(FileDialog dialog, final JavaScriptObject callback){
     dialog.addFileChooserListener(new FileChooserListener(){
 
       public void fileSelected(String solution, String path, String name, String localizedFileName) {
-        notifyOpenFileCallback(obj, solution, path, name, localizedFileName);
+        notifyOpenFileCallback(callback, solution, path, name, localizedFileName);
       }
 
       public void fileSelectionChanged(String solution, String path, String name) {}

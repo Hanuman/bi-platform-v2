@@ -40,6 +40,7 @@ public class FileDialog{
   private Document doc;
   private String title, okText;
   private String[] fileTypes;
+  private String path;
   
   public FileDialog(Document doc, String title, String okText, String[] fileTypes){
     this.doc = doc;
@@ -49,16 +50,14 @@ public class FileDialog{
   }
 
   public FileDialog(Document doc, String path, String title, String okText, String[] fileTypes){
-    this.doc = doc;
-    this.title = title;
-    this.okText = okText;
-    this.fileTypes = fileTypes;
-    this.lastPath = path;
+    this(doc, title, okText, fileTypes);
+    this.path = path;
   }
   
   
   public void show(){
-    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, doc, false, true, title, okText){
+    String pathToShow = (path != null) ? path : FileDialog.lastPath;
+    final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, pathToShow, doc, false, true, title, okText){
 
       @Override
       public void hide() {
