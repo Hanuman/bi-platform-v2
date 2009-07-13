@@ -24,7 +24,13 @@ public class ChartBeansGeneratorUtil {
   private static IChartBeansGenerator generator; 
   
   static {
-    generator = PentahoSystem.get(IChartBeansGenerator.class);
+    IChartBeansGenerator gen = PentahoSystem.get(IChartBeansGenerator.class);
+    
+    // If we are not running the PentahoSystem, at least give us a default generator...
+    if (gen == null){
+      gen = new DefaultChartBeansGenerator();
+    }
+    generator = gen;
   }
   
   private ChartBeansGeneratorUtil() {
