@@ -9,28 +9,28 @@
     <button label="Open Datasource List Dialog" tooltiptext="Open Datasource Selection Dialog" onclick="datasourceSelectionDialogController.showDialog()" />
   </hbox>
 
-  <dialog id="datasourceSelectionDialog" buttonlabelaccept="OK" buttonlabelcancel="Cancel" buttons="accept,cancel"
-    buttonalign="right" title="Select a datasource" width="350" height="400"
+  <dialog id="datasourceSelectionDialog" buttonlabelaccept="${datasourceSelectionDialog.ok}" buttonlabelcancel="${datasourceSelectionDialog.cancel}" buttons="accept,cancel"
+    buttonalign="right" title="${datasourceSelectionDialog.title}" width="350" height="200"
     ondialogaccept="datasourceSelectionDialogController.onDialogAccept()" ondialogcancel="datasourceSelectionDialogController.onDialogCancel()">
-    <vbox flex="1">
+    <vbox>
       <hbox>
-        <label value="Datasources" tooltiptext="Datasources" />
+        <label value="${datasourceSelectionDialog.listLabel}" tooltiptext="${datasourceSelectionDialog.listLabel}" />
         <spacer flex="1" />
-        <button id="addDatasource" image="images/add.png" tooltiptext="Add" pen:disabledimage="images/add_disabled.png"
-          disabled="true" onclick="datasourceSelectionDialogController.addDatasource()" />
-        <button id="removeDatasource" image="images/remove.png" tooltiptext="Remove" pen:disabledimage="images/remove_disabled.png"
-          disabled="true" onclick="datasourceSelectionDialogController.removeDatasourceConfirm()" />
+        <button id="addDatasource" image="images/add.png" tooltiptext="${datasourceSelectionDialog.add}" pen:disabledimage="images/add_disabled.png"
+          visible="false" onclick="datasourceSelectionDialogController.addDatasource()" />
+        <button id="removeDatasource" image="images/remove.png" tooltiptext="${datasourceSelectionDialog.remove}" pen:disabledimage="images/remove_disabled.png"
+          visible="false" onclick="datasourceSelectionDialogController.removeDatasourceConfirm()" />
       </hbox>
       <listbox id="datasourceListbox" rows="6" pen:binding="modelName" seltype="single">
       </listbox>
     </vbox>
   </dialog>
 
-  <dialog id="removeDatasourceConfirmationDialog" buttonlabelaccept="Remove" buttonlabelcancel="Cancel" buttons="accept, cancel"
+  <dialog id="removeDatasourceConfirmationDialog" buttonlabelaccept="${removeDatasourceConfirmationDialog.ok}" buttonlabelcancel="${removeDatasourceConfirmationDialog.cancel}" buttons="accept, cancel"
     ondialogcancel="datasourceSelectionDialogController.removeDatasourceCancel()" ondialogaccept="datasourceSelectionDialogController.removeDatasourceAccept()"
-    buttonalign="right" title="Remove Datasource" height="200" width="300">
+    buttonalign="right" title="${removeDatasourceConfirmationDialog.title}" height="200" width="300">
     <vbox>
-      <label value="Are you sure you want to remove this datasource?" />
+      <label value="${removeDatasourceConfirmationDialog.message}" />
     </vbox>
   </dialog>
 

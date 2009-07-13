@@ -43,11 +43,6 @@ import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
-/*
- * TODO mlowery This class professes to be a datasource service yet it takes as inputs both IDatasource instances and 
- * lower-level BusinessData instances. (BusinessData instances are stored in IDatasources.) They are not currently being
- * kept in sync. I propose that the service only deals with IDatasources from a caller perspective.
- */
 public class DatasourceServiceDelegate {
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
@@ -86,6 +81,25 @@ public class DatasourceServiceDelegate {
       
     }
     return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
+  }
+  
+  protected boolean hasDataAccessViewPermission() {
+    if (dataAccessViewPermHandler == null) {
+      String dataAccessClassName = null;
+      try {
+        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-view-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+        Class<?> clazz = Class.forName(dataAccessClassName);
+        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+      } catch (Exception e) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0030_DATAACCESS_VIEW_PERMISSIONS_INIT_ERROR"),e);         //$NON-NLS-1$
+          // TODO: Unhardcode once this is an actual plugin
+        dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
+      }
+      
+    }
+    return dataAccessViewPermHandler != null && dataAccessViewPermHandler.hasDataAccessViewPermission(PentahoSessionHolder.getSession());
   }
   
   protected List<String> getPermittedRoleList() {
@@ -477,9 +491,9 @@ public class DatasourceServiceDelegate {
   }
 
   public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
+    if (!hasDataAccessViewPermission()) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
     }
     List<LogicalModelSummary> logicalModelSummaries = new ArrayList<LogicalModelSummary>();
     for (String domainId : getMetadataDomainRepository().getDomainIds()) {

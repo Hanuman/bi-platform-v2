@@ -43,4 +43,12 @@ public interface IDataAccessViewPermissionHandler {
   
   int getDefaultAcls(IPentahoSession session);
   
+  /**
+   * This method returns true if user represented by session has view permission
+   * 
+   * @param session pentaho session
+   * @return true if user represented by session has view permission
+   */
+  boolean hasDataAccessViewPermission(IPentahoSession session);
+  
 }

@@ -10,7 +10,7 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
  * 
  * @author mlowery
  */
-public class LogicalModelSummary extends XulEventSourceAdapter implements Serializable {
+public class LogicalModelSummary extends XulEventSourceAdapter implements Comparable<LogicalModelSummary>, Serializable {
 
   private static final long serialVersionUID = -2876155341724009295L;
 
@@ -71,6 +71,14 @@ public class LogicalModelSummary extends XulEventSourceAdapter implements Serial
     buf.append("LogicalModelSummary[").append("domainId=").append(domainId).append(", ").append("modelId=").append( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         modelId).append(", ").append("modelName=").append(modelName).append("]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     return buf.toString();
+  }
+
+  public int compareTo(final LogicalModelSummary other) {
+    if (other == null) {
+      return 1;
+    } else {
+      return modelName.compareToIgnoreCase(other.modelName);
+    }
   }
 
 }

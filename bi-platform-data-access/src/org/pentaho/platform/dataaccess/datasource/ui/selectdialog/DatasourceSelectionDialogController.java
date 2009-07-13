@@ -1,5 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
@@ -71,7 +72,8 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       public void success(final Boolean administrator) {
         // now we have admin status; update add datasource and remove datasource buttons' enabled status
         DatasourceSelectionDialogController.this.administrator = administrator;
-        addDatasourceButton.setDisabled(!administrator);
+        addDatasourceButton.setVisible(administrator);
+        removeDatasourceButton.setVisible(administrator);
         try {
           removeDatasourceButtonBinding.fireSourceChanged();
         } catch (Exception e) {
@@ -182,13 +184,14 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       }
 
       public void success(final List<LogicalModelSummary> logicalModelSummaries) {
+        Collections.sort(logicalModelSummaries);
         datasourceSelectionDialogModel.setLogicalModelSummaries(logicalModelSummaries);
         if (logicalModelSummaries.isEmpty()) {
           datasourceListbox.setSelectedIndex(-1);
           datasourceSelectionDialogModel.setSelectedIndex(-1);
         } else {
-          datasourceListbox.setSelectedIndex(logicalModelSummaries.size() - 1);
-          datasourceSelectionDialogModel.setSelectedIndex(logicalModelSummaries.size() - 1);
+          datasourceListbox.setSelectedIndex(0);
+          datasourceSelectionDialogModel.setSelectedIndex(0);
         }
       }
 

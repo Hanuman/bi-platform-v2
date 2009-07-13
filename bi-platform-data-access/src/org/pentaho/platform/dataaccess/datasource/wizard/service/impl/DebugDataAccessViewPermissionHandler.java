@@ -22,4 +22,8 @@ public class DebugDataAccessViewPermissionHandler implements IDataAccessViewPerm
   public int getDefaultAcls(IPentahoSession session) {
     return 31;
   }
+
+  public boolean hasDataAccessViewPermission(IPentahoSession session) {
+    return true;
+  }
 }

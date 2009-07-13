@@ -75,4 +75,9 @@ public class SimpleDataAccessViewPermissionHandler implements IDataAccessViewPer
     }
     return defaultAcls;
   }
+
+  public boolean hasDataAccessViewPermission(IPentahoSession session) {
+    return getPermittedUserList(session).size() > 0 || getPermittedRoleList(session).size() > 0;
+      
+  }
 }
