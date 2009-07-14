@@ -34,7 +34,6 @@ import org.pentaho.di.job.JobEntryLoader;
 import org.pentaho.di.trans.StepLoader;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
-import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -48,8 +47,10 @@ public class KettleSystemListener implements IPentahoSystemListener {
     
     /* Load the plugins etc. */
     KettleSystemListener.environmentInit(session);
+    
     try {
-      StepLoader.init();
+      // StepLoader is using the old method of loading plugins
+      StepLoader.init(new String[]{PentahoSystem.getApplicationContext().getSolutionPath("system/kettle/plugins/steps")}); //$NON-NLS-1$
     } catch (Throwable t) {
       t.printStackTrace();
       Logger.error(KettleSystemListener.class.getName(), Messages
@@ -64,16 +65,18 @@ public class KettleSystemListener implements IPentahoSystemListener {
           .getString("KettleSystemListener.ERROR_0002_JOB_ENTRY_LOAD_FAILED")); //$NON-NLS-1$
     }
     
-    ISolutionFile pluginsFolder =  PentahoSystem.get(ISolutionRepository.class, session).getFileByPath("/system/kettle/plugins");//$NON-NLS-1$
-	  if (pluginsFolder!=null)
+    //Load plugins for jobs using the new method
+    String pluginPath = PentahoSystem.getApplicationContext().getSolutionPath("system/kettle/plugins/jobentries"); //$NON-NLS-1$
+    
+	  if (pluginPath!=null)
 	  {
 		  try {
-			  KettleConfig.getInstance().addConfig("platform-kettle-cfg",new PlatformConfigManager<PluginLocation>(pluginsFolder));
-			  PluginLoader.getInstance().load("platform-kettle-cfg");
+			  KettleConfig.getInstance().addConfig("platform-kettle-cfg",new PlatformConfigManager<PluginLocation>(pluginPath)); //$NON-NLS-1$
+			  PluginLoader.getInstance().load("platform-kettle-cfg"); //$NON-NLS-1$
 		  }
 		  catch(KettleConfigException e) {
 			 Logger.error(KettleSystemListener.class.getName(),Messages
-			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED",pluginsFolder.getFullPath())); //$NON-NLS-1$
+			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED", pluginPath)); //$NON-NLS-1$
 		  }
 	  }
         
@@ -82,7 +85,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
 
   private void hookInDataSourceProvider() {
     try {
-      Class clazz = Class.forName("org.pentaho.di.core.database.DataSourceProviderInterface");
+      Class clazz = Class.forName("org.pentaho.di.core.database.DataSourceProviderInterface"); //$NON-NLS-1$
       PlatformKettleDataSourceProvider.hookupProvider();
     } catch (Exception ignored) {
       // if here, then it's because we're running with an older

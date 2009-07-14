@@ -39,9 +39,9 @@ import org.pentaho.platform.api.engine.ISolutionFile;
 public class PlatformConfigManager<T extends PluginLocation> extends
 		BasicConfigManager<T> {
 
-	private ISolutionFile pluginsFolder;
+	private String pluginsFolder;
 
-	PlatformConfigManager(ISolutionFile pluginsFolder) {
+	PlatformConfigManager(String pluginsFolder) {
 		this.pluginsFolder = pluginsFolder;
 	}
 
@@ -49,8 +49,8 @@ public class PlatformConfigManager<T extends PluginLocation> extends
 	public Collection<T> load()  {
 		Set<T> configObjs = new LinkedHashSet<T>();
 		PluginLocation pl = new PluginLocation();
-		pl.setId(pluginsFolder.getFullPath());
-		pl.setLocation(pluginsFolder.getFullPath());
+		pl.setId(pluginsFolder);
+		pl.setLocation(pluginsFolder);
 		configObjs.add((T) pl);
 		
 		return configObjs;
