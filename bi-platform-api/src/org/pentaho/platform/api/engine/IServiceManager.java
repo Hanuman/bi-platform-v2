@@ -26,10 +26,14 @@ import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 
 
 /**
- * A service manager allows a Java bean to be exposed as a web service by constructing 
+ * A service manager allows a POJO to be exposed as various types of services by constructing 
  * a simple {@link WebServiceConfig} and calling {@link #registerService(WebServiceConfig)}.
- * Currently, these services will then become invokable through the GenericServlet servlet
- * proxying system.  Your new webservice will be available through {base_url}/content/ws-run/{service_name}/<operation>.
+ * An implementation of {@link IServiceManager} acts as a depot of service objects in the Pentaho
+ * BI platform.
+ * <p>
+ * For information on providing services via platform plugins, see the wiki link below.
+ * 
+ * @see {@link http://wiki.pentaho.com/display/ServerDoc2x/Developing+Plugins#DevelopingPlugins-Definingawebservice(newinCitrus)}
  * 
  * @author aphillips
  *
@@ -51,6 +55,13 @@ public interface IServiceManager {
    */
   public void initServices() throws ServiceInitializationException;
 
+  /**
+   * Returns an instance of a registered servicing object. 
+   * @param serviceType the type of the service, used to lookup the correct service class
+   * @param serviceId the unique id of the service
+   * @return an instance of the servicing object
+   * @throws ServiceException if no service object can be found or there was a problem retrieving the service object
+   */
   public Object getServiceBean(ServiceType serviceType, String serviceId) throws ServiceException;
 
   /**
@@ -61,6 +72,12 @@ public interface IServiceManager {
    */
   public void setServiceTypeManagers(Collection<IServiceTypeManager> serviceTypeHandlers);
   
+  /**
+   * Gets the configuration for the requested service.
+   * @param serviceType the type of the service, used to lookup the correct service class
+   * @param serviceId the unique id of the service
+   * @return configuration of the service
+   */
   public WebServiceConfig getServiceConfig(ServiceType serviceType, String serviceId);
 
 }
