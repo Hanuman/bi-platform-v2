@@ -187,6 +187,7 @@ public class CsvModel extends XulEventSourceAdapter{
     setSelectedFile(null);
     setDelimiter(Delimiter.COMMA);
     setEnclosure(Enclosure.DOUBLEQUOTE);
+    setHeadersPresent(true);
   }
 
   public void addCsvModelValidationListener(ICsvModelValidationListener listener) {

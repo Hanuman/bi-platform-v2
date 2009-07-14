@@ -283,7 +283,8 @@ public class DatasourceServiceDelegate {
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
       conn = DatasourceServiceHelper.getDataSourceConnection(connection);
-
+      // Only SELECT or read only operations are allowed throught the SQL executer 
+      conn.setReadOnly(true);
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
         if(limit >=0) {
