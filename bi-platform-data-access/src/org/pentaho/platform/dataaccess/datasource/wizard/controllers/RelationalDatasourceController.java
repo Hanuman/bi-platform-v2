@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
@@ -39,7 +41,7 @@ import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
 
-public class RelationalDatasourceController extends AbstractXulEventHandler {
+public class RelationalDatasourceController extends AbstractXulEventHandler implements IDatasourceTypeController {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
   public static final int MAX_COL_SIZE = 13;
   public static final String EMPTY_STRING = "";
@@ -644,5 +646,34 @@ public class RelationalDatasourceController extends AbstractXulEventHandler {
       }
       return EMPTY_STRING;
     }
+  }
+
+  public void initializeBusinessData(BusinessData businessData) {
+    modelDataTable.update();
+    datasourceModel.setDatasourceType(DatasourceType.SQL);
+    
+    SqlPhysicalModel model = (SqlPhysicalModel)businessData.getDomain().getPhysicalModels().get(0);
+    String queryStr = model.getPhysicalTables().get(0).getTargetTable();
+//    datasourceModel.setDatasourceType(DatasourceType.SQL);
+    datasourceModel.setDatasourceName(businessData.getDomain().getId());
+    datasourceModel.getRelationalModel().setQuery(queryStr);
+    for (IConnection conn : datasourceModel.getRelationalModel().getConnections()) {
+      if (model.getDatasource().getDatabaseName().equals(conn.getName())) {
+        datasourceModel.getRelationalModel().setSelectedConnection(conn);
+        break;
+      }
+    }
+    datasourceModel.getRelationalModel().setBusinessData(null);                    
+    query.setDisabled(false);
+    // Setting the editable property to true so that the table can be populated with correct cell types                    
+    columnNameTreeCol.setEditable(true);
+    columnTypeTreeCol.setEditable(true);
+    //columnFormatTreeCol.setEditable(true);
+    datasourceModel.getRelationalModel().setBusinessData(businessData);
+    
+  }
+
+  public boolean supportsBusinessData(BusinessData businessData) {
+    return (businessData.getDomain().getPhysicalModels().get(0) instanceof SqlPhysicalModel);
   }
 }

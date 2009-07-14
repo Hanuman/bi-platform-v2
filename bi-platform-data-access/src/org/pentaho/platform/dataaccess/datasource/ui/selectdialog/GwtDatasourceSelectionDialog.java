@@ -1,7 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
+import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
@@ -23,7 +23,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
 
   private DatasourceSelectionDialogController datasourceSelectionDialogController;
 
-  private DialogController<IDatasource> datasourceDialogController;
+  private GwtDatasourceEditor gwtDatasourceEditor;
 
   private DatasourceService datasourceService;
 
@@ -34,8 +34,8 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
   // ~ Constructors ====================================================================================================
 
   public GwtDatasourceSelectionDialog(final DatasourceService datasourceService,
-      final DialogController<IDatasource> datasourceDialogController, final AsyncConstructorListener constructorListener) {
-    this.datasourceDialogController = datasourceDialogController;
+      final GwtDatasourceEditor gwtDatasourceEditor, final AsyncConstructorListener constructorListener) {
+    this.gwtDatasourceEditor = gwtDatasourceEditor;
     this.datasourceService = datasourceService;
     this.constructorListener = constructorListener;
     try {
@@ -74,7 +74,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
       container.addEventHandler(editPanelControllerWrapper);
       // end DatasourceSelectionDialogController setup
 
-      datasourceSelectionDialogController.setDatasourceDialogController(datasourceDialogController);
+      datasourceSelectionDialogController.setDatasourceDialogController(gwtDatasourceEditor);
 
       runner.initialize();
 

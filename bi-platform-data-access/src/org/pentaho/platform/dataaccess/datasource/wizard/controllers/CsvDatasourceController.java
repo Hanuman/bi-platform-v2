@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.pentaho.metadata.model.InlineEtlPhysicalModel;
+import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.Delimiter;
 import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
@@ -37,7 +40,7 @@ import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
 
-public class CsvDatasourceController extends AbstractXulEventHandler {
+public class CsvDatasourceController extends AbstractXulEventHandler implements IDatasourceTypeController {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
   public static final int MAX_COL_SIZE = 13;
   public static final String EMPTY_STRING = "";
@@ -530,6 +533,29 @@ public class CsvDatasourceController extends AbstractXulEventHandler {
       }
       return EMPTY_STRING;
     }
+  }
+
+  public void initializeBusinessData(BusinessData businessData) {
+    // modelDataTable.update();
+    InlineEtlPhysicalModel model = (InlineEtlPhysicalModel)businessData.getDomain().getPhysicalModels().get(0);
+    datasourceModel.setDatasourceType(DatasourceType.CSV);
+    datasourceModel.setDatasourceName(businessData.getDomain().getId());
+    datasourceModel.getCsvModel().setDelimiter(Delimiter.lookupValue(model.getDelimiter()));
+    datasourceModel.getCsvModel().setEnclosure(Enclosure.lookupValue(model.getEnclosure()));
+    datasourceModel.getCsvModel().setHeadersPresent(model.getHeaderPresent());
+
+    // update business data
+    datasourceModel.getCsvModel().setBusinessData(null);
+    // Setting the editable property to true so that the table can be populated with correct cell types
+    columnNameTreeCol.setEditable(true);
+    columnTypeTreeCol.setEditable(true);
+    //columnFormatTreeCol.setEditable(true); 
+    datasourceModel.getCsvModel().setBusinessData(businessData);
+    datasourceModel.onCsvModelValid();
+  }
+
+  public boolean supportsBusinessData(BusinessData businessData) {
+    return (businessData.getDomain().getPhysicalModels().get(0) instanceof InlineEtlPhysicalModel);
   }
 }
 

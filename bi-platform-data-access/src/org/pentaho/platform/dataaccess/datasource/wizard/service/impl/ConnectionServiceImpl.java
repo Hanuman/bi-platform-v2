@@ -11,8 +11,8 @@ import org.pentaho.database.dialect.GenericDatabaseDialect;
 import org.pentaho.database.dialect.IDatabaseDialect;
 import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.database.service.DatabaseConnectionService;
-import org.pentaho.database.service.IDatabaseConnectionService;
 import org.pentaho.di.core.exception.KettleDatabaseException;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ServiceException;
@@ -23,21 +23,24 @@ import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
-public class ConnectionServiceDelegate {
+public class ConnectionServiceImpl implements IConnectionService {
   
   private IDataAccessPermissionHandler dataAccessPermHandler;
   private IDatasourceMgmtService datasourceMgmtSvc;
-  private static final Log logger = LogFactory.getLog(ConnectionServiceDelegate.class);
+  private static final Log logger = LogFactory.getLog(ConnectionServiceImpl.class);
   
-  public ConnectionServiceDelegate() {
+  public ConnectionServiceImpl() {
+    IPentahoSession session = PentahoSessionHolder.getSession();
+    datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class, session);
   }
-
+  
   protected boolean hasDataAccessPermission() {
     if (dataAccessPermHandler == null) {
       String dataAccessClassName = null;
@@ -57,10 +60,6 @@ public class ConnectionServiceDelegate {
       
     }
     return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
-  }
-  
-  public ConnectionServiceDelegate(IDatasourceMgmtService datasourceMgmtSvc) {
-    this.datasourceMgmtSvc = datasourceMgmtSvc;
   }
   
   public List<IConnection> getConnections() throws ConnectionServiceException  {
@@ -94,7 +93,7 @@ public class ConnectionServiceDelegate {
     }
   }
   
-  public Boolean addConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean addConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -111,7 +110,7 @@ public class ConnectionServiceDelegate {
     }
   }
 
-  public Boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -127,7 +126,7 @@ public class ConnectionServiceDelegate {
     }
   }
   
-  public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -142,7 +141,8 @@ public class ConnectionServiceDelegate {
       throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",connection.getName(), e.getLocalizedMessage()),e);            
     }
   }
-  public Boolean deleteConnection(String name) throws ConnectionServiceException  {
+  
+  public boolean deleteConnection(String name) throws ConnectionServiceException  {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0001_PERMISSION_DENIED"));

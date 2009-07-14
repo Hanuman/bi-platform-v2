@@ -4,22 +4,22 @@ import java.util.List;
 
 import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServiceAsync;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtConnectionServiceAsync;
 import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-public class ConnectionServiceGwtImpl implements ConnectionService {
+public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
 
-  static ConnectionGwtServiceAsync SERVICE;
+  static IGwtConnectionServiceAsync SERVICE;
 
   static {
 
-    SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServiceAsync) GWT.create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtService.class);
+    SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtConnectionServiceAsync) GWT.create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtConnectionService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     endpoint.setServiceEntryPoint(getBaseUrl());
 
@@ -147,8 +147,7 @@ public class ConnectionServiceGwtImpl implements ConnectionService {
     }); 
   }
 
-  public void convertFromConnection(final IConnection databaseConnection, final XulServiceCallback<IDatabaseConnection> callback)
-      throws ConnectionServiceException {
+  public void convertFromConnection(final IConnection databaseConnection, final XulServiceCallback<IDatabaseConnection> callback) {
     SERVICE.convertFromConnection(databaseConnection, new AsyncCallback<IDatabaseConnection>() {
       public void onFailure(Throwable arg0) {
         callback.error("error testing connection: ", arg0);
@@ -160,8 +159,7 @@ public class ConnectionServiceGwtImpl implements ConnectionService {
     
   }
 
-  public void convertToConnection(final IDatabaseConnection databaseConnection, final XulServiceCallback<IConnection> callback)
-      throws ConnectionServiceException {
+  public void convertToConnection(final IDatabaseConnection databaseConnection, final XulServiceCallback<IConnection> callback) {
     SERVICE.convertToConnection(databaseConnection, new AsyncCallback<IConnection>() {
       public void onFailure(Throwable arg0) {
         callback.error("error testing connection: ", arg0);

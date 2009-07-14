@@ -2,8 +2,9 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
+import org.pentaho.platform.dataaccess.datasource.wizard.IDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.SwingDatasourceEditor;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDebugImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDebugImpl;
@@ -26,7 +27,7 @@ public class SwingDatasourceSelectionDialog implements DialogController<LogicalM
   private DatasourceSelectionDialogController datasourceSelectionDialogController;
 
   public SwingDatasourceSelectionDialog(final DatasourceService datasourceService,
-      final DialogController<IDatasource> datasourceDialogController) throws XulException {
+      final IDatasourceEditor datasourceDialogController) throws XulException {
     XulDomContainer container = new SwingXulLoader()
         .loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/datasourceSelectionDialog.xul"); //$NON-NLS-1$
 
@@ -85,7 +86,7 @@ public class SwingDatasourceSelectionDialog implements DialogController<LogicalM
    * For debug/demo purposes only.
    */
   public static void main(String[] args) throws XulException {
-    ConnectionService connectionService = new ConnectionServiceDebugImpl();
+    IXulAsyncConnectionService connectionService = new ConnectionServiceDebugImpl();
     DatasourceService datasourceService = new DatasourceServiceDebugImpl();
 
     SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);

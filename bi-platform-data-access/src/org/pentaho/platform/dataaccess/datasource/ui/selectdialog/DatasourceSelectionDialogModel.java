@@ -32,6 +32,17 @@ public class DatasourceSelectionDialogModel extends XulEventSourceAdapter {
   public List<LogicalModelSummary> getLogicalModelSummaries() {
     return this.logicalModelSummaries == null ? null : new ArrayList<LogicalModelSummary>(logicalModelSummaries);
   }
+  
+  public void setSelectedLogicalModel(String domainId, String modelId) {
+    for (int i = 0; i < logicalModelSummaries.size(); i++) {
+      LogicalModelSummary summary = logicalModelSummaries.get(i);
+      if (summary.getDomainId().equals(domainId) && summary.getModelId().equals(modelId)) {
+        setSelectedIndex(i);
+        return;
+      }
+    }
+    setSelectedIndex(-1);
+  }
 
   public void setSelectedIndex(final int selectedIndex) {
     final int previousVal = this.selectedIndex;

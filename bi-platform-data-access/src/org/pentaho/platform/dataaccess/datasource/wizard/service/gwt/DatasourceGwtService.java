@@ -31,6 +31,8 @@ public interface DatasourceGwtService extends RemoteService{
   public String getUploadFilePath() throws DatasourceServiceException ;
   public Boolean hasPermission();
   public BogoPojo gwtWorkaround(BogoPojo pojo);
+  
+  public BusinessData loadBusinessData(String domainId, String modelId) throws DatasourceServiceException;
 }
 
   

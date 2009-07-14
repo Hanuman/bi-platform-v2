@@ -28,6 +28,14 @@ MDModel.prototype.addBView = function( xmlNd )
 	}
 }
 
+MDModel.prototype.removeBView = function (viewId)
+{
+	if (this.bViews[viewId]) 
+	{
+		delete this.bViews[viewId];
+	}
+}
+
 /**
  * @return BusinessView
  */

@@ -6,23 +6,23 @@ import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceInMemoryDelegate;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.InMemoryConnectionServiceImpl;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements ConnectionGwtService {
+public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements IGwtConnectionService {
 
-  ConnectionServiceInMemoryDelegate SERVICE;
+  public static InMemoryConnectionServiceImpl SERVICE;
 
  
   public ConnectionDebugGwtServlet() {
 
   }
 
-  private ConnectionServiceInMemoryDelegate getService(){
+  private InMemoryConnectionServiceImpl getService(){
     if(SERVICE == null){
       try {
-        SERVICE = new ConnectionServiceInMemoryDelegate();
+        SERVICE = new InMemoryConnectionServiceImpl();
         // add the sample data default connection for testing
         Connection connection = new Connection();
         connection.setDriverClass("org.hsqldb.jdbcDriver");
@@ -45,23 +45,23 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements C
   public IConnection getConnectionByName(String name)  throws ConnectionServiceException {
     return getService().getConnectionByName(name);
   }
-  public Boolean addConnection(IConnection connection)  throws ConnectionServiceException{ 
+  public boolean addConnection(IConnection connection)  throws ConnectionServiceException{ 
     return getService().addConnection(connection);
   }
 
-  public Boolean updateConnection(IConnection connection)  throws ConnectionServiceException {
+  public boolean updateConnection(IConnection connection)  throws ConnectionServiceException {
     return getService().updateConnection(connection);
   }
 
-  public Boolean deleteConnection(IConnection connection)  throws ConnectionServiceException {
+  public boolean deleteConnection(IConnection connection)  throws ConnectionServiceException {
     return getService().deleteConnection(connection);
   }
     
-  public Boolean deleteConnection(String name)  throws ConnectionServiceException {
+  public boolean deleteConnection(String name)  throws ConnectionServiceException {
     return getService().deleteConnection(name);    
   }
 
-  public Boolean testConnection(IConnection connection)  throws ConnectionServiceException{
+  public boolean testConnection(IConnection connection)  throws ConnectionServiceException{
     return getService().testConnection(connection);
   }
 

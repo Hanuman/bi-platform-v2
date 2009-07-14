@@ -1,5 +1,8 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.models;
 
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -43,6 +46,27 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
   public void setDatasourceName(String datasourceName) {
     String previousVal = this.datasourceName;
     this.datasourceName = datasourceName;
+    
+    // if we're editing a generated or already defined domain,
+    // we need to keep the datasource name in sync
+    if (csvModel != null && csvModel.getBusinessData() != null &&
+        csvModel.getBusinessData().getDomain() != null) {
+      Domain domain = csvModel.getBusinessData().getDomain(); 
+      domain.setId(datasourceName);
+      LogicalModel model = domain.getLogicalModels().get(0);
+      String localeCode = domain.getLocales().get(0).getCode();
+      model.getName().setString(localeCode, datasourceName);
+    }
+
+    if (relationalModel != null && relationalModel.getBusinessData() != null &&
+        relationalModel.getBusinessData().getDomain() != null) {
+      Domain domain = relationalModel.getBusinessData().getDomain(); 
+      domain.setId(datasourceName);
+      LogicalModel model = domain.getLogicalModels().get(0);
+      String localeCode = domain.getLocales().get(0).getCode();
+      model.getName().setString(localeCode, datasourceName);
+    }
+    
     this.firePropertyChange("datasourcename", previousVal, datasourceName); //$NON-NLS-1$
     validate();
   }
@@ -82,10 +106,12 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
    * Clears out the model
    */
   public void clearModel() {
-    setDatasourceName("");
-    setDatasourceType(DatasourceType.SQL);
+    // clear the models before switching the datasource type, otherwise
+    // an error is presented to the user.
     relationalModel.clearModel();
     csvModel.clearModel();
+    setDatasourceName("");
+    setDatasourceType(DatasourceType.SQL);
   }
   
   public IDatasource getDatasource() {

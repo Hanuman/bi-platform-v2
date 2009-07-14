@@ -82,4 +82,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
     return SERVICE.getLogicalModels();
   }
 
+  public BusinessData loadBusinessData(String domainId, String modelId) throws DatasourceServiceException {
+    return SERVICE.loadBusinessData(domainId, modelId);
+  }
+
 }

@@ -94,6 +94,15 @@ public class DatasourceServiceDebugImpl implements DatasourceService{
       callback.error(e.getLocalizedMessage(), e);
     }
   }
+
+  public void loadBusinessData(String domainId, String modelId, XulServiceCallback<BusinessData> callback) {
+    try {
+      BusinessData res = SERVICE.loadBusinessData(domainId, modelId);
+      callback.success(res);
+    } catch (DatasourceServiceException e) {
+      callback.error(e.getLocalizedMessage(), e);
+    }
+  }
 }
 
   

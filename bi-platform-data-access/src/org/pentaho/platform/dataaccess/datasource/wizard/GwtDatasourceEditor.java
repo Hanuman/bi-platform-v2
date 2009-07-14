@@ -1,5 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
@@ -8,11 +9,11 @@ import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
+import org.pentaho.platform.dataaccess.datasource.wizard.controllers.IDatasourceTypeController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.containers.XulDialog;
@@ -23,7 +24,6 @@ import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
 import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
-import org.pentaho.ui.xul.util.DialogController;
 
 import com.google.gwt.core.client.GWT;
 
@@ -31,13 +31,13 @@ import com.google.gwt.core.client.GWT;
  * GWT implementation of a datasource editor. Constructor takes all external dependencies. Dialog is shown/hidden via
  * the <code>DialogController</code>.
  */
-public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController<IDatasource> {
+public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEditor {
 
   DatasourceController datasourceController = new DatasourceController();
   private CsvDatasourceController csvDatasourceController = new CsvDatasourceController();
   private RelationalDatasourceController relationalDatasourceController = new RelationalDatasourceController();
   private ConnectionController connectionController = new ConnectionController();
-  private ConnectionService connectionService;
+  private IXulAsyncConnectionService connectionService;
   private DatasourceService datasourceService;
   private DatasourceModel datasourceModel = new DatasourceModel();
   private DatasourceMessages datasourceMessages = new GwtDatasourceMessages();
@@ -46,7 +46,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   private AsyncConstructorListener constructorListener;
   private boolean initialized;
   
-  public GwtDatasourceEditor(final DatasourceService datasourceService, final ConnectionService connectionService, final AsyncConstructorListener constructorListener) {
+  public GwtDatasourceEditor(final DatasourceService datasourceService, final IXulAsyncConnectionService connectionService, final AsyncConstructorListener constructorListener) {
     this.constructorListener = constructorListener;
     setDatasourceService(datasourceService);
     setConnectionService(connectionService);
@@ -55,7 +55,6 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
   
   private void reloadConnections() {
     if(connectionService != null) {
-      try {
       connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
@@ -67,9 +66,6 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
         }
         
       });
-      } catch(ConnectionServiceException cse) {
-        showErrorDialog("Error Occurred","Unable to get connections" + cse.getLocalizedMessage());
-      }
     } else {
       showErrorDialog("Error Occurred","Connection Service is null");
     }
@@ -149,6 +145,13 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
       csvDatasourceController.setDatasourceModel(datasourceModel);
       relationalDatasourceController.setDatasourceModel(datasourceModel);
       connectionController.setDatasourceModel(datasourceModel);
+      
+      List<IDatasourceTypeController> datasourceTypeControllers = new ArrayList<IDatasourceTypeController>();
+      datasourceTypeControllers.add(relationalDatasourceController);
+      datasourceTypeControllers.add(csvDatasourceController);
+      
+      datasourceController.setDatasourceTypeControllers(datasourceTypeControllers);
+      
       runner.initialize();
       runner.start();
       initialized = true;
@@ -167,7 +170,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
     }
   }
 
-  private void setConnectionService(ConnectionService service){
+  private void setConnectionService(IXulAsyncConnectionService service){
     this.connectionService = service;
     connectionController.setService(service);
 //    relationalDatasourceController.setConnectionService(service);
@@ -222,4 +225,16 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, DialogController
     datasourceController.initialize();
     datasourceController.showDialog();  
   }
+  
+  public void showEditDialog(final String domainId, final String modelId) {
+
+    // initialize connections
+    if(datasourceModel.getRelationalModel().getConnections() == null || datasourceModel.getRelationalModel().getConnections().size() <= 0) {
+      checkInitialized();
+      reloadConnections();
+    }
+    
+    datasourceController.showEditDialog(domainId, modelId);
+  }
+
 }

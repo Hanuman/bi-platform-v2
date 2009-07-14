@@ -26,6 +26,7 @@ public interface DatasourceService {
   void saveInlineEtlModel(Domain modelName, Boolean overwrite,XulServiceCallback<Boolean> callback) throws DatasourceServiceException;
   void getUploadFilePath(XulServiceCallback<String> callback) throws DatasourceServiceException; 
   void hasPermission(XulServiceCallback<Boolean> callback);
+  void loadBusinessData(String domainId, String modelId, XulServiceCallback<BusinessData> callback);
 }
 
   

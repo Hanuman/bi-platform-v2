@@ -87,4 +87,8 @@ public class DatasourceServiceBeanImpl implements DatasourceGwtService {
   public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {
     return SERVICE.getLogicalModels();
   }
+
+  public BusinessData loadBusinessData(String domainId, String modelId) throws DatasourceServiceException {
+    return SERVICE.loadBusinessData(domainId, modelId);
+  }
 }

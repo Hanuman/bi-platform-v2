@@ -265,5 +265,13 @@
 		<treechildren id="relationalSampleDataRows"/>
 	  </tree>  		
   </dialog>
-  
+    <dialog id="overwriteDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}"
+    		ondialogaccept="datasourceController.overwriteDialogAccept()"
+    		ondialogcancel="datasourceController.overwriteDialogCancel()" 
+    		buttons="accept, cancel" buttonalign="right" title="${overwrite.title}" 
+    		height="120" width="300">
+       <vbox>
+        <label value="${overwriteDialog.warningMessage}"/>
+      </vbox>
+    </dialog>
    </window>

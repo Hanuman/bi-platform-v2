@@ -4,50 +4,83 @@ import java.util.List;
 
 import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
 
-public class ConnectionServiceDebugImpl implements ConnectionService{
+public class ConnectionServiceDebugImpl implements IXulAsyncConnectionService {
 
-  ConnectionServiceInMemoryDelegate SERVICE;
+  InMemoryConnectionServiceImpl SERVICE;
+  
   public ConnectionServiceDebugImpl(){
-    SERVICE = new ConnectionServiceInMemoryDelegate();
+    SERVICE = new InMemoryConnectionServiceImpl();
   }
  
-  public void getConnections(XulServiceCallback<List<IConnection>> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.getConnections());
+  public void getConnections(XulServiceCallback<List<IConnection>> callback) {
+    try {
+      callback.success(SERVICE.getConnections());
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void getConnectionByName(String name, XulServiceCallback<IConnection> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.getConnectionByName(name));
+  public void getConnectionByName(String name, XulServiceCallback<IConnection> callback) {
+    try {
+      callback.success(SERVICE.getConnectionByName(name));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void addConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.addConnection(connection));
+  public void addConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+    try {
+      callback.success(SERVICE.addConnection(connection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.updateConnection(connection));
+  public void updateConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+    try {
+      callback.success(SERVICE.updateConnection(connection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.deleteConnection(connection));
+  public void deleteConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+    try {
+      callback.success(SERVICE.deleteConnection(connection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void deleteConnection(String name, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.deleteConnection(name));
+  public void deleteConnection(String name, XulServiceCallback<Boolean> callback) {
+    try {
+      callback.success(SERVICE.deleteConnection(name));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
-  public void testConnection(IConnection connection, XulServiceCallback<Boolean> callback) throws ConnectionServiceException  {
-    callback.success(SERVICE.testConnection(connection));
+  public void testConnection(IConnection connection, XulServiceCallback<Boolean> callback) {
+    try {
+      callback.success(SERVICE.testConnection(connection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
 
-  public void convertFromConnection(IConnection databaseConnection, XulServiceCallback<IDatabaseConnection> callback)
-      throws ConnectionServiceException {
-    callback.success(SERVICE.convertFromConnection(databaseConnection));
+  public void convertFromConnection(IConnection databaseConnection, XulServiceCallback<IDatabaseConnection> callback) {
+    try {
+      callback.success(SERVICE.convertFromConnection(databaseConnection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }
 
-  public void convertToConnection(IDatabaseConnection databaseConnection, XulServiceCallback<IConnection> callback)
-      throws ConnectionServiceException {
-    callback.success(SERVICE.convertToConnection(databaseConnection));
+  public void convertToConnection(IDatabaseConnection databaseConnection, XulServiceCallback<IConnection> callback) {
+    try {
+      callback.success(SERVICE.convertToConnection(databaseConnection));
+    } catch (ConnectionServiceException e) {
+      callback.error(e.getMessage(), e);
+    }
   }  
-  
-  
 }
 
   

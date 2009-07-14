@@ -129,6 +129,8 @@
     var msgCtrl = new MessageCtrl();
     /** the first few methods and vars are related to the data access dialog **/
 	var gTransport = null;
+	/** this global var is accessed by the controller to maintain enabled, disabled state **/
+	var dataAccessEditBtn = null;
 
 	function selectModel() {
 		gCtrlr.handleSelectBusinessView( gTransport.domainId, gTransport.modelId );
@@ -138,6 +140,9 @@
     var datasourceEditorCallback = {
       onFinish : function(val, transport) {
         gTransport = transport;
+        // remove the model from the cache if it exists
+        gCtrlr.mdModels.removeBView(gTransport.domainId, gTransport.modelId);
+        
         postInitFunc = function() { setTimeout( 'selectModel()', 250 ) };
         gCtrlr.getModel();
       },
@@ -164,6 +169,10 @@
         openDatasourceEditor(datasourceEditorCallback);
     }
 
+    var dataaccessEditBtnCallback = function() {
+        openEditDatasourceEditor(gCtrlr.modelId, gCtrlr.viewId, datasourceEditorCallback);
+    }
+    
     var dataaccessDeleteBtnCallback = function() {
     	var shouldDeleteModel = msgCtrl.confirm(Messages.getString("deleteModelWarningMessage"));
     	if(shouldDeleteModel) {
@@ -220,9 +229,16 @@
 				       /** Creating Add datasource button */
 					   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE );
 					   dataAccessAddBtn.setOnClickCallback(dataaccessAddBtnCallback, null);
+
+				       /** Creating Edit datasource button */
+					   dataAccessEditBtn = new ButtonCtrl( Messages.getString("dataaccessEditButtonText"), ButtonCtrl.LARGE );
+					   dataAccessEditBtn.setOnClickCallback(dataaccessEditBtnCallback, null);
+					   dataAccessEditBtn.setEnabled(false);
+					   
 					   /** Creating Delete datasource button */
 					   var dataAccessDeleteBtn = new ButtonCtrl( Messages.getString("dataaccessDeleteButtonText"), ButtonCtrl.LARGE );
 					   dataAccessDeleteBtn.setOnClickCallback(dataaccessDeleteBtnCallback, null);
+
 					   var table = document.createElement( "table" );
 					   daBtnContainer.appendChild(table);
 					   table.cellSpacing = "0";
@@ -236,8 +252,11 @@
 					   tr.appendChild( td1 );
 					   var td2 = document.createElement( "td" );
 					   tr.appendChild( td2 );
+					   var td3 = document.createElement( "td" );
+					   tr.appendChild( td3 );
 					   td1.appendChild(dataAccessAddBtn.getRoot());
-					   td2.appendChild(dataAccessDeleteBtn.getRoot());
+					   td2.appendChild(dataAccessEditBtn.getRoot());
+					   td3.appendChild(dataAccessDeleteBtn.getRoot());
 					}
 	       }
 	  	}

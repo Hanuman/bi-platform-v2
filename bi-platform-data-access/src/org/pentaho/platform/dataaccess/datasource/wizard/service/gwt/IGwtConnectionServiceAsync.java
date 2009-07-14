@@ -7,7 +7,10 @@ import org.pentaho.platform.dataaccess.datasource.IConnection;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface ConnectionGwtServiceAsync {
+/**
+ * This is the GWT Asynchronous implementation of the IConnectionService API
+ */
+public interface IGwtConnectionServiceAsync {
   void getConnections(AsyncCallback<List<IConnection>> callback);
   void getConnectionByName(String name, AsyncCallback<IConnection> callback);
   void addConnection(IConnection connection, AsyncCallback<Boolean> callback);
@@ -18,5 +21,3 @@ public interface ConnectionGwtServiceAsync {
   void convertToConnection(IDatabaseConnection connection, AsyncCallback<IConnection> callback);
   void convertFromConnection(IConnection connection, AsyncCallback<IDatabaseConnection> callback);
 }
-
-  

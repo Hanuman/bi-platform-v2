@@ -5,6 +5,7 @@ public enum Delimiter {
 
   private String name;
   private String value;
+  
   Delimiter(String name, String value) {
     this.name = name;
     this.value = value;
@@ -13,11 +14,21 @@ public enum Delimiter {
   public String toString() {
     return name;
   }
-
+  
   public String getName() {
     return name;
   }
+  
   public String getValue() {
     return value;
+  }
+  
+  public static Delimiter lookupValue(String delim) {
+    for (Delimiter delimObj : Delimiter.values()) {
+      if (delimObj.getValue().equals(delim)) {
+        return delimObj;
+      }
+    }
+    return null;
   }
 }

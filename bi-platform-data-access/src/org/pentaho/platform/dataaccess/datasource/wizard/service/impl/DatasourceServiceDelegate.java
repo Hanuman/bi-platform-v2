@@ -15,7 +15,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
@@ -25,7 +27,11 @@ import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.metadata.util.SQLModelGenerator;
 import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.IServiceManager;
+import org.pentaho.platform.api.engine.PluginBeanException;
+import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
@@ -33,7 +39,11 @@ import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -51,9 +61,16 @@ public class DatasourceServiceDelegate {
   private IPentahoSession session;
   public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;  
   private static final Log logger = LogFactory.getLog(DatasourceServiceDelegate.class);
+  private IConnectionService connectionService;
 
   public DatasourceServiceDelegate() {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
+    try {
+      IPluginManager manager = PentahoSystem.get(IPluginManager.class, null);
+      connectionService = (IConnectionService)manager.getBean("connectionServiceImpl");
+    } catch (PluginBeanException e) {
+      logger.error("failed to locate connection service", e);
+    }
   }
 
   public IPentahoSession getSession() {
@@ -384,11 +401,11 @@ public class DatasourceServiceDelegate {
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return new BusinessData(domain, data);
     } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domain.getName().toString(), dse.getLocalizedMessage()),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domain.getName().toString(), dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domain.getId(), dse.getLocalizedMessage()),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domain.getId(), dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domain.getName().toString(), dae.getLocalizedMessage()),dae);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domain.getName().toString(), dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domain.getId(), dae.getLocalizedMessage()),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domain.getId(), dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL",dne.getLocalizedMessage()),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
@@ -410,16 +427,15 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     Boolean returnValue = false;
-    LocalizedString domainName = businessData.getDomain().getName();    
+    String domainName = businessData.getDomain().getId();    
     try {
       getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
       returnValue = true;
     } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString(), dse.getLocalizedMessage()),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainName.toString(), dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName, dse.getLocalizedMessage()),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName.toString(), dae.getLocalizedMessage()),dae);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName.toString(), dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL",dne.getLocalizedMessage()),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
@@ -463,16 +479,16 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
 
-    LocalizedString domainName = modelName.getName();    
+    String domainName = modelName.getId();    
     try {
       getMetadataDomainRepository().storeDomain(modelName, overwrite);
       return true;
     } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString(), dse.getLocalizedMessage()),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainName.toString(), dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName, dse.getLocalizedMessage()),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName.toString(), dae.getLocalizedMessage()),dae);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName.toString(), dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName, dae.getLocalizedMessage()),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL",dne.getLocalizedMessage()),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
@@ -512,4 +528,23 @@ public class DatasourceServiceDelegate {
     }
     return logicalModelSummaries;
   }
+  
+  public BusinessData loadBusinessData(String domainId, String modelId)  throws DatasourceServiceException {
+    try {
+      Domain domain = getMetadataDomainRepository().getDomain(domainId);
+      List<List<String>> data = null;
+      if (domain.getPhysicalModels().get(0) instanceof InlineEtlPhysicalModel) {
+        InlineEtlPhysicalModel model = (InlineEtlPhysicalModel)domain.getPhysicalModels().get(0);
+        data = DatasourceServiceHelper.getCsvDataSample(
+            model.getFileLocation(), model.getHeaderPresent(), model.getDelimiter(), model.getEnclosure(), 5);
+      } else {
+        SqlPhysicalModel model = (SqlPhysicalModel)domain.getPhysicalModels().get(0);
+        IConnection connection = connectionService.getConnectionByName(model.getDatasource().getDatabaseName());
+        String query = model.getPhysicalTables().get(0).getTargetTable();
+        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, 5);
+      }
+      return new BusinessData(domain, data);
+    } catch (ConnectionServiceException e) {
+      throw new DatasourceServiceException("DatasourceServiceInMemoryDelegate.ERROR_0018 Failed to load business data, connection exception", e);
+    }  }
 }

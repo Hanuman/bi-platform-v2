@@ -58,6 +58,15 @@ MDModels.prototype.getBView = function( modelId, viewId )
 	return ( model ) ? model.getBView( viewId ) : null;
 }
 
+MDModels.prototype.removeBView = function( modelId, viewId ) 
+{
+	var model = this.models[ modelId ];
+	if (model) 
+	{
+		model.removeBView(viewId);
+	}
+}
+
 MDModels.prototype.modelsLoaded = function () {};
 
 MDModels.prototype.modelLoaded = function () {};

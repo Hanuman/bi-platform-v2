@@ -273,4 +273,15 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
     });
   }
+
+  public void loadBusinessData(String domainId, String modelId, final XulServiceCallback<BusinessData> callback) {
+    SERVICE.loadBusinessData(domainId, modelId, new AsyncCallback<BusinessData>() {
+      public void onFailure(Throwable arg0) {
+        callback.error("error getting logical models: ", arg0); //$NON-NLS-1$
+      }
+      public void onSuccess(BusinessData arg0) {
+        callback.success(arg0);
+      }
+    });
+  }
 }

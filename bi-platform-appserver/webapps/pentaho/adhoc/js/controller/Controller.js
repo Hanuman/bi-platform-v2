@@ -1222,6 +1222,16 @@ Controller.prototype.setBView = function( modelId, viewId )
 {
   this.modelId = modelId;
   this.viewId = viewId;
+  
+  // if there is a data access edit button defined, enable it if it's a new model
+  if (dataAccessEditBtn) {
+	  if (viewId == 'MODEL_1') {
+		  dataAccessEditBtn.setEnabled(true);
+	  } else {
+		  dataAccessEditBtn.setEnabled(false);
+	  }
+  }
+  
   this.repositoryBrowserController.reset(); // force save btn to bring up save as dialog
 };
 

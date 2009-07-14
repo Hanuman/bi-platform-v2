@@ -20,4 +20,13 @@ public enum Enclosure {
   public String getValue() {
     return value;
   }
+  
+  public static Enclosure lookupValue(String encl) {
+    for (Enclosure enclObj : Enclosure.values()) {
+      if (enclObj.getValue().equals(encl)) {
+        return enclObj;
+      }
+    }
+    return null;
+  }
 }

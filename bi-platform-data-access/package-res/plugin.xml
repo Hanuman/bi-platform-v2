@@ -6,7 +6,9 @@
      <static-path url="/data-access/resources" localFolder="resources"/>
    </static-paths>
    
-   <!-- bean id="connectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl" /-->
+   <!-- this is used by the datasource service -->
+   <bean id="connectionServiceImpl" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceImpl"/>
+   
    <webservice 
     id="datasourceService" 
     type="xml,gwt"
@@ -17,7 +19,7 @@
     type="xml,gwt"
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
-    class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionServiceBeanImpl"/>
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceImpl"/>
 
   <webservice
     id="databaseConnectionService"

@@ -31,6 +31,7 @@ public interface DatasourceGwtServiceAsync {
   void hasPermission(AsyncCallback<Boolean> callback);
   void gwtWorkaround (BogoPojo pojo, AsyncCallback<BogoPojo> callback);
 
+  void loadBusinessData(String domainId, String modelId, AsyncCallback<BusinessData> callback);
 }
 
   

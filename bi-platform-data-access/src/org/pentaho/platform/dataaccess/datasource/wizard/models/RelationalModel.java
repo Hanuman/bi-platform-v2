@@ -17,23 +17,23 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 public class RelationalModel extends XulEventSourceAdapter{
   private RelationalModelValidationListenerCollection relationalModelValidationListeners;
   private boolean validated;
-  public static enum EditType {ADD, EDIT};
+  public static enum ConnectionEditType {ADD, EDIT};
   private IConnection selectedConnection;
   private List<IConnection> connections = new ArrayList<IConnection>();
   private List<ModelDataRow> dataRows = new ArrayList<ModelDataRow>();
   private String query;
   private String previewLimit;
-  private EditType editType = EditType.ADD;
+  private ConnectionEditType editType = ConnectionEditType.ADD;
   private BusinessData object;
 
   public RelationalModel() {
     previewLimit = "10";
   }
-  public EditType getEditType() {
+  public ConnectionEditType getEditType() {
     return editType;
   }
 
-  public void setEditType(EditType editType) {
+  public void setEditType(ConnectionEditType editType) {
     this.editType = editType;
   }
 
@@ -169,7 +169,7 @@ public class RelationalModel extends XulEventSourceAdapter{
     return datasource;
   }
 
-  public void setModelData(BusinessData businessData) {
+  private void setModelData(BusinessData businessData) {
     if (businessData != null) {
       Domain domain = businessData.getDomain();
       List<List<String>> data = businessData.getData();

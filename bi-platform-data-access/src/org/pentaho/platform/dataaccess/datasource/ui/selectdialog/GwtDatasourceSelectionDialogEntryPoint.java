@@ -2,7 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
@@ -19,7 +19,7 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
 
   private DatasourceService datasourceService;
 
-  private ConnectionService connectionService;
+  private IXulAsyncConnectionService connectionService;
 
   public void onModuleLoad() {
     datasourceService = new DatasourceServiceGwtImpl();

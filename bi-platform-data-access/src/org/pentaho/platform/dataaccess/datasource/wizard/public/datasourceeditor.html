@@ -35,7 +35,25 @@
           }
         });
       }
+
+      function showEditDatasourceEditor() {
+          openEditDatasourceEditor("Test", "MODEL_1", new function(){
+            this.onOk = function(json, mqlStr){
+              alert(json+"\n\n\n"+mqlStr);
+            }
+            this.onError = function(err){
+              alert(err);
+            }
+            this.onCancel = function(){
+              alert("Canceled");
+            }
+          });
+        }
     </script>
-    <input type="button" onclick="showDatasourceEditor()" value="Test"/>
+    <input type="button" onclick="showDatasourceEditor()" value="New Data Source"/>
+    <br>
+    First Create a SQL Data Source named "Test" and then click this button:
+    <br>
+    <input type="button" onclick="showEditDatasourceEditor()" value="Edit Test Data Source"/>
   </body>
 </html>

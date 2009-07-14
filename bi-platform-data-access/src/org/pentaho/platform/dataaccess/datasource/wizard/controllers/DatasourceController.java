@@ -46,7 +46,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   public static final int RELATIONAL_TAB = 0;
   public static final int CSV_TAB = 1;
   private DatasourceModel datasourceModel;
-
+  private List<IDatasourceTypeController> datasourceTypeControllers;
   BindingFactory bf;
   XulTextbox csvDatasourceName = null;
   XulTextbox relationalDatasourceName = null;
@@ -89,11 +89,20 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   private XulTreeCol csvColumnNameTreeCol = null;
   private XulTreeCol csvColumnTypeTreeCol = null;
   private XulDialog clearModelWarningDialog = null;
+  private XulDialog overwriteDialog = null;
+  
+  private BusinessData overwriteBusinessData = null;
+  private Domain overwriteDomain = null;
+  private DatasourceType overwriteDatasourceType = null;
   private DatasourceType tabValueSelected = null;
   private boolean clearModelWarningShown = false;
   private XulTabbox datasourceTabbox = null;
   public DatasourceController() {
 
+  }
+  
+  public void setDatasourceTypeControllers(List<IDatasourceTypeController> datasourceTypeControllers) {
+    this.datasourceTypeControllers = datasourceTypeControllers;
   }
 
   public void init() {
@@ -125,6 +134,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     //relationalButton = (XulButton) document.getElementById("relationalButton"); //$NON-NLS-1$
     //csvButton = (XulButton) document.getElementById("csvButton"); //$NON-NLS-1$
     datasourceTabbox = (XulTabbox) document.getElementById("datasourceDialogTabbox"); //$NON-NLS-1$
+    
+    overwriteDialog = (XulDialog)document.getElementById("overwriteDialog"); //$NON-NLS-1$
+    
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", relationalDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(datasourceModel, "datasourceName", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,6 +240,30 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     /*buildRelationalEmptyTable();*/    
     selectSql();
   }
+
+  public void showEditDialog(String domainId, String modelId) {
+    XulServiceCallback<BusinessData> callback = new XulServiceCallback<BusinessData>() {
+      public void error(String message, Throwable error) {
+        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0004_UNABLE_TO_EDIT_DATASOURCE", error.getLocalizedMessage()));
+      }
+      public void success(BusinessData retVal) {
+        initializeModel(retVal);
+        showDialog();
+      }
+    };
+    service.loadBusinessData(domainId, modelId, callback);
+  }
+  
+  private void initializeModel(BusinessData businessData) {
+    datasourceModel.clearModel();
+    for (IDatasourceTypeController controller : datasourceTypeControllers) {
+      if (controller.supportsBusinessData(businessData)) {
+        controller.initializeBusinessData(businessData);
+        break;
+      }
+    }
+  }
+  
   public void setBindingFactory(BindingFactory bf) {
     this.bf = bf;
   }
@@ -256,8 +292,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
     }
   }
   
-  private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {  
-    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage()));    
+  private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {
+    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage()));
   }
 
   private void saveCsvModel() throws DatasourceServiceException {
@@ -326,11 +362,19 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       }
   }
 
-  private void saveRelationalModel(BusinessData businessData, boolean overwrite) throws DatasourceServiceException {
+  private void saveRelationalModel(final BusinessData businessData, final boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveModel(businessData, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          handleSaveError(datasourceModel, error);
+          // 0018 is an overwrite exception
+          if (error.getMessage().indexOf("0018") >= 0) {
+            // prompt for overwrite
+            overwriteBusinessData = businessData;
+            overwriteDatasourceType = DatasourceType.SQL;
+            overwriteDialog.show();
+          } else {
+            handleSaveError(datasourceModel, error);
+          }
         }
 
         public void success(Boolean value) {
@@ -340,11 +384,43 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
       });
   }
 
-  private void saveCsvModel(Domain domain, boolean overwrite) throws DatasourceServiceException {
+  public void overwriteDialogAccept() {
+    try {
+      overwriteDialog.hide();
+      if (overwriteDatasourceType == DatasourceType.SQL) {
+        saveRelationalModel(overwriteBusinessData, true);
+        
+      } else if (overwriteDatasourceType == DatasourceType.CSV) {
+        saveCsvModel(overwriteDomain, true);
+        
+      }
+      
+      // flush overwrite state
+      overwriteBusinessData = null;
+      overwriteDomain = null;
+      overwriteDatasourceType = null;
+      
+    } catch (Exception e) {
+      handleSaveError(datasourceModel, e);
+    }
+  }
+  
+  public void overwriteDialogCancel() {
+    overwriteDialog.hide();
+  }
+  
+  private void saveCsvModel(final Domain domain, final boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveInlineEtlModel(domain, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          handleSaveError(datasourceModel, error);
+          if (error.getMessage().indexOf("0018") >= 0) { //$NON-NLS-1$
+            // prompt for overwrite
+            overwriteDomain = domain;
+            overwriteDatasourceType = DatasourceType.CSV;
+            overwriteDialog.show();
+          } else {
+            handleSaveError(datasourceModel, error);
+          }
         }
 
         public void success(Boolean value) {

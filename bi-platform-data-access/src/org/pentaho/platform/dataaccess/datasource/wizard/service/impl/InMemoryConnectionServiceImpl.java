@@ -18,9 +18,10 @@ import org.pentaho.database.service.DatabaseConnectionService;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 
-public class ConnectionServiceInMemoryDelegate {
+public class InMemoryConnectionServiceImpl implements IConnectionService {
 
   private String locale = Locale.getDefault().toString();
   
@@ -28,8 +29,8 @@ public class ConnectionServiceInMemoryDelegate {
   private DatabaseConnectionService databaseConnectionService = new DatabaseConnectionService();
 
   private List<IConnection> connectionList = new ArrayList<IConnection>();
-  private static final Log logger = LogFactory.getLog(ConnectionServiceInMemoryDelegate.class);
-  public ConnectionServiceInMemoryDelegate() {
+  private static final Log logger = LogFactory.getLog(InMemoryConnectionServiceImpl.class);
+  public InMemoryConnectionServiceImpl() {
   }
   
   public List<IConnection> getConnections() throws ConnectionServiceException  {
@@ -44,7 +45,7 @@ public class ConnectionServiceInMemoryDelegate {
     logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
     throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
   }
-  public Boolean addConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean addConnection(IConnection connection) throws ConnectionServiceException  {
     if(!isConnectionExist(connection.getName())) {
       connectionList.add(connection);
       return true;
@@ -53,7 +54,7 @@ public class ConnectionServiceInMemoryDelegate {
       throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(),null));
     }
   }
-  public Boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
     IConnection conn = getConnectionByName(connection.getName());
     if(conn != null) {
       conn.setDriverClass(connection.getDriverClass());
@@ -66,11 +67,11 @@ public class ConnectionServiceInMemoryDelegate {
       throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(),null));
     }
   }
-  public Boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
+  public boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
     connectionList.remove(connectionList.indexOf(connection));
     return true;
   }
-  public Boolean deleteConnection(String name) throws ConnectionServiceException  {
+  public boolean deleteConnection(String name) throws ConnectionServiceException  {
     for(IConnection connection:connectionList) {
       if(connection.getName().equals(name)) {
         return deleteConnection(connection);

@@ -11,9 +11,8 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasour
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDebugImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDebugImpl;
 import org.pentaho.ui.xul.XulDomContainer;
@@ -24,9 +23,8 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.binding.DefaultBindingFactory;
 import org.pentaho.ui.xul.swing.SwingXulLoader;
 import org.pentaho.ui.xul.swing.SwingXulRunner;
-import org.pentaho.ui.xul.util.DialogController;
 
-public class SwingDatasourceEditor implements DialogController<IDatasource> {
+public class SwingDatasourceEditor implements IDatasourceEditor {
 
   private static Log log = LogFactory.getLog(SwingDatasourceEditor.class);
   
@@ -34,7 +32,7 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
   
   private DatasourceController datasourceController;
   
-  public SwingDatasourceEditor(final DatasourceService datasourceService, final ConnectionService connectionService) {
+  public SwingDatasourceEditor(final DatasourceService datasourceService, final IXulAsyncConnectionService connectionService) {
     try{
       XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/connectionFrame.xul");
     
@@ -64,7 +62,7 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
       connectionController.setService(connectionService);
 
       datasourceController.setService(datasourceService);
-      try {
+
       connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
@@ -87,18 +85,13 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
         }
         
       });
-      } catch(ConnectionServiceException cse) {
-        log.error("error loading Xul application", cse);
-      }
-      
-      
     } catch(XulException e){
       log.error("error loading Xul application", e);
     }
   }
   
   public static void main(String[] args) throws XulException {
-    ConnectionService connectionService = new ConnectionServiceDebugImpl();
+    IXulAsyncConnectionService connectionService = new ConnectionServiceDebugImpl();
     DatasourceService datasourceService = new DatasourceServiceDebugImpl();
 
     SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);
@@ -132,6 +125,11 @@ public class SwingDatasourceEditor implements DialogController<IDatasource> {
    */
   public void showDialog() {
     datasourceController.showDialog();  
+  }
+
+  public void showEditDialog(String domainId, String modelId) {
+    datasourceController.showEditDialog(domainId, modelId);
+    datasourceController.showDialog();
   }
   
 }

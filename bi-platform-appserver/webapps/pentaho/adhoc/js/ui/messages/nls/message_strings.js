@@ -204,6 +204,7 @@ step4_div:"Report Settings",
 IS_NULL: "Is Null",
 IS_NOT_NULL: "Is not Null",
 dataaccessAddButtonText:"Add",
+dataaccessEditButtonText:"Edit",
 dataaccessDeleteButtonText:"Delete",
 deleteModelWarningMessage:"All content associated to selected Data Source will no longer work."
 	
