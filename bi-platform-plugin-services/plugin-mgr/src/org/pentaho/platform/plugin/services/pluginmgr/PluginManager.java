@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -78,7 +76,7 @@ public class PluginManager extends AbstractPluginManager {
     objectFactory.init(null, null);
     //we do not need to synchronize here since unloadPlugins 
     //is called within the synchronized block in reload
-    for (IPlatformPlugin plugin : registeredPlugins) {
+    for (IPlatformPlugin plugin : registeredPlugins.values()) {
       try {
         plugin.unLoaded();
       } catch (Throwable t) {
@@ -121,7 +119,7 @@ public class PluginManager extends AbstractPluginManager {
       for (IPlatformPlugin plugin : providedPlugins) {
         try {
           registerPlugin(plugin, session);
-          registeredPlugins.add(plugin);
+          registeredPlugins.put(plugin.getName(), plugin);
         } catch (Throwable t) {
           // this has been logged already
           anyErrors = true;
@@ -176,13 +174,13 @@ public class PluginManager extends AbstractPluginManager {
       throws PlatformPluginRegistrationException, PluginLifecycleException {
     //TODO: we should treat the registration of a plugin as an atomic operation
     //with rollback if something is broken
+    
+    if(StringUtils.isEmpty(plugin.getName())) {
+      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          "PluginManager.ERROR_0026_PLUGIN_INVALID", plugin.getSourceDescription())); //$NON-NLS-1$
+    }
 
-    boolean dupId = CollectionUtils.exists(registeredPlugins, new Predicate() {
-      public boolean evaluate(Object object) {
-        return ((IPlatformPlugin) object).getName().equalsIgnoreCase(plugin.getName());
-      }
-    });
-    if (dupId) {
+    if (registeredPlugins.containsKey(plugin.getName())) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
           "PluginManager.ERROR_0024_PLUGIN_ALREADY_LOADED_BY_SAME_NAME", plugin.getName())); //$NON-NLS-1$
     }
@@ -387,7 +385,11 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public ClassLoader getClassLoader(IPlatformPlugin plugin) {
-    return classLoaderMap.get(plugin.getSourceDescription());
+    return getClassLoader(plugin.getName());
+  }
+  
+  public ClassLoader getClassLoader(String pluginId) {
+    return classLoaderMap.get(registeredPlugins.get(pluginId).getSourceDescription());
   }
 
   private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader)
@@ -564,33 +566,32 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue) {
+    return getPluginSetting(plugin.getName(), key, defaultValue);
+  }
+  
+  public Object getPluginSetting(String pluginId, String key, String defaultValue) {
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-    ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
+    ClassLoader classLoader = classLoaderMap.get(registeredPlugins.get(pluginId).getSourceDescription());
     return resLoader.getPluginSetting(classLoader, key, defaultValue);
   }
 
   public IPlatformPlugin isResourceLoadable(String path) {
-    return getServicePlugin(path);
+    PlatformPlugin p = new PlatformPlugin();
+    p.setName(getServicePlugin(path));
+    return p;
   }
 
-  //  public IPlatformPlugin isResourceLoadable(String path) {
-  //    PlatformPlugin p = new PlatformPlugin();
-  //    p.setName(getServicePlugin(path));
-  //    return p;
-  //  }
-
-  //FIXME: return plugin name/id here instead of the object
-  public IPlatformPlugin getServicePlugin(String path) {
+  public String getServicePlugin(String path) {
     //normalize path for comparison
     path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
 
-    for (IPlatformPlugin plugin : registeredPlugins) {
+    for (IPlatformPlugin plugin : registeredPlugins.values()) {
       Map<String, String> resourceMap = plugin.getStaticResourceMap();
       for (String url : resourceMap.keySet()) {
         //normalize static url for comparison
         url = (url.startsWith("/")) ? url.substring(1) : url; //$NON-NLS-1$
         if (path.startsWith(url)) {
-          return plugin;
+          return plugin.getName();
         }
       }
 
@@ -598,7 +599,7 @@ public class PluginManager extends AbstractPluginManager {
         String cgId = contentGenerator.getId();
         //content generator ids cannot start with '/', so no need to normalize cg ids
         if (path.startsWith(cgId)) {
-          return plugin;
+          return plugin.getName();
         }
       }
     }
@@ -607,7 +608,7 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public InputStream getStaticResource(String path) {
-    for (IPlatformPlugin plugin : registeredPlugins) {
+    for (IPlatformPlugin plugin : registeredPlugins.values()) {
       Map<String, String> resourceMap = plugin.getStaticResourceMap();
       for (String url : resourceMap.keySet()) {
         if (path.startsWith(url, 1) || path.startsWith(url)) {

@@ -19,7 +19,6 @@
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
 
-import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -45,13 +44,13 @@ public class PluginUtil {
 
     //The plugin manager can tell us which plugin handles requests like the one for the serialization file
     //
-    IPlatformPlugin servicePlugin = pluginManager.getServicePlugin(serviceId);
+    String servicePluginId = pluginManager.getServicePlugin(serviceId);
 
-    if (servicePlugin == null) {
+    if (servicePluginId == null) {
       return null;
     }
 
-    return pluginManager.getClassLoader(servicePlugin);
+    return pluginManager.getClassLoader(servicePluginId);
   }
 
 }

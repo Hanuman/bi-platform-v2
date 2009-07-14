@@ -140,13 +140,18 @@ public interface IPluginManager {
   public IFileInfo getFileInfo(String extension, IPentahoSession session, ISolutionFile file, InputStream in);
 
   /**
+   * @deprecated use {@link #getPluginSetting(String, String, String)}
+   */
+  public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue);
+  
+  /**
    * Retrieves a plugin setting for a given plugin and key.
-   * @param plugin the plugin to find settings for
+   * @param pluginId the ID of the plugin to find settings for
    * @param key the setting name to lookup
    * @param defaultValue the default to use if the setting key is not found
    * @return the plugin setting
    */
-  public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue);
+  public Object getPluginSetting(String pluginId, String key, String defaultValue);
   
   /**
    * @deprecated This is a poorly named method, use {@link #getServicePlugin(String)} instead.
@@ -161,10 +166,14 @@ public interface IPluginManager {
    * "/my-plugin/resources/images/file.png" can be handled by the plugin.
    * If ultimately, no plugin can handle the resource path, <code>null</code> is returned.
    * @param path the path to the plugin resource
-   * @return the plugin which owns the resource or <code>null</code> if one cannot be found
-   * @deprecated This method is going to change to return the plugin id rather than IPlatformPlugin
+   * @return the ID of the plugin which owns the resource or <code>null</code> if one cannot be found
    */
-  public IPlatformPlugin getServicePlugin(String path);
+  public String getServicePlugin(String path);
+  
+  /**
+   * @deprecated use {@link #getClassLoader(String)}
+   */
+  public ClassLoader getClassLoader(IPlatformPlugin plugin);
   
   /**
    * Returns the classloader instance that was assigned by the plugin manager to load all 
@@ -175,9 +184,8 @@ public interface IPluginManager {
    * @return the classloader assigned to this plugin, or <code>null</code> if the plugin is not
    * known by the plugin manager, or for some reason a classloader was not assigned to the plugin
    * (an error condition).
-   * @deprecated This method is going to change to accept the plugin id rather than IPlatformPlugin
    */
-  public ClassLoader getClassLoader(IPlatformPlugin plugin);
+  public ClassLoader getClassLoader(String pluginId);
   
   /**
    * Returns and InputStream to the specified resource path.

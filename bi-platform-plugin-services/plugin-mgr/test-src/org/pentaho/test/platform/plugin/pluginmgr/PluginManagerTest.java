@@ -81,7 +81,6 @@ public class PluginManagerTest {
   IPluginManager pluginManager;
   
   
-
   @Before
   public void init0() {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
@@ -381,7 +380,7 @@ public class PluginManagerTest {
     pluginManager.reload(session);
     
     //test exact match to content generator
-    IPlatformPlugin plugin1 = pluginManager.getServicePlugin("test13cgId");
+    String plugin1 = pluginManager.getServicePlugin("test13cgId");
     assertNotNull("Should have found a plugin to serve resource 'test13id'", plugin1);
     //test inexact match to content generator
     plugin1 = pluginManager.getServicePlugin("/test13cgId/blah/blah");
@@ -389,7 +388,7 @@ public class PluginManagerTest {
     
     
     //test exact match to a plugin static resource
-    IPlatformPlugin plugin2 = pluginManager.getServicePlugin("/test/13/static/url");
+    String plugin2 = pluginManager.getServicePlugin("/test/13/static/url");
     assertNotNull("Should have found a plugin to serve resource '/test/13/static/url'", plugin2);
     //test inexact match to a plugin static resource
     plugin2 = pluginManager.getServicePlugin("/test/13/static/url/blah/blah/blah");
@@ -477,6 +476,7 @@ public class PluginManagerTest {
   public static class Tst2PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
+      p.setName("test2Plugin");
       p.setLifecycleListenerClassname(CheckingLifecycleListener.class.getName());
       return Arrays.asList((IPlatformPlugin) p);
     }
@@ -486,6 +486,7 @@ public class PluginManagerTest {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
       //need to set source description - classloader needs it
+      p.setName("good-plugin1");
       p.setSourceDescription("good-plugin1");
       p.addBean(new BeanDefinition("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent"));
       p.addBean(new BeanDefinition("TestPojo", "java.lang.String"));
@@ -507,6 +508,7 @@ public class PluginManagerTest {
   public static class Tst8PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
+      p.setName("test8Plugin");
       //need to set source description - classloader needs it
       p.setSourceDescription("good-plugin1");
       p.addBean(new BeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));

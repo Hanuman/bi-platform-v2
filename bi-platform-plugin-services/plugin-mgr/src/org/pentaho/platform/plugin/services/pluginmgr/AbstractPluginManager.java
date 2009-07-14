@@ -22,6 +22,7 @@ package org.pentaho.platform.plugin.services.pluginmgr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ import org.pentaho.ui.xul.XulOverlay;
 public abstract class AbstractPluginManager implements IPluginManager {
   protected StandaloneObjectFactory objectFactory = new StandaloneObjectFactory();
 
-  protected List<IPlatformPlugin> registeredPlugins = Collections.synchronizedList(new ArrayList<IPlatformPlugin>());
+  protected Map<String, IPlatformPlugin> registeredPlugins = new Hashtable<String, IPlatformPlugin>();
   
   /* indexes and cached collections */
   

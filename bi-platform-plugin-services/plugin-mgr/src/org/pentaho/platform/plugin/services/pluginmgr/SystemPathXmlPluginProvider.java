@@ -233,8 +233,18 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
   protected void processPluginInfo(PlatformPlugin plugin, Document doc, String folder, IPentahoSession session) {
     Element node = (Element) doc.selectSingleNode("/plugin"); //$NON-NLS-1$
+    
+    //"name" is the attribute that unique identifies a plugin.  It acts as the plugin ID.  For backwards compatibility,
+    //if name is not provided, name is set to the value of the "title" attribute
+    //
     if (node != null) {
-      String name = node.attributeValue("title"); //$NON-NLS-1$
+      String name = (node.attributeValue("name") != null)?node.attributeValue("name"):node.attributeValue("title"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      if(StringUtils.isEmpty(name)) {
+        String msg = Messages.getErrorString("SystemPathXmlPluginProvider.ERROR_0002_PLUGIN_INVALID", folder); //$NON-NLS-1$
+        PluginMessageLogger.add(msg);
+        Logger.error(getClass().toString(), msg);
+      }
+      
       plugin.setName(name);
       PluginMessageLogger.add(Messages.getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
     }
