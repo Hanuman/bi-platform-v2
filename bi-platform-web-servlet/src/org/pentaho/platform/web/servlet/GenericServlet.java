@@ -143,10 +143,10 @@ public class GenericServlet extends ServletBase {
       }
 
       if (pathInfo != null && pluginManager.getServicePlugin(pathInfo) != null) {
-        IPlatformPlugin plugin = pluginManager.getServicePlugin(pathInfo);
+        String pluginId = pluginManager.getServicePlugin(pathInfo);
 
-        boolean cacheOn = "true".equals(pluginManager.getPluginSetting(plugin, "settings/cache", "false"));
-        String maxAge = (String)pluginManager.getPluginSetting(plugin, "settings/max-age", null);
+        boolean cacheOn = "true".equals(pluginManager.getPluginSetting(pluginId, "settings/cache", "false"));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+        String maxAge = (String)pluginManager.getPluginSetting(pluginId, "settings/max-age", null); //$NON-NLS-1$
         allowBrowserCache(maxAge, pathParams);
         
         String mimeType = MimeHelper.getMimeTypeFromFileName(pathInfo);
