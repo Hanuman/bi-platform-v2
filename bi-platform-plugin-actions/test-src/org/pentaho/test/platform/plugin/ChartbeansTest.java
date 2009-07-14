@@ -72,6 +72,7 @@ public class ChartbeansTest{
   
   @Test
   public void testChartbeansActionComponentJFree() {
+    //IMPORTANT: This test will fail on local machines, the image being compared against was generated on Hudson!!!
     microPlatform.init();
     
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl());
