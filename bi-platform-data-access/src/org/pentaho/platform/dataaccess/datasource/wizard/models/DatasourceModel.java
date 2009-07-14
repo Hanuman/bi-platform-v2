@@ -1,11 +1,11 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.models;
 
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
-import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
@@ -15,6 +15,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
   private DatasourceType datasourceType = DatasourceType.NONE;
   private RelationalModel relationalModel;
   private CsvModel csvModel;
+  
   public DatasourceModel() {
     relationalModel = new RelationalModel();
     csvModel = new CsvModel();
@@ -150,6 +151,26 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
   public void onCsvModelValid() {
     if(DatasourceType.CSV == getDatasourceType()) {
       setValidated(datasourceName != null && datasourceName.length() > 0 && true);
+    }
+  }
+  
+  /**
+   * This is a utility method that looks into an old domain for the same column ids, and then 
+   * copies over the old metadata into the new.
+   * @param oldDomain
+   * @param newDomain
+   */
+  public void copyOverMetadata(Domain oldDomain, Domain newDomain) {
+    Category category = newDomain.getLogicalModels().get(0).getCategories().get(0);
+    LogicalModel oldModel = oldDomain.getLogicalModels().get(0);
+    for (LogicalColumn column : category.getLogicalColumns()) {
+      LogicalColumn oldColumn = oldModel.findLogicalColumn(column.getId());
+      if (oldColumn != null) {
+        column.setDataType(oldColumn.getDataType());
+        column.setName(oldColumn.getName());
+        column.setAggregationList(oldColumn.getAggregationList());
+        column.setAggregationType(oldColumn.getAggregationType());
+      }
     }
   }
 

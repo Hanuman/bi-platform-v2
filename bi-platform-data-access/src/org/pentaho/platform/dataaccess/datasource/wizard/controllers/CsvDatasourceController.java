@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
-import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.Delimiter;
 import org.pentaho.platform.dataaccess.datasource.Enclosure;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
@@ -32,7 +31,6 @@ import org.pentaho.ui.xul.components.XulMenuList;
 import org.pentaho.ui.xul.components.XulTextbox;
 import org.pentaho.ui.xul.components.XulTreeCol;
 import org.pentaho.ui.xul.containers.XulDialog;
-import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -275,6 +273,14 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
               public void success(BusinessData businessData) {
                 try {
                   hideWaitingDialog();
+
+                  // merge any potential changes from earlier models
+                  if (datasourceModel.getCsvModel().getBusinessData() != null) {
+                    Domain oldDomain = datasourceModel.getRelationalModel().getBusinessData().getDomain();
+                    Domain newDomain = businessData.getDomain();
+                    datasourceModel.copyOverMetadata(oldDomain, newDomain);
+                  }
+
                   // Clear out the model for data
                   datasourceModel.getCsvModel().setBusinessData(null);
                   // Setting the editable property to true so that the table can be populated with correct cell types

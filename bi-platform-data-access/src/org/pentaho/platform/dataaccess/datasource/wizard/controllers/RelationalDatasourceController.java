@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
@@ -44,9 +45,9 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 public class RelationalDatasourceController extends AbstractXulEventHandler implements IDatasourceTypeController {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
   public static final int MAX_COL_SIZE = 13;
-  public static final String EMPTY_STRING = "";
+  public static final String EMPTY_STRING = ""; //$NON-NLS-1$
   
-  public static final String COMMA = ",";
+  public static final String COMMA = ","; //$NON-NLS-1$
   private DatasourceMessages datasourceMessages;
   private XulDialog connectionDialog;
   private WaitingDialog waitingDialogBox;
@@ -284,6 +285,14 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
                 public void success(BusinessData businessData) {
                   try {
                     hideWaitingDialog();
+                    
+                    // merge any potential changes from earlier models
+                    if (datasourceModel.getRelationalModel().getBusinessData() != null) {
+                      Domain oldDomain = datasourceModel.getRelationalModel().getBusinessData().getDomain();
+                      Domain newDomain = businessData.getDomain();
+                      datasourceModel.copyOverMetadata(oldDomain, newDomain);
+                    }
+                    
                     datasourceModel.getRelationalModel().setBusinessData(null);                    
                     query.setDisabled(false);
                     // Setting the editable property to true so that the table can be populated with correct cell types                    
@@ -305,6 +314,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
         openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"), getMissingInputs());
       }
   }
+  
   private boolean validateInputs() {
     return (datasourceModel.getRelationalModel().getSelectedConnection() != null
         && (datasourceModel.getRelationalModel().getQuery() != null && datasourceModel.getRelationalModel().getQuery().length() > 0) && (datasourceModel
