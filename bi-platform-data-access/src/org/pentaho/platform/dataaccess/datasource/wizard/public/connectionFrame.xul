@@ -51,7 +51,7 @@
 						      </hbox>
 						    </vbox>
 			       		
-		                    <hbox width="540">
+		                    <hbox width="551">
 							  	<vbox width="187">
 						          <hbox>
 			                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
@@ -106,7 +106,7 @@
 						  	  <groupbox id="fileGroupbox" width="500">
 						  	  	<caption label="${datasourceDialog.File}" />
 						  	  	<vbox>
-							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
+							  	  	<pen:fileupload id="fileUpload" action="UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
 							  	  	<spacer height="5"/>
 									<grid>
 									  <columns>
@@ -138,7 +138,7 @@
 											</menulist>
 											<spacer width="20"/>								
 											<hbox width="180">				
-												<checkbox flex="1" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true" oncommand=""/>
+												<checkbox flex="1" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true"/>
 											</hbox>
 											<spacer width="20"/>												
 											<button id="applyCsvButton" label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="csvDatasourceController.submitCsv()"  disabled="true" height="16" width="30"/>

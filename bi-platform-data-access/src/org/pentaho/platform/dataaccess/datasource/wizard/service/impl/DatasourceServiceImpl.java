@@ -261,6 +261,7 @@ public class DatasourceServiceImpl implements IDatasourceService{
     }
     try {
       Connection conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
+      conn.setReadOnly(true);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
         || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
       SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, conn,
@@ -269,6 +270,9 @@ public class DatasourceServiceImpl implements IDatasourceService{
       Domain domain = sqlModelGenerator.generate();
       List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
       return new BusinessData(domain, data);
+    } catch(SQLException sqle) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GET_READONLY_CONNECTION",sqle.getLocalizedMessage()),sqle);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GET_READONLY_CONNECTION",sqle.getLocalizedMessage()), sqle); //$NON-NLS-1$
     } catch(SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()), smge); //$NON-NLS-1$
