@@ -18,7 +18,6 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
@@ -174,25 +173,21 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       @Override
       public Enclosure sourceToTarget(Integer value) {
         if (value == 0) {
-          return Enclosure.NONE;
-        } else if (value == 1) {
           return Enclosure.SINGLEQUOTE;
-        } else if (value == 2) {
+        } else if (value == 1) {
           return Enclosure.DOUBLEQUOTE;
         }
-        return Enclosure.NONE;
+        return Enclosure.DOUBLEQUOTE;
       }
 
       @Override
       public Integer targetToSource(Enclosure value) {
-        if (value == Enclosure.NONE) {
+        if (value == Enclosure.SINGLEQUOTE) {
           return 0;
-        } else if (value == Enclosure.SINGLEQUOTE) {
-          return 1;
         } else if (value == Enclosure.DOUBLEQUOTE) {
-          return 2;
+          return 1;
         }
-        return 0;
+        return 1;
       }
     };
 
@@ -201,31 +196,27 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       @Override
       public Delimiter sourceToTarget(Integer value) {
         if (value == 0) {
-          return Delimiter.NONE;
-        } else if (value == 1) {
           return Delimiter.COMMA;
-        } else if (value == 2) {
+        } else if (value == 1) {
           return Delimiter.TAB;
-        } else if (value == 3) {
+        } else if (value == 2) {
           return Delimiter.SEMICOLON;
-        } else if (value == 4) {
+        } else if (value == 3) {
           return Delimiter.SPACE;
         }
-        return Delimiter.NONE;
+        return Delimiter.COMMA;
       }
 
       @Override
       public Integer targetToSource(Delimiter value) {
-        if (value == Delimiter.NONE) {
+        if (value == Delimiter.COMMA) {
           return 0;
-        } else if (value == Delimiter.COMMA) {
-          return 1;
         } else if (value == Delimiter.TAB) {
-          return 2;
+          return 1;
         } else if (value == Delimiter.SEMICOLON) {
-          return 3;
+          return 2;
         } else if (value == Delimiter.SPACE) {
-          return 4;
+          return 3;
         }
         return 0;
       }
@@ -338,9 +329,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
 
   private boolean validateIputForCsv() {
     return (datasourceModel.getCsvModel().getSelectedFile() != null
-        && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0)
-        && (datasourceModel.getCsvModel().getDelimiter() != Delimiter.NONE) && (datasourceModel.getCsvModel()
-        .getEnclosure() != Enclosure.NONE));
+        && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0));
   }
 
   private String getMissingInputs() {
@@ -352,16 +341,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     }
     if (datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <= 0) {
       buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
-      buffer.append(" \n");
-    }
-    if (datasourceModel.getCsvModel().getDelimiter() == null
-        || datasourceModel.getCsvModel().getDelimiter() == Delimiter.NONE) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Delimiter"));
-      buffer.append(" \n");
-    }
-    if (datasourceModel.getCsvModel().getEnclosure() == null
-        || datasourceModel.getCsvModel().getEnclosure() == Enclosure.NONE) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Enclosure"));
       buffer.append(" \n");
     }
     return buffer.toString();

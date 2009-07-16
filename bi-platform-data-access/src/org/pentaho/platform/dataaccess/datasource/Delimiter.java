@@ -1,7 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource;
 
 public enum Delimiter {
-  NONE("None", ""), COMMA("Comma",","), TAB("Tab"," "), SEMICOLON("Semicolon", ";"), SPACE("Space", " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  COMMA("Comma",","), TAB("Tab"," "), SEMICOLON("Semicolon", ";"), SPACE("Space", " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
   private String name;
   private String value;

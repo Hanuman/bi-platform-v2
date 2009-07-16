@@ -1,7 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource;
 
 public enum Enclosure {
-  NONE("None", ""),SINGLEQUOTE("Single Quote", "'"), DOUBLEQUOTE("Double Quote", "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  SINGLEQUOTE("Single Quote", "'"), DOUBLEQUOTE("Double Quote", "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   private String name;
   private String value;
