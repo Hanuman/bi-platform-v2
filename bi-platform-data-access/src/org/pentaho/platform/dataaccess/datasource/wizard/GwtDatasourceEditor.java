@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.utils.i18n.ResourceBundle;
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.IDatasourceTypeController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.components.XulLabel;
@@ -38,7 +38,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   private RelationalDatasourceController relationalDatasourceController = new RelationalDatasourceController();
   private ConnectionController connectionController = new ConnectionController();
   private IXulAsyncConnectionService connectionService;
-  private DatasourceService datasourceService;
+  private IXulAsyncDatasourceService datasourceService;
   private DatasourceModel datasourceModel = new DatasourceModel();
   private DatasourceMessages datasourceMessages = new GwtDatasourceMessages();
   private WaitingDialog waitingDialog;
@@ -46,7 +46,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   private AsyncConstructorListener constructorListener;
   private boolean initialized;
   
-  public GwtDatasourceEditor(final DatasourceService datasourceService, final IXulAsyncConnectionService connectionService, final AsyncConstructorListener constructorListener) {
+  public GwtDatasourceEditor(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService, final AsyncConstructorListener constructorListener) {
     this.constructorListener = constructorListener;
     setDatasourceService(datasourceService);
     setConnectionService(connectionService);
@@ -177,7 +177,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
     reloadConnections();
   }
 
-  private void setDatasourceService(DatasourceService service){
+  private void setDatasourceService(IXulAsyncDatasourceService service){
     this.datasourceService = service;
     datasourceController.setService(service);
     csvDatasourceController.setService(service);
@@ -192,7 +192,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<Domain> listener) {
     checkInitialized();
     datasourceController.addDialogListener(listener);  
   }
@@ -208,7 +208,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<Domain> listener) {
     checkInitialized();
     datasourceController.removeDialogListener(listener);
   }

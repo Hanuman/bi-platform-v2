@@ -11,14 +11,13 @@ import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.CsvModelDataRow;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -37,12 +36,12 @@ import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
-public class DatasourceController extends AbstractXulDialogController<IDatasource> {
+public class DatasourceController extends AbstractXulDialogController<Domain> {
   public static final int DEFAULT_RELATIONAL_TABLE_ROW_COUNT = 5;
   public static final int DEFAULT_CSV_TABLE_ROW_COUNT = 7;
   private DatasourceMessages datasourceMessages;
   private XulDialog datasourceDialog;
-  private DatasourceService service;
+  private IXulAsyncDatasourceService service;
   public static final int RELATIONAL_TAB = 0;
   public static final int CSV_TAB = 1;
   private DatasourceModel datasourceModel;
@@ -67,9 +66,9 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   //private XulDeck datasourceDeck = null;
   
   /**
-   * The datasource being edited.
+   * The domain being edited.
    */
-  private IDatasource datasource;
+  private Domain domainToBeSaved;
 
   //XulButton relationalButton = null;
   
@@ -364,7 +363,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   private void saveRelationalModel(final BusinessData businessData, final boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
-      service.saveModel(businessData, overwrite, new XulServiceCallback<Boolean>() {
+      service.saveLogicalModel(businessData.getDomain(), overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
           // 0018 is an overwrite exception
           if (error.getMessage().indexOf("0018") >= 0) {
@@ -378,7 +377,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         }
 
         public void success(Boolean value) {
-          datasource = datasourceModel.getRelationalModel().getDatasource();
+          domainToBeSaved = datasourceModel.getRelationalModel().getBusinessData().getDomain();
           saveModelDone();
         }
       });
@@ -411,7 +410,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   
   private void saveCsvModel(final Domain domain, final boolean overwrite) throws DatasourceServiceException {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
-      service.saveInlineEtlModel(domain, overwrite, new XulServiceCallback<Boolean>() {
+      service.saveLogicalModel(domain, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
           if (error.getMessage().indexOf("0018") >= 0) { //$NON-NLS-1$
             // prompt for overwrite
@@ -424,7 +423,7 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
         }
 
         public void success(Boolean value) {
-          datasource = datasourceModel.getDatasource();
+          domainToBeSaved = datasourceModel.getCsvModel().getBusinessData().getDomain();
           saveModelDone();
         }
       });
@@ -496,11 +495,11 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
 
   }
 
-  public DatasourceService getService() {
+  public IXulAsyncDatasourceService getService() {
     return service;
   }
 
-  public void setService(DatasourceService service) {
+  public void setService(IXulAsyncDatasourceService service) {
     this.service = service;
   }
 
@@ -534,8 +533,8 @@ public class DatasourceController extends AbstractXulDialogController<IDatasourc
   }
 
   @Override
-  protected IDatasource getDialogResult() {
-    return datasource;  
+  protected Domain getDialogResult() {
+    return domainToBeSaved;  
   }
 
   @Override

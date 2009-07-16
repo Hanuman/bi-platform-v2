@@ -2,7 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
@@ -25,7 +25,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
 
   private GwtDatasourceEditor gwtDatasourceEditor;
 
-  private DatasourceService datasourceService;
+  private IXulAsyncDatasourceService datasourceService;
 
   private AsyncConstructorListener constructorListener;
 
@@ -33,7 +33,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
 
   // ~ Constructors ====================================================================================================
 
-  public GwtDatasourceSelectionDialog(final DatasourceService datasourceService,
+  public GwtDatasourceSelectionDialog(final IXulAsyncDatasourceService datasourceService,
       final GwtDatasourceEditor gwtDatasourceEditor, final AsyncConstructorListener constructorListener) {
     this.gwtDatasourceEditor = gwtDatasourceEditor;
     this.datasourceService = datasourceService;

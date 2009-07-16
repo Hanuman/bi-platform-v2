@@ -8,17 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
@@ -26,60 +23,33 @@ import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.metadata.util.SQLModelGenerator;
 import org.pentaho.metadata.util.SQLModelGeneratorException;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
-import org.pentaho.platform.api.engine.IServiceManager;
-import org.pentaho.platform.api.engine.PluginBeanException;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
-import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
-import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
-public class DatasourceServiceDelegate {
+public class DatasourceServiceImpl implements IDatasourceService{
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
   private IDataAccessViewPermissionHandler dataAccessViewPermHandler;
   private IMetadataDomainRepository metadataDomainRepository;
-  private IPentahoSession session;
   public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;  
-  private static final Log logger = LogFactory.getLog(DatasourceServiceDelegate.class);
-  private IConnectionService connectionService;
+  private static final Log logger = LogFactory.getLog(DatasourceServiceImpl.class);
 
-  public DatasourceServiceDelegate() {
+  public DatasourceServiceImpl() {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
-    try {
-      IPluginManager manager = PentahoSystem.get(IPluginManager.class, null);
-      connectionService = (IConnectionService)manager.getBean("connectionServiceImpl");
-    } catch (PluginBeanException e) {
-      logger.error("failed to locate connection service", e);
-    }
   }
 
-  public IPentahoSession getSession() {
-    return session;
-  }
-
-  public void setSession(IPentahoSession session) {
-    this.session = session;
-  }
 
   protected boolean hasDataAccessPermission() {
     if (dataAccessPermHandler == null) {
@@ -183,80 +153,10 @@ public class DatasourceServiceDelegate {
     }
     return dataAccessViewPermHandler.getDefaultAcls(PentahoSessionHolder.getSession());
   }
-  public List<IDatasource> getDatasources() {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    List<IDatasource> datasources = new ArrayList<IDatasource>();
-    Set<String> domainIds = metadataDomainRepository.getDomainIds();
-    for (String domainId : domainIds) {
-      Domain domain = metadataDomainRepository.getDomain(domainId);
-      BusinessData bs = new BusinessData();
-      bs.setDomain(domain);
-      Datasource ds = new Datasource();
-      ds.setBusinessData(bs);
-      ds.setDatasourceName(domain.getId());
-      datasources.add(ds);
-    }
-    return datasources;
-  }
-  
-  public IDatasource getDatasourceByName(String name) {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    for(IDatasource datasource:getDatasources()) {
-      if(datasource.getDatasourceName().equals(name)) {
-        return datasource;
-      }
-    }
-    return null;
-  }
-  
-  public Boolean addDatasource(IDatasource datasource) {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    getDatasources().add(datasource);
-    return true;
-  }
-  
-  public Boolean updateDatasource(IDatasource datasource) {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    List<IDatasource> datasources = getDatasources();
-    for(IDatasource datasrc:datasources) {
-      if(datasrc.getDatasourceName().equals(datasource.getDatasourceName())) {
-        datasources.remove(datasrc);
-        datasources.add(datasource);
-      }
-    }
-    return true;
-  }
-  public Boolean deleteDatasource(IDatasource datasource) {
-    if (!hasDataAccessPermission()) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-        return null;
-    }
-    List<IDatasource> datasources = getDatasources();
-    metadataDomainRepository.removeDomain(datasource.getDatasourceName());
-    datasources.remove(datasources.indexOf(datasource));
-    return true;
-  }
-
-  public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException {
+  public boolean deleteLogicalModel(String domainId, String modelName) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-      return null;
+      return false;
     }
     try {
       metadataDomainRepository.removeModel(domainId, modelName);
@@ -271,7 +171,7 @@ public class DatasourceServiceDelegate {
   }
 
   
-  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+  public SerializedResultSet doPreview(String connectionName, String query, String previewLimit) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -282,8 +182,8 @@ public class DatasourceServiceDelegate {
     SerializedResultSet serializedResultSet = null;
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
-      // Only SELECT or read only operations are allowed throught the SQL executer 
+      conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
+      // Only SELECT or read only operations are allowed through the SQL executer 
       conn.setReadOnly(true);
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -320,25 +220,26 @@ public class DatasourceServiceDelegate {
 
   }
   
-  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+  public boolean testDataSourceConnection(String connectionName) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     Connection conn = null;
     try {
-      conn = DatasourceServiceHelper.getDataSourceConnection(connection);
-    } catch (DatasourceServiceException dme) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName(),dme.getLocalizedMessage()),dme);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),dme.getLocalizedMessage()),dme); //$NON-NLS-1$
+      conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
+      if(conn == null) {
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName));
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connectionName)); //$NON-NLS-1$
+      }
     } finally {
       try {
         if (conn != null) {
           conn.close();
         }
       } catch (SQLException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName(), e.getLocalizedMessage()),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),e.getLocalizedMessage()),e); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName, e.getLocalizedMessage()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connectionName,e.getLocalizedMessage()),e); //$NON-NLS-1$
       }
     }
     return true;
@@ -353,21 +254,20 @@ public class DatasourceServiceDelegate {
    * @throws DatasourceServiceException
    */
   
-  public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+  public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
     try {
-      SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
-          connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
+      Connection conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
         || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), sqlConnection.getNativeConnection(),
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, conn,
           query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
-            ,getDefaultAcls(),(getSession() != null) ? getSession().getName(): null); 
+            ,getDefaultAcls(),(PentahoSessionHolder.getSession() != null) ? PentahoSessionHolder.getSession().getName(): null); 
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
+      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
       return new BusinessData(domain, data);
     } catch(SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
@@ -382,7 +282,7 @@ public class DatasourceServiceDelegate {
    * @return BusinessData
    * @throws DatasourceServiceException
    */  
-  public BusinessData generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
+  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -391,14 +291,12 @@ public class DatasourceServiceDelegate {
     try {
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-
-      SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
-          connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), sqlConnection.getNativeConnection(),
+      Connection conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, conn,
           query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
-            ,getDefaultAcls(),(getSession() != null) ? getSession().getName(): null); 
+            ,getDefaultAcls(),(PentahoSessionHolder.getSession() != null) ? PentahoSessionHolder.getSession().getName(): null); 
       domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
+      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return new BusinessData(domain, data);
     } catch(DomainStorageException dse) {
@@ -415,34 +313,7 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()), smge); //$NON-NLS-1$
     }
   }
-  /**
-   * This method save the model
-   * 
-   * @param businessData, overwritze
-   * @return Boolean
-   * @throws DataSourceManagementException
-   */  
-  public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
-    }
-    Boolean returnValue = false;
-    String domainName = businessData.getDomain().getId();    
-    try {
-      getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
-      returnValue = true;
-    } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName, dse.getLocalizedMessage()),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
-    } catch(DomainAlreadyExistsException dae) {
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
-    } catch(DomainIdNullException dne) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL",dne.getLocalizedMessage()),dne);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
-    }
-    return returnValue;
-  }
+
   public IMetadataDomainRepository getMetadataDomainRepository() {
     return metadataDomainRepository;
   }
@@ -451,7 +322,7 @@ public class DatasourceServiceDelegate {
     this.metadataDomainRepository = metadataDomainRepository;
   }
 
-  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
+  public BusinessData generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
@@ -463,7 +334,7 @@ public class DatasourceServiceDelegate {
     InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
         relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
           getPermittedRoleList(),getPermittedUserList(),
-            getDefaultAcls(), (getSession() != null) ? getSession().getName(): null);
+            getDefaultAcls(), (PentahoSessionHolder.getSession() != null) ? PentahoSessionHolder.getSession().getName(): null);
     Domain domain  = inlineEtlModelGenerator.generate();
     List<List<String>> data = DatasourceServiceHelper.getCsvDataSample(relativeFilePath, headersPresent,
         delimiter, enclosure, 5);
@@ -473,16 +344,15 @@ public class DatasourceServiceDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
   }
-
-  public Boolean saveInlineEtlModel(Domain modelName, boolean overwrite) throws DatasourceServiceException  {
+  public boolean saveLogicalModel(Domain domain, boolean overwrite) throws DatasourceServiceException  {
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
 
-    String domainName = modelName.getId();    
+    String domainName = domain.getId();    
     try {
-      getMetadataDomainRepository().storeDomain(modelName, overwrite);
+      getMetadataDomainRepository().storeDomain(domain, overwrite);
       return true;
     } catch(DomainStorageException dse) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName, dse.getLocalizedMessage()),dse);
@@ -499,9 +369,9 @@ public class DatasourceServiceDelegate {
     String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
     return PentahoSystem.getApplicationContext().getSolutionPath(relativePath);    
   }
-  public Boolean hasPermission() {
-    if(getSession() != null) {
-      return (SecurityHelper.isPentahoAdministrator(getSession()) || hasDataAccessPermission());
+  public boolean hasPermission() {
+    if(PentahoSessionHolder.getSession() != null) {
+      return (SecurityHelper.isPentahoAdministrator(PentahoSessionHolder.getSession()) || hasDataAccessPermission());
     } else {
       return false;
     }
@@ -531,7 +401,6 @@ public class DatasourceServiceDelegate {
   }
   
   public BusinessData loadBusinessData(String domainId, String modelId)  throws DatasourceServiceException {
-    try {
       Domain domain = getMetadataDomainRepository().getDomain(domainId);
       List<List<String>> data = null;
       if (domain.getPhysicalModels().get(0) instanceof InlineEtlPhysicalModel) {
@@ -540,12 +409,15 @@ public class DatasourceServiceDelegate {
             model.getFileLocation(), model.getHeaderPresent(), model.getDelimiter(), model.getEnclosure(), 5);
       } else {
         SqlPhysicalModel model = (SqlPhysicalModel)domain.getPhysicalModels().get(0);
-        IConnection connection = connectionService.getConnectionByName(model.getDatasource().getDatabaseName());
         String query = model.getPhysicalTables().get(0).getTargetTable();
-        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, 5);
+        data = DatasourceServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5, PentahoSessionHolder.getSession());
       }
       return new BusinessData(domain, data);
-    } catch (ConnectionServiceException e) {
-      throw new DatasourceServiceException("DatasourceServiceInMemoryDelegate.ERROR_0018 Failed to load business data, connection exception", e);
-    }  }
+  }
+
+
+  public BogoPojo gwtWorkaround(BogoPojo pojo) {
+    return pojo;
+  }
+
 }

@@ -14,7 +14,6 @@ import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel.ConnectionEditType;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.ui.database.event.DatabaseDialogListener;
 import org.pentaho.ui.database.gwt.GwtDatabaseDialog;
 import org.pentaho.ui.database.gwt.GwtXulAsyncDatabaseConnectionService;

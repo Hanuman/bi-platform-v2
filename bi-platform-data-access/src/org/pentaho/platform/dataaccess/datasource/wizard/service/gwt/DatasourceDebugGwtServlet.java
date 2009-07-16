@@ -1,72 +1,53 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 
 import java.util.List;
+import java.lang.Boolean;
 
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceInMemoryDelegate;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.InMemoryDatasourceServiceImpl;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements DatasourceGwtService {
+public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements IGwtDatasourceService {
 
-  DatasourceServiceInMemoryDelegate SERVICE;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8247397306730500944L;
+  InMemoryDatasourceServiceImpl SERVICE;
 
   public DatasourceDebugGwtServlet() {
-    SERVICE = new DatasourceServiceInMemoryDelegate();
+    SERVICE = new InMemoryDatasourceServiceImpl();
   }
 
-  public List<IDatasource> getDatasources() {
-    return SERVICE.getDatasources();
-  }
-  public IDatasource getDatasourceByName(String name) {
-    return SERVICE.getDatasourceByName(name);
-  }
-  public Boolean addDatasource(IDatasource datasource) {
-    return SERVICE.addDatasource(datasource);
+  public SerializedResultSet doPreview(String connectionName, String query, String previewLimit) throws DatasourceServiceException{
+    return SERVICE.doPreview(connectionName, query, previewLimit);
   }
 
-  public Boolean updateDatasource(IDatasource datasource) {
-    return SERVICE.updateDatasource(datasource);
-  }
-
-  public Boolean deleteDatasource(IDatasource datasource) {
-    return SERVICE.deleteDatasource(datasource);
-  }
-    
-  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
-    return SERVICE.doPreview(connection, query, previewLimit);
-  }
-
-  public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
-    return SERVICE.generateModel(modelName, connection, query, previewLimit);
+  public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit) throws DatasourceServiceException {
+    return SERVICE.generateLogicalModel(modelName, connectionName, query, previewLimit);
    }
-  public BusinessData generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit) throws DatasourceServiceException {
-    return SERVICE.generateAndSaveModel(modelName, connection, query, overwrite, previewLimit);
+  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit) throws DatasourceServiceException {
+    return SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit);
   }
-  public Boolean saveModel(BusinessData businessData, Boolean overwrite) throws DatasourceServiceException {
-    return SERVICE.saveModel(businessData, overwrite);
+  public boolean saveLogicalModel(Domain modelName, boolean overwrite) throws DatasourceServiceException {
+    return SERVICE.saveLogicalModel(modelName, overwrite);
   }
   public BogoPojo gwtWorkaround(BogoPojo pojo) {
     return pojo;
   }
 
-  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
+  public BusinessData generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent,
       String delimeter, String enclosure) throws DatasourceServiceException {
-    return SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
+    return SERVICE.generateInlineEtlLogicalModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure);
   }
-
-  public Boolean saveInlineEtlModel(Domain modelName, Boolean overwrite) throws DatasourceServiceException {
-    return SERVICE.saveInlineEtlModel(modelName, overwrite);
-  } 
   
-  public Boolean hasPermission() {
+  public boolean hasPermission() {
     return SERVICE.hasPermission();
   }
 
@@ -74,8 +55,8 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements D
     return SERVICE.getUploadFilePath();
   }
 
-  public Boolean deleteModel(String domainId, String modelName)  throws DatasourceServiceException {
-    return SERVICE.deleteModel(domainId, modelName);
+  public boolean deleteLogicalModel(String domainId, String modelName)  throws DatasourceServiceException {
+    return SERVICE.deleteLogicalModel(domainId, modelName);
   }
 
   public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {

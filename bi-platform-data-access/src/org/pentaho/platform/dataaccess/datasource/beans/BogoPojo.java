@@ -19,7 +19,7 @@ import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-
+import java.lang.Boolean;
 /*
  * This class is a workaround for GWT. GWT is not able to compile these classes are they have been used in a map
  * http://code.google.com/p/google-web-toolkit/issues/detail?id=3521
@@ -43,7 +43,14 @@ public class BogoPojo implements Serializable{
   Alignment alignment;
   Color color;
   ColumnWidth columnWidth;
+  Boolean booleanValue;
   
+  public Boolean getBooleanValue() {
+    return booleanValue;
+  }
+  public void setBooleanValue(Boolean booleanValue) {
+    this.booleanValue = booleanValue;
+  }
   public Alignment getAlignment() {
     return alignment;
   }

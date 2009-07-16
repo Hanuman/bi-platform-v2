@@ -5,7 +5,6 @@ import java.util.List;
 import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtConnectionServiceAsync;
 import org.pentaho.ui.xul.XulServiceCallback;
 

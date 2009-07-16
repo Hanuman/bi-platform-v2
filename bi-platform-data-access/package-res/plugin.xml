@@ -9,10 +9,12 @@
    <!-- this is used by the datasource service -->
    <bean id="connectionServiceImpl" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceImpl"/>
    
+   <bean id="datasourceServiceImpl" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceImpl"/>
+   
    <webservice 
     id="datasourceService" 
     type="xml,gwt"
-    class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceServiceBeanImpl"/>
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceImpl"/>
    
   <webservice
     id="connectionService"

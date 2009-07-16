@@ -3,28 +3,25 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 import java.util.List;
 
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtServiceAsync;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtDatasourceServiceAsync;
 import org.pentaho.ui.xul.XulServiceCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-public class DatasourceServiceGwtImpl implements DatasourceService {
+public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
   final static String ERROR = "ERROR:";
-  static DatasourceGwtServiceAsync SERVICE;
+  static IGwtDatasourceServiceAsync SERVICE;
 
   static {
 
-    SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtServiceAsync) GWT
-        .create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtService.class);
+    SERVICE = (org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtDatasourceServiceAsync) GWT
+        .create(org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IGwtDatasourceService.class);
     ServiceDefTarget endpoint = (ServiceDefTarget) SERVICE;
     endpoint.setServiceEntryPoint(getBaseUrl());
 
@@ -56,79 +53,9 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
   public DatasourceServiceGwtImpl() {
 
   }
-
-  public void getDatasources(final XulServiceCallback<List<IDatasource>> callback) {
-    SERVICE.getDatasources(new AsyncCallback<List<IDatasource>>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error getting connections: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(List<IDatasource> arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
-  public void getDatasourceByName(String name, final XulServiceCallback<IDatasource> callback) {
-    SERVICE.getDatasourceByName(name, new AsyncCallback<IDatasource>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error getting connections: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(IDatasource arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
-  public void addDatasource(IDatasource datasource, final XulServiceCallback<Boolean> callback) {
-    SERVICE.addDatasource(datasource, new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error adding connection: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(Boolean arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
-  public void updateDatasource(IDatasource datasource, final XulServiceCallback<Boolean> callback) {
-    SERVICE.updateDatasource(datasource, new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error updating connection: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(Boolean arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
-  public void deleteDatasource(IDatasource datasource, final XulServiceCallback<Boolean> callback) {
-    SERVICE.deleteDatasource(datasource, new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error deleting connection: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(Boolean arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-  public void doPreview(IConnection connection, String query, String previewLimit,
-      final XulServiceCallback<SerializedResultSet> callback) throws DatasourceServiceException {
-    SERVICE.doPreview(connection, query, previewLimit, new AsyncCallback<SerializedResultSet>() {
+  public void doPreview(String connectionName, String query, String previewLimit,
+      final XulServiceCallback<SerializedResultSet> callback) {
+    SERVICE.doPreview(connectionName, query, previewLimit, new AsyncCallback<SerializedResultSet>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error doing preview: ", arg0);//$NON-NLS-1$
@@ -142,9 +69,9 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
 
   }
 
-  public void generateModel(String modelName, IConnection connection, String query, String previewLimit,
-      final XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
-    SERVICE.generateModel(modelName, connection, query, previewLimit, new AsyncCallback<BusinessData>() {
+  public void generateLogicalModel(String modelName, String connectionName, String query, String previewLimit,
+      final XulServiceCallback<BusinessData> callback) {
+    SERVICE.generateLogicalModel(modelName, connectionName, query, previewLimit, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error generating the mode: ", arg0);//$NON-NLS-1$
@@ -157,9 +84,9 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  public void generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit,
-      final XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
-    SERVICE.generateAndSaveModel(modelName, connection, query, overwrite, previewLimit, new AsyncCallback<BusinessData>() {
+  public void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit,
+      final XulServiceCallback<BusinessData> callback) {
+    SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error saving the mode: ", arg0); //$NON-NLS-1$
@@ -172,9 +99,8 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  public void saveModel(BusinessData businessData, Boolean overwrite, final XulServiceCallback<Boolean> callback)
-      throws DatasourceServiceException {
-    SERVICE.saveModel(businessData, overwrite, new AsyncCallback<Boolean>() {
+  public void saveLogicalModel(Domain domain, boolean overwrite, final XulServiceCallback<Boolean> callback) {
+    SERVICE.saveLogicalModel(domain, overwrite, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error saving the mode: ", arg0); //$NON-NLS-1$
@@ -187,9 +113,9 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  public void generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent,
-      String delimeter, String enclosure, final XulServiceCallback<BusinessData> callback) throws DatasourceServiceException {
-    SERVICE.generateInlineEtlModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<BusinessData>() {
+  public void generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent,
+      String delimeter, String enclosure, final XulServiceCallback<BusinessData> callback) {
+    SERVICE.generateInlineEtlLogicalModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error generating the inline etl model: ", arg0);//$NON-NLS-1$
@@ -203,20 +129,6 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     
   }
 
-  public void saveInlineEtlModel(Domain modelName, Boolean overwrite, final XulServiceCallback<Boolean> callback)
-      throws DatasourceServiceException {
-    SERVICE.saveInlineEtlModel(modelName, overwrite, new AsyncCallback<Boolean>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error("error generating the inline etl model: ", arg0);//$NON-NLS-1$
-      }
-
-      public void onSuccess(Boolean arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
 
   public void hasPermission(final XulServiceCallback<Boolean> callback) {
     SERVICE.hasPermission(new AsyncCallback<Boolean>() {
@@ -232,7 +144,7 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  public void getUploadFilePath(final XulServiceCallback<String> callback) throws DatasourceServiceException {
+  public void getUploadFilePath(final XulServiceCallback<String> callback) {
     SERVICE.getUploadFilePath(new AsyncCallback<String>() {
 
       public void onFailure(Throwable arg0) {
@@ -246,8 +158,8 @@ public class DatasourceServiceGwtImpl implements DatasourceService {
     });
   }
 
-  public void deleteModel(String domainId, String modelName, final XulServiceCallback<Boolean> callback) {
-    SERVICE.deleteModel(domainId, modelName, new AsyncCallback<Boolean>() {
+  public void deleteLogicalModel(String domainId, String modelName, final XulServiceCallback<Boolean> callback) {
+    SERVICE.deleteLogicalModel(domainId, modelName, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
         callback.error("error deleting the model: ", arg0); //$NON-NLS-1$

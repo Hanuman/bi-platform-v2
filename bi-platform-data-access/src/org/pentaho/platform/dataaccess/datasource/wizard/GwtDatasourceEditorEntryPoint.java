@@ -1,9 +1,9 @@
 package org.pentaho.platform.dataaccess.datasource.wizard;
 
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -18,7 +18,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class GwtDatasourceEditorEntryPoint implements EntryPoint {
 
   private GwtDatasourceEditor editor;
-  private DatasourceService datasourceService;
+  private IXulAsyncDatasourceService datasourceService;
   private IXulAsyncConnectionService connectionService;
 
   public void onModuleLoad() {
@@ -36,7 +36,7 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
       editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::showEdit(Ljava/lang/String;Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(domainId, modelId, callback);
     }
     $wnd.deleteModel=function(domainId, modelName, callback) {
-      editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::deleteModel(Ljava/lang/String;Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(domainId, modelName, callback);
+      editor.@org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint::deleteLogicalModel(Ljava/lang/String;Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(domainId, modelName, callback);
     }
   }-*/;
 
@@ -51,23 +51,13 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
    *
    */
   private void show(final JavaScriptObject callback) {
-    final DialogListener<IDatasource> listener = new DialogListener<IDatasource>(){
+    final DialogListener<Domain> listener = new DialogListener<Domain>(){
       public void onDialogCancel() {
         notifyCallbackCancel(callback);
       }
-
-      public void onDialogAccept(final IDatasource datasource) {
-        datasourceService.addDatasource(datasource, new XulServiceCallback<Boolean>(){
-          public void success(Boolean value) {
-            WAQRTransport transport = WAQRTransport.createFromMetadata(datasource.getBusinessData().getDomain());
-            notifyCallbackSuccess(callback, value, transport);
-          }
-
-          public void error(String s, Throwable throwable) {
-            notifyCallbackError(callback, throwable.getMessage());
-          }
-        });
-
+      public void onDialogAccept(final Domain domain) {
+        WAQRTransport transport = WAQRTransport.createFromMetadata(domain);
+        notifyCallbackSuccess(callback, true, transport);
       }
     };
     editor.addDialogListener(listener);
@@ -85,21 +75,13 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
    *
    */
   private void showEdit(final String domainId, final String modelId, final JavaScriptObject callback) {
-    final DialogListener<IDatasource> listener = new DialogListener<IDatasource>(){
+    final DialogListener<Domain> listener = new DialogListener<Domain>(){
       public void onDialogCancel() {
         notifyCallbackCancel(callback);
       }
-      public void onDialogAccept(final IDatasource datasource) {
-        datasourceService.addDatasource(datasource, new XulServiceCallback<Boolean>(){
-          public void success(Boolean value) {
-            WAQRTransport transport = WAQRTransport.createFromMetadata(datasource.getBusinessData().getDomain());
-            notifyCallbackSuccess(callback, value, transport);
-          }
-
-          public void error(String s, Throwable throwable) {
-            notifyCallbackError(callback, throwable.getMessage());
-          }
-        });
+      public void onDialogAccept(final Domain domain) {
+            WAQRTransport transport = WAQRTransport.createFromMetadata(domain);
+            notifyCallbackSuccess(callback, true, transport);
       }
     };
     editor.addDialogListener(listener);
@@ -117,8 +99,8 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
    * @param callback
    *
    */
-  private void deleteModel(String domainId, String modelName, final JavaScriptObject callback) {
-    datasourceService.deleteModel(domainId, modelName, new XulServiceCallback<Boolean>(){
+  private void deleteLogicalModel(String domainId, String modelName, final JavaScriptObject callback) {
+    datasourceService.deleteLogicalModel(domainId, modelName, new XulServiceCallback<Boolean>(){
       public void success(Boolean value) {
         notifyCallbackSuccess(callback, value);
       }

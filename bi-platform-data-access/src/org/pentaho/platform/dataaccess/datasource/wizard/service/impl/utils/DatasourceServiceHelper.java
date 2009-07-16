@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,67 +13,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 
 public class DatasourceServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceServiceHelper.class);
-  /**
-   * NOTE: caller is responsible for closing connection
-   * 
-   * @param ds
-   * @return
-   * @throws DatasourceServiceException
-   */
-  public static Connection getDataSourceConnection(IConnection connection) throws DatasourceServiceException {
-    String driverClass = connection.getDriverClass();
-    if (StringUtils.isEmpty(driverClass)) {
-      logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0014_CONNECTION_ATTEMPT_FAILED"));
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0014_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
-    }
-    Class<?> driverC = null;
 
-    try {
-      driverC = Class.forName(driverClass);
-    } catch (ClassNotFoundException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
-    }
-    if (!Driver.class.isAssignableFrom(driverC)) {
-      logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0011_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
-    }
-    Driver driver = null;
-    try {
-      driver = driverC.asSubclass(Driver.class).newInstance();
-    } catch (InstantiationException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    } catch (IllegalAccessException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0012_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
-    }
-      SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection.getDriverClass(),
-          connection.getUrl(), connection.getUsername(), connection.getPassword(), null, null);
-      return sqlConnection.getNativeConnection(); 
+
+  public static Connection getDataSourceConnection(String connectionName, IPentahoSession session) {
+    SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, session, null);
+    return sqlConnection.getNativeConnection(); 
   }
-
   
-  public static List<List<String>> getRelationalDataSample(IConnection connection, String query, int rowLimit) {
+  public static List<List<String>> getRelationalDataSample(String connectionName, String query, int rowLimit, IPentahoSession session) {
     List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
     Connection conn = null;
     Statement stmt = null;
     ResultSet results = null;
 
     try {
-      conn = getDataSourceConnection(connection);
+      conn = getDataSourceConnection(connectionName, session);
       stmt = conn.createStatement();
       results = stmt.executeQuery(query);
       
@@ -108,7 +70,7 @@ public class DatasourceServiceHelper {
     return dataSample;
   }
 
-  public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String enclosure, String delimiter, int rowLimit) {
+  public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String delimiter, String enclosure, int rowLimit) {
     String line = null;
     int row = 0;
     List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);

@@ -1,9 +1,7 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
-import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**

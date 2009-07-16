@@ -11,7 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -20,7 +19,6 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
@@ -29,16 +27,13 @@ import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.metadata.util.SQLModelGenerator;
 import org.pentaho.metadata.util.SQLModelGeneratorException;
-import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
-import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -49,65 +44,21 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  * lower-level BusinessData instances. (BusinessData instances are stored in IDatasources.) They are not currently being
  * kept in sync. I propose that the service only deals with IDatasources from a caller perspective.
  */
-public class DatasourceServiceInMemoryDelegate {
+public class InMemoryDatasourceServiceImpl implements IDatasourceService{
 
   public static final IMetadataDomainRepository METADATA_DOMAIN_REPO = new InMemoryMetadataDomainRepository();
-  private static final Log logger = LogFactory.getLog(DatasourceServiceInMemoryDelegate.class);
+  private static final Log logger = LogFactory.getLog(InMemoryDatasourceServiceImpl.class);
   public static final String DEFAULT_UPLOAD_FILEPATH_FILE_NAME = "debug_upload_filepath.properties"; //$NON-NLS-1$
   public static final String UPLOAD_FILE_PATH = "upload.file.path"; //$NON-NLS-1$
   private IMetadataDomainRepository metadataDomainRepository;
   
   
-  public DatasourceServiceInMemoryDelegate() {
+  public InMemoryDatasourceServiceImpl() {
     // this needs to share the same one as MQL editor...
     metadataDomainRepository = METADATA_DOMAIN_REPO;
   }
-  
-  public List<IDatasource> getDatasources() {
-    List<IDatasource> datasources = new ArrayList<IDatasource>();
-    Set<String> domainIds = metadataDomainRepository.getDomainIds();
-    for (String domainId : domainIds) {
-      Domain domain = metadataDomainRepository.getDomain(domainId);
-      BusinessData bs = new BusinessData();
-      bs.setDomain(domain);
-      Datasource ds = new Datasource();
-      ds.setBusinessData(bs);
-      ds.setDatasourceName(domain.getId());
-      datasources.add(ds);
-    }
-    return datasources;
-  }
-  
-  public IDatasource getDatasourceByName(String name) {
-    for(IDatasource datasource:getDatasources()) {
-      if(datasource.getDatasourceName().equals(name)) {
-        return datasource;
-      }
-    }
-    return null;
-  }
-  public Boolean addDatasource(IDatasource datasource) {
-    getDatasources().add(datasource);
-    return true;
-  }
-  public Boolean updateDatasource(IDatasource datasource) {
-    List<IDatasource> datasources = getDatasources();
-    for(IDatasource datasrc:datasources) {
-      if(datasrc.getDatasourceName().equals(datasource.getDatasourceName())) {
-        datasources.remove(datasrc);
-        datasources.add(datasource);
-      }
-    }
-    return true;
-  }
-  public Boolean deleteDatasource(IDatasource datasource) {
-    List<IDatasource> datasources = getDatasources();
-    metadataDomainRepository.removeDomain(datasource.getDatasourceName());
-    datasources.remove(datasources.indexOf(datasource));
-    return true;
-  }
-  
-  public Boolean deleteModel(String domainId, String modelName) throws DatasourceServiceException {
+ 
+  public boolean deleteLogicalModel(String domainId, String modelName) throws DatasourceServiceException {
     try {
       metadataDomainRepository.removeModel(domainId, modelName);
     } catch(DomainStorageException dse) {
@@ -133,14 +84,14 @@ public class DatasourceServiceInMemoryDelegate {
     return dataAccessViewPermHandler.getDefaultAcls(PentahoSessionHolder.getSession()); 
   }
   
-  public SerializedResultSet doPreview(IConnection connection, String query, String previewLimit) throws DatasourceServiceException{
+  public SerializedResultSet doPreview(String connectionName, String query, String previewLimit) throws DatasourceServiceException{
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
     SerializedResultSet serializedResultSet = null;
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
+      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName);
 
       if (!StringUtils.isEmpty(query)) {
         stmt = conn.createStatement();
@@ -175,21 +126,21 @@ public class DatasourceServiceInMemoryDelegate {
 
   }
 
-  public boolean testDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+  public boolean testDataSourceConnection(String connectionName) throws DatasourceServiceException {
     Connection conn = null;
     try {
-      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connection);
+      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName);
     } catch (DatasourceServiceException dme) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),dme);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),dme); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName),dme);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connectionName),dme); //$NON-NLS-1$
     } finally {
       try {
         if (conn != null) {
           conn.close();
         }
       } catch (SQLException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connection.getName()),e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName()),e); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connectionName),e); //$NON-NLS-1$
       }
     }
     return true;
@@ -205,15 +156,15 @@ public class DatasourceServiceInMemoryDelegate {
    * @throws DatasourceServiceException
    */
   
-  public BusinessData generateModel(String modelName, IConnection connection, String query, String previewLimit) throws DatasourceServiceException {
+  public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit) throws DatasourceServiceException {
     try {
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
         || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), DatasourceInMemoryServiceHelper.getDataSourceConnection(connection),
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName),
           query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
             ,getDefaultAcls(),"joe"); 
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit));
       return new BusinessData(domain, data);
     } catch(SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
@@ -229,17 +180,17 @@ public class DatasourceServiceInMemoryDelegate {
    * @return BusinessData
    * @throws DatasourceServiceException
    */  
-  public BusinessData generateAndSaveModel(String modelName, IConnection connection, String query, Boolean overwrite, String previewLimit)  throws DatasourceServiceException {
+  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit)  throws DatasourceServiceException {
     Domain domain = null;
       try {
         Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
         || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
 
-        SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connection.getName(), DatasourceInMemoryServiceHelper.getDataSourceConnection(connection),
+        SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName),
             query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
               ,getDefaultAcls(),"joe"); 
         domain = sqlModelGenerator.generate();
-        List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, Integer.parseInt(previewLimit));
+        List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit));
         getMetadataDomainRepository().storeDomain(domain, overwrite);
         return new BusinessData(domain, data);
     } catch(SQLModelGeneratorException smge) {
@@ -256,33 +207,6 @@ public class DatasourceServiceInMemoryDelegate {
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$     
     }   
   }
-  
-  /**
-   * This method save the model
-   * 
-   * @param businessData, overwrite
-   * @return Boolean
-   * @throws DataSourceManagementException
-   */  
-  public Boolean saveModel(BusinessData businessData, Boolean overwrite)throws DatasourceServiceException {
-    Boolean returnValue = false;
-    String domainName = businessData.getDomain().getId();   
-    try {
-    getMetadataDomainRepository().storeDomain(businessData.getDomain(), overwrite);
-    returnValue = true;
-    } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName), dse); //$NON-NLS-1$      
-    } catch(DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName),dae);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName), dae); //$NON-NLS-1$      
-    } catch(DomainIdNullException dne) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$     
-    }
-    return returnValue;
-  }
-
   public IMetadataDomainRepository getMetadataDomainRepository() {
     return metadataDomainRepository;
   }
@@ -291,7 +215,7 @@ public class DatasourceServiceInMemoryDelegate {
     this.metadataDomainRepository = metadataDomainRepository;
   }
   
-  public BusinessData generateInlineEtlModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
+  public BusinessData generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimiter, String enclosure) throws DatasourceServiceException {
     try  {
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
@@ -311,7 +235,6 @@ public class DatasourceServiceInMemoryDelegate {
   }
   
   public BusinessData loadBusinessData(String domainId, String modelId)  throws DatasourceServiceException {
-    try {
       Domain domain = getMetadataDomainRepository().getDomain(domainId);
       List<List<String>> data = null;
       if (domain.getPhysicalModels().get(0) instanceof InlineEtlPhysicalModel) {
@@ -320,27 +243,23 @@ public class DatasourceServiceInMemoryDelegate {
             model.getFileLocation(), model.getHeaderPresent(), model.getDelimiter(), model.getEnclosure(), 5);
       } else {
         SqlPhysicalModel model = (SqlPhysicalModel)domain.getPhysicalModels().get(0);
-        IConnection connection = ConnectionDebugGwtServlet.SERVICE.getConnectionByName(model.getDatasource().getDatabaseName());
         String query = model.getPhysicalTables().get(0).getTargetTable();
-        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connection, query, 5);
+        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5);
       }
       return new BusinessData(domain, data);
-    } catch (ConnectionServiceException e) {
-      throw new DatasourceServiceException("DatasourceServiceInMemoryDelegate.ERROR_0018 Failed to load business data, connection exception", e);
-    }
   }
 
-  public Boolean saveInlineEtlModel(Domain modelName, boolean overwrite) throws DatasourceServiceException  {
-    LocalizedString domainName = modelName.getName();   
+  public boolean saveLogicalModel(Domain domain, boolean overwrite) throws DatasourceServiceException  {
+    String domainName = domain.getId();
     try {
-      getMetadataDomainRepository().storeDomain(modelName, overwrite);
+      getMetadataDomainRepository().storeDomain(domain, overwrite);
       return true;
     } catch(DomainStorageException dse) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName.toString()),dse);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName.toString()), dse); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0017_UNABLE_TO_STORE_DOMAIN",domainName),dse);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName), dse); //$NON-NLS-1$      
     } catch(DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName.toString()),dae);
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName.toString()), dae); //$NON-NLS-1$      
+      logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST",domainName),dae);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName), dae); //$NON-NLS-1$      
     } catch(DomainIdNullException dne) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"),dne);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
@@ -360,7 +279,7 @@ public class DatasourceServiceInMemoryDelegate {
     }
   }
   
-  public Boolean hasPermission() {
+  public boolean hasPermission() {
     return true;
   }
 
@@ -381,5 +300,9 @@ public class DatasourceServiceInMemoryDelegate {
       }
     }
     return logicalModelSummaries;
+  }
+
+  public BogoPojo gwtWorkaround(BogoPojo pojo) {
+    return pojo;
   }
 }

@@ -19,7 +19,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 
 public class DatasourceInMemoryServiceHelper {
@@ -32,7 +34,14 @@ public class DatasourceInMemoryServiceHelper {
    * @return
    * @throws DatasourceServiceException
    */
-  public static Connection getDataSourceConnection(IConnection connection) throws DatasourceServiceException {
+  public static Connection getDataSourceConnection(String connectionName) throws DatasourceServiceException {
+    IConnection connection = null;
+    try {
+      connection = ConnectionDebugGwtServlet.SERVICE.getConnectionByName(connectionName);
+    } catch (ConnectionServiceException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
     Connection conn = null;
 
     String driverClass = connection.getDriverClass();
@@ -74,14 +83,14 @@ public class DatasourceInMemoryServiceHelper {
   }
 
   
-  public static List<List<String>> getRelationalDataSample(IConnection connection, String query, int rowLimit) {
+  public static List<List<String>> getRelationalDataSample(String connectionName, String query, int rowLimit) {
     List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
     Connection conn = null;
     Statement stmt = null;
     ResultSet results = null;
 
     try {
-      conn = getDataSourceConnection(connection);
+      conn = getDataSourceConnection(connectionName);
       stmt = conn.createStatement();
       results = stmt.executeQuery(query);
       
@@ -115,7 +124,7 @@ public class DatasourceInMemoryServiceHelper {
     return dataSample;
   }
 
-  public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String enclosure, String delimiter, int rowLimit) {
+  public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String delimiter, String enclosure, int rowLimit) {
     String line = null;
     int row = 0;
     List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);

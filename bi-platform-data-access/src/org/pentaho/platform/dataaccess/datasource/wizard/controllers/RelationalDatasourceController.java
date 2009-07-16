@@ -17,8 +17,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.WaitingDialog;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.ModelDataRow;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -44,23 +43,28 @@ import org.pentaho.ui.xul.util.TreeCellRenderer;
 
 public class RelationalDatasourceController extends AbstractXulEventHandler implements IDatasourceTypeController {
   public static final int MAX_SAMPLE_DATA_ROWS = 5;
+
   public static final int MAX_COL_SIZE = 13;
+
   public static final String EMPTY_STRING = ""; //$NON-NLS-1$
-  
+
   public static final String COMMA = ","; //$NON-NLS-1$
+
   private DatasourceMessages datasourceMessages;
+
   private XulDialog connectionDialog;
+
   private WaitingDialog waitingDialogBox;
 
   private XulDialog waitingDialog = null;
-  
+
   private XulDialog applyQueryConfirmationDialog = null;
-  
+
   private XulLabel waitingDialogLabel = null;
 
   private XulDialog previewResultsDialog = null;
 
-  private DatasourceService service;
+  private IXulAsyncDatasourceService service;
 
   private DatasourceModel datasourceModel;
 
@@ -99,19 +103,28 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   private XulButton applyButton = null;
 
   private XulTreeCol columnNameTreeCol = null;
+
   private XulTreeCol columnTypeTreeCol = null;
+
   //private XulTreeCol columnFormatTreeCol = null;\
   XulTree sampleDataTree = null;
+
   XulDialog aggregationEditorDialog = null;
+
   XulDialog sampleDataDialog = null;
+
   CustomAggregateCellEditor aggregationCellEditor = null;
+
   CustomSampleDataCellEditor sampleDataCellEditor = null;
+
   CustomSampleDataCellRenderer sampleDataCellRenderer = null;
+
   //private XulRows rows = null;
   //private XulGrid grid = null;  
   CustomAggregationCellRenderer aggregationCellRenderer = null;
+
   private XulVbox relationalAggregationEditorVbox = null;
-  
+
   public RelationalDatasourceController() {
 
   }
@@ -175,10 +188,9 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
     };
 
-
-    bf.createBinding(datasourceName, "value", connections, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceName, "value", query, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceName, "value", modelDataTable, "!disabled",widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceName, "value", connections, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceName, "value", query, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceName, "value", modelDataTable, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
       @Override
@@ -194,9 +206,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     };
 
     bf.setBindingType(Binding.Type.ONE_WAY);
-    final Binding domainBinding = bf.createBinding(datasourceModel.getRelationalModel(), "connections", connections, "elements"); //$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel.getRelationalModel(), "selectedConnection", editConnectionButton, "!disabled", buttonConvertor); //$NON-NLS-1$ //$NON-NLS-2$ 
-    bf.createBinding(datasourceModel.getRelationalModel(), "selectedConnection", removeConnectionButton, "!disabled", buttonConvertor); //$NON-NLS-1$ //$NON-NLS-2$
+    final Binding domainBinding = bf.createBinding(datasourceModel.getRelationalModel(),
+        "connections", connections, "elements"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getRelationalModel(),
+        "selectedConnection", editConnectionButton, "!disabled", buttonConvertor); //$NON-NLS-1$ //$NON-NLS-2$ 
+    bf.createBinding(datasourceModel.getRelationalModel(),
+        "selectedConnection", removeConnectionButton, "!disabled", buttonConvertor); //$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     bf.createBinding(datasourceModel.getRelationalModel(),
         "selectedConnection", connections, "selectedIndex", new BindingConvertor<IConnection, Integer>() { //$NON-NLS-1$ //$NON-NLS-2$
@@ -223,7 +238,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
         });
     bf.createBinding(datasourceModel.getRelationalModel(), "dataRows", modelDataTable, "elements");
-    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);     
+    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     bf.createBinding(datasourceModel.getRelationalModel(), "previewLimit", previewLimit, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     // Not sure if editQuery button is doing much
     //bf.createBinding(editQueryButton, "!disabled", "removeConnectionButton", "!disabled", buttonConvertor); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -259,85 +274,85 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   }
 
   public void applyQuery() {
-    if(datasourceModel.getRelationalModel().getBusinessData() != null) {
+    if (datasourceModel.getRelationalModel().getBusinessData() != null) {
       applyQueryConfirmationDialog.show();
     } else {
       generateModel();
     }
   }
+
   public void generateModel() {
-      if (validateInputs()) {
-        query.setDisabled(true);
-        if(applyQueryConfirmationDialog.isVisible()) {
-          applyQueryConfirmationDialog.hide();
-        }
-        try {
-          showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages.getString("DatasourceController.WAIT"));
-          service.generateModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel().getSelectedConnection(),
-              datasourceModel.getRelationalModel().getQuery(), datasourceModel.getRelationalModel().getPreviewLimit(), new XulServiceCallback<BusinessData>() {
+    if (validateInputs()) {
+      query.setDisabled(true);
+      if (applyQueryConfirmationDialog.isVisible()) {
+        applyQueryConfirmationDialog.hide();
+      }
+      showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages
+          .getString("DatasourceController.WAIT"));
+      service.generateLogicalModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel()
+          .getSelectedConnection().getName(), datasourceModel.getRelationalModel().getQuery(), datasourceModel
+          .getRelationalModel().getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
-                public void error(String message, Throwable error) {
-                  hideWaitingDialog();
-                  query.setDisabled(false);
-                  displayErrorMessage(error);
-                }
-
-                public void success(BusinessData businessData) {
-                  try {
-                    hideWaitingDialog();
-                    
-                    // merge any potential changes from earlier models
-                    if (datasourceModel.getRelationalModel().getBusinessData() != null) {
-                      Domain oldDomain = datasourceModel.getRelationalModel().getBusinessData().getDomain();
-                      Domain newDomain = businessData.getDomain();
-                      datasourceModel.copyOverMetadata(oldDomain, newDomain);
-                    }
-                    
-                    datasourceModel.getRelationalModel().setBusinessData(null);                    
-                    query.setDisabled(false);
-                    // Setting the editable property to true so that the table can be populated with correct cell types                    
-                    columnNameTreeCol.setEditable(true);
-                    columnTypeTreeCol.setEditable(true);
-                    //columnFormatTreeCol.setEditable(true);
-                    datasourceModel.getRelationalModel().setBusinessData(businessData);
-                  } catch (Exception xe) {
-                    xe.printStackTrace();
-                  }
-                }
-              });
-        } catch (DatasourceServiceException e) {
+        public void error(String message, Throwable error) {
           hideWaitingDialog();
           query.setDisabled(false);
-          displayErrorMessage(e);
+          displayErrorMessage(error);
         }
-      } else {
-        openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"), getMissingInputs());
-      }
+
+        public void success(BusinessData businessData) {
+          try {
+            hideWaitingDialog();
+
+            // merge any potential changes from earlier models
+            if (datasourceModel.getRelationalModel().getBusinessData() != null) {
+              Domain oldDomain = datasourceModel.getRelationalModel().getBusinessData().getDomain();
+              Domain newDomain = businessData.getDomain();
+              datasourceModel.copyOverMetadata(oldDomain, newDomain);
+            }
+
+            datasourceModel.getRelationalModel().setBusinessData(null);
+            query.setDisabled(false);
+            // Setting the editable property to true so that the table can be populated with correct cell types                    
+            columnNameTreeCol.setEditable(true);
+            columnTypeTreeCol.setEditable(true);
+            //columnFormatTreeCol.setEditable(true);
+            datasourceModel.getRelationalModel().setBusinessData(businessData);
+          } catch (Exception xe) {
+            xe.printStackTrace();
+          }
+        }
+      });
+    } else {
+      openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"),
+          getMissingInputs());
+    }
   }
-  
+
   private boolean validateInputs() {
     return (datasourceModel.getRelationalModel().getSelectedConnection() != null
-        && (datasourceModel.getRelationalModel().getQuery() != null && datasourceModel.getRelationalModel().getQuery().length() > 0) && (datasourceModel
-        .getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0));
+        && (datasourceModel.getRelationalModel().getQuery() != null && datasourceModel.getRelationalModel().getQuery()
+            .length() > 0) && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName()
+        .length() > 0));
   }
-  
+
   private String getMissingInputs() {
     StringBuffer buffer = new StringBuffer();
-    if(datasourceModel.getRelationalModel().getSelectedConnection() == null) {
+    if (datasourceModel.getRelationalModel().getSelectedConnection() == null) {
       buffer.append(datasourceMessages.getString("datasourceDialog.Connection"));
       buffer.append(" \n");
     }
-    if(datasourceModel.getRelationalModel().getQuery() == null && datasourceModel.getRelationalModel().getQuery().length() <= 0) {
+    if (datasourceModel.getRelationalModel().getQuery() == null
+        && datasourceModel.getRelationalModel().getQuery().length() <= 0) {
       buffer.append(datasourceMessages.getString("datasourceDialog.Query"));
       buffer.append(" \n");
     }
-    if(datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <=0) {
+    if (datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <= 0) {
       buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
       buffer.append(" \n");
     }
     return buffer.toString();
   }
-  
+
   public void editQuery() {
 
   }
@@ -349,99 +364,97 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   public void closeApplyQueryConfirmationDialog() {
     applyQueryConfirmationDialog.hide();
   }
-  
+
   public void displayPreview() {
 
     if (!validateInputs()) {
-      openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
+      openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
+          .getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
     } else {
-      try {
-        showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_PREVIEW_DATA"), datasourceMessages.getString("DatasourceController.WAIT"));
-        service.doPreview(datasourceModel.getRelationalModel().getSelectedConnection(), datasourceModel.getRelationalModel().getQuery(), datasourceModel
-            .getRelationalModel().getPreviewLimit(), new XulServiceCallback<SerializedResultSet>() {
+      showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_PREVIEW_DATA"), datasourceMessages
+          .getString("DatasourceController.WAIT"));
+      service.doPreview(datasourceModel.getRelationalModel().getSelectedConnection().getName(), datasourceModel
+          .getRelationalModel().getQuery(), datasourceModel.getRelationalModel().getPreviewLimit(),
+          new XulServiceCallback<SerializedResultSet>() {
 
-          public void error(String message, Throwable error) {
-            hideWaitingDialog();
-            displayErrorMessage(error);
-          }
+            public void error(String message, Throwable error) {
+              hideWaitingDialog();
+              displayErrorMessage(error);
+            }
 
-          public void success(SerializedResultSet rs) {
-            try {
-              String[][] data = rs.getData();
-              String[] columns = rs.getColumns();
-              int columnCount = columns.length;
-              // Remove any existing children
-              List<XulComponent> previewResultsList = previewResultsTable.getChildNodes();
-
-              for (int i = 0; i < previewResultsList.size(); i++) {
-                previewResultsTable.removeChild(previewResultsList.get(i));
-              }
-              XulTreeChildren treeChildren = previewResultsTable.getRootChildren();
-              if(treeChildren != null) {
-                treeChildren.removeAll();
-              }
-              // Remove all the existing columns
-              int curTreeColCount = previewResultsTable.getColumns().getColumnCount();
-              List<XulComponent> cols = previewResultsTable.getColumns().getChildNodes();
-              for (int i = 0; i < curTreeColCount; i++) {
-                previewResultsTable.getColumns().removeChild(cols.get(i));
-              }
-              previewResultsTable.update();
-              // Recreate the colums
-              XulTreeCols treeCols = previewResultsTable.getColumns();
-              if (treeCols == null) {
-                try {
-                  treeCols = (XulTreeCols) document.createElement("treecols");
-                } catch (XulException e) {
-
-                }
-              }
-              // Setting column data
-              for (int i = 0; i < columnCount; i++) {
-                try {
-                  XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
-                  treeCol.setLabel(columns[i]);
-                  treeCol.setWidth(columns[i].length() + 120);
-                  treeCols.addColumn(treeCol);
-                } catch (XulException e) {
-
-                }
-              }
-
-              XulTreeCols treeCols1 = previewResultsTable.getColumns();
-              int count = previewResultsTable.getColumns().getColumnCount();
-              // Create the tree children and setting the data
+            public void success(SerializedResultSet rs) {
               try {
-                for (int i = 0; i < data.length; i++) {
-                  XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+                String[][] data = rs.getData();
+                String[] columns = rs.getColumns();
+                int columnCount = columns.length;
+                // Remove any existing children
+                List<XulComponent> previewResultsList = previewResultsTable.getChildNodes();
 
-                  for (int j = 0; j < columnCount; j++) {
-                    XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
-                    cell.setLabel(data[i][j]);
-                    row.addCell(cell);
-                  }
-
-                  previewResultsTable.addTreeRow(row);
+                for (int i = 0; i < previewResultsList.size(); i++) {
+                  previewResultsTable.removeChild(previewResultsList.get(i));
+                }
+                XulTreeChildren treeChildren = previewResultsTable.getRootChildren();
+                if (treeChildren != null) {
+                  treeChildren.removeAll();
+                }
+                // Remove all the existing columns
+                int curTreeColCount = previewResultsTable.getColumns().getColumnCount();
+                List<XulComponent> cols = previewResultsTable.getColumns().getChildNodes();
+                for (int i = 0; i < curTreeColCount; i++) {
+                  previewResultsTable.getColumns().removeChild(cols.get(i));
                 }
                 previewResultsTable.update();
+                // Recreate the colums
+                XulTreeCols treeCols = previewResultsTable.getColumns();
+                if (treeCols == null) {
+                  try {
+                    treeCols = (XulTreeCols) document.createElement("treecols");
+                  } catch (XulException e) {
+
+                  }
+                }
+                // Setting column data
+                for (int i = 0; i < columnCount; i++) {
+                  try {
+                    XulTreeCol treeCol = (XulTreeCol) document.createElement("treecol");
+                    treeCol.setLabel(columns[i]);
+                    treeCol.setWidth(columns[i].length() + 120);
+                    treeCols.addColumn(treeCol);
+                  } catch (XulException e) {
+
+                  }
+                }
+
+                XulTreeCols treeCols1 = previewResultsTable.getColumns();
+                int count = previewResultsTable.getColumns().getColumnCount();
+                // Create the tree children and setting the data
+                try {
+                  for (int i = 0; i < data.length; i++) {
+                    XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+
+                    for (int j = 0; j < columnCount; j++) {
+                      XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
+                      cell.setLabel(data[i][j]);
+                      row.addCell(cell);
+                    }
+
+                    previewResultsTable.addTreeRow(row);
+                  }
+                  previewResultsTable.update();
+                  hideWaitingDialog();
+                  previewResultsDialog.show();
+                } catch (XulException e) {
+                  // TODO: add logging
+                  hideWaitingDialog();
+                  System.out.println(e.getMessage());
+                  e.printStackTrace();
+                }
+              } catch (Exception e) {
                 hideWaitingDialog();
-                previewResultsDialog.show();
-              } catch (XulException e) {
-                // TODO: add logging
-                hideWaitingDialog();
-                System.out.println(e.getMessage());
-                e.printStackTrace();
+                displayErrorMessage(e);
               }
-            } catch (Exception e) {
-              hideWaitingDialog();
-              displayErrorMessage(e);
             }
-          }
-        });
-      } catch (DatasourceServiceException e) {
-        hideWaitingDialog();
-        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("RelationalDatasourceController.ERROR_0001_UNABLE_TO_PREVIEW_DATA",e.getLocalizedMessage()));
-      }
+          });
     }
   }
 
@@ -449,11 +462,11 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     previewResultsDialog.hide();
   }
 
-  public DatasourceService getService() {
+  public IXulAsyncDatasourceService getService() {
     return service;
   }
 
-  public void setService(DatasourceService service) {
+  public void setService(IXulAsyncDatasourceService service) {
     this.service = service;
   }
 
@@ -481,17 +494,17 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     }
   }
 
-/*  public void showWaitingDialog(String title, String message) {
-    getWaitingDialog().setTitle(title);
-    getWaitingDialog().setMessage(message);
-    getWaitingDialog().show();
-  }
+  /*  public void showWaitingDialog(String title, String message) {
+      getWaitingDialog().setTitle(title);
+      getWaitingDialog().setMessage(message);
+      getWaitingDialog().show();
+    }
 
-  public void hideWaitingDialog() {
-    getWaitingDialog().hide();
-  }
-*/
-  
+    public void hideWaitingDialog() {
+      getWaitingDialog().hide();
+    }
+  */
+
   public void showWaitingDialog(String title, String message) {
     waitingDialog.setTitle(title);
     waitingDialogLabel.setValue(message);
@@ -502,12 +515,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   public void hideWaitingDialog() {
     waitingDialog.hide();
   }
-  
+
   public void displayErrorMessage(Throwable th) {
     errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
     errorLabel.setValue(ExceptionParser.getErrorMessage(th));
     errorDialog.show();
   }
+
   /**
    * @param datasourceMessages the datasourceMessages to set
    */
@@ -535,22 +549,22 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   public void setWaitingDialog(WaitingDialog waitingDialog) {
     this.waitingDialogBox = waitingDialog;
   }
-  
+
   public void closeAggregationEditorDialog() {
-   aggregationCellEditor.hide(); 
+    aggregationCellEditor.hide();
   }
-  
+
   public void saveAggregationValues() {
     aggregationCellEditor.notifyListeners();
   }
 
   public void closeSampleDataDialog() {
-    sampleDataCellEditor.hide(); 
+    sampleDataCellEditor.hide();
   }
 
- 
   private class CustomSampleDataCellEditor implements TreeCellEditor {
     XulDialog dialog = null;
+
     TreeCellEditorCallback callback = null;
 
     public CustomSampleDataCellEditor(XulDialog dialog) {
@@ -571,14 +585,15 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     public void setValue(Object val) {
 
     }
+
     public void show(int row, int col, Object boundObj, String columnBinding, TreeCellEditorCallback callback) {
       this.callback = callback;
-      ModelDataRow modelDataRow = (ModelDataRow)boundObj;
-      XulTreeCol  column = sampleDataTree.getColumns().getColumn(0);
+      ModelDataRow modelDataRow = (ModelDataRow) boundObj;
+      XulTreeCol column = sampleDataTree.getColumns().getColumn(0);
       column.setLabel(modelDataRow.getColumnName());
       List<String> values = modelDataRow.getSampleDataList();
       List<String> sampleDataList = new ArrayList<String>();
-      for(int i=0;i<MAX_SAMPLE_DATA_ROWS && i<modelDataRow.getSampleDataList().size();i++) {
+      for (int i = 0; i < MAX_SAMPLE_DATA_ROWS && i < modelDataRow.getSampleDataList().size(); i++) {
         sampleDataList.add(values.get(i));
       }
       sampleDataTree.setElements(sampleDataList);
@@ -587,6 +602,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
       dialog.show();
     }
   }
+
   private class CustomAggregationCellRenderer implements TreeCellRenderer {
 
     public Object getNativeComponent() {
@@ -596,14 +612,15 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
     public String getText(Object value) {
       StringBuffer buffer = new StringBuffer();
-      if(value instanceof Aggregation) {
+      if (value instanceof Aggregation) {
         Aggregation aggregation = (Aggregation) value;
         List<AggregationType> aggregationList = aggregation.getAggregationList();
-        for(int i=0;i<aggregationList.size();i++) {
-          if(buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
+        for (int i = 0; i < aggregationList.size(); i++) {
+          if (buffer.length() + datasourceMessages.getString(aggregationList.get(i).getDescription()).length() < MAX_COL_SIZE) {
             buffer.append(datasourceMessages.getString(aggregationList.get(i).getDescription()));
-            if((i<aggregationList.size()-1 && (buffer.length() + datasourceMessages.getString(aggregationList.get(i+1).getDescription()).length() + COMMA.length() < MAX_COL_SIZE))) {
-              buffer.append(COMMA);  
+            if ((i < aggregationList.size() - 1 && (buffer.length()
+                + datasourceMessages.getString(aggregationList.get(i + 1).getDescription()).length() + COMMA.length() < MAX_COL_SIZE))) {
+              buffer.append(COMMA);
             }
           } else {
             break;
@@ -617,9 +634,9 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
       // TODO Auto-generated method stub
       return false;
     }
-    
+
   }
-  
+
   private class CustomSampleDataCellRenderer implements TreeCellRenderer {
 
     public Object getNativeComponent() {
@@ -628,12 +645,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     }
 
     public String getText(Object value) {
-      if(value instanceof String) {
+      if (value instanceof String) {
         return getSampleData((String) value);
-      } else if (value instanceof Vector){
+      } else if (value instanceof Vector) {
         Vector<String> vectorValue = (Vector<String>) value;
         StringBuffer sampleDataBuffer = new StringBuffer();
-        for(int i=0;i<vectorValue.size();i++) {
+        for (int i = 0; i < vectorValue.size(); i++) {
           sampleDataBuffer.append(vectorValue.get(i));
         }
         return getSampleData(sampleDataBuffer.toString());
@@ -645,13 +662,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
       // TODO Auto-generated method stub
       return false;
     }
-    
+
     private String getSampleData(String sampleData) {
-      if(sampleData != null && sampleData.length() > 0) {
-        if(sampleData.length() <= MAX_COL_SIZE) {
+      if (sampleData != null && sampleData.length() > 0) {
+        if (sampleData.length() <= MAX_COL_SIZE) {
           return sampleData;
         } else {
-          return sampleData.substring(0, MAX_COL_SIZE); 
+          return sampleData.substring(0, MAX_COL_SIZE);
         }
       }
       return EMPTY_STRING;
@@ -661,10 +678,10 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   public void initializeBusinessData(BusinessData businessData) {
     modelDataTable.update();
     datasourceModel.setDatasourceType(DatasourceType.SQL);
-    
-    SqlPhysicalModel model = (SqlPhysicalModel)businessData.getDomain().getPhysicalModels().get(0);
+
+    SqlPhysicalModel model = (SqlPhysicalModel) businessData.getDomain().getPhysicalModels().get(0);
     String queryStr = model.getPhysicalTables().get(0).getTargetTable();
-//    datasourceModel.setDatasourceType(DatasourceType.SQL);
+    //    datasourceModel.setDatasourceType(DatasourceType.SQL);
     datasourceModel.setDatasourceName(businessData.getDomain().getId());
     datasourceModel.getRelationalModel().setQuery(queryStr);
     for (IConnection conn : datasourceModel.getRelationalModel().getConnections()) {
@@ -673,14 +690,14 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
         break;
       }
     }
-    datasourceModel.getRelationalModel().setBusinessData(null);                    
+    datasourceModel.getRelationalModel().setBusinessData(null);
     query.setDisabled(false);
     // Setting the editable property to true so that the table can be populated with correct cell types                    
     columnNameTreeCol.setEditable(true);
     columnTypeTreeCol.setEditable(true);
     //columnFormatTreeCol.setEditable(true);
     datasourceModel.getRelationalModel().setBusinessData(businessData);
-    
+
   }
 
   public boolean supportsBusinessData(BusinessData businessData) {

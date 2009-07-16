@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.ConnectionController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.CsvDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceDebugImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceDebugImpl;
@@ -32,7 +32,7 @@ public class SwingDatasourceEditor implements IDatasourceEditor {
   
   private DatasourceController datasourceController;
   
-  public SwingDatasourceEditor(final DatasourceService datasourceService, final IXulAsyncConnectionService connectionService) {
+  public SwingDatasourceEditor(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService) {
     try{
       XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/connectionFrame.xul");
     
@@ -92,7 +92,7 @@ public class SwingDatasourceEditor implements IDatasourceEditor {
   
   public static void main(String[] args) throws XulException {
     IXulAsyncConnectionService connectionService = new ConnectionServiceDebugImpl();
-    DatasourceService datasourceService = new DatasourceServiceDebugImpl();
+    IXulAsyncDatasourceService datasourceService = new DatasourceServiceDebugImpl();
 
     SwingDatasourceEditor editor = new SwingDatasourceEditor(datasourceService, connectionService);
     editor.runner.start(); // shows the root window
@@ -102,7 +102,7 @@ public class SwingDatasourceEditor implements IDatasourceEditor {
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<Domain> listener) {
     datasourceController.addDialogListener(listener);  
   }
 
@@ -116,7 +116,7 @@ public class SwingDatasourceEditor implements IDatasourceEditor {
   /**
    * Specified by <code>DialogController</code>.
    */
-  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<IDatasource> listener) {
+  public void removeDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<Domain> listener) {
     datasourceController.removeDialogListener(listener);
   }
 

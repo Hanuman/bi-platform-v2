@@ -3,11 +3,10 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 import java.util.Collections;
 import java.util.List;
 
-import org.pentaho.platform.dataaccess.datasource.IDatasource;
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
 import org.pentaho.platform.dataaccess.datasource.wizard.IDatasourceEditor;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -20,7 +19,6 @@ import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
-import org.pentaho.ui.xul.util.DialogController;
 
 public class DatasourceSelectionDialogController extends AbstractXulDialogController<LogicalModelSummary> {
 
@@ -30,7 +28,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
   private BindingFactory bf;
 
-  private DatasourceService datasourceService;
+  private IXulAsyncDatasourceService datasourceService;
 
   private DatasourceSelectionDialogModel datasourceSelectionDialogModel = new DatasourceSelectionDialogModel();
 
@@ -246,7 +244,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     this.bf = bf;
   }
 
-  public void setDatasourceService(final DatasourceService datasourceService) {
+  public void setDatasourceService(final IXulAsyncDatasourceService datasourceService) {
     this.datasourceService = datasourceService;
   }
 
@@ -273,9 +271,9 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   }
 
   public void addDatasource() {
-    datasourceEditor.addDialogListener(new DialogListener<IDatasource>() {
-      public void onDialogAccept(final IDatasource datasource) {
-        refreshDatasources(datasource.getBusinessData().getDomain().getId(), datasource.getBusinessData().getDomain().getLogicalModels().get(0).getId());
+    datasourceEditor.addDialogListener(new DialogListener<Domain>() {
+      public void onDialogAccept(final Domain domain) {
+        refreshDatasources(domain.getId(), domain.getLogicalModels().get(0).getId());
       }
 
       public void onDialogCancel() {
@@ -288,9 +286,9 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     
     // logicalModelSummary.getDomainId(), logicalModelSummary.getModelId()
     
-    datasourceEditor.addDialogListener(new DialogListener<IDatasource>() {
-      public void onDialogAccept(final IDatasource datasource) {
-        refreshDatasources(datasource.getBusinessData().getDomain().getId(), datasource.getBusinessData().getDomain().getLogicalModels().get(0).getId());
+    datasourceEditor.addDialogListener(new DialogListener<Domain>() {
+      public void onDialogAccept(final Domain domain) {
+        refreshDatasources(domain.getId(), domain.getLogicalModels().get(0).getId());
       }
 
       public void onDialogCancel() {
@@ -311,7 +309,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
   public void removeDatasourceAccept() {
     LogicalModelSummary logicalModelSummary = getDialogResult();
-    datasourceService.deleteModel(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId(), new XulServiceCallback<Boolean>() {
+    datasourceService.deleteLogicalModel(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId(), new XulServiceCallback<Boolean>() {
       public void error(String message, Throwable error) {
         showMessagebox("Error", error.getLocalizedMessage()); //$NON-NLS-1$
       }

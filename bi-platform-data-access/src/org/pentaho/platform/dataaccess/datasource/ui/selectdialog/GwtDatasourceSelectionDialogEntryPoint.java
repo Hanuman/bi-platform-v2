@@ -2,8 +2,8 @@ package org.pentaho.platform.dataaccess.datasource.ui.selectdialog;
 
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditor;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.util.DialogController.DialogListener;
@@ -17,7 +17,7 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
 
   private GwtDatasourceEditor editor;
 
-  private DatasourceService datasourceService;
+  private IXulAsyncDatasourceService datasourceService;
 
   private IXulAsyncConnectionService connectionService;
 
