@@ -74,6 +74,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
         // now we have admin status; update add datasource and remove datasource buttons' enabled status
         DatasourceSelectionDialogController.this.administrator = administrator;
         addDatasourceButton.setVisible(administrator);
+        editDatasourceButton.setVisible(administrator);
         removeDatasourceButton.setVisible(administrator);
         try {
           removeDatasourceButtonBinding.fireSourceChanged();
