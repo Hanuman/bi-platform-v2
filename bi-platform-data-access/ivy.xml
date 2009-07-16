@@ -32,6 +32,8 @@
         <dependency org="ognl" name="ognl" rev="2.6.9" transitive="false"/> 
         <dependency org="log4j" name="log4j" rev="1.2.14"/>
         <dependency org="jfree" name="jcommon" rev="1.0.14"/>
+        <!--  using libbase's CSVTokenizer -->
+        <dependency org="${dependency.libbase.group}" name="libbase" rev="${dependency.libbase.revision}" />
         <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
                     changing="true" transitive="false"/>
         <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"

@@ -11,14 +11,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 public class DatasourceServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceServiceHelper.class);
@@ -78,20 +79,13 @@ public class DatasourceServiceHelper {
     BufferedReader bufRdr = null;
     try {
       bufRdr = new BufferedReader(new FileReader(file));
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    //read each line of text file
-    try {
-      while((line = bufRdr.readLine()) != null && row < rowLimit)
-      {
-        StringTokenizer st = new StringTokenizer(line,delimiter);
+      //read each line of text file
+      while((line = bufRdr.readLine()) != null && row < rowLimit) {
+        CSVTokenizer ct = new CSVTokenizer(line, delimiter, enclosure);
         List<String> rowData = new ArrayList<String>();
-        while (st.hasMoreTokens())
-        {
+        while (ct.hasMoreTokens()) {
           //get next token and store it in the list
-          rowData.add(st.nextToken());
+          rowData.add(ct.nextToken());
         }
         if(headerPresent && row != 0 || !headerPresent) {
           dataSample.add(rowData);  
@@ -100,9 +94,12 @@ public class DatasourceServiceHelper {
       }
       //close the file
       bufRdr.close();
+    } catch (FileNotFoundException e) {
+      logger.error(Messages.getString("DatasourceServiceHelper.ERROR_0001_CSV_DATASAMPLE_FAILED"), e); //$NON-NLS-1$
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("DatasourceServiceHelper.ERROR_0001_CSV_DATASAMPLE_FAILED", e); //$NON-NLS-1$
+    } finally {
+      try { bufRdr.close(); } catch (Exception e) {}
     }
     return dataSample;
   }
