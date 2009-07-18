@@ -510,7 +510,14 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
       String schemaName = schemaFromXml.name;
       List<MondrianCube> mondrianCubes = new ArrayList<MondrianCube>();
       for (MondrianDef.Cube cube : schemaFromXml.cubes) {
-        mondrianCubes.add(new MondrianCube(cube.name));
+        if (cube.enabled == null || cube.enabled.booleanValue()) {
+          mondrianCubes.add(new MondrianCube(cube.name));
+        }
+      }
+      for (MondrianDef.VirtualCube cube : schemaFromXml.virtualCubes) {
+        if (cube.enabled == null || cube.enabled.booleanValue()) {
+          mondrianCubes.add(new MondrianCube(cube.name));
+        }
       }
       schema = new MondrianSchema(schemaName, mondrianCubes);
 
