@@ -474,6 +474,11 @@ public class PivotViewComponent extends ComponentBase {
       String cube = getInputStringValue(PivotViewComponent.CUBE);
       // we need to generate a query.
       query = MondrianModelComponent.getInitialQuery(model, dataSource, cube, roleName, getSession());
+      
+      if (query == null) {
+        error(Messages.getErrorString("PivotView.ERROR_0010_QUERY_GENERATION_FAILED")); //$NON-NLS-1$
+        return false;
+      }
     }
 
     String mdx = applyInputsToFormat(query);
