@@ -20,12 +20,12 @@ MQLConstraintParser = function()
 
 // match LIKE, followed by a param list, where the param list look like ( param ; param ), return the function LIKE, and the 2 params, be reluctant on matching ";"
 /*static*/MQLConstraintParser.RE_PREFIX_COMPARATOR_FUNCTION_PARTS = /^\s*(LIKE)\(\s*\[(.+)\];(.+)\s*\)\s*$/;
+// match ISNA, followed by a param list, where the param list look like ( param  ), return the function ISNA, and the param
+/*static*/MQLConstraintParser.RE_PREFIX_COMPARATOR_ISNA_FUNCTION_PARTS = /^\s*(ISNA)\(\s*\[(.+)\]\s*\)\s*$/;
 
 // match "[tableId.columnId] operator value". value may be in double quotes. return tableId.columnId, the operator, and the value (unquoted)
 /*static*/MQLConstraintParser.RE_INFIX_COMPARATOR_FUNCTION_PARTS = /^\s*\[([^\]]+)\]\s*([<>=]{1,2})\s*(DATEVALUE\()?"?([^"]*)"?(\))?\s*$/;
 // /*static*/MQLConstraintParser.RE_INFIX_COMPARATOR_FUNCTION_PARTS = /^\s*\[([^\]]+)\]\s*([<>=]{1,2})\s*"?([^"]*)"?\s*$/;
-// match ISNA, followed by a param list, where the param list look like ( param  ), return the function ISNA, and the param
-/*static*/MQLConstraintParser.RE_NOT_FUNCTION_PARTS = /^\s*(ISNA)\((.+)\)\s*$/;
 
 // match NOT, followed by a param list, where the param list look like ( param ; param ), return the function NOT, and the 2 params
 /*static*/MQLConstraintParser.RE_NOT_FUNCTION_PARTS = /^\s*(NOT)\((.+)\)\s*$/;
@@ -136,6 +136,7 @@ MQLConstraintParser.RE_LOGICAL_FUNCTION_PARTS = /^\s*(AND|OR)\((.+)\)\s*$/;
 	}
 	else
 	{
+		// look for LIKE
 		parts = strComparatorFunk.match( MQLConstraintParser.RE_PREFIX_COMPARATOR_FUNCTION_PARTS );
 		if ( parts )
 		{
@@ -143,6 +144,11 @@ MQLConstraintParser.RE_LOGICAL_FUNCTION_PARTS = /^\s*(AND|OR)\((.+)\)\s*$/;
 		}
 		else
 		{
+			// look for ISNA
+			parts = strComparatorFunk.match( MQLConstraintParser.RE_PREFIX_COMPARATOR_ISNA_FUNCTION_PARTS );
+			if ( parts ) {
+				return {bIsNot: bIsNot, funkName:parts[1], leftParam:parts[2]};
+			}
 			return null;
 		}
 	}
