@@ -18,6 +18,7 @@
 package org.pentaho.platform.plugin.services.webservices.content;
 
 import java.io.OutputStream;
+import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.webservices.AxisServletHooks;
+import org.pentaho.platform.plugin.services.webservices.AxisUtil;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**
@@ -51,6 +53,7 @@ public class AxisServiceExecutor extends AxisWebServiceRequestDispatcher impleme
   
   private static final long serialVersionUID = -8815968682881342687L;
 
+  
   @Override
   public void createServiceContent( AxisService axisService, String operationName, AxisConfiguration axisConfiguration, ConfigurationContext context, OutputStream out ) throws Exception {
 
@@ -58,6 +61,17 @@ public class AxisServiceExecutor extends AxisWebServiceRequestDispatcher impleme
     
     // get the HTTP objects from the 'path' parameter provider
     HttpServletRequest request = (HttpServletRequest) pathParams.getParameter("httprequest"); //$NON-NLS-1$
+    
+    @SuppressWarnings("unchecked")
+    Enumeration names = request.getParameterNames();
+    while(names.hasMoreElements()){
+      String name = (String)names.nextElement();
+      if(name.equalsIgnoreCase("wsdl")) { //$NON-NLS-1$
+        axisService.printWSDL(out, AxisUtil.getWebServiceExecuteUrl() );
+        return;
+      }
+    }
+    
     HttpServletResponse response = (HttpServletResponse) pathParams.getParameter("httpresponse"); //$NON-NLS-1$
     ServletConfig servletConfig  = (ServletConfig) pathParams.getParameter("servletconfig"); //$NON-NLS-1$
     
