@@ -17,6 +17,7 @@
  */
 package org.pentaho.platform.plugin.action.pentahometadata;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,9 @@ import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class MetadataQueryComponent {
-  
+  // This is also defined in UploadFileServlet and DatasourceServiceImpl, so don't change it in just one place
+  private static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
   static final Log logger = LogFactory.getLog(MetadataQueryComponent.class);
   String query;
   int maxRows = -1;
@@ -187,8 +190,12 @@ public class MetadataQueryComponent {
   
   protected boolean executeInlineEtlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    
+    String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
+    String csvFileLoc = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
+    
     try {
-      resultSet = executor.executeQuery(queryObject, parameters);
+      resultSet = executor.executeQuery(queryObject, csvFileLoc, parameters);
       return true;
     } catch (Exception e ) {
       logger.error("error", e); //$NON-NLS-1$
