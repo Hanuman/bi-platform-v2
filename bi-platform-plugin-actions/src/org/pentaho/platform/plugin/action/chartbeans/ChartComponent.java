@@ -33,8 +33,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.pentaho.chart.AbstractChartThemeFactory;
+import org.pentaho.chart.ChartBeanFactory;
 import org.pentaho.chart.ChartBoot;
-import org.pentaho.chart.ChartFactory;
 import org.pentaho.chart.InvalidChartDefinition;
 import org.pentaho.chart.model.ChartModel;
 import org.pentaho.chart.model.DialPlot;
@@ -180,7 +180,7 @@ public class ChartComponent {
       // Set chart engine on chartModel for the ChartFactory to use
       chartModel.setChartEngineId(chartEngine);
       
-      InputStream is = ChartFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
+      InputStream is = ChartBeanFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       if (is == null) {
         if(JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)){
