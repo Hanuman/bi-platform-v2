@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,8 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  */
 
 @SuppressWarnings("nls")
-public class ChartbeansTest{
-  protected class ChartbeansActionComponent extends ActionComponent{
+public class ChartbeansTest {
+  protected class ChartbeansActionComponent extends ActionComponent {
 
     public ChartbeansActionComponent(String actionString, String instanceId, int outputPreference,
         IPentahoUrlFactory urlFactory, List messages) {
@@ -49,7 +50,7 @@ public class ChartbeansTest{
       return super.getContentAsStream(null).toByteArray();
     }
   }
-  
+
   private MicroPlatform microPlatform;
 
   StandaloneSession session;
@@ -63,12 +64,12 @@ public class ChartbeansTest{
 
     session = new StandaloneSession();
   }
-  
+
   @Test
-  public void testChartbeansActionComponentJFree() {
+  public void testChartbeansActionComponentJFree() throws IOException {
     //IMPORTANT: This test will fail on local machines, the image being compared against was generated on Hudson!!!
     microPlatform.init();
-    
+
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl());
     ArrayList messages = new ArrayList();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -81,44 +82,45 @@ public class ChartbeansTest{
     StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     component.validate(session, null);
     OutputStream outputStream = getOutputStream("Chartbeans.testChartbeansAllInclusive_JFree", ".png"); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     // Compare resultant byte array to the originally generated one
     byte[] generatedContents = component.getContentBytes();
 
     File hFile = getOriginalFile("Chartbeans.testChartbeansAllInclusive_JFree.png"); //$NON-NLS-1$
+
+    byte[] originalContents = new byte[(int) hFile.length()];
+
+    outputStream.write(generatedContents);
     
-    byte[] originalContents = new byte[(int)hFile.length()];
-    
-    try {
-      outputStream.write(generatedContents);
-      
-      new FileInputStream(hFile).read(originalContents);
-      assertTrue("Generated content is incorrect", Arrays.equals(generatedContents, originalContents)); //$NON-NLS-1$
-    } catch (Exception e) {
-      assertTrue("An exception has been thrown: " + e.getMessage(), false); //$NON-NLS-1$
-    }
+    FileOutputStream fos = new FileOutputStream("testOutput.png");
+    fos.write(generatedContents);
+    fos.close();
+
+    new FileInputStream(hFile).read(originalContents);
+    assertTrue("Generated content is incorrect", Arrays.equals(generatedContents, originalContents)); //$NON-NLS-1$
   }
-  
+
   @Test
   public void testChartbeansActionComponentOFC() {
     microPlatform.init();
-    
+
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl());
     ArrayList messages = new ArrayList();
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("solution", "test"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("path", "chartbeans"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("action", "Chartbeans_All_Inclusive_OFC.xaction"); //$NON-NLS-1$ //$NON-NLS-2$
-    ActionComponent component = new ActionComponent("test/chartbeans/Chartbeans_All_Inclusive_OFC.xaction", null, IOutputHandler.OUTPUT_TYPE_DEFAULT, urlFactory, messages); //$NON-NLS-1$
+    ActionComponent component = new ActionComponent(
+        "test/chartbeans/Chartbeans_All_Inclusive_OFC.xaction", null, IOutputHandler.OUTPUT_TYPE_DEFAULT, urlFactory, messages); //$NON-NLS-1$
     component.setParameterProvider(IParameterProvider.SCOPE_REQUEST, parameterProvider);
     component.validate(session, null);
     OutputStream outputStream = getOutputStream("Chartbeans.testChartbeansAllInclusive_OFC", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     String result = component.getContent("text/html"); //$NON-NLS-1$
-    
+
     try {
       outputStream.write(result.getBytes());
-      
+
       assertTrue(result.startsWith("<html><head>")); //$NON-NLS-1$
       assertEquals("function getChartData()", result.substring(74, 97)); //$NON-NLS-1$
       assertEquals("/*JSON*/", result.substring(107, 115)); //$NON-NLS-1$
@@ -128,7 +130,7 @@ public class ChartbeansTest{
       assertTrue("An exception has been thrown: " + e.getMessage(), false); //$NON-NLS-1$
     }
   }
-  
+
   protected OutputStream getOutputStream(String testName, String extension) {
     OutputStream outputStream = null;
     try {
@@ -142,10 +144,11 @@ public class ChartbeansTest{
     }
     return outputStream;
   }
-  
-  protected File getOriginalFile(String fileName){
-    return new File(System.getProperty("user.dir") + File.separator + "test-src" + File.separator + "solution" + File.separator + "test" + File.separator + "chartbeans" +  //$NON-NLS-1$//$NON-NLS-2$
-        File.separator + "results" + File.separator +  fileName); //$NON-NLS-1$
+
+  protected File getOriginalFile(String fileName) {
+    return new File(
+        System.getProperty("user.dir") + File.separator + "test-src" + File.separator + "solution" + File.separator + "test" + File.separator + "chartbeans" + //$NON-NLS-1$//$NON-NLS-2$
+            File.separator + "results" + File.separator + fileName); //$NON-NLS-1$
   }
-  
+
 }
