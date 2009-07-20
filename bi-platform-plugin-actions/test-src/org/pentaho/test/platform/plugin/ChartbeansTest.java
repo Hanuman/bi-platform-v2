@@ -92,10 +92,6 @@ public class ChartbeansTest {
 
     outputStream.write(generatedContents);
     
-    FileOutputStream fos = new FileOutputStream("testOutput.png");
-    fos.write(generatedContents);
-    fos.close();
-
     new FileInputStream(hFile).read(originalContents);
     assertTrue("Generated content is incorrect", Arrays.equals(generatedContents, originalContents)); //$NON-NLS-1$
   }
