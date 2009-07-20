@@ -16,7 +16,6 @@ public interface IXulAsyncDatasourceService {
   void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit, XulServiceCallback<BusinessData> callback);  
   void saveLogicalModel(Domain domain, boolean overwrite,XulServiceCallback<Boolean> callback);
   void generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, XulServiceCallback<BusinessData> callback);
-  void getUploadFilePath(XulServiceCallback<String> callback);
   void hasPermission(XulServiceCallback<Boolean> callback);
   void loadBusinessData(String domainId, String modelId, XulServiceCallback<BusinessData> callback);
 }

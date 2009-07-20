@@ -48,8 +48,16 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0003_FILE_TOO_BIG"));
         return;        
       }
+      
       String path = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
-      if(uploadItem.getSize() + getFolderSize(new File(path)) > Long.parseLong(maxFolderLimit)) {
+      
+      File pathDir = new File(path);
+      // create the path if it doesn't exist yet
+      if (!pathDir.exists()) {
+        pathDir.mkdirs();
+      }
+      
+      if(uploadItem.getSize() + getFolderSize(pathDir) > Long.parseLong(maxFolderLimit)) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
         return;                
       }
@@ -65,7 +73,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       outputStream.write(fileContents);
       outputStream.flush();
       outputStream.close();
-      response.getWriter().write(new String(path+filename));
+      response.getWriter().write(new String(filename));
       } catch(Exception e) {
         response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0005_UNKNOWN_ERROR",e.getLocalizedMessage()));
       }

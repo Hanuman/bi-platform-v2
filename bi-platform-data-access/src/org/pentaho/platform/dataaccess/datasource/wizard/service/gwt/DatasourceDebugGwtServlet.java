@@ -51,10 +51,6 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements I
     return SERVICE.hasPermission();
   }
 
-  public String getUploadFilePath() throws DatasourceServiceException {
-    return SERVICE.getUploadFilePath();
-  }
-
   public boolean deleteLogicalModel(String domainId, String modelName)  throws DatasourceServiceException {
     return SERVICE.deleteLogicalModel(domainId, modelName);
   }

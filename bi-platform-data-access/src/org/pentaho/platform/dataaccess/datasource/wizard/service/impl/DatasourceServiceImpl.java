@@ -40,11 +40,14 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class DatasourceServiceImpl implements IDatasourceService{
 
+  private static final Log logger = LogFactory.getLog(DatasourceServiceImpl.class);
+  
+  // This is also defined in UploadFileServlet and MetadataQueryComponent, so don't change it in just one place
+  private static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  
   private IDataAccessPermissionHandler dataAccessPermHandler;
   private IDataAccessViewPermissionHandler dataAccessViewPermHandler;
   private IMetadataDomainRepository metadataDomainRepository;
-  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;  
-  private static final Log logger = LogFactory.getLog(DatasourceServiceImpl.class);
 
   public DatasourceServiceImpl() {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
@@ -333,16 +336,21 @@ public class DatasourceServiceImpl implements IDatasourceService{
     }
 
     try  {
-    Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-    || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
-    InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
-        relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
-          getPermittedRoleList(),getPermittedUserList(),
-            getDefaultAcls(), (PentahoSessionHolder.getSession() != null) ? PentahoSessionHolder.getSession().getName(): null);
-    Domain domain  = inlineEtlModelGenerator.generate();
-    List<List<String>> data = DatasourceServiceHelper.getCsvDataSample(relativeFilePath, headersPresent,
-        delimiter, enclosure, 5);
-    return  new BusinessData(domain, data);
+      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
+      || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
+      
+      String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
+      String csvFileLoc = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
+      
+      InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
+          csvFileLoc, relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
+            getPermittedRoleList(),getPermittedUserList(),
+              getDefaultAcls(), (PentahoSessionHolder.getSession() != null) ? PentahoSessionHolder.getSession().getName(): null);
+      
+      Domain domain  = inlineEtlModelGenerator.generate();
+      List<List<String>> data = DatasourceServiceHelper.getCsvDataSample(csvFileLoc + relativeFilePath, headersPresent,
+          delimiter, enclosure, 5);
+      return  new BusinessData(domain, data);
     } catch(Exception e) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e); //$NON-NLS-1$
@@ -369,10 +377,7 @@ public class DatasourceServiceImpl implements IDatasourceService{
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
     }
   }
-  public String getUploadFilePath() throws DatasourceServiceException {
-    String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
-    return PentahoSystem.getApplicationContext().getSolutionPath(relativePath);    
-  }
+
   public boolean hasPermission() {
     if(PentahoSessionHolder.getSession() != null) {
       return (SecurityHelper.isPentahoAdministrator(PentahoSessionHolder.getSession()) || hasDataAccessPermission());
@@ -409,8 +414,12 @@ public class DatasourceServiceImpl implements IDatasourceService{
       List<List<String>> data = null;
       if (domain.getPhysicalModels().get(0) instanceof InlineEtlPhysicalModel) {
         InlineEtlPhysicalModel model = (InlineEtlPhysicalModel)domain.getPhysicalModels().get(0);
+        
+        String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$
+        String csvFileLoc = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
+        
         data = DatasourceServiceHelper.getCsvDataSample(
-            model.getFileLocation(), model.getHeaderPresent(), model.getDelimiter(), model.getEnclosure(), 5);
+            csvFileLoc + model.getFileLocation(), model.getHeaderPresent(), model.getDelimiter(), model.getEnclosure(), 5);
       } else {
         SqlPhysicalModel model = (SqlPhysicalModel)domain.getPhysicalModels().get(0);
         String query = model.getPhysicalTables().get(0).getTargetTable();

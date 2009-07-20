@@ -62,14 +62,6 @@ public class DatasourceServiceDebugImpl implements IXulAsyncDatasourceService{
     callback.success(SERVICE.hasPermission());
   }
 
-  public void getUploadFilePath(XulServiceCallback<String> callback) {
-    try {
-    callback.success(SERVICE.getUploadFilePath());
-    } catch (DatasourceServiceException e) {
-      callback.error(e.getLocalizedMessage(), e);
-    }
-  }
-
   public void deleteLogicalModel(String domainId, String modelName, XulServiceCallback<Boolean> callback) {
     try {
       Boolean res = SERVICE.deleteLogicalModel(domainId, modelName);

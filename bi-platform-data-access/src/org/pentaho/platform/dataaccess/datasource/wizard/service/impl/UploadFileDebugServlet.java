@@ -83,7 +83,7 @@ public class UploadFileDebugServlet extends HttpServlet implements Servlet {
       outputStream.write(fileContents);
       outputStream.flush();
       outputStream.close();
-      response.getWriter().write(new String(path + filename));
+      response.getWriter().write(new String(filename));
     } catch (Exception e) {
       response.getWriter().write(
           Messages.getErrorString("UploadFileDebugServlet.ERROR_0005_UNKNOWN_ERROR", e.getLocalizedMessage()));

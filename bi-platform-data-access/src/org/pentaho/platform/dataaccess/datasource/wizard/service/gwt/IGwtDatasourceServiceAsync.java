@@ -18,7 +18,6 @@ public interface IGwtDatasourceServiceAsync {
   void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit, AsyncCallback<BusinessData> callback);
   void saveLogicalModel(Domain domain, boolean overwrite,AsyncCallback<Boolean> callback);
   void generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback);
-  void getUploadFilePath(AsyncCallback<String> callback);
   void hasPermission(AsyncCallback<Boolean> callback);
   void gwtWorkaround (BogoPojo pojo, AsyncCallback<BogoPojo> callback);
   void loadBusinessData(String domainId, String modelId, AsyncCallback<BusinessData> callback);

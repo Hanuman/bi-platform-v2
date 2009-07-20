@@ -220,7 +220,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
       InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
-          relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
+          getUploadFilePath(), relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
             getPermittedRoleList(),getPermittedUserList(),
               getDefaultAcls(), "joe");
       Domain domain  = inlineEtlModelGenerator.generate();
@@ -265,7 +265,8 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
     }
   }
-  public String getUploadFilePath() throws DatasourceServiceException {
+  
+  private String getUploadFilePath() throws DatasourceServiceException {
     try {
       URL url = ClassLoader.getSystemResource(DEFAULT_UPLOAD_FILEPATH_FILE_NAME);
       URI uri = url.toURI();

@@ -185,7 +185,7 @@
 	  <test-on-return>false</test-on-return>
    </dbcp-defaults>
    <file-upload-defaults>
-   		<relative-path>/system/metadata/</relative-path>
+   		<relative-path>/system/metadata/csvfiles/</relative-path>
    		<max-file-limit>300000</max-file-limit>
    		<max-folder-limit>3000000</max-folder-limit>
    </file-upload-defaults>

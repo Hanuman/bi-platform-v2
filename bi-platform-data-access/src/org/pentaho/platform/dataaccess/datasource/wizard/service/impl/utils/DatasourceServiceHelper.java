@@ -1,10 +1,5 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +10,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.metadata.query.model.util.CsvDataReader;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
-import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 public class DatasourceServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceServiceHelper.class);
@@ -72,35 +66,8 @@ public class DatasourceServiceHelper {
   }
 
   public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String delimiter, String enclosure, int rowLimit) {
-    String line = null;
-    int row = 0;
-    List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
-    File file = new File(fileLocation);
-    BufferedReader bufRdr = null;
-    try {
-      bufRdr = new BufferedReader(new FileReader(file));
-      //read each line of text file
-      while((line = bufRdr.readLine()) != null && row < rowLimit) {
-        CSVTokenizer ct = new CSVTokenizer(line, delimiter, enclosure);
-        List<String> rowData = new ArrayList<String>();
-        while (ct.hasMoreTokens()) {
-          //get next token and store it in the list
-          rowData.add(ct.nextToken());
-        }
-        if(headerPresent && row != 0 || !headerPresent) {
-          dataSample.add(rowData);  
-        }
-        row++;
-      }
-      //close the file
-      bufRdr.close();
-    } catch (FileNotFoundException e) {
-      logger.error(Messages.getString("DatasourceServiceHelper.ERROR_0001_CSV_DATASAMPLE_FAILED"), e); //$NON-NLS-1$
-    } catch (IOException e) {
-      logger.error("DatasourceServiceHelper.ERROR_0001_CSV_DATASAMPLE_FAILED", e); //$NON-NLS-1$
-    } finally {
-      try { bufRdr.close(); } catch (Exception e) {}
-    }
-    return dataSample;
+    CsvDataReader reader = new CsvDataReader(fileLocation, headerPresent, delimiter, enclosure, rowLimit);
+    return reader.loadData();
   }
+
 }

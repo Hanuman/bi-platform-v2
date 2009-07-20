@@ -82,13 +82,7 @@ public interface IDatasourceService {
    * @return BusinessData - This object contains the data, column name, column types and sample data
    */    
   public BusinessData generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure) throws DatasourceServiceException;
-  /**
-   * Returns the upload file path. This is the base location where all files are uploaded
-   *
-   * @throws DatasourceServiceException
-   * @return file path of all the files to be uploaded
-   */    
-  public String getUploadFilePath() throws DatasourceServiceException ;
+
   /**
    * Returns whether the current user has the authority to create/edit/delete datasources
    *
