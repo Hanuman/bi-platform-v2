@@ -19,34 +19,25 @@ package org.pentaho.platform.plugin.services.metadata;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
 import org.pentaho.metadata.repository.DomainStorageException;
 import org.pentaho.metadata.repository.FileBasedMetadataDomainRepository;
-import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.metadata.util.RowLevelSecurityHelper;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.engine.services.metadata.MetadataPublisher;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -223,45 +214,5 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     } catch (Exception e) {
       throw new DomainStorageException("Failed to store legacy domain", e); //$NON-NLS-1$
     }
-  }
-
-  
-  //
-  // Overridden Security Methods
-  //
-  
-  @Override
-  public String generateRowLevelSecurityConstraint(LogicalModel model) {
-    RowLevelSecurity rls = model.getRowLevelSecurity();
-    if (rls == null || rls.getType() == RowLevelSecurity.Type.NONE) {
-      return null;
-    }
-    Authentication auth = SecurityHelper.getAuthentication(getSession(), true);
-    if (auth == null) {
-      logger.info(Messages.getString("SecurityAwareCwmSchemaFactory.INFO_AUTH_NULL_CONTINUE")); //$NON-NLS-1$
-      return "FALSE()"; //$NON-NLS-1$
-    }
-    String username = auth.getName();
-    List<String> roles = new ArrayList<String>();
-    for (GrantedAuthority role : auth.getAuthorities()) {
-      roles.add(role.getAuthority());
-    }
-
-    RowLevelSecurityHelper helper = new RowLevelSecurityHelper();
-    return helper.getOpenFormulaSecurityConstraint(rls, username, roles);
-  }
-  
-  @Override
-  public boolean hasAccess(final int accessType, final IConcept aclHolder) {
-    if (aclHolder != null) {
-      MetadataAclHolder newHolder = new MetadataAclHolder(aclHolder);
-      int mappedActionOperation = ACCESS_TYPE_MAP[accessType];
-      return SecurityHelper.hasAccess(newHolder, mappedActionOperation, getSession());
-    } else {
-      if (accessType == IMetadataDomainRepository.ACCESS_TYPE_SCHEMA_ADMIN) {
-        return SecurityHelper.isPentahoAdministrator(getSession());
-      }
-    }
-    return true;
   }
 }
