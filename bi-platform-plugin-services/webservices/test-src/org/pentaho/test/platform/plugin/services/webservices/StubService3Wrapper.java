@@ -19,10 +19,10 @@ package org.pentaho.test.platform.plugin.services.webservices;
 
 import java.util.Collection;
 
-import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 
 
-public class StubService3Wrapper extends WebServiceConfig {
+public class StubService3Wrapper extends ServiceConfig {
 
   public Class<?> getServiceClass() {
     return StubService3.class;

@@ -39,7 +39,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 
 /**

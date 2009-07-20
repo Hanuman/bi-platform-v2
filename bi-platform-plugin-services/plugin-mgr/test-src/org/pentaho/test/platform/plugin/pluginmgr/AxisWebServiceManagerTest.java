@@ -17,6 +17,7 @@
  */
 package org.pentaho.test.platform.plugin.pluginmgr;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -30,12 +31,11 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IServiceManager;
-import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.api.engine.IPlatformPlugin.WebServiceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -43,10 +43,11 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.ContentGeneratorUtil;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
-import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.DefaultServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.IServiceTypeManager;
 import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
@@ -57,21 +58,25 @@ public class AxisWebServiceManagerTest {
 
   private MicroPlatform microPlatform;
 
-  @Before
+  
   /*
    * Wire up an in-memory platform to register and expose plug-in web services.
    */
+  @Before
   public void init0() throws ServiceInitializationException {
     //set solution path to a place that hosts an axis config file
     microPlatform = new MicroPlatform("plugin-mgr/test-res/AxisWebServiceManagerTest/");
+    assertNotNull(PentahoSystem.getObjectFactory());
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
+    assertNotNull(PentahoSystem.getObjectFactory());
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
-    microPlatform.define(IPluginManager.class, PluginManager.class, Scope.GLOBAL);
+    microPlatform.define(IPluginManager.class, DefaultPluginManager.class, Scope.GLOBAL);
     microPlatform.define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL);
     microPlatform.define(IPluginProvider.class, TstPluginProvider.class);
 
     IServiceTypeManager axisManager = new AxisWebServiceManager();
-    PentahoSystem.get(IServiceManager.class).setServiceTypeManagers(Arrays.asList(axisManager));
+    DefaultServiceManager sm = (DefaultServiceManager)PentahoSystem.get(IServiceManager.class);
+    sm.setServiceTypeManagers(Arrays.asList(axisManager));
 
     microPlatform.init();
 
@@ -135,7 +140,7 @@ public class AxisWebServiceManagerTest {
   public static class TstPluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("testPlugin");
+      p.setId("testPlugin");
 
       ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
       cg1.setDescription("Mock web service execution generator");
@@ -153,11 +158,11 @@ public class AxisWebServiceManagerTest {
       cg2.setClassname("org.pentaho.test.platform.plugin.pluginmgr.ContentGenerator1");
       p.addContentGenerator(cg2);
 
-      WebServiceDefinition ws = new WebServiceDefinition();
-      ws.id = "echoService";
-      ws.serviceClass = EchoServiceBean.class.getName();
-      ws.types = new String[] { "xml" };
-      ws.title = "junit echo service";
+      PluginServiceDefinition ws = new PluginServiceDefinition();
+      ws.setId("echoService");
+      ws.setServiceClass(EchoServiceBean.class.getName());
+      ws.setTypes(new String[] { "xml" });
+      ws.setTitle("junit echo service");
       p.addWebservice(ws);
 
       return Arrays.asList((IPlatformPlugin) p);

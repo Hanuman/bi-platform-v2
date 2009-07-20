@@ -20,7 +20,6 @@
 package org.pentaho.platform.plugin.services.pluginmgr;
 
 import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
@@ -34,17 +33,16 @@ public class PluginUtil {
    * file, properties files, etc.  If the service was not supplied by a plugin,
    * then <code>null</code> is returned.
    * 
-   * @param type the type of service (helps uniquely identify the service, along with serviceId)
-   * @param serviceId the id for the service to lookup (requires service type to be unique)
+   * @param path a path to a plugin resource
    * @return the ClassLoader that serves the (plugin-supplied) service, or <code>null</code> if
    * the service was not plugin-supplied or the plugin manager cannot identify the service.
    */
-  public static ClassLoader getClassLoaderForService(ServiceType type, String serviceId) {
+  public static ClassLoader getClassLoaderForService(String path) {
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
 
     //The plugin manager can tell us which plugin handles requests like the one for the serialization file
     //
-    String servicePluginId = pluginManager.getServicePlugin(serviceId);
+    String servicePluginId = pluginManager.getServicePlugin(path);
 
     if (servicePluginId == null) {
       return null;

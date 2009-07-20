@@ -24,7 +24,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
+import org.pentaho.platform.plugin.services.webservices.AxisUtil;
 
 /**
  * Writes the WSDL for a Axis web service to the output stream provided

@@ -217,7 +217,7 @@ public class ConnectionServiceImpl implements IConnectionService {
     
     try {
       IServiceManager manager = PentahoSystem.get(IServiceManager.class);
-      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean(ServiceType.GWT, "databaseConnectionService");
+      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean("gwt", "databaseConnectionService");
       IDatabaseConnection conn = service.createDatabaseConnection(connection.getDriverClass(), connection.getUrl());
       conn.setName(connection.getName());
       conn.setUsername(connection.getUsername());
@@ -237,7 +237,7 @@ public class ConnectionServiceImpl implements IConnectionService {
     try {
       IServiceManager manager = PentahoSystem.get(IServiceManager.class);
 
-      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean(ServiceType.GWT, "databaseConnectionService");
+      DatabaseConnectionService service = (DatabaseConnectionService)manager.getServiceBean("gwt", "databaseConnectionService");
       IDatabaseDialect dialect = service.getDialectService().getDialect(connection);
       
       Connection conn = new Connection();

@@ -33,7 +33,8 @@ import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
-import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.PluginBeanDefinition;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
@@ -103,7 +104,7 @@ public class SystemPathPluginProviderTest {
     }
 
     public boolean evaluate(Object object) {
-      return pluginNameToMatch.equals(((IPlatformPlugin) object).getName());
+      return pluginNameToMatch.equals(((IPlatformPlugin) object).getId());
     }
 
   }
@@ -120,11 +121,11 @@ public class SystemPathPluginProviderTest {
     assertTrue("plugin1 was not found", CollectionUtils.exists(plugins, new PluginNameMatcherPredicate("Plugin 1")));
 
     for (IPlatformPlugin plugin : plugins) {
-      if (plugin.getName().equals("Plugin 1")) {
+      if (plugin.getId().equals("Plugin 1")) {
         assertEquals("org.pentaho.test.platform.plugin.pluginmgr.FooInitializer", plugin
             .getLifecycleListenerClassname());
       }
-      if (plugin.getName().equals("Plugin 2")) {
+      if (plugin.getId().equals("Plugin 2")) {
         //no listener defined to for Plugin 2
         assertNull(plugin.getLifecycleListenerClassname());
       }
@@ -141,19 +142,19 @@ public class SystemPathPluginProviderTest {
         .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
 
-    Collection<BeanDefinition> beans = plugin.getBeans();
+    Collection<PluginBeanDefinition> beans = plugin.getBeans();
 
     assertEquals("FooComponent was not loaded", 1, CollectionUtils.countMatches(beans, new Predicate() {
       public boolean evaluate(Object object) {
-        BeanDefinition bean = (BeanDefinition) object;
-        return bean.beanId.equals("FooComponent")
-            && bean.classname.equals("org.pentaho.test.platform.plugin.pluginmgr.FooComponent");
+        PluginBeanDefinition bean = (PluginBeanDefinition) object;
+        return bean.getBeanId().equals("FooComponent")
+            && bean.getClassname().equals("org.pentaho.test.platform.plugin.pluginmgr.FooComponent");
       }
     }));
     assertEquals("genericBean was not loaded", 1, CollectionUtils.countMatches(beans, new Predicate() {
       public boolean evaluate(Object object) {
-        BeanDefinition bean = (BeanDefinition) object;
-        return bean.beanId.equals("genericBean") && bean.classname.equals("java.lang.Object");
+        PluginBeanDefinition bean = (PluginBeanDefinition) object;
+        return bean.getBeanId().equals("genericBean") && bean.getClassname().equals("java.lang.Object");
       }
     }));
   }
@@ -181,26 +182,26 @@ public class SystemPathPluginProviderTest {
     .find(plugins, new PluginNameMatcherPredicate("Plugin 1"));
     assertNotNull("Plugin 1 should have been found", plugin);
     
-    Collection<IPlatformPlugin.WebServiceDefinition> webservices = plugin.getWebservices();
+    Collection<PluginServiceDefinition> webservices = plugin.getServices();
     
     Object wsobj = CollectionUtils.find(webservices, new Predicate() {
       public boolean evaluate(Object object) {
-        IPlatformPlugin.WebServiceDefinition ws = (IPlatformPlugin.WebServiceDefinition)object;
-        boolean ret = ws.title.equals("%TestWS1.TITLE%");
+        PluginServiceDefinition ws = (PluginServiceDefinition)object;
+        boolean ret = ws.getTitle().equals("%TestWS1.TITLE%");
         return ret;
       }
     });
     
     assertNotNull("Webservice \"%TestWS1.TITLE%\" should have been loaded", wsobj);
     
-    IPlatformPlugin.WebServiceDefinition wsDfn = (IPlatformPlugin.WebServiceDefinition)wsobj;
+    PluginServiceDefinition wsDfn = (PluginServiceDefinition)wsobj;
     
-    assertEquals("org.pentaho.test.platform.engine.core.EchoServiceBean", wsDfn.serviceClass);
-    assertEquals("xml", wsDfn.types[0]);
-    assertEquals("gwt", wsDfn.types[1]);
-    assertEquals("A test webservice", wsDfn.description);
-    assertEquals(1, wsDfn.extraClasses.size());
-    assertEquals("java.lang.String", wsDfn.extraClasses.iterator().next());
+    assertEquals("org.pentaho.test.platform.engine.core.EchoServiceBean", wsDfn.getServiceClass());
+    assertEquals("xml", wsDfn.getTypes()[0]);
+    assertEquals("gwt", wsDfn.getTypes()[1]);
+    assertEquals("A test webservice", wsDfn.getDescription());
+    assertEquals(1, wsDfn.getExtraClasses().size());
+    assertEquals("java.lang.String", wsDfn.getExtraClasses().iterator().next());
   }
 
   @Test

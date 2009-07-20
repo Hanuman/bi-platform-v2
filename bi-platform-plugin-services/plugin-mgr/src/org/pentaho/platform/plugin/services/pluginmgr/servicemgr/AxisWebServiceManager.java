@@ -14,7 +14,7 @@
  *
  * Copyright 2009 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.platform.plugin.services.pluginmgr;
+package org.pentaho.platform.plugin.services.pluginmgr.servicemgr;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -22,11 +22,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
+import org.pentaho.platform.plugin.services.webservices.AxisUtil;
+import org.pentaho.platform.plugin.services.webservices.SystemSolutionAxisConfigurator;
 
 public class AxisWebServiceManager extends AbstractServiceTypeManager {
 
@@ -47,7 +47,8 @@ public class AxisWebServiceManager extends AbstractServiceTypeManager {
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#defineService(org.pentaho.platform.plugin.services.pluginmgr.WebServiceDefinition)
    */
-  public void registerService(final WebServiceConfig wsConfig) {
+  @Override
+  public void registerService(final IServiceConfig wsConfig) {
     super.registerService(wsConfig);
     configurator.addService(wsConfig);
   }
@@ -75,7 +76,7 @@ public class AxisWebServiceManager extends AbstractServiceTypeManager {
     axisConfigurator.loadServices();
   }
 
-  public ServiceType getSupportedServiceType() {
-    return ServiceType.XML;
+  public String getSupportedServiceType() {
+    return "xml"; //$NON-NLS-1$
   }
 }

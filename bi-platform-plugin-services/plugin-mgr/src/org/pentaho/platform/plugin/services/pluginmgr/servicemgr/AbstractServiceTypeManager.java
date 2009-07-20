@@ -17,30 +17,29 @@
  * Created June 17 2009
  * @author aphillips
  */
-package org.pentaho.platform.plugin.services.pluginmgr;
+package org.pentaho.platform.plugin.services.pluginmgr.servicemgr;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pentaho.platform.api.engine.IServiceTypeManager;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.engine.ServiceException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
 
 public abstract class AbstractServiceTypeManager implements IServiceTypeManager {
   
-  protected Collection<WebServiceConfig> registeredServiceConfigs = new ArrayList<WebServiceConfig>();
+  protected Collection<IServiceConfig> registeredServiceConfigs = new ArrayList<IServiceConfig>();
   protected Map<String, Class<?>> serviceClassMap = new HashMap<String, Class<?>>();
   protected Map<String, Object> serviceInstanceMap = new HashMap<String, Object>();
   
-  public void registerService(WebServiceConfig wsConfig) {
+  public void registerService(final IServiceConfig wsConfig) {
     serviceClassMap.put(wsConfig.getId(), wsConfig.getServiceClass());
     registeredServiceConfigs.add(wsConfig);
   }
   
-  public WebServiceConfig getServiceConfig(String serviceId) {
-    for(WebServiceConfig config : registeredServiceConfigs) {
+  public IServiceConfig getServiceConfig(String serviceId) {
+    for(IServiceConfig config : registeredServiceConfigs) {
       if(config.getId().equals(serviceId)) {
         return config;
       }

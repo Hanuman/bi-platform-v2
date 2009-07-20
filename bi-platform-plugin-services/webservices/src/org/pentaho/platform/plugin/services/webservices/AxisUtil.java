@@ -17,7 +17,7 @@
  * Created May 1, 2009
  * @author aphillips
  */
-package org.pentaho.platform.plugin.services.pluginmgr;
+package org.pentaho.platform.plugin.services.webservices;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,20 +39,20 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.pluginmgr.webservice.SystemSolutionAxisConfigurator;
+import org.pentaho.platform.plugin.services.messages.Messages;
 import org.xml.sax.InputSource;
 
 import com.ibm.wsdl.factory.WSDLFactoryImpl;
 
 public class AxisUtil {
-  
-  public static String WS_EXECUTE_SERVICE_ID="ws-run"; //$NON-NLS-1$
-  public static String WSDL_SERVICE_ID="ws-wsdl"; //$NON-NLS-1$
-  
-  public static Definition getWsdlDefinition(AxisConfiguration axisConfig, WebServiceConfig webservice)
-      throws Exception {
+
+  public static String WS_EXECUTE_SERVICE_ID = "ws-run"; //$NON-NLS-1$
+
+  public static String WSDL_SERVICE_ID = "ws-wsdl"; //$NON-NLS-1$
+
+  public static Definition getWsdlDefinition(AxisConfiguration axisConfig, IServiceConfig webservice) throws Exception {
 
     String wsdlStr = getWsdl(axisConfig, webservice);
     InputStream in = new ByteArrayInputStream(wsdlStr.getBytes());
@@ -64,7 +64,7 @@ public class AxisUtil {
     return def;
   }
 
-  public static String getWsdl(AxisConfiguration axisConfig, WebServiceConfig webservice) throws Exception {
+  public static String getWsdl(AxisConfiguration axisConfig, IServiceConfig webservice) throws Exception {
     Class<?> serviceClass = webservice.getServiceClass();
     String name = serviceClass.getSimpleName();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -81,7 +81,7 @@ public class AxisUtil {
       java2WsdlBuilder.setExtraClasses(extraClassNames);
     }
     java2WsdlBuilder.setSchemaTargetNamespace("http://webservice.pentaho.com"); //$NON-NLS-1$
-    
+
     java2WsdlBuilder.setLocationUri(getWebServiceExecuteUrl() + name);
     java2WsdlBuilder.setTargetNamespacePrefix("pho"); //$NON-NLS-1$
     java2WsdlBuilder.setServiceName(name);
@@ -92,7 +92,7 @@ public class AxisUtil {
 
     return new String(out.toByteArray());
   }
-  
+
   /**
    * Create a web service from a web service wrapper. The concrete subclass
    * providers the wrappers via getWebServiceWrappers()
@@ -100,7 +100,7 @@ public class AxisUtil {
    * @return
    * @throws AxisFault
    */
-  public static AxisService createService(WebServiceConfig ws, AxisConfiguration axisConfig) throws AxisFault {
+  public static AxisService createService(IServiceConfig ws, AxisConfiguration axisConfig) throws AxisFault {
     Class<?> serviceClass = ws.getServiceClass();
     String serviceName = ws.getId();
 
@@ -112,7 +112,7 @@ public class AxisUtil {
 
     axisService.setName(serviceName);
     axisService.setDocumentation(ws.getDescription());
-    
+
     return axisService;
   }
 
@@ -142,7 +142,8 @@ public class AxisUtil {
    * @param wrapper
    * @throws Exception
    */
-  public static void createServiceWsdl(AxisService axisService, WebServiceConfig wsDef, AxisConfiguration axisConfig) throws Exception {
+  public static void createServiceWsdl(AxisService axisService, IServiceConfig wsDef, AxisConfiguration axisConfig)
+      throws Exception {
     // specific that we are generating the WSDL
     Parameter useOriginalwsdl = new Parameter();
     useOriginalwsdl.setName("useOriginalwsdl"); //$NON-NLS-1$
@@ -158,8 +159,9 @@ public class AxisUtil {
     // add the WSDL parameter to the service
     axisService.addParameter(wsdl);
   }
-  
-  public static WebServiceConfig getSourceDefinition(AxisService axisService, SystemSolutionAxisConfigurator axisConfigurator) {
+
+  public static IServiceConfig getSourceDefinition(AxisService axisService,
+      SystemSolutionAxisConfigurator axisConfigurator) {
     return axisConfigurator.getWebServiceDefinition(axisService.getName());
   }
 
@@ -171,8 +173,9 @@ public class AxisUtil {
   public static String getWebServiceExecuteUrl() {
     IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
     String relUrl = pluginMgr.getContentGeneratorIdForType(WS_EXECUTE_SERVICE_ID, null);
-    if(relUrl == null) {
-      throw new IllegalStateException("No content generator with id \""+WS_EXECUTE_SERVICE_ID+"\" configured to process web service requests");  //$NON-NLS-1$//$NON-NLS-2$
+    if (relUrl == null) {
+      throw new IllegalStateException(Messages.getErrorString(
+          "AxisUtil.ERROR_0001_NO_CONTENT_GENERATOR_FOR_WS", WS_EXECUTE_SERVICE_ID)); //$NON-NLS-1$
     }
     String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
     return url;
@@ -180,12 +183,13 @@ public class AxisUtil {
 
   public static String getWebServiceWsdlUrl() {
     IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
-    String relUrl = pluginMgr.getContentGeneratorIdForType("ws-wsdl", null); //$NON-NLS-1$
-    if(relUrl == null) {
-      throw new IllegalStateException("No content generator with id \""+WSDL_SERVICE_ID+"\" configured to process web service requests"); //$NON-NLS-1$ //$NON-NLS-2$
+    String relUrl = pluginMgr.getContentGeneratorIdForType(WSDL_SERVICE_ID, null);
+    if (relUrl == null) {
+      throw new IllegalStateException(Messages.getErrorString(
+          "AxisUtil.ERROR_0002_NO_CONTENT_GENERATOR_FOR_WSDL", WSDL_SERVICE_ID)); //$NON-NLS-1$
     }
     String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
     return url;
   }
-  
+
 }

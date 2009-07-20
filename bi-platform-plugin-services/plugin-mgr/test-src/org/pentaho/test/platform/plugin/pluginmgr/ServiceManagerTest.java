@@ -8,19 +8,18 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pentaho.platform.api.engine.IServiceManager;
-import org.pentaho.platform.api.engine.IServiceTypeManager;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.engine.ServiceException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
-import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
-import org.pentaho.platform.plugin.services.pluginmgr.GwtRpcServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.DefaultServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.GwtRpcServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.IServiceTypeManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
 
 @SuppressWarnings("nls")
 public class ServiceManagerTest {
   
-  IServiceManager serviceManager;
+  DefaultServiceManager serviceManager;
   
   @Before
   public void init() {
@@ -31,20 +30,20 @@ public class ServiceManagerTest {
   
   @Test
   public void testServiceRegistration() throws ServiceException {
-    WebServiceConfig config = new WebServiceConfig();
+    ServiceConfig config = new ServiceConfig();
     config.setId("testId");
     config.setServiceClass(EchoServiceBean.class);
-    config.setServiceType(ServiceType.GWT);
+    config.setServiceType("gwt");
     serviceManager.registerService(config);
     
-    assertNotNull(serviceManager.getServiceConfig(ServiceType.GWT, "testId"));
+    assertNotNull(serviceManager.getServiceConfig("gwt", "testId"));
   }
   
   @Test
   public void testGetServiceBean() throws ServiceException {
     testServiceRegistration();
     
-    Object serviceBean = serviceManager.getServiceBean(ServiceType.GWT, "testId");
+    Object serviceBean = serviceManager.getServiceBean("gwt", "testId");
     assertNotNull(serviceBean);
     assertTrue(serviceBean instanceof EchoServiceBean);
   }
@@ -53,10 +52,16 @@ public class ServiceManagerTest {
   public void testGetServiceConfig() throws ServiceException {
     testServiceRegistration();
     
-    WebServiceConfig config = serviceManager.getServiceConfig(ServiceType.GWT, "testId");
+    IServiceConfig config = serviceManager.getServiceConfig("gwt", "testId");
     assertNotNull(config);
     assertEquals("testId", config.getId());
     assertEquals(EchoServiceBean.class, config.getServiceClass());
-    assertEquals(ServiceType.GWT, config.getServiceType());
+    assertEquals("gwt", config.getServiceType());
+  }
+  
+  @Test(expected=IllegalStateException.class)
+  public void testRegisterInvalidService() throws ServiceException {
+    ServiceConfig config = new ServiceConfig();
+    serviceManager.registerService(config);
   }
 }

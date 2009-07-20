@@ -43,21 +43,21 @@ import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFileMetaProvider;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.PluginBeanDefinition;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.platform.api.engine.ServiceException;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 import org.pentaho.platform.util.logging.Logger;
 
-public class PluginManager extends AbstractPluginManager {
+public class DefaultPluginManager extends AbstractPluginManager {
 
   private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
 
@@ -84,7 +84,7 @@ public class PluginManager extends AbstractPluginManager {
         //A plugin unload should not adversely affect anything downstream, it should
         //log an error and otherwise fail silently
         String msg = Messages.getErrorString(
-            "PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getName()); //$NON-NLS-1$
+            "PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getId()); //$NON-NLS-1$
         Logger.error(getClass().toString(), msg, t);
         PluginMessageLogger.add(msg);
       }
@@ -119,11 +119,11 @@ public class PluginManager extends AbstractPluginManager {
       for (IPlatformPlugin plugin : providedPlugins) {
         try {
           registerPlugin(plugin, session);
-          registeredPlugins.put(plugin.getName(), plugin);
+          registeredPlugins.put(plugin.getId(), plugin);
         } catch (Throwable t) {
           // this has been logged already
           anyErrors = true;
-          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_REGISTER_PLUGIN", plugin.getName()); //$NON-NLS-1$
+          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_REGISTER_PLUGIN", plugin.getId()); //$NON-NLS-1$
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
         }
@@ -154,7 +154,7 @@ public class PluginManager extends AbstractPluginManager {
       }
     } catch (Throwable t) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0017_COULD_NOT_LOAD_PLUGIN_LIFECYCLE_LISTENER", plugin.getName(), plugin //$NON-NLS-1$
+          "PluginManager.ERROR_0017_COULD_NOT_LOAD_PLUGIN_LIFECYCLE_LISTENER", plugin.getId(), plugin //$NON-NLS-1$
               .getLifecycleListenerClassname()), t);
     }
 
@@ -163,7 +163,7 @@ public class PluginManager extends AbstractPluginManager {
         throw new PlatformPluginRegistrationException(
             Messages
                 .getErrorString(
-                    "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getName(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
+                    "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getId(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
       }
       plugin.addLifecycleListener((IPluginLifecycleListener) listener);
     }
@@ -175,14 +175,14 @@ public class PluginManager extends AbstractPluginManager {
     //TODO: we should treat the registration of a plugin as an atomic operation
     //with rollback if something is broken
     
-    if(StringUtils.isEmpty(plugin.getName())) {
+    if(StringUtils.isEmpty(plugin.getId())) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
           "PluginManager.ERROR_0026_PLUGIN_INVALID", plugin.getSourceDescription())); //$NON-NLS-1$
     }
 
-    if (registeredPlugins.containsKey(plugin.getName())) {
+    if (registeredPlugins.containsKey(plugin.getId())) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0024_PLUGIN_ALREADY_LOADED_BY_SAME_NAME", plugin.getName())); //$NON-NLS-1$
+          "PluginManager.ERROR_0024_PLUGIN_ALREADY_LOADED_BY_SAME_NAME", plugin.getId())); //$NON-NLS-1$
     }
 
     ClassLoader loader = setPluginClassLoader(plugin);
@@ -207,13 +207,13 @@ public class PluginManager extends AbstractPluginManager {
     //a service class may be configured as a plugin bean
     registerServices(plugin, loader);
 
-    PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getName())); //$NON-NLS-1$
+    PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getId())); //$NON-NLS-1$
     try {
       plugin.loaded();
     } catch (Throwable t) {
       //The plugin has already been loaded, so there is really no logical response to any type
       //of failure here except to log an error and otherwise fail silently
-      String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getName()); //$NON-NLS-1$
+      String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getId()); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, t);
       PluginMessageLogger.add(msg);
     }
@@ -269,10 +269,10 @@ public class PluginManager extends AbstractPluginManager {
     //we do not have to synchronize on the bean set here because the
     //map that backs the set is never modified after the plugin has 
     //been made available to the plugin manager
-    for (BeanDefinition def : plugin.getBeans()) {
+    for (PluginBeanDefinition def : plugin.getBeans()) {
       //register by classname if id is null
-      def.beanId = (def.beanId == null) ? def.classname : def.beanId;
-      registerClass(plugin, def.beanId, def.classname, loader);
+      def.setBeanId((def.getBeanId() == null) ? def.getClassname() : def.getBeanId());
+      registerClass(plugin, def.getBeanId(), def.getClassname(), loader);
     }
   }
 
@@ -283,7 +283,7 @@ public class PluginManager extends AbstractPluginManager {
       throws PlatformPluginRegistrationException {
     if (objectFactory.objectDefined(id)) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", id, plugin.getName())); //$NON-NLS-1$
+          "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", id, plugin.getId())); //$NON-NLS-1$
     }
     //right now we support only prototype scope for beans
     objectFactory.defineObject(id, classname, Scope.LOCAL, loader);
@@ -292,13 +292,13 @@ public class PluginManager extends AbstractPluginManager {
   private void registerServices(IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
     IServiceManager svcManager = PentahoSystem.get(IServiceManager.class, null);
 
-    for (IPlatformPlugin.WebServiceDefinition pws : plugin.getWebservices()) {
-      for (WebServiceConfig ws : createServiceConfigs(pws, plugin, loader)) {
+    for (PluginServiceDefinition pws : plugin.getServices()) {
+      for (ServiceConfig ws : createServiceConfigs(pws, plugin, loader)) {
         try {
           svcManager.registerService(ws);
         } catch (ServiceException e) {
           throw new PlatformPluginRegistrationException(Messages.getErrorString(
-              "PluginManager.ERROR_0025_SERVICE_REGISTRATION_FAILED", ws.getId(), plugin.getName()), e); //$NON-NLS-1$
+              "PluginManager.ERROR_0025_SERVICE_REGISTRATION_FAILED", ws.getId(), plugin.getId()), e); //$NON-NLS-1$
         }
       }
     }
@@ -308,26 +308,27 @@ public class PluginManager extends AbstractPluginManager {
    * A utility method to convert plugin version of webservice definition to the official engine version
    * consumable by an IServiceManager 
    */
-  private Collection<WebServiceConfig> createServiceConfigs(IPlatformPlugin.WebServiceDefinition pws,
+  private Collection<ServiceConfig> createServiceConfigs(PluginServiceDefinition pws,
       IPlatformPlugin plugin, ClassLoader loader) throws PlatformPluginRegistrationException {
-    Collection<WebServiceConfig> services = new ArrayList<WebServiceConfig>();
+    Collection<ServiceConfig> services = new ArrayList<ServiceConfig>();
 
     //Set the service type (one service config instance created per service type)
     //
-    if (pws.types == null || pws.types.length < 1) {
+    if (pws.getTypes() == null || pws.getTypes().length < 1) {
       throw new PlatformPluginRegistrationException(Messages.getErrorString(
-          "PluginManager.ERROR_0023_SERVICE_TYPE_UNSPECIFIED", pws.id)); //$NON-NLS-1$
+          "PluginManager.ERROR_0023_SERVICE_TYPE_UNSPECIFIED", pws.getId())); //$NON-NLS-1$
     }
-    for (String type : pws.types) {
-      WebServiceConfig ws = new WebServiceConfig();
-      ws.setServiceType(ServiceType.valueOf(type.toUpperCase()));
-      ws.setTitle(pws.title);
-      ws.setDescription(pws.description);
-      String serviceClassName = (StringUtils.isEmpty(pws.serviceClass)) ? pws.serviceBeanId : pws.serviceClass;
+    for (String type : pws.getTypes()) {
+      ServiceConfig ws = new ServiceConfig();
+      
+      ws.setServiceType(type);
+      ws.setTitle(pws.getTitle());
+      ws.setDescription(pws.getDescription());
+      String serviceClassName = (StringUtils.isEmpty(pws.getServiceClass())) ? pws.getServiceBeanId() : pws.getServiceClass();
 
       String serviceId;
-      if (!StringUtils.isEmpty(pws.id)) {
-        serviceId = pws.id;
+      if (!StringUtils.isEmpty(pws.getId())) {
+        serviceId = pws.getId();
       } else {
         serviceId = serviceClassName;
         if (serviceClassName.indexOf('.') > 0) {
@@ -352,8 +353,8 @@ public class PluginManager extends AbstractPluginManager {
         ws.setServiceClass(loadClass(serviceClassKey));
 
         ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-        if (pws.extraClasses != null) {
-          for (String extraClass : pws.extraClasses) {
+        if (pws.getExtraClasses() != null) {
+          for (String extraClass : pws.getExtraClasses()) {
             classes.add(loadClass(extraClass));
           }
         }
@@ -369,7 +370,7 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
-    ClassLoader loader = classLoaderMap.get(plugin.getSourceDescription());
+    ClassLoader loader = classLoaderMap.get(plugin.getId());
     if (loader == null) {
       String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath(
           "system/" + plugin.getSourceDescription()); //$NON-NLS-1$
@@ -377,19 +378,19 @@ public class PluginManager extends AbstractPluginManager {
       //not be able to locate resources in jars.  This classloader ultimately
       //needs to be made less fragile
       pluginDir = pluginDir.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-      Logger.debug(this, "plugin dir for " + plugin.getName() + " is [" + pluginDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      Logger.debug(this, "plugin dir for " + plugin.getId() + " is [" + pluginDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       loader = new PluginClassLoader(pluginDir, this);
-      classLoaderMap.put(plugin.getSourceDescription(), loader);
+      classLoaderMap.put(plugin.getId(), loader);
     }
     return loader;
   }
 
   public ClassLoader getClassLoader(IPlatformPlugin plugin) {
-    return getClassLoader(plugin.getName());
+    return getClassLoader(plugin.getId());
   }
   
   public ClassLoader getClassLoader(String pluginId) {
-    return classLoaderMap.get(registeredPlugins.get(pluginId).getSourceDescription());
+    return classLoaderMap.get(pluginId);
   }
 
   private void registerContentGenerators(IPlatformPlugin plugin, ClassLoader loader)
@@ -397,11 +398,11 @@ public class PluginManager extends AbstractPluginManager {
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
       String errorMsg = Messages.getString(
-          "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getSourceDescription()); //$NON-NLS-1$
+          "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getId()); //$NON-NLS-1$
 
       //test load the content generator
       try {
-        Class<?> clazz = loader.loadClass(cgInfo.getClassname());
+        Class<?> clazz = Class.forName(cgInfo.getClassname(), false, loader);
         objectFactory.defineObject(clazz.getSimpleName(), cgInfo.getClassname(), Scope.LOCAL, loader);
         objectFactory.defineObject(cgInfo.getId(), cgInfo.getClassname(), Scope.LOCAL, loader);
       } catch (Exception e) {
@@ -426,8 +427,6 @@ public class PluginManager extends AbstractPluginManager {
         // try to create the fileinfo generator class
 
         try {
-          Class<?> clazz = loader.loadClass(cgInfo.getFileInfoGeneratorClassname());
-          clazz.newInstance();
           objectFactory.defineObject(cgInfo.getType(), cgInfo.getFileInfoGeneratorClassname(), Scope.LOCAL, loader);
         } catch (Exception e) {
           throw new PlatformPluginRegistrationException(
@@ -446,7 +445,7 @@ public class PluginManager extends AbstractPluginManager {
       generatorList.add(cgInfo);
 
       PluginMessageLogger.add(Messages.getString(
-          "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getName())); //$NON-NLS-1$
+          "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getId())); //$NON-NLS-1$
     }
   }
 
@@ -566,18 +565,18 @@ public class PluginManager extends AbstractPluginManager {
   }
 
   public Object getPluginSetting(IPlatformPlugin plugin, String key, String defaultValue) {
-    return getPluginSetting(plugin.getName(), key, defaultValue);
+    return getPluginSetting(plugin.getId(), key, defaultValue);
   }
   
   public Object getPluginSetting(String pluginId, String key, String defaultValue) {
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-    ClassLoader classLoader = classLoaderMap.get(registeredPlugins.get(pluginId).getSourceDescription());
+    ClassLoader classLoader = classLoaderMap.get(pluginId);
     return resLoader.getPluginSetting(classLoader, key, defaultValue);
   }
 
   public IPlatformPlugin isResourceLoadable(String path) {
     PlatformPlugin p = new PlatformPlugin();
-    p.setName(getServicePlugin(path));
+    p.setId(getServicePlugin(path));
     return p;
   }
 
@@ -591,7 +590,7 @@ public class PluginManager extends AbstractPluginManager {
         //normalize static url for comparison
         url = (url.startsWith("/")) ? url.substring(1) : url; //$NON-NLS-1$
         if (path.startsWith(url)) {
-          return plugin.getName();
+          return plugin.getId();
         }
       }
 
@@ -599,7 +598,7 @@ public class PluginManager extends AbstractPluginManager {
         String cgId = contentGenerator.getId();
         //content generator ids cannot start with '/', so no need to normalize cg ids
         if (path.startsWith(cgId)) {
-          return plugin.getName();
+          return plugin.getId();
         }
       }
     }
@@ -613,7 +612,7 @@ public class PluginManager extends AbstractPluginManager {
       for (String url : resourceMap.keySet()) {
         if (path.startsWith(url, 1) || path.startsWith(url)) {
           IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-          ClassLoader classLoader = classLoaderMap.get(plugin.getSourceDescription());
+          ClassLoader classLoader = classLoaderMap.get(plugin.getId());
           String resourcePath = path.replace(url, resourceMap.get(url));
           return resLoader.getResourceAsStream(classLoader, resourcePath);
         }

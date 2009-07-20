@@ -30,7 +30,9 @@ import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginLifecycleListener;
+import org.pentaho.platform.api.engine.PluginBeanDefinition;
 import org.pentaho.platform.api.engine.PluginLifecycleException;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.ui.xul.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
@@ -45,9 +47,9 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private List<XulOverlay> overlays = new ArrayList<XulOverlay>();
   
-  private Collection<BeanDefinition> beanDefinitions = new ArrayList<BeanDefinition>();
+  private Collection<PluginBeanDefinition> beanDefinitions = new ArrayList<PluginBeanDefinition>();
 
-  private Collection<IPlatformPlugin.WebServiceDefinition> webserviceDefinitions = new ArrayList<IPlatformPlugin.WebServiceDefinition>();
+  private Collection<PluginServiceDefinition> webserviceDefinitions = new ArrayList<PluginServiceDefinition>();
 
   private List<IPentahoInitializer> initializers = new ArrayList<IPentahoInitializer>();
 
@@ -58,7 +60,7 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   @SuppressWarnings("unchecked")
   private List menuOverlays = new ArrayList();
 
-  private String name;
+  private String id;
 
   private String sourceDescription;
 
@@ -88,8 +90,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
     return contentInfos;
   }
 
-  public String getName() {
-    return name;
+  public String getId() {
+    return id;
   }
 
   public List<XulOverlay> getOverlays() {
@@ -97,11 +99,11 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
   }
 
   /**
-   * Sets the name for this plug-in
-   * @param name
+   * Sets the unique id for this plug-in
+   * @param id
    */
-  public void setName(String name) {
-    this.name = name;
+  public void setId(String id) {
+    this.id = id;
   }
 
   /**
@@ -161,20 +163,20 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
     return staticResourceMap;
   }
   
-  public Collection<BeanDefinition> getBeans() {
+  public Collection<PluginBeanDefinition> getBeans() {
     return Collections.unmodifiableCollection(beanDefinitions);
   }
 
-  public Collection<IPlatformPlugin.WebServiceDefinition> getWebservices() {
+  public Collection<PluginServiceDefinition> getServices() {
     return Collections.unmodifiableCollection(webserviceDefinitions);
   }
   
-  public void addBean(BeanDefinition beanDefinition) {
+  public void addBean(PluginBeanDefinition beanDefinition) {
     beanDefinitions.add(beanDefinition);
   }
   
-  public void addWebservice(IPlatformPlugin.WebServiceDefinition webserviceDefinition) {
-    webserviceDefinitions.add(webserviceDefinition);
+  public void addWebservice(PluginServiceDefinition serviceDefinition) {
+    webserviceDefinitions.add(serviceDefinition);
   }
 
   public void init() throws PluginLifecycleException {
@@ -201,6 +203,11 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   public Map<String, String> getMetaProviderMap() {
     return metaProviderMap;
+  }
+
+  public String getName() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

@@ -41,16 +41,15 @@ import org.pentaho.platform.api.engine.IPluginLifecycleListener;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.engine.IServiceManager;
-import org.pentaho.platform.api.engine.IServiceTypeManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
+import org.pentaho.platform.api.engine.PluginBeanDefinition;
 import org.pentaho.platform.api.engine.PluginBeanException;
-import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
-import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
@@ -58,12 +57,13 @@ import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
-import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
-import org.pentaho.platform.plugin.services.pluginmgr.GwtRpcServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginMessageLogger;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.DefaultServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.GwtRpcServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.IServiceTypeManager;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
@@ -90,7 +90,7 @@ public class PluginManagerTest {
     microPlatform.define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL);
 
     session = new StandaloneSession();
-    pluginManager = new PluginManager();
+    pluginManager = new DefaultPluginManager();
   }
 
   @Test
@@ -405,7 +405,8 @@ public class PluginManagerTest {
     
     //register the gwt service handler
     IServiceTypeManager gwtHandler = new GwtRpcServiceManager();
-    PentahoSystem.get(IServiceManager.class, session).setServiceTypeManagers(Arrays.asList(gwtHandler));
+    DefaultServiceManager sm = (DefaultServiceManager)PentahoSystem.get(IServiceManager.class);
+    sm.setServiceTypeManagers(Arrays.asList(gwtHandler));
     
     PluginMessageLogger.clear();
     
@@ -419,9 +420,9 @@ public class PluginManagerTest {
     //with the service manager.  We'll use a mock service manager to test this, since the default service manager
     //is a heavy Axis-backed impl, requiring an http server
     
-    WebServiceConfig config = gwtHandler.getServiceConfig("EchoServiceBean");
+    IServiceConfig config = gwtHandler.getServiceConfig("EchoServiceBean");
     assertNotNull("The GWT service manager should have a service registered by name 'EchoServiceBean'", config);
-    assertEquals(ServiceType.GWT, config.getServiceType());
+    assertEquals("gwt", config.getServiceType());
     assertEquals(EchoServiceBean.class, config.getServiceClass());
   }
   
@@ -467,7 +468,7 @@ public class PluginManagerTest {
   public static class Tst3PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("Plugin 3");
+      p.setId("Plugin 3");
       p.setLifecycleListenerClassname("bogus.classname");
       return Arrays.asList((IPlatformPlugin) p);
     }
@@ -476,7 +477,7 @@ public class PluginManagerTest {
   public static class Tst2PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test2Plugin");
+      p.setId("test2Plugin");
       p.setLifecycleListenerClassname(CheckingLifecycleListener.class.getName());
       return Arrays.asList((IPlatformPlugin) p);
     }
@@ -486,11 +487,11 @@ public class PluginManagerTest {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
       //need to set source description - classloader needs it
-      p.setName("good-plugin1");
+      p.setId("good-plugin1");
       p.setSourceDescription("good-plugin1");
-      p.addBean(new BeanDefinition("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent"));
-      p.addBean(new BeanDefinition("TestPojo", "java.lang.String"));
-      p.addBean(new BeanDefinition("TestClassNotFoundComponent", "org.pentaho.test.NotThere"));
+      p.addBean(new PluginBeanDefinition("TestMockComponent", "org.pentaho.test.platform.engine.core.MockComponent"));
+      p.addBean(new PluginBeanDefinition("TestPojo", "java.lang.String"));
+      p.addBean(new PluginBeanDefinition("TestClassNotFoundComponent", "org.pentaho.test.NotThere"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
@@ -498,9 +499,9 @@ public class PluginManagerTest {
   public static class Tst6PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test6Plugin");
-      p.addBean(new BeanDefinition("bean1", "java.lang.String"));
-      p.addBean(new BeanDefinition("bean1", "java.lang.Object"));
+      p.setId("test6Plugin");
+      p.addBean(new PluginBeanDefinition("bean1", "java.lang.String"));
+      p.addBean(new PluginBeanDefinition("bean1", "java.lang.Object"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
@@ -508,10 +509,10 @@ public class PluginManagerTest {
   public static class Tst8PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test8Plugin");
+      p.setId("test8Plugin");
       //need to set source description - classloader needs it
       p.setSourceDescription("good-plugin1");
-      p.addBean(new BeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));
+      p.addBean(new PluginBeanDefinition("PluginOnlyClass", "org.pentaho.nowhere.PluginOnlyClass"));
       return Arrays.asList((IPlatformPlugin) p);
     }
   }
@@ -519,7 +520,7 @@ public class PluginManagerTest {
   public static class Tst9PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test9Plugin");
+      p.setId("test9Plugin");
 
       ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
       cg1.setDescription("test 9 plugin description");
@@ -546,7 +547,7 @@ public class PluginManagerTest {
   public static class Tst10PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test10Plugin");
+      p.setId("test10Plugin");
 
       ContentInfo type = new ContentInfo();
       type.setDescription("test10type1-description");
@@ -571,15 +572,15 @@ public class PluginManagerTest {
   public static class Tst11PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test11Plugin");
-      IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
-      pws.title = "ws11title";
-      pws.description = "ws11description";
-      pws.serviceBeanId = "org.pentaho.test.platform.engine.core.EchoServiceBean";
+      p.setId("test11Plugin");
+      PluginServiceDefinition pws = new PluginServiceDefinition();
+      pws.setTitle("ws11title");
+      pws.setDescription("ws11description");
+      pws.setServiceBeanId("org.pentaho.test.platform.engine.core.EchoServiceBean");
       p.addWebservice(pws);
 
       //defining bean with null id, the classname will be used as the id
-      p.addBean(new BeanDefinition(null, "org.pentaho.test.platform.engine.core.EchoServiceBean"));
+      p.addBean(new PluginBeanDefinition(null, "org.pentaho.test.platform.engine.core.EchoServiceBean"));
 
       return Arrays.asList((IPlatformPlugin) p);
     }
@@ -588,7 +589,7 @@ public class PluginManagerTest {
   public static class Tst12PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test12Plugin");
+      p.setId("test12Plugin");
       p.addMenuCustomization(new IMenuCustomization() {
 
         public String getAnchorId() {
@@ -632,7 +633,7 @@ public class PluginManagerTest {
   public static class Tst13PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test13Plugin");
+      p.setId("test13Plugin");
 
       ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
       cg1.setDescription("test 9 plugin description");
@@ -652,12 +653,12 @@ public class PluginManagerTest {
   public static class Tst14PluginProvider implements IPluginProvider {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("test14Plugin");
-      IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
-      pws.types = new String[]{"gwt"};
-      pws.title = "ws14title";
-      pws.description = "ws14description";
-      pws.serviceClass = "org.pentaho.test.platform.engine.core.EchoServiceBean";
+      p.setId("test14Plugin");
+      PluginServiceDefinition pws = new PluginServiceDefinition();
+      pws.setTypes(new String[]{"gwt"});
+      pws.setTitle("ws14title");
+      pws.setDescription("ws14description");
+      pws.setServiceClass("org.pentaho.test.platform.engine.core.EchoServiceBean");
       p.addWebservice(pws);
 
       return Arrays.asList((IPlatformPlugin) p);
@@ -669,11 +670,11 @@ public class PluginManagerTest {
       List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
       
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("distinctTest15Plugin1");
+      p.setId("distinctTest15Plugin1");
       plugins.add(p);
       
       PlatformPlugin p2 = new PlatformPlugin();
-      p2.setName("distinctTest15Plugin2");
+      p2.setId("distinctTest15Plugin2");
       plugins.add(p2);
       
       return plugins;
@@ -684,12 +685,12 @@ public class PluginManagerTest {
       List<IPlatformPlugin> plugins = new ArrayList<IPlatformPlugin>();
       
       PlatformPlugin p = new PlatformPlugin();
-      p.setName("dupTest15Plugin");
+      p.setId("dupTest15Plugin");
       plugins.add(p);
       
       
       PlatformPlugin p2 = new PlatformPlugin();
-      p2.setName("dupTest15Plugin");
+      p2.setId("dupTest15Plugin");
       plugins.add(p2);
       
       return plugins;

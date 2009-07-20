@@ -31,10 +31,10 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.commons.logging.Log;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.engine.core.system.PentahoBase;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisUtil;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 import org.pentaho.platform.util.logging.Logger;
 
 public abstract class AbstractAxisConfigurator extends PentahoBase implements AxisConfigurator {
@@ -44,7 +44,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
   protected IPentahoSession session; // Session to use during initialization
   
   //map of the web service wrappers
-  private Map<String, WebServiceConfig> services = new HashMap<String,WebServiceConfig>();  
+  private Map<String, IServiceConfig> services = new HashMap<String,IServiceConfig>();  
 
   public abstract Log getLogger();
   
@@ -62,7 +62,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
     List<String> removed = new ArrayList<String>();
     // iterate through the list of web service wrappers
     for( String key : keys ) {
-      WebServiceConfig wrapper = services.get( key );
+      IServiceConfig wrapper = services.get( key );
       
       
       // use the service name to remove them from the Axis system
@@ -78,7 +78,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
 
   }
   
-  public WebServiceConfig getWebServiceDefinition( String name ) {
+  public IServiceConfig getWebServiceDefinition( String name ) {
      return services.get( name );
   }
 
@@ -137,16 +137,16 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
    * Returns a list of the web service wrappers for this implmentation
    * @return
    */
-  protected abstract List<WebServiceConfig> getWebServiceDefinitions();
+  protected abstract List<IServiceConfig> getWebServiceDefinitions();
 
   /**
    * Load the web services from the list of web service wrappers
    */
   public void loadServices() {
     
-    List<WebServiceConfig> wsDfns = getWebServiceDefinitions();
+    List<IServiceConfig> wsDfns = getWebServiceDefinitions();
     
-    for( WebServiceConfig wsDef : wsDfns ) {
+    for( IServiceConfig wsDef : wsDfns ) {
       try {
         loadService( wsDef );
       } catch (Exception e) {
@@ -162,7 +162,7 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
    * @param wrapper Web service wrapper
    * @throws Exception
    */
-  protected void loadService( WebServiceConfig wsDef) throws Exception {
+  protected void loadService( IServiceConfig wsDef) throws Exception {
 
     // first create the service
     String serviceId = wsDef.getId();

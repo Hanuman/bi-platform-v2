@@ -36,10 +36,10 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.DefaultServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.DefaultServiceManager;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 
@@ -54,7 +54,7 @@ public class PluginAdapterTest {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");
     microPlatform.define(ISolutionEngine.class, SolutionEngine.class);
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
-    microPlatform.define(IPluginManager.class, PluginManager.class);
+    microPlatform.define(IPluginManager.class, DefaultPluginManager.class);
     microPlatform.define(IPluginProvider.class, SystemPathXmlPluginProvider.class);
     microPlatform.define(IServiceManager.class, DefaultServiceManager.class);
 

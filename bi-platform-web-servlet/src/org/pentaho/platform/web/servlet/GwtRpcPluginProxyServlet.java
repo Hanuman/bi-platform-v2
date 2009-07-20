@@ -37,7 +37,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ServiceException;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginUtil;
@@ -86,7 +85,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     IServiceManager serviceManager = PentahoSystem.get(IServiceManager.class, PentahoSessionHolder.getSession());
 
     String serviceId = getDispatchKey();
-    if (null == serviceManager.getServiceConfig(ServiceType.GWT, serviceId)) {
+    if (null == serviceManager.getServiceConfig("gwt", serviceId)) { //$NON-NLS-1$
       String errMsg = Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0001_SERVICE_NOT_FOUND", serviceId); //$NON-NLS-1$
       logger.error(errMsg);
       return RPC.encodeResponseForFailure(null, new ServiceException(errMsg), policy);
@@ -94,7 +93,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
     Object targetBean = null;
     try {
-      targetBean = serviceManager.getServiceBean(ServiceType.GWT, serviceId);
+      targetBean = serviceManager.getServiceBean("gwt", serviceId); //$NON-NLS-1$
     } catch (ServiceException e) {
       logger.error(
           Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0002_FAILED_TO_GET_BEAN_REFERENCE", serviceId), e); //$NON-NLS-1$
@@ -170,7 +169,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     //
     String pluginServiceContextPath = servletContextPath.substring(servletContextPath.indexOf('/', 1));
 
-    ClassLoader serviceClassloader = PluginUtil.getClassLoaderForService(ServiceType.GWT, pluginServiceContextPath);
+    ClassLoader serviceClassloader = PluginUtil.getClassLoaderForService(pluginServiceContextPath);
     if (serviceClassloader == null) {
       //if we get here, then the service is not supplied by a plugin and thus we cannot hope to find
       //the appropriate serialization policy

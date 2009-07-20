@@ -15,7 +15,7 @@
  * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.plugin.services.pluginmgr.webservice;
+package org.pentaho.platform.plugin.services.webservices;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -26,11 +26,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.WebServiceConfig;
+import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.pluginmgr.webservice.messages.Messages;
-import org.pentaho.platform.plugin.services.webservices.AbstractAxisConfigurator;
+import org.pentaho.platform.plugin.services.messages.Messages;
 
 /**
  * This class provides axis with it's configuration information from 
@@ -49,7 +48,7 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
 
   private static final Log logger = LogFactory.getLog(SystemSolutionAxisConfigurator.class);
 
-  protected List<WebServiceConfig> wsDfns = new ArrayList<WebServiceConfig>();
+  protected List<IServiceConfig> wsDfns = new ArrayList<IServiceConfig>();
   
   public SystemSolutionAxisConfigurator() {
     super();
@@ -89,12 +88,12 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
     return true;
   }
   
-  public void addService( WebServiceConfig ws ) {
+  public void addService( IServiceConfig ws ) {
     wsDfns.add(ws);
   }
   
   @Override
-  protected List<WebServiceConfig> getWebServiceDefinitions() {
+  protected List<IServiceConfig> getWebServiceDefinitions() {
 
     return wsDfns;
   }

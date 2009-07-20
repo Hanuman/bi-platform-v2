@@ -33,7 +33,7 @@ import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.webservices.content.AxisServiceWsdlGenerator;
 import org.pentaho.platform.plugin.services.webservices.messages.Messages;
 import org.pentaho.platform.util.web.SimpleUrlFactory;

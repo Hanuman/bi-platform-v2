@@ -17,17 +17,17 @@
  * Created June 17 2009
  * @author aphillips
  */
-package org.pentaho.platform.plugin.services.pluginmgr;
+package org.pentaho.platform.plugin.services.pluginmgr.servicemgr;
 
 import org.pentaho.platform.api.engine.ServiceInitializationException;
-import org.pentaho.platform.api.engine.WebServiceConfig.ServiceType;
 
 public class GwtRpcServiceManager extends AbstractServiceTypeManager {
 
   public void initServices() throws ServiceInitializationException {
   }
 
-  public ServiceType getSupportedServiceType() {
-    return ServiceType.GWT;
+  public String getSupportedServiceType() {
+    return "gwt"; //$NON-NLS-1$
   }
+
 }

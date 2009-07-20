@@ -1,5 +1,8 @@
 package org.pentaho.test.platform.plugin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,13 +13,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
-import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
@@ -26,11 +25,9 @@ import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.action.chartbeans.DefaultChartBeansGenerator;
 import org.pentaho.platform.plugin.action.chartbeans.IChartBeansGenerator;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.platform.uifoundation.component.ActionComponent;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
-import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -57,8 +54,6 @@ public class ChartbeansTest{
 
   StandaloneSession session;
 
-  IPluginManager pluginManager;
-
   @Before
   public void init0() {
     microPlatform = new MicroPlatform("test-src/solution/");
@@ -67,7 +62,6 @@ public class ChartbeansTest{
     microPlatform.define(IChartBeansGenerator.class, DefaultChartBeansGenerator.class);
 
     session = new StandaloneSession();
-    pluginManager = new PluginManager();
   }
   
   @Test

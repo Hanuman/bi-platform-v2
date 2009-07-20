@@ -38,7 +38,8 @@ import org.pentaho.platform.api.engine.IPlatformPlugin;
 import org.pentaho.platform.api.engine.IPluginOperation;
 import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
-import org.pentaho.platform.api.engine.IPlatformPlugin.BeanDefinition;
+import org.pentaho.platform.api.engine.PluginBeanDefinition;
+import org.pentaho.platform.api.engine.PluginServiceDefinition;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.solution.ContentInfo;
@@ -188,7 +189,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     for (Object obj : nodes) {
       Element node = (Element) obj;
       if (node != null) {
-        plugin.addBean(new BeanDefinition(node.attributeValue("id"), node.attributeValue("class"))); //$NON-NLS-1$ //$NON-NLS-2$
+        plugin.addBean(new PluginBeanDefinition(node.attributeValue("id"), node.attributeValue("class"))); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }
   }
@@ -198,19 +199,19 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     for (Object obj : nodes) {
       Element node = (Element) obj;
 
-      IPlatformPlugin.WebServiceDefinition pws = new IPlatformPlugin.WebServiceDefinition();
+      PluginServiceDefinition pws = new PluginServiceDefinition();
 
-      pws.id = getProperty(node, "id"); //$NON-NLS-1$
+      pws.setId(getProperty(node, "id")); //$NON-NLS-1$
       String type = getProperty(node, "type"); //$NON-NLS-1$
       if(!StringUtils.isEmpty(type)) {
-        pws.types = type.split(","); //$NON-NLS-1$
+        pws.setTypes(type.split(",")); //$NON-NLS-1$
       }
-      pws.title = getProperty(node, "title"); //$NON-NLS-1$
-      pws.description = getProperty(node, "description"); //$NON-NLS-1$
+      pws.setTitle(getProperty(node, "title")); //$NON-NLS-1$
+      pws.setDescription(getProperty(node, "description")); //$NON-NLS-1$
       
       //TODO: add support for inline service class definition
-      pws.serviceBeanId = getProperty(node, "ref"); //$NON-NLS-1$
-      pws.serviceClass = getProperty(node, "class"); //$NON-NLS-1$
+      pws.setServiceBeanId(getProperty(node, "ref")); //$NON-NLS-1$
+      pws.setServiceClass(getProperty(node, "class")); //$NON-NLS-1$
 
       Collection<String> extraClasses = new ArrayList<String>();
       List<?> extraNodes = node.selectNodes("extra"); //$NON-NLS-1$
@@ -221,9 +222,9 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
           extraClasses.add(extraClass);
         }
       }
-      pws.extraClasses = extraClasses;
+      pws.setExtraClasses(extraClasses);
 
-      if (pws.serviceBeanId == null && pws.serviceClass == null) {
+      if (pws.getServiceBeanId() == null && pws.getServiceClass() == null) {
         PluginMessageLogger.add(Messages.getString("PluginManager.NO_SERVICE_CLASS_FOUND")); //$NON-NLS-1$
       } else {
         plugin.addWebservice(pws);
@@ -245,7 +246,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         Logger.error(getClass().toString(), msg);
       }
       
-      plugin.setName(name);
+      plugin.setId(name);
       PluginMessageLogger.add(Messages.getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
     }
   }
