@@ -41,7 +41,6 @@ import org.pentaho.platform.engine.core.solution.ContentGeneratorInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.services.solution.ContentGeneratorUtil;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
 import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
@@ -52,6 +51,7 @@ import org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisSe
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 import org.pentaho.test.platform.engine.core.EchoServiceBean;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
+import org.pentaho.test.platform.engine.services.ContentGeneratorUtil;
 
 @SuppressWarnings("nls")
 public class AxisWebServiceManagerTest {

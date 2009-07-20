@@ -16,7 +16,7 @@
  * Copyright 2009 Pentaho Corporation.  All rights reserved. 
  * 
  */
-package org.pentaho.platform.engine.services.solution;
+package org.pentaho.test.platform.engine.services;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
