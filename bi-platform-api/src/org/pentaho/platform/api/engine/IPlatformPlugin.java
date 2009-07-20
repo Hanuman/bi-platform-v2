@@ -24,31 +24,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.pentaho.platform.api.ui.IMenuCustomization;
 import org.pentaho.ui.xul.XulOverlay;
 
 /**
- * The root of a logical grouping of BI Platform extensions.  Platform extension
- * points include:
- * <li>Content Generators  (see {@link IContentGenerator})
- * <li>Overlays  (see {@link XulOverlay})
- * <li>Menu Customizations (see {@link IMenuCustomization}) 
- * <p>In addition to grouping extensions, an {@link IPlatformPlugin}
- * include some attributes that allow the platform to identify and use the plugin
- * appropriately.
- * <p>
- * <b>WARNING: This interface will be changing and may go away entirely by the next major
- * release</b> 
+ * This interface represents the contract for the specification of a plugin.
+ * A {@link IPluginProvider} is responsible for serving these to requesting
+ * clients, such as the {@link IPluginManager}.  The presence of an instance
+ * of an {@link IPlatformPlugin} does not necessarily mean that the plugin
+ * is loaded.  An implementations of this interface represents merely a 
+ * plugin configuration. 
  * 
  * @author jdixon
  */
 public interface IPlatformPlugin extends IPluginLifecycleListener {
 
   /**
-   * Returns the name of this plug-in 
-   * @return
+   * Returns the unique ID of this plugin
+   * @return the plugin id
    */
-  public String getName();
+  public String getId();
   
   /**
    * A short description of where this plugin came from, e.g. "biserver/solutions/pluginA"
@@ -77,7 +71,7 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
   /**
    * Returns a list of bean configurations for this plugin-in
    */
-  public Collection<BeanDefinition> getBeans();
+  public Collection<PluginBeanDefinition> getBeans();
   
   /**
    * Returns a list of static resource paths for this plugin-in
@@ -124,28 +118,6 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
   public void unLoaded() throws PluginLifecycleException;
   
   /**
-   * A simple struct that holds a plugin bean definition
-   */
-  public static class BeanDefinition {
-    public String beanId, classname;
-    
-    public BeanDefinition(String beanId, String classname) { 
-      this.beanId = beanId;
-      this.classname = classname;
-    }
-  }
-  
-  /**
-   * This class will become a Java bean in it's own file by the next major release
-   */
-  public class WebServiceDefinition {
-    public String id, title, description;
-    public String[] types;
-    public String serviceBeanId, serviceClass;
-    public Collection<String> extraClasses;
-  }
-
-  /**
    * The storage mechanism for a plugin to know what ISolutionFileMetaProvider class
    * should be used for a particular content type.
    * @return a map of content types (extensions) keys and ISolutionFileMetaProvider 
@@ -153,5 +125,5 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    */
   public Map<String, String> getMetaProviderMap();
   
-  public Collection<IPlatformPlugin.WebServiceDefinition> getWebservices();
+  public Collection<PluginServiceDefinition> getServices();
 }

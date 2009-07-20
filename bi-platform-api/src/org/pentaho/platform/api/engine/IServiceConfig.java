@@ -14,104 +14,54 @@
  *
  * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
- * Created May 1, 2009
- * @author aphillips
+ * @created Jul 17, 2009 
+ * @author James Dixon
+ * 
  */
- 
 package org.pentaho.platform.api.engine;
 
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
+/**
+ * The configuration spec for a platform managed service
+ * @author aphillips
+ */
+public interface IServiceConfig {
 
-public class WebServiceConfig {
-  
-  private Class<?> serviceClass;
-  private Collection<Class<?>> extraClasses;
-  private String title, description, id;
-  private ServiceType serviceType;
-  private boolean enabled = true; //does this really belong here, or in the service manager? 
-  public enum ServiceType { GWT, XML };
-  
   /**
    * Returns the unique id of this web service. This should not be localized
    * @return a unique id for this web service
    */
-  public String getId() {
-    return id;
-  }
-  
-  public void setId(String id) {
-    this.id = id;
-  }
-  
+  public String getId();
+
   /**
    * Returns the enabled state of this service
    * @return Current enable/disable state
    */
-  public boolean isEnabled() {
-    return enabled;
-  }
+  public boolean isEnabled();
 
-  /**
-   * Sets the enabled state of this service
-   * @param enabled
-   */
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-  
-  public Collection<Class<?>> getExtraClasses() {
-    return extraClasses;
-  }
-  
+  public Collection<Class<?>> getExtraClasses();
+
   /**
    * Returns the web service bean class
    * @return bean class or id by which the class can be looked up
    */
-  public Class<?> getServiceClass() {
-    return serviceClass;
-  }
+  public Class<?> getServiceClass();
 
-  public void setServiceClass(Class<?> serviceClass) {
-    this.serviceClass = serviceClass;
-  }
-
-  public void setExtraClasses(Collection<Class<?>> extraClasses) {
-    this.extraClasses = extraClasses;
-  }
-  
   /**
    * Returns the localized title for this web service. This is shown on the 
    * services list page.  Defaults to service id if not set.
    * @return natural language name for the service
    */
-  public String getTitle() {
-    return (StringUtils.isEmpty(title))?getId():title;
-  }
-  
-  public void setTitle(String title) {
-    this.title = title;
-  }
+  public String getTitle();
 
   /**
    * Returns the localized title for this web service. This is shown on the 
    * services list page.
    * @return Description
    */
-  public String getDescription() {
-    return description;
-  }
-  
-  public void setDescription(String description) {
-    this.description = description;
-  }
-  
-  public ServiceType getServiceType() {
-    return serviceType;
-  }
+  public String getDescription();
 
-  public void setServiceType(ServiceType serviceType) {
-    this.serviceType = serviceType;
-  }
+  public String getServiceType();
+
 }
