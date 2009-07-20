@@ -33,11 +33,11 @@ import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.connections.xquery.XQConnection;
 import org.pentaho.platform.plugin.services.metadata.MetadataDomainRepository;
-import org.pentaho.platform.plugin.services.pluginmgr.AxisWebServiceManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 
 /**
@@ -100,7 +100,7 @@ public class PentahoBoot extends PentahoSystemBoot {
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( "IPluginProvider", SystemPathXmlPluginProvider.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
-      factory.defineObject( "IPluginManager", PluginManager.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
+      factory.defineObject( "IPluginManager", DefaultPluginManager.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
       factory.defineObject( "IServiceManager", AxisWebServiceManager.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
       factory.defineObject( "IPluginResourceLoader", PluginResourceLoader.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
     }
