@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Element;
-import org.pentaho.chart.ChartFactory;
+import org.pentaho.chart.ChartBeanFactory;
 import org.pentaho.chart.plugin.IChartPlugin;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
@@ -44,7 +44,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 
 	public boolean startup(final IPentahoSession session) {
 		try {
-			ChartFactory.loadDefaultChartPlugins(initPlugins());
+			ChartBeanFactory.loadDefaultChartPlugins(initPlugins());
 		} catch (Exception ex) {
 			Logger
 					.warn(
