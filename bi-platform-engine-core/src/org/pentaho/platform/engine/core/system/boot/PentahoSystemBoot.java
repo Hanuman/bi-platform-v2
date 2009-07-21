@@ -125,12 +125,12 @@ public class PentahoSystemBoot {
    * Override this method to create a different set of defaults or
    * use the 'setter' methods to override defaults in a more fine-grained manner
    */
-  protected void configure(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
-    setFilePath(solutionPath != null?solutionPath:new File(".").getAbsolutePath()); //$NON-NLS-1$
+  protected void configure(String userFilePath, String userBaseUrl, IPentahoDefinableObjectFactory userFactory) {
+    setFilePath(userFilePath != null?userFilePath:new File(".").getAbsolutePath()); //$NON-NLS-1$
     
-    setBaseUrl(baseUrl != null?baseUrl:"http://localhost:8080/pentaho/"); //$NON-NLS-1$
+    setBaseUrl(userBaseUrl != null?userBaseUrl:"http://localhost:8080/pentaho/"); //$NON-NLS-1$
     
-    setFactory(factory != null?factory:new StandaloneObjectFactory());
+    setFactory(userFactory != null?userFactory:new StandaloneObjectFactory());
 
     PentahoSystem.setSystemListeners(lifecycleListeners);
     PentahoSystem.setSessionStartupActions(startupActions);
@@ -194,7 +194,7 @@ public class PentahoSystemBoot {
     initialized = false;
     try {
       initialized = PentahoSystem.init(createApplicationContext());
-      //we want to wrap any exception that causes initialization to faile, so we will
+      //we want to wrap any exception that causes initialization to fail, so we will
       //catch throwable
     } catch (Throwable t) {
       throw new PlatformInitializationException(Messages.getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED"), t); //$NON-NLS-1$
