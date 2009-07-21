@@ -77,7 +77,9 @@ PentahoSystem which is initialized after Spring
   
   <!-- Data connections.  Connections objects should be accessed through PentahoConnectionFactory, 
        not directly from the PentahoObjectFactory. -->
-  <bean id="connection-SQL" class="org.pentaho.platform.plugin.services.connections.sql.SQLConnection" scope="prototype" />
+  <bean id="connection-SQL" class="org.pentaho.platform.plugin.services.connections.sql.SQLConnection" scope="prototype" >
+          <property name="fallBackToNonscrollableOnError" value="true" />
+  </bean>
   <bean id="connection-MDX" class="org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection" scope="prototype" >
   	      <property name="useExtendedColumnNames" value="true" />
           <property name="returnNullCells" value="true" />
