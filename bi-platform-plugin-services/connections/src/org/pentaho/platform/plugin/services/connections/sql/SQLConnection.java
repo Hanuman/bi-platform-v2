@@ -74,6 +74,8 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
   private int fetchSize = -1;
   
   private boolean readOnly;
+  
+  private boolean fallBackToNonscrollableOnError = true;
 
   public static final int RESULTSET_SCROLLABLE = ResultSet.TYPE_SCROLL_INSENSITIVE;
 
@@ -531,6 +533,14 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
    */
   public boolean getReadOnly() {
     return this.readOnly;
+  }
+
+  public void setFallBackToNonscrollableOnError(boolean fallBackToNonscrollableOnError) {
+    this.fallBackToNonscrollableOnError = fallBackToNonscrollableOnError;
+  }
+
+  public boolean isFallBackToNonscrollableOnError() {
+    return fallBackToNonscrollableOnError;
   }
   
 }
