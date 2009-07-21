@@ -17,7 +17,7 @@
         <label value="${datasourceSelectionDialog.listLabel}" tooltiptext="${datasourceSelectionDialog.listLabel}" />
         <spacer flex="1" />
         <button id="editDatasource" image="images/edit.png" tooltiptext="${datasourceSelectionDialog.edit}" pen:disabledimage="images/edit_disabled.png"
-          disabled="true" onclick="datasourceSelectionDialogController.editDatasource()" />
+          visible="false" disabled="true" onclick="datasourceSelectionDialogController.editDatasource()" />
         <button id="addDatasource" image="images/add.png" tooltiptext="${datasourceSelectionDialog.add}" pen:disabledimage="images/add_disabled.png"
           visible="false" onclick="datasourceSelectionDialogController.addDatasource()" />
         <button id="removeDatasource" image="images/remove.png" tooltiptext="${datasourceSelectionDialog.remove}" pen:disabledimage="images/remove_disabled.png"
