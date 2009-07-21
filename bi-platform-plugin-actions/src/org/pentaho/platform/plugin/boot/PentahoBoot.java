@@ -15,8 +15,14 @@
  */
 package org.pentaho.platform.plugin.boot;
 
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoObjectFactory;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.api.engine.IPluginProvider;
+import org.pentaho.platform.api.engine.IPluginResourceLoader;
+import org.pentaho.platform.api.engine.IServiceManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -33,11 +39,11 @@ import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.connections.xquery.XQConnection;
 import org.pentaho.platform.plugin.services.metadata.MetadataDomainRepository;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
 import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
 import org.pentaho.platform.plugin.services.pluginmgr.SystemPathXmlPluginProvider;
-import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager;
+import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.DefaultServiceManager;
 import org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository;
 
 /**
@@ -58,18 +64,17 @@ public class PentahoBoot extends PentahoSystemBoot {
    * - MXL datasources
    * - File outputs
    */
-  protected void setupDefaults() {
-    
+  @Override
+  protected void configure(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
     super.configure(null, null, null);
     IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( ISolutionEngine.class.getSimpleName(), SolutionEngine.class.getName(), Scope.LOCAL );
-      factory.defineObject( "systemStartupSession" , StandaloneSession.class.getName(), IPentahoDefinableObjectFactory.Scope.GLOBAL ); //$NON-NLS-1$
-      factory.defineObject( ISolutionRepository.class.getSimpleName(), FileBasedSolutionRepository.class.getName(), Scope.SESSION );
-      factory.defineObject( "connection-XML", XQConnection.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
-      factory.defineObject( "connection-SQL", SQLConnection.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
-      factory.defineObject( "file", FileOutputHandler.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
+      define( ISolutionEngine.class, SolutionEngine.class, Scope.LOCAL );
+      define( "systemStartupSession" , StandaloneSession.class, IPentahoDefinableObjectFactory.Scope.GLOBAL ); //$NON-NLS-1$
+      define( ISolutionRepository.class, FileBasedSolutionRepository.class, Scope.SESSION );
+      define( "connection-XML", XQConnection.class, Scope.LOCAL ); //$NON-NLS-1$
+      define( "connection-SQL", SQLConnection.class, Scope.LOCAL ); //$NON-NLS-1$
+      define( "file", FileOutputHandler.class, Scope.LOCAL ); //$NON-NLS-1$
     }
   }
   
@@ -86,8 +91,7 @@ public class PentahoBoot extends PentahoSystemBoot {
   public void enableOlap() {
     IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( "connection-MDX", MDXConnection.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
+      define( "connection-MDX", MDXConnection.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
     }
     addLifecycleListener( new MondrianSystemListener() );
   }
@@ -96,13 +100,11 @@ public class PentahoBoot extends PentahoSystemBoot {
    * Enables the plugin manager
    */
   public void enablePluginManager() {
-    IPentahoObjectFactory objectFactory = getFactory();
-    if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( "IPluginProvider", SystemPathXmlPluginProvider.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
-      factory.defineObject( "IPluginManager", DefaultPluginManager.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
-      factory.defineObject( "IServiceManager", AxisWebServiceManager.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
-      factory.defineObject( "IPluginResourceLoader", PluginResourceLoader.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
+    if( getFactory() instanceof IPentahoDefinableObjectFactory ) {
+      define(IPluginProvider.class, SystemPathXmlPluginProvider.class, Scope.GLOBAL );
+      define(IPluginManager.class, DefaultPluginManager.class, Scope.GLOBAL );
+      define(IServiceManager.class, DefaultServiceManager.class, Scope.GLOBAL );
+      define(IPluginResourceLoader.class, PluginResourceLoader.class, Scope.GLOBAL );
     }
     addLifecycleListener( new PluginAdapter() );
     
@@ -114,8 +116,7 @@ public class PentahoBoot extends PentahoSystemBoot {
   public void enablePooledDatasources() {
     IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( "IDatasourceService", PooledOrJndiDatasourceService.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
+      define(IDatasourceService.class, PooledOrJndiDatasourceService.class, Scope.LOCAL );
     }
     addLifecycleListener( new PooledDatasourceSystemListener() );
   }
@@ -126,8 +127,7 @@ public class PentahoBoot extends PentahoSystemBoot {
   public void enableMetadata() {
     IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( "IMetadataDomainRepository", MetadataDomainRepository.class.getName(), Scope.GLOBAL); //$NON-NLS-1$
+      define(IMetadataDomainRepository.class, MetadataDomainRepository.class, Scope.GLOBAL);
     }
   }
   
