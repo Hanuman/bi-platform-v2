@@ -51,7 +51,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 public class SQLConnection implements IPentahoLoggingConnection, ILimitableConnection {
-  Connection nativeConnection;
+  protected Connection nativeConnection;
 
   /*
    * private static int connectionCtr = 0;
@@ -74,6 +74,8 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
   private int fetchSize = -1;
   
   private boolean readOnly;
+  
+  private boolean forcedForwardOnly = false;
   
   private boolean fallBackToNonscrollableOnError = true;
 
@@ -308,14 +310,29 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       } catch (Exception ignored) {}
     }
     
+    
     // Create a statement for a scrollable resultset.
-    Statement stmt = nativeConnection.createStatement(scrollType, concur);
+    Statement stmt = null;
+    ResultSet resultSet = null;
+    try {
 
-    stmts.add(stmt);
-    
-    setStatementLimitations(stmt);
-    
-    ResultSet resultSet = stmt.executeQuery(query);
+      stmt = nativeConnection.createStatement(scrollType, concur);
+      stmts.add(stmt);
+      setStatementLimitations(stmt);
+      resultSet = stmt.executeQuery(query);
+      
+    } catch (Exception e) {
+      // We're going to assume that the problem MIGHT be that a scrolling resultset isn't supported
+      // on this connection, then try to fix it up...
+     if ((scrollType == ResultSet.TYPE_SCROLL_INSENSITIVE)&&(isFallBackToNonscrollableOnError())){
+         // FORCE forward only
+        stmt = nativeConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, concur);
+        stmts.add(stmt);
+        setStatementLimitations(stmt);
+        resultSet = stmt.executeQuery(query);
+        setForcedForwardOnly(true);
+      }
+    }
     sqlResultSet = new SQLResultSet(resultSet, this);
     // add to list of resultsets for cleanup later.
     resultSets.add(sqlResultSet);
@@ -388,17 +405,34 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     }
     
     // Create a prepared statement
-    PreparedStatement pStmt = nativeConnection.prepareStatement(query, scrollType, concur);
-    // add to stmts list for closing when connection closes
-    stmts.add(pStmt);
-    
-    setStatementLimitations(pStmt);
-
-    for (int i = 0; i < parameters.size(); i++) {
-      pStmt.setObject(i + 1, parameters.get(i));
+    PreparedStatement pStmt = null;
+    ResultSet resultSet = null;
+    try {
+      pStmt = nativeConnection.prepareStatement(query, scrollType, concur);
+      // add to stmts list for closing when connection closes
+      stmts.add(pStmt);
+      setStatementLimitations(pStmt);
+      for (int i = 0; i < parameters.size(); i++) {
+        pStmt.setObject(i + 1, parameters.get(i));
+      }
+      resultSet = pStmt.executeQuery();
+      
+    } catch (Exception e) {
+      // attempt to remove the offending statement...
+      stmts.remove(pStmt);
+      if ((scrollType == ResultSet.TYPE_SCROLL_INSENSITIVE)&&(isFallBackToNonscrollableOnError())){
+        // FORCE forward only
+        pStmt = nativeConnection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, concur);
+        // add to stmts list for closing when connection closes
+        stmts.add(pStmt);
+        setStatementLimitations(pStmt);
+        for (int i = 0; i < parameters.size(); i++) {
+          pStmt.setObject(i + 1, parameters.get(i));
+        }
+        resultSet = pStmt.executeQuery();
+        setForcedForwardOnly(true);
+     }
     }
-
-    ResultSet resultSet = pStmt.executeQuery();
 
     sqlResultSet = new SQLResultSet(resultSet, this);
     // add to list of resultsets for cleanup later.
@@ -477,6 +511,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
   }
 
   public int execute(final String query, final int scrollType, final int concur) throws SQLException {
+    
     // Create a statement for a scrollable resultset.
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
 
@@ -541,6 +576,14 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
 
   public boolean isFallBackToNonscrollableOnError() {
     return fallBackToNonscrollableOnError;
+  }
+
+  public boolean isForcedForwardOnly() {
+    return forcedForwardOnly;
+  }
+
+  public void setForcedForwardOnly(boolean forcedForwardOnly) {
+    this.forcedForwardOnly = forcedForwardOnly;
   }
   
 }
