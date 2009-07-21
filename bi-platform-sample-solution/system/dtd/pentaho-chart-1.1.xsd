@@ -834,7 +834,7 @@ five percent of the length of the axis. This can improve the appearance of chart
 	</xs:element>
 	<!--    
 		Applicable only to pie charts   -->
-	<xs:element name="interior-gap" type="xs:decimal" default="0.25">
+	<xs:element name="interior-gap" type="xs:decimal" default="0.085">
 		<xs:annotation>
 			<xs:documentation>Sets the gap around the interior of the pie plot (the region where the labels are drawn) as a percentage of the plot width and height. </xs:documentation>
 		</xs:annotation>

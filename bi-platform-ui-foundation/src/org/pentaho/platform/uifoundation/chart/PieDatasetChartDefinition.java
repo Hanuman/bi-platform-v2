@@ -105,7 +105,7 @@ public class PieDatasetChartDefinition extends DefaultPieDataset implements Char
   private boolean displayLabels = true;
 
   // PiePlot Customizations
-  private double interiorGap = 0.25;
+  private double interiorGap = 0.085;
 
   private double startAngle = 90.0;
 
