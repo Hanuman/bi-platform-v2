@@ -12,13 +12,14 @@ import junit.framework.TestCase;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.core.system.boot.PlatformInitializationException;
 import org.pentaho.platform.engine.services.solution.SolutionHelper;
 import org.pentaho.platform.plugin.boot.PentahoBoot;
 
 @SuppressWarnings({"all"})
 public class BootTest extends TestCase {
   
-  public void testBoot() {
+  public void testBoot() throws PlatformInitializationException {
     PentahoBoot boot = new PentahoBoot();
     boot.setFilePath("test-src/solution");
     boot.enableReporting();
