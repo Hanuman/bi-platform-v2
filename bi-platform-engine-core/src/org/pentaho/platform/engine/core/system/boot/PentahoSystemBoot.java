@@ -34,83 +34,174 @@ import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneObjectFactory;
+import org.pentaho.platform.engine.core.messages.Messages;
 
 /**
- * This class is designed to help embedded deployments start the Pentaho system
- * @author jamesdixon
+ * This class is designed to help embedded deployments start the Pentaho system.
+ * {@link PentahoSystemBoot} is a self-contained and very easy to configure platform initializer 
+ * which does not impose the use of configuration files on your filesystem.  A booter instance 
+ * gives you the flexibility to configure and run the platform entirely in memory. 
+ * <p>
+ * In general you will want to
+ * <ol>
+ * <li> Construct a {@link PentahoSystemBoot} 
+ * <li> define the system objects that your system requires, by using one of the {@link #define(Class, Class)} variants
+ * <li> (optionally) initialize the Pentaho system for processing requests by calling {@link #start()}
+ * </ol>
+ * An extremely minimal platform might be configured like this:
+ * <pre>
+ * &#064;Before
+ * public void init() {
+ *   PentahoSystemBoot booter = new PentahoSystemBoot();
+ *   //setup your required object definitions
+ *   booter.define(ISolutionRepository.class, FileBasedSolutionRepository.class);
+ *   
+ *   //initialize the minimal platform
+ *   booter.init();
+ * }
+ * </pre>
+
+ * @author jamesdixon and aphillips
  *
  */
 public class PentahoSystemBoot {
 
-  // the object factory
-  private IPentahoObjectFactory objectFactory = new StandaloneObjectFactory();
+  private IPentahoObjectFactory factory;
+
+  private String filePath;
+
+  private String baseUrl;
 
   // list of the system listeners to hook up
   private List<IPentahoSystemListener> lifecycleListeners = new ArrayList<IPentahoSystemListener>();
-  
+
   // list of startup actions to execute
   private List<ISessionStartupAction> startupActions = new ArrayList<ISessionStartupAction>();
-  
+
   // list of admin plugins (aka publishers)
   private List<IPentahoPublisher> adminActions = new ArrayList<IPentahoPublisher>();
-  
-  private String filePath;
-  
+
   private ISystemSettings settingsProvider = null;
-  
+
   private boolean initialized = false;
-  
-  private String defaultFilePath = "."; //$NON-NLS-1$
-  
-  public PentahoSystemBoot( ) {
-    setupDefaults();
+
+  /**
+   * Creates a minimal ready-to-run platform.  Use this constructor if you want to accept
+   * all the defaults for your in-memory platform.
+   */
+  public PentahoSystemBoot() {
+    configure(null, null, null);
+  }
+
+  /**
+   * Creates a minimal ready-to-run platform with a specified solution path.  Use this constructor if
+   * your system needs to access system or other solution files from a particular directory.
+   * @param solutionPath full path to the pentaho_solutions folder
+   */
+  public PentahoSystemBoot(String solutionPath) {
+    configure(solutionPath, null, null);
+  }
+
+  public PentahoSystemBoot(String solutionPath, String baseUrl) {
+    configure(solutionPath, baseUrl, null);
+  }
+
+  public PentahoSystemBoot(String solutionPath, IPentahoDefinableObjectFactory factory) {
+    configure(solutionPath, null, factory);
+  }
+
+  public PentahoSystemBoot(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
+    configure(solutionPath, baseUrl, factory);
+  }
+
+  /**
+   * Configures this booter to run.  Any parameters that are <code>null</code> will be set
+   * with default values.  The default values are as follows:
+   * <ul>
+   * <li> solutionPath = "." (current working directory)
+   * <li> baseUrl = "http://localhost:8080/pentaho/"
+   * <li> factory = a new StandaloneObjectFactory instance
+   * </ul>
+   * Override this method to create a different set of defaults or
+   * use the 'setter' methods to override defaults in a more fine-grained manner
+   */
+  protected void configure(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
+    setFilePath(solutionPath != null?solutionPath:new File(".").getAbsolutePath()); //$NON-NLS-1$
+    
+    setBaseUrl(baseUrl != null?baseUrl:"http://localhost:8080/pentaho/"); //$NON-NLS-1$
+    
+    setFactory(factory != null?factory:new StandaloneObjectFactory());
+
+    PentahoSystem.setSystemListeners(lifecycleListeners);
+    PentahoSystem.setSessionStartupActions(startupActions);
+    PentahoSystem.setAdministrationPlugins(adminActions);
   }
   
   /**
-   * Sets up the defaults:
-   * Override this method to create a different set of defaults or
-   * use the 'add' methods to override defaults on a case by case
-   * basis
+   * Sets the file path that will be used to get to file-based
+   * resources
+   * @return
    */
-  protected void setupDefaults() {
-    
-    filePath = new File( defaultFilePath ).getAbsolutePath();
+  public String getFilePath() {
+    return filePath;
   }
-
+  
   /**
    * Sets the file path to be used to find configuration and content files
    * If this is not set the current directory (.) is used.
    * @param filePath
    */
-  public void setFilePath( final String filePath ) {
+  public void setFilePath(final String filePath) {
     this.filePath = filePath;
   }
   
+  /**
+   * Sets the URL that the platform uses to generate paths to its own resources
+   * @param baseUrl
+   */
+  public void setBaseUrl(final String baseUrl) {
+    this.baseUrl = baseUrl;
+  }
+
   /**
    * Override this method if you want to change the type and state of the application
    * context used to initialize the system.
    * @return an application context for system initialization
    */
   protected IApplicationContext createApplicationContext() {
-    return new StandaloneApplicationContext(filePath, ""); //$NON-NLS-1$
+    StandaloneApplicationContext appCtxt = new StandaloneApplicationContext(getFilePath(), ""); //$NON-NLS-1$
+    appCtxt.setBaseUrl(baseUrl);
+    return appCtxt;
+  }
+
+  /**
+   * @deprecated use {@link #start()}.  This method is hanging around for backward compatibility
+   * with MicroPlatform
+   */
+  public void init() {
+    try {
+      start();
+    } catch (PlatformInitializationException e) {
+      throw new RuntimeException(e);
+    }
   }
   
   /**
-   * Starts the Pentaho platform using the defaults and options set
-   * @return
+   * Starts the Pentaho platform, making it ready to process requests.
+   * @throws PlatformInitializationException if there was a problem initializing the platform
    */
-  public boolean start() {
-    PentahoSystem.setObjectFactory( objectFactory );
-    PentahoSystem.setSystemListeners( lifecycleListeners );
-    PentahoSystem.setSystemSettingsService( settingsProvider );
-    PentahoSystem.setSessionStartupActions(startupActions);
-    PentahoSystem.setAdministrationPlugins(adminActions);
-    // initialize the system
+  public boolean start() throws PlatformInitializationException {
     initialized = false;
     try {
-      initialized = PentahoSystem.init( createApplicationContext() );
-    } catch (Exception e) {
-      e.printStackTrace();
+      initialized = PentahoSystem.init(createApplicationContext());
+      //we want to wrap any exception that causes initialization to faile, so we will
+      //catch throwable
+    } catch (Throwable t) {
+      throw new PlatformInitializationException(Messages.getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED"), t); //$NON-NLS-1$
+    }
+    
+    if (!initialized) {
+      throw new PlatformInitializationException(Messages.getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED")); //$NON-NLS-1$
     }
 
     return initialized;
@@ -125,13 +216,13 @@ public class PentahoSystemBoot {
     PentahoSystem.shutdown();
     return true;
   }
-  
+
   /**
    * Gets the object factory for the Pentaho platform
    * @return
    */
-  public IPentahoObjectFactory getObjectFactory() {
-    return objectFactory;
+  public IPentahoObjectFactory getFactory() {
+    return factory;
   }
 
   /**
@@ -139,13 +230,13 @@ public class PentahoSystemBoot {
    * StandaloneObjectFactory
    * @return
    */
-  public void setObjectFactory( IPentahoObjectFactory objectFactory) {
-    this.objectFactory = objectFactory;
+  public void setFactory(IPentahoObjectFactory factory) {
+    this.factory = factory;
     //object factory needs to also be early here so clients that do not need to
     //run the platform can have an object factory available
-    PentahoSystem.setObjectFactory( objectFactory );
+    PentahoSystem.setObjectFactory(factory);
   }
-  
+
   /**
    * Adds an administrative action to the system.
    * @param adminAction
@@ -153,7 +244,7 @@ public class PentahoSystemBoot {
   public void addAdminAction(final IPentahoPublisher adminAction) {
     adminActions.add(adminAction);
   }
-  
+
   public void setAdminActions(final List<IPentahoPublisher> adminActions) {
     this.adminActions = adminActions;
   }
@@ -163,10 +254,10 @@ public class PentahoSystemBoot {
    * starts and stops.
    * @param lifecycleListener
    */
-  public void addLifecycleListener( final IPentahoSystemListener lifecycleListener ) {
-    lifecycleListeners.add( lifecycleListener );
+  public void addLifecycleListener(final IPentahoSystemListener lifecycleListener) {
+    lifecycleListeners.add(lifecycleListener);
   }
-  
+
   /**
    * Returns the list of lifecycle listeners that will be used.
    * These objects will be notified when the Pentaho platform
@@ -200,17 +291,8 @@ public class PentahoSystemBoot {
    * @return
    */
   public void setSettingsProvider(final ISystemSettings settingsProvider) {
-    PentahoSystem.setSystemSettingsService( settingsProvider );
+    PentahoSystem.setSystemSettingsService(settingsProvider);
     this.settingsProvider = settingsProvider;
-  }
-
-  /**
-   * Sets the file path that will be used to get to file-based
-   * resources
-   * @return
-   */
-  public String getFilePath() {
-    return filePath;
   }
 
   /**
@@ -244,8 +326,8 @@ public class PentahoSystemBoot {
    * These actions will be executed on system startup or on session creation.
    * @param startupAction
    */
-  public void addStartupAction( final ISessionStartupAction startupAction ) {
-    startupActions.add( startupAction );
+  public void addStartupAction(final ISessionStartupAction startupAction) {
+    startupActions.add(startupAction);
   }
 
   /**
@@ -257,15 +339,15 @@ public class PentahoSystemBoot {
    * @throws NoSuchMethodError if the object factory does not support runtime object definition 
    */
   public PentahoSystemBoot define(String key, String implClassName, Scope scope) {
-    if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
-      IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
-      factory.defineObject( key, implClassName, scope ); 
+    if (factory instanceof IPentahoDefinableObjectFactory) {
+      IPentahoDefinableObjectFactory definableFactory = (IPentahoDefinableObjectFactory) getFactory();
+      definableFactory.defineObject(key, implClassName, scope);
     } else {
       throw new NoSuchMethodError("define is only supported by IPentahoDefinableObjectFactory"); //$NON-NLS-1$
     }
     return this;
   }
-  
+
   /**
    * Define an arbitrarily scoped object
    * @param interfaceClass  the key to retrieval of this object
@@ -277,7 +359,7 @@ public class PentahoSystemBoot {
   public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass, Scope scope) {
     return define(interfaceClass.getSimpleName(), implClass.getName(), scope);
   }
-  
+
   /**
    * Define an arbitrarily scoped object
    * @param key  the key to retrieval of this object
@@ -289,5 +371,25 @@ public class PentahoSystemBoot {
   public PentahoSystemBoot define(String key, Class<?> implClass, Scope scope) {
     return define(key, implClass.getName(), scope);
   }
-  
+
+  /**
+   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
+   * @param interfaceClass  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @return  the current {@link MicroPlatform} instance, for chaining
+   */
+  public PentahoSystemBoot define(Class<?> interfaceClass, Class<?> implClass) {
+    return define(interfaceClass.getSimpleName(), implClass.getName(), Scope.LOCAL);
+  }
+
+  /**
+   * Define a locally scoped object (aka prototype scope -- unique instance for each request for the class)
+   * @param key  the key to retrieval of this object
+   * @param implClass  the actual type that is served back to you when requested.
+   * @return  the current {@link MicroPlatform} instance, for chaining
+   */
+  public PentahoSystemBoot define(String key, Class<?> implClass) {
+    return define(key, implClass.getName(), Scope.LOCAL);
+  }
+
 }

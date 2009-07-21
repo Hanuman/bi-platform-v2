@@ -60,8 +60,8 @@ public class PentahoBoot extends PentahoSystemBoot {
    */
   protected void setupDefaults() {
     
-    super.setupDefaults();
-    IPentahoObjectFactory objectFactory = getObjectFactory();
+    super.configure(null, null, null);
+    IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( ISolutionEngine.class.getSimpleName(), SolutionEngine.class.getName(), Scope.LOCAL );
@@ -84,7 +84,7 @@ public class PentahoBoot extends PentahoSystemBoot {
    * Enables the components necessary to create reports
    */
   public void enableOlap() {
-    IPentahoObjectFactory objectFactory = getObjectFactory();
+    IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( "connection-MDX", MDXConnection.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class PentahoBoot extends PentahoSystemBoot {
    * Enables the plugin manager
    */
   public void enablePluginManager() {
-    IPentahoObjectFactory objectFactory = getObjectFactory();
+    IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( "IPluginProvider", SystemPathXmlPluginProvider.class.getName(), Scope.GLOBAL ); //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class PentahoBoot extends PentahoSystemBoot {
    * Enables the pooled datasources
    */
   public void enablePooledDatasources() {
-    IPentahoObjectFactory objectFactory = getObjectFactory();
+    IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( "IDatasourceService", PooledOrJndiDatasourceService.class.getName(), Scope.LOCAL ); //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class PentahoBoot extends PentahoSystemBoot {
    * Enables the metadata services
    */
   public void enableMetadata() {
-    IPentahoObjectFactory objectFactory = getObjectFactory();
+    IPentahoObjectFactory objectFactory = getFactory();
     if( objectFactory instanceof IPentahoDefinableObjectFactory ) {
       IPentahoDefinableObjectFactory factory = (IPentahoDefinableObjectFactory) objectFactory;
       factory.defineObject( "IMetadataDomainRepository", MetadataDomainRepository.class.getName(), Scope.GLOBAL); //$NON-NLS-1$

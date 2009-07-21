@@ -23,25 +23,23 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.SystemSettings;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
+import org.pentaho.platform.engine.core.system.boot.PlatformInitializationException;
 
 @SuppressWarnings( { "all" })
 public class BootTest {
 
-  @Test
-  public void testMissingSolutionEngine() {
+  @Test(expected = PlatformInitializationException.class)
+  public void testMissingSolutionEngine() throws PlatformInitializationException {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
-    IPentahoObjectFactory factory = boot.getObjectFactory();
+    IPentahoObjectFactory factory = boot.getFactory();
     assertNotNull("object factory is null", factory);
 
     assertTrue("object factory not definable", factory instanceof IPentahoDefinableObjectFactory);
 
     IPentahoDefinableObjectFactory definable = (IPentahoDefinableObjectFactory) factory;
 
-    boolean ok = boot.start();
-    assertFalse(ok);
-
-    boot.stop();
+    boot.start();
   }
 
   @Test
@@ -49,7 +47,7 @@ public class BootTest {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
 
-    IPentahoObjectFactory factory = boot.getObjectFactory();
+    IPentahoObjectFactory factory = boot.getFactory();
     assertNotNull("object factory is null", factory);
 
     assertTrue("object factory not definable", factory instanceof IPentahoDefinableObjectFactory);
@@ -68,7 +66,7 @@ public class BootTest {
     assertTrue(boot.isInitialized());
     assertTrue(ok);
 
-    factory = boot.getObjectFactory();
+    factory = boot.getFactory();
     Object2 object = factory.get(Object2.class, "MyObject", null);
 
     assertNotNull("object get failed", object);
@@ -106,7 +104,7 @@ public class BootTest {
     assertEquals(lifecycleListener2, lifecycleListeners3.get(0));
     assertEquals(lifecycleListeners2, lifecycleListeners3);
 
-    IPentahoObjectFactory factory = boot.getObjectFactory();
+    IPentahoObjectFactory factory = boot.getFactory();
     assertNotNull("object factory is null", factory);
 
     assertTrue("object factory not definable", factory instanceof IPentahoDefinableObjectFactory);
@@ -154,7 +152,7 @@ public class BootTest {
     assertEquals(startupAction2, startupActions3.get(0));
     assertEquals(startupActions2, startupActions3);
 
-    IPentahoObjectFactory factory = boot.getObjectFactory();
+    IPentahoObjectFactory factory = boot.getFactory();
     assertNotNull("object factory is null", factory);
 
     assertTrue("object factory not definable", factory instanceof IPentahoDefinableObjectFactory);
@@ -178,7 +176,7 @@ public class BootTest {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
 
-    IPentahoObjectFactory factory = boot.getObjectFactory();
+    IPentahoObjectFactory factory = boot.getFactory();
     assertNotNull("object factory is null", factory);
 
     SystemSettings settings = new SystemSettings();
@@ -194,7 +192,7 @@ public class BootTest {
     PentahoSystemBoot boot = new PentahoSystemBoot();
     boot.setFilePath("test-src/solution");
     TestObjectFactory objectFactory = new TestObjectFactory();
-    boot.setObjectFactory(objectFactory);
+    boot.setFactory(objectFactory);
 
     boot.define(ISolutionEngine.class.getSimpleName(), Object1.class.getName(),
         IPentahoDefinableObjectFactory.Scope.GLOBAL);
