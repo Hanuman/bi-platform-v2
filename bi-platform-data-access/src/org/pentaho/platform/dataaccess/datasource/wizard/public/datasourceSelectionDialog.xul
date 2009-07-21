@@ -12,7 +12,7 @@
   <dialog id="datasourceSelectionDialog" buttonlabelaccept="${datasourceSelectionDialog.ok}" buttonlabelcancel="${datasourceSelectionDialog.cancel}" buttons="accept,cancel"
     buttonalign="right" title="${datasourceSelectionDialog.title}" width="350" height="200"
     ondialogaccept="datasourceSelectionDialogController.onDialogAccept()" ondialogcancel="datasourceSelectionDialogController.onDialogCancel()">
-    <vbox>
+    <vbox flex="1">
       <hbox>
         <label value="${datasourceSelectionDialog.listLabel}" tooltiptext="${datasourceSelectionDialog.listLabel}" />
         <spacer flex="1" />
@@ -23,7 +23,7 @@
         <button id="removeDatasource" image="images/remove.png" tooltiptext="${datasourceSelectionDialog.remove}" pen:disabledimage="images/remove_disabled.png"
           visible="false" onclick="datasourceSelectionDialogController.removeDatasourceConfirm()" />
       </hbox>
-      <listbox id="datasourceListbox" rows="6" pen:binding="modelName" seltype="single">
+      <listbox id="datasourceListbox" flex="1" rows="6" pen:binding="modelName" seltype="single">
       </listbox>
     </vbox>
   </dialog>
