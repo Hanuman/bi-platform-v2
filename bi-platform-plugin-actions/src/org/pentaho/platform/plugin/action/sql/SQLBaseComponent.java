@@ -63,7 +63,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
   public static final String PREPARE_PARAMETER_PREFIX = "PREPARE"; //$NON-NLS-1$
 
   /** stores the prepared query for later use */
-  String preparedQuery = null;
+  protected String preparedQuery = null;
 
   /** stores the prepared parameters for later use */
   protected List preparedParameters = new ArrayList();
@@ -459,6 +459,12 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         resultSet = connection.executeQuery(query);
       }
 
+      if (connection instanceof SQLConnection){
+        if (((SQLConnection)connection).isForcedForwardOnly()){
+          warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE"));
+        }
+      }
+
       rSet = resultSet;
       return resultSet;
     } catch (Exception e) {
@@ -505,7 +511,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
    * @param live returns original result set if true, memory result set if false
    * @return true if successful
    */
-  protected boolean runQuery(final String rawQuery, final boolean live) {
+  protected boolean runQuery(final String rawQuery, boolean live) {
     try {
       if ((connection == null) || !connection.initialized()) {
         error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
@@ -532,11 +538,21 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       
       
       AbstractRelationalDbAction relationalDbAction = (AbstractRelationalDbAction) getActionDefinition();
+
+      IPentahoResultSet resultSet = null;
+      boolean isForwardOnly = relationalDbAction.getUseForwardOnlyResultSet().getBooleanValue(false);
+      
+      resultSet = doQuery(sqlConnection, query, isForwardOnly);
+ 
+      if (sqlConnection.isForcedForwardOnly()){
+        isForwardOnly = true;
+        live = false;
+        warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE"));
+      }
+
       if (live) {
 
         // set the result set as the output
-        IPentahoResultSet resultSet = doQuery(sqlConnection, query, relationalDbAction.getUseForwardOnlyResultSet()
-            .getBooleanValue(false));
         rSet = resultSet;
 
         // After preparation and execution, we need to clear out the
@@ -561,28 +577,13 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       } else {
         // execute the query, read the results and cache them
         try {
-          IPentahoResultSet resultSet = doQuery(sqlConnection, query, relationalDbAction.getUseForwardOnlyResultSet()
-              .getBooleanValue(false));
           // After preparation and execution, we need to clear out the
           // prepared parameters.
           preparedParameters.clear();
-          IPentahoMetaData metadata = getMetadata(resultSet, false);
-          Object columnHeaders[][] = metadata.getColumnHeaders();
-
-          MemoryResultSet cachedResultSet = new MemoryResultSet(metadata);
-
-          int columnCount = columnHeaders[0].length;
-          String columnNames[] = new String[columnCount];
-          for (int columnNo = 0; columnNo < columnCount; columnNo++) {
-            columnNames[columnNo] = columnHeaders[0][columnNo].toString();
-          }
-
-          Object[] rowObjects = resultSet.next();
-          while (rowObjects != null) {
-            cachedResultSet.addRow(rowObjects);
-            rowObjects = resultSet.next();
-          }
+          
+          IPentahoResultSet cachedResultSet = resultSet.memoryCopy();
           rSet = cachedResultSet;
+
           IActionOutput actionOutput = relationalDbAction.getOutputResultSet();
           if (actionOutput != null) {
             actionOutput.setValue(cachedResultSet);
