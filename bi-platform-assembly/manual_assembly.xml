@@ -185,6 +185,7 @@
     <mkdir dir="${stage.dir}/pentaho-plugins" />
     <copy todir="${stage.dir}/pentaho-plugins">
       <fileset dir="${lib.dir}" includes="*plugin*.zip" />
+      <fileset dir="${lib.dir}" includes="*cdf*.zip" />
     </copy>
 
     <!-- copy package-res-manual stuff into stage dir -->
