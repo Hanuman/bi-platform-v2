@@ -10,6 +10,7 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.platform.dataaccess.datasource.Delimiter;
 import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class CsvModel extends XulEventSourceAdapter{
@@ -23,7 +24,9 @@ public class CsvModel extends XulEventSourceAdapter{
   private Delimiter delimiter;
   private List<String> enclosureList;
   private List<String> delimiterList;
-  
+  private DatasourceMessages messages;
+
+
   public CsvModel() {
   }
 
@@ -35,7 +38,7 @@ public class CsvModel extends XulEventSourceAdapter{
     enclosureList = new ArrayList<String>();
     Enclosure[] enclosureArray = Enclosure.values();
     for(int i=0;i<enclosureArray.length;i++) {
-      enclosureList.add(enclosureArray[i].getName());
+      enclosureList.add(getMessages().getString(enclosureArray[i].getName()));
     }
     this.firePropertyChange("enclosureList", null, enclosureList); //$NON-NLS-1$
   }
@@ -48,7 +51,7 @@ public class CsvModel extends XulEventSourceAdapter{
     delimiterList = new ArrayList<String>();
     Delimiter[] delimiterArray = Delimiter.values();
     for(int i=0;i<delimiterArray.length;i++) {
-      delimiterList.add(delimiterArray[i].getName());
+      delimiterList.add(getMessages().getString(delimiterArray[i].getName()));
     }
     this.firePropertyChange("delimiterList", null, delimiterList); //$NON-NLS-1$
   }
@@ -178,6 +181,14 @@ public class CsvModel extends XulEventSourceAdapter{
     this.firePropertyChange("delimiter", previousValue, delimiter); //$NON-NLS-1$
   }
 
+  
+  public DatasourceMessages getMessages() {
+    return messages;
+  }
+
+  public void setMessages(DatasourceMessages messages) {
+    this.messages = messages;
+  }
   /*
    * Clears out the model
    */
@@ -221,4 +232,5 @@ public class CsvModel extends XulEventSourceAdapter{
       csvModelValidationListeners.fireCsvModelInValid();
     }
   }
+
 }

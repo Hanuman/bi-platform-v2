@@ -56,7 +56,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.getConnections(new AsyncCallback<List<IConnection>>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error getting connections: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(List<IConnection> arg0) {
@@ -69,7 +69,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.getConnectionByName(name, new AsyncCallback<IConnection>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error getting connections: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(IConnection arg0) {
@@ -82,7 +82,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.addConnection(connection, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error adding connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(Boolean arg0) {
@@ -96,7 +96,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.updateConnection(connection, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error updating connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(Boolean arg0) {
@@ -109,7 +109,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.deleteConnection(connection, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error deleting connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(Boolean arg0) {
@@ -122,7 +122,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.deleteConnection(name, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error deleting connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(Boolean arg0) {
@@ -136,7 +136,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
     SERVICE.testConnection(connection, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error testing connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
 
       public void onSuccess(Boolean arg0) {
@@ -149,7 +149,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
   public void convertFromConnection(final IConnection databaseConnection, final XulServiceCallback<IDatabaseConnection> callback) {
     SERVICE.convertFromConnection(databaseConnection, new AsyncCallback<IDatabaseConnection>() {
       public void onFailure(Throwable arg0) {
-        callback.error("error testing connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
       public void onSuccess(IDatabaseConnection arg0) {
         callback.success(arg0);
@@ -161,7 +161,7 @@ public class ConnectionServiceGwtImpl implements IXulAsyncConnectionService {
   public void convertToConnection(final IDatabaseConnection databaseConnection, final XulServiceCallback<IConnection> callback) {
     SERVICE.convertToConnection(databaseConnection, new AsyncCallback<IConnection>() {
       public void onFailure(Throwable arg0) {
-        callback.error("error testing connection: ", arg0);
+        callback.error(arg0.getLocalizedMessage(), arg0);
       }
       public void onSuccess(IConnection arg0) {
         callback.success(arg0);

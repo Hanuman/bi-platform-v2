@@ -3,15 +3,16 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableRow;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
@@ -27,7 +28,6 @@ import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
@@ -36,6 +36,8 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messag
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class DatasourceServiceImpl implements IDatasourceService{
@@ -51,63 +53,43 @@ public class DatasourceServiceImpl implements IDatasourceService{
 
   public DatasourceServiceImpl() {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
+    String dataAccessClassName = null;
+    try {
+      IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+      dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+      Class<?> clazz = Class.forName(dataAccessClassName);
+      Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+      dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
+        // TODO: Unhardcode once this is an actual plugin
+        dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
+    }
+    String dataAccessViewClassName = null;
+    try {
+      IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+      dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-view-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
+      Class<?> clazz = Class.forName(dataAccessViewClassName);
+      Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+      dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0030_DATAACCESS_VIEW_PERMISSIONS_INIT_ERROR"),e);         //$NON-NLS-1$
+        // TODO: Unhardcode once this is an actual plugin
+      dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
+    }
+    
   }
 
 
   protected boolean hasDataAccessPermission() {
-    if (dataAccessPermHandler == null) {
-      String dataAccessClassName = null;
-      try {
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessClassName);
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
-          // TODO: Unhardcode once this is an actual plugin
-          dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
-      }
-      
-    }
     return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
   }
   
   protected boolean hasDataAccessViewPermission() {
-    if (dataAccessViewPermHandler == null) {
-      String dataAccessClassName = null;
-      try {
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-view-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessClassName);
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0030_DATAACCESS_VIEW_PERMISSIONS_INIT_ERROR"),e);         //$NON-NLS-1$
-          // TODO: Unhardcode once this is an actual plugin
-        dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
-      }
-      
-    }
     return dataAccessViewPermHandler != null && dataAccessViewPermHandler.hasDataAccessViewPermission(PentahoSessionHolder.getSession());
   }
   
   protected List<String> getPermittedRoleList() {
-    if (dataAccessViewPermHandler == null) {
-      String dataAccessViewClassName = null;
-      try {
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessViewClassName);
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
-          // TODO: Unhardcode once this is an actual plugin
-          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
-      }
-      
-    }
     if(dataAccessViewPermHandler == null) {
       return null;
     }
@@ -115,42 +97,12 @@ public class DatasourceServiceImpl implements IDatasourceService{
   }
   protected List<String> getPermittedUserList() {
     if (dataAccessViewPermHandler == null) {
-      String dataAccessViewClassName = null;
-      try {
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessViewClassName);
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
-          // TODO: Unhardcode once this is an actual plugin
-          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
-      }
-      
-    }
-    if(dataAccessViewPermHandler == null) {
       return null;
     }
     return dataAccessViewPermHandler.getPermittedUserList(PentahoSessionHolder.getSession());
   }
 
   protected int getDefaultAcls() {
-    if (dataAccessViewPermHandler == null) {
-      String dataAccessViewClassName = null;
-      try {
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessViewClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", "org.pentaho.platform.dataaccess.datasource.wizard.service.impl.SimpleDataAccessViewPermissionHandler" );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessViewClassName);
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessViewPermHandler = (IDataAccessViewPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"),e);        
-          // TODO: Unhardcode once this is an actual plugin
-          dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
-      }
-      
-    }
     if(dataAccessViewPermHandler == null) {
       return -1;
     }
@@ -179,47 +131,36 @@ public class DatasourceServiceImpl implements IDatasourceService{
         logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0001_PERMISSION_DENIED"));
     }
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-    SerializedResultSet serializedResultSet = null;
+    SerializedResultSet returnResultSet;
+    SQLConnection sqlConnection = null; 
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
-      // Only SELECT or read only operations are allowed through the SQL executer 
-      conn.setReadOnly(true);
-      if (!StringUtils.isEmpty(query)) {
-        stmt = conn.createStatement();
-        if(limit >=0) {
-          stmt.setMaxRows(limit);
-        }        
-        ResultSetConverter rsc = new ResultSetConverter(stmt.executeQuery(query));
-        serializedResultSet =  new SerializedResultSet(rsc.getColumnTypeNames(), rsc.getMetaData(), rsc.getResultSet());
-  
-      } else {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0021_QUERY_IS_EMPTY"));
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0021_QUERY_IS_EMPTY")); //$NON-NLS-1$
+      sqlConnection = (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, PentahoSessionHolder.getSession(), null);
+      sqlConnection.setMaxRows(limit);
+      sqlConnection.setReadOnly(true);
+      IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
+      MarshallableResultSet marshallableResultSet = new MarshallableResultSet();
+      marshallableResultSet.setResultSet(resultSet);
+      String[][] data = new String[marshallableResultSet.getRows().length][];
+      int rowCount = 0;
+      for(MarshallableRow row : marshallableResultSet.getRows()) {
+        data[rowCount++] = row.getCell();
       }
+      returnResultSet = new SerializedResultSet(marshallableResultSet.getColumnTypes().getColumnType(), 
+          marshallableResultSet.getColumnNames().getColumnName(), data);
+      
     } catch (SQLException e) {
       logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
     } finally {
-      try {
-        if (rs != null) {
-          rs.close();
+        if (sqlConnection != null) {
+          sqlConnection.close();
         }
-        if (stmt != null) {
-          stmt.close();
-        }
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()), e);
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()),e);
-      }
     }
-    return serializedResultSet;
+    return returnResultSet;
 
   }
   

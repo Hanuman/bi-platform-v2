@@ -1,7 +1,6 @@
 package org.pentaho.platform.dataaccess.datasource.wizard.service.gwt;
 
 import java.util.List;
-import java.lang.Boolean;
 
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;

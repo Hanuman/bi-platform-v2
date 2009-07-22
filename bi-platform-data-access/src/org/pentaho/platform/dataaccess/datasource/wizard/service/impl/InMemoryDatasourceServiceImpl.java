@@ -2,19 +2,21 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableRow;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
@@ -30,13 +32,15 @@ import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.utils.ResultSetConverter;
 import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.action.sql.SQLLookupRule;
+import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 /*
@@ -85,44 +89,33 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
   }
   
   public SerializedResultSet doPreview(String connectionName, String query, String previewLimit) throws DatasourceServiceException{
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-    SerializedResultSet serializedResultSet = null;
+    SerializedResultSet returnResultSet;
+    SQLConnection sqlConnection = null; 
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName);
-
-      if (!StringUtils.isEmpty(query)) {
-        stmt = conn.createStatement();
-        if(limit >=0) {
-          stmt.setMaxRows(limit);
-        }        
-        ResultSetConverter rsc = new ResultSetConverter(stmt.executeQuery(query));
-        serializedResultSet =  new SerializedResultSet(rsc.getColumnTypeNames(), rsc.getMetaData(), rsc.getResultSet());
-  
-      } else {
-        throw new DatasourceServiceException("Query not valid"); //$NON-NLS-1$
+      sqlConnection = DatasourceInMemoryServiceHelper.getConnection(connectionName);
+      sqlConnection.setMaxRows(limit);
+      sqlConnection.setReadOnly(true);
+      IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
+      MarshallableResultSet marshallableResultSet = new MarshallableResultSet();
+      marshallableResultSet.setResultSet(resultSet);
+      String[][] data = new String[marshallableResultSet.getRows().length][];
+      int rowCount = 0;
+      for(MarshallableRow row : marshallableResultSet.getRows()) {
+        data[rowCount++] = row.getCell();
       }
-    } catch (SQLException e) {
+      returnResultSet = new SerializedResultSet(marshallableResultSet.getColumnTypes().getColumnType(), 
+          marshallableResultSet.getColumnNames().getColumnName(), data);
+      
+    } catch (Exception e) {
       e.printStackTrace();
       throw new DatasourceServiceException("Query validation failed", e); //$NON-NLS-1$
     } finally {
-      try {
-        if (rs != null) {
-          rs.close();
+        if (sqlConnection != null) {
+          sqlConnection.close();
         }
-        if (stmt != null) {
-          stmt.close();
-        }
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        throw new DatasourceServiceException(e);
-      }
     }
-    return serializedResultSet;
+    return returnResultSet;
 
   }
 
@@ -164,7 +157,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
           query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
             ,getDefaultAcls(),"joe"); 
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit));
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit), null);
       return new BusinessData(domain, data);
     } catch(SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",smge.getLocalizedMessage()),smge);
@@ -190,7 +183,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
             query,securityEnabled, getPermittedRoleList(),getPermittedUserList()
               ,getDefaultAcls(),"joe"); 
         domain = sqlModelGenerator.generate();
-        List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit));
+        List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer.parseInt(previewLimit), null);
         getMetadataDomainRepository().storeDomain(domain, overwrite);
         return new BusinessData(domain, data);
     } catch(SQLModelGeneratorException smge) {
@@ -224,7 +217,21 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
             getPermittedRoleList(),getPermittedUserList(),
               getDefaultAcls(), "joe");
       Domain domain  = inlineEtlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getCsvDataSample(relativeFilePath, headersPresent,
+      Properties properties = new Properties();
+      String path = null;
+      try {
+        URL url = ClassLoader.getSystemResource(DEFAULT_UPLOAD_FILEPATH_FILE_NAME);
+        URI uri = url.toURI();
+        File file = new File(uri);
+        FileInputStream fis = new FileInputStream(file);
+        properties.load(fis);
+        path = (String) properties.get(UPLOAD_FILE_PATH);
+      } catch (IOException e) {
+        logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);
+        throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()), e); //$NON-NLS-1$
+      }
+
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getCsvDataSample(path + relativeFilePath, headersPresent,
           delimiter, enclosure, 5);
       return  new BusinessData(domain, data);
 
@@ -244,7 +251,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
       } else {
         SqlPhysicalModel model = (SqlPhysicalModel)domain.getPhysicalModels().get(0);
         String query = model.getPhysicalTables().get(0).getTargetTable();
-        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5);
+        data = DatasourceInMemoryServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5, null);
       }
       return new BusinessData(domain, data);
   }

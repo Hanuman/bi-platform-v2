@@ -45,6 +45,7 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/DebugDataAccessViewPermissionHandler*"/>
         <exclude name="**/DatasourceInMemoryServiceHelper*"/>
         <exclude name="**/DatasourceServiceHelper*"/>
+    	<exclude name="**/DataAccessDatabaseConnectionService*"/>        
         <exclude name="**/Messages*"/>                
     </source>
    <stylesheet src="connectionFrame.css"/>

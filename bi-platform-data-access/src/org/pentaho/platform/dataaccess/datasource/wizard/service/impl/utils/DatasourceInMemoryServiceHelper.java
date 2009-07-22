@@ -18,11 +18,19 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableRow;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 
 public class DatasourceInMemoryServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceInMemoryServiceHelper.class);
@@ -82,46 +90,50 @@ public class DatasourceInMemoryServiceHelper {
     }
   }
 
-  
-  public static List<List<String>> getRelationalDataSample(String connectionName, String query, int rowLimit) {
-    List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet results = null;
-
+  public static SQLConnection getConnection(String connectionName) throws DatasourceServiceException {
+    IConnection connection = null;
     try {
-      conn = getDataSourceConnection(connectionName);
-      stmt = conn.createStatement();
-      results = stmt.executeQuery(query);
-      
-      int colCount = results.getMetaData().getColumnCount();
-      //loop through rows
-      int rowIdx = 0;
-      while (results.next()) {
-        if(rowIdx >= rowLimit) {
-          break;
-        }
-        dataSample.add(new ArrayList<String>(colCount));
-        //loop through columns
-        for (int colIdx = 1; colIdx <= colCount; colIdx++) {
-          dataSample.get(rowIdx).add(results.getString(colIdx));
-        }
-        rowIdx++;
+      connection = ConnectionDebugGwtServlet.SERVICE.getConnectionByName(connectionName);
+      return new SQLConnection(connection.getDriverClass(), connection.getUrl(), connection.getUsername(), connection.getPassword(), null);
+    } catch (ConnectionServiceException e1) {
+      return null;
+    }
+  }
+  
+  public static List<List<String>> getRelationalDataSample(String connectionName, String query, int rowLimit, IPentahoSession session) throws DatasourceServiceException{
+    List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
+    MarshallableResultSet resultSet  = getMarshallableResultSet(connectionName, query, rowLimit, session);
+    MarshallableRow[] rows =  resultSet.getRows();
+    for(int i=0;i<rows.length;i++) {
+      MarshallableRow row = rows[i];
+      String[] rowData = row.getCell();
+      List<String> rowDataList = new ArrayList<String>(rowData.length);
+      for(int j=0;j<rowData.length;j++) {
+        rowDataList.add(rowData[j]);
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        if (results != null)
-          results.close();
-        if (stmt != null)
-          stmt.close();
-        if (conn != null)
-          conn.close();
-      } catch (SQLException e) {
-      }
+      dataSample.add(rowDataList);
     }
     return dataSample;
+  }
+
+  public static MarshallableResultSet getMarshallableResultSet(String connectionName, String query, int rowLimit, IPentahoSession session) throws DatasourceServiceException{
+    MarshallableResultSet marshallableResultSet = null;
+    SQLConnection sqlConnection = null; 
+    try {
+      sqlConnection = getConnection(connectionName);
+      IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
+      marshallableResultSet = new MarshallableResultSet();
+      marshallableResultSet.setResultSet(resultSet);
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);
+      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0009_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
+    } finally {
+        if (sqlConnection != null) {
+          sqlConnection.close();
+        }
+    }
+    return marshallableResultSet;
+
   }
 
   public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String delimiter, String enclosure, int rowLimit) {

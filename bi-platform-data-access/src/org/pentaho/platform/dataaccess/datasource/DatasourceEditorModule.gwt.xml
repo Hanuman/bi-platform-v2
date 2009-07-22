@@ -39,7 +39,8 @@
     <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>   
     <exclude name="**/DebugDataAccessViewPermissionHandler*"/> 
     <exclude name="**/DatasourceInMemoryServiceHelper*"/>
-    <exclude name="**/DatasourceServiceHelper*"/>                                
+    <exclude name="**/DatasourceServiceHelper*"/>     
+    <exclude name="**/DataAccessDatabaseConnectionService*"/>
     <exclude name="**/Messages*"/>      
   </source>
   <stylesheet src="connectionFrame.css"/>

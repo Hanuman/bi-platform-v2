@@ -4,37 +4,15 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul"
   height="600" width="800"
   onload="connectionController.init(), datasourceController.init(), csvDatasourceController.init(), relationalDatasourceController.init()">
-
-  <dialog id="connectionDialog" buttonlabelaccept="${connectionDialog.OK}" buttonlabelcancel="${connectionDialog.CANCEL}"
-    buttons="accept,cancel" ondialogaccept="connectionController.addConnection()"
-    ondialogcancel="connectionController.closeDialog()" buttonalign="right"
-    title="${connectionDialog.Title}" width="350" height="400">
-    <groupbox flex="1">
-        <hbox flex="1">
-    		<spacer width="10"/>
-            <vbox flex="1">
-		        <label value="${connectionDialog.ConnectionName}" tooltiptext="${connectionDialog.ConnectionNameToolTip}"/>
-		        <textbox id="connectionname" multiline="false" width="300" disabled="false"/>
-		        <label value="${connectionDialog.DriverClass}" tooltiptext="${connectionDialog.DriverClassToolTip}"/>
-                <textbox id="driverClass" multiline="false" width="300"/>            
-		        <label value="${connectionDialog.Username}" tooltiptext="${connectionDialog.UsernameToolTip}"/>
-		        <textbox id="username" multiline="false" width="300" />
-		        <label value="${connectionDialog.Password}" tooltiptext="${connectionDialog.PasswordToolTip}"/>
-		        <textbox id="password" multiline="false" width="300" type="password" />
-		        <label value="${connectionDialog.URL}" tooltiptext="${connectionDialog.URLToolTip}"/>
-		        <textbox id="url" multiline="false" width="300" />
-		        <spacer flex="1"/>
-		        <hbox>
-		        	<spacer flex="1"/>
-		        	<button id="testButton" label="${connectionDialog.TEST}" tooltiptext="${connectionDialog.testButtonToolTip}" onclick="connectionController.testConnection()"  disabled="false" align="top"/>
-		        </hbox>
-	        </vbox>
-			<spacer width="10"/>	        
-        </hbox>
-    </groupbox>
-  </dialog>
+  <!--  ###############################################################################  -->
+  <!--     DATASOURCE EDITOR DIALOG: Datasource Editor dialog which allows the creation/ -->
+  <!--     editing and deletion of the datasource model                                  -->
+  <!--  ###############################################################################  -->
   <dialog id="datasourceDialog" buttonlabelaccept="${datasourceDialog.OK}" buttonlabelcancel="${datasourceDialog.CANCEL}" resizable="true"
     buttons="accept,cancel" ondialogaccept="datasourceController.onDialogAccept()"   ondialogcancel="datasourceController.onDialogCancel()" title="${datasourceDialog.Title}" width="580" height="540" buttonalign="right">
+      		<!--  ###############################################################################  -->
+		  	<!--     TAB PANELS FOR SQL and CSV DATASOURCE: First tab is for SQL and the second is CSV/ -->
+  			<!--  ###############################################################################  -->
     		<tabbox  id="datasourceDialogTabbox">
 			    <tabs id="datasourceDialogTabs">
 			       <tab id="datasourceDialogDatabaseTab" label="${datasourceDialog.Database}" onclick="datasourceController.selectSql()" pen:onbeforeselect="datasourceController.beforeTabSwitch()"/>
@@ -58,7 +36,7 @@
 						            <spacer flex="1"/>
 						            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="connectionController.showEditConnectionDialog()"  disabled="true"/>
 						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
-						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.ShowRemoveConnectionDialog()"  disabled="true"/>
+						            <button id="removeConnection" image="images/remove.png"  pen:disabledimage="images/remove_disabled.png" tooltiptext="${datasourceDialog.removeConnectionImageToolTip}" onclick="connectionController.showRemoveConnectionDialog()"  disabled="true"/>
 						          </hbox>
 			                      <listbox id="connectionList" pen:binding="name" disabled="true"/>
 						        </vbox>
@@ -81,6 +59,10 @@
 					        </hbox>
 			  			    <label value="${datasourceDialog.Metadata}"/>
 		                    <vbox flex="3">
+		                    	<!--  ###############################################################################  -->
+		  						<!--     SQL MODEL TABLE: Table to display the SQL Model Results -->
+		  						<!--     There are four columns of this table. 1) Display Name 2) Column Type 3) Aggregation 4) Sample Data -->
+  								<!--  ###############################################################################  -->
 							  <tree flex="1" id="modelDataTable" seltype="single">
 									<treecols id="modelDataTableCols">
 										<treecol id="relationalColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
@@ -133,11 +115,11 @@
 												<menupopup />
 											</menulist>
 											<spacer width="20"/>
-										    <menulist width="120" label="Enclosure" id="enclosureList" pen:binding="name">
+										    <menulist width="130" label="Enclosure" id="enclosureList" pen:binding="name">
 								  				<menupopup />
 											</menulist>
 											<spacer width="20"/>								
-											<hbox width="180">				
+											<hbox width="170">				
 												<checkbox flex="1" id="headersPresent" label="${datasourceDialog.headersPresent}" disabled="false" checked="true"/>
 											</hbox>
 											<spacer width="20"/>												
@@ -149,6 +131,11 @@
 						  	  </groupbox>
 							  <label value="${datasourceDialog.Metadata}"/>
 							  <vbox flex="1">
+		    	                	<!--  ###############################################################################  -->
+			  						<!--     CSV MODEL TABLE: Table to display the CSV Model Results -->
+			  						<!--     There are four columns of this table. 1) Display Name 2) Column Type 3) Aggregation 4) Sample Data -->
+	  								<!--  ###############################################################################  -->
+							  
 								  <tree flex="1" id="csvDataTable" seltype="single">
 											<treecols id="csvDataTableCols">
 												<treecol id="csvColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
@@ -165,7 +152,11 @@
 			    </tabpanels>
 		</tabbox>
   </dialog>
-  
+  <!--  ###############################################################################  -->
+  <!--     PREVIEW RESULTS DIALOG: Dialog to display the SQL preview data/               -->
+  <!--     This dialog contains a table which can have different number of columns based -->
+  <!--     of the columns for the selected tables                                        -->
+  <!--  ###############################################################################  -->
   <dialog id="previewResultsDialog" buttonlabelaccept="${dialog.CLOSE}" pen:buttonlabelaccepttooltiptext="${previewResultsDialog.closeToolTip}" buttons="accept"
     ondialogaccept="relationalDatasourceController.closePreviewResultsDialog()" buttonalign="right"
     title="${previewResultsDialog.title}" width="530" height="320">

@@ -38,26 +38,23 @@ public class ConnectionServiceImpl implements IConnectionService {
   public ConnectionServiceImpl() {
     IPentahoSession session = PentahoSessionHolder.getSession();
     datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class, session);
+    String dataAccessClassName = null;
+    try {
+      //FIXME: we should be using an object factory of some kind here
+      IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
+      dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", SimpleDataAccessPermissionHandler.class.getName() );  //$NON-NLS-1$ //$NON-NLS-2$
+      Class<?> clazz = Class.forName(dataAccessClassName, true, getClass().getClassLoader());
+      Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
+      dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
+    } catch (Exception e) {
+      logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR",e.getLocalizedMessage()),e);        
+        // TODO: Unhardcode once this is an actual plugin
+        dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
+    }
+    
   }
   
   protected boolean hasDataAccessPermission() {
-    if (dataAccessPermHandler == null) {
-      String dataAccessClassName = null;
-      try {
-        //FIXME: we should be using an object factory of some kind here
-        IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, null);
-        dataAccessClassName = resLoader.getPluginSetting(getClass(), "settings/data-access-permission-handler", SimpleDataAccessPermissionHandler.class.getName() );  //$NON-NLS-1$ //$NON-NLS-2$
-        Class<?> clazz = Class.forName(dataAccessClassName, true, getClass().getClassLoader());
-        Constructor<?> defaultConstructor = clazz.getConstructor(new Class[]{});
-        dataAccessPermHandler = (IDataAccessPermissionHandler)defaultConstructor.newInstance(new Object[]{});
-      } catch (Exception e) {
-    	  logger.error(Messages.getErrorString("ConnectionServiceDelegate.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR",e.getLocalizedMessage()),e);        
-          // TODO: Unhardcode once this is an actual plugin
-          dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
-      }
-
-      
-    }
     return dataAccessPermHandler != null && dataAccessPermHandler.hasDataAccessPermission(PentahoSessionHolder.getSession());
   }
   
@@ -200,7 +197,16 @@ public class ConnectionServiceImpl implements IConnectionService {
     IDatasource returnDatasource = (IDatasource) PentahoSystem.get(IDatasource.class, null);
     returnDatasource.setDriverClass(connection.getDriverClass());
     returnDatasource.setName(connection.getName());
-    returnDatasource.setQuery("select count(*) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES"); //$NON-NLS-1$
+    String driverClass = (connection.getDriverClass() != null) ? connection.getDriverClass().toLowerCase() : null;
+    if(driverClass != null) {
+      if(driverClass.indexOf("oracle") >=0 || (driverClass.indexOf("postgres") >=0)) { //$NON-NLS-1$
+        returnDatasource.setQuery("select 1 from dual");//$NON-NLS-1$
+      } else if(driverClass.indexOf("mysql") >=0) {//$NON-NLS-1$
+        returnDatasource.setQuery("select 1");//$NON-NLS-1$
+      } else if(driverClass.indexOf("hsql") >=0) {//$NON-NLS-1$
+        returnDatasource.setQuery("select count(*) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES"); //$NON-NLS-1$
+      } 
+    } 
     returnDatasource.setPassword(connection.getPassword());
     returnDatasource.setUserName(connection.getUsername());
     returnDatasource.setUrl(connection.getUrl());

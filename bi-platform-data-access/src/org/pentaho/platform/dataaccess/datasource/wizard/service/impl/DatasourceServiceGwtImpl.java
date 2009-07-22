@@ -2,6 +2,7 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
 import java.util.List;
 
+import org.pentaho.commons.connection.marshal.MarshallableResultSet;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
@@ -58,7 +59,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.doPreview(connectionName, query, previewLimit, new AsyncCallback<SerializedResultSet>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error doing preview: ", arg0);//$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0);//$NON-NLS-1$
       }
 
       public void onSuccess(SerializedResultSet arg0) {
@@ -74,7 +75,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.generateLogicalModel(modelName, connectionName, query, previewLimit, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error generating the mode: ", arg0);//$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0);//$NON-NLS-1$
       }
 
       public void onSuccess(BusinessData arg0) {
@@ -89,7 +90,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error saving the mode: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
 
       public void onSuccess(BusinessData arg0) {
@@ -103,7 +104,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.saveLogicalModel(domain, overwrite, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error saving the mode: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
 
       public void onSuccess(Boolean arg0) {
@@ -118,7 +119,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.generateInlineEtlLogicalModel(modelName, relativeFilePath, headersPresent, delimeter, enclosure, new AsyncCallback<BusinessData>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error generating the inline etl model: ", arg0);//$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0);//$NON-NLS-1$
       }
 
       public void onSuccess(BusinessData arg0) {
@@ -134,7 +135,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.hasPermission(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error checking if the user is the administrator: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
 
       public void onSuccess(Boolean arg0) {
@@ -148,7 +149,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.deleteLogicalModel(domainId, modelName, new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error deleting the model: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
 
       public void onSuccess(Boolean arg0) {
@@ -162,7 +163,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     SERVICE.getLogicalModels(new AsyncCallback<List<LogicalModelSummary>>() {
 
       public void onFailure(Throwable arg0) {
-        callback.error("error getting logical models: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
 
       public void onSuccess(List<LogicalModelSummary> arg0) {
@@ -175,7 +176,7 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
   public void loadBusinessData(String domainId, String modelId, final XulServiceCallback<BusinessData> callback) {
     SERVICE.loadBusinessData(domainId, modelId, new AsyncCallback<BusinessData>() {
       public void onFailure(Throwable arg0) {
-        callback.error("error getting logical models: ", arg0); //$NON-NLS-1$
+        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
       }
       public void onSuccess(BusinessData arg0) {
         callback.success(arg0);

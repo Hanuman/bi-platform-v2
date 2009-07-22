@@ -617,8 +617,8 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     }
   }
   public void displayErrorMessage(Throwable th) {
-    errorDialog.setTitle(ExceptionParser.getErrorHeader(th));
-    errorLabel.setValue(ExceptionParser.getErrorMessage(th));
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("Controller.ERROR_0002_ERROR")));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("Controller.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
     errorDialog.show();
   }
 

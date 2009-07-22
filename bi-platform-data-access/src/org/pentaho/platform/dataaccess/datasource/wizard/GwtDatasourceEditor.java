@@ -58,7 +58,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
       connectionService.getConnections(new XulServiceCallback<List<IConnection>>(){
 
         public void error(String message, Throwable error) {
-          showErrorDialog("Error Occurred","Unable to show the dialog." +error.getLocalizedMessage());
+          showErrorDialog(datasourceMessages.getString("DatasourceEditor.ERROR"),datasourceMessages.getString("DatasourceEditor.ERROR_0002_UNABLE_TO_SHOW_DIALOG",error.getLocalizedMessage()));
         }
 
         public void success(List<IConnection> connections) {
@@ -67,7 +67,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
         
       });
     } else {
-      showErrorDialog("Error Occurred","Connection Service is null");
+      showErrorDialog(datasourceMessages.getString("DatasourceEditor.ERROR"),"DatasourceEditor.ERROR_0001_CONNECTION_SERVICE_NULL");
     }
 
   }
@@ -140,7 +140,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
       connectionController.setDatasourceMessages(datasourceMessages);      
       wrapper.setHandler(connectionController);      
       container.addEventHandler(wrapper);
-
+      datasourceModel.getCsvModel().setMessages(datasourceMessages);
       datasourceController.setDatasourceModel(datasourceModel);
       csvDatasourceController.setDatasourceModel(datasourceModel);
       relationalDatasourceController.setDatasourceModel(datasourceModel);
@@ -166,7 +166,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   
   private void checkInitialized() {
     if (!initialized) {
-      throw new IllegalStateException("You must wait until the constructor listener is notified."); //$NON-NLS-1$
+      throw new IllegalStateException(datasourceMessages.getString("DatasourceEditor.ERROR_0003_CONSTRUCTOR_NOT_INITIALIZED_ERROR")); //$NON-NLS-1$
     }
   }
 
