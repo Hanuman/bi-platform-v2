@@ -149,7 +149,7 @@ public class ChartComponent {
     
     // Transform IPentahoResultSet to an object array
     
-    Object[][] data = processChartData(resultSet, scalingFactor, valueColumn);
+    Object[][] data = processChartData(resultSet, valueColumn);
     
     try{
       
@@ -180,7 +180,7 @@ public class ChartComponent {
       // Set chart engine on chartModel for the ChartFactory to use
       chartModel.setChartEngineId(chartEngine);
       
-      InputStream is = ChartBeanFactory.createChart(data, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
+      InputStream is = ChartBeanFactory.createChart(data, scalingFactor, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
       
       if (is == null) {
         if(JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)){
@@ -238,7 +238,7 @@ public class ChartComponent {
    * 
    * @return Row / Column data table or null
    */
-  protected Object[][] processChartData(IPentahoResultSet resultSet, Number scalingFactor, int valueColumnIndex){
+  protected Object[][] processChartData(IPentahoResultSet resultSet, int valueColumnIndex){
     if(resultSet == null){
       return null;
     }
@@ -249,11 +249,7 @@ public class ChartComponent {
     
     for(int r = 0; r < resultSet.getRowCount(); r++){
       for(int c = 0; c < resultSet.getMetaData().getColumnCount(); c++){
-        Object value = resultSet.getValueAt(r, c);
-        if ((c == valueColumnIndex) && (scalingFactor != null) && !scalingFactor.equals(0) && !scalingFactor.equals(1) && (value instanceof Number)) {
-          value = new Double(((Number)value).doubleValue() / scalingFactor.doubleValue());
-        }
-        result[r][c] = value;
+        result[r][c] = resultSet.getValueAt(r, c);
       }
     }
     
