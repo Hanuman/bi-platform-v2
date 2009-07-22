@@ -497,13 +497,15 @@ public class PojoComponent extends ComponentBase {
       }
       
       //the bean class was not found in a plugin, so try the default classloader
-      try {
-        // TODO support loading classes from the solution repository
-        Class<?> aClass = getClass().getClassLoader().loadClass(className);
-        pojo = aClass.newInstance();
-      } catch (Exception ex) {
-        error( "Could not load bean class" , ex); //$NON-NLS-1$
-        return false;
+      if (pojo == null){
+        try {
+          // TODO support loading classes from the solution repository
+          Class<?> aClass = getClass().getClassLoader().loadClass(className);
+          pojo = aClass.newInstance();
+        } catch (Exception ex) {
+          error( "Could not load bean class" , ex); //$NON-NLS-1$
+          return false;
+        }
       }
     }
     if( pojo != null ) {
