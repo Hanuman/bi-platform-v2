@@ -38,9 +38,10 @@
 	<property name="impl.vendor" value="Pentaho Corporation" />
 
 	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
-	<property name="stage.dir" value="${basedir}/stage" description="Staging dir for pentaho war" />
+	<property name="stage.dir" value="${basedir}/bin/stage" description="Staging dir for pentaho war" />
 	<property name="stage.dir.server" value="${stage.dir}/${productId}-${releaseType}" />
 	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
+	<property name="package-res-archive.dir" value="${bi.platform.assembly.dir}/package-res-archive" />
 	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
 	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
 	<property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
@@ -65,8 +66,7 @@
 	<property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
 	<property name="bi.platform.repository.dir" value="../bi-platform-repository" />
 	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
-	<property name="res.dir" value="${bi.platform.assembly.dir}/res" />
-	<property name="admin-console.res.dir" value="${res.dir}/${admin-console.name}" />
+	<property name="admin-console.res.dir" value="${package-res-archive.dir}/${admin-console.name}" />
 	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
 	<property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
 	<property name="system.solution.dir" value="${solution.dir.server}/system" />
@@ -83,7 +83,6 @@
 
 	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
   
-
 
 	<target name="assemble" depends="check-blacklist,assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-plugins,install-resources">
 		<chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
@@ -199,7 +198,7 @@
 
 			<!-- Copy overlay files into tomcat -->
 			<copy todir="${stage.dir.server}/tomcat" overwrite="true">
-				<fileset dir="${bi.platform.assembly.dir}/tomcat" />
+				<fileset dir="${package-res-archive.dir}/tomcat" />
 			</copy>
 
 			<!-- Copy required jars to common/lib -->
@@ -280,10 +279,10 @@
 				<equals arg1="${rdbms}" arg2="hsqldb" />
 				<then>
 					<copy todir="${stage.dir.server}">
-						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/hsqldb">
+						<fileset dir="${package-res-archive.dir}/scripts/tomcat/hsqldb">
 							<include name="**" />
 						</fileset>
-						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/general">
+						<fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
 							<include name="**" />
 						</fileset>
 					</copy>
@@ -293,10 +292,10 @@
 				<equals arg1="${rdbms}" arg2="mysql5" />
 				<then>
 					<copy todir="${stage.dir.server}">
-						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/mysql5">
+						<fileset dir="${package-res-archive.dir}/scripts/tomcat/mysql5">
 							<include name="**" />
 						</fileset>
-						<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat/general">
+						<fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
 							<include name="**" />
 						</fileset>
 					</copy>
@@ -305,7 +304,7 @@
 
 			<!-- Replace tomcat's setclasspath.bat -->
 			<copy todir="${stage.dir.server}/tomcat/bin">
-				<fileset dir="${bi.platform.assembly.dir}/scripts/tomcat">
+				<fileset dir="${package-res-archive.dir}/scripts/tomcat">
 					<include name="*.bat" />
 				</fileset>
 			</copy>
