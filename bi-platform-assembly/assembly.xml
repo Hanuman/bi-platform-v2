@@ -41,7 +41,7 @@
 	<property name="stage.dir" value="${basedir}/bin/stage" description="Staging dir for pentaho war" />
 	<property name="stage.dir.server" value="${stage.dir}/${productId}-${releaseType}" />
 	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
-	<property name="package-res-archive.dir" value="${bi.platform.assembly.dir}/package-res-archive" />
+	<property name="package-res-archive.dir" value="package-res-archive" />
 	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
 	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
 	<property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
