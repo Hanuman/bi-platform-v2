@@ -21,9 +21,9 @@ import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
 
 /**
+ * This is a test-oriented booter class that extends {@link PentahoSystemBoot}.
  * @author aphillips
  * @see PentahoSystemBoot
- * @deprecated This class has been wrapped into {@link PentahoSystemBoot}.  Please use {@link PentahoSystemBoot} directly.
  */
 @SuppressWarnings("nls")
 public class MicroPlatform extends PentahoSystemBoot {
