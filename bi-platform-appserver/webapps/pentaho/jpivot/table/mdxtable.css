@@ -40,7 +40,7 @@ th, td {
 }
 
 #folder-options {
-    background-image: url(jpivot/table/toolbar_bg.png);
+    background-image: url(toolbar_bg.png);
     height: 32px;
     vertical-align: top;
     border-bottom: 1px solid #848484;
