@@ -36,7 +36,7 @@
   <target name="package" depends="assemble, package-zip" description="Creates a j2ee manual deployments package" />
 
   <target name="assemble"
-          depends="assemble.init,check-blacklist,assemble-message-bundles,assemble-licenses,assemble-jars,assemble-resource-files,assemble-webapps,assemble-plugins,create-custom-folders"
+          depends="assemble.init,check-blacklist,assemble-message-bundles,assemble-licenses,assemble-jars,assemble-resource-files,assemble-webapps,assemble-solutions,assemble-plugins,prepare-custom-solutions"
           description="Assembles a j2ee manual deployments package">
 
     <!-- copy package-res-manual stuff into stage dir -->
@@ -201,6 +201,10 @@
     <copy todir="${stage.dir}/pentaho-res/styles/sw-style.war">
       <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
     </copy>
+    
+    <mkdir dir="${stage.dir}/custom-pentaho-webapp/META-INF" />
+    <mkdir dir="${stage.dir}/custom-pentaho-webapp/WEB-INF" />
+    <mkdir dir="${stage.dir}/custom-ear" />
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
@@ -214,12 +218,24 @@
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: create-custom-folders                      
+          target: prepare-custom-solutions                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="create-custom-folders">
-    <mkdir dir="${stage.dir}/custom-pentaho-webapp/META-INF" />
-    <mkdir dir="${stage.dir}/custom-pentaho-webapp/WEB-INF" />
-    <mkdir dir="${stage.dir}/custom-ear" />
+  <target name="prepare-custom-solutions"/>
+
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: assemble-solutions                      
+         - - - - - - - - - - - - - - - - - -->
+  <target name="assemble-solutions">
+    <unzip dest="${stage.dir}/pentaho-data">
+      <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
+    </unzip>
+
+    <!-- create pentaho-solutions folder -->
+    <mkdir dir="${stage.dir}/pentaho-solutions/tmp" />
+
+    <copy todir="${stage.dir}/pentaho-solutions" overwrite="true">
+      <fileset dir="${bi.platform.sample.solution.dir}" />
+    </copy>
   </target>
 
 
