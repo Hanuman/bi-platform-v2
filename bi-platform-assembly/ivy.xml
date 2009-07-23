@@ -25,9 +25,6 @@
 		<dependency org="mysql" name="mysql-connector-java" rev="5.0.7" />
 		<dependency org="postgresql" name="postgresql" rev="8.2-504.jdbc3" />   
 
-<!-- Pentaho Reporting Plugin -->
-		<dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${dependency.pentaho-reporting.revision}" changing="true"/>
-
 <!-- BIRT -->
 		<dependency org="org.eclipse/birt" name="chartengineapi" rev="2.2.1" />
 		<dependency org="org.eclipse/birt" name="org.eclipse.emf.common" rev="2.2.1.v200702131851-birt-custom" />
@@ -70,6 +67,8 @@
 		<dependency org="jexcelapi" name="jxl" rev="2.4.3" />
     
     <!--  ZIP Files of Other Resources -->
+    <!-- Pentaho Reporting Plugin -->
+    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-core-platform-plugin" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="mantle-package" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-open-admin-console-package" rev="${project.revision}" changing="true" />
     <dependency org="pentaho" name="pentaho-bi-platform-sample-data" rev="${project.revision}" changing="true" />
