@@ -2,447 +2,405 @@
      it's much nicer to have a short name with no spaces. Please don't change it. -->
 <project name="Open_Assembly" basedir="." default="" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<!-- Define the default location of the common build file -->
-	<property name="common.build.file" value="./common.xml" description="This is the location of the standardized common.xml file" />
+  <!-- =================================================================================
+       Property Defaults
+       Any of these properties can be overridden in either assembly.properties or override.properties
+       =================================================================================-->
 
-	<!-- Import the common_build.xml file which contains all the default tasks -->
-	<import file="${common.build.file}" />
+  <!-- Load the properties files in the proper order -->
+  <property file="override.properties"
+            description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
+  <property file="assembly.properties"
+            description="Properties customized for your particular project belong in this file." />
 
-	<!-- =================================================================================
-	     Property Defaults
-	     Any of these properties can be overridden in either build.properties or override.properties
-	     =================================================================================-->
-
-	<!-- Load the properties files in the proper order -->
-	<property file="override.properties" description="Properties customized for your development environment belong in this file.  This file will never be checked into the SCM." />
-	<property file="assembly.properties" description="Properties customized for your particular project belong in this file." />
-
-	<!-- Assembly properties -->
-	<property name="dist.dir" value="${basedir}/dist" />
-	<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
-	<!-- property name="stability.flag" value="false" / -->
-
-	<property name="rdbms" value="hsqldb" description="Default database for open assembly is hsqldb" />
-
-	<!-- set the stability tag to add to the package filename
-	<condition property="stability.tag" value="stable">
-		<istrue value="${stability.flag}" />
-	</condition>
-	<property name="stability.tag" value="unstable" / -->
-
-	<property name="productId" value="biserver" />
-	<property name="releaseType" value="ce" />
-  	<!-- the impl properties are used to create the manifest file -->
-	<property name="impl.title" value="Pentaho BI Platform Community Edition" />
-	<property name="impl.version" value="${project.revision}" />
-	<property name="impl.vendor" value="Pentaho Corporation" />
-
-	<property name="package.basename" value="${productId}-${releaseType}-${project.revision}" />
-	<property name="stage.dir" value="${basedir}/bin/stage" description="Staging dir for pentaho war" />
-	<property name="stage.dir.server" value="${stage.dir}/${productId}-${releaseType}" />
-	<property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
-	<property name="package-res-archive.dir" value="package-res-archive" />
-	<property name="web.classes.dir" value="${stage.webdir.server}/classes" />
-	<property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
-	<property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
-	<property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
-	<property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
-	<property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
-	<property name="stage.data.dir" value="${stage.dir.server}/data" />
-	<property name="admin-console.name" value="administration-console" />
-	<property name="admin-console.dir" value="${stage.dir}/administration-console" />
-
-	<!-- default relative project paths -->
-	<property name="bi.platform.assembly.dir" value="." />
-	<property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
-	<property name="bi.platform.data.access.dir" value="../bi-platform-data-access" />
-	<property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
-	<property name="bi.platform.plugin.actions.dir" value="../bi-platform-plugin-actions" />
-	<property name="bi.platform.sample.data.dir" value="../bi-platform-sample-data" />
-	<property name="bi.platform.sample.solution.dir" value="../bi-platform-sample-solution" />
-	<property name="bi.platform.util.dir" value="../bi-platform-util" />
-	<property name="bi.platform.web.dir" value="../bi-platform-web" />
-	<property name="bi.platform.web.portlet.dir" value="../bi-platform-web-portlet" />
-	<property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
-	<property name="bi.platform.repository.dir" value="../bi-platform-repository" />
-	<property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
-	<property name="admin-console.res.dir" value="${package-res-archive.dir}/${admin-console.name}" />
-	<property name="dependency.pentaho-cdf-plugin.revision" value="" />
-	<property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
-	<property name="system.solution.dir" value="${solution.dir.server}/system" />
-	<property name="bi-developers.solution.dir" value="${solution.dir.server}/bi-developers" />
-	<property name="bi-developers.visible" value="true" description="Should the bi-developers samples be visible" />
-
-
-	<!-- =================================================================================
-	     "Wrapper" target section: This section is set aside for the creation of those 
-	     targets that should be grouped.  If desired build functionality is addressed
-	     in any of the targets in the main section of the file, pls do not duplicate, just
-	     create a wrapper target here, and set your dependencies as appropriate. -ejh
-	     =================================================================================-->
-
-	<target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
+  <!-- subfloor property overrides -->
+  <property name="package.id" value="biserver-ce"/>
+  <!-- the impl properties are used to create the manifest file -->
+  <property name="impl.title" value="Pentaho BI Platform Community Edition" />
+  <property name="impl.version" value="${project.revision}" />
+  <property name="impl.vendor" value="Pentaho Corporation" />
   
+  <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
+  <import file="build-res/subfloor-pkg.xml" />
+  <import file="build-res/assembly_shared.xml" />
 
-	<target name="assemble" depends="check-blacklist,assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-plugins,install-resources">
-		<chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
-	</target>
+  <!-- custom platform assembly properties -->
+  <property name="rdbms" value="hsqldb" description="Default database for open assembly is hsqldb" />
+  <property name="stage.dir.server" value="${stage.dir}/${package.id}" />
+  <property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
+  <property name="package-res-archive.dir" value="package-res-archive" />
+  <property name="web.classes.dir" value="${stage.webdir.server}/classes" />
+  <property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
+  <property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
+  <property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
+  <property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
+  <property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
+  <property name="stage.data.dir" value="${stage.dir.server}/data" />
+  <property name="admin-console.name" value="administration-console" />
+  <property name="admin-console.dir" value="${stage.dir}/administration-console" />
 
-	<target name="package" depends="assemble,package-zip,package-targz" />
-
-	<!-- =================================================================================
-	     End wrapper target section -ejh
-	     =================================================================================-->
-
-	<!-- assemble dist targets -->
-
-	<target name="package-zip">
-		<zip destfile="${dist.dir}/${package.basename}.zip">
-			<zipfileset dir="${stage.dir}" />
-		</zip>
-	</target>
-
-	<target name="package-targz">
-		<tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${stage.dir}"  mode="755">
-				<include name="**/*.sh" />
-				<exclude name="jre/" />
-			</tarfileset>
-			<tarfileset dir="${stage.dir}">
-				<exclude name="**/*.sh" />
-				<exclude name="jre/" />
-			</tarfileset>
-		</tar>
-	</target>
-
-	<!-- override targets -->
-
-	<target name="install-resources" />
+  <!-- default relative project paths -->
+  <property name="bi.platform.assembly.dir" value="." />
+  <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
+  <property name="bi.platform.data.access.dir" value="../bi-platform-data-access" />
+  <property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
+  <property name="bi.platform.plugin.actions.dir" value="../bi-platform-plugin-actions" />
+  <property name="bi.platform.sample.data.dir" value="../bi-platform-sample-data" />
+  <property name="bi.platform.sample.solution.dir" value="../bi-platform-sample-solution" />
+  <property name="bi.platform.util.dir" value="../bi-platform-util" />
+  <property name="bi.platform.web.dir" value="../bi-platform-web" />
+  <property name="bi.platform.web.portlet.dir" value="../bi-platform-web-portlet" />
+  <property name="bi.platform.web.servlet.dir" value="../bi-platform-web-servlet" />
+  <property name="bi.platform.repository.dir" value="../bi-platform-repository" />
+  <property name="hibernate.hbm.dir" value="../bi-platform-repository/res/hibernate" />
+  <property name="admin-console.res.dir" value="${package-res-archive.dir}/${admin-console.name}" />
+  <property name="dependency.pentaho-cdf-plugin.revision" value="" />
+  <property name="solution.dir.server" value="${stage.dir.server}/pentaho-solutions" />
+  <property name="system.solution.dir" value="${solution.dir.server}/system" />
+  <property name="bi-developers.solution.dir" value="${solution.dir.server}/bi-developers" />
+  <property name="bi-developers.visible" value="true" description="Should the bi-developers samples be visible" />
 
 
-	<!-- ========================================================================
-	target: Clean-all / Clean-stage / Clean-dist / Clean-lib 
-	======================================================================= -->
-	<target name="clean-all" depends="clean-stage,clean-dist,clean-lib" />
 
-	<!-- Clean Targets -->
-	<target name="clean-stage">
-		<delete dir="${stage.dir}" />
-	</target>
+  <target name="assemble"
+          depends="check-blacklist,assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-plugins,install-resources">
+    <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
+  </target>
 
-	<target name="clean-dist">
-		<delete dir="${dist.dir}" />
-	</target>
+  <target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
 
-	<!-- - - - - - - - - - - - - - - - - - 
+  <target name="package-targz">
+    <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
+      <tarfileset dir="${stage.dir}" mode="755">
+        <include name="**/*.sh" />
+        <exclude name="jre/" />
+      </tarfileset>
+      <tarfileset dir="${stage.dir}">
+        <exclude name="**/*.sh" />
+        <exclude name="jre/" />
+      </tarfileset>
+    </tar>
+  </target>
+
+  <!-- override targets -->
+
+  <target name="install-resources" />
+
+  <!-- - - - - - - - - - - - - - - - - - 
       private target: init.stage.pentaho                      
      - - - - - - - - - - - - - - - - - -->
-	<target name="init.stage.pentaho">
-		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${lib.dir}" />
-		<mkdir dir="${admin-console.dir}" />
-		<mkdir dir="${stage.dir.server}/tomcat" />
-		<mkdir dir="${stage.dir.server}/jre" />
-		<mkdir dir="${prep.pentaho.war.dir}" />
-		<mkdir dir="${container.deploy.dir}" />
-	</target>
+  <target name="init.stage.pentaho">
+    <mkdir dir="${dist.dir}" />
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${admin-console.dir}" />
+    <mkdir dir="${stage.dir.server}/tomcat" />
+    <mkdir dir="${stage.dir.server}/jre" />
+    <mkdir dir="${prep.pentaho.war.dir}" />
+    <mkdir dir="${container.deploy.dir}" />
+  </target>
 
-	<!-- ===================================================================
+  <!-- ===================================================================
 				 target: prep-pentaho-style			         
 				 =================================================================== -->
-	<target name="prep-pentaho-style" depends="init.stage.pentaho">
-		<copy todir="${container.deploy.dir}/pentaho-style">
-			<fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style">
-				<include name="**/**" />
-			</fileset>
-		</copy>
-	</target>
+  <target name="prep-pentaho-style" depends="init.stage.pentaho">
+    <copy todir="${container.deploy.dir}/pentaho-style">
+      <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style">
+        <include name="**/**" />
+      </fileset>
+    </copy>
+  </target>
 
-	<!-- ===================================================================
+  <!-- ===================================================================
 				 target: prep-sw-style (steel wheel)			         
 				 =================================================================== -->
-	<target name="prep-sw-style" depends="init.stage.pentaho">
-		<copy todir="${container.deploy.dir}/sw-style">
-			<fileset dir="${bi.platform.appserver.dir}/webapps/sw-style">
-				<include name="**/**" />
-			</fileset>
-		</copy>
-	</target>
+  <target name="prep-sw-style" depends="init.stage.pentaho">
+    <copy todir="${container.deploy.dir}/sw-style">
+      <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style">
+        <include name="**/**" />
+      </fileset>
+    </copy>
+  </target>
 
-	<!-- ===================================================================
+  <!-- ===================================================================
       target: prep-pentaho-tomcat
       
       This is the primary target for setting up the container structure
       and the structure for the wars that will go into the container.  This
       task does not zip, tar or compress.          
      =================================================================== -->
+  <target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
+    <sequential>
+
+      <!-- Copy pure tomcat 5.5.26 -->
+      <copy todir="${stage.dir.server}/tomcat">
+        <fileset dir="${tomcat.dir}">
+          <exclude name="webapps/balancer/**" />
+          <exclude name="webapps/jsp-examples/**" />
+          <exclude name="webapps/examples/**" />
+          <exclude name="webapps/servlets-examples/**" />
+          <exclude name="webapps/tomcat-docs/**" />
+          <exclude name="webapps/docs/**" />
+          <exclude name="webapps/webdav/**" />
+          <exclude name="bin/setclasspath.bat" />
+        </fileset>
+      </copy>
+
+      <!-- Copy overlay files into tomcat -->
+      <copy todir="${stage.dir.server}/tomcat" overwrite="true">
+        <fileset dir="${package-res-archive.dir}/tomcat" />
+      </copy>
+
+      <!-- Copy required jars to common/lib -->
+      <mkdir dir="${stage.dir.server}/tomcat/common/lib" />
+      <copy todir="${stage.dir.server}/tomcat/common/lib">
+        <fileset dir="${lib.dir}">
+          <include name="hsqldb-*.jar" />
+          <include name="mysql-connector-*.jar" />
+          <include name="postgresql*.jar" />
+          <include name="naming*.jar" />
+          <include name="commons-el.jar" />
+          <include name="jsp-api.jar" />
+          <exclude name="jasperreports-*.jar" />
+        </fileset>
+      </copy>
+
+      <!-- Add jre -->
+      <copy todir="${stage.dir.server}/jre">
+        <fileset dir="${jre.dir}">
+          <exclude name="**/servlet-api.jar" />
+        </fileset>
+      </copy>
+
+      <!-- Add libs needed by tomcat -->
+      <copy todir="${stage.dir.server}/tomcat/server/lib">
+        <fileset dir="${lib.dir}">
+          <include name="cglib*.jar" />
+          <include name="jaxen*.jar" />
+        </fileset>
+      </copy>
+
+      <!-- Add general libs -->
+
+      <copy todir="${prep.pentaho.war.lib.dir}">
+        <fileset dir="${lib.dir}">
+          <include name="*.jar" />
+          <exclude name="servlet-api-*.jar" />
+          <exclude name="gwt-user-*.jar" />
+          <exclude name="hsqldb-*.jar" />
+          <exclude name="mysql-connector-*.jar" />
+          <exclude name="postgresql*.jar" />
+          <exclude name="*-sources.jar" />
+        </fileset>
+      </copy>
+
+      <!-- Add manifest -->
+      <mkdir dir="${prep.pentaho.war.dir}/META-INF" />
+      <manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
+        <attribute name="Implementation-Title" value="${impl.title}" />
+        <attribute name="Implementation-Version" value="${impl.version}" />
+        <attribute name="Implementation-Vendor" value="${impl.vendor}" />
+      </manifest>
+
+      <!-- Add rdbms context -->
+      <copy file="${bi.platform.appserver.dir}/tomcat/res/datasources/${rdbms}/context.xml"
+            todir="${prep.pentaho.war.dir}/META-INF" />
+
+      <!-- Add the Pentaho webapp -->
+      <copy todir="${prep.pentaho.war.dir}">
+        <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
+          <exclude name="**/WEB-INF/default-object.xml" />
+          <exclude name="**/WEB-INF/jboss-app.xml" />
+          <exclude name="**/WEB-INF/jboss-portlet.xml" />
+          <exclude name="**/WEB-INF/jboss-web.xml" />
+          <exclude name="**/WEB-INF/portlet-instances.xml" />
+        </fileset>
+      </copy>
+      <delete dir="${prep.pentaho.war.dir}/.settings" />
+
+      <copy todir="${prep.pentaho.war.lib.dir}">
+        <!-- get all pentaho jars from the build process -->
+        <fileset dir="${lib.dir}">
+          <include name="bi-platform*.jar" />
+        </fileset>
+      </copy>
+
+      <!-- Add scripts to appropriate locations based on desired rdbms -->
+      <if>
+        <equals arg1="${rdbms}" arg2="hsqldb" />
+        <then>
+          <copy todir="${stage.dir.server}">
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/hsqldb">
+              <include name="**" />
+            </fileset>
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
+              <include name="**" />
+            </fileset>
+          </copy>
+        </then>
+      </if>
+      <if>
+        <equals arg1="${rdbms}" arg2="mysql5" />
+        <then>
+          <copy todir="${stage.dir.server}">
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/mysql5">
+              <include name="**" />
+            </fileset>
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
+              <include name="**" />
+            </fileset>
+          </copy>
+        </then>
+      </if>
+
+      <!-- Replace tomcat's setclasspath.bat -->
+      <copy todir="${stage.dir.server}/tomcat/bin">
+        <fileset dir="${package-res-archive.dir}/scripts/tomcat">
+          <include name="*.bat" />
+        </fileset>
+      </copy>
+
+      <!-- Add additional Pentaho resources -->
+      <copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
+        <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
+        <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
+        <fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />
+        <fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
+      </copy>
+
+      <!-- Explode the mantle generated files -->
+      <unzip dest="${prep.pentaho.war.dir}">
+        <fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
+      </unzip>
+
+      <!-- Add licenses -->
+      <copy todir="${stage.dir.server}/licenses">
+        <fileset dir="${bi.platform.assembly.dir}/licenses">
+          <include name="**/**" />
+        </fileset>
+      </copy>
+
+      <!-- Copy style and steel wheel wars to webapps -->
+      <copy todir="${container.deploy.dir}/">
+        <fileset dir="${dist.dir}">
+          <include name="*.war" />
+        </fileset>
+      </copy>
+    </sequential>
+
+  </target>
 
 
-
-	<target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
-		<sequential>
-
-			<!-- Copy pure tomcat 5.5.26 -->
-			<copy todir="${stage.dir.server}/tomcat">
-				<fileset dir="${tomcat.dir}">
-					<exclude name="webapps/balancer/**" />
-					<exclude name="webapps/jsp-examples/**" />
-					<exclude name="webapps/examples/**" />
-					<exclude name="webapps/servlets-examples/**" />
-					<exclude name="webapps/tomcat-docs/**" />
-					<exclude name="webapps/docs/**" />
-					<exclude name="webapps/webdav/**" />
-					<exclude name="bin/setclasspath.bat" />
-				</fileset>
-			</copy>
-
-			<!-- Copy overlay files into tomcat -->
-			<copy todir="${stage.dir.server}/tomcat" overwrite="true">
-				<fileset dir="${package-res-archive.dir}/tomcat" />
-			</copy>
-
-			<!-- Copy required jars to common/lib -->
-			<mkdir dir="${stage.dir.server}/tomcat/common/lib" />
-			<copy todir="${stage.dir.server}/tomcat/common/lib">
-				<fileset dir="${lib.dir}">
-				    <include name="hsqldb-*.jar" />
-					<include name="mysql-connector-*.jar" />
-					<include name="postgresql*.jar" />
-					<include name="naming*.jar" />
-					<include name="commons-el.jar" />
-					<include name="jsp-api.jar" />
-					<exclude name="jasperreports-*.jar" />
-				</fileset>
-			</copy>
-
-			<!-- Add jre -->
-			<copy todir="${stage.dir.server}/jre">
-				<fileset dir="${jre.dir}">
-					<exclude name="**/servlet-api.jar" />
-				</fileset>
-			</copy>
-
-			<!-- Add libs needed by tomcat -->
-			<copy todir="${stage.dir.server}/tomcat/server/lib">
-				<fileset dir="${lib.dir}">
-					<include name="cglib*.jar" />
-					<include name="jaxen*.jar" />
-				</fileset>
-			</copy>
-
-			<!-- Add general libs -->
-		  
-			<copy todir="${prep.pentaho.war.lib.dir}">
-				<fileset dir="${lib.dir}">
-					<include name="*.jar" />
-					<exclude name="servlet-api-*.jar" />
-					<exclude name="gwt-user-*.jar" />
-					<exclude name="hsqldb-*.jar" />
-					<exclude name="mysql-connector-*.jar" />
-					<exclude name="postgresql*.jar" />
-					<exclude name="*-sources.jar" />
-				</fileset>
-			</copy>
-		  
-			<!-- Add manifest -->
-			<mkdir dir="${prep.pentaho.war.dir}/META-INF" />
-			<manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
-				<attribute name="Implementation-Title" value="${impl.title}" />
-				<attribute name="Implementation-Version" value="${impl.version}" />
-				<attribute name="Implementation-Vendor" value="${impl.vendor}" />
-			</manifest>
-
-			<!-- Add rdbms context -->
-			<copy file="${bi.platform.appserver.dir}/tomcat/res/datasources/${rdbms}/context.xml" todir="${prep.pentaho.war.dir}/META-INF" />
-
-			<!-- Add the Pentaho webapp -->
-			<copy todir="${prep.pentaho.war.dir}">
-				<fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
-					<exclude name="**/WEB-INF/default-object.xml" />
-					<exclude name="**/WEB-INF/jboss-app.xml" />
-					<exclude name="**/WEB-INF/jboss-portlet.xml" />
-					<exclude name="**/WEB-INF/jboss-web.xml" />
-					<exclude name="**/WEB-INF/portlet-instances.xml" />
-				</fileset>
-			</copy>
-		    <delete dir="${prep.pentaho.war.dir}/.settings" />
-			
-			<copy todir="${prep.pentaho.war.lib.dir}">
-				<!-- get all pentaho jars from the build process -->
-				<fileset dir="${lib.dir}">
-					<include name="bi-platform*.jar" />
-				</fileset>
-			</copy>
-
-			<!-- Add scripts to appropriate locations based on desired rdbms -->
-			<if>
-				<equals arg1="${rdbms}" arg2="hsqldb" />
-				<then>
-					<copy todir="${stage.dir.server}">
-						<fileset dir="${package-res-archive.dir}/scripts/tomcat/hsqldb">
-							<include name="**" />
-						</fileset>
-						<fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
-							<include name="**" />
-						</fileset>
-					</copy>
-				</then>
-			</if>
-			<if>
-				<equals arg1="${rdbms}" arg2="mysql5" />
-				<then>
-					<copy todir="${stage.dir.server}">
-						<fileset dir="${package-res-archive.dir}/scripts/tomcat/mysql5">
-							<include name="**" />
-						</fileset>
-						<fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
-							<include name="**" />
-						</fileset>
-					</copy>
-				</then>
-			</if>
-
-			<!-- Replace tomcat's setclasspath.bat -->
-			<copy todir="${stage.dir.server}/tomcat/bin">
-				<fileset dir="${package-res-archive.dir}/scripts/tomcat">
-					<include name="*.bat" />
-				</fileset>
-			</copy>
-
-			<!-- Add additional Pentaho resources -->
-			<copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
-				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
-				<fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
-				<fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />
-				<fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
-			</copy>
-
-			<!-- Explode the mantle generated files -->
-			<unzip dest="${prep.pentaho.war.dir}">
-				<fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
-			</unzip>
-
-			<!-- Add licenses -->
-			<copy todir="${stage.dir.server}/licenses">
-				<fileset dir="${bi.platform.assembly.dir}/licenses">
-					<include name="**/**" />
-				</fileset>
-			</copy>
-
-			<!-- Copy style and steel wheel wars to webapps -->
-			<copy todir="${container.deploy.dir}/">
-				<fileset dir="${dist.dir}">
-					<include name="*.war" />
-				</fileset>
-			</copy>
-		</sequential>
-
-	</target>
-
-
-	<!-- ===================================================================
+  <!-- ===================================================================
       target: install-management-console
       
       Installs the Open Admin Console from the pentaho-open-admin-console.zip
       file in the lib directory. Once installed, a few settings in the 
       configuration file will need to be tweaked.          
      =================================================================== -->
-	<target name="install-management-console">
-		<!-- Explode the Open Admin Console -->
-		<unzip dest="${stage.dir}">
-			<fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
-		</unzip>
+  <target name="install-management-console">
+    <!-- Explode the Open Admin Console -->
+    <unzip dest="${stage.dir}">
+      <fileset dir="${lib.dir}" includes="pentaho-open-admin-console-*.zip" />
+    </unzip>
 
-		<!-- Update the Admin Console's config.xml file -->
-		<copy file="${admin-console.res.dir}/resource/config/console.xml" tofile="${admin-console.dir}/resource/config/console.xml" overwrite="true" />
-	</target>
+    <!-- Update the Admin Console's config.xml file -->
+    <copy file="${admin-console.res.dir}/resource/config/console.xml"
+          tofile="${admin-console.dir}/resource/config/console.xml"
+          overwrite="true" />
+  </target>
 
-	<!--====================================================
+  <!--====================================================
           macrodef: set-solution-visibility          
           
           Sets the visible attribute for a pentaho solution
           directory.
         ==================================================-->
-	<macrodef name="set-solution-visibility">
-		<attribute name="dir" />
-		<attribute name="visible" default="true" />
-		<sequential>
-			<!-- Set the visible value of the specified directory -->
-			<!--  ... replace <visible>...</visible> with <visible>@{visible}</visible> -->
-			<echo message="Setting visibility=@{visible} for directory [@{dir}]..." />
-			<replaceregexp file="@{dir}/index.xml" match="&lt;visible&gt;.*&lt;/visible&gt;" replace="&lt;visible&gt;@{visible}&lt;/visible&gt;" />
-		</sequential>
-	</macrodef>
+  <macrodef name="set-solution-visibility">
+    <attribute name="dir" />
+    <attribute name="visible" default="true" />
+    <sequential>
+      <!-- Set the visible value of the specified directory -->
+      <!--  ... replace <visible>...</visible> with <visible>@{visible}</visible> -->
+      <echo message="Setting visibility=@{visible} for directory [@{dir}]..." />
+      <replaceregexp file="@{dir}/index.xml"
+                     match="&lt;visible&gt;.*&lt;/visible&gt;"
+                     replace="&lt;visible&gt;@{visible}&lt;/visible&gt;" />
+    </sequential>
+  </macrodef>
 
 
-	<!--====================================================
+  <!--====================================================
 			target: init-tomcat-solutions
 			===================================================== -->
 
-	<target name="init-tomcat-solutions">
-		<mkdir dir="${stage.dir.server}/pentaho-solutions/tmp" />
-		<copy todir="${stage.dir.server}/pentaho-solutions">
-			<fileset dir="${bi.platform.sample.solution.dir}">
-				<include name="**/**" />
-			</fileset>
-		</copy>
-	  
-	    <!-- install CDF samples -->
-		<!-- note, cdf samples now exist within the bi-developers folder, and the zip reflects that  -->
-		<unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
+  <target name="init-tomcat-solutions">
+    <mkdir dir="${stage.dir.server}/pentaho-solutions/tmp" />
+    <copy todir="${stage.dir.server}/pentaho-solutions">
+      <fileset dir="${bi.platform.sample.solution.dir}">
+        <include name="**/**" />
+      </fileset>
+    </copy>
 
-		<!-- Set the visible value of the sample dirs -->
-		<set-solution-visibility dir="${bi-developers.solution.dir}" visible="${bi-developers.visible}" />
+    <!-- install CDF samples -->
+    <!-- note, cdf samples now exist within the bi-developers folder, and the zip reflects that  -->
+    <unzip src="${lib.dir}/pentaho-cdf-samples-${dependency.pentaho-cdf-plugin.revision}.zip"
+           dest="${solution.dir.server}"
+           overwrite="true" />
 
-		<!-- copy db specific changes into system -->
-		<mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
-		<copy todir="${stage.dir.server}/pentaho-solutions/system" overwrite="true">
-			<fileset dir="${stage.dir.server}/pentaho-solutions/system/dialects/${rdbms}">
-				<include name="**/**" />
-			</fileset>
-		</copy>
-	</target>
- 
-	<!--====================================================
+    <!-- Set the visible value of the sample dirs -->
+    <set-solution-visibility dir="${bi-developers.solution.dir}" visible="${bi-developers.visible}" />
+
+    <!-- copy db specific changes into system -->
+    <mkdir dir="${stage.dir.server}/pentaho-solutions/system/tmp" />
+    <copy todir="${stage.dir.server}/pentaho-solutions/system" overwrite="true">
+      <fileset dir="${stage.dir.server}/pentaho-solutions/system/dialects/${rdbms}">
+        <include name="**/**" />
+      </fileset>
+    </copy>
+  </target>
+
+  <!--====================================================
 			target: install-plugins
 			===================================================== -->
   <target name="install-plugins">
-      <!-- CDF -->
-	  <install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip"/>
+    <!-- CDF -->
+    <install-plugin zipfile="${lib.dir}/pentaho-cdf-${dependency.pentaho-cdf-plugin.revision}.zip" />
 
-	  <!-- install CDF solution -->
-	  <unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
-		
-	  <!-- install pentaho reporting plugin (for prpt files) -->
-	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${project.revision}.zip"/>
+    <!-- install CDF solution -->
+    <unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip"
+           dest="${solution.dir.server}"
+           overwrite="true" />
 
-  	  <!-- install the data access plugin (for data access dialog in WAQR) -->
-      <install-plugin zipfile="${lib.dir}/data-access-plugin-${project.revision}.zip"/>
-	</target>
-  
-	<macrodef name="install-plugin">
-		<attribute name="zipfile" />
-	  <sequential>
-		<unzip src="@{zipfile}" dest="${stage.dir.server}/pentaho-solutions/system" overwrite="true" />
-	    </sequential>
-	</macrodef>
+    <!-- install pentaho reporting plugin (for prpt files) -->
+    <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${project.revision}.zip" />
 
-	<!-- =================================
+    <!-- install the data access plugin (for data access dialog in WAQR) -->
+    <install-plugin zipfile="${lib.dir}/data-access-plugin-${project.revision}.zip" />
+  </target>
+
+  <macrodef name="install-plugin">
+    <attribute name="zipfile" />
+    <sequential>
+      <unzip src="@{zipfile}" dest="${stage.dir.server}/pentaho-solutions/system" overwrite="true" />
+    </sequential>
+  </macrodef>
+
+  <!-- =================================
 	        target: init-pentaho-data
 	  ================================= -->
 
-	<target name="init-pentaho-data">
+  <target name="init-pentaho-data">
 
-		<mkdir dir="${stage.data.dir}" />
+    <mkdir dir="${stage.data.dir}" />
 
-		<!-- Explode the sample data dist -->
-		<unzip dest="${stage.data.dir}">
-			<fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
-		</unzip>
+    <!-- Explode the sample data dist -->
+    <unzip dest="${stage.data.dir}">
+      <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
+    </unzip>
 
-	</target>
+  </target>
 
-	<!--=======================================================================
+  <!--=======================================================================
 		        unified-platform-javadoc
 		    
 		        cleans, resolves, generates and copies all platform javadocs serially.  This
@@ -451,7 +409,8 @@
 		        talk to the release manager if you need to change this target.
 		        ====================================================================-->
 
-	<property name="bi.javadoc.list" value="../bi-platform-api,
+  <property name="bi.javadoc.list"
+            value="../bi-platform-api,
 										 ${bi.platform.util.dir},
 										 ../bi-platform-engine-core,
 		                 ../bi-platform-test-foundation,
@@ -467,103 +426,113 @@
 										 ${bi.platform.web.servlet.dir},
 										 ${bi.platform.web.portlet.dir}" />
 
-	<!-- Setup the javadoc classpath -->
-	<path id="jdoc.classpath">
-		<fileset dir="${lib.dir}">
-			<include name="*.jar" />
-		</fileset>
-		<fileset dir="../mantle/lib">
-			<include name="*.jar" />
-		</fileset>
-	</path>
+  <!-- Setup the javadoc classpath -->
+  <path id="jdoc.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="../mantle/lib">
+      <include name="*.jar" />
+    </fileset>
+  </path>
 
-	<target name="unified-platform-javadoc" description="Generates unified javadoc source documentation for the open bi platform">
-		<sequential>
-			<delete dir="${unified.javadoc.dir}" />
-			<property name="unified.javadoc.dir" value="${basedir}/javadoc/bi_platform" />
-			<mkdir dir="${unified.javadoc.dir}/src" />
-			<property name="unified.javadoc.src" value="${unified.javadoc.dir}/src" />
-			<property name="java.incl" value="**/*.java" />
-			<property name="test.excl" value="**/test/**" />
-			<property name="com.excl" value="**/com/**" />
+  <target name="unified-platform-javadoc"
+          description="Generates unified javadoc source documentation for the open bi platform">
+    <sequential>
+      <delete dir="${unified.javadoc.dir}" />
+      <property name="unified.javadoc.dir" value="${basedir}/javadoc/bi_platform" />
+      <mkdir dir="${unified.javadoc.dir}/src" />
+      <property name="unified.javadoc.src" value="${unified.javadoc.dir}/src" />
+      <property name="java.incl" value="**/*.java" />
+      <property name="test.excl" value="**/test/**" />
+      <property name="com.excl" value="**/com/**" />
 
-			<!-- iterate through the module list and copy src -->
+      <!-- iterate through the module list and copy src -->
 
-			<for list="${bi.javadoc.list}" param="module" trim="true">
-				<sequential>
-					<copy todir="${unified.javadoc.src}">
-						<fileset dir="@{module}/src">
-							<include name="${java.incl}" />
-							<exclude name="${test.excl}" />
-							<exclude name="${com.excl}" />
-						</fileset>
-						<fileset dir="../mantle/source">
-							<include name="${java.incl}" />
-							<exclude name="${test.excl}" />
-							<exclude name="${com.excl}" />
-						</fileset>
-					</copy>
-				</sequential>
-			</for>
-			<javadoc destdir="${unified.javadoc.dir}" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" sourcepath="${unified.javadoc.src}" packagenames="org.pentaho.*" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" doctitle="Pentaho BI Platform documentation">
-				<classpath refid="jdoc.classpath" />
-				<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
-			</javadoc>
-			<move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">			  
-			  	<fileset dir="${unified.javadoc.src}"/>
-		  	</move>
-			<zip destfile="bi-server-ce-${project.revision}-all-sources.zip" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
-			<tar destfile="bi-server-ce-${project.revision}-all-sources.tar.gz" basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" compression="gzip" />
-       	    <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
-		</sequential>
-	</target>
-	
-	<target name="validate-mantle-svn-revisions" unless="suppress-svn-validation">
-	<sequential>
-		<mkdir dir="${basedir}/temp/mantle" />
-		<mkdir dir="${basedir}/temp/mantle-pkg" />
-		
-		<property name="mantle.rev" value="${project.revision}.${build.id}" />
-		<property name="mantle.pkg.rev" value="${project.revision}.${build.id}" />
+      <for list="${bi.javadoc.list}" param="module" trim="true">
+        <sequential>
+          <copy todir="${unified.javadoc.src}">
+            <fileset dir="@{module}/src">
+              <include name="${java.incl}" />
+              <exclude name="${test.excl}" />
+              <exclude name="${com.excl}" />
+            </fileset>
+            <fileset dir="../mantle/source">
+              <include name="${java.incl}" />
+              <exclude name="${test.excl}" />
+              <exclude name="${com.excl}" />
+            </fileset>
+          </copy>
+        </sequential>
+      </for>
+      <javadoc destdir="${unified.javadoc.dir}"
+               access="public"
+               source="1.5"
+               use="true"
+               notree="false"
+               nonavbar="false"
+               noindex="false"
+               splitindex="true"
+               author="true"
+               version="true"
+               sourcepath="${unified.javadoc.src}"
+               packagenames="org.pentaho.*"
+               maxmemory="256M"
+               nodeprecatedlist="false"
+               nodeprecated="false"
+               doctitle="Pentaho BI Platform documentation">
+        <classpath refid="jdoc.classpath" />
+        <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+      </javadoc>
+      <move todir="${basedir}/dist/bi-server-ce-${project.revision}-all-sources" dir="${unified.javadoc.dir}">
+        <fileset dir="${unified.javadoc.src}" />
+      </move>
+      <zip destfile="bi-server-ce-${project.revision}-all-sources.zip"
+           basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
+      <tar destfile="bi-server-ce-${project.revision}-all-sources.tar.gz"
+           basedir="${dist.dir}/bi-server-ce-${project.revision}-all-sources"
+           compression="gzip" />
+      <delete dir="${dist.dir}/bi-server-ce-${project.revision}-all-sources" />
+    </sequential>
+  </target>
 
-		<unjar src="${prep.pentaho.war.lib.dir}/mantle-${project.revision}.jar" dest="${basedir}/temp/mantle" />
-		<unzip src="${lib.dir}/mantle-package-${project.revision}.zip" dest="${basedir}/temp/mantle-pkg" />
+  <target name="validate-mantle-svn-revisions" unless="suppress-svn-validation">
+    <sequential>
+      <mkdir dir="${basedir}/temp/mantle" />
+      <mkdir dir="${basedir}/temp/mantle-pkg" />
 
-		<loadfile property="mantle.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
-			<filterchain>
-				<linecontains>
-					<contains value="Implementation-Version" />
-				</linecontains>
-			</filterchain>
-		</loadfile>
+      <property name="mantle.rev" value="${project.revision}.${build.id}" />
+      <property name="mantle.pkg.rev" value="${project.revision}.${build.id}" />
 
-		<loadfile property="mantle.pkg.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
-			<filterchain>
-				<linecontains>
-					<contains value="Implementation-Version" />
-				</linecontains>
-			</filterchain>
-		</loadfile>
-		<if>
-			<equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
-			<then>
-				<echo message="Mantle SVN revisions in sync" />
-				<delete dir="${basedir}/temp"/>
-			</then>
-			<else>
-					<fail message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
-			</else>
-		</if>
-	</sequential>
-</target>
+      <unjar src="${prep.pentaho.war.lib.dir}/mantle-${project.revision}.jar" dest="${basedir}/temp/mantle" />
+      <unzip src="${lib.dir}/mantle-package-${project.revision}.zip" dest="${basedir}/temp/mantle-pkg" />
 
-	<!--=======================================================================
-		    report
-		    
-		    Allows ivy to report on the dependencies for this project 
-		    ====================================================================-->
-	<target name="report" depends="install-ivy">
-		<ivy:resolve file="ivy.xml" />
-		<ivy:report conf="default" />
-	</target>
+      <loadfile property="mantle.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+        <filterchain>
+          <linecontains>
+            <contains value="Implementation-Version" />
+          </linecontains>
+        </filterchain>
+      </loadfile>
+
+      <loadfile property="mantle.pkg.rev" srcFile="${basedir}/temp/mantle/META-INF/MANIFEST.MF">
+        <filterchain>
+          <linecontains>
+            <contains value="Implementation-Version" />
+          </linecontains>
+        </filterchain>
+      </loadfile>
+      <if>
+        <equals arg1="${mantle.rev}" arg2="${mantle.pkg.rev}" />
+        <then>
+          <echo message="Mantle SVN revisions in sync" />
+          <delete dir="${basedir}/temp" />
+        </then>
+        <else>
+          <fail message="Mantle SVN revisions out of sync.  Currently reporting: ${mantle.rev} / ${mantle.pkg.rev}.  Please correct and rebuild. " />
+        </else>
+      </if>
+    </sequential>
+  </target>
+
 </project>
