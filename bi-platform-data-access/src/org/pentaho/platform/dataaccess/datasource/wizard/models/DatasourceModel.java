@@ -79,7 +79,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
   private void setValidated(boolean validated) {
     boolean prevVal = this.validated;
     this.validated = validated;
-    this.firePropertyChange("validated", prevVal, validated);
+    this.firePropertyChange("validated", prevVal, validated); //$NON-NLS-1$
   }
   
   public DatasourceType getDatasourceType() {

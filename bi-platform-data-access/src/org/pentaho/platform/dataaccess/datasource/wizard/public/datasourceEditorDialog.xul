@@ -94,7 +94,7 @@
 						  	  <groupbox id="fileGroupbox" width="500">
 						  	  	<caption label="${datasourceDialog.File}" />
 						  	  	<vbox>
-							  	  	<pen:fileupload id="fileUpload" action="UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
+							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
 							  	  	<spacer height="5"/>
 									<grid>
 									  <columns>

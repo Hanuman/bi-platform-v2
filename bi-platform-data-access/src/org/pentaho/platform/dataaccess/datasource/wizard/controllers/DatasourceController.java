@@ -107,19 +107,19 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
   public void init() {
     clearModelWarningDialog = (XulDialog) document.getElementById("clearModelWarningDialog");//$NON-NLS-1$
     //databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
-    relationalAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
-    relationalSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalSampleDataTreeCol");
-    relationalColumnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol");
-    relationalColumnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol");
-    csvColumnNameTreeCol = (XulTreeCol) document.getElementById("csvColumnNameTreeCol");
-    csvColumnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol");
+    relationalAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol"); //$NON-NLS-1$
+    relationalSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalSampleDataTreeCol"); //$NON-NLS-1$
+    relationalColumnNameTreeCol = (XulTreeCol) document.getElementById("relationalColumnNameTreeCol");//$NON-NLS-1$
+    relationalColumnTypeTreeCol = (XulTreeCol) document.getElementById("relationalColumnTypeTreeCol");//$NON-NLS-1$
+    csvColumnNameTreeCol = (XulTreeCol) document.getElementById("csvColumnNameTreeCol");//$NON-NLS-1$
+    csvColumnTypeTreeCol = (XulTreeCol) document.getElementById("csvColumnTypeTreeCol");//$NON-NLS-1$
     
-    csvAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
-    csvSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");
+    csvAggregationListCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");//$NON-NLS-1$
+    csvSampleDataTreeCol = (XulTreeCol) document.getElementById("relationalAggregationListCol");//$NON-NLS-1$
     //csvButtonBox = (XulHbox) document.getElementById("csvButtonBox");
     //datasourceDeck = (XulDeck) document.getElementById("datasourceDeck"); //$NON-NLS-1$
-    csvDataTable = (XulTree) document.getElementById("csvDataTable");
-    modelDataTable = (XulTree) document.getElementById("modelDataTable");
+    csvDataTable = (XulTree) document.getElementById("csvDataTable");//$NON-NLS-1$
+    modelDataTable = (XulTree) document.getElementById("modelDataTable");//$NON-NLS-1$
     //buttonBox = (XulHbox) document.getElementById("buttonBox");
     errorDialog = (XulDialog) document.getElementById("errorDialog"); //$NON-NLS-1$
     errorLabel = (XulLabel) document.getElementById("errorLabel");//$NON-NLS-1$    
@@ -243,7 +243,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
   public void showEditDialog(String domainId, String modelId) {
     XulServiceCallback<BusinessData> callback = new XulServiceCallback<BusinessData>() {
       public void error(String message, Throwable error) {
-        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0004_UNABLE_TO_EDIT_DATASOURCE", error.getLocalizedMessage()));
+        openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0004_UNABLE_TO_EDIT_DATASOURCE", error.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
       }
       public void success(BusinessData retVal) {
         initializeModel(retVal);
@@ -292,7 +292,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
   }
   
   private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {
-    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage()));
+    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   private void saveCsvModel() throws DatasourceServiceException {
@@ -321,10 +321,10 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
           }
           saveCsvModel(domain, false);
         } else {
-          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL")); //$NON-NLS-1$
         }
       } else {
-        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL")); //$NON-NLS-1$
       }
   }
 
@@ -354,10 +354,10 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
           }
           saveRelationalModel(businessData, false);
         } else {
-          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
+          throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL")); //$NON-NLS-1$
         }
       } else {
-        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL"));
+        throw new RuntimeException(datasourceMessages.getString("DatasourceController.ERROR_0002_NULL_MODEL")); //$NON-NLS-1$
       }
   }
 
@@ -366,7 +366,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
       service.saveLogicalModel(businessData.getDomain(), overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
           // 0018 is an overwrite exception
-          if (error.getMessage().indexOf("0018") >= 0) {
+          if (error.getMessage().indexOf("0013") >= 0) { //$NON-NLS-1$
             // prompt for overwrite
             overwriteBusinessData = businessData;
             overwriteDatasourceType = DatasourceType.SQL;
@@ -561,11 +561,11 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     try {
       int count = csvDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_CSV_TABLE_ROW_COUNT; i++) {
-        XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+        XulTreeRow row = (XulTreeRow) document.createElement("treerow"); //$NON-NLS-1$
 
         for (int j = 0; j < count; j++) {
-          XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
-          cell.setLabel(" ");
+          XulTreeCell cell = (XulTreeCell) document.createElement("treecell"); //$NON-NLS-1$
+          cell.setLabel(" "); //$NON-NLS-1$
           row.addCell(cell);
         }
 
@@ -597,11 +597,11 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     try {
       int count = modelDataTable.getColumns().getColumnCount();
       for (int i = 0; i < DEFAULT_RELATIONAL_TABLE_ROW_COUNT; i++) {
-        XulTreeRow row = (XulTreeRow) document.createElement("treerow");
+        XulTreeRow row = (XulTreeRow) document.createElement("treerow"); //$NON-NLS-1$
 
         for (int j = 0; j < count; j++) {
-          XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
-          cell.setLabel(" ");
+          XulTreeCell cell = (XulTreeCell) document.createElement("treecell"); //$NON-NLS-1$
+          cell.setLabel(" ");//$NON-NLS-1$
           row.addCell(cell);
         }
 
@@ -617,8 +617,8 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     }
   }
   public void displayErrorMessage(Throwable th) {
-    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE")));
-    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE"))); //$NON-NLS-1$
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED"))); //$NON-NLS-1$
     errorDialog.show();
   }
 

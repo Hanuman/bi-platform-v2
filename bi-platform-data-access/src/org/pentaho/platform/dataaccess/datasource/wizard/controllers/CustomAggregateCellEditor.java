@@ -53,7 +53,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     this.datasourceMessages = datasourceMessages;
     this.document = document;
     this.bf = bf;
-    dialog.setBgcolor("#FFFFFF");
+    dialog.setBgcolor("#FFFFFF");//$NON-NLS-1$
   }
 
   public Object getValue() {
@@ -90,13 +90,13 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     List<AggregationType> aggregationList = aggregation.getAggregationList();
     AggregationType[] aggregationTypeArray = AggregationType.values();
     try {
-      XulGroupbox groupBox = (XulGroupbox) document.createElement("groupbox");
-      XulHbox mainAggregateBox = (XulHbox) document.createElement("hbox");
-      leftAggregateBox = (XulVbox) document.createElement("vbox");
-      rightAggregateBox = (XulVbox) document.createElement("vbox");
+      XulGroupbox groupBox = (XulGroupbox) document.createElement("groupbox");//$NON-NLS-1$
+      XulHbox mainAggregateBox = (XulHbox) document.createElement("hbox");//$NON-NLS-1$
+      leftAggregateBox = (XulVbox) document.createElement("vbox");//$NON-NLS-1$
+      rightAggregateBox = (XulVbox) document.createElement("vbox");//$NON-NLS-1$
       for (int i = 0; i < aggregationTypeArray.length/2; i++) {
         XulCheckbox aggregationCheckBox;
-        aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
+        aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");//$NON-NLS-1$
         aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[i].getDescription()));
         aggregationCheckBox.setID(aggregationTypeArray[i].name());
         aggregationCheckBox.setCommand(null);
@@ -107,11 +107,11 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         }
         aggregationCheckboxList.add(aggregationCheckBox);
         leftAggregateBox.addComponent(aggregationCheckBox);
-        bf.createBinding(aggregationCheckBox, "checked", this, "checkboxChanged");
+        bf.createBinding(aggregationCheckBox, "checked", this, "checkboxChanged");//$NON-NLS-1$ //$NON-NLS-2$
       }
       for (int j = aggregationTypeArray.length/2; j < aggregationTypeArray.length; j++) {
         XulCheckbox aggregationCheckBox;
-        aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");
+        aggregationCheckBox = (XulCheckbox) document.createElement("checkbox"); //$NON-NLS-1$
         aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[j].getDescription()));
         aggregationCheckBox.setID(aggregationTypeArray[j].name());
         aggregationCheckBox.setCommand(null);
@@ -122,23 +122,23 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         }
         aggregationCheckboxList.add(aggregationCheckBox);
         rightAggregateBox.addComponent(aggregationCheckBox);
-        bf.createBinding(aggregationCheckBox, "checked", this, "checkboxChanged");
+        bf.createBinding(aggregationCheckBox, "checked", this, "checkboxChanged"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       mainAggregateBox.addComponent(leftAggregateBox);
       mainAggregateBox.addComponent(rightAggregateBox);
-      groupBox.setCaption(datasourceMessages.getString("aggregationEditorDialog.available"));
+      groupBox.setCaption(datasourceMessages.getString("aggregationEditorDialog.available")); //$NON-NLS-1$
       groupBox.addChild(mainAggregateBox);
       groupBox.setHeight(130);
       groupBox.setWidth(200);
       ((AbstractGwtXulContainer) groupBox).layout();
       dialog.addChild(groupBox);
-      XulLabel label = (XulLabel) document.createElement("label");
-      label.setValue(datasourceMessages.getString("aggregationEditorDialog.default"));
-      listbox = (XulMenuList) document.createElement("menulist");
-      XulMenupopup menuPopup = (XulMenupopup) document.createElement("menupopup");
+      XulLabel label = (XulLabel) document.createElement("label");//$NON-NLS-1$
+      label.setValue(datasourceMessages.getString("aggregationEditorDialog.default"));//$NON-NLS-1$
+      listbox = (XulMenuList) document.createElement("menulist");//$NON-NLS-1$
+      XulMenupopup menuPopup = (XulMenupopup) document.createElement("menupopup");//$NON-NLS-1$
       listbox.addChild(menuPopup);
-      listbox.setID("DefaultAggregationType");
-      listbox.setBinding("name");
+      listbox.setID("DefaultAggregationType");//$NON-NLS-1$
+      listbox.setBinding("name");//$NON-NLS-1$
       dialog.addChild(label);
       dialog.addChild(listbox);
       bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
@@ -167,7 +167,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         }
 
       };      
-      Binding binding = bf.createBinding(aggregation, "aggregationList", listbox, "elements",externalizedAggregationLabelConverter);
+      Binding binding = bf.createBinding(aggregation, "aggregationList", listbox, "elements",externalizedAggregationLabelConverter); //$NON-NLS-1$ //$NON-NLS-2$
       BindingConvertor<AggregationType, Integer> aggregationTypeToIntegerConverter = new BindingConvertor<AggregationType, Integer>() {
 
         @Override
@@ -194,7 +194,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         }
 
       };      
-      bf.createBinding(aggregation, "defaultAggregationType", listbox, "selectedIndex", aggregationTypeToIntegerConverter);
+      bf.createBinding(aggregation, "defaultAggregationType", listbox, "selectedIndex", aggregationTypeToIntegerConverter); //$NON-NLS-1$ //$NON-NLS-2$
       try {
         binding.fireSourceChanged();
       } catch (IllegalArgumentException e) {

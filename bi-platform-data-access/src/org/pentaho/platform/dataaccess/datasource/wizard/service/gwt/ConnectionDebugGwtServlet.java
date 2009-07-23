@@ -12,6 +12,10 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements IGwtConnectionService {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6800099826721568704L;
   public static InMemoryConnectionServiceImpl SERVICE;
 
  
@@ -25,11 +29,11 @@ public class ConnectionDebugGwtServlet extends RemoteServiceServlet implements I
         SERVICE = new InMemoryConnectionServiceImpl();
         // add the sample data default connection for testing
         Connection connection = new Connection();
-        connection.setDriverClass("org.hsqldb.jdbcDriver");
-        connection.setName("SampleData");
-        connection.setUrl("jdbc:hsqldb:hsql://localhost:9001/sampledata");
-        connection.setUsername("pentaho_user");
-        connection.setPassword("password");
+        connection.setDriverClass("org.hsqldb.jdbcDriver"); //$NON-NLS-1$
+        connection.setName("SampleData");//$NON-NLS-1$
+        connection.setUrl("jdbc:hsqldb:hsql://localhost:9001/sampledata");//$NON-NLS-1$
+        connection.setUsername("pentaho_user");//$NON-NLS-1$
+        connection.setPassword("password");//$NON-NLS-1$
         SERVICE.addConnection(connection);
       } catch (Exception e) {
         System.out.println(e.getMessage());

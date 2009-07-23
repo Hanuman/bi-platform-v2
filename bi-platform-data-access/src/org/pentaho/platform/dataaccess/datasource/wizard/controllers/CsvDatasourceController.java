@@ -42,9 +42,9 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
 
   public static final int MAX_COL_SIZE = 13;
 
-  public static final String EMPTY_STRING = "";
+  public static final String EMPTY_STRING = "";//$NON-NLS-1$
 
-  public static final String COMMA = ",";
+  public static final String COMMA = ",";//$NON-NLS-1$
 
   private DatasourceMessages datasourceMessages;
 
@@ -118,18 +118,18 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     applyCsvButton = (XulButton) document.getElementById("applyCsvButton"); //$NON-NLS-1$
     csvAggregationEditorVbox = (XulVbox) document.getElementById("csvAggregationEditorVbox"); //$NON-NLS-1$
     applyCsvConfirmationDialog = (XulDialog) document.getElementById("applyCsvConfirmationDialog"); //$NON-NLS-1$
-    csvDataTable = (XulTree) document.getElementById("csvDataTable");
-    sampleDataTree = (XulTree) document.getElementById("csvSampleDataTable");
-    aggregationEditorDialog = (XulDialog) document.getElementById("csvAggregationEditorDialog");
+    csvDataTable = (XulTree) document.getElementById("csvDataTable");//$NON-NLS-1$
+    sampleDataTree = (XulTree) document.getElementById("csvSampleDataTable");//$NON-NLS-1$
+    aggregationEditorDialog = (XulDialog) document.getElementById("csvAggregationEditorDialog");//$NON-NLS-1$
     aggregationCellEditor = new CustomAggregateCellEditor(aggregationEditorDialog, datasourceMessages, document, bf);
-    csvDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);
+    csvDataTable.registerCellEditor("aggregation-cell-editor", aggregationCellEditor);//$NON-NLS-1$
     aggregationCellRenderer = new CustomAggregationCellRenderer();
-    csvDataTable.registerCellRenderer("aggregation-cell-editor", aggregationCellRenderer);
-    sampleDataDialog = (XulDialog) document.getElementById("csvSampleDataDialog");
+    csvDataTable.registerCellRenderer("aggregation-cell-editor", aggregationCellRenderer);//$NON-NLS-1$
+    sampleDataDialog = (XulDialog) document.getElementById("csvSampleDataDialog");//$NON-NLS-1$
     sampleDataCellEditor = new CustomSampleDataCellEditor(sampleDataDialog);
-    csvDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);
+    csvDataTable.registerCellEditor("sample-data-cell-editor", sampleDataCellEditor);//$NON-NLS-1$
     sampleDataCellRenderer = new CustomSampleDataCellRenderer();
-    csvDataTable.registerCellRenderer("sample-data-cell-editor", sampleDataCellRenderer);
+    csvDataTable.registerCellRenderer("sample-data-cell-editor", sampleDataCellRenderer);//$NON-NLS-1$
     regenerateModelConfirmationDialog = (XulDialog) document.getElementById("regenerateModelConfirmationDialog"); //$NON-NLS-1$
     waitingDialog = (XulDialog) document.getElementById("waitingDialog"); //$NON-NLS-1$
     waitingDialogLabel = (XulLabel) document.getElementById("waitingDialogLabel");//$NON-NLS-1$    
@@ -150,10 +150,10 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
     final Binding domainBinding = bf.createBinding(datasourceModel.getCsvModel(),
         "headersPresent", headersPresent, "checked"); //$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");
-    bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");
-    bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");
-    bf.createBinding(datasourceModel.getCsvModel(), "selectedFile", fileUpload, "selectedFile");
+    bf.createBinding(datasourceModel.getCsvModel(), "dataRows", csvDataTable, "elements");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "delimiterList", delimiterList, "elements");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "enclosureList", enclosureList, "elements");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "selectedFile", fileUpload, "selectedFile");//$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<String, Boolean> buttonConverter = new BindingConvertor<String, Boolean>() {
 
       @Override
@@ -167,7 +167,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       }
     };
 
-    bf.createBinding(datasourceModel, "datasourceName", applyCsvButton, "!disabled", buttonConverter);
+    bf.createBinding(datasourceModel, "datasourceName", applyCsvButton, "!disabled", buttonConverter); //$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<Integer, Enclosure> indexToEnclosureConverter = new BindingConvertor<Integer, Enclosure>() {
 
       @Override
@@ -221,12 +221,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
         return 0;
       }
     };
-    bf.createBinding(enclosureList, "selectedIndex", datasourceModel.getCsvModel(), "enclosure",
+    bf.createBinding(enclosureList, "selectedIndex", datasourceModel.getCsvModel(), "enclosure", //$NON-NLS-1$ //$NON-NLS-2$
         indexToEnclosureConverter);
-    bf.createBinding(delimiterList, "selectedIndex", datasourceModel.getCsvModel(), "delimiter",
+    bf.createBinding(delimiterList, "selectedIndex", datasourceModel.getCsvModel(), "delimiter", //$NON-NLS-1$ //$NON-NLS-2$
         indexToDelimiterConverter);
     bf.setBindingType(Binding.Type.ONE_WAY);
-    bf.createBinding(csvDataTable, "selectedIndex", this, "selectedCsvDataRow");
+    bf.createBinding(csvDataTable, "selectedIndex", this, "selectedCsvDataRow"); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       domainBinding.fireSourceChanged();
 
@@ -258,7 +258,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
   }
 
   public String getName() {
-    return "csvDatasourceController";
+    return "csvDatasourceController";//$NON-NLS-1$
   }
 
   public void setService(IXulAsyncDatasourceService service) {
@@ -286,8 +286,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       if (applyCsvConfirmationDialog.isVisible()) {
         applyCsvConfirmationDialog.hide();
       }
-      showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages
-          .getString("DatasourceController.WAIT"));
+      showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages //$NON-NLS-1$
+          .getString("DatasourceController.WAIT")); //$NON-NLS-1$
       service.generateInlineEtlLogicalModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
           .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), datasourceModel.getCsvModel()
           .getDelimiter().getValue(), datasourceModel.getCsvModel().getEnclosure().getValue(),
@@ -322,7 +322,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
             }
           });
     } else {
-      openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"),
+      openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"), //$NON-NLS-1$
           getMissingInputs());
     }
   }
@@ -336,12 +336,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     StringBuffer buffer = new StringBuffer();
     if (datasourceModel.getCsvModel().getSelectedFile() == null
         && datasourceModel.getCsvModel().getSelectedFile().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.File"));
-      buffer.append(" \n");
+      buffer.append(datasourceMessages.getString("datasourceDialog.File"));//$NON-NLS-1$
+      buffer.append(" \n");//$NON-NLS-1$
     }
     if (datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
-      buffer.append(" \n");
+      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));//$NON-NLS-1$
+      buffer.append(" \n");//$NON-NLS-1$
     }
     return buffer.toString();
   }
@@ -352,7 +352,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
   }
 
   public void uploadFailure(Throwable t) {
-    openErrorDialog("Upload Failed", t.getLocalizedMessage());
+    openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0005_UPLOAD_FAILED"), t.getLocalizedMessage()); //$NON-NLS-1$
   }
 
   public void openErrorDialog(String title, String message) {
@@ -405,8 +405,8 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
   }
 
   public void displayErrorMessage(Throwable th) {
-    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE")));
-    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE"))); //$NON-NLS-1$
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));//$NON-NLS-1$
     errorDialog.show();
   }
 
@@ -458,7 +458,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
-      dialog.setBgcolor("#FFFFFF");
+      dialog.setBgcolor("#FFFFFF");//$NON-NLS-1$
     }
 
     public Object getValue() {
@@ -486,7 +486,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       }
       sampleDataTree.setElements(sampleDataList);
       sampleDataTree.update();
-      dialog.setTitle(datasourceMessages.getString("DatasourceController.SAMPLE_DATA"));
+      dialog.setTitle(datasourceMessages.getString("DatasourceController.SAMPLE_DATA"));//$NON-NLS-1$
       dialog.show();
     }
   }

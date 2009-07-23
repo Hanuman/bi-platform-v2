@@ -32,10 +32,10 @@ public  class ConnectionServiceHelper {
         return password;
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("ConnectionServiceHelper.ERROR_0001_UNABLE_TO_GET_CONNECTION_PASSWORD",
+      logger.error(Messages.getErrorString("ConnectionServiceHelper.ERROR_0001_UNABLE_TO_GET_CONNECTION_PASSWORD", //$NON-NLS-1$
           connectionName, e.getLocalizedMessage()));
       throw new ConnectionServiceException(Messages.getErrorString(
-          "ConnectionServiceHelper.ERROR_0001_UNABLE_TO_GET_CONNECTION_PASSWORD", connectionName, e.getLocalizedMessage()), e);
+          "ConnectionServiceHelper.ERROR_0001_UNABLE_TO_GET_CONNECTION_PASSWORD", connectionName, e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
   }
   
