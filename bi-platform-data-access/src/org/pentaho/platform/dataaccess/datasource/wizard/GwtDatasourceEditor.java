@@ -50,7 +50,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
     this.constructorListener = constructorListener;
     setDatasourceService(datasourceService);
     setConnectionService(connectionService);
-    AsyncXulLoader.loadXulFromUrl("connectionFrame.xul", "connectionFrame", this); //$NON-NLS-1$//$NON-NLS-2$
+    AsyncXulLoader.loadXulFromUrl("datasourceEditorDialog.xul", "datasourceEditorDialog", this); //$NON-NLS-1$//$NON-NLS-2$
   }
   
   private void reloadConnections() {
@@ -67,7 +67,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
         
       });
     } else {
-      showErrorDialog(datasourceMessages.getString("DatasourceEditor.ERROR"),"DatasourceEditor.ERROR_0001_CONNECTION_SERVICE_NULL");
+      showErrorDialog(datasourceMessages.getString("DatasourceEditor.ERROR"),"DatasourceEditor.ERROR_0004_CONNECTION_SERVICE_NULL");
     }
 
   }
@@ -110,7 +110,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
     try {
       
       container = (GwtXulDomContainer) runner.getXulDomContainers().get(0);
-      AsyncXulLoader.loadOverlayFromUrl("connectionFrame-gwt-overlay.xul", "connectionFrame", container, this); //$NON-NLS-1$//$NON-NLS-2$
+      AsyncXulLoader.loadOverlayFromUrl("datasourceEditorDialog-gwt-overlay.xul", "datasourceEditorDialog", container, this); //$NON-NLS-1$//$NON-NLS-2$
       datasourceMessages.setMessageBundle((ResourceBundle) container.getResourceBundles().get(0));
       GwtBindingFactory bf = new GwtBindingFactory(container.getDocumentRoot());
       

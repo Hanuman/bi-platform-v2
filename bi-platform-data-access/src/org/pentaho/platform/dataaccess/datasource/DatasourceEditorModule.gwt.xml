@@ -43,7 +43,7 @@
     <exclude name="**/DataAccessDatabaseConnectionService*"/>
     <exclude name="**/Messages*"/>      
   </source>
-  <stylesheet src="connectionFrame.css"/>
+  <stylesheet src="datasourceEditorDialog.css"/>
   <public path="wizard/public"/>
   <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
   <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />

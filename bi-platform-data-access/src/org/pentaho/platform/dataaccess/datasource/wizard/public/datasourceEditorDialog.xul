@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<window id="datasourceEditorWindow" title="${connectionFrame.TITLE}" orient="vertical"
+<window id="datasourceEditorWindow" title="${datasourceEditorDialog.TITLE}" orient="vertical"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:pen="http://www.pentaho.org/2008/xul"
   height="600" width="800"
   onload="connectionController.init(), datasourceController.init(), csvDatasourceController.init(), relationalDatasourceController.init()">
@@ -19,6 +19,9 @@
 			       <tab id="datasourceDialogCsvTab" label="${datasourceDialog.Csv}" onclick="datasourceController.selectCsv()" pen:onbeforeselect="datasourceController.beforeTabSwitch()"/>
 			    </tabs>
 			    <tabpanels id="datasourceDialogTabpanels">
+                   	<!--  ###############################################################################  -->
+					<!--     DATABASE TAB PANEL: Panel containing contents for Database based model -->
+					<!--  ###############################################################################  -->
 			    	<tabpanel id="datasourceDialogDatabaseTabPanel">
 			       		<vbox flex="1">
 							<vbox>
@@ -76,6 +79,9 @@
 						    </vbox>
 						  </vbox>
 					  </tabpanel>
+                   	  <!--  ###############################################################################  -->
+					  <!--     CSV TAB PANEL: Panel containing contents for CSV based model -->
+ 					  <!--  ###############################################################################  -->
 					  <tabpanel id="datasourceDialogCsvTabPanel">
 						  <vbox flex="1">
 						  	  <vbox>
@@ -88,7 +94,7 @@
 						  	  <groupbox id="fileGroupbox" width="500">
 						  	  	<caption label="${datasourceDialog.File}" />
 						  	  	<vbox>
-							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
+							  	  	<pen:fileupload id="fileUpload" action="UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
 							  	  	<spacer height="5"/>
 									<grid>
 									  <columns>
@@ -135,7 +141,6 @@
 			  						<!--     CSV MODEL TABLE: Table to display the CSV Model Results -->
 			  						<!--     There are four columns of this table. 1) Display Name 2) Column Type 3) Aggregation 4) Sample Data -->
 	  								<!--  ###############################################################################  -->
-							  
 								  <tree flex="1" id="csvDataTable" seltype="single">
 											<treecols id="csvDataTableCols">
 												<treecol id="csvColumnNameTreeCol" label="${datasourceDialog.displayName}" flex="1" pen:binding="columnName" editable="false" type="text"/>
@@ -168,7 +173,10 @@
 		</tree>    
   </dialog>
     
-    
+  <!--  ###############################################################################  -->
+  <!--     REMOVE CONNECTION CONFIRMATION DIALOG: Dialog to display the confirmation     -->
+  <!--     message to the user before deleting the selected connection from the list     -->
+  <!--  ###############################################################################  -->   
   <dialog id="removeConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="connectionController.closeRemoveConfirmationDialog()"
   ondialogaccept="connectionController.deleteConnection()" buttonalign="right" title="${removeConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="150" width="200">
@@ -176,8 +184,13 @@
         <label value="${removeConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
-  
-    <dialog id="saveConnectionConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept,cancel" ondialogcancel="connectionController.closeSaveConnectionConfirmationDialog()"
+
+  <!--  ###############################################################################   -->
+  <!--     SAVE CONNECTION CONFIRMATION DIALOG: Dialog to display the confirmation        -->
+  <!--     message to the user before saving the connection which has not been succesfully-->
+  <!--     tested                                                                         -->
+  <!--  ###############################################################################   -->   
+  <dialog id="saveConnectionConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept,cancel" ondialogcancel="connectionController.closeSaveConnectionConfirmationDialog()"
   ondialogaccept="connectionController.saveConnection()" buttonalign="right" title="${saveConnectionConfirmationDialog.title}" 
   xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
        <vbox>
@@ -185,20 +198,36 @@
       </vbox>
   </dialog>
 
-  
+  <!--  ###############################################################################   -->
+  <!--     WAITING DIALOG: Dialog to display wait text while the operation is being       -->
+  <!--     performed                                                                      -->
+  <!--  ###############################################################################   -->   
   <dialog id="waitingDialog" title="${waitingDialog.previewLoading}" width="220" height="40">
   		<hbox>
   			<image src="images/large-loading.gif" />
   			<label id="waitingDialogLabel" value="${waitingDialog.generatingPreview}"/>
   		</hbox>
   </dialog>
-
+  
+  <!--  ###############################################################################   -->
+  <!--     ERROR DIALOG: Dialog to display error text                                     -->
+  <!--  ###############################################################################   -->   
   <dialog id="errorDialog" title="${errorDialog.errorOccurred}" buttonlabelaccept="${errorDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeErrorDialog()" width="300" height="100" buttonalign="center">
         <label id="errorLabel" value="${errorDialog.errorOccurred}"/>
   </dialog>
+  
+  <!--  ###############################################################################   -->
+  <!--     SUCCESS DIALOG: Dialog to display success text                                 -->
+  <!--  ###############################################################################   -->   
   <dialog id="successDialog" title="${successDialog.successTitle}" buttonlabelaccept="${successDialog.OK}" buttons="accept" ondialogaccept="connectionController.closeSuccessDialog()" width="300" height="100" buttonalign="center">
         <label id="successLabel" value="${successDialog.successMessage}"/>
   </dialog>
+
+  <!--  ###############################################################################   -->
+  <!--     APPLY QUERY CONFIRMATION DIALOG: Dialog to display the confirmation            -->
+  <!--     message to the user before possibly over writing the  model with the newly     -->
+  <!--     typed query by the user                                                        -->
+  <!--  ###############################################################################   -->   
   <dialog id="applyQueryConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="relationalDatasourceController.generateModel()" buttonalign="right" title="${applyQueryConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
@@ -206,6 +235,11 @@
         <label value="${applyQueryConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
+  <!--  ###############################################################################   -->
+  <!--     APPLY CSV CONFIRMATION DIALOG: Dialog to display the confirmation              -->
+  <!--     message to the user before possibly over writing the  model with the newly     -->
+  <!--     seleced csv fileby the user                                                    -->
+  <!--  ###############################################################################   -->    
   <dialog id="applyCsvConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyCsvConfirmationDialog()"
 	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${applyCsvConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
@@ -214,6 +248,11 @@
       </vbox>
   </dialog>
   
+  <!--  ###############################################################################   -->
+  <!--     REGENERATE MODEL CONFIRMATION DIALOG: Dialog to display the confirmation       -->
+  <!--     message to the user before regenerating the model and possibly over writing    -->
+  <!--     the current model                                                              -->
+  <!--  ###############################################################################   -->    
   <dialog id="regenerateModelConfirmationDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeApplyQueryConfirmationDialog()"
 	  ondialogaccept="csvDatasourceController.generateModel()" buttonalign="right" title="${regenerateModelConfirmationDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="220">
@@ -221,6 +260,12 @@
         <label value="${regenerateModelConfirmationDialog.confirmMessage}"/>
       </vbox>
   </dialog>
+
+  <!--  ###############################################################################   -->
+  <!--     CLEAR MODEL CONFIRMATION DIALOG: Dialog to display the confirmation            -->
+  <!--     message to the user before switching the tab which result in clearing          -->
+  <!--     of the model                                                                   -->
+  <!--  ###############################################################################   -->
   <dialog id="clearModelWarningDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="datasourceController.closeClearModelWarningDialog()"
 	  ondialogaccept="datasourceController.switchTab()" buttonalign="right" title="${clearModelWarningDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="120" width="240">
@@ -228,11 +273,21 @@
         <label value="${clearModelWarningDialog.warningMessage}"/>
       </vbox>
   </dialog>
+
+  <!--  ###############################################################################   -->
+  <!--     CSV AGGREGATION EDITOR DIALOG: Dialog to display aggregation option to the     -->
+  <!--     user                                                                           -->
+  <!--  ###############################################################################   -->
   <dialog id="csvAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="csvDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="csvDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="250">
   		<vbox id="csvAggregationEditorVbox"/>
   </dialog>
+
+  <!--  ###############################################################################     -->
+  <!--     CSV SAMPLE DATA DIALOG: Dialog to display sample data for the selected column    -->
+  <!--  ###############################################################################     -->
+  
   <dialog id="csvSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="csvDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="530">
 	  <tree height="195" width="530" id="csvSampleDataTable" seltype="single">
@@ -242,11 +297,21 @@
 		<treechildren id="csvSampleDataRows"/>
 	  </tree>  		
   </dialog>
+  
+  <!--  ###############################################################################     -->
+  <!--     RELATIONAL AGGREGATION EDITOR DIALOG: Dialog to display aggregation option to the-->
+  <!--     user                                                                             -->
+  <!--  ###############################################################################     -->
+  
   <dialog id="relationalAggregationEditorDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}" buttons="accept, cancel" ondialogcancel="relationalDatasourceController.closeAggregationEditorDialog()"
 	  ondialogaccept="relationalDatasourceController.saveAggregationValues()" buttonalign="right" title="${aggregationEditorDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="250" width="250">
   		<vbox id="relationalAggregationEditorVbox"/>
   </dialog>
+
+  <!--  ###############################################################################         -->
+  <!--  RELATIONAL SAMPLE DATA DIALOG: Dialog to display sample data for the selected column    -->
+  <!--  ###############################################################################         -->
   <dialog id="relationalSampleDataDialog" buttonlabelaccept="${dialog.CLOSE}" buttons="accept" ondialogaccept="relationalDatasourceController.closeSampleDataDialog()" buttonalign="right" title="${sampleDataDialog.title}" 
   		xmlns:pen="http://www.pentaho.org/2008/xul" height="240" width="530">
 	  <tree height="195" width="530" id="relationalSampleDataTable" seltype="single">
@@ -256,7 +321,12 @@
 		<treechildren id="relationalSampleDataRows"/>
 	  </tree>  		
   </dialog>
-    <dialog id="overwriteDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}"
+
+  <!--  ###############################################################################   -->
+  <!--     OVERWRITE CONFIRMATION DIALOG: Dialog to display the confirmation              -->
+  <!--     message to the user before the model with the new one in the repository        -->
+  <!--  ###############################################################################   -->   
+  <dialog id="overwriteDialog" buttonlabelaccept="${dialog.OK}" buttonlabelcancel="${dialog.CANCEL}"
     		ondialogaccept="datasourceController.overwriteDialogAccept()"
     		ondialogcancel="datasourceController.overwriteDialogCancel()" 
     		buttons="accept, cancel" buttonalign="right" title="${overwrite.title}" 
@@ -264,5 +334,5 @@
        <vbox>
         <label value="${overwriteDialog.warningMessage}"/>
       </vbox>
-    </dialog>
-   </window>
+  </dialog>
+</window>

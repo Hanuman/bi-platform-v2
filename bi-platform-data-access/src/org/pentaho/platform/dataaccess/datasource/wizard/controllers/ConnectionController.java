@@ -111,7 +111,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
   }
 
   public String getName() {
-    return "connectionController";
+    return "connectionController";//$NON-NLS-1$
   }
 
   public void closeDialog() {
@@ -153,11 +153,11 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
         public void success(Boolean value) {
           try {
             if (value) {
-              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
-                  .getString("ConnectionController.CONNECTION_TEST_SUCCESS"));
+              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages//$NON-NLS-1$
+                  .getString("ConnectionController.CONNECTION_TEST_SUCCESS"));//$NON-NLS-1$
             } else {
-              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
-                  .getString("ConnectionController.ERROR_0003_CONNECTION_TEST_FAILED"));
+              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages//$NON-NLS-1$
+                  .getString("ConnectionController.ERROR_0003_CONNECTION_TEST_FAILED"));//$NON-NLS-1$
             }
 
           } catch (Exception e) {
@@ -182,8 +182,8 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
           public void success(Boolean value) {
             try {
               if (value) {
-                openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
-                    .getString("ConnectionController.CONNECTION_DELETED"));
+                openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages//$NON-NLS-1$
+                    .getString("ConnectionController.CONNECTION_DELETED"));//$NON-NLS-1$
                 datasourceModel.getRelationalModel().deleteConnection(
                     datasourceModel.getRelationalModel().getSelectedConnection().getName());
                 List<IConnection> connections = datasourceModel.getRelationalModel().getConnections();
@@ -194,8 +194,8 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
                 }
 
               } else {
-                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
-                    .getString("ConnectionController.ERROR_0002_UNABLE_TO_DELETE_CONNECTION"));
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages//$NON-NLS-1$
+                    .getString("ConnectionController.ERROR_0002_UNABLE_TO_DELETE_CONNECTION"));//$NON-NLS-1$
               }
 
             } catch (Exception e) {
@@ -222,8 +222,8 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
                 datasourceModel.getRelationalModel().addConnection(currentConnection);
                 datasourceModel.getRelationalModel().setSelectedConnection(currentConnection);
               } else {
-                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
-                    .getString("ConnectionController.ERROR_0001_UNABLE_TO_ADD_CONNECTION"));
+                openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages//$NON-NLS-1$
+                    .getString("ConnectionController.ERROR_0001_UNABLE_TO_ADD_CONNECTION"));//$NON-NLS-1$
               }
 
             } catch (Exception e) {
@@ -241,13 +241,13 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
         public void success(Boolean value) {
           try {
             if (value) {
-              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages
-                  .getString("ConnectionController.CONNECTION_UPDATED"));
+              openSuccesDialog(datasourceMessages.getString("SUCCESS"), datasourceMessages//$NON-NLS-1$
+                  .getString("ConnectionController.CONNECTION_UPDATED"));//$NON-NLS-1$
               datasourceModel.getRelationalModel().updateConnection(currentConnection);
               datasourceModel.getRelationalModel().setSelectedConnection(currentConnection);
             } else {
-              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
-                  .getString("ConnectionController.ERROR_0004_UNABLE_TO_UPDATE_CONNECTION"));
+              openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages//$NON-NLS-1$
+                  .getString("ConnectionController.ERROR_0004_UNABLE_TO_UPDATE_CONNECTION"));//$NON-NLS-1$
             }
 
           } catch (Exception e) {
@@ -278,8 +278,8 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
   }
 
   public void displayErrorMessage(Throwable th) {
-    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("Controller.ERROR_0002_ERROR")));
-    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("Controller.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE")));//$NON-NLS-1$
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));//$NON-NLS-1$
     errorDialog.show();
   }
 

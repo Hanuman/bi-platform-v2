@@ -517,8 +517,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   }
 
   public void displayErrorMessage(Throwable th) {
-    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("Controller.ERROR_0002_ERROR")));
-    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("Controller.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
+    errorDialog.setTitle(ExceptionParser.getErrorHeader(th, getDatasourceMessages().getString("DatasourceEditor.USER_ERROR_TITLE")));
+    errorLabel.setValue(ExceptionParser.getErrorMessage(th, getDatasourceMessages().getString("DatasourceEditor.ERROR_0001_UNKNOWN_ERROR_HAS_OCCURED")));
     errorDialog.show();
   }
 

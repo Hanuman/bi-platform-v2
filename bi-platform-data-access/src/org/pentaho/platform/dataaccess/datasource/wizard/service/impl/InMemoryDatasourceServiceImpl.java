@@ -13,7 +13,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.marshal.MarshallableResultSet;
 import org.pentaho.commons.connection.marshal.MarshallableRow;
@@ -38,8 +37,6 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasource
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.action.sql.SQLLookupRule;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
@@ -213,25 +210,28 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService{
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
       || (getPermittedUserList() != null && getPermittedUserList().size() > 0); 
       InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName,
-          getUploadFilePath(), relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
+          getUploadFilePath() + File.separatorChar, relativeFilePath, headersPresent, delimiter,enclosure,securityEnabled,
             getPermittedRoleList(),getPermittedUserList(),
               getDefaultAcls(), "joe");
       Domain domain  = inlineEtlModelGenerator.generate();
       Properties properties = new Properties();
       String path = null;
+      FileInputStream fis = null;
       try {
         URL url = ClassLoader.getSystemResource(DEFAULT_UPLOAD_FILEPATH_FILE_NAME);
         URI uri = url.toURI();
         File file = new File(uri);
-        FileInputStream fis = new FileInputStream(file);
+        fis = new FileInputStream(file);
         properties.load(fis);
         path = (String) properties.get(UPLOAD_FILE_PATH);
       } catch (IOException e) {
         logger.error(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0016_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()),e);
         throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceInMemoryDelegate.ERROR_0015_UNABLE_TO_GENERATE_MODEL",e.getLocalizedMessage()), e); //$NON-NLS-1$
+      } finally {
+        fis.close();
       }
 
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getCsvDataSample(path + relativeFilePath, headersPresent,
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getCsvDataSample(path + File.separatorChar + relativeFilePath, headersPresent,
           delimiter, enclosure, 5);
       return  new BusinessData(domain, data);
 

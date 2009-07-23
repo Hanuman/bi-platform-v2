@@ -4,8 +4,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.pentaho.database.model.DatabaseAccessType;
+import org.pentaho.database.model.IDatabaseConnection;
 import org.pentaho.database.model.IDatabaseType;
 import org.pentaho.database.service.DatabaseConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.ConnectionServiceHelper;
 
 public class DataAccessDatabaseConnectionService extends DatabaseConnectionService {
   
@@ -26,5 +28,16 @@ public class DataAccessDatabaseConnectionService extends DatabaseConnectionServi
        }
      }
      return databaseTypes;
+  }
+
+  @Override
+  public String testConnection(IDatabaseConnection connection) {
+    try {
+      
+      connection.setPassword(ConnectionServiceHelper.getConnectionPassword(connection.getName(), connection.getPassword()));
+      return super.testConnection(connection);
+    } catch (ConnectionServiceException e) {
+      return super.testConnection(connection);
+    }
   }
 }

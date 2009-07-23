@@ -48,7 +48,7 @@ This module serves as the Debuging environment and default implementation for in
     	<exclude name="**/DataAccessDatabaseConnectionService*"/>        
         <exclude name="**/Messages*"/>                
     </source>
-   <stylesheet src="connectionFrame.css"/>
+   <stylesheet src="datasourceEditorDialog.css"/>
    <public path="wizard/public"/>
     <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint"/>
    

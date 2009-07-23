@@ -96,7 +96,7 @@ public class CsvModel extends XulEventSourceAdapter{
   private void setValidated(boolean validated) {
     boolean prevVal = validated;
     this.validated = validated;
-    this.firePropertyChange("validated", prevVal, validated);
+    this.firePropertyChange("validated", prevVal, validated);//$NON-NLS-1$
   }
 
   public void validate() {
@@ -124,12 +124,12 @@ public class CsvModel extends XulEventSourceAdapter{
           }
         }
       }
-      firePropertyChange("dataRows", null, dataRows);
+      firePropertyChange("dataRows", null, dataRows);//$NON-NLS-1$
     } else {
       if (this.dataRows != null) {
         this.dataRows.removeAll(dataRows);
         List<CsvModelDataRow> previousValue = this.dataRows;
-        firePropertyChange("dataRows", previousValue, null);
+        firePropertyChange("dataRows", previousValue, null);//$NON-NLS-1$
       }
     }
   }

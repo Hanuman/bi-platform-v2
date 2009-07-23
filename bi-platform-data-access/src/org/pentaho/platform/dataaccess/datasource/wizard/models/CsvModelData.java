@@ -30,7 +30,7 @@ public class CsvModelData extends XulEventSourceAdapter{
 
   public void addCsvModelDataRow(LogicalColumn column) {
   /*  this.dataRows.add(new ModelDataRow(column, data));*/
-    firePropertyChange("csvDataRows", null, csvDataRows);
+    firePropertyChange("csvDataRows", null, csvDataRows);//$NON-NLS-1$
   }
 
   public List<CsvModelDataRow> getModelData() {
@@ -40,7 +40,7 @@ public class CsvModelData extends XulEventSourceAdapter{
 
   public void setModelData(List<CsvModelDataRow> csvDataRows) {
     this.csvDataRows = csvDataRows;
-    firePropertyChange("csvDataRows", null, csvDataRows);
+    firePropertyChange("csvDataRows", null, csvDataRows);//$NON-NLS-1$
   }
 
 

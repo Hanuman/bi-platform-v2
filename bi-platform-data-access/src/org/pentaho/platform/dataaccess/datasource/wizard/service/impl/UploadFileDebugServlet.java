@@ -41,14 +41,14 @@ public class UploadFileDebugServlet extends HttpServlet implements Servlet {
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     try {
-      response.setContentType("text/plain");
+      response.setContentType("text/plain"); //$NON-NLS-1$
       FileItem uploadItem = getFileItem(request);
       if (uploadItem == null) {
-        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0001_NO_FILE_TO_UPLOAD"));
+        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0001_NO_FILE_TO_UPLOAD")); //$NON-NLS-1$
         return;
       }
       if (MAX_FILE_SIZE < uploadItem.getSize()) {
-        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0003_FILE_TOO_BIG"));
+        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0003_FILE_TOO_BIG")); //$NON-NLS-1$
         return;
       }
 
@@ -63,30 +63,34 @@ public class UploadFileDebugServlet extends HttpServlet implements Servlet {
         path = (String) properties.get(UPLOAD_FILE_PATH);
       } catch (IOException e) {
         response.getWriter().write(
-            Messages.getErrorString("UploadFileDebugServlet.ERROR_0005_UNKNOWN_ERROR", e.getLocalizedMessage()));
+            Messages.getErrorString("UploadFileDebugServlet.ERROR_0005_UNKNOWN_ERROR", e.getLocalizedMessage()));//$NON-NLS-1$
+      } finally {
+        fis.close();
       }
 
       if (uploadItem.getSize() + getFolderSize(new File(path)) > MAX_FOLDER_SIZE) {
         response.getWriter().write(
-            Messages.getErrorString("UploadFileDebugServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
+            Messages.getErrorString("UploadFileDebugServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED")); //$NON-NLS-1$ 
         return;
       }
       byte[] fileContents = uploadItem.get();
       UUID id = UUIDUtil.getUUID();
       String filename = id.toString() + CSV_EXT;
-
-      if (doesFileExists(new File(path + filename))) {
-        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0002_FILE_ALREADY_EXIST"));
+      // File name is path + / + name of the file
+      String filenameWithPath = path + File.separatorChar + filename;
+      if (doesFileExists(new File(filenameWithPath))) {
+        response.getWriter().write(Messages.getErrorString("UploadFileDebugServlet.ERROR_0002_FILE_ALREADY_EXIST")); //$NON-NLS-1$
         return;
       }
-      FileOutputStream outputStream = new FileOutputStream(path + filename);
+      FileOutputStream outputStream = new FileOutputStream(filenameWithPath);
+      
       outputStream.write(fileContents);
       outputStream.flush();
       outputStream.close();
       response.getWriter().write(new String(filename));
     } catch (Exception e) {
       response.getWriter().write(
-          Messages.getErrorString("UploadFileDebugServlet.ERROR_0005_UNKNOWN_ERROR", e.getLocalizedMessage()));
+          Messages.getErrorString("UploadFileDebugServlet.ERROR_0005_UNKNOWN_ERROR", e.getLocalizedMessage())); //$NON-NLS-1$
     }
   }
 

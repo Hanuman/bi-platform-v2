@@ -51,7 +51,7 @@ public class Aggregation  extends XulEventSourceAdapter{
     } else {
       this.aggregationList.add(AggregationType.NONE);
     }
-    firePropertyChange("aggregationList", null, aggregationList);
+    firePropertyChange("aggregationList", null, aggregationList); //$NON-NLS-1$
   }
 
   /**
@@ -63,7 +63,7 @@ public class Aggregation  extends XulEventSourceAdapter{
 
   public void setDefaultAggregationType(AggregationType defaultAggregationType) {
     this.defaultAggregationType = defaultAggregationType;
-    firePropertyChange("defaultAggregationType", null, defaultAggregationType);
+    firePropertyChange("defaultAggregationType", null, defaultAggregationType);//$NON-NLS-1$
   }
 
   public AggregationType getDefaultAggregationType() {

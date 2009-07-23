@@ -34,7 +34,7 @@ public class SwingDatasourceEditor implements IDatasourceEditor {
   
   public SwingDatasourceEditor(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService) {
     try{
-      XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/connectionFrame.xul");
+      XulDomContainer container = new SwingXulLoader().loadXul("org/pentaho/platform/dataaccess/datasource/wizard/public/datasourceEditorDialog.xul");
     
       runner = new SwingXulRunner();
       runner.addContainer(container);
