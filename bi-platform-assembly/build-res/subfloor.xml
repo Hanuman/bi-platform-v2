@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!--===========================================================================
     == SUBFLOOR ==
     
-    $Rev: 66 $
-    $Date: 2009-07-21 14:44:09 -0400 (Tue, 21 Jul 2009) $
+    $Rev: 67 $
+    $Date: 2009-07-23 10:34:46 -0400 (Thu, 23 Jul 2009) $
     Project Home: http://code.google.com/p/subfloor/
     
     This file contains the default implementation of the ant tasks to 
@@ -834,7 +834,7 @@ TYPICAL TARGET SEQUENCE
     
         Creates a publishable version of the ivy dependencies file, ivy.xml
         ====================================================================-->
-  <target name="ivy.deliver" depends="resolve">
+  <target name="ivy.deliver">
     <ivy:deliver conf="*(public)" deliverpattern="${dist.dir}/ivy.xml" />
   </target>
 
