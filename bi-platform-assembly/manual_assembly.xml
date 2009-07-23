@@ -40,12 +40,12 @@
           description="Assembles a j2ee manual deployments package">
 
     <!-- copy package-res-manual stuff into stage dir -->
-    <copy todir="${stage.dir}">
+    <copy todir="${approot.stage.dir}">
       <fileset dir="${package-res-manual.dir}" />
     </copy>
 
     <!-- create version.properties -->
-    <propertyfile file="${stage.dir}/version.properties" comment="Pentaho Manual Deployments build information">
+    <propertyfile file="${approot.stage.dir}/version.properties" comment="Pentaho Manual Deployments build information">
       <entry key="impl.vender" value="Pentaho" />
       <entry key="impl.vender" value="Pentaho Manual Deployments" />
       <entry key="impl.version" value="${project.revision}" />
@@ -57,7 +57,7 @@
           target: assemble-message-bundles                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-message-bundles">
-    <copy todir="${stage.dir}/pentaho-classes">
+    <copy todir="${approot.stage.dir}/pentaho-classes">
       <fileset dir="${bi.platform.util.dir}/src">
         <include name="**/messages*properties" />
       </fileset>
@@ -104,8 +104,8 @@
           target: assemble-licenses                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-licenses">
-    <mkdir dir="${stage.dir}/pentaho-doc" />
-    <copy todir="${stage.dir}/pentaho-doc/licenses">
+    <mkdir dir="${approot.stage.dir}/pentaho-doc" />
+    <copy todir="${approot.stage.dir}/pentaho-doc/licenses">
       <fileset dir="${license.dir}" />
     </copy>
   </target>
@@ -115,14 +115,14 @@
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-jars">
     <!--  copy over bi-platform jars -->
-    <copy todir="${stage.dir}/pentaho-jars">
+    <copy todir="${approot.stage.dir}/pentaho-jars">
       <fileset dir="${lib.dir}">
         <include name="pentaho-bi-platform-*.jar" />
       </fileset>
     </copy>
 
     <!--  copy over non bi-platform jars -->
-    <copy todir="${stage.dir}/pentaho-third-party">
+    <copy todir="${approot.stage.dir}/pentaho-third-party">
       <fileset dir="${lib.dir}">
         <include name="*.jar" />
         <exclude name="pentaho-bi-platform-*.jar" />
@@ -135,47 +135,47 @@
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-resource-files">
     <!--  ear related files -->
-    <copy todir="${stage.dir}/pentaho-res">
+    <copy todir="${approot.stage.dir}/pentaho-res">
       <fileset dir="${bi.platform.appserver.dir}/res" />
     </copy>
 
     <!--  ehcache related config -->
-    <copy todir="${stage.dir}/pentaho-res">
+    <copy todir="${approot.stage.dir}/pentaho-res">
       <fileset dir="${bi.platform.engine.services.dir}/res" />
     </copy>
 
     <!-- jboss datasources -->
-    <copy todir="${stage.dir}/pentaho-res/jboss">
+    <copy todir="${approot.stage.dir}/pentaho-res/jboss">
       <fileset dir="${bi.platform.appserver.dir}/jboss/res" />
     </copy>
 
     <!-- portal-layout.war -->
-    <copy todir="${stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war">
+    <copy todir="${approot.stage.dir}/pentaho-res/jboss/pentaho-portal-layout.war">
       <fileset dir="${bi.platform.appserver.dir}/jboss/webapps/pentaho-portal-layout" />
     </copy>
 
     <!-- jfreereport files -->
-    <copy todir="${stage.dir}/pentaho-res/jfreereport">
+    <copy todir="${approot.stage.dir}/pentaho-res/jfreereport">
       <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
     </copy>
 
     <!-- mondrian files -->
-    <copy todir="${stage.dir}/pentaho-res/mondrian">
+    <copy todir="${approot.stage.dir}/pentaho-res/mondrian">
       <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
     </copy>
 
     <!-- log4j files -->
-    <copy todir="${stage.dir}/pentaho-res/log4j">
+    <copy todir="${approot.stage.dir}/pentaho-res/log4j">
       <fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />
     </copy>
 
     <!--  orion files -->
-    <copy todir="${stage.dir}/pentaho-res/orion">
+    <copy todir="${approot.stage.dir}/pentaho-res/orion">
       <fileset dir="${bi.platform.appserver.dir}/orion/res" />
     </copy>
 
     <!--  security example files -->
-    <copy todir="${stage.dir}/pentaho-res/security-samples">
+    <copy todir="${approot.stage.dir}/pentaho-res/security-samples">
       <fileset dir="${bi.platform.engine.security.dir}/res/samples" />
     </copy>
 
@@ -185,33 +185,33 @@
           target: assemble-webapps                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-webapps">
-    <copy todir="${stage.dir}/pentaho-webapp">
+    <copy todir="${approot.stage.dir}/pentaho-webapp">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
         <exclude name="**/classes/loader.properties" />
       </fileset>
     </copy>
 
-    <unzip dest="${stage.dir}/pentaho-webapp">
+    <unzip dest="${approot.stage.dir}/pentaho-webapp">
       <fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
     </unzip>
 
-    <copy todir="${stage.dir}/pentaho-res/styles/pentaho-style.war">
+    <copy todir="${approot.stage.dir}/pentaho-res/styles/pentaho-style.war">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style" />
     </copy>
-    <copy todir="${stage.dir}/pentaho-res/styles/sw-style.war">
+    <copy todir="${approot.stage.dir}/pentaho-res/styles/sw-style.war">
       <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
     </copy>
     
-    <mkdir dir="${stage.dir}/custom-pentaho-webapp/META-INF" />
-    <mkdir dir="${stage.dir}/custom-pentaho-webapp/WEB-INF" />
-    <mkdir dir="${stage.dir}/custom-ear" />
+    <mkdir dir="${approot.stage.dir}/custom-pentaho-webapp/META-INF" />
+    <mkdir dir="${approot.stage.dir}/custom-pentaho-webapp/WEB-INF" />
+    <mkdir dir="${approot.stage.dir}/custom-ear" />
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
           target: assemble-plugins                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-plugins">
-    <copy todir="${stage.dir}/pentaho-plugins">
+    <copy todir="${approot.stage.dir}/pentaho-plugins">
       <fileset dir="${lib.dir}" includes="*plugin*.zip" />
       <fileset dir="${lib.dir}" includes="*cdf*.zip" />
     </copy>
@@ -226,14 +226,14 @@
           target: assemble-solutions                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-solutions">
-    <unzip dest="${stage.dir}/pentaho-data">
+    <unzip dest="${approot.stage.dir}/pentaho-data">
       <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
     </unzip>
 
     <!-- create pentaho-solutions folder -->
-    <mkdir dir="${stage.dir}/pentaho-solutions/tmp" />
+    <mkdir dir="${approot.stage.dir}/pentaho-solutions/tmp" />
 
-    <copy todir="${stage.dir}/pentaho-solutions" overwrite="true">
+    <copy todir="${approot.stage.dir}/pentaho-solutions" overwrite="true">
       <fileset dir="${bi.platform.sample.solution.dir}" />
     </copy>
   </target>
