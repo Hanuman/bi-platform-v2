@@ -414,7 +414,7 @@
 	  <unzip src="${lib.dir}/pentaho-cdf-solution-${dependency.pentaho-cdf-plugin.revision}.zip" dest="${solution.dir.server}" overwrite="true" />
 		
 	  <!-- install pentaho reporting plugin (for prpt files) -->
-	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${dependency.pentaho-reporting.revision}.zip"/>
+	  <install-plugin zipfile="${lib.dir}/pentaho-reporting-engine-classic-core-platform-plugin-package-${project.revision}.zip"/>
 
   	  <!-- install the data access plugin (for data access dialog in WAQR) -->
       <install-plugin zipfile="${lib.dir}/data-access-plugin-${project.revision}.zip"/>
