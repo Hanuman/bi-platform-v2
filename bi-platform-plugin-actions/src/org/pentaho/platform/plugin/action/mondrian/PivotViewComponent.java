@@ -225,12 +225,6 @@ public class PivotViewComponent extends ComponentBase {
 
     // process the model
     String model = getInputStringValue(StandardSettings.DATA_MODEL);
-    //    if (model.indexOf("http") != 0) { //$NON-NLS-1$
-    //      model = PentahoSystem.getApplicationContext().getBaseUrl() + "GetMondrianModel?model=" + model; //$NON-NLS-1$
-    //    }
-    //
-    // Allow fully-qualified model reference to pass un-molested
-    //
     if (!model.startsWith("solution:") && !model.startsWith("http:")) { //$NON-NLS-1$ //$NON-NLS-2$
       model = "solution:" + model; //$NON-NLS-1$
     }

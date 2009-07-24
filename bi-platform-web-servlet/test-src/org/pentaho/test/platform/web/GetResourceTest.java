@@ -36,7 +36,7 @@ import com.mockrunner.mock.web.MockServletConfig;
 import com.mockrunner.mock.web.MockServletContext;
 
 /**
- * Tests for <code>org.pentaho.platform.web.servlet.GetMondrianModel</code>.
+ * Tests for <code>org.pentaho.platform.web.servlet.GetResource</code>.
  * 
  * @author mlowery
  */

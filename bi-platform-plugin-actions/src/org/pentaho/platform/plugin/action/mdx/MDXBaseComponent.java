@@ -406,8 +406,6 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           catalog = PentahoSystem.getApplicationContext().getSolutionPath(catalog);
         }
         if ((resource.getSourceType() == IActionSequenceResource.URL_RESOURCE) && (catalog.indexOf("solution:") != 0)) { //$NON-NLS-1$
-          // catalog = PentahoSystem.getApplicationContext().getBaseUrl() + "GetMondrianModel?model=" + catalog; //$NON-NLS-1$
-
           // Extra step to make sure that remote mondrian models
           // fully qualified aren't munged
           // MB

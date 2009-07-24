@@ -284,11 +284,6 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>GetMondrianModel</servlet-name>
-		<servlet-class>org.pentaho.platform.web.servlet.GetMondrianModel</servlet-class>
-	</servlet>
-
-	<servlet>
 		<servlet-name>SubscriptionAdmin</servlet-name>
 		<servlet-class>org.pentaho.platform.web.servlet.SubscriptionAdminServlet</servlet-class>
 	</servlet>
@@ -706,11 +701,6 @@
 	<servlet-mapping>
 		<servlet-name>GetContent</servlet-name>
 		<url-pattern>/GetContent</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>GetMondrianModel</servlet-name>
-		<url-pattern>/GetMondrianModel</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
