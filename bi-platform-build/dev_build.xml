@@ -66,8 +66,7 @@ INSTRUCTIONS
   <property name="stage.dir" value="../tomcat-pci-test" />
   <property name="stage.dir.server" value="${stage.dir}/${package.id}" />
   <property name="jre.dir" value="../dummy-jre" />
-  <property name="package-res-archive.dir" value="${assembly.dir}/package-res-archive" />
-  <property name="bi.platform.assembly.dir" location="${assembly.dir}" />
+  <property name="bi.platform.open.assembly.dir" location="../bi-platform-assembly" />
   <property name="classes.dir" value="${prep.pentaho.war.classes.dir}" />
 
 
@@ -81,7 +80,8 @@ INSTRUCTIONS
   <property name="suppress-svn-validation" value="true" />
   <property name="tomcat.lib.dir" value="${tomcat.dir}/common/lib" />
 
-  <property name="project.list"
+  <!-- These are the projects that will be compiled to class files and placed in WEB-INF/classes -->
+  <property name="dev-project.list"
             value="bi-platform-api, 
     				bi-platform-util,
 			  		bi-platform-engine-core,
@@ -97,7 +97,7 @@ INSTRUCTIONS
 			  		bi-platform-web,
 			  		bi-platform-web-servlet,
 			  		bi-platform-web-portlet,
-			  		bi-platform-security-userroledao" />  <!-- TODO include data access and mantle -->
+			  		bi-platform-security-userroledao" />
 
 
 
@@ -125,7 +125,7 @@ INSTRUCTIONS
   <!-- - - - - - - - - - - - - - - - - - 
           target: prep-dev-tomcat                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="prep-dev-biserver" depends="subfloor.clean-all,subfloor.resolve,fake-jre,Open_Assembly.assemble">
+  <target name="prep-dev-biserver" depends="clean-all,resolve,fake-jre,assemble">
     <!-- Remove pentaho-bi-platform-*.jar since we want to use classes instead. -->
     <delete>
       <fileset dir="${prep.pentaho.war.lib.dir}">
@@ -152,7 +152,7 @@ INSTRUCTIONS
           target: dev-update                      
          - - - - - - - - - - - - - - - - - -->
   <target name="dev-update" depends="install-antcontrib">
-    <for list="${project.list}" param="module" trim="true">
+    <for list="${dev-project.list}" param="module" trim="true">
       <sequential>
         <ant antfile="build.xml" dir="../@{module}" inheritall="false" target="compile">
           <property name="classes.dir" value="${prep.pentaho.war.classes.dir}" />

@@ -23,11 +23,13 @@
   <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
   <import file="build-res/subfloor-pkg.xml" />
   <import file="build-res/assembly_shared.xml" />
+  
+  <property name="bi.platform.open.assembly.dir" value="." />
 
   <!-- custom platform assembly properties -->
   <property name="rdbms" value="hsqldb" description="Default database for open assembly is hsqldb" />
   <property name="stage.dir.server" value="${stage.dir}/${package.id}" />
-  <property name="package-res-archive.dir" value="${basedir}/package-res-archive" />
+  <property name="package-res-archive.dir" value="${bi.platform.open.assembly.dir}/package-res-archive" />
   <property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
   <property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
   <property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
@@ -40,7 +42,6 @@
   <property name="admin-console.dir" value="${stage.dir}/administration-console" />
 
   <!-- default relative project paths -->
-  <property name="bi.platform.assembly.dir" value="." />
   <property name="bi.platform.appserver.dir" value="../bi-platform-appserver" />
   <property name="bi.platform.data.access.dir" value="../bi-platform-data-access" />
   <property name="bi.platform.engine.services.dir" value="../bi-platform-engine-services" />
@@ -279,7 +280,7 @@
 
       <!-- Add licenses -->
       <copy todir="${stage.dir.server}/licenses">
-        <fileset dir="${bi.platform.assembly.dir}/licenses">
+        <fileset dir="${bi.platform.open.assembly.dir}/licenses">
           <include name="**/**" />
         </fileset>
       </copy>
