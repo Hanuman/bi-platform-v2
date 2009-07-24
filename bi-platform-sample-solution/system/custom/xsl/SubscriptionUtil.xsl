@@ -49,8 +49,21 @@
 									</td>
 									<td class="portlet-font" colspan="2">
 										<br/>
+										<xsl:element name="script">
+                      <xsl:attribute name="type">text/javascript</xsl:attribute>
+                      function detectEnter(e)
+                        {
+                          if (null == e)
+                            e = window.event ;
+                          if (e.keyCode == 13)  {
+                            document.getElementById("savesubmit").click();
+                            return false;
+                          }
+                        }
+                    </xsl:element>
 										<input name="subscribe-name" class="portlet-form-field" size="50">
 											<xsl:attribute name="value"><xsl:value-of select="/filters/input[@name='subscribe-title']/@value"/></xsl:attribute>
+											<xsl:attribute name="onkeypress">return detectEnter(event);</xsl:attribute>
 											<xsl:attribute name="onkeyup">rptnmlimit(this,25)</xsl:attribute>
 										</input>
 									</td>
@@ -89,7 +102,7 @@
 									</td>
                                     <td align="left" width="100%" >
                                     
-										<input type="button" name="save" class="portlet-form-button">
+										<input type="button" name="save" id="savesubmit" class="portlet-form-button">
 											<xsl:attribute name="value">Save</xsl:attribute>
 											<xsl:attribute name="onClick">doSave('<xsl:value-of select="/filters/id" />', '<xsl:value-of select="/filters/action"/>', true );</xsl:attribute>
 										</input>
