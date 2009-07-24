@@ -75,7 +75,6 @@ INSTRUCTIONS
 
   <!-- custom dev_build properties -->
   <property name="source-solution" value="../bi-platform-sample-solution" />
-  <property name="target-solution" value="${stage.dir}/biserver-ce/pentaho-solutions" />
   <property name="suppress-svn-validation" value="true" />
   <property name="tomcat.lib.dir" value="${tomcat.dir}/common/lib" />
 
@@ -168,7 +167,7 @@ INSTRUCTIONS
   </target>
 
   <target name="copy-solution" description="Copies Pentaho solution files.">
-    <copy todir="${target-solution}">
+    <copy todir="${solution.dir.server}">
       <fileset dir="${source-solution}" />
     </copy>
   </target>
