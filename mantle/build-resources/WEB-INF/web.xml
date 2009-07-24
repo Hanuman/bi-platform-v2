@@ -261,10 +261,6 @@
   </servlet>
 
   <servlet>
-      <servlet-name>ShowTestResult</servlet-name>
-    <servlet-class>org.pentaho.platform.web.servlet.ShowTestResult</servlet-class>
-  </servlet>
-  <servlet>
     <servlet-name>Xmla</servlet-name>
     <servlet-class>org.pentaho.platform.web.servlet.PentahoXmlaServlet</servlet-class>
     <init-param>
@@ -590,11 +586,6 @@
   <servlet-mapping>
     <servlet-name>GetContent</servlet-name>
     <url-pattern>/GetContent</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>ShowTestResult</servlet-name>
-    <url-pattern>/ShowTestResult</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
