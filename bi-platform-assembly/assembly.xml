@@ -27,13 +27,13 @@
   <!-- custom platform assembly properties -->
   <property name="rdbms" value="hsqldb" description="Default database for open assembly is hsqldb" />
   <property name="stage.dir.server" value="${stage.dir}/${package.id}" />
-  <property name="stage.webdir.server" value="${stage.dir.server}/WEB-INF" />
-  <property name="package-res-archive.dir" value="package-res-archive" />
-  <property name="web.classes.dir" value="${stage.webdir.server}/classes" />
+  <property name="package-res-archive.dir" value="${basedir}/package-res-archive" />
   <property name="container.stage.dir" value="${stage.dir.server}/tomcat" />
   <property name="container.deploy.dir" value="${stage.dir.server}/tomcat/webapps" />
   <property name="prep.pentaho.war.dir" value="${stage.dir.server}/tomcat/webapps/pentaho" />
   <property name="prep.pentaho.war.lib.dir" value="${prep.pentaho.war.dir}/WEB-INF/lib" />
+  <property name="prep.pentaho.war.classes.dir" value="${prep.pentaho.war.dir}/WEB-INF/classes" />
+  <property name="prep.pentaho.war.meta.dir" value="${prep.pentaho.war.dir}/META-INF" />
   <property name="container.lib.dir" value="${stage.dir.server}/tomcat/lib" />
   <property name="stage.data.dir" value="${stage.dir.server}/data" />
   <property name="admin-console.name" value="administration-console" />
@@ -61,7 +61,6 @@
   <property name="bi-developers.visible" value="true" description="Should the bi-developers samples be visible" />
 
 
-
   <target name="assemble"
           depends="check-blacklist,assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,init-tomcat-solutions,init-pentaho-data,install-plugins,install-resources">
     <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
@@ -85,6 +84,12 @@
   <!-- override targets -->
 
   <target name="install-resources" />
+  
+  <!-- ================================= 
+          target: clean-all              
+         ================================= -->
+    <target name="clean-all" depends="subfloor.clean-all"/>
+
 
   <!-- - - - - - - - - - - - - - - - - - 
       private target: init.stage.pentaho                      
@@ -194,8 +199,8 @@
       </copy>
 
       <!-- Add manifest -->
-      <mkdir dir="${prep.pentaho.war.dir}/META-INF" />
-      <manifest file="${prep.pentaho.war.dir}/META-INF/MANIFEST.MF">
+      <mkdir dir="${prep.pentaho.war.meta.dir}" />
+      <manifest file="${prep.pentaho.war.meta.dir}/MANIFEST.MF">
         <attribute name="Implementation-Title" value="${impl.title}" />
         <attribute name="Implementation-Version" value="${impl.version}" />
         <attribute name="Implementation-Vendor" value="${impl.vendor}" />
@@ -203,7 +208,7 @@
 
       <!-- Add rdbms context -->
       <copy file="${bi.platform.appserver.dir}/tomcat/res/datasources/${rdbms}/context.xml"
-            todir="${prep.pentaho.war.dir}/META-INF" />
+            todir="${prep.pentaho.war.meta.dir}" />
 
       <!-- Add the Pentaho webapp -->
       <copy todir="${prep.pentaho.war.dir}">
@@ -260,7 +265,7 @@
       </copy>
 
       <!-- Add additional Pentaho resources -->
-      <copy todir="${prep.pentaho.war.dir}/WEB-INF/classes">
+      <copy todir="${prep.pentaho.war.classes.dir}">
         <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
         <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/mondrian/res" />
         <fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />

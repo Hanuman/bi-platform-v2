@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!--===========================================================================
     == SUBFLOOR ==
     
-    $Rev: 67 $
-    $Date: 2009-07-23 10:34:46 -0400 (Thu, 23 Jul 2009) $
+    $Rev: 69 $
+    $Date: 2009-07-24 02:36:42 -0400 (Fri, 24 Jul 2009) $
     Project Home: http://code.google.com/p/subfloor/
     
     This file contains the default implementation of the ant tasks to 
@@ -269,6 +269,9 @@ TYPICAL TARGET SEQUENCE
   <property name="ivy.settingsurl"
             value="file:${basedir}/ivysettings.xml"
             description="URL to the (common) ivysettings.xml.  This file is required by the build to configure IVY.  Note you must escape the ':' if this property exists in a .properties file" />
+  <property name="ivyfile"
+            value="ivy.xml"
+            description="The name of the IVY xml file defining your project's dependencies" />
   <property name="ivy.artifact.group"
             value="mycompanyname"
             description="IVY metadata describing the originating company or organization" />
@@ -676,22 +679,22 @@ TYPICAL TARGET SEQUENCE
   </target>
 
   <target name="resolve-default" depends="resolve-init">
-    <ivy:resolve file="ivy.xml" conf="default" />
+    <ivy:resolve file="${ivyfile}" conf="default" />
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-test" depends="resolve-init">
-    <ivy:resolve file="ivy.xml" conf="test" />
+    <ivy:resolve file="${ivyfile}" conf="test" />
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-codegen" depends="resolve-init">
-    <ivy:resolve file="ivy.xml" conf="codegen" />
+    <ivy:resolve file="${ivyfile}" conf="codegen" />
     <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-runtime" depends="resolve-init">
-    <ivy:resolve file="ivy.xml" conf="runtime" />
+    <ivy:resolve file="${ivyfile}" conf="runtime" />
     <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
@@ -758,7 +761,7 @@ TYPICAL TARGET SEQUENCE
       Allows ivy to report on the dependencies for this project 
       ====================================================================-->
   <target name="report" depends="install-ivy">
-    <ivy:resolve file="ivy.xml" />
+    <ivy:resolve file="${ivyfile}" />
     <ivy:report conf="default" />
   </target>
 
@@ -985,7 +988,7 @@ TYPICAL TARGET SEQUENCE
       Creates the POM file for publishing the jar file to a Maven2 repository.
       ====================================================================-->
   <target name="create-pom" depends="install-ivy">
-    <ivy:makepom ivyfile="./ivy.xml" pomfile="${dist.dir}/pom.xml">
+    <ivy:makepom ivyfile="${ivyfile}" pomfile="${dist.dir}/pom.xml">
       <mapping conf="default" scope="compile" />
       <mapping conf="runtime" scope="runtime" />
     </ivy:makepom>
@@ -1364,7 +1367,7 @@ TYPICAL TARGET SEQUENCE
       and coverage artifacts
       ====================================================================-->
   <target name="continuous"
-          depends="clean-all,resolve,cobertura,dist-javadoc,dist-source,dist"/>
+          depends="clean-all,resolve,cobertura,dist-source,dist"/>
 
 
   <!--=======================================================================
@@ -1374,7 +1377,7 @@ TYPICAL TARGET SEQUENCE
       and coverage artifacts
       ====================================================================-->
   <target name="continuous-testless"
-          depends="clean-all,resolve,dist-javadoc,dist-source,dist"/>
+          depends="clean-all,resolve,dist-source,dist"/>
 
 
   <!--=======================================================================
