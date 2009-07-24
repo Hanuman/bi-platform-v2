@@ -64,7 +64,6 @@ INSTRUCTIONS
   <property name="ivyfile" value="${assembly.dir}/ivy.xml" />
   <property name="ivy.settingsurl" value="file:${assembly.dir}/ivysettings.xml" />
   <property name="stage.dir" value="../tomcat-pci-test" />
-  <property name="stage.dir.server" value="${stage.dir}/${package.id}" />
   <property name="jre.dir" value="../dummy-jre" />
   <property name="bi.platform.open.assembly.dir" location="../bi-platform-assembly" />
   <property name="classes.dir" value="${prep.pentaho.war.classes.dir}" />
