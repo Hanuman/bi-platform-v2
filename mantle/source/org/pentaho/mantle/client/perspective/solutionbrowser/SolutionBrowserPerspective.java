@@ -1255,7 +1255,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             // see if this file is a plugin
             ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
             String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
-            showNewURLTab(fileInfo.getLocalizedName(), fileInfo.getLocalizedName(), url);
+            String displayName = fileInfo.getLocalizedName();
+            if (displayName == null || displayName.length()<1) {
+              displayName = fileInfo.getName();
+            }
+            showNewURLTab(displayName, displayName, url);
           } else {
             executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
           }
