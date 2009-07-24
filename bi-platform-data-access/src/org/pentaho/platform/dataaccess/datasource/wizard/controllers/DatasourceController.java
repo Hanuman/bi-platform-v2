@@ -365,7 +365,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveLogicalModel(businessData.getDomain(), overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          // 0018 is an overwrite exception
+          // 0013 is an overwrite exception
           if (error.getMessage().indexOf("0013") >= 0) { //$NON-NLS-1$
             // prompt for overwrite
             overwriteBusinessData = businessData;
@@ -412,7 +412,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
       // TODO setting value to false to always create a new one. Save as is not yet implemented
       service.saveLogicalModel(domain, overwrite, new XulServiceCallback<Boolean>() {
         public void error(String message, Throwable error) {
-          if (error.getMessage().indexOf("0018") >= 0) { //$NON-NLS-1$
+          if (error.getMessage().indexOf("0013") >= 0) { //$NON-NLS-1$
             // prompt for overwrite
             overwriteDomain = domain;
             overwriteDatasourceType = DatasourceType.CSV;
