@@ -457,7 +457,20 @@ public abstract class AbstractChartFactory implements IChartFactory {
         }
       }
     }
-    return new MinMax(rangeMin, rangeMax);
+    
+    MinMax minMax = null;
+    if (rangeMin == rangeMax) {
+      if (rangeMin == 0) {
+        minMax = new MinMax(0, 100);
+      } else if (rangeMin < 0) {
+        minMax = new MinMax(rangeMin, 0);
+      } else {
+        minMax = new MinMax(0, rangeMax);
+      }
+    } else {
+      minMax = new MinMax(rangeMin, rangeMax);
+    }
+    return minMax;
   }
   
   public Axis setupRange() {
