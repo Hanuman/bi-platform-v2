@@ -37,10 +37,31 @@
   com.tonbeller.jpivot.olap.query.MdxOlapModel,
   com.tonbeller.jpivot.mondrian.MondrianModel,
   com.tonbeller.jpivot.chart.ChartComponent,
-  com.tonbeller.wcf.form.FormComponent
+  com.tonbeller.wcf.form.FormComponent,
+  com.tonbeller.wcf.controller.MultiPartEnabledRequest,
+  org.apache.log4j.MDC,
+  com.tonbeller.wcf.controller.RequestContext,
+  com.tonbeller.wcf.controller.RequestContextFactoryFinder,
+  javax.servlet.jsp.jstl.core.Config,
+  com.tonbeller.wcf.controller.Controller,
+  com.tonbeller.wcf.controller.WcfController
   "%>
 <jsp:directive.page
   import="org.pentaho.platform.api.repository.ISolutionRepository" />
+<%
+ // the following code replaces wcf's RequestFilter due to session based
+ // synchronization logic that is no longer necessary. (PDB-369)
+ MultiPartEnabledRequest mprequest = new MultiPartEnabledRequest((HttpServletRequest) request);
+ HttpSession mpsession = mprequest.getSession(true);
+ MDC.put("SessionID", mpsession.getId());
+ String cpath = mprequest.getContextPath();
+ mprequest.setAttribute("context", cpath);
+ RequestContext wcfcontext = RequestContextFactoryFinder.createContext(mprequest, response, true);
+ try {
+   Config.set(mprequest, Config.FMT_LOCALE, wcfcontext.getLocale());
+   Controller controller = WcfController.instance(session);
+   controller.request(wcfcontext);
+%>
 <%@ 
    taglib uri="http://www.tonbeller.com/jpivot" prefix="jp"%>
 <%@ 
@@ -848,12 +869,14 @@
       cursor_wait();
     <%
       ActionInfo actionInfo = ActionInfo.parseActionString( actionReference );
+      if (actionInfo != null) {
     %>
       var nActionName = "<%= actionInfo.getActionName() %>";
       var nSolution = "<%= actionInfo.getSolutionName() %>";
       var nActionPath = "<%= actionInfo.getPath() %>";
       var nActionTitle = "<%= actionTitle %>";
       doSaveAsPost(nActionName, nSolution, nActionPath, nActionTitle);
+    <% } %>
       cursor_clear();
     }
 
@@ -1462,5 +1485,10 @@
       return null;
     }
   }
+
+%><%
+ } finally {
+    wcfcontext.invalidate();
+ }
 
 %>
