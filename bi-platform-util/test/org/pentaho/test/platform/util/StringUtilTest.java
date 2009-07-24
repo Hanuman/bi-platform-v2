@@ -48,11 +48,13 @@ public class StringUtilTest extends TestCase {
         "..//bart/maggie.xml", //$NON-NLS-1$
         "/bart//..", //$NON-NLS-1$
         "/bart//../maggie/homer.xml", //$NON-NLS-1$
+        "/bart/judi.xml%00", //$NON-NLS-1$
         "/../", //$NON-NLS-1$
         "/..", //$NON-NLS-1$
         "../", //$NON-NLS-1$
         "..\\bart\\maggie.xml", //$NON-NLS-1$
         "\\bart\\..", //$NON-NLS-1$
+        "\\bart\\%00.png", //$NON-NLS-1$
         "\\bart\\..\\maggie\\homer.xml", //$NON-NLS-1$
         ".." //$NON-NLS-1$
     };
@@ -66,6 +68,7 @@ public class StringUtilTest extends TestCase {
         "/go/not/parent.xml", //$NON-NLS-1$
         "\\go\\not\\parent.xml", //$NON-NLS-1$
         "should/not..not/match", //$NON-NLS-1$
+        "should/not%0Dnot/match", //$NON-NLS-1$
         "..should/not/match.xml", //$NON-NLS-1$
         "should/not..", //$NON-NLS-1$
         "..." //$NON-NLS-1$
