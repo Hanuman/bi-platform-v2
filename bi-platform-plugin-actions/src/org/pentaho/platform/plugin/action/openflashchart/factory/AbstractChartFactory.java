@@ -354,7 +354,7 @@ public abstract class AbstractChartFactory implements IChartFactory {
       }
       
       // If actual min is positive, don't go below ZERO
-      if (domainMin.intValue() > 0 && domainMin.intValue() - chunksize < 0) {
+      if (domainMin.intValue() >= 0 && domainMin.intValue() - chunksize < 0) {
         domainMin = 0;
       } else {
         domainMin = domainMin.intValue() - chunksize;
