@@ -329,6 +329,16 @@ public abstract class AbstractChartFactory implements IChartFactory {
           }
       }
       
+      if (domainMin.equals(domainMax)) {
+        if (domainMin.intValue() == 0) {
+          domainMax = new Integer(100);
+        } else if (domainMin.intValue() < 0) {
+          domainMax = new Integer(0);
+        } else {
+          domainMin = new Integer(0);
+        }
+      }
+      
       int steps = 9;
       int diff = domainMax.intValue() - domainMin.intValue();
       
@@ -361,7 +371,7 @@ public abstract class AbstractChartFactory implements IChartFactory {
         domainMax = new Integer(getValue(temp)).intValue();
       }
     }
-
+    
     String domainColor = AXIS_COLOR_DEFAULT;
     String domainGridColor = AXIS_GRID_COLOR_DEFAULT;
     int domainStroke = 1;
