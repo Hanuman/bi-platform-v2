@@ -10,9 +10,9 @@
   </hbox>
 
   <dialog id="datasourceSelectionDialog" buttonlabelaccept="${datasourceSelectionDialog.ok}" buttonlabelcancel="${datasourceSelectionDialog.cancel}" buttons="accept,cancel"
-    buttonalign="right" title="${datasourceSelectionDialog.title}" width="350" height="200"
+    buttonalign="right" title="${datasourceSelectionDialog.title}" width="350" height="215"
     ondialogaccept="datasourceSelectionDialogController.onDialogAccept()" ondialogcancel="datasourceSelectionDialogController.onDialogCancel()">
-    <vbox flex="1">
+    <vbox flex="1" height="125">
       <hbox>
         <label value="${datasourceSelectionDialog.listLabel}" tooltiptext="${datasourceSelectionDialog.listLabel}" />
         <spacer flex="1" />
