@@ -1,5 +1,6 @@
 package org.pentaho.test.platform.plugin;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,8 +54,14 @@ public class MetadataQueryComponentTest {
       Domain domain = getBasicDomain();
       Domain domain2 = getJdbcDomain();
       // System.out.println(new SerializationService().serializeDomain(domain));
+
+      Domain domain3 = getJdbcDomain();
+      domain3.setId("JDBCDOMAIN2");
+      domain3.getLogicalModels().get(0).setProperty("max_rows", new BigDecimal(10));
+      
       repo.storeDomain(domain, true);
       repo.storeDomain(domain2, true);
+      repo.storeDomain(domain3, true);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -185,6 +192,58 @@ public class MetadataQueryComponentTest {
     }
   }
   
+  @Test
+  public void testJdbcComponentMaxRows() {
+    String mql = "<mql><domain_id>JDBCDOMAIN2</domain_id><model_id>MODEL</model_id>" + 
+                 "<selections><selection>" +
+                 "<view>CATEGORY</view>" +
+                 "<column>LC_CUSTOMERNAME</column>" +
+                 "</selection>" +
+                 "</selections></mql>";
+    
+    MetadataQueryComponent component = new MetadataQueryComponent();
+    component.setQuery(mql);
+    component.execute();
+    
+    IPentahoResultSet rs = component.getResultSet();
+    try {
+      Assert.assertNotNull(rs);
+      Assert.assertEquals(1, rs.getColumnCount());
+      Assert.assertEquals(10, rs.getRowCount());
+      Object obj[];
+      while ((obj = rs.next()) != null) {
+        System.out.println(obj[0]);
+      }
+      
+    } finally {
+      rs.close();
+      rs.closeConnection();
+    }
+    
+    component = new MetadataQueryComponent();
+    component.setQuery(mql);
+    component.setMaxRows(100);
+    component.execute();
+    
+    
+    rs = component.getResultSet();
+    try {
+      Assert.assertNotNull(rs);
+      Assert.assertEquals(1, rs.getColumnCount());
+      Assert.assertEquals(100, rs.getRowCount());
+      Object obj[];
+      while ((obj = rs.next()) != null) {
+        System.out.println(obj[0]);
+      }
+      
+    } finally {
+      rs.close();
+      rs.closeConnection();
+    }
+
+    
+  }
+  
   public Domain getJdbcDomain() {
     Domain domain = getBasicDomain();
     SqlDataSource dataSource = ((SqlPhysicalModel)domain.getPhysicalModels().get(0)).getDatasource();
@@ -221,6 +280,7 @@ public class MetadataQueryComponentTest {
     table.getPhysicalColumns().add(column);
     
     LogicalModel logicalModel = new LogicalModel();
+    logicalModel.setPhysicalModel(model);
     logicalModel.setId("MODEL");
     logicalModel.setName(new LocalizedString("en_US", "My Model"));
     logicalModel.setDescription(new LocalizedString("en_US", "A Description of the Model"));

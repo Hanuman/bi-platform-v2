@@ -1124,7 +1124,11 @@ public class AdhocWebService extends ServletBase {
     actionDefinitionElement.addElement("component-name").setText("MQLRelationalDataComponent"); //$NON-NLS-1$ //$NON-NLS-2$
     actionDefinitionElement.addElement("action-type").setText("MQL Query"); //$NON-NLS-1$ //$NON-NLS-2$
     Element componentDefinitionElement = actionDefinitionElement.addElement("component-definition"); //$NON-NLS-1$
-
+    
+    // log SQL flag
+    if ("true".equals(PentahoSystem.getSystemSetting("adhoc-preview-log-sql", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      componentDefinitionElement.addElement("logSql").addCDATA("true");  //$NON-NLS-1$ //$NON-NLS-2$
+    }
     // componentDefinitionElement.addElement("query").addCDATA(createMQLQueryXml(domainId, modelId, tableId, columnId, searchStr)); //$NON-NLS-1$
     addMQLQueryXml(componentDefinitionElement, domainId, modelId, tableId, columnId, searchStr);
 
@@ -1291,6 +1295,12 @@ public class AdhocWebService extends ServletBase {
     componentDefinitionElement.add(mqlNode);
     componentDefinitionElement.addElement("live").setText("true"); //$NON-NLS-1$ //$NON-NLS-2$
     componentDefinitionElement.addElement("display-names").setText("false"); //$NON-NLS-1$ //$NON-NLS-2$
+
+    // log SQL flag
+    if ("true".equals(PentahoSystem.getSystemSetting("adhoc-preview-log-sql", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      componentDefinitionElement.addElement("logSql").addCDATA("true");  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     // end action-definition for SQLLookupRule
     // begin action-definition for JFreeReportComponent
     actionDefinitionElement = actionsElement.addElement("action-definition"); //$NON-NLS-1$

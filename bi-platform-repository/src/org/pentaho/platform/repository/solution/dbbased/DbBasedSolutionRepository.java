@@ -1448,8 +1448,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
             (fileName.toLowerCase().endsWith(".xmi")) ) {
 
       IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
-      // this call forces a check for new domains
-      repo.getDomainIds();
+      // this call forces a reload of the domains
+      repo.reloadDomains();
     }
     return res;
   }

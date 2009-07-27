@@ -44,6 +44,7 @@ import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.DatabaseMetaUtil;
 import org.pentaho.metadata.util.ThinModelConverter;
+
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
@@ -53,14 +54,27 @@ import org.pentaho.platform.plugin.services.connections.sql.SQLResultSet;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+/**
+ * This is the BI Platform Pojo Component for Pentaho Metadata Queries.  It currently supports
+ * executing the inline etl and sql physical models. 
+ * 
+ * 
+ * 
+ * TODO: We should eventually move the copy and pasted code that executes the SQL into a pojo SQL Component.
+ * 
+ * @author Will Gorman
+ *
+ */
 public class MetadataQueryComponent {
   // This is also defined in UploadFileServlet and DatasourceServiceImpl, so don't change it in just one place
   private static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   static final Log logger = LogFactory.getLog(MetadataQueryComponent.class);
   String query;
-  int maxRows = -1;
-  int timeout = -1;
+  Integer maxRows; //-1;
+  Integer timeout; // -1;
+  Boolean readOnly; // false;
+  
   boolean live = false;
   boolean useForwardOnlyResultSet = false;
   boolean logSql = false;
@@ -90,16 +104,25 @@ public class MetadataQueryComponent {
     this.query = query;
   }
   
-  public void setMaxRows(int maxRows) {
+  public void setMaxRows(Integer maxRows) {
     this.maxRows = maxRows;
   }
   
-  public void setTimeout(int timeout) {
+  public void setTimeout(Integer timeout) {
     this.timeout = timeout;
   }
   
   public void setLive(boolean live) {
     this.live = live;
+  }
+  
+  /**
+   * This sets the read only property in the Pentaho SQLConnection API 
+   * 
+   * @param readOnly true if read only
+   */
+  public void setReadOnly(Boolean readOnly) {
+    this.readOnly = readOnly;
   }
   
   public void setUseForwardOnlyResultSet(boolean useForwardOnlyResultSet) {
@@ -156,6 +179,24 @@ public class MetadataQueryComponent {
       return false;
     }
 
+    // Read metadata for new timeout/max_rows and set in superclass
+    // Can still be overridden in the action sequence
+    if (timeout == null) {
+      Object timeoutProperty = queryObject.getLogicalModel().getProperty("timeout"); //$NON-NLS-1$
+      if (timeoutProperty != null && timeoutProperty instanceof Number) {
+        int timeoutVal = ((Number)timeoutProperty).intValue();
+        this.setTimeout(timeoutVal);
+      }
+    }
+    
+    if (maxRows == null) {
+      Object maxRowsProperty = queryObject.getLogicalModel().getProperty("max_rows"); //$NON-NLS-1$
+      if (maxRowsProperty != null && maxRowsProperty instanceof Number) {
+        int maxRowsVal = ((Number)maxRowsProperty).intValue();
+        this.setMaxRows(maxRowsVal);
+      }
+    }
+    
     // determine parameter values
     Map<String, Object> parameters = null;
     if (queryObject.getParameters() != null) {
@@ -177,7 +218,7 @@ public class MetadataQueryComponent {
       }
     }
     
-    IPhysicalModel physicalModel = queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
+    IPhysicalModel physicalModel = queryObject.getLogicalModel().getPhysicalModel();
     if (physicalModel instanceof SqlPhysicalModel) {
       return executeSqlPhysicalModel(queryObject, repo, parameters);
     } else if (physicalModel instanceof InlineEtlPhysicalModel) {
@@ -291,7 +332,7 @@ public class MetadataQueryComponent {
   
   protected boolean executeSqlPhysicalModel(Query queryObject, IMetadataDomainRepository repo, Map<String, Object> parameters) {
     // need to get the correct DatabaseMeta
-    SqlPhysicalModel sqlModel = (SqlPhysicalModel)queryObject.getLogicalModel().getLogicalTables().get(0).getPhysicalTable().getPhysicalModel();
+    SqlPhysicalModel sqlModel = (SqlPhysicalModel)queryObject.getLogicalModel().getPhysicalModel();
     DatabaseMeta databaseMeta = ThinModelConverter.convertToLegacy(sqlModel.getId(), sqlModel.getDatasource());
     // this connection needs closed
     boolean closeConnection = true;
@@ -309,16 +350,20 @@ public class MetadataQueryComponent {
         SqlGenerator sqlGenerator = createSqlGenerator();
         mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, activeDatabaseMeta, parameters, true);
       } catch (Exception e) {
-        // TODO
         logger.error("error", e); //$NON-NLS-1$ 
         return false;      
       }
       
-      if (timeout >= 0 ) {
+      if (timeout != null && timeout >= 0 ) {
         sqlConnection.setQueryTimeout(timeout);
       }
-      if (maxRows >= 0) {
+
+      if (maxRows != null && maxRows >= 0) {
         sqlConnection.setMaxRows(maxRows);
+      }
+      
+      if (readOnly != null && readOnly.booleanValue()) {
+        sqlConnection.setReadOnly(true);
       }
       
       IPentahoResultSet localResultSet = null;
@@ -346,12 +391,13 @@ public class MetadataQueryComponent {
           }
         } else {
           if (sqlParams != null) {
-            localResultSet = sqlConnection.prepareAndExecuteQuery(query, sqlParams, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+            localResultSet = sqlConnection.prepareAndExecuteQuery(sql, sqlParams, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
           } else {
-            localResultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
+            localResultSet = sqlConnection.executeQuery(sql, SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
           }
         }
         IPentahoMetaData metadata = mappedQuery.generateMetadata(localResultSet.getMetaData());
+        
         if (live) {
           ((SQLResultSet) localResultSet).setMetaData(metadata);
           // live, don't close the connection
