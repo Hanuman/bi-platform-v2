@@ -136,7 +136,8 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       };
       removeDatasourceButtonBinding = bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel, "selectedIndex", //$NON-NLS-1$
           removeDatasourceButton, "!disabled", removeDatasourceButtonConvertor); //$NON-NLS-1$
-
+      bf.createBinding(DatasourceSelectionDialogController.this.datasourceSelectionDialogModel, "selectedIndex", //$NON-NLS-1$
+          addDatasourceButton, "!disabled", removeDatasourceButtonConvertor); //$NON-NLS-1$
       
       BindingConvertor<Integer, Boolean> editDatasourceButtonConvertor = new BindingConvertor<Integer, Boolean>() {
         @Override
