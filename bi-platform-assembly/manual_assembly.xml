@@ -4,12 +4,15 @@
             description="Properties customized for your particular assembly environment belong in this file." />
   <property file="manual_assembly.properties" description="Default properties belong in this file." />
 
+  <!-- subfloor / assembly property overrides -->
   <property name="package-res-manual.dir" value="package-res-manual" />
   <property name="stage.dir" value="bin/manual-stage" />
+  
+  <property name="plugins.dir" value="plugins" />
+  <property name="solution-archives.dir" value="solution-archives" />
 
 
-  <!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
-  <import file="build-res/subfloor-pkg.xml" />
+  <!-- Import the ant script that includes targets share between manual and archive-based assemblies -->
   <import file="build-res/assembly_shared.xml" />
 
   <property name="bi.platform.assembly.dir" value="." />
@@ -201,31 +204,31 @@
     <copy todir="${approot.stage.dir}/pentaho-res/styles/sw-style.war">
       <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
     </copy>
-    
+
     <mkdir dir="${approot.stage.dir}/custom-pentaho-webapp/META-INF" />
     <mkdir dir="${approot.stage.dir}/custom-pentaho-webapp/WEB-INF" />
     <mkdir dir="${approot.stage.dir}/custom-ear" />
   </target>
 
+  
   <!-- - - - - - - - - - - - - - - - - - 
-          target: assemble-plugins                      
+          target: assemble-plugins                     
          - - - - - - - - - - - - - - - - - -->
-  <target name="assemble-plugins">
-    <copy todir="${approot.stage.dir}/pentaho-plugins">
-      <fileset dir="${lib.dir}" includes="*plugin*.zip" />
-      <fileset dir="${lib.dir}" includes="*cdf*.zip" />
-    </copy>
+  <target name="assemble-plugins" depends="resolve-plugins">
+    <unzip dest="${approot.stage.dir}/pentaho-solutions/system" overwrite="true">
+      <fileset file="${plugins.dir}/*.zip" />
+    </unzip>
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
           target: prepare-custom-solutions                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="prepare-custom-solutions"/>
+  <target name="prepare-custom-solutions" />
 
   <!-- - - - - - - - - - - - - - - - - - 
           target: assemble-solutions                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="assemble-solutions">
+  <target name="assemble-solutions" depends="resolve-solutions">
     <unzip dest="${approot.stage.dir}/pentaho-data">
       <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
     </unzip>
@@ -236,6 +239,11 @@
     <copy todir="${approot.stage.dir}/pentaho-solutions" overwrite="true">
       <fileset dir="${bi.platform.sample.solution.dir}" />
     </copy>
+    
+    <!-- install solution archives -->
+    <unzip dest="${approot.stage.dir}/pentaho-solutions" overwrite="true">
+      <fileset file="${solution-archives.dir}/*.zip" />
+    </unzip>
   </target>
 
 
