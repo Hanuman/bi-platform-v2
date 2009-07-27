@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!--===========================================================================
     == SUBFLOOR ==
     
-    $Rev: 69 $
-    $Date: 2009-07-24 02:36:42 -0400 (Fri, 24 Jul 2009) $
+    $Rev: 70 $
+    $Date: 2009-07-27 13:42:35 -0400 (Mon, 27 Jul 2009) $
     Project Home: http://code.google.com/p/subfloor/
     
     This file contains the default implementation of the ant tasks to 
@@ -284,6 +284,12 @@ TYPICAL TARGET SEQUENCE
   <property name="ivy.artifact.ivypathname"
             value="${dist.dir}/ivy.xml"
             description="The full path to the IVY xml file to deploy with the artifact" />
+  <property name="ivy.reports.dir"
+            value="${bin.dir}/reports/ivy"
+            description="Base directory that holds all IVY dependency report files" />
+  <property name="ivy.report.configs"
+            value="default"
+            description="Comma-separated list of IVY configurations to report on" />
 
   <!-- Load the manifest file (if any) as a properties file -->
   <property name="dist.manifest.file" value="${dist.dir}/MANIFEST.MF" description="The manifest file that will be generated as part of the build" />
@@ -756,13 +762,13 @@ TYPICAL TARGET SEQUENCE
 
 
   <!--=======================================================================
-      report
+      ivy-report
       
-      Allows ivy to report on the dependencies for this project 
+      Generates an IVY dependency report for this project. 
       ====================================================================-->
-  <target name="report" depends="install-ivy">
-    <ivy:resolve file="${ivyfile}" />
-    <ivy:report conf="default" />
+  <target name="ivy-report" depends="install-ivy">
+    <ivy:resolve file="${ivyfile}" conf="${ivy.report.configs}"/>
+    <ivy:report xml="true" todir="${ivy.reports.dir}"/>
   </target>
 
 
