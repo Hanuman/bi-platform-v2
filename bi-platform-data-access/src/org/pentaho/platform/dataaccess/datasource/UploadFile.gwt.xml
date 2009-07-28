@@ -4,7 +4,6 @@
   <inherits name='com.google.gwt.xml.XML'/>
   <inherits name="org.pentaho.gwt.widgets.Widgets"/>
   <inherits name="org.pentaho.ui.xul.Gwt"/>
-  <inherits name="org.pentaho.pms.schema.v3.Column"/>
   <inherits name="org.pentaho.metadata.Model"/>
   <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.UploadFile"/>
   
