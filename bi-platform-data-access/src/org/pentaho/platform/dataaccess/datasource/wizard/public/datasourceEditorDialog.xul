@@ -95,7 +95,6 @@
 						  	  	<caption label="${datasourceDialog.File}" />
 						  	  	<vbox>
 							  	  	<pen:fileupload id="fileUpload" action="../UploadService" onuploadsuccess="csvDatasourceController.uploadSuccess()" onuploadfailure="csvDatasourceController.uploadFailure()" flex="1"  height="26" width = "230"/>
-							  	  	<spacer height="5"/>
 									<grid>
 									  <columns>
 									    <column flex="1" />
