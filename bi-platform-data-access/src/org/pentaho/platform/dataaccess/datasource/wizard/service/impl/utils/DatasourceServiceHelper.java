@@ -17,12 +17,13 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messag
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
+import org.pentaho.platform.util.logging.SimpleLogger;
 
 public class DatasourceServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceServiceHelper.class);
   
   public static Connection getDataSourceConnection(String connectionName, IPentahoSession session) {
-    SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, session, null);
+    SQLConnection sqlConnection= (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, session, new SimpleLogger(DatasourceServiceHelper.class.getName()));
     return sqlConnection.getNativeConnection(); 
   }
   
@@ -53,7 +54,7 @@ public class DatasourceServiceHelper {
       marshallableResultSet = new MarshallableResultSet();
       marshallableResultSet.setResultSet(resultSet);
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);
+      logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e); //$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
     } finally {
         if (sqlConnection != null) {
