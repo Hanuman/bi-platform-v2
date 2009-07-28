@@ -1089,7 +1089,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         }
         return rtn;
       } else {
-          return super.getFileByPath(super.buildDirectoryPath(repositoryName, path));
+          return null;
       }
     }
   }
