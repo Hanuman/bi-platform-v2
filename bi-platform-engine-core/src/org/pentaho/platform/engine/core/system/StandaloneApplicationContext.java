@@ -81,13 +81,13 @@ public class StandaloneApplicationContext implements IApplicationContext {
     this.solutionRootPath = solutionRootPath;
   }
 
-  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extn) throws IOException {
-    return createTrackedTempFile(session, prefix, extn, new File(getSolutionPath("system/tmp"))); //$NON-NLS-1$
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extn, boolean trackFile) throws IOException {
+    return createTempFile(session, prefix, extn, new File(getSolutionPath("system/tmp")), trackFile); //$NON-NLS-1$
   }
   
-  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extn, final File parentDir) throws IOException {
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extn, final File parentDir, boolean trackFile) throws IOException {
     ITempFileDeleter fileDeleter = null;
-    if (session != null) {
+    if ((session != null) && trackFile) {
       fileDeleter = (ITempFileDeleter)session.getAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE);
     }
     final String newPrefix = new StringBuilder().append(prefix).append(session.getId().substring(0, 10)).append('-').toString();

@@ -37,4 +37,13 @@ public interface ITempFileDeleter {
      */
   public void doTempFileCleanup();
   
+  /**
+   * Returns true if the specified file is being tracked
+   * by the deleter
+   * @param aFileName
+   * @return true if the deleter has the filename in it's list
+   */
+  public boolean hasTempFile(String aFileName);
+  
+  
 }

@@ -305,8 +305,7 @@ public class FlashChartComponent extends AbstractChartComponent {
 
     // create a temporary file
     try {
-      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
-          new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
+      File file = PentahoSystem.getApplicationContext().createTempFile(getSession(), fileNamePrefix, extension, true);
       fileName = file.getName();
       if (file.canWrite()) {
         Writer out = new FileWriter(file);
@@ -663,8 +662,7 @@ public class FlashChartComponent extends AbstractChartComponent {
     } else {
       // create a temporary file
       try {
-        File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
-            new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
+        File file = PentahoSystem.getApplicationContext().createTempFile(getSession(), fileNamePrefix, extension, true);
         fileName = file.getName();
         if (file.canWrite()) {
           Writer out = new FileWriter(file);

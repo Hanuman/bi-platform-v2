@@ -338,8 +338,7 @@ public class WidgetGridComponent extends XmlComponent {
     String fileName = null;
     String filePathWithoutExtension = null;
     try {
-      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
-          new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
+      File file = PentahoSystem.getApplicationContext().createTempFile(getSession(), fileNamePrefix, extension, true); 
       fileName = file.getName();
       filePathWithoutExtension = solutionDir + fileName.substring(0, fileName.indexOf('.'));
     } catch (IOException e) {

@@ -308,7 +308,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
     File file;
     String documentPath = null;
     try {
-      file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), XQueryBaseComponent.FILENAME_PREFIX, XQueryBaseComponent.EXTENSION); 
+      file = PentahoSystem.getApplicationContext().createTempFile(getSession(), XQueryBaseComponent.FILENAME_PREFIX, XQueryBaseComponent.EXTENSION, true); 
       
       documentPath = file.getCanonicalPath();
 

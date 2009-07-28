@@ -148,7 +148,7 @@ public class ReportUtils {
       // ok, fall back to copy the file into the temp dir and to load it from
       // there...
       File temp = ReportUtils.getTempDirectory(session);
-      File tempFile = PentahoSystem.getApplicationContext().createTrackedTempFile(session, "loaded-jar-", ".jar", temp); //$NON-NLS-1$ //$NON-NLS-2$
+      File tempFile = PentahoSystem.getApplicationContext().createTempFile(session, "loaded-jar-", ".jar", temp, true); //$NON-NLS-1$ //$NON-NLS-2$
       // if that fails, we dont have to waste our time on copying the stuff ..
       final URL url = tempFile.toURL();
 

@@ -120,6 +120,8 @@ public class ChartComponent extends ComponentBase {
 
   private static final String MAP_EXTENSION = ".map"; //$NON-NLS-1$
 
+  private static final String KEEP_TEMP_FILE_PROP = "keep_temp_file"; //$NON-NLS-1$
+  
   private static final int FILE_NAME = 0;
 
   private static final int MAP_NAME = 1;
@@ -388,6 +390,11 @@ public class ChartComponent extends ComponentBase {
       }
     }
 
+    boolean keepTempFile = false;
+    if ( isDefinedInput(KEEP_TEMP_FILE_PROP) ) {
+      keepTempFile = getInputBooleanValue(KEEP_TEMP_FILE_PROP, false);
+    }
+    
     JFreeChart chart = null;
 
     switch (outputType) {
@@ -426,7 +433,7 @@ public class ChartComponent extends ComponentBase {
         boolean createMapFile = !isDefinedOutput(ChartComponent.HTML_MAPPING_HTML);
         boolean hasTemplate = urlTemplate != null && urlTemplate.length() > 0;
         
-        File[] fileResults = createTempFile(outputType, hasTemplate);
+        File[] fileResults = createTempFile(outputType, hasTemplate, !keepTempFile);
 
         if (fileResults == null) {
           error(Messages.getErrorString("ChartComponent.ERROR_0003_CANT_CREATE_TEMP_FILES")); //$NON-NLS-1$
@@ -588,7 +595,7 @@ public class ChartComponent extends ComponentBase {
   /**
    * @return String that represents the file path to a temporary file
    */
-  protected File[] createTempFile(final int outputType, final boolean includeMapFile) {
+  protected File[] createTempFile(final int outputType, final boolean includeMapFile, boolean trackFile) {
     File[] results;
     if (includeMapFile) {
       results = new File[2];
@@ -600,10 +607,10 @@ public class ChartComponent extends ComponentBase {
         : ChartComponent.PNG_EXTENSION;
 
     try {
-      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), ChartComponent.FILENAME_PREFIX, extension);
+      File file = PentahoSystem.getApplicationContext().createTempFile(getSession(), ChartComponent.FILENAME_PREFIX, extension, trackFile);
       results[ChartComponent.FILE_NAME] = file;
       if (includeMapFile) {
-        file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), ChartComponent.MAP_EXTENSION, extension);
+        file = PentahoSystem.getApplicationContext().createTempFile(getSession(), ChartComponent.MAP_EXTENSION, extension, trackFile);
         results[ChartComponent.MAP_NAME] = file;
       }
     } catch (IOException e) {

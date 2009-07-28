@@ -17,6 +17,8 @@
 */
 package org.pentaho.test.platform.web.doubles;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +26,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IApplicationContext;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemEntryPoint;
 import org.pentaho.platform.api.engine.IPentahoSystemExitPoint;
+import org.pentaho.platform.api.util.ITempFileDeleter;
 
 public class ApplicationContextDouble implements IApplicationContext {
 
@@ -143,6 +147,26 @@ public class ApplicationContextDouble implements IApplicationContext {
   public void setSolutionRootPath(String solutionRootPath) {
     this.solutionRootPath = solutionRootPath;
 
+  }
+
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extn, boolean trackFile) throws IOException {
+    return createTempFile(session, prefix, extn, new File(getSolutionPath("system/tmp")), trackFile); //$NON-NLS-1$
+  }
+  
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extn, final File parentDir, boolean trackFile) throws IOException {
+    ITempFileDeleter fileDeleter = null;
+    if ((session != null) && trackFile) {
+      fileDeleter = (ITempFileDeleter)session.getAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE);
+    }
+    final String newPrefix = new StringBuilder().append(prefix).append(session.getId().substring(0, 10)).append('-').toString();
+    final File file = File.createTempFile(newPrefix, extn, parentDir);
+    if (fileDeleter != null) {
+      fileDeleter.trackTempFile(file);
+    } else {
+      // There is no deleter, so cleanup on VM exit. (old behavior)
+      file.deleteOnExit(); 
+    }
+    return file;
   }
 
 }

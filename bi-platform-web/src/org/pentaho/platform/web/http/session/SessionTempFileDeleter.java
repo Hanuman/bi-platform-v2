@@ -60,4 +60,18 @@ public class SessionTempFileDeleter implements HttpSessionBindingListener, Seria
     }
   }
 
+  public boolean hasTempFile(String aFileName) {
+    if ( (aFileName != null) && (aFileName.length() > 0) ) {
+      synchronized(tmpFileList) {
+        for (File f : tmpFileList ) {
+          if ((f.getName().equals(aFileName))) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  
 }

@@ -161,24 +161,26 @@ public interface IApplicationContext {
   public void setContext(Object context);
 
   /**
-   * Creates a temporary file in the system/tmp solutions folder, and adds it to the sessions' ITempFileDeleter 
-   * @param session
-   * @param prefix
-   * @param extn
+   * Creates a temporary file in the specified parent folder and optionally tracks it for deletion on session termination 
+   * @param session   - IPentahoSession
+   * @param prefix    - file prefix
+   * @param extension - file extension
+   * @param parentDir - parent folder to create the temp file in
+   * @param trackFile - true = add it to the session deleter
    * @return
    * @throws IOException
    */
-  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extension) throws IOException;
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extension, final File parentDir, boolean trackFile) throws IOException;
     
   /**
-   * Creates a temporary file in the specified parent folder, and adds it to the sessions' ITempFileDeleter 
-   * @param session
-   * @param prefix
-   * @param extn
-   * @param parentDir
+   * Creates a temporary file in the system/tmp solutions folder 
+   * @param session   - IPentahoSession
+   * @param prefix    - file prefix
+   * @param extension - file extension
+   * @param trackFile - true = add it to the session deleter
    * @return
    * @throws IOException
    */
-  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extension, final File parentDir) throws IOException;
+  public File createTempFile(final IPentahoSession session, final String prefix, final String extension, boolean trackFile) throws IOException;
     
 }
