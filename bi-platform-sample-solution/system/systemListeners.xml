@@ -11,8 +11,9 @@
   <bean id="systemListenersList" class="java.util.ArrayList">
     <constructor-arg>
       <list>
-        <bean id="jfreeReportSystemListener" class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener" />
+        <!-- The kettleSystemListener MUST be first. It initializes and loads the Kettle plugins. -->
         <bean id="kettleSystemListener" class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener" />
+        <bean id="jfreeReportSystemListener" class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener" />
         <bean id="mondrianSystemListener" class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener" />
         <bean id="quartzSystemListener" class="org.pentaho.platform.scheduler.QuartzSystemListener" />
         <bean id="versionCheckerSystemListener" class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
