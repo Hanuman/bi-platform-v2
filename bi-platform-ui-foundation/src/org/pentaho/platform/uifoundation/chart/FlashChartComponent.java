@@ -38,6 +38,7 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.platform.uifoundation.messages.Messages;
@@ -304,9 +305,8 @@ public class FlashChartComponent extends AbstractChartComponent {
 
     // create a temporary file
     try {
-      File file = File.createTempFile(fileNamePrefix, extension, new File(PentahoSystem.getApplicationContext()
-          .getFileOutputPath(solutionDir)));
-      // file.deleteOnExit();
+      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
+          new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
       fileName = file.getName();
       if (file.canWrite()) {
         Writer out = new FileWriter(file);
@@ -663,9 +663,8 @@ public class FlashChartComponent extends AbstractChartComponent {
     } else {
       // create a temporary file
       try {
-        File file = File.createTempFile(fileNamePrefix, extension, new File(PentahoSystem.getApplicationContext()
-            .getFileOutputPath(solutionDir)));
-        // file.deleteOnExit();
+        File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
+            new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
         fileName = file.getName();
         if (file.canWrite()) {
           Writer out = new FileWriter(file);

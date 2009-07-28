@@ -125,31 +125,6 @@ public interface IContentLocation {
   public IContentItem getContentItemByPath(String path);
 
   /**
-   * Gets a temporary file in the location.
-   * 
-   * @param fileSuffix
-   *            What the file suffix should be. If null, then .tmp will be
-   *            used.
-   * @return File that is unique within the directory inside this location.
-   * @throws ContentException
-   */
-  public File getTmpFile(String fileSuffix) throws ContentException;
-
-  /**
-   * Gets a temporary file in the location.
-   * 
-   * @param fileSuffix
-   *            What the file suffix should be. If null, then .tmp will be
-   *            used.
-   * @param deleteOnExit
-   *            If true, will call the files' deleteOnExit method which will
-   *            attempt to delete the file on VM termination.
-   * @return File that is unique within the directory inside this location.
-   * @throws ContentException
-   */
-  public File getTmpFile(String fileSuffix, boolean deleteOnExit) throws ContentException;
-
-  /**
    * Creates a subdirectory in the content location.
    * 
    * @param subDirName

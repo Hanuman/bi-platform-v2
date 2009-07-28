@@ -49,6 +49,7 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
@@ -337,9 +338,8 @@ public class WidgetGridComponent extends XmlComponent {
     String fileName = null;
     String filePathWithoutExtension = null;
     try {
-      File file = File.createTempFile(fileNamePrefix, extension, new File(PentahoSystem.getApplicationContext()
-          .getFileOutputPath(solutionDir)));
-      file.deleteOnExit();
+      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), fileNamePrefix, extension, 
+          new File(PentahoSystem.getApplicationContext().getFileOutputPath(solutionDir)));
       fileName = file.getName();
       filePathWithoutExtension = solutionDir + fileName.substring(0, fileName.indexOf('.'));
     } catch (IOException e) {

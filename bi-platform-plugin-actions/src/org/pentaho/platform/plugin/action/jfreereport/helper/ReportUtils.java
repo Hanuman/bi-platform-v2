@@ -148,16 +148,19 @@ public class ReportUtils {
       // ok, fall back to copy the file into the temp dir and to load it from
       // there...
       File temp = ReportUtils.getTempDirectory(session);
-      File tempFile = File.createTempFile("loaded-jar-", ".jar", temp); //$NON-NLS-1$ //$NON-NLS-2$
+      File tempFile = PentahoSystem.getApplicationContext().createTrackedTempFile(session, "loaded-jar-", ".jar", temp); //$NON-NLS-1$ //$NON-NLS-2$
       // if that fails, we dont have to waste our time on copying the stuff ..
       final URL url = tempFile.toURL();
 
       final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
       final InputStream in = solutionRepository.getResourceInputStream(resource, true);
       final OutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile));
-      IOUtils.getInstance().copyStreams(in, out);
-      in.close();
-      out.close();
+      try {
+        IOUtils.getInstance().copyStreams(in, out);
+      } finally {
+        in.close();
+        out.close();
+      }
       return url;
     } else {
       return null;

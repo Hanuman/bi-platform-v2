@@ -21,6 +21,9 @@
 
 package org.pentaho.platform.api.engine;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Defines a set of methods to retrieve information about the application
  * environment.
@@ -157,4 +160,25 @@ public interface IApplicationContext {
 
   public void setContext(Object context);
 
+  /**
+   * Creates a temporary file in the system/tmp solutions folder, and adds it to the sessions' ITempFileDeleter 
+   * @param session
+   * @param prefix
+   * @param extn
+   * @return
+   * @throws IOException
+   */
+  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extension) throws IOException;
+    
+  /**
+   * Creates a temporary file in the specified parent folder, and adds it to the sessions' ITempFileDeleter 
+   * @param session
+   * @param prefix
+   * @param extn
+   * @param parentDir
+   * @return
+   * @throws IOException
+   */
+  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extension, final File parentDir) throws IOException;
+    
 }

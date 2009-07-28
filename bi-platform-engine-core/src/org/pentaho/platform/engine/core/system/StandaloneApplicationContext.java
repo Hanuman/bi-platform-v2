@@ -23,13 +23,16 @@
 package org.pentaho.platform.engine.core.system;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.pentaho.platform.api.engine.IApplicationContext;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemEntryPoint;
 import org.pentaho.platform.api.engine.IPentahoSystemExitPoint;
+import org.pentaho.platform.api.util.ITempFileDeleter;
 
 public class StandaloneApplicationContext implements IApplicationContext {
 
@@ -78,6 +81,28 @@ public class StandaloneApplicationContext implements IApplicationContext {
     this.solutionRootPath = solutionRootPath;
   }
 
+  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extn) throws IOException {
+    return createTrackedTempFile(session, prefix, extn, new File(getSolutionPath("system/tmp"))); //$NON-NLS-1$
+  }
+  
+  public File createTrackedTempFile(final IPentahoSession session, final String prefix, final String extn, final File parentDir) throws IOException {
+    ITempFileDeleter fileDeleter = null;
+    if (session != null) {
+      fileDeleter = (ITempFileDeleter)session.getAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE);
+    }
+    final String newPrefix = new StringBuilder().append(prefix).append(session.getId().substring(0, 10)).append('-').toString();
+    final File file = File.createTempFile(newPrefix, extn, parentDir);
+    if (fileDeleter != null) {
+      fileDeleter.trackTempFile(file);
+    } else {
+      // There is no deleter, so cleanup on VM exit. (old behavior)
+      file.deleteOnExit(); 
+    }
+    return file;
+  }
+  
+  
+  
   /*
    * (non-Javadoc)
    * 

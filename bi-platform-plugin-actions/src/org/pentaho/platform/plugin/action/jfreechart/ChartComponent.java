@@ -46,6 +46,7 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.util.XmlParseException;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -599,14 +600,10 @@ public class ChartComponent extends ComponentBase {
         : ChartComponent.PNG_EXTENSION;
 
     try {
-      File file = File.createTempFile(ChartComponent.FILENAME_PREFIX, extension, new File(PentahoSystem
-          .getApplicationContext().getFileOutputPath(ChartComponent.TEMP_DIRECTORY)));
-      file.deleteOnExit();
+      File file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), ChartComponent.FILENAME_PREFIX, extension);
       results[ChartComponent.FILE_NAME] = file;
       if (includeMapFile) {
-        file = File.createTempFile(ChartComponent.FILENAME_PREFIX, ChartComponent.MAP_EXTENSION, new File(PentahoSystem
-            .getApplicationContext().getFileOutputPath(ChartComponent.TEMP_DIRECTORY)));
-        file.deleteOnExit();
+        file = PentahoSystem.getApplicationContext().createTrackedTempFile(getSession(), ChartComponent.MAP_EXTENSION, extension);
         results[ChartComponent.MAP_NAME] = file;
       }
     } catch (IOException e) {

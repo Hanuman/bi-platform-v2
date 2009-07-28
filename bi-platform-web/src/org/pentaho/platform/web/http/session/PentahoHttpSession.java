@@ -62,7 +62,7 @@ public class PentahoHttpSession extends BaseSession {
     // run any session initialization actions
     IParameterProvider sessionParameters = new PentahoSessionParameterProvider(userSession);
     PentahoSystem.sessionStartup(this, sessionParameters);
-  }
+}
 
   public Iterator getAttributeNames() {
 

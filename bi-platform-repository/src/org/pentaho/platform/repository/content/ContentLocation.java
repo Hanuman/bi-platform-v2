@@ -177,45 +177,6 @@ public class ContentLocation extends PentahoBase implements IContentLocation, IS
   }
 
   /**
-   * Gets a temporary file in the location.
-   * 
-   * @param fileSuffix
-   *            What the file suffix should be. If null, then .tmp will be
-   *            used.
-   * @return File that is unique within the directory inside this location.
-   * @throws ContentException
-   */
-  public File getTmpFile(final String fileSuffix) throws ContentException {
-    return getTmpFile(fileSuffix, false);
-  }
-
-  /**
-   * Gets a temporary file in the location.
-   * 
-   * @param fileSuffix
-   *            What the file suffix should be. If null, then .tmp will be
-   *            used.
-   * @param deleteOnExit
-   *            If true, will call the files' deleteOnExit method which will
-   *            attempt to delete the file on VM termination.
-   * @return File that is unique within the directory inside this location.
-   * @throws ContentException
-   */
-  public File getTmpFile(final String fileSuffix, final boolean deleteOnExit) throws ContentException {
-    File f = checkPath();
-    try {
-      File rtn = File.createTempFile("PENTAHOTMP", fileSuffix, f); //$NON-NLS-1$ 
-      if (deleteOnExit) {
-        rtn.deleteOnExit();
-      }
-      return rtn;
-    } catch (IOException ex) {
-      throwError(Messages.getErrorString("CONTLOC.ERROR_0002_CANNOT_CREATE_TMPFILE", getDirPath())); //$NON-NLS-1$ 
-      return null; // Unreachable
-    }
-  }
-
-  /**
    * Creates a subdirectory in the content location.
    * 
    * @param subDirName
