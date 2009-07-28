@@ -38,6 +38,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
+import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class DatasourceServiceImpl implements IDatasourceService{
@@ -135,7 +136,7 @@ public class DatasourceServiceImpl implements IDatasourceService{
     SQLConnection sqlConnection = null; 
     int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
-      sqlConnection = (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, PentahoSessionHolder.getSession(), null);
+      sqlConnection = (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, PentahoSessionHolder.getSession(), new SimpleLogger(DatasourceServiceHelper.class.getName()));
       sqlConnection.setMaxRows(limit);
       sqlConnection.setReadOnly(true);
       IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
