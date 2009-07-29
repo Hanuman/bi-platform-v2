@@ -742,7 +742,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    */
   public Boolean isSubscriptionContent(String actionRef) {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
-    return new Boolean(subscriptionRepository.getContentByActionReference(actionRef) != null);
+    return new Boolean(subscriptionRepository.getContentByActionReference(actionRef) != null && subscriptionRepository.getContentByActionReference(actionRef).getSchedules().size() > 0);
   }
 
   /*
@@ -1019,7 +1019,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       subscribeContent.setSchedules(updatedSchedules);
     } else {
       if (subscribeContent != null) {
-        subscriptionRepository.deleteContent(subscribeContent);
+        subscribeContent.clearsSchedules();
       }
     }
   }
