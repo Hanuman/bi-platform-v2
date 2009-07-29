@@ -20,14 +20,22 @@
  */
 package org.pentaho.test.platform.engine.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
-
-import org.pentaho.platform.engine.core.system.StandaloneSession;
 
 import junit.framework.TestCase;
 
+import org.pentaho.platform.api.util.ITempFileDeleter;
+import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.core.system.StandaloneTempFileDeleter;
+import org.pentaho.platform.util.UUIDUtil;
+
 public class StandaloneSessionTest extends TestCase {
 
+  private static final String SolutionDeleterTopFolderName = "test-session-solution";
+  
   public void testDefaultConstructor() {
     
     StandaloneSession session = new StandaloneSession( ); 
@@ -42,6 +50,34 @@ public class StandaloneSessionTest extends TestCase {
     assertEquals( "session object name is wrong", StandaloneSession.class.getName(), session.getObjectName() ); //$NON-NLS-1$
   }
   
+  protected void setUp() throws Exception {
+    File tmpDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+    File solnDir = new File(tmpDir, "test-session-solution/system/tmp"); //$NON-NLS-1$
+    if (!solnDir.exists() ) {
+      solnDir.mkdirs();
+    }
+   }
+  
+   protected void tearDown() throws Exception {
+     File tmpDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+     File solnDir = new File(tmpDir, "test-session-solution"); //$NON-NLS-1$
+     emptyDir(solnDir);
+     if ((solnDir != null) & (solnDir.exists())) {
+       solnDir.delete();
+     }
+   }
+
+  protected void emptyDir(File aFile) throws Exception {
+    File[] files = aFile.listFiles();
+    for (File aTmpFile : files ) {
+      if ( aTmpFile.isDirectory() ) {
+        emptyDir(aTmpFile);
+      } else if (aTmpFile.isFile()) {
+        aTmpFile.delete();
+      }
+    }
+  }
+   
   public void testNameConstructor() {
     
     StandaloneSession session = new StandaloneSession( "testname" );  //$NON-NLS-1$
@@ -132,6 +168,48 @@ public class StandaloneSessionTest extends TestCase {
     session.resetBackgroundExecutionAlert();
     assertFalse( "Wrong alert", session.getBackgroundExecutionAlert() ); //$NON-NLS-1$ 
     
+  }
+  
+  protected String getSolutionRoot() {
+    String tmpDir = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
+    if (tmpDir.endsWith("/")) { //$NON-NLS-1$
+      return tmpDir + SolutionDeleterTopFolderName;
+    } else {
+      return tmpDir + "/" + SolutionDeleterTopFolderName; //$NON-NLS-1$
+    }
+  }
+  
+  public void testTempFileDeleter() throws Exception {
+    StandaloneSession session = new StandaloneSession("tempfiledeleter", UUIDUtil.getUUIDAsString()); // get one with an id. //$NON-NLS-1$
+    StandaloneTempFileDeleter deleter = new StandaloneTempFileDeleter();
+    
+    StandaloneApplicationContext appContext = new StandaloneApplicationContext(getSolutionRoot(), ""); //$NON-NLS-1$ //$NON-NLS-2$
+    File file1 = appContext.createTempFile(session, "testTempFileDeleter", "txt", true); //$NON-NLS-1$ //$NON-NLS-2$
+    assertNotNull(file1); // File object was returned
+    assertTrue(file1.exists()); // File exists
+    assertFalse(deleter.hasTempFile(file1.getName())); // Deleter wasn't bound to session, so no delete
+    // Bind deleter to the session
+    session.setAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE, deleter);
+    File file2 = appContext.createTempFile(session, "testTempFileDeleter", "txt", true); //$NON-NLS-1$ //$NON-NLS-2$
+    assertNotNull(file2); // File object was returned
+    assertTrue(file2.exists()); // File exists
+    assertTrue(deleter.hasTempFile(file2.getName())); // Deleter is bound to session
+    // File names should be unique
+    assertFalse(file1.getName().equals(file2.getName()));
+    
+    deleter.doTempFileCleanup();
+    assertTrue(file1.exists()); // This file will be left over
+    assertFalse(file2.exists()); // The deleter should have removed this
+    assertFalse(deleter.hasTempFile(file2.getName())); // After doTempFileCleanup() the list should be empty
+    // The tearDown should blow away everything else...
+    deleter.trackTempFile(file2); // Add known deleted file to the deleter
+    deleter.doTempFileCleanup(); // Validates cleanup doesn't choke on missing files
+    // Test that IllegalArgumentException if passed a null
+    try {
+      deleter.trackTempFile(null);
+      fail();
+    } catch (IllegalArgumentException expected) {
+    }
   }
   
 }
