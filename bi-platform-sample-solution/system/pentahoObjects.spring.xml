@@ -68,6 +68,7 @@ PentahoSystem which is initialized after Spring
         <ref bean="axisServiceManager"/>
       </list></property>
   </bean>
+  <bean id="ITempFileDeleter" class="org.pentaho.platform.web.http.session.SessionTempFileDeleter" scope="prototype" />
   <bean id="gwtServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.servicemgr.GwtRpcServiceManager" scope="singleton"/>
   <bean id="axisServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager" scope="singleton"/>
   

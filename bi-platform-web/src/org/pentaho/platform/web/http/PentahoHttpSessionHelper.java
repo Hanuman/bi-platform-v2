@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.util.ITempFileDeleter;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.web.http.session.PentahoHttpSession;
 import org.pentaho.platform.web.http.session.SessionTempFileDeleter;
@@ -52,7 +53,10 @@ public class PentahoHttpSessionHelper {
       return userSession;
     }
     userSession = new PentahoHttpSession(request.getRemoteUser(), request.getSession(), request.getLocale(), userSession);
-    userSession.setAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE, new SessionTempFileDeleter());
+    ITempFileDeleter deleter = PentahoSystem.get(ITempFileDeleter.class, userSession);
+    if (deleter != null) {
+      userSession.setAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE, deleter);
+    }
 
     // TODO sbarkdull delete following line?
     LocaleHelper.setLocale(request.getLocale());

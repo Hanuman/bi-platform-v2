@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.util.ITempFileDeleter;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 
 public class PentahoSessionFactory {
 
@@ -39,7 +40,10 @@ public class PentahoSessionFactory {
       return userSession;
     }
     userSession = new PentahoHttpSession(userName, session, request.getLocale(), userSession);
-    userSession.setAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE, new SessionTempFileDeleter()); //$NON-NLS-1$
+    ITempFileDeleter deleter = PentahoSystem.get(ITempFileDeleter.class, userSession);
+    if (deleter != null) {
+      userSession.setAttribute(ITempFileDeleter.DELETER_SESSION_VARIABLE, deleter);
+    }
     return userSession;
 
   }
