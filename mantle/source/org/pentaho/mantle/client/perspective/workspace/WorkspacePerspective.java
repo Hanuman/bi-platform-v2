@@ -307,7 +307,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblDelete.addClickListener(new DeleteSubscriptionClickListener(currentSubscr));
+      lblDelete.addClickListener(new DeleteSubscriptionClickListener(currentSubscr, lblDelete));
 
       buttonsPanel.add(lblRunNow);
       buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
@@ -921,12 +921,15 @@ public class WorkspacePerspective extends ScrollPanel {
 
   public class DeleteSubscriptionClickListener implements ClickListener {
     SubscriptionBean subscription;
+    Label lblDelete;
 
-    public DeleteSubscriptionClickListener(SubscriptionBean subscription) {
+    public DeleteSubscriptionClickListener(SubscriptionBean subscription, Label lblDelete) {
       this.subscription = subscription;
+      this.lblDelete = lblDelete;
     }
 
     public void onClick(Widget sender) {
+      lblDelete.setVisible(false);
       doDelete(true, subscription, ""); //$NON-NLS-1$
     }
   }
