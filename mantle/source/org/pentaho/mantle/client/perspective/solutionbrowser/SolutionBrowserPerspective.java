@@ -33,6 +33,7 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
@@ -1604,15 +1605,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void handleWAQRPreview(String url, String xml) {
-    showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
-    final FormPanel form = new FormPanel(namedFrame);
-    RootPanel.get().add(form);
-    form.setMethod(FormPanel.METHOD_POST);
-    form.setAction(url);
-    form.add(new Hidden("reportXml", xml)); //$NON-NLS-1$
-    form.submit();
-    ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
+    ExecuteWAQRPreviewCommand command = new ExecuteWAQRPreviewCommand(contentTabPanel, url, xml, this);
+    command.execute();
   }
 
   /*
