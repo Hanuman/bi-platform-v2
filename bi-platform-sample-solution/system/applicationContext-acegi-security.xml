@@ -258,6 +258,8 @@ CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 \A/scheduleradmin.*\Z=Admin
 \A/publish.*\Z=Admin
 \A/logout.*\Z=Anonymous
+\A/solutionrepositoryservice.*component=delete.*solution=system.*\Z=Nobody
+\A/solutionrepositoryservice.*solution=system.*component=delete.*\Z=Nobody
 .*system.*pentaho.xml.*=Nobody
 .*system.*applicationcontext.*.xml.*=Nobody
 .*system.*pentahoobjects.spring.xml.*=Nobody
