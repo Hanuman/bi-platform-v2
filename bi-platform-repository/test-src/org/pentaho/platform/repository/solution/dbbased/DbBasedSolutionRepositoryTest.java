@@ -338,9 +338,9 @@ public class DbBasedSolutionRepositoryTest {
     // file should not exist before we copy it
     assertFalse(repo.resourceExists("mysolution1/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
     int res = repo
-    .addSolutionFile(
-        PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution1", "HelloWorld3.xaction", FileUtils.readFileToByteArray(new File( //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-                "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")), true); //$NON-NLS-1$
+        .addSolutionFile(
+            PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution1", "HelloWorld3.xaction", FileUtils.readFileToByteArray(new File( //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                    "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")), true); //$NON-NLS-1$
     assertEquals(ISolutionRepository.FILE_ADD_SUCCESSFUL, res);
     login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
@@ -701,6 +701,29 @@ public class DbBasedSolutionRepositoryTest {
         new SimpleSession(newSessionWithlogin("joe", "Admin")), f2, ISolutionRepository.ACTION_CREATE)); //$NON-NLS-1$//$NON-NLS-2$
     assertTrue(repo.hasAccess(
         new SimpleSession(newSessionWithlogin("joe", "Admin")), f3, ISolutionRepository.ACTION_DELETE)); //$NON-NLS-1$//$NON-NLS-2$
+  }
+
+  @Test
+  @Ignore
+  public void testHasAccessOnNonACLedFile() throws Exception {
+    printTestHeader("testHasAccessOnNonACLedFile"); //$NON-NLS-1$
+    // we don't login because it shouldn't matter if you're logged in or not
+    repo.init(pentahoSession);
+    ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    assertNotNull(f1);
+    // now attempt to set perms on it and re-request it
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
+    IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_EXECUTE);
+    Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
+    acl.put(recipient, mask);
+    repo.setPermissions(f1, acl); // should not have applied any acls
+    // doesn't have access--but it doesn't matter!
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    assertNotNull(f1);
   }
 
   @Test
