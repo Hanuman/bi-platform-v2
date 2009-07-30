@@ -87,7 +87,7 @@
       <component-definition> 
         <script><![CDATA[ 
 				var solutionRepository = Packages.org.pentaho.platform.engine.core.system.PentahoSystem.get(Packages.org.pentaho.platform.api.repository.ISolutionRepository);
-				reportDefinitionInputStream = solutionRepository.getResourceInputStream(reportDefinitionPath, false);
+				reportDefinitionInputStream = solutionRepository.getResourceInputStream(reportDefinitionPath, false, Packages.org.pentaho.platform.api.repository.ISolutionRepository.ACTION_EXECUTE);
 		      ]]> </script> 
       </component-definition> 
     </action-definition>
