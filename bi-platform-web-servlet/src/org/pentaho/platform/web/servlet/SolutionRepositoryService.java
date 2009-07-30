@@ -244,12 +244,7 @@ public class SolutionRepositoryService extends ServletBase {
 
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String fullPath = ActionInfo.buildSolutionPath(solution, path, name);
-    ISolutionFile solutionFile = repository.getSolutionFile(fullPath, ISolutionRepository.ACTION_DELETE);
-    if (solutionFile != null && repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_DELETE)) {
-      repository.removeSolutionFile(fullPath);
-      return true;
-    }
-    return false;
+    return repository.removeSolutionFile(fullPath);
   }
 
   /**
