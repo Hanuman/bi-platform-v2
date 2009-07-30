@@ -23,13 +23,10 @@ import java.util.Map.Entry;
 
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IAclHolder;
-import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionMgr;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 
 public class AcegiPermissionMgr implements IPermissionMgr {
@@ -76,39 +73,6 @@ public class AcegiPermissionMgr implements IPermissionMgr {
     return permissionsMap;
   }
   
-  public boolean hasPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permissionMask,
-      final Object object) {
-    if (object == null || !(object instanceof IAclHolder)) {
-	  // i would argue that the "object" parameter should be IAclHolder!
-      return true;
-    }
-    IAclHolder aclHolder = (IAclHolder) object;
-    IPentahoSession session = null;
-    boolean isPermitted = false;
-    // For PermissionRecipient being on SimpleSession we will get the session from the recipient and create voter and let the voter
-    if (permissionRecipient instanceof SimpleSession) {
-      SimpleSession simpleSession = (SimpleSession) permissionRecipient;
-      session = simpleSession.getSession();
-      IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
-      int aclMask = permissionMask.getMask();
-      isPermitted = voter.hasAccess(session, aclHolder, aclMask);
-    } else { // Otherwise we will get the permission for the object and check if object has permission or not
-      Map<IPermissionRecipient, IPermissionMask> map = getPermissions(aclHolder);
-      IPermissionMask mask = map.get(permissionRecipient);
-      if (mask != null) {
-        PentahoAclEntry pentahoAclEntry = new PentahoAclEntry();
-        if (permissionRecipient instanceof SimpleRole) {
-          pentahoAclEntry.setRecipient(new GrantedAuthorityImpl(permissionRecipient.getName()));
-        } else {
-          pentahoAclEntry.setRecipient(permissionRecipient.getName());
-        }
-        pentahoAclEntry.addPermission(mask.getMask());
-        isPermitted = pentahoAclEntry.isPermitted(permissionMask.getMask());
-      }
-    }
-    return isPermitted;
-  }
-
   public void setPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permission,
       final Object object) {
     if (object == null || !(object instanceof IAclHolder)) {

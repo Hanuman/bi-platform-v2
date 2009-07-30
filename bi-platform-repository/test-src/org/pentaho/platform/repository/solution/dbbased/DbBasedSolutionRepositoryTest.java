@@ -18,9 +18,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
@@ -29,6 +32,8 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.junit.After;
@@ -55,7 +60,6 @@ import org.pentaho.platform.engine.core.system.SystemSettings;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
-import org.pentaho.platform.engine.security.SimpleSession;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.security.acls.AclPublisher;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
@@ -185,6 +189,36 @@ public class DbBasedSolutionRepositoryTest {
     OutputFormat format = OutputFormat.createPrettyPrint();
     XMLWriter writer = new XMLWriter(System.out, format);
     writer.write(doc);
+  }
+
+  protected boolean accessControlEntryExists(final IPermissionRecipient recipient, final ISolutionFile file,
+      int actionOperation) {
+    Map<IPermissionRecipient, IPermissionMask> acl = repo.getPermissions(file);
+    IPermissionMask mask = acl.get(recipient);
+    if (mask != null) {
+      if (mask.getMask() == actionOperation) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  
+  protected boolean accessControlEntryMaskBitSet(final IPermissionRecipient recipient, final ISolutionFile file,
+      int expectedMask) {
+    Map<IPermissionRecipient, IPermissionMask> acl = repo.getPermissions(file);
+    IPermissionMask mask = acl.get(recipient);
+    if (mask != null) {
+      if ((mask.getMask() & expectedMask) == expectedMask) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   @Test
@@ -696,34 +730,71 @@ public class DbBasedSolutionRepositoryTest {
     assertTrue(repo.hasAccess(f2, ISolutionRepository.ACTION_CREATE));
     assertFalse(repo.hasAccess(f1, ISolutionRepository.ACTION_CREATE));
     assertFalse(repo.hasAccess(f4, ISolutionRepository.ACTION_UPDATE));
-    // admins can do anything
-    assertTrue(repo.hasAccess(
-        new SimpleSession(newSessionWithlogin("joe", "Admin")), f2, ISolutionRepository.ACTION_CREATE)); //$NON-NLS-1$//$NON-NLS-2$
-    assertTrue(repo.hasAccess(
-        new SimpleSession(newSessionWithlogin("joe", "Admin")), f3, ISolutionRepository.ACTION_DELETE)); //$NON-NLS-1$//$NON-NLS-2$
   }
 
   @Test
-  @Ignore
+  public void testHasAccessAdminNeverDenied() throws Exception {
+    printTestHeader("testHasAccessAdminNeverDenied"); //$NON-NLS-1$
+    login("joe", "Admin"); //$NON-NLS-1$ //$NON-NLS-2$
+    repo.init(pentahoSession);
+    ISolutionFile f2 = repo.getFileByPath("mysolution2", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    ISolutionFile f3 = repo.getFileByPath("", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    // admins can do anything
+    assertTrue(repo.hasAccess(f2, ISolutionRepository.ACTION_CREATE)); //$NON-NLS-1$//$NON-NLS-2$
+    assertTrue(repo.hasAccess(f3, ISolutionRepository.ACTION_DELETE)); //$NON-NLS-1$//$NON-NLS-2
+  }
+
+  /**
+   * @see #testgetPermissionsOnNonACLedFile()
+   * @see #testSetPermissionsOnNonACLedFile()
+   */
+  @Test
   public void testHasAccessOnNonACLedFile() throws Exception {
     printTestHeader("testHasAccessOnNonACLedFile"); //$NON-NLS-1$
     // we don't login because it shouldn't matter if you're logged in or not
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     assertNotNull(f1);
-    // now attempt to set perms on it and re-request it
+  }
+
+  /**
+   * @see #testHasAccessOnNonACLedFile()
+   * @see #testGetPermissionsOnNonACLedFile()
+   */
+  @Test(expected=PentahoAccessControlException.class)
+  public void testSetPermissionsOnNonACLedFile() throws Exception {
+    printTestHeader("testSetPermissionsOnNonACLedFile"); //$NON-NLS-1$
     login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
     IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_EXECUTE);
     Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
     acl.put(recipient, mask);
-    repo.setPermissions(f1, acl); // should not have applied any acls
-    // doesn't have access--but it doesn't matter!
-    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
-    repo.init(pentahoSession);
-    f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_SHARE); //$NON-NLS-1$
     assertNotNull(f1);
+    repo.setPermissions(f1, acl);
+  }
+
+  /**
+   * @see #testHasAccessOnNonACLedFile()
+   * @see #testSetPermissionsOnNonACLedFile()
+   */
+  @Test
+  public void testGetPermissionsOnNonACLedFile() throws Exception {
+    printTestHeader("testGetPermissionsOnNonACLedFile"); //$NON-NLS-1$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_SHARE); //$NON-NLS-1$
+    assertTrue(repo.getPermissions(f1).isEmpty());
+  }
+  
+  @Test
+  public void testGetEffectivePermissionsOnNonACLedFile() throws Exception {
+    printTestHeader("testGetEffectivePermissionsOnNonACLedFile"); //$NON-NLS-1$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_SHARE); //$NON-NLS-1$
+    assertTrue(repo.getEffectivePermissions(f1).isEmpty());
   }
 
   @Test
@@ -735,11 +806,11 @@ public class DbBasedSolutionRepositoryTest {
     SimpleUser shareRecipient = new SimpleUser("tiffany"); //$NON-NLS-1$
     List<IPermissionRecipient> shareRecipients = new ArrayList<IPermissionRecipient>();
     shareRecipients.add(shareRecipient);
-    assertFalse(repo.hasAccess(shareRecipient, f1, ISolutionRepository.ACTION_EXECUTE));
-    assertFalse(repo.hasAccess(shareRecipient, f1, ISolutionRepository.ACTION_SUBSCRIBE));
+    assertFalse(accessControlEntryExists(shareRecipient, f1, ISolutionRepository.ACTION_EXECUTE
+        | ISolutionRepository.ACTION_SUBSCRIBE));
     repo.share(f1, shareRecipients);
-    assertTrue(repo.hasAccess(shareRecipient, f1, ISolutionRepository.ACTION_EXECUTE));
-    assertTrue(repo.hasAccess(shareRecipient, f1, ISolutionRepository.ACTION_SUBSCRIBE));
+    assertTrue(accessControlEntryExists(shareRecipient, f1, ISolutionRepository.ACTION_EXECUTE
+        | ISolutionRepository.ACTION_SUBSCRIBE));
   }
 
   @Test
@@ -820,9 +891,9 @@ public class DbBasedSolutionRepositoryTest {
     ISolutionFile file = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
     IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_UPDATE);
-    assertFalse(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertFalse(accessControlEntryMaskBitSet(recipient, file, ISolutionRepository.ACTION_UPDATE));
     repo.addPermission(file, recipient, mask);
-    assertTrue(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertTrue(accessControlEntryMaskBitSet(recipient, file, ISolutionRepository.ACTION_UPDATE));
   }
 
   @Test
@@ -833,9 +904,9 @@ public class DbBasedSolutionRepositoryTest {
     ISolutionFile file = repo.getFileByPath("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
     IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_UPDATE);
-    assertFalse(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertFalse(accessControlEntryMaskBitSet(recipient, file, ISolutionRepository.ACTION_UPDATE));
     repo.addPermission(file, recipient, mask);
-    assertFalse(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertFalse(accessControlEntryMaskBitSet(recipient, file, ISolutionRepository.ACTION_UPDATE));
   }
 
   @Test
@@ -844,14 +915,18 @@ public class DbBasedSolutionRepositoryTest {
     login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-    IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
-    IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_UPDATE);
+    IPermissionRecipient recipientTiffany = new SimpleUser("tiffany"); //$NON-NLS-1$
+    IPermissionMask maskTiffany = new SimplePermissionMask(ISolutionRepository.ACTION_UPDATE);
     Map<IPermissionRecipient, IPermissionMask> acl = new HashMap<IPermissionRecipient, IPermissionMask>();
-    acl.put(recipient, mask);
+    acl.put(recipientTiffany, maskTiffany);
+    // next three lines necessary so that suzy doesn't get locked out of file
+    IPermissionRecipient recipientSuzy = new SimpleUser("suzy"); //$NON-NLS-1$
+    IPermissionMask maskSuzy = new SimplePermissionMask(ISolutionRepository.ACTION_EXECUTE);
+    acl.put(recipientSuzy, maskSuzy);
     Map<IPermissionRecipient, IPermissionMask> origAcl = repo.getPermissions(file);
-    assertFalse(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertFalse(accessControlEntryMaskBitSet(recipientTiffany, file, ISolutionRepository.ACTION_UPDATE));
     repo.setPermissions(file, acl);
-    assertTrue(repo.hasAccess(recipient, file, ISolutionRepository.ACTION_UPDATE));
+    assertTrue(accessControlEntryExists(recipientTiffany, file, ISolutionRepository.ACTION_UPDATE));
     assertFalse(acl.equals(origAcl));
   }
 
@@ -867,7 +942,7 @@ public class DbBasedSolutionRepositoryTest {
     acl.put(recipient, mask);
     repo.setPermissions(file, acl);
   }
-
+  
   @Test
   public void testGetPermissions() throws Exception {
     printTestHeader("testGetPermissions"); //$NON-NLS-1$
@@ -922,6 +997,120 @@ public class DbBasedSolutionRepositoryTest {
     ISolutionFile file = repo.getSolutionFile("mysolution1/HelloWorld2.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     String title = repo.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     assertEquals("Hello World 2", title); //$NON-NLS-1$
+  }
+
+  @Test
+  public void showInputPage() throws Exception {
+    String TYPE_PARAM = "type"; //$NON-NLS-1$
+    String ACTION_PARAM = "action"; //$NON-NLS-1$
+    String ADD_NAME_PARAM = "add_name"; //$NON-NLS-1$
+    String PATH_PARAM = "path"; //$NON-NLS-1$
+    String LIST_ACTION = "list"; //$NON-NLS-1$
+    String ADD_BTN_PARAM = "addBtn"; //$NON-NLS-1$
+    String UPDATE_BTN_PARAM = "updateBtn"; //$NON-NLS-1$
+    String ROLE_TYPE = "role"; //$NON-NLS-1$
+    String PERM_TYPE = "perm"; //$NON-NLS-1$
+    String ROLE_PREFIX = ROLE_TYPE + "_"; //$NON-NLS-1$
+    String PERMISSION_PREFIX = PERM_TYPE + "_"; //$NON-NLS-1$
+    String USER_TYPE = "user"; //$NON-NLS-1$
+    String USER_PREFIX = USER_TYPE + "_"; //$NON-NLS-1$
+    String PERMISSION_SEPERATOR = "#"; //$NON-NLS-1$
+    String DELETE_PREFIX = "delete_"; //$NON-NLS-1$
+    String NO_FILE_PATH_NODE_NAME = "no-file-path"; //$NON-NLS-1$
+    String SET_PERMISSIONS_DENIED_NAME = "set-permissions-denied"; //$NON-NLS-1$
+    String NO_ACLS_NODE_NAME = "no-acls"; //$NON-NLS-1$
+    String INPUT_PAGE_NODE_NAME = "input-page"; //$NON-NLS-1$
+    String FILE_PATH_NODE_NAME = "file-path"; //$NON-NLS-1$
+    String IS_DIR_NODE_NAME = "is-directory"; //$NON-NLS-1$
+    String RECIPIENTS_NODE_NAME = "recipients"; //$NON-NLS-1$
+    String ROLE_NODE_NAME = "role"; //$NON-NLS-1$
+    String USER_NODE_NAME = "user"; //$NON-NLS-1$
+    String PERMISSION_NAMES_NODE_NAME = "permission-names"; //$NON-NLS-1$
+    String NAME_NODE_NAME = "name"; //$NON-NLS-1$
+    String ACCESS_CONTROL_LIST_NODE_NAME = "ac-list"; //$NON-NLS-1$
+    String ACCESS_CONTROL_NODE_NAME = "access-control"; //$NON-NLS-1$
+    String RECIPIENT_NODE_NAME = "recipient"; //$NON-NLS-1$
+    String PERMISSION_NODE_NAME = "permission"; //$NON-NLS-1$
+    String PERMITTED_NODE_NAME = "permitted"; //$NON-NLS-1$
+    String EMPTY_STRING = ""; //$NON-NLS-1$
+    String TRUE = "true"; //$NON-NLS-1$
+    String FALSE = "false"; //$NON-NLS-1$
+    String ON = "on"; //$NON-NLS-1$
+    String DISPLAY_PATH_NODE_NAME = "display-path"; //$NON-NLS-1$
+    printTestHeader("testTemporaryTest"); //$NON-NLS-1$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    ISolutionFile file = repo.getSolutionFile("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+
+    Document document = DocumentHelper.createDocument();
+    Element root = document.addElement(INPUT_PAGE_NODE_NAME).addText(file.getFullPath());
+
+    // Add the info for the file we're working on
+    root.addElement(FILE_PATH_NODE_NAME).addText(file.getFullPath());
+    root.addElement(DISPLAY_PATH_NODE_NAME).addText(
+        file.getFullPath().replaceFirst(repo.getRepositoryName(), EMPTY_STRING).replaceFirst("//", "/")); //$NON-NLS-1$//$NON-NLS-2$
+    root.addElement(IS_DIR_NODE_NAME).addText(file.isDirectory() ? TRUE : FALSE);
+    Element recipients = root.addElement(RECIPIENTS_NODE_NAME);
+
+    Iterator iter = null;
+    if (true) {
+      // Add all the possible roles
+      List rList = new ArrayList();
+      rList.add("suzy");
+      rList.add("joe");
+      if (rList != null) {
+        iter = rList.iterator();
+        while (iter.hasNext()) {
+          recipients.addElement(ROLE_NODE_NAME).addText(iter.next().toString());
+        }
+      }
+    }
+    if (true) {
+      // Add all the possible users
+      List uList = new ArrayList();
+      uList.add("Authenticated");
+      uList.add("Admin");
+      if (uList != null) {
+        iter = uList.iterator();
+        while (iter.hasNext()) {
+          recipients.addElement(USER_NODE_NAME).addText(iter.next().toString());
+        }
+      }
+    }
+    // Add the names of all the permissions
+    Map permissionsMap = PentahoAclEntry.getValidPermissionsNameMap();
+    // permissionsMap.remove(Messages.getString("PentahoAclEntry.USER_SUBSCRIBE")); //$NON-NLS-1$
+    Iterator keyIter = permissionsMap.keySet().iterator();
+    Element permNames = root.addElement(PERMISSION_NAMES_NODE_NAME);
+    while (keyIter.hasNext()) {
+      permNames.addElement(NAME_NODE_NAME).addText(keyIter.next().toString());
+    }
+
+    Element acListNode = root.addElement(ACCESS_CONTROL_LIST_NODE_NAME);
+    TreeMap<IPermissionRecipient, IPermissionMask> sortedMap = new TreeMap<IPermissionRecipient, IPermissionMask>(
+        new Comparator<IPermissionRecipient>() {
+          public int compare(IPermissionRecipient arg0, IPermissionRecipient arg1) {
+            return arg0.getName().compareTo(arg1.getName());
+          }
+        });
+    sortedMap.putAll(repo.getPermissions(file));
+    for (Map.Entry<IPermissionRecipient, IPermissionMask> mapEntry : sortedMap.entrySet()) {
+      IPermissionRecipient permissionRecipient = mapEntry.getKey();
+      Element acNode = acListNode.addElement(ACCESS_CONTROL_NODE_NAME);
+      Element recipientNode = acNode.addElement(RECIPIENT_NODE_NAME);
+      recipientNode.setText(permissionRecipient.getName());
+      recipientNode.addAttribute(TYPE_PARAM, (permissionRecipient instanceof SimpleRole) ? ROLE_TYPE : USER_TYPE);
+      // Add individual permissions for this group
+      for (Iterator keyIterator = permissionsMap.keySet().iterator(); keyIterator.hasNext();) {
+        Element aPermission = acNode.addElement(PERMISSION_NODE_NAME);
+        String permName = keyIterator.next().toString();
+        aPermission.addElement(NAME_NODE_NAME).setText(permName);
+        int permMask = ((Integer) permissionsMap.get(permName)).intValue();
+        boolean isPermitted = true;//repo.hasAccess(permissionRecipient, file, permMask);
+        aPermission.addElement(PERMITTED_NODE_NAME).addText(isPermitted ? TRUE : FALSE);
+      }
+    }
+    prettyPrint(document);
   }
 
 }

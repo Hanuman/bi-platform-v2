@@ -1,23 +1,13 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License, version 2 as published by the Free Software 
- * Foundation.
- *
- * You should have received a copy of the GNU General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
- * or from the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * 
- * Copyright 2005-2008 Pentaho Corporation.  All rights reserved. 
- * 
- * @created Jun 21, 2005 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License, version 2 as published by the Free Software Foundation. You should have received a copy of the GNU General
+ * Public License along with this program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html or
+ * from the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. This program is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. Copyright
+ * 2005-2008 Pentaho Corporation. All rights reserved.
+ * @created Jun 21, 2005
  * @author James Dixon
- * 
  */
 package org.pentaho.platform.repository.solution.dbbased;
 
@@ -46,6 +36,7 @@ import org.hibernate.Transaction;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclPublisher;
+import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IFileInfo;
@@ -86,9 +77,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   private static final long serialVersionUID = -8270135463210017284L;
 
   private static final String BREAD_CRUMBS_TAG = "breadcrumbs/"; //$NON-NLS-1$
-  
+
   private ISolutionAttributeContributor defaultSolutionAtributeContributor = new DefaultSolutionAttributeContributor();
-  
+
   private ISolutionFilter defaultSolutionFilter = new DefaultSolutionFilter();
 
   // private String rootFile;
@@ -149,20 +140,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     return actionSequence;
   }
 
-  public boolean hasAccess(final IPermissionRecipient permRecipient, final ISolutionFile aFile,
-      final int actionOperation) {
-    AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
-    IPermissionMask permissionMask = mapOperationToPermissionMask(actionOperation);
-    boolean hasAccess = permissionMgr.hasPermission(permRecipient, permissionMask, aFile);
-    if (!hasAccess) {
-      debug(Messages.getString(
-          "SolutionRepository.ACCESS_DENIED", aFile.getFullPath(), Integer.toString(actionOperation))); //$NON-NLS-1$
-    }
-    return hasAccess;
-  }
-
   public boolean hasAccess(final ISolutionFile aFile, final int actionOperation) {
-    return hasAccess(new SimpleSession(getSession()), aFile, actionOperation);
+    if (aFile instanceof IAclSolutionFile) {
+      return SecurityHelper.hasAccess((IAclSolutionFile) aFile, actionOperation, getSession());
+    } else {
+      return true;
+    }
   }
 
   protected boolean isPentahoAdministrator() {
@@ -178,7 +161,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       } else {
         SolutionRepositoryBase.logger.warn(Messages.getString("SolutionRepository.WARN_0004_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
             documentPath));
-        return null; //If it's still null then it doesn't exist
+        return null; // If it's still null then it doesn't exist
       }
     }
 
@@ -247,7 +230,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       putRepositoryObjectInCache(localDirStr + getLocale().toString(), repository);
     }
   }
-  
+
   @Override
   protected String buildDirectoryPath(final String solution, final String path, final String action) {
     String localDirStr = repositoryName;
@@ -436,7 +419,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
 
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
-    
+
     boolean subscribable = false;
     if (subscriptionRepository != null) {
       subscribable = subscriptionRepository.getContentByActionReference(solution + ISolutionRepository.SEPARATOR + path
@@ -816,12 +799,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   /**
    * This method loads solution files and folders from the file system into the RDBMS repository.
    * 
-   * @param pSession
-   *          Users' Session
-   * @param solutionRoot
-   *          The file system root folder
-   * @param deleteOrphans
-   *          Whether to delete stranded references from RDBMS repository
+   * @param pSession Users' Session
+   * @param solutionRoot The file system root folder
+   * @param deleteOrphans Whether to delete stranded references from RDBMS repository
    * @return List of orphans that were deleted - returns list of deleted solution files.
    * @throws RepositoryException
    * @author mbatchel
@@ -878,7 +858,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           List deletions = updateHelper.processDeletions(deleteOrphans);
           // Publish ACLs
           IAclPublisher aclPublisher = PentahoSystem.get(IAclPublisher.class, pSession);
-          
+
           if (aclPublisher != null) {
             aclPublisher.publishDefaultAcls(solution);
           }
@@ -911,16 +891,11 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   /**
    * This method builds up lists of the files modified (based on date/time), new folders, and new files.
    * 
-   * @param reposFileStructure
-   *          Map of what's currently in the DB repository
-   * @param solutionFile
-   *          The folder to begin working through
-   * @param updatedFiles
-   *          List of files updated
-   * @param newFolders
-   *          List of new folders
-   * @param newFiles
-   *          List of new files
+   * @param reposFileStructure Map of what's currently in the DB repository
+   * @param solutionFile The folder to begin working through
+   * @param updatedFiles List of files updated
+   * @param newFolders List of new folders
+   * @param newFiles List of new files
    * @throws IOException
    * @author mbatchel
    */
@@ -1008,7 +983,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
     return rootDirectory;
   }
-  
+
   @Override
   public ISolutionFile getRootFolder(final int actionOperation) {
     ISolutionFile rootFolder = internalGetRootFolder();
@@ -1017,7 +992,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
     return rootDirectory;
   }
-  
+
   protected RepositoryFile getSolutionById(final String anId) {
     Session hibSession = HibernateUtil.getSession();
     RepositoryFile rtn = (RepositoryFile) hibSession.load(RepositoryFile.class, anId);
@@ -1032,14 +1007,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   /**
-   * Check <param>systemPath</param> to see if it has the repository name,
-   * followed by "system", followed by anything else. If it matches,
-   * remove the repository name from the front of the path, and return the
-   * path. If not, simply return <param>systemPath</param>
+   * Check <param>systemPath</param> to see if it has the repository name, followed by "system", followed by anything
+   * else. If it matches, remove the repository name from the front of the path, and return the path. If not, simply
+   * return <param>systemPath</param>
    * 
    * @param systemPath String containing a path.
-   * @return String <param>systemPath</param> with the repository name removed 
-   * from the path
+   * @return String <param>systemPath</param> with the repository name removed from the path
    */
   private String removeRepositoryNameFromSystemPath(String systemPath) {
     if (systemPath != null) {
@@ -1060,7 +1033,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     if (cleanPath == null) {
       return internalGetRootFolder();
     } else if (SolutionRepositoryBase.isSystemPath(cleanPath)) {
-      return super.getFileByPath(super.buildDirectoryPath(repositoryName, cleanPath), /*ignored*/0);
+      return super.getFileByPath(super.buildDirectoryPath(repositoryName, cleanPath), /* ignored */0);
     } else {
       String fullPath = cleanPath.replace('\\', ISolutionRepository.SEPARATOR); // use our file seperator
       if ((repositoryName != null) && !fullPath.startsWith(repositoryName)) {
@@ -1070,7 +1043,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           fullPath = repositoryName + fullPath;
         }
       }
-      // TODO sbarkdull, this line should probably be removed, we shouldnt be cleaning up the path for the caller, the caller should be passing us a correct path string
+      // TODO sbarkdull, this line should probably be removed, we shouldnt be cleaning up the path for the caller, the
+      // caller should be passing us a correct path string
       fullPath = fullPath.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$ // Make sure no double-slashes exist
       if (fullPath.endsWith("/")) { //$NON-NLS-1$
         fullPath = fullPath.substring(0, fullPath.length() - 1);
@@ -1088,11 +1062,11 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         }
         return rtn;
       } else {
-          return null;
+        return null;
       }
     }
   }
-  
+
   @Override
   protected ISolutionFile getFileByPath(final String path, final int actionOperation) {
     ISolutionFile file = internalGetFileByPath(path);
@@ -1110,7 +1084,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   public boolean resourceExists(final String solutionPath, final int actionOperation) {
     return getFileByPath(solutionPath, actionOperation) != null;
   }
-  
+
   private boolean internalResourceExists(final String solutionPath) {
     return internalGetFileByPath(solutionPath) != null;
   }
@@ -1129,7 +1103,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       if (isSystemPath(solutionPath)) {
         return false;
       }
-      
+
       // Build the path
       String fullPath = repositoryName;
       String sepStr = Character.toString(ISolutionRepository.SEPARATOR);
@@ -1154,10 +1128,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
       super.removeSolutionFile(solutionPath);
 
-      if (parent != null) { // this take care of the case of deleting the repository completely  
+      if (parent != null) { // this take care of the case of deleting the repository completely
         parent.removeChildFile(file);
       }
-        
+
       Session hibSession = HibernateUtil.getSession();
       Transaction trans = hibSession.beginTransaction();
       hibSession.delete(file);
@@ -1198,8 +1172,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   /**
-   * @param repositoryName
-   *          The repositoryName to set.
+   * @param repositoryName The repositoryName to set.
    */
   public void setRepositoryName(final String value) {
     if (value == null) {
@@ -1217,16 +1190,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     this.repositoryName = repositoryName != null ? repositoryName : repoName;
   }
 
-
-
   /**
-   * Add security related attributes to <param>node</param>. The attributes are:
-   * aclAdministration
-   * aclExecute
-   * aclSubscribe
-   * aclModifyAcl
-   * Their values will be "true" or "false", depending on the corresponding property
-   * in the <param>entry</param> parameter.
+   * Add security related attributes to <param>node</param>. The attributes are: aclAdministration aclExecute
+   * aclSubscribe aclModifyAcl Their values will be "true" or "false", depending on the corresponding property in the
+   * <param>entry</param> parameter.
    * 
    * @param entry PentahoAclEntry
    * @param node Element
@@ -1278,7 +1245,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         return ISolutionRepository.FILE_ADD_FAILED;
       }
 
-      // allow any user to add to system/tmp (e.g. during new analysis view) 
+      // allow any user to add to system/tmp (e.g. during new analysis view)
       if ((SolutionRepositoryBase.isSystemPath(path) && isPentahoAdministrator() || SolutionRepositoryBase
           .isSystemTmpPath(path))) {
         // add file using file based technique to send it to disk
@@ -1335,8 +1302,8 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   @Override
   public int addSolutionFile(final String baseUrl, final String path, final String fileName, final File f,
       final boolean overwrite) {
-    // TODO mlowery Allow this method for Pentaho administrators only. Use a RunAsManager when calling this method 
-    // from within this class.  That way you prevent external callers from directly calling this method.
+    // TODO mlowery Allow this method for Pentaho administrators only. Use a RunAsManager when calling this method
+    // from within this class. That way you prevent external callers from directly calling this method.
 
     // baseUrl is ignored
     byte[] bytes;
@@ -1381,53 +1348,6 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     return true;
   }
 
-  /**
-   * TODO mlowery This mapping needs to go away. An AclEntry type should exist per application. AclEntry types should
-   * not be re-used over more than one app!  In other words, get rid of the mapping!
-   * 
-   * This mapping is currently hard-coded in ISolutionRepository constant initialization.
-   */
-  protected IPermissionMask mapOperationToPermissionMask(final int actionOperation) {
-    int aclMask = actionOperation;
-    //    switch (actionOperation) {
-    //      
-    //      case ISolutionRepository.ACTION_EXECUTE: {
-    //        aclMask = PentahoAclEntry.PERM_EXECUTE;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_ADMIN: {
-    //        aclMask = PentahoAclEntry.PERM_ADMINISTRATION;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_SUBSCRIBE: {
-    //        aclMask = PentahoAclEntry.PERM_SUBSCRIBE;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_CREATE: {
-    //        aclMask = PentahoAclEntry.PERM_CREATE;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_UPDATE: {
-    //        aclMask = PentahoAclEntry.PERM_UPDATE;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_DELETE: {
-    //        aclMask = PentahoAclEntry.PERM_DELETE;
-    //        break;
-    //      }
-    //      case ISolutionRepository.ACTION_SHARE: {
-    //        aclMask = PentahoAclEntry.PERM_UPDATE_PERMS;
-    //        break;
-    //      }
-    //      default: {
-    //        // give no permission if incoming actionOperation is unknown
-    //        aclMask = PentahoAclEntry.PERM_NOTHING;
-    //        break;
-    //      }
-    //    }
-    return new SimplePermissionMask(aclMask);
-  }
-
   public int publish(final String baseUrl, final String path, final String fileName, final byte[] data,
       final boolean overwrite) throws PentahoAccessControlException {
     // TODO mlowery This should be wrapped in a transaction to ensure both steps (add file and set perm on file) happen
@@ -1441,11 +1361,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       // entire ACL is replaced for new files
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       HibernateUtil.beginTransaction();
-      permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
+      setPermissions(justPublishedFile, getDefaultPublishAcl());
     }
-    if( (res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && 
-            (fileName != null) && 
-            (fileName.toLowerCase().endsWith(".xmi")) ) {
+    if ((res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && (fileName != null)
+        && (fileName.toLowerCase().endsWith(".xmi"))) {
 
       IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
       // this call forces a reload of the domains
@@ -1456,6 +1375,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   /**
    * Returns the ACL to set on newly published content.
+   * 
    * @return an ACL
    */
   protected Map<IPermissionRecipient, IPermissionMask> getDefaultPublishAcl() {
@@ -1489,19 +1409,35 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     }
   }
 
+  /*
+   * Unfortunately, the contract for IAclHolder.getAccessControls() doesn't allow us to tell whether someone 
+   * deliberately set an empty ACL or is simply inheriting. We have to assume that every time we see an empty ACL,
+   * it is because it was inheriting.
+   */
   public void addPermission(final ISolutionFile file, final IPermissionRecipient recipient,
       final IPermissionMask permission) {
     if (hasAccess(file, ISolutionRepository.ACTION_SHARE)) {
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
-      permissionMgr.setPermission(recipient, permission, file);
+      Map<IPermissionRecipient, IPermissionMask> acl = permissionMgr.getPermissions(file);
+      if (acl.isEmpty()) {
+        // no direct permissions; get the effective acls
+        acl = permissionMgr.getEffectivePermissions(file);
+      }
+      acl.put(recipient, permission);
+      try {
+        setPermissions(file, acl);
+      } catch (PentahoAccessControlException ignored) {
+        // unfortunately, throwing this exception would cause a cascade of methods to have to throw it
+      }      
     }
   }
 
-  /**
-   * TODO mlowery Need to throw exception if unauthorized.
-   */
   public void setPermissions(final ISolutionFile file, final Map<IPermissionRecipient, IPermissionMask> acl)
       throws PentahoAccessControlException {
+    if (!SecurityHelper.canHaveACLS(file)) {
+      throw new PentahoAccessControlException(Messages.getString(
+          "SolutionRepository.ACCESS_DENIED", file.getFullPath(), Integer.toString(ISolutionRepository.ACTION_SHARE))); //$NON-NLS-1$
+    }
     if (hasAccess(file, ISolutionRepository.ACTION_SHARE)) {
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       permissionMgr.setPermissions(acl, file);
@@ -1515,6 +1451,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * TODO mlowery If we had a READ_PERMS bit, then it would be enforced here. Instead, we use ACTION_EXECUTE.
    */
   public Map<IPermissionRecipient, IPermissionMask> getPermissions(final ISolutionFile file) {
+    if (!SecurityHelper.canHaveACLS(file)) {
+      return Collections.emptyMap();
+    }
     if (hasAccess(file, ISolutionRepository.ACTION_EXECUTE)) {
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       return permissionMgr.getPermissions(file);
@@ -1527,9 +1466,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * If we had a READ_PERMS bit, then it would be enforced here. Instead, we use ACTION_EXECUTE.
    */
   public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(final ISolutionFile file) {
+    if (!SecurityHelper.canHaveACLS(file)) {
+      return Collections.emptyMap();
+    }
     if (hasAccess(file, ISolutionRepository.ACTION_EXECUTE)) {
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
-      return permissionMgr.getEffectivePermissions(file);      
+      return permissionMgr.getEffectivePermissions(file);
     } else {
       return null;
     }
@@ -1540,11 +1482,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     synchronized (lock) {
       HibernateUtil.beginTransaction();
       try {
-        
+
         if (!(isPathedUnderSolutionRoot(newFolder))) {
-          throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName()));
+          throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder
+              .getName()));
         }
-        
+
         String newFolderCanonicalPath = newFolder.getCanonicalPath();
         String relativePath = newFolderCanonicalPath.substring(rootCanonicalName.length());
         if (relativePath.startsWith(File.separator)) {
@@ -1560,13 +1503,14 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         if (parentFolder == null) { // no access
           return null;
         }
-        
+
         String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath("");
         File solutionFile = new File(solutionRoot);
         if (solutionFile.isDirectory()) {
           Map reposFileStructure = this.getAllRepositoryModDates();
           /*
-           * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base: /solutions
+           * The fromBase and toBase are, for example: From Base: D:\japps\pentaho\my-solutions\solutions To Base:
+           * /solutions
            */
           String fromBase = solutionFile.getAbsolutePath();
           String toBase = (solutionFile.getName().charAt(0) == '/') ? solutionFile.getName()
@@ -1583,7 +1527,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       return null;
     }
   }
-  
+
   private class DefaultSolutionFilter implements ISolutionFilter {
     public boolean keepFile(final ISolutionFile solutionFile, final int actionOperation) {
       if (solutionFile instanceof IAclHolder) {
@@ -1593,7 +1537,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
   }
-  
+
   private class DefaultSolutionAttributeContributor implements ISolutionAttributeContributor {
     public void contributeAttributes(final ISolutionFile solutionFile, final Element childNode) {
       if (solutionFile instanceof IAclHolder) {

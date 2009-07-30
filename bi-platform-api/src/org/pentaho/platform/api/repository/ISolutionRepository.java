@@ -487,16 +487,6 @@ public interface ISolutionRepository extends ILogger {
    * @param actionOperation permission requested (A constant from ISolutionRepository.)
    * @return true if actionOperation is allowed for this aFile
    */
-  public boolean hasAccess(IPermissionRecipient permRecipient, ISolutionFile aFile, int actionOperation);
-
-  /**
-   * Checks permission. Although implementations should enforce permissions, some clients may want to see beforehand
-   * whether or not an operation will succeed. An example is enabling/disable UI controls based on access.
-   * 
-   * @param aFile domain instance to check
-   * @param actionOperation permission requested (A constant from ISolutionRepository.)
-   * @return true if actionOperation is allowed for this aFile
-   */
   public boolean hasAccess(ISolutionFile aFile, int actionOperation);
 
   /**

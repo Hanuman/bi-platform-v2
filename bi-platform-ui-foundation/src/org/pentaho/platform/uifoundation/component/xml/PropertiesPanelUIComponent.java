@@ -385,7 +385,9 @@ public class PropertiesPanelUIComponent extends XmlComponent {
         String permName = keyIterator.next().toString();
         aPermission.addElement(PropertiesPanelUIComponent.NAME_NODE_NAME).setText(permName);
         int permMask = ((Integer) permissionsMap.get(permName)).intValue();
-        boolean isPermitted = repository.hasAccess(permissionRecipient, file, permMask);
+//        boolean isPermitted = repository.hasAccess(permissionRecipient, file, permMask);
+//        broken on purpose
+        boolean isPermitted = false;
         aPermission.addElement(PropertiesPanelUIComponent.PERMITTED_NODE_NAME).addText(
             isPermitted ? PropertiesPanelUIComponent.TRUE : PropertiesPanelUIComponent.FALSE);
       }
@@ -393,6 +395,10 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     return document;
   }
 
+  public static void main(String[] args) {
+    
+  }
+  
   public List getAllUsersList() {
     if (allUsersList == null) {
       allUsersList = userDetailsRoleListService.getAllUsers();

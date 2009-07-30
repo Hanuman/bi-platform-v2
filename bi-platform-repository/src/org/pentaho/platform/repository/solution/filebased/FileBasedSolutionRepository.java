@@ -933,10 +933,6 @@ private void addToRepository( final IFileInfo info, final String solution, final
     return true;
   }
 
-  public boolean hasAccess(final IPermissionRecipient permRecipient, final ISolutionFile file, final int actionOperation) {
-    return true;
-  }
-
   public int publish(final String baseUrl, final String path, final String fileName, final byte[] data,
       final boolean overwrite) throws PentahoAccessControlException {
     return addSolutionFile(baseUrl, path, fileName, data, overwrite);

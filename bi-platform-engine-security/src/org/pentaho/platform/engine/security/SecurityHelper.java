@@ -27,15 +27,14 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclHolder;
+import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
-import org.pentaho.platform.api.repository.IRepositoryFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 
 /**
  * A utility class with several static methods that are used to
@@ -226,7 +225,7 @@ public class SecurityHelper {
    * @param session
    * @return
    */
-  public static boolean hasAccess(final IRepositoryFile aFile, final int actionOperation, final IPentahoSession session) {
+  public static boolean hasAccess(final IAclSolutionFile aFile, final int actionOperation, final IPentahoSession session) {
     if (!aFile.isDirectory()) {
       List extensionList = PentahoSystem.getACLFileExtensionList();
       String fName = aFile.getFileName();
@@ -267,6 +266,10 @@ public class SecurityHelper {
       }
       case ISolutionRepository.ACTION_DELETE: {
         aclMask = IPentahoAclEntry.PERM_DELETE;
+        break;
+      }
+      case ISolutionRepository.ACTION_SHARE: {
+        aclMask = IPentahoAclEntry.PERM_UPDATE_PERMS;
         break;
       }
       default: {

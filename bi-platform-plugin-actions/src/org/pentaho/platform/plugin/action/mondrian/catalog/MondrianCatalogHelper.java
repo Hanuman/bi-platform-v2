@@ -65,7 +65,6 @@ import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.SimpleSession;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.plugin.action.messages.Messages;
@@ -590,8 +589,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
       throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0011_REPOSITORY_ERROR", cat.getDefinition())); //$NON-NLS-1$
     }
 
-    return PentahoSystem.get(ISolutionRepository.class, pentahoSession).hasAccess(new SimpleSession(pentahoSession),
-        solutionFile, mappedPerm.getMask());
+    return PentahoSystem.get(ISolutionRepository.class, pentahoSession).hasAccess(solutionFile, mappedPerm.getMask());
   }
 
   protected String getSolutionRepositoryRelativePath(final String path, final IPentahoSession pentahoSession) {

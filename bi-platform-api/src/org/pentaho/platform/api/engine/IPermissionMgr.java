@@ -19,14 +19,10 @@ package org.pentaho.platform.api.engine;
 import java.util.Map;
 
 public interface IPermissionMgr {
-  public void setPermission(IPermissionRecipient permissionRecipient, IPermissionMask permission, Object domainInstance);
-
   /**
-   * mlowery Note that this method takes a single recipient--either a role or user. It does not take an Authentication 
-   * instance like Acegi Security's AccessDecisionVoter.  
+   * TODO mlowery This is really addPermission. Perhaps a method name change?
    */
-  public boolean hasPermission(IPermissionRecipient permissionRecipient, IPermissionMask permission,
-      Object domainInstance);
+  public void setPermission(IPermissionRecipient permissionRecipient, IPermissionMask permission, Object domainInstance);
 
   /**
    * Returns permission map containing access control entries that are defined directly on this 
@@ -45,8 +41,5 @@ public interface IPermissionMgr {
    */
   public Map<IPermissionRecipient, IPermissionMask> getEffectivePermissions(Object domainInstance);
 
-  /**
-   * TODO mlowery This is really addPermission. Perhaps a method name change?
-   */
   public void setPermissions(Map<IPermissionRecipient, IPermissionMask> acl, Object domainInstance);
 }

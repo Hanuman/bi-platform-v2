@@ -116,7 +116,7 @@
 				  with an extension in this list can have ACLs applied.
 				-->
                 
-				<acl-files>xaction,url</acl-files>
+				<acl-files>xaction,url,prpt,xdash,xcdf</acl-files>
 
 				<anonymous-authentication>
 				  <anonymous-user>anonymous</anonymous-user>
