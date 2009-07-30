@@ -110,7 +110,7 @@ public class FilterPanelComponent extends XmlComponent {
           definitionPath);
       Document filterDocument = null;
       try {
-        filterDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
+        filterDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException e) {
         // TODO sbarkdull localize
         FilterPanelComponent.logger.error(Messages.getString("FilterPanelComponent.ERROR_0002_CREATE_XML"), e); //$NON-NLS-1$

@@ -96,7 +96,7 @@ public class GetResource extends ServletBase {
     }
     
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
-    InputStream in = repository.getResourceInputStream(resourcePath, true);
+    InputStream in = repository.getResourceInputStream(resourcePath, true, ISolutionRepository.ACTION_EXECUTE);
     if (in == null) {
       error(Messages.getErrorString("GetResource.ERROR_0003_RESOURCE_MISSING", resourcePath)); //$NON-NLS-1$
       response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);

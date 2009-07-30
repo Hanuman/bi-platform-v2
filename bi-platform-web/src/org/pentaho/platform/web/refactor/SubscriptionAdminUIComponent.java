@@ -1403,7 +1403,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     }
 
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
-    String actionSequences[] = repository.getAllActionSequences();
+    String actionSequences[] = repository.getAllActionSequences(ISolutionRepository.ACTION_EXECUTE);
     Arrays.sort(actionSequences, new SolutionCompare()); // Put these babies in order
     ele = DocumentHelper.createElement("listContent"); //$NON-NLS-1$
     ele.addAttribute("count", String.valueOf(actionSequences.length)); //$NON-NLS-1$

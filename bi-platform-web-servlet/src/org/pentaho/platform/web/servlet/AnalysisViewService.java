@@ -373,8 +373,8 @@ public class AnalysisViewService extends ServletBase {
     
     try {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
-      if (repository.resourceExists(analysisViewTemplate)) {
-        is = repository.getResourceInputStream(analysisViewTemplate, false);
+      if (repository.resourceExists(analysisViewTemplate, ISolutionRepository.ACTION_EXECUTE)) {
+        is = repository.getResourceInputStream(analysisViewTemplate, false, ISolutionRepository.ACTION_EXECUTE);
         SAXReader reader = new SAXReader();
         Document doc = reader.read(is);
         return new ActionSequenceDocument(doc);

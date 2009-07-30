@@ -29,6 +29,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.FileHelper;
@@ -131,7 +132,7 @@ public class RepositoryUpdateHelper {
     for (int i = 0; i < updatedFiles.size(); i++) {
       File updatedFile = (File) updatedFiles.get(i);
       String updRepoFileName = convertFileName(updatedFile.getAbsolutePath());
-      RepositoryFile updRepoFileObject = (RepositoryFile) dbBasedRepository.getFileByPath(updRepoFileName); // Hibernate Query
+      RepositoryFile updRepoFileObject = (RepositoryFile) dbBasedRepository.internalGetFileByPath(updRepoFileName); // Hibernate Query
       byte[] data = FileHelper.getBytesFromFile(updatedFile);
       updRepoFileObject.setLastModified(updatedFile.lastModified());
       updRepoFileObject.setData(data);
@@ -148,7 +149,7 @@ public class RepositoryUpdateHelper {
       // Check for it to already be there...
       updFolderObject = (RepositoryFile) createdOrRetrievedFolders.get(folderNameCorrected);
       if (updFolderObject == null) {
-        updFolderObject = (RepositoryFile) dbBasedRepository.getFileByPath(folderNameCorrected); // Hibernate Query
+        updFolderObject = (RepositoryFile) dbBasedRepository.internalGetFileByPath(folderNameCorrected); // Hibernate Query
         createdOrRetrievedFolders.put(folderNameCorrected, updFolderObject); // Put it here so we can use it later if needed
       }
       updFolderObject.setLastModified(updatedFolder.lastModified()); // Update the date/time stamp
@@ -316,7 +317,7 @@ public class RepositoryUpdateHelper {
     ISolutionFile theParent = (RepositoryFile) createdOrRetrievedFolders.get(parentName);
     if (theParent == null) {
       // It's not there - need to get it from the RDBMS
-      theParent = dbBasedRepository.getFileByPath(parentName); // Hibernate Query
+      theParent = dbBasedRepository.internalGetFileByPath(parentName); // Hibernate Query
       createdOrRetrievedFolders.put(parentName, theParent);
     }
     return theParent;
@@ -340,7 +341,7 @@ public class RepositoryUpdateHelper {
     // Get the Parent Folder either from our map or from Hibernate if necessary
     RepositoryFile parentFolderObject = (RepositoryFile) getParent(fixedParentFolderName);
     if (parentFolderObject == null) {
-      parentFolderObject = (RepositoryFile)dbBasedRepository.getRootFolder();
+      parentFolderObject = (RepositoryFile)dbBasedRepository.internalGetRootFolder();
     }
     // Now, we have the parent in hand, we can create the RepositoryFile object
     RepositoryFile newFolderObject = new RepositoryFile(newFolder.getName(), parentFolderObject, null, newFolder

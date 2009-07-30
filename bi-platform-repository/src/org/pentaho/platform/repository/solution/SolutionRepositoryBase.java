@@ -53,6 +53,7 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISessionContainer;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
+import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
@@ -87,7 +88,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   protected static final int BROWSE_DEPTH = 2;
 
-  protected static final String ROOT_NODE_NAME = "repositiory"; //$NON-NLS-1$
+  protected static final String ROOT_NODE_NAME = "repository"; //$NON-NLS-1$
 
   protected static final String LOCATION_ATTR_NAME = "location"; //$NON-NLS-1$
 
@@ -142,7 +143,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return LocaleHelper.getLocale();
   }
 
-  public void init() {
+  protected void init() {
     rootFile = getFile("", false); //$NON-NLS-1$
     rootPath = rootFile.getAbsolutePath() + File.separator;
     setLogId(SolutionRepositoryBase.LOG_NAME + ": "); //$NON-NLS-1$
@@ -161,8 +162,8 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
    * 
    */
   public void init(final IPentahoSession pentahoSession) {
-    init();
     setSession(pentahoSession);
+    init();
   }
 
   protected IPentahoSession getSession() {
@@ -176,7 +177,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   // TODO sbarkdull, this code is very similar to XmlHelper.getLocalizedFile(). they
   // likely should be resolved into a single method in an appropriate utility class/package.
-  public ISolutionFile getLocalizedFile(final ISolutionFile resourceFile) {
+  protected ISolutionFile getLocalizedFile(final ISolutionFile resourceFile, final int actionOperation) {
     String fileName = resourceFile.getFileName();
     int idx = fileName.lastIndexOf('.');
     String baseName = idx == -1 ? fileName : fileName.substring(0, idx); // These two lines fix an index out of bounds
@@ -193,16 +194,16 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     String variant = getLocale().getVariant();
     ISolutionFile localeFile = null;
     if (!variant.equals("")) { //$NON-NLS-1$
-      localeFile = getFileByPath(directory + baseName + "_" + language + "_" + country + "_" + variant + extension); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      localeFile = getFileByPath(directory + baseName + "_" + language + "_" + country + "_" + variant + extension, actionOperation); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     if (localeFile == null) {
-      localeFile = getFileByPath(directory + baseName + "_" + language + "_" + country + extension); //$NON-NLS-1$//$NON-NLS-2$
+      localeFile = getFileByPath(directory + baseName + "_" + language + "_" + country + extension, actionOperation); //$NON-NLS-1$//$NON-NLS-2$
     }
     if (localeFile == null) {
-      localeFile = getFileByPath(directory + baseName + "_" + language + extension); //$NON-NLS-1$
+      localeFile = getFileByPath(directory + baseName + "_" + language + extension, actionOperation); //$NON-NLS-1$
     }
     if (localeFile == null) {
-      localeFile = getFileByPath(directory + baseName + extension);
+      localeFile = getFileByPath(directory + baseName + extension, actionOperation);
     }
     if (localeFile != null) {
       return localeFile;
@@ -211,7 +212,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
   }
 
-  public ISolutionFile getFileByPath(final String path) {
+  protected ISolutionFile getFileByPath(final String path, final int actionOperation) {
     File file = new File(PentahoSystem.getApplicationContext().getSolutionPath(path));
     if ((isPathedUnderSolutionRoot(file)) && (file.exists())) {
       return new FileSolutionFile(file, rootFile);
@@ -258,7 +259,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return f;
   }
 
-  public static boolean isSystemPath(final String path) {
+  protected static boolean isSystemPath(final String path) {
 
     Matcher m = SolutionRepositoryBase.SYSTEM_PATH_PATTERN.matcher(path.toLowerCase());
     return m.matches();
@@ -267,24 +268,24 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   /**
    * Returns true if the path is the tmp directory in the system solution.
    */
-  public static boolean isSystemTmpPath(final String path) {
+  protected static boolean isSystemTmpPath(final String path) {
     Matcher m = SolutionRepositoryBase.SYSTEM_TMP_PATH_PATTERN.matcher(path.toLowerCase());
     return m.matches();
   }
 
-  public InputStream getResourceInputStream(final IActionSequenceResource actionResource, final boolean getLocalizedResource) throws FileNotFoundException {
+  public InputStream getResourceInputStream(final IActionSequenceResource actionResource, final boolean getLocalizedResource, final int actionOperation) throws FileNotFoundException {
     int resourceSource = actionResource.getSourceType();
     InputStream inputStream = null;
     if (resourceSource == IActionSequenceResource.URL_RESOURCE) {
       inputStream = HttpUtil.getURLInputStream(actionResource.getAddress());
     } else if ((resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE) || (resourceSource == IActionSequenceResource.FILE_RESOURCE)) {
-      ISolutionFile solutionFile = getSolutionFile(actionResource);
+      ISolutionFile solutionFile = getSolutionFile(actionResource, actionOperation);
       if (solutionFile == null) {
         String msg = "Resource not found: ["+actionResource.getAddress()+"]"; //$NON-NLS-1$ //$NON-NLS-2$
         debug(msg);
         throw new FileNotFoundException(msg);
       } else if (getLocalizedResource) {
-        solutionFile = getLocalizedFile(solutionFile);
+        solutionFile = getLocalizedFile(solutionFile, actionOperation);
       }
       inputStream = new ByteArrayInputStream(solutionFile.getData());
     }
@@ -319,8 +320,8 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
   }
 
-  public String getLocaleString(final String key, final String baseName, final String baseFilePath) {
-    ISolutionFile file = getFileByPath(baseFilePath);
+  protected String getLocaleString(final String key, final String baseName, final String baseFilePath, final int actionOperation) {
+    ISolutionFile file = getFileByPath(baseFilePath, actionOperation);
     return getLocaleString(key, baseName, file, true);
   }
 
@@ -414,34 +415,34 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return null;
   }
 
-  public InputStream getResourceInputStream(final String solutionPath, final boolean getLocalizedResource) throws FileNotFoundException {
+  public InputStream getResourceInputStream(final String solutionPath, final boolean getLocalizedResource, final int actionOperation) throws FileNotFoundException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceInputStream(resource, getLocalizedResource);
+    return getResourceInputStream(resource, getLocalizedResource, actionOperation);
   }
 
-  public Reader getResourceReader(final IActionSequenceResource actionResource) throws FileNotFoundException, IOException {
-    return new InputStreamReader(getResourceInputStream(actionResource, true), LocaleHelper.getSystemEncoding());
+  public Reader getResourceReader(final IActionSequenceResource actionResource, final int actionOperation) throws FileNotFoundException, IOException {
+    return new InputStreamReader(getResourceInputStream(actionResource, true, actionOperation), LocaleHelper.getSystemEncoding());
   }
 
-  public Reader getResourceReader(final String solutionPath) throws FileNotFoundException, IOException {
+  public Reader getResourceReader(final String solutionPath, final int actionOperation) throws FileNotFoundException, IOException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceReader(resource);
+    return getResourceReader(resource, actionOperation);
   }
 
-  public String getResourceAsString(final IActionSequenceResource actionResource) throws IOException {
-    return new String(getResourceAsBytes(actionResource, true), LocaleHelper.getSystemEncoding());
+  public String getResourceAsString(final IActionSequenceResource actionResource, final int actionOperation) throws IOException {
+    return new String(getResourceAsBytes(actionResource, true, actionOperation), LocaleHelper.getSystemEncoding());
   }
 
-  public String getResourceAsString(final String solutionPath) throws IOException {
+  public String getResourceAsString(final String solutionPath, final int actionOperation) throws IOException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceAsString(resource);
+    return getResourceAsString(resource, actionOperation);
   }
 
-  public byte[] getResourceAsBytes(final IActionSequenceResource actionResource, final boolean getLocalizedResource) throws IOException {
-    InputStream inputStream = getResourceInputStream(actionResource, getLocalizedResource);
+  public byte[] getResourceAsBytes(final IActionSequenceResource actionResource, final boolean getLocalizedResource, final int actionOperation) throws IOException {
+    InputStream inputStream = getResourceInputStream(actionResource, getLocalizedResource, actionOperation);
     ByteArrayOutputStream bais = new ByteArrayOutputStream();
     int numRead = 0;
     byte[] buffer = new byte[16384];
@@ -452,17 +453,17 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return bais.toByteArray();
   }
 
-  public byte[] getResourceAsBytes(final String solutionPath, final boolean getLocalizedResource) throws IOException {
+  public byte[] getResourceAsBytes(final String solutionPath, final boolean getLocalizedResource, final int actionOperation) throws IOException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceAsBytes(resource, getLocalizedResource);
+    return getResourceAsBytes(resource, getLocalizedResource, actionOperation);
   }
 
-  public IPentahoStreamSource getResourceDataSource(final IActionSequenceResource actionResource) throws FileNotFoundException {
-    return new SolutionRepositoryBase.ActionSequenceResourceWrapper(actionResource, getResourceInputStream(actionResource, true));
+  public IPentahoStreamSource getResourceDataSource(final IActionSequenceResource actionResource, final int actionOperation) throws FileNotFoundException {
+    return new SolutionRepositoryBase.ActionSequenceResourceWrapper(actionResource, getResourceInputStream(actionResource, true, actionOperation));
   }
 
-  public static final class ActionSequenceResourceWrapper implements IPentahoStreamSource {
+  protected static final class ActionSequenceResourceWrapper implements IPentahoStreamSource {
     private InputStream inputStream;
 
     private IActionSequenceResource resource;
@@ -492,23 +493,23 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
   }
 
-  public IPentahoStreamSource getResourceDataSource(final String solutionPath) throws FileNotFoundException {
+  public IPentahoStreamSource getResourceDataSource(final String solutionPath, final int actionOperation) throws FileNotFoundException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceDataSource(resource);
+    return getResourceDataSource(resource, actionOperation);
   }
 
-  public Document getResourceAsDocument(final String solutionPath) throws IOException {
+  public Document getResourceAsDocument(final String solutionPath, final int actionOperation) throws IOException {
     IActionSequenceResource resource = new ActionSequenceResource("", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         solutionPath);
-    return getResourceAsDocument(resource);
+    return getResourceAsDocument(resource, actionOperation);
   }
 
-  public Document getResourceAsDocument(final IActionSequenceResource actionResource) throws IOException {
+  public Document getResourceAsDocument(final IActionSequenceResource actionResource, final int actionOperation) throws IOException {
     // TODO support locales here
 
     // figure out what the XML string says the encoding is
-    byte[] b = getResourceAsBytes(actionResource, true);
+    byte[] b = getResourceAsBytes(actionResource, true, actionOperation);
     String tmpXml = new String(b);
     String encoding = XmlHelper.getEncoding(tmpXml);
     if (null == encoding) {
@@ -532,11 +533,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     String fullPath = solution + ISolutionRepository.SEPARATOR
         + ((StringUtil.isEmpty(path)) ? "" : path + ISolutionRepository.SEPARATOR) + fileName; //$NON-NLS-1$
     try {
-      ISolutionFile file = getFileByPath(fullPath);
-      if (hasAccess(file, actionOperation)) {
-        InputStream in = getResourceInputStream(fullPath, true);
-        fileInfo = pluginManager.getFileInfo(extension, getSession(), file, in);
-      }
+      ISolutionFile file = getFileByPath(fullPath, actionOperation);
+      InputStream in = getResourceInputStream(fullPath, true, actionOperation);
+      fileInfo = pluginManager.getFileInfo(extension, getSession(), file, in);
     } catch (Exception e) {
       error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
     }
@@ -567,7 +566,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     SolutionRepositoryBase.propertyMap.clear();
   }
 
-  public ISolutionFile getRootFolder() {
+  public ISolutionFile getRootFolder(final int actionOperation) {
     return new FileSolutionFile(rootFile, rootFile);
   }
 
@@ -684,6 +683,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public boolean removeSolutionFile(String solutionPath) {
+    if (isSystemPath(solutionPath)) {
+      return false;
+    }
     solutionPath = PentahoSystem.getApplicationContext().getSolutionPath(solutionPath);
     File deleteFile = new File(solutionPath);
     try {
@@ -801,22 +803,28 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return null;
   }
 
-  public ISolutionFile getSolutionFile(final IActionSequenceResource actionResource) {
+  public ISolutionFile getSolutionFile(final String path, final int actionOperation) {
+    ISolutionFile solutionFile = null;
+    if (!SolutionRepositoryBase.isSystemPath(path)) {
+      // Not checking here because the underlying
+      // has the check.
+      solutionFile = getFileByPath(path, actionOperation);
+    } else {
+      String solutionPath = PentahoSystem.getApplicationContext().getSolutionPath(path);
+      if ((isPathedUnderSolutionRoot(solutionPath))) {
+        solutionFile = new FileSolutionFile(new File(solutionPath), rootFile);
+      }
+    }
+    return solutionFile;
+  }
+  
+  public ISolutionFile getSolutionFile(final IActionSequenceResource actionResource, final int actionOperation) {
     ISolutionFile solutionFile = null;
     int resourceSource = actionResource.getSourceType();
     String realPath = null;
     if (resourceSource == IActionSequenceResource.SOLUTION_FILE_RESOURCE) {
       realPath = actionResource.getAddress();
-      if (!SolutionRepositoryBase.isSystemPath(realPath)) {
-				// Not checking here because the underlying
-				// has the check.
-        solutionFile = getFileByPath(realPath);
-      } else {
-        realPath = PentahoSystem.getApplicationContext().getSolutionPath(actionResource.getAddress());
-        if ((isPathedUnderSolutionRoot(realPath))) {
-        solutionFile = new FileSolutionFile(new File(realPath), rootFile);
-      }
-      }
+      solutionFile = getSolutionFile(realPath, actionOperation);
     } else if (resourceSource == IActionSequenceResource.FILE_RESOURCE) {
       realPath = actionResource.getAddress();
       if ((isPathedUnderSolutionRoot(realPath))) {
@@ -837,8 +845,11 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     FileSolutionFile fsf = new FileSolutionFile(newFolder, rootFile);
     return fsf;
   }
-
-  public String getLocalizedFileProperty(final ISolutionFile resourceFile, final String key) {
+  
+  public String getLocalizedFileProperty(final ISolutionFile resourceFile, final String key, final int actionOperation) {
+    if (!hasAccess(resourceFile, actionOperation)) {
+      return null;
+    }
     // look for .properties file for this file
     String fileName = resourceFile.getFileName();
     int idx = fileName.lastIndexOf('.');
@@ -935,5 +946,18 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
       }
     }
     return path;
+  }
+  
+  // TODO sbarkdull, refactor, this should should be in the XmlHelper class
+  // maybe rename getNodeTextOrDefault
+  protected String getValue(final Document doc, final String xPath, final String defaultValue) {
+    if (doc != null) {
+      Node node = doc.selectSingleNode(xPath);
+      if (node == null) {
+        return defaultValue;
+      }
+      return node.getText();
+    }
+    return defaultValue;
   }
 }

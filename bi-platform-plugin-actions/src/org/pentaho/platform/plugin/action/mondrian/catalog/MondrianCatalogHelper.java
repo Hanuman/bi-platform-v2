@@ -470,7 +470,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     String res = null;
     InputStream in = null;
     try {
-      in = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getResourceInputStream(relPath, true);
+      in = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getResourceInputStream(relPath, true, ISolutionRepository.ACTION_EXECUTE);
       in.mark(Integer.MAX_VALUE);
       try {
         // Read the encoding from the XML file - see BISERVER-895
@@ -571,13 +571,13 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 
     String relPath = getSolutionRepositoryRelativePath(cat.getDefinition(), pentahoSession);
 
-    ISolutionFile solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getFileByPath(relPath);
+    ISolutionFile solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getSolutionFile(relPath, ISolutionRepository.ACTION_EXECUTE);
 
     if (null == solutionFile) {
 
       // try to get parent folder
       relPath = relPath.substring(0, relPath.lastIndexOf("/")); //$NON-NLS-1$
-      solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getFileByPath(relPath);
+      solutionFile = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getSolutionFile(relPath, ISolutionRepository.ACTION_EXECUTE);
       if (null == solutionFile) {
         // file not found
         throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0010_PATH_NOT_FOUND", cat.getDefinition())); //$NON-NLS-1$

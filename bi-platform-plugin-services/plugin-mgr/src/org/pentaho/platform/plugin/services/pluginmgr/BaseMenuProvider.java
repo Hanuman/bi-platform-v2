@@ -48,7 +48,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 	protected XulDomContainer getXulContainer( String documentPath, IPentahoSession session) {
 		  try {
 			  ISolutionRepository repo = PentahoSystem.get( ISolutionRepository.class, session );
-			  InputStream in = repo.getResourceInputStream( documentPath, true);
+			  InputStream in = repo.getResourceInputStream( documentPath, true, ISolutionRepository.ACTION_EXECUTE);
 		      SAXReader rdr = new SAXReader();
 		      final Document doc = rdr.read(in);
 		      

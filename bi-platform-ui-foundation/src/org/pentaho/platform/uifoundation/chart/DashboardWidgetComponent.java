@@ -194,7 +194,7 @@ public class DashboardWidgetComponent extends XmlComponent {
           definitionPath);
       Document dialDefinition = null;
       try {
-        dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
+        dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException e) {
         error(Messages.getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath), e); //$NON-NLS-1$
       }

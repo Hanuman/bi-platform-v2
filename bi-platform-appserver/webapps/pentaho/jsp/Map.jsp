@@ -73,7 +73,7 @@
 		String template = null;
   		try {
 	   		ActionResource resource = new ActionResource( "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", "system/custom/template-document.html" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    			template = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsString( resource );
+    			template = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsString( resource, ISolutionRepository.ACTION_EXECUTE );
     		} catch (Throwable t) {
                   t.printStackTrace();
     		}

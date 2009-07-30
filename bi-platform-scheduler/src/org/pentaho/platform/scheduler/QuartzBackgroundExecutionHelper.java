@@ -282,12 +282,12 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       // get the title for the plugin file
       InputStream inputStream = null;
       try {
-        inputStream = repo.getResourceInputStream(actionSeqPath, true);
+        inputStream = repo.getResourceInputStream(actionSeqPath, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e) {
         logger.warn(e.getMessage(), e);
         // proceed to get the file info from the plugin manager. getFileInfo will return a failsafe fileInfo when something goes wrong.
       }
-      IFileInfo fileInfo = pluginManager.getFileInfo(type, userSession, repo.getFileByPath(actionSeqPath), inputStream);
+      IFileInfo fileInfo = pluginManager.getFileInfo(type, userSession, repo.getSolutionFile(actionSeqPath, ISolutionRepository.ACTION_EXECUTE), inputStream);
       title = fileInfo.getTitle();
     } else {
       IActionSequence action = repo.getActionSequence(actionInfo.getSolutionName(), actionInfo.getPath(), actionInfo.getActionName(), repo.getLoggingLevel(),

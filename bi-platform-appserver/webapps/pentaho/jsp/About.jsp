@@ -55,7 +55,7 @@
   		    templateName = "system/custom/template-dialog.html"; //$NON-NLS-1$
   		  }
 	   		ActionResource resource = new ActionResource( "", IActionResource.SOLUTION_FILE_RESOURCE, "text/xml", templateName ); //$NON-NLS-1$ //$NON-NLS-2$
-    			template = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsString( resource );
+    			template = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsString( resource, ISolutionRepository.ACTION_EXECUTE );
     		} catch (Throwable t) {
     		  // TODO we need to do something here, like log at the very least!
     		  // catching Throwable is likely not optimal either.

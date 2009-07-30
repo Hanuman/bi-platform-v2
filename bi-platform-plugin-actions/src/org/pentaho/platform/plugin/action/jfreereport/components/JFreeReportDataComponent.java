@@ -145,7 +145,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
       final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, getSession());
       final InputStream in;
       try {
-        in = solutionRepository.getResourceInputStream(resource, true);
+        in = solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
         try {
           // not being able to read a single char is definitly a big boo ..
           if (in.read() == -1) {

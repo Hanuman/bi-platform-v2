@@ -546,16 +546,16 @@ public class DefaultPluginManager extends AbstractPluginManager {
       IFileInfoGenerator.ContentType contentType = fileInfoGenerator.getContentType();
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       if (contentType == IFileInfoGenerator.ContentType.INPUTSTREAM) {
-        InputStream in = repository.getResourceInputStream(fullPath, true);
+        InputStream in = repository.getResourceInputStream(fullPath, true, ISolutionRepository.ACTION_EXECUTE);
         fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, in);
       } else if (contentType == IFileInfoGenerator.ContentType.DOM4JDOC) {
-        Document doc = repository.getResourceAsDocument(fullPath);
+        Document doc = repository.getResourceAsDocument(fullPath, ISolutionRepository.ACTION_EXECUTE);
         fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, doc);
       } else if (contentType == IFileInfoGenerator.ContentType.BYTES) {
-        byte bytes[] = repository.getResourceAsBytes(fullPath, true);
+        byte bytes[] = repository.getResourceAsBytes(fullPath, true, ISolutionRepository.ACTION_EXECUTE);
         fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, bytes);
       } else if (contentType == IFileInfoGenerator.ContentType.STRING) {
-        String str = repository.getResourceAsString(fullPath);
+        String str = repository.getResourceAsString(fullPath, ISolutionRepository.ACTION_EXECUTE);
         fileInfo = fileInfoGenerator.getFileInfo(solution, path, fileName, str);
       }
     } catch (Exception e) {

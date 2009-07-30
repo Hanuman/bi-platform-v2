@@ -88,7 +88,7 @@ public class HtmlComponent extends BaseUIComponent {
     IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/html", solutionPath); //$NON-NLS-1$ //$NON-NLS-2$
     try {
-      return PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsString(resource);
+      return PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsString(resource, ISolutionRepository.ACTION_EXECUTE);
     } catch (Exception e) {
       if (errorMessage != null) {
         return errorMessage;

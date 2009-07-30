@@ -1712,7 +1712,7 @@ public class JFreeChartEngine {
     Image image = null;
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     try {
-      InputStream is = repository.getResourceInputStream(imageName, true);
+      InputStream is = repository.getResourceInputStream(imageName, true, ISolutionRepository.ACTION_EXECUTE);
       image = ImageIO.read(is);
     } catch (IOException e) {
       JFreeChartEngine.log.error(null, e);

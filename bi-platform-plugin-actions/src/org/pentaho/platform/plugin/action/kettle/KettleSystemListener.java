@@ -102,10 +102,10 @@ public class KettleSystemListener implements IPentahoSystemListener {
     try {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class,session);
 
-      if (!repository.resourceExists(kettlePropsFilename)) {
+      if (!repository.resourceExists(kettlePropsFilename, ISolutionRepository.ACTION_EXECUTE)) {
         return props;
       }
-      is = repository.getResourceInputStream(kettlePropsFilename, false);
+      is = repository.getResourceInputStream(kettlePropsFilename, false, ISolutionRepository.ACTION_EXECUTE);
       props.load(is);
     } catch (IOException ioe) {
       Logger.error(KettleSystemListener.class.getName(), Messages

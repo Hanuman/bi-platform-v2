@@ -91,12 +91,7 @@ public class AcegiPermissionMgr implements IPermissionMgr {
       session = simpleSession.getSession();
       IAclVoter voter = PentahoSystem.get(IAclVoter.class, session);
       int aclMask = permissionMask.getMask();
-      if (aclMask == IPentahoAclEntry.PERM_ADMINISTRATION) {
-        isPermitted = voter.isPentahoAdministrator(session);
-      } else {
-        // TODO mlowery Voter only needs Authentication. Why pass in IPentahoSession?
-        isPermitted = voter.hasAccess(session, aclHolder, aclMask);
-      }
+      isPermitted = voter.hasAccess(session, aclHolder, aclMask);
     } else { // Otherwise we will get the permission for the object and check if object has permission or not
       Map<IPermissionRecipient, IPermissionMask> map = getPermissions(aclHolder);
       IPermissionMask mask = map.get(permissionRecipient);

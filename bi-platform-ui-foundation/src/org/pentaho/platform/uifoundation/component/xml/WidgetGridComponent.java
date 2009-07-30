@@ -173,7 +173,7 @@ public class WidgetGridComponent extends XmlComponent {
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         widgetGridDataDefinition);
     try {
-      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
+      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       if (dataActionDocument == null) {
         return false;
       }
@@ -242,7 +242,7 @@ public class WidgetGridComponent extends XmlComponent {
         definitionPath);
     Document dialDefinition = null;
     try {
-      dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
+      dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
     } catch (IOException e) {
     }
 

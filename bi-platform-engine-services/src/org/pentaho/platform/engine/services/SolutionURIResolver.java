@@ -63,7 +63,7 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
         if (systemId.toLowerCase().indexOf(".dtd")>=0) { //$NON-NLS-1$
           return resolveDTDEntity(publicId, systemId);
         }
-        xslIS = repository.getResourceInputStream(systemId, true);
+        xslIS = repository.getResourceInputStream(systemId, true, ISolutionRepository.ACTION_EXECUTE);
         return new InputSource(xslIS);
       } catch (IOException e) {
         Logger.error(this, e.getLocalizedMessage());
@@ -106,7 +106,7 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
     if (repository != null) {
       InputStream xslIS = null;
       try {
-        xslIS = repository.getResourceInputStream(href, true);
+        xslIS = repository.getResourceInputStream(href, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e) {
         Logger.error(this, e.getLocalizedMessage());
         return null;
@@ -121,7 +121,7 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
     InputStream xslIS = null;
     if (repository != null) {
       try {
-        xslIS = repository.getResourceInputStream(name, true);
+        xslIS = repository.getResourceInputStream(name, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e) {
         return null;
       }

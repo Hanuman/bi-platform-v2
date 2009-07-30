@@ -150,7 +150,7 @@ public class PrintComponent extends ComponentBase {
     if (printFileName != null) {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
       try {
-        inStream = repository.getResourceInputStream(printFileName, true);
+        inStream = repository.getResourceInputStream(printFileName, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e) {
         return false;
       }

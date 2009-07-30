@@ -56,7 +56,7 @@ public class DbRepositoryClassLoader extends ClassLoader {
     byte[] bytes = (byte[]) DbRepositoryClassLoader.resourceMap.get(key);
     if (bytes == null) {
       try {
-        bytes = repository.getResourceAsBytes(key, false);
+        bytes = repository.getResourceAsBytes(key, false, ISolutionRepository.ACTION_EXECUTE);
         DbRepositoryClassLoader.resourceMap.put(key, bytes);
       } catch (IOException ignored) {
         // This situation indicates the resource could not be found. This is a common and correct situation 

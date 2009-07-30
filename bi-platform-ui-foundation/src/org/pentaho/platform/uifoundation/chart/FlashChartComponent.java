@@ -103,7 +103,7 @@ public class FlashChartComponent extends AbstractChartComponent {
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         chartDefinition);
     try {
-      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource);
+      Document dataActionDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       if (dataActionDocument == null) {
         return false;
       }
@@ -122,7 +122,7 @@ public class FlashChartComponent extends AbstractChartComponent {
               templatePath);
           try {
             Document templateDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(
-                templateResource);
+                templateResource, ISolutionRepository.ACTION_EXECUTE);
             chartTemplate = templateDocument.getRootElement();
           } catch (Exception e) {
             // the chart template document is not valid

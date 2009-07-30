@@ -347,7 +347,7 @@ function loader(){
         if (messageUri.startsWith("content/")) {
           messageUri = "system/" + messageUri.substring(8); //$NON-NLS-1$
         }
-      InputStream in = PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream(messageUri, true);
+      InputStream in = PentahoSystem.get(ISolutionRepository.class, session).getResourceInputStream(messageUri, true, ISolutionRepository.ACTION_EXECUTE);
       return new PropertyResourceBundle( in );
     } catch (Exception e) {
       Logger.error( Messages.class.getName(), "Could not get localization bundle", e ); //$NON-NLS-1$

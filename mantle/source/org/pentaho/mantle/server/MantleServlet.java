@@ -479,17 +479,17 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
 
     String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
-    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+    ISolutionFile solutionFile = repository.getSolutionFile(fullPath, ISolutionRepository.ACTION_EXECUTE);
     solutionFileInfo.solution = solutionName;
     solutionFileInfo.path = path;
     solutionFileInfo.name = fileName;
 
     // Get Localized name
     if (!solutionFile.isDirectory()) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title"); //$NON-NLS-1$
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     }
     if (StringUtils.isEmpty(solutionFileInfo.localizedName)) {
-      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name"); //$NON-NLS-1$
+      solutionFileInfo.localizedName = repository.getLocalizedFileProperty(solutionFile, "name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     }
     
     // Find file Type, if plugin, also get the title
@@ -516,7 +516,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         // get the title for the plugin file
         InputStream inputStream = null;
         try {
-          inputStream = repository.getResourceInputStream(solutionFile.getFullPath(), true);
+          inputStream = repository.getResourceInputStream(solutionFile.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
         } catch (FileNotFoundException e) {
           logger.warn(e.getMessage(), e);
           //proceed to get the file info from the plugin manager.  getFileInfo will return a failsafe fileInfo when something goes wrong.
@@ -577,9 +577,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation) {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
     String fullPath = ActionInfo.buildSolutionPath(solutionName, path, fileName);
-    ISolutionFile solutionFile = repository.getFileByPath(fullPath);
-
-    return repository.hasAccess(solutionFile, actionOperation);
+    ISolutionFile solutionFile = repository.getSolutionFile(fullPath, actionOperation);
+    return solutionFile != null;
   }
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
@@ -590,7 +589,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
       if (repository.supportsAccessControls()) {
         String fullPath = ActionInfo.buildSolutionPath(fileInfo.solution, fileInfo.path, fileInfo.name);
-        ISolutionFile solutionFile = repository.getFileByPath(fullPath);
+        ISolutionFile solutionFile = repository.getSolutionFile(fullPath, ISolutionRepository.ACTION_SHARE);
         
         Map<IPermissionRecipient, IPermissionMask> origAcl = repository.getEffectivePermissions((solutionFile));
         

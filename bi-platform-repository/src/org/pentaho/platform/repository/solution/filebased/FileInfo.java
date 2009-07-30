@@ -131,7 +131,7 @@ public class FileInfo {
     if (fileNameCaseless.endsWith(".xaction")) { //$NON-NLS-1$
       // this is dynamic content - open the document to get the
       // descriptions
-      Document doc = repository.getSolutionDocument(solutionId, path, fileName);
+      Document doc = repository.getSolutionDocument(solutionId, path, fileName, ISolutionRepository.ACTION_EXECUTE);
       if (doc == null) {
         if (doc != null) {
           type = FileInfo.FILE_TYPE_ACTIVITY;
@@ -197,7 +197,7 @@ public class FileInfo {
       }
 
       mimeType = "text/xml"; //$NON-NLS-1$
-      Document doc = repository.getSolutionDocument(solutionId, path, fileName);
+      Document doc = repository.getSolutionDocument(solutionId, path, fileName, ISolutionRepository.ACTION_EXECUTE);
       if (doc != null) {
         Node node = doc.selectSingleNode("//file-info/name"); //$NON-NLS-1$
         if (node == null) {

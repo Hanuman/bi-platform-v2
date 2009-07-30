@@ -72,7 +72,7 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
 
     try {
       ISolutionRepository solutionRepo = PentahoSystem.get(ISolutionRepository.class, session);
-      byte[] configBytes = solutionRepo.getResourceAsBytes(getAxisConfigPath(), false);
+      byte[] configBytes = solutionRepo.getResourceAsBytes(getAxisConfigPath(), false, ISolutionRepository.ACTION_EXECUTE);
       
       //FIXME: specify an encoding when getting bytes
       ByteArrayInputStream in = new ByteArrayInputStream( configBytes );

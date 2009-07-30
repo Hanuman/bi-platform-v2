@@ -86,7 +86,7 @@ public class PentahoResourceData extends AbstractResourceData {
     final IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionResource.SOLUTION_FILE_RESOURCE, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
     try {
-      return solutionRepository.getResourceInputStream(resource, true);
+      return solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
     } catch (FileNotFoundException e) {
       throw new ResourceLoadingException(e.getLocalizedMessage(), e);
     }
@@ -116,7 +116,7 @@ public class PentahoResourceData extends AbstractResourceData {
   public long getVersion(final ResourceManager caller) throws ResourceLoadingException {
     final IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionResource.SOLUTION_FILE_RESOURCE, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
-    final ISolutionFile file = solutionRepository.getSolutionFile(resource);
+    final ISolutionFile file = solutionRepository.getSolutionFile(resource, ISolutionRepository.ACTION_EXECUTE);
     long version = -1L;
     if (file != null) {
       version = file.getLastModified();

@@ -113,7 +113,7 @@ public class GetImage extends ServletBase {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
       //    Open the file and output streams
-      InputStream in = repository.getResourceInputStream(location, true);
+      InputStream in = repository.getResourceInputStream(location, true, ISolutionRepository.ACTION_EXECUTE);
 
       if (in == null) {
         error(Messages.getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$

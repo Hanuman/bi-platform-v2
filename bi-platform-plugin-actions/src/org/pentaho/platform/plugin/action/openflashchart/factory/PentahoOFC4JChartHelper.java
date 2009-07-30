@@ -125,8 +125,8 @@ public class PentahoOFC4JChartHelper {
     }
     ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, new StandaloneSession("system")); //$NON-NLS-1$
     try {
-      if( solutionRepository.resourceExists( SOLUTION_PROPS ) ) {
-        InputStream is = solutionRepository.getResourceInputStream(SOLUTION_PROPS, false);
+      if( solutionRepository.resourceExists( SOLUTION_PROPS, ISolutionRepository.ACTION_EXECUTE) ) {
+        InputStream is = solutionRepository.getResourceInputStream(SOLUTION_PROPS, false, ISolutionRepository.ACTION_EXECUTE);
         Properties overrideChartFactories = new Properties();
         overrideChartFactories.load(is);
         chartFactories.putAll(overrideChartFactories); // load over the top of the known properties

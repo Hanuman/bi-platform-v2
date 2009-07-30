@@ -624,7 +624,7 @@ public class AdhocWebService extends ServletBase {
     
     if (bUseTemplate) {
       templatePath = AdhocWebService.WAQR_REPOSITORY_PATH + templatePath;
-      templateDoc = repository.getResourceAsDocument(templatePath);
+      templateDoc = repository.getResourceAsDocument(templatePath, ISolutionRepository.ACTION_EXECUTE);
 
       templateItems = (Element) templateDoc.selectSingleNode("/report/items"); //$NON-NLS-1$
       List nodes = templateItems.elements();
@@ -1381,9 +1381,9 @@ public class AdhocWebService extends ServletBase {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String templateFilename = "system/waqr" + templateFolderPath + "/" + ISolutionRepository.INDEX_FILENAME; //$NON-NLS-1$ //$NON-NLS-2$
     try {
-      InputStream inStrm = repository.getResourceInputStream(templateFilename, false);
+      InputStream inStrm = repository.getResourceInputStream(templateFilename, false, ISolutionRepository.ACTION_EXECUTE);
       Document indexDoc = XmlDom4JHelper.getDocFromStream(inStrm, new PentahoEntityResolver());
-      ISolutionFile templateFile = repository.getFileByPath(templateFilename);
+      ISolutionFile templateFile = repository.getSolutionFile(templateFilename, ISolutionRepository.ACTION_EXECUTE);
       repository.localizeDoc(indexDoc, templateFile);
       
       WebServiceUtil.writeDocument(outputStream, indexDoc, wrapWithSoap);
@@ -1682,7 +1682,7 @@ public class AdhocWebService extends ServletBase {
     if ( !StringUtils.isEmpty( reportSpecName ) ) {
       try {
         reportSpecName = AdhocWebService.WAQR_REPOSITORY_PATH + reportSpecName;
-        reportSpecDoc = repository.getResourceAsDocument(reportSpecName);
+        reportSpecDoc = repository.getResourceAsDocument(reportSpecName, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException ex) {
         String msg = Messages.getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC", reportSpecName);//$NON-NLS-1$
         throw new AdhocWebServiceException(msg, ex);
@@ -1707,7 +1707,7 @@ public class AdhocWebService extends ServletBase {
         && !StringUtils.isEmpty( filename ) ) {
       try {
         String filePath = ActionInfo.buildSolutionPath(solution, path, filename);
-        reportSpecDoc = repository.getResourceAsDocument(filePath);
+        reportSpecDoc = repository.getResourceAsDocument(filePath, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException ex) {
         String msg = Messages.getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC",//$NON-NLS-1$
             filename );
@@ -1917,7 +1917,7 @@ public class AdhocWebService extends ServletBase {
   private static String getSolutionRepositoryName(final IPentahoSession userSession)
   {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
-    ISolutionFile rootFolder = repository.getRootFolder();
+    ISolutionFile rootFolder = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE);
     return rootFolder.getSolution();
   }
   

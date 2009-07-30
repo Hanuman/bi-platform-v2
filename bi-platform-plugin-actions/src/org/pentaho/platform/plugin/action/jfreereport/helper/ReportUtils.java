@@ -153,7 +153,7 @@ public class ReportUtils {
       final URL url = tempFile.toURL();
 
       final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, session);
-      final InputStream in = solutionRepository.getResourceInputStream(resource, true);
+      final InputStream in = solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
       final OutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile));
       try {
         IOUtils.getInstance().copyStreams(in, out);

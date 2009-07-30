@@ -85,7 +85,7 @@ public class AnalysisSaver extends PentahoMessenger {
         throw new MissingParameterException(Messages.getErrorString("ANALYSISSAVER.ERROR_0001_MISSING_ACTION_REFERENCE")); //$NON-NLS-1$
       }
 
-      org.dom4j.Document document = solutionRepository.getResourceAsDocument(originalActionReference);
+      org.dom4j.Document document = solutionRepository.getResourceAsDocument(originalActionReference, ISolutionRepository.ACTION_UPDATE);
 
       // Update the document with the stuff we passed in on the props
       document = AnalysisSaver.updateDocument(document, props);
@@ -97,7 +97,7 @@ public class AnalysisSaver extends PentahoMessenger {
       String originalPath = actionInfo.getSolutionName() + "/" + actionInfo.getPath(); //$NON-NLS-1$
       String originalFileName = actionInfo.getActionName();
       originalFileName = originalFileName.substring(0, originalFileName.lastIndexOf(AnalysisSaver.SUFFIX));
-      ISolutionFile[] parentFiles = solutionRepository.getFileByPath(originalPath).listFiles();
+      ISolutionFile[] parentFiles = solutionRepository.getSolutionFile(originalPath, ISolutionRepository.ACTION_EXECUTE).listFiles();
       String baseFileName = fileName.substring(0, fileName.lastIndexOf(AnalysisSaver.SUFFIX));
       for (ISolutionFile aSolutionFile : parentFiles) {
         if (!aSolutionFile.isDirectory() && aSolutionFile.getFileName().startsWith(originalFileName)

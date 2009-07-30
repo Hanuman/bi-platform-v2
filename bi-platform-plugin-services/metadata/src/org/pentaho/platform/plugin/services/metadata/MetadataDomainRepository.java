@@ -161,9 +161,9 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     resourceName = solution + "/" + XMI_FILENAME; //$NON-NLS-1$
     xmiInputStream = null;
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-    if (repo.resourceExists(resourceName)) {
+    if (repo.resourceExists(resourceName, ISolutionRepository.ACTION_EXECUTE)) {
       try {
-        xmiInputStream = repo.getResourceInputStream(resourceName, true);
+        xmiInputStream = repo.getResourceInputStream(resourceName, true, ISolutionRepository.ACTION_EXECUTE);
         Domain domain = new XmiParser().parseXmi(xmiInputStream);
         domain.setProperty(LEGACY_LOCATION, resourceName); //$NON-NLS-1$
         domain.setId(solution);

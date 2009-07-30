@@ -98,7 +98,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
     final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, getSession());
 
     try {
-      InputStream reportSpecInputStream = solutionRepository.getResourceInputStream(resource, true);
+      InputStream reportSpecInputStream = solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
       ZipInputStream zis = new ZipInputStream(reportSpecInputStream);
 
       ZipEntry reportSpecEntry = findReportSpec(zis);
@@ -122,7 +122,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
       reportSpec = loadFromZip(resource);
       if (reportSpec == null) {
         InputStream reportSpecInputStream = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceInputStream(
-            resource, true);
+            resource, true, ISolutionRepository.ACTION_EXECUTE);
         reportSpec = (ReportSpec) CastorUtility.getInstance().readCastorObject(reportSpecInputStream, ReportSpec.class);
       }
     }

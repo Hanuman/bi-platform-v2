@@ -100,7 +100,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     MockSecurityUtility.createPat(session);
     repository = getSolutionRepository(session);
-    file = (RepositoryFile) repository.getFileByPath("samples");
+    file = (RepositoryFile) repository.getSolutionFile("samples", ISolutionRepository.ACTION_EXECUTE);
     publisher = new AclPublisher(defaultAcls);
     publisher.publishDefaultAcls(file);
 
@@ -159,7 +159,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     // RepositoryFile aFile =
     // repo.getFileByPath("/test-solution/samples/reporting/custom-parameter-page-example.xaction");
     RepositoryFile aFile = (RepositoryFile) repo
-        .getFileByPath("samples/reporting/jasper-reports-test-1.xaction"); //$NON-NLS-1$
+        .getSolutionFile("samples/reporting/jasper-reports-test-1.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
 
     AcegiPermissionMgr.instance().setPermission(new SimpleRole("ROLE_ADMIN"), new SimplePermissionMask(7), aFile);
     AcegiPermissionMgr.instance().setPermission(new SimpleRole("ROLE_DEVMGR"), new SimplePermissionMask(6), aFile);

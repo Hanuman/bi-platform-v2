@@ -20,6 +20,7 @@
         <!--  external dependencies -->
         <dependency org="org.acegisecurity"   name="acegi-security"      rev="1.0.6" transitive="false"/>
         <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
+        <dependency org="commons-io"          name="commons-io"          rev="1.4" />
         <dependency org="commons-vfs"         name="commons-vfs"         rev="1.0"   transitive="false"/>
        	<dependency org="commons-dbcp"        name="commons-dbcp"        rev="1.2.1">
         	<exclude org="xml-apis" />

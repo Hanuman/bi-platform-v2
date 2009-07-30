@@ -168,7 +168,7 @@ public abstract class AbstractJFreeChartComponent extends AbstractChartComponent
   public static Document getResourceAsDocument(final IPentahoSession userSession,
       final IActionSequenceResource actionResource) throws IOException  {
     // TODO support locales here
-    byte[] xmlBytes = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsBytes(actionResource, false);
+    byte[] xmlBytes = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsBytes(actionResource, false, ISolutionRepository.ACTION_EXECUTE);
     Document document = null;
     if (xmlBytes == null) {
       return null;

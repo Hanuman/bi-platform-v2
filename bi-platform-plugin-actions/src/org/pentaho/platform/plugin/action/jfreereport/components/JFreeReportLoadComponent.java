@@ -95,7 +95,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
       final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, getSession());
       final InputStream in;
       try {
-        in = solutionRepository.getResourceInputStream(resource, true);
+        in = solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e1) {
         error(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
         return false;

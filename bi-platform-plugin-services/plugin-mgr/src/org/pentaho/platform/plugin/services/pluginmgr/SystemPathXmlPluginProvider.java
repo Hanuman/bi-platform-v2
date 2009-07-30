@@ -122,7 +122,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     String path = "system" + ISolutionRepository.SEPARATOR + folder.getName() + ISolutionRepository.SEPARATOR + "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
     Document doc = null;
     try {
-      doc = repo.getResourceAsDocument(path);
+      doc = repo.getResourceAsDocument(path, ISolutionRepository.ACTION_EXECUTE);
       if (doc != null) {
         plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
       }

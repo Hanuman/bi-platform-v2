@@ -116,7 +116,7 @@ public class SolutionRepositoryVfsFileObject implements FileObject {
   }
 
   public boolean exists() throws FileSystemException {
-    return repository.resourceExists(fileRef);
+    return repository.resourceExists(fileRef, ISolutionRepository.ACTION_EXECUTE);
   }
 
   public boolean isHidden() throws FileSystemException {
@@ -153,26 +153,29 @@ public class SolutionRepositoryVfsFileObject implements FileObject {
     List fileList = new ArrayList();
     if (solution == null) {
       // return a list of solutions
-      ISolutionFile files[] = repository.getRootFolder().listFiles();
+      ISolutionFile files[] = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).listFiles();
       for (ISolutionFile element : files) {
         if (element.isDirectory()) {
-          System.out.println("solution: " + element.getFileName());//$NON-NLS-1$
+          //System.out.println("solution: " + element.getFileName());//$NON-NLS-1$
           SolutionRepositoryVfsFileObject fileInfo = new SolutionRepositoryVfsFileObject(
               "/" + element.getFileName(), repository, FileType.FOLDER);//$NON-NLS-1$
           fileList.add(fileInfo);
         }
       }
     } else {
-      ISolutionFile file = repository.getFileByPath(fileRef);
+      ISolutionFile file = repository.getSolutionFile(fileRef, ISolutionRepository.ACTION_EXECUTE);
+      if (file == null) { // no access
+        return new FileObject[0];
+      }
       ISolutionFile files[] = file.listFiles();
       for (ISolutionFile element : files) {
         if (element.isDirectory()) {
-          System.out.println("folder: " + element.getFileName());//$NON-NLS-1$
+          //System.out.println("folder: " + element.getFileName());//$NON-NLS-1$
           SolutionRepositoryVfsFileObject fileInfo = new SolutionRepositoryVfsFileObject(
               "/" + element.getFileName(), repository, FileType.FOLDER);//$NON-NLS-1$
           fileList.add(fileInfo);
         } else {
-          System.out.println("file: " + element.getFileName());//$NON-NLS-1$
+          //System.out.println("file: " + element.getFileName());//$NON-NLS-1$
           SolutionRepositoryVfsFileObject fileInfo = new SolutionRepositoryVfsFileObject(fileRef
               + "/" + element.getFileName(), repository, FileType.FILE);//$NON-NLS-1$
           fileList.add(fileInfo);

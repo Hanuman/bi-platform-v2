@@ -113,7 +113,7 @@ public String processTemplate(String template, final String title, final String 
 
     String template = null;
     try {
-      template = PentahoSystem.get(ISolutionRepository.class, session).getResourceAsString(resource);
+      template = PentahoSystem.get(ISolutionRepository.class, session).getResourceAsString(resource, ISolutionRepository.ACTION_EXECUTE);
     } catch (Throwable t) {
     }
 

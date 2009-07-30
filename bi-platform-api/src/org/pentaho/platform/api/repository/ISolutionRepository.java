@@ -195,8 +195,9 @@ public interface ISolutionRepository extends ILogger {
    * Returns a long that represents the last time this file was modified
    * 
    * @param path
+   * @param actionOperation - Type of action operation to be performed
    */
-  public long getSolutionFileLastModified(String path);
+  public long getSolutionFileLastModified(String path, int actionOperation);
 
   /**
    * Returns an appropriate class loader for a specific path
@@ -233,29 +234,32 @@ public interface ISolutionRepository extends ILogger {
    * Returns a true if the specified resource exists.
    * 
    * @param solutionPath - path to the resource
+   * @param actionOperation - Type of action operation to be performed
    * @return - boolean true if resource exists
    */
-  public boolean resourceExists(String solutionPath);
+  public boolean resourceExists(String solutionPath, int actionOperation);
 
   /**
    * Returns the size of the specfied resource.  If resource doesn't exit
    * a -1 is returned
    * 
    * @param solutionPath - path to the resource
+   * @param actionOperation - Type of action operation to be performed
    * @return - long value of the size
    */
-  public long resourceSize(String solutionPath);
-
+  public long resourceSize(String solutionPath, int actionOperation);
+ 
   /**
    * Given a IActionResource this method returns a InputStream that references the
    * content of the actionResource.
    * 
    * @param actionResource - resource to create a stream for.
    * @param getLocalizedResource - flag to use to check if we should attempt to get a localized version of the resource
+   * @param actionOperation - Type of action operation to be performed
    * @return - InputStream that contains the data of the actionResource
    * @throws FileNotFoundException 
    */
-  public InputStream getResourceInputStream(IActionSequenceResource actionResource, boolean getLocalizedResource)
+  public InputStream getResourceInputStream(IActionSequenceResource actionResource, boolean getLocalizedResource, int actionOperation)
       throws FileNotFoundException;
 
   /**
@@ -263,10 +267,11 @@ public interface ISolutionRepository extends ILogger {
    * solutionPath.
    * 
    * @param solutionPath - location of a resource.
+   * @param actionOperation - Type of action operation to be performed
    * @return - InputStream that represents the data of the resource.
    * @throws FileNotFoundException 
    */
-  public InputStream getResourceInputStream(String solutionPath, boolean getLocalizedResource)
+  public InputStream getResourceInputStream(String solutionPath, boolean getLocalizedResource, int actionOperation)
       throws FileNotFoundException;
 
   /**
@@ -275,11 +280,12 @@ public interface ISolutionRepository extends ILogger {
    * found.
    * 
    * @param actionResource
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws FileNotFoundException
    * @throws IOException
    */
-  public Reader getResourceReader(IActionSequenceResource actionResource) throws FileNotFoundException, IOException;
+  public Reader getResourceReader(IActionSequenceResource actionResource, int actionOperation) throws FileNotFoundException, IOException;
 
   /**
    * See getResourceInputStream(String solutionPath). Identical method
@@ -287,51 +293,56 @@ public interface ISolutionRepository extends ILogger {
    * found.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws FileNotFoundException
    * @throws IOException
    */
-  public Reader getResourceReader(String solutionPath) throws FileNotFoundException, IOException;
+  public Reader getResourceReader(String solutionPath, int actionOperation) throws FileNotFoundException, IOException;
 
   /**
    * See getResourceInputStream(IActionResource actionResource). Identical method
    * except returns results as a String.  Exception is thrown if io error.
    * 
    * @param actionResource
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws IOException
    */
-  public String getResourceAsString(IActionSequenceResource actionResource) throws IOException;
+  public String getResourceAsString(IActionSequenceResource actionResource, int actionOperation) throws IOException;
 
   /**
    * See getResourceInputStream(String solutionPath). Identical method
    * except returns results as a String.  Exception is thrown if io error.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws IOException
    */
-  public String getResourceAsString(String solutionPath) throws IOException;
+  public String getResourceAsString(String solutionPath, int actionOperation) throws IOException;
 
   /**
    * See getResourceInputBytes(String solutionPath). Identical method
    * except returns results as a byte array.  Exception is thrown if io error.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws IOException
    */
-  public byte[] getResourceAsBytes(String solutionPath, boolean getLocalizedResource) throws IOException;
+  public byte[] getResourceAsBytes(String solutionPath, boolean getLocalizedResource, int actionOperation) throws IOException;
 
   /**
    * See getResourceInputBytes(String solutionPath). Identical method
    * except returns results as a byte array.  Exception is thrown if io error.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws IOException
    */
-  public byte[] getResourceAsBytes(IActionSequenceResource actionResource, boolean getLocalizedResource)
+  public byte[] getResourceAsBytes(IActionSequenceResource actionResource, boolean getLocalizedResource, int actionOperation)
       throws IOException;
 
   /**
@@ -339,20 +350,22 @@ public interface ISolutionRepository extends ILogger {
    * except returns results as a DataSource.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws FileNotFoundException 
    */
-  public IPentahoStreamSource getResourceDataSource(String solutionPath) throws FileNotFoundException;
+  public IPentahoStreamSource getResourceDataSource(String solutionPath, int actionOperation) throws FileNotFoundException;
 
   /**
    * See getResourceInputStream(IActionResource actionResource). Identical method
    * except returns results as a DataSource.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    * @throws FileNotFoundException 
    */
-  public IPentahoStreamSource getResourceDataSource(IActionSequenceResource actionResource)
+  public IPentahoStreamSource getResourceDataSource(IActionSequenceResource actionResource, int actionOperation)
       throws FileNotFoundException;
 
   /**
@@ -360,27 +373,29 @@ public interface ISolutionRepository extends ILogger {
    * except returns results as a Document.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    */
-  public Document getResourceAsDocument(String solutionPath) throws IOException;
+  public Document getResourceAsDocument(String solutionPath, int actionOperation) throws IOException;
 
   /**
    * See getResourceInputStream(IActionResource actionResource). Identical method
    * except returns results as a Document.
    * 
    * @param solutionPath
+   * @param actionOperation - Type of action operation to be performed
    * @return
    */
-  public Document getResourceAsDocument(IActionSequenceResource actionResource) throws IOException;
+  public Document getResourceAsDocument(IActionSequenceResource actionResource, int actionOperation) throws IOException;
 
   /**
-   * 
-   * @return
-   *      An array of Strings where each string is the fully qualified path of
+   * An array of Strings where each string is the fully qualified path of
    *      every *.xaction contained in the repository.
+   * @param actionOperation - Type of action operation to be performed
+   * @return
    */
 
-  public String[] getAllActionSequences();
+  public String[] getAllActionSequences(int actionOperation);
 
   /**
    * Allows the caller to provide a List that will contain all log messages generated by the Solution Repository 
@@ -408,7 +423,7 @@ public interface ISolutionRepository extends ILogger {
    * starts at the node specified by the solution and path in the solution
    * @param path String The path of the interested folder. See notes for
    * parameter <param>solution</param>.
-   * @param actionOperation String
+   * @param actionOperation - Type of action operation to be performed
    * @return Document XML document that describes the structure of the solution repository.
    */
   public Document getNavigationUIDocument(String solution, String path, int actionOperation);
@@ -428,15 +443,10 @@ public interface ISolutionRepository extends ILogger {
   public void resetRepository();
 
   /**
-   * @param path the solution path to the desired resource
-   * @return the ISolutionFile for the given path
-   */
-  public ISolutionFile getFileByPath(String path);
-
-  /**
+   * @param actionOperation - Type of action operation to be performed
    * @return the ISolutionFile for the root of the repository
    */
-  public ISolutionFile getRootFolder();
+  public ISolutionFile getRootFolder(int actionOperation);
 
   public void localizeDoc(Node document, ISolutionFile file);
 
@@ -445,7 +455,19 @@ public interface ISolutionRepository extends ILogger {
    */
   public boolean supportsAccessControls();
 
-  public ISolutionFile getSolutionFile(IActionSequenceResource actionResource);
+  /**
+   * @param path
+   * @param actionOperation - Type of action operation to be performed
+   * @return
+   */
+  public ISolutionFile getSolutionFile(String path, int actionOperation);
+  
+  /**
+   * @param actionResource
+   * @param actionOperation - Type of action operation to be performed
+   * @return
+   */
+  public ISolutionFile getSolutionFile(IActionSequenceResource actionResource, int actionOperation);
 
   /**
    * This method creates a new folder in the Repository
@@ -484,13 +506,6 @@ public interface ISolutionRepository extends ILogger {
    * @param shareRecipients the users or roles with which to share (aka share-ees)
    */
   public void share(ISolutionFile aFile, List<IPermissionRecipient> shareRecipients);
-
-  /**
-   * Undoes the share operation.
-   * @param aFile file to stop sharing
-   * @param shareRecipients the users or roles with which to stop sharing
-   */
-  public void unshare(ISolutionFile aFile, List<IPermissionRecipient> shareRecipients);
 
   /**
    * Put a file into the solution repo. This method differs from addSolutionFile. Only Pentaho administrators can
@@ -577,10 +592,12 @@ public interface ISolutionRepository extends ILogger {
    * can ask it for the "title" or "description" or "author" of a given
    * file with localization in effect.
    * 
-   * @param path the solution path to the desired resource
+   * @param resourceFile
+   * @param key
+   * @param actionOperation - Type of action operation to be performed
    * @return the String value found for the given key
    */
 
-  public String getLocalizedFileProperty(ISolutionFile resourceFile, String key);
+  public String getLocalizedFileProperty(ISolutionFile resourceFile, String key, int actionOperation);
 
 }

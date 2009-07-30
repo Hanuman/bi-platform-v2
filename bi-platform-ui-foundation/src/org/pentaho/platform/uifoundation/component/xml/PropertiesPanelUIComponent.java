@@ -176,7 +176,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     ISolutionFile file = null;
     try {
       HibernateUtil.beginTransaction();
-      file = repository.getFileByPath(pathStr);
+      file = repository.getSolutionFile(pathStr, ISolutionRepository.ACTION_EXECUTE);
     } catch (Exception e) {
       // do nothing since we want file to be null if it wasn't found
       // TODO sbarkdull, arg, let's at least log it

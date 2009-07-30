@@ -29,6 +29,7 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.RandomAccessContent;
 import org.apache.commons.vfs.util.RandomAccessMode;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 
 public class SolutionRepositoryVfsFileContent implements FileContent {
 
@@ -97,7 +98,7 @@ public class SolutionRepositoryVfsFileContent implements FileContent {
   public InputStream getInputStream() throws FileSystemException {
 
     try {
-      inputStream = fileObject.getRepository().getResourceInputStream(fileObject.getFileRef(), true);
+      inputStream = fileObject.getRepository().getResourceInputStream(fileObject.getFileRef(), true, ISolutionRepository.ACTION_EXECUTE);
     } catch (FileNotFoundException e) {
       throw new FileSystemException(e.getLocalizedMessage(), e);
     }

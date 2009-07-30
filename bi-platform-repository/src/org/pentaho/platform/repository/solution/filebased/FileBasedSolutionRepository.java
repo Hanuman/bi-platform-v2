@@ -67,11 +67,13 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 /**
  * @author James Dixon TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class FileBasedSolutionRepository extends SolutionRepositoryBase implements ISolutionFilter {
+public class FileBasedSolutionRepository extends SolutionRepositoryBase {
   /**
    * 
    */
   private static final long serialVersionUID = -8270135463210017284L;
+  
+  private ISolutionFilter defaultSolutionFilter = new DefaultSolutionFilter();
 
   private boolean useActionSequenceCaching = false;
 
@@ -125,7 +127,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     if (actionSequence != null) {
       return actionSequence;
     }
-    Document actionSequenceDocument = getSolutionDocument(action);
+    Document actionSequenceDocument = getSolutionDocument(action, actionOperation);
     if (actionSequenceDocument == null) {
       return null;
     }
@@ -144,11 +146,11 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     return actionSequence;
   }
 
-  public Document getSolutionDocument(final String solutionName, final String actionPath, final String actionName) {
-    return getSolutionDocument(solutionName + File.separator + actionPath + File.separator + actionName);
+  public Document getSolutionDocument(final String solutionName, final String actionPath, final String actionName, final int actionOperation) {
+    return getSolutionDocument(solutionName + File.separator + actionPath + File.separator + actionName, actionOperation);
   }
 
-  public Document getSolutionDocument(final String documentPath) {
+  public Document getSolutionDocument(final String documentPath, final int actionOperation) {
     // TODO: caching
     File file = getFile(documentPath, false);
     // Handle the exception when you have the best knowledge about it.
@@ -173,7 +175,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
       error(Messages.getString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", documentPath)); //$NON-NLS-1$
       return null;
     }
-    localizeDoc(document, new FileSolutionFile(file, ((FileSolutionFile) getRootFolder()).getFile()));
+    localizeDoc(document, new FileSolutionFile(file, ((FileSolutionFile) getRootFolder(actionOperation)).getFile()));
     return document;
   }
 
@@ -194,7 +196,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     return f;
   }
 
-  public String getActionDefinition(final IRuntimeContext runtimeContext, final String actionPath) {
+  protected String getActionDefinition(final IRuntimeContext runtimeContext, final String actionPath) {
     // TODO: caching
     if ((runtimeContext == null) || (runtimeContext.getInstanceId() == null)
         || (runtimeContext.getActionName() == null)) {
@@ -208,7 +210,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
     return FileHelper.getStringFromFile(f);
   }
 
-  public Document getActionDefinitionDocument(final IRuntimeContext runtimeContext, final String actionPath) {
+  protected Document getActionDefinitionDocument(final IRuntimeContext runtimeContext, final String actionPath) {
     // TODO: caching
     genLogIdFromInfo(runtimeContext.getInstanceId(), SolutionRepositoryBase.LOG_NAME, runtimeContext.getActionName());
     File f = getFile(runtimeContext, actionPath);
@@ -268,7 +270,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
         File indexFile = new File(element, ISolutionRepository.INDEX_FILENAME);
         Document indexDoc = null;
         if (indexFile.exists()) {
-          indexDoc = getSolutionDocument(thisSolution, path, ISolutionRepository.INDEX_FILENAME);
+          indexDoc = getSolutionDocument(thisSolution, path, ISolutionRepository.INDEX_FILENAME, actionOperation);
         }
         if (indexDoc != null) {
           addIndexToRepository(indexDoc, element, dirNode, path, thisSolution);
@@ -281,7 +283,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase implemen
         processDir(dirNode, element, thisSolution, pathIdx, actionOperation);
       } else if ((solutionId == null) && element.getName().equalsIgnoreCase(ISolutionRepository.INDEX_FILENAME)) {
         Document indexDoc = null;
-        indexDoc = getSolutionDocument("", "", ISolutionRepository.INDEX_FILENAME); //$NON-NLS-1$ //$NON-NLS-2$
+        indexDoc = getSolutionDocument("", "", ISolutionRepository.INDEX_FILENAME, actionOperation); //$NON-NLS-1$ //$NON-NLS-2$
         if (indexDoc != null) {
           addIndexToRepository(indexDoc, parentDir, parentNode, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -303,7 +305,7 @@ protected void processFile( String fileName, File element, final Element parentN
     String extension = fileName.substring( lastPoint+1 ).toLowerCase();
       String solutionPath = element.getAbsolutePath().substring(rootPath.length());
       if ("url".equals( extension )) { //$NON-NLS-1$
-        addUrlToRepository(element, parentNode, solutionPath);
+        addUrlToRepository(element, parentNode, solutionPath, actionOperation);
       }
     boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
   IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
@@ -490,12 +492,12 @@ private void addToRepository( final IFileInfo info, final String solution, final
     directoryNode.addElement("solution").setText(solution); //$NON-NLS-1$
   }
 
-  protected void addUrlToRepository(final File file, final Element parentNode, final String solutionPath) {
+  protected void addUrlToRepository(final File file, final Element parentNode, final String solutionPath, final int actionOperation) {
     // parse the .url file to get the contents
     ActionResource urlResource = new ActionResource(file.getName(), IActionSequenceResource.SOLUTION_FILE_RESOURCE,
         "text/url", solutionPath); //$NON-NLS-1$
     try {
-      String urlContent = getResourceAsString(urlResource);
+      String urlContent = getResourceAsString(urlResource, actionOperation);
       StringTokenizer tokenizer = new StringTokenizer(urlContent, "\n"); //$NON-NLS-1$
       String url = null;
       String title = file.getName();
@@ -563,7 +565,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
         dirNode.addElement("url").setText(url); //$NON-NLS-1$
         dirNode.addAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         dirNode.addAttribute("displaytype", FileInfo.FILE_DISPLAY_TYPE_URL); //$NON-NLS-1$
-        localizeDoc(dirNode, new FileSolutionFile(file, ((FileSolutionFile) getRootFolder()).getFile()));
+        localizeDoc(dirNode, new FileSolutionFile(file, ((FileSolutionFile) getRootFolder(actionOperation)).getFile()));
       }
     } catch (IOException e) {
     }
@@ -791,19 +793,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
     }
     return repository.selectNodes(xPath);
   }
-
-  // TODO sbarkdull, this method does not belong here, but belongs in an XML utilities class, maybe XmlHelper?
-  public String getValue(final Document doc, final String xPath, final String defaultValue) {
-    if (doc != null) {
-      Node node = doc.selectSingleNode(xPath);
-      if (node == null) {
-        return defaultValue;
-      }
-      return node.getText();
-    }
-    return defaultValue;
-  }
-
+  
   public Document getSolutionStructure(final int actionOperation) {
     Document document = DocumentHelper.createDocument();
     File rootDir = getFile(SolutionRepositoryBase.EMPTY_STR, false);
@@ -819,7 +809,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
   }
 
   public Document getSolutionTree(final int actionOperation) {
-    return getSolutionTree(actionOperation, this);
+    return getSolutionTree(actionOperation, defaultSolutionFilter);
   }
 
   private void processSolutionTree(final Element parentNode, final File targetFile) {
@@ -843,14 +833,14 @@ private void addToRepository( final IFileInfo info, final String solution, final
 
   // -----------------------------------------------------------------------
   // Methods from PentahoSystem
-  public boolean resourceExists(final String solutionPath) {
+  public boolean resourceExists(final String solutionPath, final int actionOperation) {
     String filePath = PentahoSystem.getApplicationContext().getSolutionPath(solutionPath);
     File file = new File(filePath);
     return file.exists();
   }
 
-  public long resourceSize(final String solutionPath) {
-    if (!resourceExists(solutionPath)) {
+  public long resourceSize(final String solutionPath, final int actionOperation) {
+    if (!resourceExists(solutionPath, actionOperation)) {
       return -1;
     }
     String filePath = PentahoSystem.getApplicationContext().getSolutionPath(solutionPath);
@@ -858,7 +848,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
     return file.length();
   }
 
-  public String[] getAllActionSequences() {
+  public String[] getAllActionSequences(final int actionOperation) {
     File rootDir = getFile("", false); //$NON-NLS-1$
     List files = new ArrayList();
     files = getAllActionSequences(rootDir, files);
@@ -893,7 +883,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
     return files;
   }
 
-  public long getSolutionFileLastModified(final String path) {
+  public long getSolutionFileLastModified(final String path, final int actionOperation) {
     File file = getFile(path, false);
     long mod = -1;
     if (file != null) {
@@ -921,12 +911,6 @@ private void addToRepository( final IFileInfo info, final String solution, final
       document = getActionSequences(solution, path, false, true, ISolutionRepository.ACTION_EXECUTE);
     }
     return document;
-  }
-
-  public boolean keepFile(final ISolutionFile solutionFile, final int actionOperation) {
-    // No filtering of solution files/folders in the file-based repository
-    // yet.
-    return true;
   }
 
   public String getRepositoryName() {
@@ -966,9 +950,6 @@ private void addToRepository( final IFileInfo info, final String solution, final
   public void share(final ISolutionFile file, final List<IPermissionRecipient> shareRecipient) {
   }
 
-  public void unshare(final ISolutionFile file, final List<IPermissionRecipient> shareRecipients) {
-  }
-
   public void addPermission(final ISolutionFile file, final IPermissionRecipient recipient,
       final IPermissionMask permission) {
   }
@@ -993,4 +974,11 @@ private void addToRepository( final IFileInfo info, final String solution, final
     return false;
   }
 
+  private class DefaultSolutionFilter implements ISolutionFilter {
+    public boolean keepFile(final ISolutionFile solutionFile, final int actionOperation) {
+      // No filtering of solution files/folders in the file-based repository
+      // yet.
+      return true;
+    }
+  }
 }
