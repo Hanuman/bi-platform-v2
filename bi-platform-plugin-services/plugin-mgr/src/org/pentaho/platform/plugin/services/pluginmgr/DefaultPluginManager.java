@@ -61,6 +61,10 @@ public class DefaultPluginManager extends AbstractPluginManager {
 
   private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
 
+  public DefaultPluginManager() {
+    
+  }
+  
   /**
    * Clears all the lists and maps in preparation for
    * reloading the state from the plugin provider.
