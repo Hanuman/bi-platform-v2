@@ -193,6 +193,38 @@ public class MetadataQueryComponentTest {
   }
   
   @Test
+  public void testApplyTemplates() {
+    String mql = "<mql><domain_id>{domain}</domain_id><model_id>MODEL</model_id>" + 
+                 "<selections><selection>" +
+                 "<view>CATEGORY</view>" +
+                 "<column>LC_CUSTOMERNAME</column>" +
+                 "</selection>" +
+                 "</selections></mql>";
+    
+    MetadataQueryComponent component = new MetadataQueryComponent();
+    Map<String,Object> map = new HashMap<String,Object>();
+    map.put("domain", "JDBCDOMAIN");
+    component.setInputs(map);
+    component.setQuery(mql);
+    component.execute();
+    
+    IPentahoResultSet rs = component.getResultSet();
+    try {
+      Assert.assertNotNull(rs);
+      Assert.assertEquals(1, rs.getColumnCount());
+      Assert.assertEquals(122, rs.getRowCount());
+      Object obj[];
+      while ((obj = rs.next()) != null) {
+        System.out.println(obj[0]);
+      }
+      
+    } finally {
+      rs.close();
+      rs.closeConnection();
+    }
+  }
+  
+  @Test
   public void testJdbcComponentMaxRows() {
     String mql = "<mql><domain_id>JDBCDOMAIN2</domain_id><model_id>MODEL</model_id>" + 
                  "<selections><selection>" +

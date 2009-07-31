@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +49,7 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.plugin.services.connections.sql.SQLResultSet;
@@ -166,9 +168,22 @@ public class MetadataQueryComponent {
     
     // parse the metadata query
     IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
+    
+    // apply templates to the query
+    String templatedQuery = null;
+    if (inputs != null) {
+      Properties properties = new Properties();
+      for (String name : inputs.keySet()) {
+        properties.put(name, inputs.get(name).toString());
+      }
+      templatedQuery = TemplateUtil.applyTemplate(query, properties, null);
+    } else {
+      templatedQuery = query;
+    }
+    
     Query queryObject = null;
     try {
-      queryObject = helper.fromXML(repo, query);
+      queryObject = helper.fromXML(repo, templatedQuery);
     } catch (Exception e) {
       logger.error("error", e); //$NON-NLS-1$
       return false;
