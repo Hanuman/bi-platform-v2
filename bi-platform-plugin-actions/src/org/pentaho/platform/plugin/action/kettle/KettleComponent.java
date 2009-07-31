@@ -24,11 +24,14 @@ package org.pentaho.platform.plugin.action.kettle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Node;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.di.core.exception.KettleException;
@@ -36,6 +39,7 @@ import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.logging.Log4jStringAppender;
 import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.core.parameters.UnknownParamException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.xml.XMLHandlerCache;
@@ -136,6 +140,12 @@ public class KettleComponent extends ComponentBase implements RowListener {
   
   private static final String TRANSFORM_ERROR_COUNT_OUTPUT = "transformation-output-error-rows-count"; //$NON-NLS-1$
   
+  public static final String PARAMETER_MAP_CMD_ARG = "set-argument"; //$NON-NLS-1$
+  
+  public static final String PARAMETER_MAP_VARIABLE = "set-variable"; //$NON-NLS-1$
+  
+  public static final String PARAMETER_MAP_PARAMETER = "set-parameter"; //$NON-NLS-1$
+  
   private static final ArrayList<String> outputParams = new ArrayList<String>(Arrays.asList(EXECUTION_STATUS_OUTPUT, EXECUTION_LOG_OUTPUT, TRANSFORM_SUCCESS_OUTPUT, TRANSFORM_ERROR_OUTPUT, TRANSFORM_SUCCESS_COUNT_OUTPUT, TRANSFORM_ERROR_COUNT_OUTPUT));
   
 
@@ -200,9 +210,77 @@ public class KettleComponent extends ComponentBase implements RowListener {
     return true;
 
   }
+  
+  private boolean checkMapping(Node name, Node mapping) {
+    if(name == null){
+      error(Messages.getErrorString("Kettle.ERROR_0031_NAME_ELEMENT_MISSING_FROM_MAPPING")); //$NON-NLS-1$
+      return false;
+    }
+    if(mapping == null){
+      error(Messages.getErrorString("Kettle.ERROR_0032_MAPPING_ELEMENT_MISSING_FROM_MAPPING")); //$NON-NLS-1$
+      return false;
+    }
+    
+    // Make sure the mapping field is available as an input
+    if(!isDefinedInput(mapping.getText())){
+      error(Messages.getErrorString("Kettle.ERROR_0033_MAPPING_NOT_FOUND_IN_ACTION_INPUTS", mapping.getText()));  //$NON-NLS-1$
+      return false;
+    }
+    return true;
+  }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean validateAction() {
+    
+    // If there are any mappings, validate their xml and values
+    if(getComponentDefinition().selectNodes(PARAMETER_MAP_CMD_ARG + " | " + PARAMETER_MAP_VARIABLE + " | " + PARAMETER_MAP_PARAMETER).size() > 0){ //$NON-NLS-1$ //$NON-NLS-2$
+      Map<String, String> argumentMap = null;
+      
+      Node name = null, mapping = null;
+
+      // Extract all mapping elements from component-definition and verify they have a 'name' and 'mapping' child element
+      for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_CMD_ARG)){
+        name = n.selectSingleNode("name"); //$NON-NLS-1$
+        mapping = n.selectSingleNode("mapping"); //$NON-NLS-1$
+        if (checkMapping(name, mapping)) {
+          if (argumentMap == null) {
+            argumentMap = new HashMap<String, String>();
+          }
+          argumentMap.put(name.getText(), applyInputsToFormat(getInputStringValue(mapping.getText())));
+        } else {
+          return false;
+        }
+      }
+      
+      for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_VARIABLE)){
+        name = n.selectSingleNode("name"); //$NON-NLS-1$
+        mapping = n.selectSingleNode("mapping"); //$NON-NLS-1$
+        if (!checkMapping(name, mapping)) {
+          return false;
+        }
+      }
+      
+      for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_PARAMETER)){
+        name = n.selectSingleNode("name"); //$NON-NLS-1$
+        mapping = n.selectSingleNode("mapping"); //$NON-NLS-1$
+        if (!checkMapping(name, mapping)) {
+          return false;
+        }
+      }
+      
+      // Make sure all of the arguments are present, correctly labeled and that there are not more then 10 (currently supported by Kettle)
+      if (argumentMap != null) {
+        String val = null;
+        for(int i = 1; i <= argumentMap.size(); i++){
+          val = argumentMap.get(Integer.toString(i));
+          if(val == null){
+            error(Messages.getErrorString("Kettle.ERROR_0030_INVALID_ARGUMENT_MAPPING")); //$NON-NLS-1$
+            return false;
+          }
+        }
+      }
+    }
 
     if (isDefinedResource(KettleComponent.TRANSFORMFILE) || isDefinedResource(KettleComponent.JOBFILE)) {
       return true;
@@ -276,38 +354,70 @@ public class KettleComponent extends ComponentBase implements RowListener {
     } catch (Exception e) {
 
     }
+    
+    // Build lists of parameters, variables and command line arguments
+    
+    Map<String, String> argumentMap = new HashMap<String, String>();
+    Map<String, String> variableMap = new HashMap<String, String>();
+    Map<String, String> parameterMap = new HashMap<String, String>();
+    
+    for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_CMD_ARG)){
+      argumentMap.put(n.selectSingleNode("name").getText(), applyInputsToFormat(getInputStringValue(n.selectSingleNode("mapping").getText()))); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_VARIABLE)){
+      variableMap.put(n.selectSingleNode("name").getText(), applyInputsToFormat(getInputStringValue(n.selectSingleNode("mapping").getText()))); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    for(Node n : (List<Node>)getComponentDefinition().selectNodes(PARAMETER_MAP_PARAMETER)){
+      parameterMap.put(n.selectSingleNode("name").getText(), applyInputsToFormat(getInputStringValue(n.selectSingleNode("mapping").getText()))); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    String arguments[] = null;
 
-    // this use is now considered obsolete, as we prefer the action-sequence inputs since they
-    // now maintain order
-    boolean running = true;
-    int index = 1;
-    ArrayList<String> parameterList = new ArrayList<String>();
-    while (running) {
-      if (isDefinedInput("parameter" + index)) { //$NON-NLS-1$
-        String value = null;
-        String inputName = getInputStringValue("parameter" + index); //$NON-NLS-1$
-        // see if we have an input with this name
-        if (isDefinedInput(inputName)) {
-          value = getInputStringValue(inputName);
+    // If no mappings are provided, assume all inputs are command line arguments (This supports the legacy method)
+    if(argumentMap.size() <= 0 && variableMap.size() <= 0 && parameterMap.size() <= 0){
+      // this use is now considered obsolete, as we prefer the action-sequence inputs since they
+      // now maintain order
+      boolean running = true;
+      int index = 1;
+      ArrayList<String> argumentList = new ArrayList<String>();
+      while (running) {
+        if (isDefinedInput("parameter" + index)) { //$NON-NLS-1$
+          String value = null;
+          String inputName = getInputStringValue("parameter" + index); //$NON-NLS-1$
+          // see if we have an input with this name
+          if (isDefinedInput(inputName)) {
+            value = getInputStringValue(inputName);
+          }
+          argumentList.add(value);
+        } else {
+          running = false;
         }
-        parameterList.add(value);
-      } else {
-        running = false;
+        index++;
       }
-      index++;
+      
+      // this is the preferred way to provide inputs to the KetteComponent, the order of inputs is now preserved
+      Iterator inputNamesIter = getInputNames().iterator();
+      while (inputNamesIter.hasNext()) {
+        String name = (String) inputNamesIter.next();
+        argumentList.add(getInputStringValue(name));
+      }
+      
+      arguments = (String[]) argumentList.toArray(new String[argumentList.size()]);
+    } else {
+      // Extract arguments from argumentMap (Throw an error if the sequential ordering is broken)
+      arguments = new String[argumentMap.size()];
+      for(int i = 0; i < argumentMap.size(); i++){
+        arguments[i] = argumentMap.get(Integer.toString(i + 1)); // Mapping is 1 based to match Kettle UI
+        if(arguments[i] == null){
+          error(Messages.getErrorString("Kettle.ERROR_0030_INVALID_ARGUMENT_MAPPING")); //$NON-NLS-1$
+        }
+      }
     }
 
     // initialize environment variables
     KettleSystemListener.environmentInit(getSession());
-
-    // this is the preferred way to provide inputs to the KetteComponent, the order of inputs is now preserved
-    Iterator inputNamesIter = getInputNames().iterator();
-    while (inputNamesIter.hasNext()) {
-      String name = (String) inputNamesIter.next();
-      parameterList.add(getInputStringValue(name));
-    }
-
-    String parameters[] = (String[]) parameterList.toArray(new String[parameterList.size()]);
 
     String solutionPath = PentahoSystem.getApplicationContext().getFileOutputPath(""); //$NON-NLS-1$
     solutionPath = solutionPath.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -328,7 +438,18 @@ public class KettleComponent extends ComponentBase implements RowListener {
           String transformationName = getInputStringValue(KettleComponent.TRANSFORMATION);
           transMeta = loadTransformFromRepository(directoryName, transformationName, repository, logWriter);
           if (transMeta != null) {
-            transMeta.setArguments(parameters);
+            try {
+              for(String key : parameterMap.keySet()){
+                transMeta.setParameterValue(key, parameterMap.get(key));
+              }
+              for(String key : variableMap.keySet()){
+                transMeta.setVariable(key, variableMap.get(key));
+              }
+
+            } catch (UnknownParamException e) {
+              error(e.getMessage());
+            }
+            transMeta.setArguments(arguments);
           } else {
             return false;
           }
@@ -336,7 +457,18 @@ public class KettleComponent extends ComponentBase implements RowListener {
           String jobName = getInputStringValue(KettleComponent.JOB);
           jobMeta = loadJobFromRepository(directoryName, jobName, repository, logWriter);
           if (jobMeta != null) {
-            jobMeta.setArguments(parameters);
+            try {
+              for(String key : parameterMap.keySet()){
+                jobMeta.setParameterValue(key, parameterMap.get(key));
+              }
+              for(String key : variableMap.keySet()){
+                jobMeta.setVariable(key, variableMap.get(key));
+              }
+
+            } catch (UnknownParamException e) {
+              error(e.getMessage());
+            }
+            jobMeta.setArguments(arguments);
           } else {
             return false;
           }
@@ -368,7 +500,18 @@ public class KettleComponent extends ComponentBase implements RowListener {
           debug(kettleUserAppender.getBuffer().toString());
           return false;
         } else { // Don't forget to set the parameters here as well...
-          transMeta.setArguments(parameters);
+          try {
+            for(String key : parameterMap.keySet()){
+              transMeta.setParameterValue(key, parameterMap.get(key));
+            }
+            for(String key : variableMap.keySet()){
+              transMeta.setVariable(key, variableMap.get(key));
+            }
+
+          } catch (UnknownParamException e) {
+            error(e.getMessage());
+          }
+          transMeta.setArguments(arguments);
           /* 
            * We do not need to concatenate the solutionPath info as the fileAddress has the complete location of the file
            * from start to end. This is to resolve BISERVER-502.
@@ -414,7 +557,18 @@ public class KettleComponent extends ComponentBase implements RowListener {
           debug(kettleUserAppender.getBuffer().toString());
           return false;
         } else {
-          jobMeta.setArguments(parameters);
+          try {
+            for(String key : parameterMap.keySet()){
+              jobMeta.setParameterValue(key, parameterMap.get(key));
+            }
+            for(String key : variableMap.keySet()){
+              jobMeta.setVariable(key, variableMap.get(key));
+            }
+
+          } catch (UnknownParamException e) {
+            error(e.getMessage());
+          }
+          jobMeta.setArguments(arguments);
           jobMeta.setFilename(solutionPath + fileAddress);
         }
 
