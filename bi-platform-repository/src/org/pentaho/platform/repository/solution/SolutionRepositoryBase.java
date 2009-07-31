@@ -960,4 +960,104 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
     return defaultValue;
   }
+  
+  @Deprecated
+  public String[] getAllActionSequences() {
+    return getAllActionSequences(ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public String getLocalizedFileProperty(ISolutionFile resourceFile, String key) {
+    return getLocalizedFileProperty(resourceFile, key, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public byte[] getResourceAsBytes(String solutionPath, boolean getLocalizedResource) throws IOException {
+    return getResourceAsBytes(solutionPath, getLocalizedResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public byte[] getResourceAsBytes(IActionSequenceResource actionResource, boolean getLocalizedResource)
+      throws IOException {
+    return getResourceAsBytes(actionResource, getLocalizedResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public Document getResourceAsDocument(String solutionPath) throws IOException {
+    return getResourceAsDocument(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public Document getResourceAsDocument(IActionSequenceResource actionResource) throws IOException {
+    return getResourceAsDocument(actionResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public String getResourceAsString(IActionSequenceResource actionResource) throws IOException {
+    return getResourceAsString(actionResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public String getResourceAsString(String solutionPath) throws IOException {
+    return getResourceAsString(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public IPentahoStreamSource getResourceDataSource(String solutionPath) throws FileNotFoundException {
+    return getResourceDataSource(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public IPentahoStreamSource getResourceDataSource(IActionSequenceResource actionResource)
+      throws FileNotFoundException {
+    return getResourceDataSource(actionResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public InputStream getResourceInputStream(IActionSequenceResource actionResource, boolean getLocalizedResource)
+      throws FileNotFoundException {
+    return getResourceInputStream(actionResource, getLocalizedResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public InputStream getResourceInputStream(String solutionPath, boolean getLocalizedResource)
+      throws FileNotFoundException {
+    return getResourceInputStream(solutionPath, getLocalizedResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public Reader getResourceReader(IActionSequenceResource actionResource) throws FileNotFoundException, IOException {
+    return getResourceReader(actionResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public Reader getResourceReader(String solutionPath) throws FileNotFoundException, IOException {
+    return getResourceReader(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public ISolutionFile getSolutionFile(String path) {
+    return getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE);
+  }
+  
+  @Deprecated
+  public ISolutionFile getSolutionFile(IActionSequenceResource actionResource) {
+    return getSolutionFile(actionResource, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public long getSolutionFileLastModified(String path) {
+    return getSolutionFileLastModified(path, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public boolean resourceExists(String solutionPath) {
+    return resourceExists(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+
+  @Deprecated
+  public long resourceSize(String solutionPath) {
+    return resourceSize(solutionPath, ISolutionRepository.ACTION_EXECUTE);
+  }
+  
 }
