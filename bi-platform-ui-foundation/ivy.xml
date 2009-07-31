@@ -33,6 +33,6 @@
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-services" rev="${project.revision}" changing="true" conf="default->default"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-repository"      rev="${project.revision}" changing="true" conf="default->default"/>
     
-    <dependency org="${ivy.artifact.group}" name="pentaho-metadata"                    rev="${dependency.pentaho-metadata.revision}" changing="true" />
+    <dependency org="pentaho" name="pentaho-metadata"                    rev="${dependency.pentaho-metadata.revision}" changing="true" />
   </dependencies>
 </ivy-module>
