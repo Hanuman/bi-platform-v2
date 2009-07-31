@@ -62,7 +62,6 @@
 			  											bi-platform-web,
 			  											bi-platform-web-servlet,
 			  											bi-platform-web-portlet,
-			  											bi-platform-data-access,
 			  	                                        bi-platform-security-userroledao,
 	  	  												mantle" />
       <for list="${project.list}" param="module" trim="true">
