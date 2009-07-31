@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	version="2.0" 
 	xmlns:html="http://www.w3.org/TR/REC-html40"
@@ -44,7 +44,20 @@
 						</xsl:call-template>
 						<xsl:text>';
  					</xsl:text>
-					</xsl:for-each>
+		      function initialStartup_form_<xsl:value-of select="/filters/id"/>() {
+            // Now, focus on first visible input control...
+            var form = document.forms['form_<xsl:value-of select="/filters/id" />'];
+            if (form) {
+              for (i=0; i &lt; form.elements.length; i++) {
+                var anElement = form.elements[i];
+                if (anElement &amp;&amp; anElement.type &amp;&amp; anElement.type != 'hidden' &amp;&amp; !anElement.disabled) {
+                  setTimeout(function(){anElement.focus();}, 5);
+                  break;
+                }
+              }
+            }
+          }
+          			</xsl:for-each>
                     pentaho_optionalParams.push('form_<xsl:value-of select="id"/>.run_as_background');
 			    </script>
 	    </head>
@@ -94,6 +107,9 @@
 					</table>					
 					<br/>
 				</div>
+        <script>
+          initialStartup_form_<xsl:value-of select="/filters/id"/>();
+        </script>
 				</body>
 		</html>
 	</xsl:template>
