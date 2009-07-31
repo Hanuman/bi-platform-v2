@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IContentGenerator;
+import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -57,6 +58,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.MimeHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.HttpOutputHandler;
+import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.platform.web.servlet.messages.Messages;
@@ -90,6 +92,7 @@ public class GenericServlet extends ServletBase {
 
     PentahoSystem.systemEntryPoint();
 
+    IOutputHandler outputHandler = null;
     // BISERVER-2767 - grabbing the current class loader so we can replace it at the end
     ClassLoader origContextClassloader = Thread.currentThread().getContextClassLoader();
     try {
@@ -226,7 +229,7 @@ public class GenericServlet extends ServletBase {
 
       IMimeTypeListener listener = new HttpMimeTypeListener(request, response);
 
-      IOutputHandler outputHandler = getOutputHandler(response, true);
+      outputHandler = getOutputHandler(response, true);
       outputHandler.setMimeTypeListener(listener);
 
       IParameterProvider sessionParameters = new HttpSessionParameterProvider(session);
@@ -252,7 +255,15 @@ public class GenericServlet extends ServletBase {
       }
 
     } catch (Exception e) {
+      StringBuffer buffer = new StringBuffer();
       error(Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
+      List errorList = new ArrayList();
+      String msg = e.getMessage();
+      errorList.add(msg);
+      PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatFailureMessage(
+          "text/html", null, buffer, errorList); //$NON-NLS-1$
+      response.getOutputStream().write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
+      
     } finally {
       // reset the classloader of the current thread
       Thread.currentThread().setContextClassLoader(origContextClassloader);
