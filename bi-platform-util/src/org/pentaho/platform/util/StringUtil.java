@@ -37,7 +37,7 @@ public class StringUtil {
   // match "../stuff", "stuff/../stuff", "stuff/..", and same string with "\" instead of "/"
   // Also, fail if it contains a %00 which gets interpreted as a null when thrown at the
   // file system. 
-  private static final String RE_CONTAINS_PARENT_PATH = "(^.*[/\\\\]|^)\\.\\.([/\\\\].*$|$)|(^.*%00.*$)"; //$NON-NLS-1$
+  private static final String RE_CONTAINS_PARENT_PATH = "(^.*[/\\\\]|^)\\.\\.([/\\\\].*$|$)|(^.*\0.*$)"; //$NON-NLS-1$
 
   private static final Pattern CONTAINS_PARENT_PATH_PATTERN = Pattern.compile(StringUtil.RE_CONTAINS_PARENT_PATH);
 
