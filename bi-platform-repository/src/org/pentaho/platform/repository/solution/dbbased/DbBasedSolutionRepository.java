@@ -1361,7 +1361,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       // entire ACL is replaced for new files
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       HibernateUtil.beginTransaction();
-      setPermissions(justPublishedFile, getDefaultPublishAcl());
+      if (SecurityHelper.canHaveACLS(justPublishedFile)) {
+        setPermissions(justPublishedFile, getDefaultPublishAcl());
+      }
     }
     if ((res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && (fileName != null)
         && (fileName.toLowerCase().endsWith(".xmi"))) {

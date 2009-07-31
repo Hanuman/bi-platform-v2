@@ -115,6 +115,8 @@ public class DbBasedSolutionRepositoryTest {
     FileUtils.deleteQuietly(f2);
     File f3 = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution2/myfolder1"); //$NON-NLS-1$
     FileUtils.deleteQuietly(f3);
+    File f4 = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution2/HelloWorld3.mondrian.xml"); //$NON-NLS-1$
+    FileUtils.deleteQuietly(f4);
     tearDownSolutionRepositoryTables();
   }
 
@@ -830,6 +832,19 @@ public class DbBasedSolutionRepositoryTest {
     assertTrue(repo.hasAccess(publishedFile, ISolutionRepository.ACTION_SHARE));
     assertTrue(repo.hasAccess(publishedFile, ISolutionRepository.ACTION_SUBSCRIBE));
     assertTrue(repo.hasAccess(publishedFile, ISolutionRepository.ACTION_UPDATE));
+  }
+  
+  @Test
+  public void testPublishNonACLedFile() throws Exception {
+    printTestHeader("testPublishNonACLedFile"); //$NON-NLS-1$
+    File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    repo.init(pentahoSession);
+    int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
+        "HelloWorld3.mondrian.xml", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
+    assertEquals(ISolutionRepository.FILE_ADD_SUCCESSFUL, res);
+    ISolutionFile publishedFile = repo.getFileByPath(
+        "mysolution2/HelloWorld3.mondrian.xml", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
   }
 
   @Test
