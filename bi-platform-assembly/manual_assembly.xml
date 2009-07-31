@@ -7,7 +7,7 @@
   <!-- subfloor / assembly property overrides -->
   <property name="package-res-manual.dir" value="package-res-manual" />
   <property name="stage.dir" value="bin/manual-stage" />
-  
+
   <property name="plugins.dir" value="plugins" />
   <property name="solution-archives.dir" value="solution-archives" />
 
@@ -38,10 +38,15 @@
 
   <target name="package" depends="assemble, package-zip" description="Creates a j2ee manual deployments package" />
 
-  <target name="assemble"
-          depends="assemble.init,check-blacklist,assemble-message-bundles,assemble-licenses,assemble-jars,assemble-resource-files,assemble-webapps,assemble-solutions,assemble-plugins,prepare-custom-solutions"
-          description="Assembles a j2ee manual deployments package">
+  <target name="assemble-no-plugins"
+          depends="assemble.init,check-blacklist,assemble-message-bundles,assemble-licenses,assemble-jars,assemble-resource-files,assemble-webapps,assemble-solutions,prepare-custom-solutions,do-assemble"
+          description="Assembles a j2ee manual deployments package without plugins" />
 
+  <target name="assemble"
+          depends="assemble.init,check-blacklist,assemble-message-bundles,assemble-licenses,assemble-jars,assemble-resource-files,assemble-webapps,assemble-solutions,assemble-plugins,prepare-custom-solutions,do-assemble"
+          description="Assembles a j2ee manual deployments package" />
+
+  <target name="do-assemble">
     <!-- copy package-res-manual stuff into stage dir -->
     <copy todir="${approot.stage.dir}">
       <fileset dir="${package-res-manual.dir}" />
@@ -210,7 +215,7 @@
     <mkdir dir="${approot.stage.dir}/custom-ear" />
   </target>
 
-  
+
   <!-- - - - - - - - - - - - - - - - - - 
           target: assemble-plugins                     
          - - - - - - - - - - - - - - - - - -->
@@ -239,7 +244,7 @@
     <copy todir="${approot.stage.dir}/pentaho-solutions" overwrite="true">
       <fileset dir="${bi.platform.sample.solution.dir}" />
     </copy>
-    
+
     <!-- install solution archives -->
     <unzip dest="${approot.stage.dir}/pentaho-solutions" overwrite="true">
       <fileset file="${solution-archives.dir}/*.zip" />
