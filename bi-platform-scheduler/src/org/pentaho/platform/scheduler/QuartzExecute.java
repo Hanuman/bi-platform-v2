@@ -168,6 +168,11 @@ public class QuartzExecute extends PentahoBase implements Job {
         }
       }
 
+      // set the session so that anything who needs to access it will have 
+      // a single safe place to get one.  in particular, some content generators
+      // will need a session.
+      PentahoSessionHolder.setSession(userSession);
+      
       // get content generator
       int lastDot = actionName.lastIndexOf('.');
       String type = actionName.substring(lastDot + 1);
