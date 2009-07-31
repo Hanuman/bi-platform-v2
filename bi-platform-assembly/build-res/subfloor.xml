@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!--===========================================================================
     == SUBFLOOR ==
     
-    $Rev: 70 $
-    $Date: 2009-07-27 13:42:35 -0400 (Mon, 27 Jul 2009) $
+    $Rev: 72 $
+    $Date: 2009-07-31 04:11:06 -0400 (Fri, 31 Jul 2009) $
     Project Home: http://code.google.com/p/subfloor/
     
     This file contains the default implementation of the ant tasks to 
@@ -186,7 +186,7 @@ TYPICAL TARGET SEQUENCE
 
   <!-- SVN Ant Properties -->
   <property name="svnant.url"
-            value="http://subclipse.tigris.org/files/documents/906/43359/svnant-1.2.0-RC1.zip"
+            value="http://subclipse.tigris.org/files/documents/906/46267/svnant-1.3.0.zip"
             description="The URL to the current release of SVN Ant" />
   <property name="svnant.use-javahl"
             value="false"
@@ -287,9 +287,9 @@ TYPICAL TARGET SEQUENCE
   <property name="ivy.reports.dir"
             value="${bin.dir}/reports/ivy"
             description="Base directory that holds all IVY dependency report files" />
-  <property name="ivy.report.configs"
-            value="default"
-            description="Comma-separated list of IVY configurations to report on" />
+  <property name="ivy.configs"
+            value="*"
+            description="Set of configs used for IVY reporting and checking operations" />
 
   <!-- Load the manifest file (if any) as a properties file -->
   <property name="dist.manifest.file" value="${dist.dir}/MANIFEST.MF" description="The manifest file that will be generated as part of the build" />
@@ -654,7 +654,7 @@ TYPICAL TARGET SEQUENCE
       <istrue value="${release}" />
       <then>
         <sequential>
-          <ivy:artifactproperty conf="*" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
+          <ivy:artifactproperty conf="${ivy.configs}" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
 
           <propertyselector property="violators" match="dep\..*SNAPSHOT.*" select="\0" casesensitive="false" />
 
@@ -767,7 +767,7 @@ TYPICAL TARGET SEQUENCE
       Generates an IVY dependency report for this project. 
       ====================================================================-->
   <target name="ivy-report" depends="install-ivy">
-    <ivy:resolve file="${ivyfile}" conf="${ivy.report.configs}"/>
+    <ivy:resolve file="${ivyfile}" conf="${ivy.configs}"/>
     <ivy:report xml="true" todir="${ivy.reports.dir}"/>
   </target>
 
