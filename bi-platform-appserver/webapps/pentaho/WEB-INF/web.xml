@@ -525,6 +525,11 @@
 		<servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtServlet</servlet-class>
 	</servlet-->
 
+  	<servlet>
+		<servlet-name>UploadService</servlet-name>
+		<servlet-class>org.pentaho.platform.web.servlet.UploadFileServlet</servlet-class>
+	</servlet>
+
   <!-- insert additional servlets -->
 
 	<servlet-mapping>
@@ -828,6 +833,11 @@
 		<servlet-name>DatasourceServlet</servlet-name>
 		<url-pattern>/content/data-access/resources/gwt/DatasourceService</url-pattern>
 	</servlet-mapping-->
+
+  <servlet-mapping>
+    <servlet-name>UploadService</servlet-name>
+    <url-pattern>/UploadService</url-pattern>
+  </servlet-mapping>
 
 	<!-- insert additional servlet mappings -->
 
