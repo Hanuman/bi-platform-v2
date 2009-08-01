@@ -226,6 +226,9 @@ public class SecurityHelper {
    * @return
    */
   public static boolean hasAccess(final IAclSolutionFile aFile, final int actionOperation, final IPentahoSession session) {
+    if (aFile == null) {
+      return false;
+    }
     if (!aFile.isDirectory()) {
       List extensionList = PentahoSystem.getACLFileExtensionList();
       String fName = aFile.getFileName();
