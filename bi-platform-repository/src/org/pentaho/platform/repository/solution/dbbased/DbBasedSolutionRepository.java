@@ -1357,12 +1357,12 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     int res = addSolutionFile(baseUrl, path, fileName, data, overwrite);
     if ((res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && !alreadyExists) {
       // get the file
-      ISolutionFile justPublishedFile = getFileByPath(fullPath, ISolutionRepository.ACTION_EXECUTE);
+      ISolutionFile justPublishedFile = internalGetFileByPath(fullPath);
       // entire ACL is replaced for new files
       AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
       HibernateUtil.beginTransaction();
       if (SecurityHelper.canHaveACLS(justPublishedFile)) {
-        setPermissions(justPublishedFile, getDefaultPublishAcl());
+        permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
       }
     }
     if ((res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && (fileName != null)
