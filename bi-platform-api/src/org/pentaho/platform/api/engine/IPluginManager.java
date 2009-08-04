@@ -188,6 +188,17 @@ public interface IPluginManager {
   public ClassLoader getClassLoader(String pluginId);
   
   /**
+   * returns true if the path is a reference to a potential static resource.
+   * Note that this does not guarantee that the resource exists, just that it maps
+   * to a static resource location.
+   * 
+   * @param path static resource path
+   * 
+   * @return true if path begins as a static resource
+   */
+  public boolean isStaticResource(String path);
+  
+  /**
    * Returns and InputStream to the specified resource path.
    * @param path the path to the plugin resource
    * @return the InputStream which may be used to read the plugin resource

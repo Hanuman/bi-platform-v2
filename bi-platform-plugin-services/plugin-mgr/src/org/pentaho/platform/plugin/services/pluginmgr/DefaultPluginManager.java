@@ -589,13 +589,9 @@ public class DefaultPluginManager extends AbstractPluginManager {
     path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
 
     for (IPlatformPlugin plugin : registeredPlugins.values()) {
-      Map<String, String> resourceMap = plugin.getStaticResourceMap();
-      for (String url : resourceMap.keySet()) {
-        //normalize static url for comparison
-        url = (url.startsWith("/")) ? url.substring(1) : url; //$NON-NLS-1$
-        if (path.startsWith(url)) {
-          return plugin.getId();
-        }
+      String pluginId = isStaticResource(plugin, path);
+      if (pluginId != null) {
+        return pluginId;
       }
 
       for (IContentGeneratorInfo contentGenerator : plugin.getContentGenerators()) {
@@ -609,7 +605,31 @@ public class DefaultPluginManager extends AbstractPluginManager {
 
     return null;
   }
+  
+  public String isStaticResource(IPlatformPlugin plugin, String path) {
+    Map<String, String> resourceMap = plugin.getStaticResourceMap();
+    for (String url : resourceMap.keySet()) {
+      //normalize static url for comparison
+      url = (url.startsWith("/")) ? url.substring(1) : url; //$NON-NLS-1$
+      if (path.startsWith(url)) {
+        return plugin.getId();
+      }
+    }
+    return null;
+  }
 
+  public boolean isStaticResource(String path) {
+    // normalize path for comparison
+    path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
+    for (IPlatformPlugin plugin : registeredPlugins.values()) {
+      String pluginId = isStaticResource(plugin, path);
+      if (pluginId != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
   public InputStream getStaticResource(String path) {
     for (IPlatformPlugin plugin : registeredPlugins.values()) {
       Map<String, String> resourceMap = plugin.getStaticResourceMap();

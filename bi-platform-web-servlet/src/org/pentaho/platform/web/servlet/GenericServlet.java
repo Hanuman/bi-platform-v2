@@ -145,41 +145,45 @@ public class GenericServlet extends ServletBase {
         headerParams.setParameter(name, value);
       }
 
-      if (pathInfo != null && pluginManager.getServicePlugin(pathInfo) != null) {
+
+      if (pathInfo != null) {
         String pluginId = pluginManager.getServicePlugin(pathInfo);
-
-        boolean cacheOn = "true".equals(pluginManager.getPluginSetting(pluginId, "settings/cache", "false"));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-        String maxAge = (String)pluginManager.getPluginSetting(pluginId, "settings/max-age", null); //$NON-NLS-1$
-        allowBrowserCache(maxAge, pathParams);
-        
-        String mimeType = MimeHelper.getMimeTypeFromFileName(pathInfo);
-        response.setContentType(mimeType);
-        OutputStream out = response.getOutputStream();
-
-        // do we have this resource cached?
-        ByteArrayOutputStream byteStream = null;
-
-        if (cacheOn) {
-          byteStream = (ByteArrayOutputStream) cache.getFromRegionCache(CACHE_FILE, pathInfo);
-        }
-
-        if (byteStream != null) {
-          IOUtils.write(byteStream.toByteArray(), out);
-          return;
-        }
-
-        InputStream resourceStream = pluginManager.getStaticResource(pathInfo);
-        if (resourceStream != null) {
-          byteStream = new ByteArrayOutputStream();
-          IOUtils.copy(resourceStream, byteStream);
-
-          // if cache is enabled, drop file in cache
+        if (pluginId != null && pluginManager.isStaticResource(pathInfo)) {
+          boolean cacheOn = "true".equals(pluginManager.getPluginSetting(pluginId, "settings/cache", "false"));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+          String maxAge = (String)pluginManager.getPluginSetting(pluginId, "settings/max-age", null); //$NON-NLS-1$
+          allowBrowserCache(maxAge, pathParams);
+          
+          String mimeType = MimeHelper.getMimeTypeFromFileName(pathInfo);
+          response.setContentType(mimeType);
+          OutputStream out = response.getOutputStream();
+  
+          // do we have this resource cached?
+          ByteArrayOutputStream byteStream = null;
+  
           if (cacheOn) {
-            cache.putInRegionCache(CACHE_FILE, pathInfo, byteStream);
+            byteStream = (ByteArrayOutputStream) cache.getFromRegionCache(CACHE_FILE, pathInfo);
           }
-
-          // write it out
-          IOUtils.write(byteStream.toByteArray(), out);
+  
+          if (byteStream != null) {
+            IOUtils.write(byteStream.toByteArray(), out);
+            return;
+          }
+          InputStream resourceStream = pluginManager.getStaticResource(pathInfo);
+          if (resourceStream != null) {
+            byteStream = new ByteArrayOutputStream();
+            IOUtils.copy(resourceStream, byteStream);
+  
+            // if cache is enabled, drop file in cache
+            if (cacheOn) {
+              cache.putInRegionCache(CACHE_FILE, pathInfo, byteStream);
+            }
+  
+            // write it out
+            IOUtils.write(byteStream.toByteArray(), out);
+            return;
+          }
+          logger.error(Messages.getErrorString("GenericServlet.ERROR_0004_RESOURCE_NOT_FOUND", pluginId, pathInfo)); //$NON-NLS-1$
+          response.sendError(404);
           return;
         }
       }
