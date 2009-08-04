@@ -19,6 +19,7 @@ package org.pentaho.platform.plugin.action.openflashchart.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import ofc4j.model.Tooltip;
 import ofc4j.model.axis.Axis;
 import ofc4j.model.elements.BarChart;
 import ofc4j.model.elements.Element;
@@ -29,7 +30,7 @@ import ofc4j.model.elements.BarChart.Style;
 import ofc4j.model.elements.StackedBarChart.Stack;
 import ofc4j.model.elements.StackedBarChart.StackKey;
 import ofc4j.model.elements.StackedBarChart.StackValue;
- 
+
 import org.dom4j.Node;
 
 public class BarChartFactory extends AbstractChartFactory {
@@ -157,6 +158,9 @@ public class BarChartFactory extends AbstractChartFactory {
           e = getVerticalBarChartFromColumn(col);
         } else if (HORIZONTAL_ORIENTATION.equals(orientation)) {
           e = getHorizontalBarChartFromColumn(col);
+          
+          // Fix for BISERVER-3027, incorrect hover tip placement on hbar
+          chart.setTooltip(new Tooltip());
         } else {
           // we've got an invalid orientation
           // TODO: Log error message

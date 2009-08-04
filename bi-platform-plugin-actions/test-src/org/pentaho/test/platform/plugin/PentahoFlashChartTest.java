@@ -322,7 +322,7 @@ public class PentahoFlashChartTest {
     String c2 = PentahoOFC4JChartHelper.generateChartJson(chartNode, rs, false, null);
     
     Assert.assertEquals(c2, 
-      "{\"x_legend\":{\"text\":\"DEPARTMENT\",\"style\":\"font-family: Arial; font-size: 14px; font-weight: normal; font-style: normal;\"}," + 
+      "{\"tooltip\":{\"mouse\":2},\"x_legend\":{\"text\":\"DEPARTMENT\",\"style\":\"font-family: Arial; font-size: 14px; font-weight: normal; font-style: normal;\"}," + 
         "\"y_axis\":{\"stroke\":1,\"grid-colour\":\"#aaaaaa\",\"colour\":\"#000000\",\"labels\":[\"Human Resource\",\"Finance\",\"Sales\"],\"offset\":1}," + 
         "\"x_axis\":{\"min\":0,\"steps\":11,\"stroke\":1,\"grid-colour\":\"#aaaaaa\",\"colour\":\"#000000\",\"labels\":{},\"max\":121}," + 
         "\"elements\":[{\"text\":\"ACTUAL\",\"type\":\"hbar\",\"values\":[{\"right\":11},{\"right\":14},{\"right\":7}],\"colour\":\"#006666\"},{\"text\":\"BUDGET\",\"type\":\"hbar\",\"values\":[{\"right\":12},{\"right\":9},{\"right\":100}],\"colour\":\"#0066CC\"}]}");
