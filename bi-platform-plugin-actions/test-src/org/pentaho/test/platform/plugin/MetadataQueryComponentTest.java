@@ -58,10 +58,18 @@ public class MetadataQueryComponentTest {
       Domain domain3 = getJdbcDomain();
       domain3.setId("JDBCDOMAIN2");
       domain3.getLogicalModels().get(0).setProperty("max_rows", new BigDecimal(10));
+
+      Domain domain4 = getBasicDomain();
+      ((SqlPhysicalModel)domain4.getPhysicalModels().get(0)).getDatasource().setDialectType("MYSQL");
+      Map<String, String> attributes = new HashMap<String, String>();
+      attributes.put("QUOTE_ALL_FIELDS", "Y");
+      ((SqlPhysicalModel)domain4.getPhysicalModels().get(0)).getDatasource().setAttributes(attributes);
       
+      domain4.setId("MYSQL_DOMAIN");
       repo.storeDomain(domain, true);
       repo.storeDomain(domain2, true);
       repo.storeDomain(domain3, true);
+      repo.storeDomain(domain4, true);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -162,6 +170,47 @@ public class MetadataQueryComponentTest {
       rs.closeConnection();
     }
   }
+ 
+ @Test
+ public void testMysqlComponent() {
+   
+   // first, test default behavior of forceDb = false
+   
+   String mql = "<mql><domain_id>MYSQL_DOMAIN</domain_id><model_id>MODEL</model_id>" + 
+                "<selections><selection>" +
+                "<view>CATEGORY</view>" +
+                "<column>LC_CUSTOMERNAME</column>" +
+                "</selection>" +
+                "</selections></mql>";
+   
+   MetadataQueryComponent component = new MetadataQueryComponent();
+   component.setQuery(mql);
+   component.execute();
+   
+   IPentahoResultSet rs = component.getResultSet();
+   try {
+     Assert.assertNotNull(rs);
+     Assert.assertEquals(1, rs.getColumnCount());
+     Assert.assertEquals(122, rs.getRowCount());
+     Object obj[];
+     while ((obj = rs.next()) != null) {
+       System.out.println(obj[0]);
+     }
+     
+   } finally {
+     rs.close();
+     rs.closeConnection();
+   }
+   
+   // second, test with forceDb = true
+   
+   MetadataQueryComponent component2 = new MetadataQueryComponent();
+   component2.setQuery(mql);
+   component2.setForceDbDialect(true);
+   boolean result = component2.execute();
+   Assert.assertFalse(result);
+   Assert.assertNull(component2.getResultSet());
+ }
   
   @Test
   public void testJdbcComponent() {
