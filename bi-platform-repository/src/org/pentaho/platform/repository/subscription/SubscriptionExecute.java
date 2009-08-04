@@ -48,6 +48,7 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoBase;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.UserSession;
@@ -122,6 +123,11 @@ public class SubscriptionExecute extends PentahoBase {
         String jobName = sub.getUser() + " : " + sub.getTitle(); //$NON-NLS-1$
         IPentahoSession userSession = getEffectiveUserSession(sub.getUser());
 
+        // set the session so that anything who needs to access it will have 
+        // a single safe place to get one.  in particular, some content generators
+        // will need a session.
+        PentahoSessionHolder.setSession(userSession);
+        
         paramMap.put("solution", contentInfo.getSolutionName()); //$NON-NLS-1$
         paramMap.put("path", contentInfo.getPath()); //$NON-NLS-1$
         paramMap.put("action", contentInfo.getActionName()); //$NON-NLS-1$
