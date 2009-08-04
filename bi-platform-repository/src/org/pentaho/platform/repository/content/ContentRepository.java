@@ -79,8 +79,10 @@ public class ContentRepository extends PentahoBase implements IContentRepository
 
   public void setSession(final IPentahoSession session) {
     ContentRepository.threadSession.set(session);
-    genLogIdFromSession(session);
-    HibernateUtil.beginTransaction();
+    if (session != null) {
+      genLogIdFromSession(session);
+      HibernateUtil.beginTransaction();
+    }
   }
 
   public void init(final IPentahoSession session) {
