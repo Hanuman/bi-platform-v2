@@ -75,8 +75,8 @@ public class MetadataPublisher extends BasePublisher {
       return Messages.getString(
             "MetadataPublisher.USER_METADATA_RELOADED", Integer.toString(MetadataPublisher.numberUpdated)); //$NON-NLS-1$
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("MetadataPublisher.ERROR_0000_THIN_METADATA_FAILED")); //$NON-NLS-1$
-      messages.add(Messages.getString("MetadataPublisher.USER_IMPORT_META_FAILED")); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED"), e); //$NON-NLS-1$
+      messages.add(Messages.getString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED")); //$NON-NLS-1$
     }
     
     StringBuffer buffer = new StringBuffer();
