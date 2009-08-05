@@ -13,7 +13,11 @@
  * See the GNU Lesser General Public License for more details.
  *
  * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
-*/
+ *
+ *
+ * Created April 21, 2009
+ * @author rmansoor
+ */
 package org.pentaho.platform.dataaccess.datasource.wizard.service;
 
 import java.io.Serializable;

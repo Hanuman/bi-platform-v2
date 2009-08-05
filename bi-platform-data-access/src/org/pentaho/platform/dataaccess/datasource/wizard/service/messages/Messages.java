@@ -15,8 +15,8 @@
  * Copyright 2005 - 2009 Pentaho Corporation.  All rights reserved.
  *
  *
- * @created Jul 19, 2005 
- * @author James Dixon
+ * @created Jul 18, 2009 
+ * @author rmansoor
  * 
  */
 package org.pentaho.platform.dataaccess.datasource.wizard.service.messages;
