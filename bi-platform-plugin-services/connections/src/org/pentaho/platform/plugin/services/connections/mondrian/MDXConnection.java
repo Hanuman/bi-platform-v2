@@ -36,6 +36,7 @@ import mondrian.rolap.RolapConnectionProperties;
 
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
@@ -167,6 +168,12 @@ public class MDXConnection implements IPentahoLoggingConnection {
         close();
       }
 
+      // default behavior in the platform is to have I18N support for MDX Connection
+      if (properties.get(RolapConnectionProperties.DynamicSchemaProcessor.name()) == null) {
+        properties.put(RolapConnectionProperties.DynamicSchemaProcessor.name(), "mondrian.i18n.LocalizingDynamicSchemaProcessor"); //$NON-NLS-1$
+        properties.put(RolapConnectionProperties.Locale.name(), LocaleHelper.getLocale().toString());
+      }
+      
       String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name());
       
       if (dataSourceName != null) {
