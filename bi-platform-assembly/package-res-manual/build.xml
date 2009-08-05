@@ -183,6 +183,7 @@
 			</fileset>
 		</copy>
 		
+		<!--
 		<pathconvert property="hsqldb.ear.java.modules" pathsep=" ">
 			<path refid="hsqldb.library.path" />
 			<mapper>
@@ -262,7 +263,8 @@
 				</chainedmapper>
 			</mapper>
 		</pathconvert>
-
+    -->
+		
 		<copy file="${build.res.dir}/ear/application.xml" tofile="${build.ears.dir}/jboss/portal/hsqldb/application.xml" overwrite="true" />
 		<copy file="${build.res.dir}/ear/application.xml" tofile="${build.ears.dir}/jboss/portal/mysql5/application.xml" overwrite="true" />
 		<copy file="${build.res.dir}/ear/application.xml" tofile="${build.ears.dir}/jboss/portal/oracle10g/application.xml" overwrite="true" />
@@ -273,16 +275,20 @@
 		<copy file="${build.res.dir}/ear/application.xml" tofile="${build.ears.dir}/jboss/no-portal/oracle10g/application.xml" overwrite="true" />
 		<copy file="${build.res.dir}/ear/application.xml" tofile="${build.ears.dir}/jboss/no-portal/postgresql/application.xml" overwrite="true" />
 
-		<replace file="${build.ears.dir}/jboss/portal/hsqldb/application.xml" token="&lt;!-- additional web apps --&gt;" value="${hsqldb.ear.java.modules} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/portal/mysql5/application.xml" token="&lt;!-- additional web apps --&gt;" value="${mysql5.ear.java.modules} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/portal/oracle10g/application.xml" token="&lt;!-- additional web apps --&gt;" value="${oracle10g.ear.java.modules} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/portal/postgresql/application.xml" token="&lt;!-- additional web apps --&gt;" value="${postgresql.ear.java.modules} &lt;!-- additional web apps --&gt;" />
+		<!-- using java module XML as a classpath is not appropriate (BISERVER-2515)
+		 
+		<replace file="${build.ears.dir}/jboss/portal/hsqldb/application.xml" token="&lt;!- additional web apps -&gt;" value="${hsqldb.ear.java.modules} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/portal/mysql5/application.xml" token="&lt;!- additional web apps -&gt;" value="${mysql5.ear.java.modules} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/portal/oracle10g/application.xml" token="&lt;!- additional web apps -&gt;" value="${oracle10g.ear.java.modules} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/portal/postgresql/application.xml" token="&lt;!- additional web apps -&gt;" value="${postgresql.ear.java.modules} &lt;!- additional web apps -&gt;" />
 
-		<replace file="${build.ears.dir}/jboss/no-portal/hsqldb/application.xml" token="&lt;!-- additional web apps --&gt;" value="${hsqldb.ear.java.modules.no.portal} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/no-portal/mysql5/application.xml" token="&lt;!-- additional web apps --&gt;" value="${mysql5.ear.java.modules.no.portal} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/no-portal/oracle10g/application.xml" token="&lt;!-- additional web apps --&gt;" value="${oracle10g.ear.java.modules.no.portal} &lt;!-- additional web apps --&gt;" />
-		<replace file="${build.ears.dir}/jboss/no-portal/postgresql/application.xml" token="&lt;!-- additional web apps --&gt;" value="${postgresql.ear.java.modules.no.portal} &lt;!-- additional web apps --&gt;" />
-
+		<replace file="${build.ears.dir}/jboss/no-portal/hsqldb/application.xml" token="&lt;!- additional web apps -&gt;" value="${hsqldb.ear.java.modules.no.portal} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/no-portal/mysql5/application.xml" token="&lt;!- additional web apps -&gt;" value="${mysql5.ear.java.modules.no.portal} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/no-portal/oracle10g/application.xml" token="&lt;!- additional web apps -&gt;" value="${oracle10g.ear.java.modules.no.portal} &lt;!- additional web apps -&gt;" />
+		<replace file="${build.ears.dir}/jboss/no-portal/postgresql/application.xml" token="&lt;!- additional web apps -&gt;" value="${postgresql.ear.java.modules.no.portal} &lt;!- additional web apps -&gt;" />
+    
+    --> 
+		
 		<manifest file="${build.ears.dir}/jboss/portal/hsqldb/MANIFEST.MF">
 			<attribute name="Implementation-Title" value="${impl.title}" />
 			<attribute name="Implementation-Version" value="${impl.version}" />
@@ -439,20 +445,13 @@
 
 		<mkdir dir="${build.ears.dir}/jboss/portal" />
 
-		<manifest file="${build.ears.dir}/jboss/portal/MANIFEST.MF">
-			<attribute name="Implementation-Title" value="${impl.title}" />
-			<attribute name="Implementation-Version" value="${impl.version}" />
-			<attribute name="Implementation-Vendor" value="${impl.vendor}" />
-			<attribute name="Class-Path" value="${lib.project.manifest.classpath}" />
-		</manifest>
-
 		<!-- Remove the libraries from WEB-INF/lib. When creating the ear, they will be placed in the ear's /lib dir -->
 		<zip destfile="${build.ears.dir}/jboss/portal/pentaho.war" duplicate="preserve">
 			
 			<!-- copy over any custom changes to webapp -->
 			<zipfileset dir="custom-pentaho-webapp" />
 			
-			<zipfileset dir="${build.ears.dir}/jboss/portal" prefix="META-INF">
+			<zipfileset dir="${build.ears.dir}/jboss/portal/${rdbms}" prefix="META-INF">
 				<include name="MANIFEST.MF" />
 			</zipfileset>
 			<zipfileset dir="${webapp.dir}">
@@ -488,7 +487,7 @@
 			<!-- copy over any custom changes to webapp -->
 			<zipfileset dir="custom-pentaho-webapp" />
 			
-			<zipfileset dir="${build.ears.dir}/jboss/no-portal" prefix="META-INF">
+			<zipfileset dir="${build.ears.dir}/jboss/no-portal/${rdbms}" prefix="META-INF">
 				<include name="MANIFEST.MF" />
 			</zipfileset>
 			<zipfileset dir="${webapp.dir}">
@@ -617,10 +616,14 @@
           If your jboss configuration does not have jboss portal installed, use
           ear-pentaho-jboss-hsqldb-no-portal instead.
          ============================================================================ -->
-	<target name="ear-pentaho-jboss-hsqldb" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war, war-pentaho-jboss-for-ear">
-		<antcall target="ear-pentaho-jboss">
+	<target name="ear-pentaho-jboss-hsqldb" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war">
+		
+		<antcall target="war-pentaho-jboss-for-ear">
 			<param name="rdbms" value="hsqldb" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss">
+      <param name="rdbms" value="hsqldb" />
+    </antcall>
 	</target>
 
 	<!-- ===============================================================================
@@ -631,10 +634,13 @@
           If your jboss configuration has jboss portal installed, use
           ear-pentaho-jboss-hsqldb instead.
          ============================================================================= -->
-	<target name="ear-pentaho-jboss-hsqldb-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, war-pentaho-jboss-for-ear-no-portal">
-		<antcall target="ear-pentaho-jboss-no-portal">
+	<target name="ear-pentaho-jboss-hsqldb-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war">
+		<antcall target="war-pentaho-jboss-for-ear-no-portal">
 			<param name="rdbms" value="hsqldb" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss-no-portal">
+      <param name="rdbms" value="hsqldb" />
+    </antcall>
 	</target>
 
 	<!-- =========================================================================
@@ -645,10 +651,13 @@
           If your jboss configuration does not have jboss portal installed, use
           ear-pentaho-jboss-mysql-no-portal instead.
          ========================================================================== -->
-	<target name="ear-pentaho-jboss-mysql" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war, war-pentaho-jboss-for-ear">
-		<antcall target="ear-pentaho-jboss">
+	<target name="ear-pentaho-jboss-mysql" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war">
+		<antcall target="war-pentaho-jboss-for-ear">
 			<param name="rdbms" value="mysql5" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss">
+      <param name="rdbms" value="mysql5" />
+    </antcall>
 	</target>
 
 	<!-- ===============================================================
@@ -659,10 +668,14 @@
           If your jboss configuration has jboss portal installed, use
           ear-pentaho-jboss-mysql instead.
          ================================================================= -->
-	<target name="ear-pentaho-jboss-mysql-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, war-pentaho-jboss-for-ear-no-portal">
-		<antcall target="ear-pentaho-jboss-no-portal">
+	<target name="ear-pentaho-jboss-mysql-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war">
+		
+		<antcall target="war-pentaho-jboss-for-ear-no-portal">
 			<param name="rdbms" value="mysql5" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss-no-portal">
+      <param name="rdbms" value="mysql5" />
+    </antcall>
 	</target>
 
 	<!-- =========================================================================
@@ -673,10 +686,14 @@
           If your jboss configuration does not have jboss portal installed, use
           ear-pentaho-jboss-oracle10g-no-portal instead.
          ========================================================================== -->
-	<target name="ear-pentaho-jboss-oracle10g" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war, war-pentaho-jboss-for-ear">
-		<antcall target="ear-pentaho-jboss">
+	<target name="ear-pentaho-jboss-oracle10g" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war">
+		
+		<antcall target="war-pentaho-jboss-for-ear">
 			<param name="rdbms" value="oracle10g" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss">
+      <param name="rdbms" value="oracle10g" />
+    </antcall>
 	</target>
 
 	<!-- ===============================================================
@@ -687,10 +704,13 @@
           If your jboss configuration has jboss portal installed, use
           ear-pentaho-jboss-oracle10g instead.
          ================================================================= -->
-	<target name="ear-pentaho-jboss-oracle10g-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, war-pentaho-jboss-for-ear-no-portal">
-		<antcall target="ear-pentaho-jboss-no-portal">
+	<target name="ear-pentaho-jboss-oracle10g-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war">
+		<antcall target="war-pentaho-jboss-for-ear-no-portal">
 			<param name="rdbms" value="oracle10g" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss-no-portal">
+      <param name="rdbms" value="oracle10g" />
+    </antcall>
 	</target>
 
 	<!-- =========================================================================
@@ -701,10 +721,13 @@
           If your jboss configuration does not have jboss portal installed, use
           ear-pentaho-jboss-postgresql-no-portal instead.
          ========================================================================== -->
-	<target name="ear-pentaho-jboss-postgresql" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war, war-pentaho-jboss-for-ear">
-		<antcall target="ear-pentaho-jboss">
+	<target name="ear-pentaho-jboss-postgresql" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, zip-pentaho-portal-layout-war">
+		<antcall target="war-pentaho-jboss-for-ear">
 			<param name="rdbms" value="postgresql" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss">
+      <param name="rdbms" value="postgresql" />
+    </antcall>
 	</target>
 
 	<!-- ===============================================================
@@ -715,10 +738,13 @@
           If your jboss configuration has jboss portal installed, use
           ear-pentaho-jboss-postgresql instead.
          ================================================================= -->
-	<target name="ear-pentaho-jboss-postgresql-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war, war-pentaho-jboss-for-ear-no-portal">
-		<antcall target="ear-pentaho-jboss-no-portal">
+	<target name="ear-pentaho-jboss-postgresql-no-portal" depends="init, init-pentaho-ears, zip-pentaho-style-war, zip-pentaho-steel-wheels-style-war">
+		<antcall target="war-pentaho-jboss-for-ear-no-portal">
 			<param name="rdbms" value="postgresql" />
 		</antcall>
+    <antcall target="ear-pentaho-jboss-no-portal">
+      <param name="rdbms" value="postgresql" />
+    </antcall>
 	</target>
 
 	<!-- ======================================================================
