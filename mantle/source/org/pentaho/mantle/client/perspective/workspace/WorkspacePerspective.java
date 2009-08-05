@@ -54,7 +54,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkspacePerspective extends ScrollPanel {
-
+  public DeleteSubscriptionClickListener deleteSubscriptionClickListener;
   private static final int WAITING = 0;
   private static final int COMPLETE = 1;
   private static final int MYSCHEDULES = 2;
@@ -307,7 +307,8 @@ public class WorkspacePerspective extends ScrollPanel {
 
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblDelete.addClickListener(new DeleteSubscriptionClickListener(currentSubscr, lblDelete));
+      deleteSubscriptionClickListener = new DeleteSubscriptionClickListener(currentSubscr, lblDelete);
+      lblDelete.addClickListener(deleteSubscriptionClickListener);
 
       buttonsPanel.add(lblRunNow);
       buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
@@ -393,15 +394,24 @@ public class WorkspacePerspective extends ScrollPanel {
   }
 
   void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
-    VerticalPanel vp = new VerticalPanel();
     if (isPublicSchedule) {
+      VerticalPanel vp = new VerticalPanel();
       vp.add(new Label(Messages.getString("deletePublicSchedule"))); //$NON-NLS-1$
-    } else {
-      vp.add(new Label(Messages.getString("deleteContentItem"))); //$NON-NLS-1$
-    }
+      final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
+          Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    if (isPublicSchedule) {
-      deletePublicScheduleAndContents(currentSubscr);
+      final IDialogCallback callback = new IDialogCallback() {
+        public void cancelPressed() {
+          deleteConfirmDialog.hide();
+          deleteSubscriptionClickListener.getLblDelete().setVisible(true);
+        }
+
+        public void okPressed() {
+          deletePublicScheduleAndContents(currentSubscr);
+        }
+      };
+      deleteConfirmDialog.setCallback(callback);
+      deleteConfirmDialog.center();
     } else {
       deleteContentItem(currentSubscr.getId(), fileId);
     }
@@ -923,6 +933,14 @@ public class WorkspacePerspective extends ScrollPanel {
     SubscriptionBean subscription;
     Label lblDelete;
 
+    public Label getLblDelete() {
+      return lblDelete;
+    }
+
+    public void setLblDelete(Label lblDelete) {
+      this.lblDelete = lblDelete;
+    }
+
     public DeleteSubscriptionClickListener(SubscriptionBean subscription, Label lblDelete) {
       this.subscription = subscription;
       this.lblDelete = lblDelete;
@@ -932,6 +950,7 @@ public class WorkspacePerspective extends ScrollPanel {
       lblDelete.setVisible(false);
       doDelete(true, subscription, ""); //$NON-NLS-1$
     }
+    
   }
 
 }

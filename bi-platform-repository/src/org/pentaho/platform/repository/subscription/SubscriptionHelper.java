@@ -59,7 +59,6 @@ import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SimpleParameterSetter;
-import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.engine.services.solution.StandardSettings;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
@@ -95,7 +94,7 @@ public class SubscriptionHelper {
     ISystemSettings systemSettings = PentahoSystem.getSystemSettings();
     String defaultParameterXsl = systemSettings.getSystemSetting("default-parameter-xsl", "DefaultParameterForm.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    SolutionEngine solutionEngine = (SolutionEngine) PentahoSystem.get(ISolutionEngine.class, session);
+    ISolutionEngine solutionEngine = (ISolutionEngine) PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setLoggingLevel(PentahoSystem.loggingLevel);
     solutionEngine.init(session);
     solutionEngine.setParameterXsl(defaultParameterXsl);
