@@ -159,7 +159,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       if (file != null) {
         putRepositoryObjectInCache(documentPath, file);
       } else {
-        SolutionRepositoryBase.logger.warn(Messages.getString("SolutionRepository.WARN_0004_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
+        SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0010_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
             documentPath));
         return null; // If it's still null then it doesn't exist
       }
