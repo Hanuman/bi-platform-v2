@@ -18,10 +18,10 @@
       <paint style="color: #333333;"/>
     </palette>
     <verticalAxis>
-      <legend style="font-family: san-serif; color: #772200; font-size: 12px; font-weight: bold; text-align: right; font-style: oblique; background-color: #ffaa00;">yAxis</legend>
+      <legend style="font-family: san-serif; color: #772200; font-size: 12px; font-weight: bold;">yAxis</legend>
     </verticalAxis>
     <horizontalAxis class="org.pentaho.chart.model.NumericAxis" labelOrientation="DIAGONAL">
-      <legend style="font-family: san-serif; color: #772200; font-size: 10px; text-align: left; background-color: #ffaa00;">xAxis</legend>
+      <legend style="font-family: san-serif; color: #772200; font-size: 10px;">xAxis</legend>
     </horizontalAxis>
   </barPlot>
 </chartModel>
