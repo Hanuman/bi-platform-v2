@@ -37,6 +37,7 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 public class RelationalModel extends XulEventSourceAdapter{
   private RelationalModelValidationListenerCollection relationalModelValidationListeners;
   private boolean validated;
+  private boolean previewValidated;
   public static enum ConnectionEditType {ADD, EDIT};
   private IConnection selectedConnection;
   private List<IConnection> connections = new ArrayList<IConnection>();
@@ -44,7 +45,7 @@ public class RelationalModel extends XulEventSourceAdapter{
   private String query;
   private String previewLimit;
   private ConnectionEditType editType = ConnectionEditType.ADD;
-  private BusinessData object;
+  private BusinessData businessData;
 
   public RelationalModel() {
     previewLimit = "10";
@@ -156,29 +157,34 @@ public class RelationalModel extends XulEventSourceAdapter{
   }
 
   private void setValidated(boolean validated) {
-    boolean prevVal = validated;
+    boolean prevVal = this.validated;
     this.validated = validated;
     this.firePropertyChange("validated", prevVal, validated);
   }
 
   public void validate() {
-    if ((getQuery() != null && getQuery().length() > 0)
-        && (getSelectedConnection() != null)) {
-      this.setValidated(true);
-      fireRelationalModelValid();
+    if((getQuery() != null && getQuery().length() > 0)&& (getSelectedConnection() != null)) {
+      this.setPreviewValidated(true);
+      if(getBusinessData() != null) {
+        this.setValidated(true);
+        fireRelationalModelValid();
+      } else {
+        this.setValidated(false);
+        fireRelationalModelInValid();
+      }
     } else {
-      this.setValidated(false);
-      fireRelationalModelInValid();
+      this.setPreviewValidated(false);
     }
   }
 
   public BusinessData getBusinessData() {
-    return object;
+    return businessData;
   }
 
-  public void setBusinessData(BusinessData object) {
-    this.object = object;
-    setModelData(object);
+  public void setBusinessData(BusinessData businessData) {
+    this.businessData = businessData;
+    setModelData(businessData);
+    validate();
   }
   public IDatasource getDatasource() {
     IDatasource datasource = new Datasource();
@@ -281,5 +287,13 @@ public class RelationalModel extends XulEventSourceAdapter{
     if (relationalModelValidationListeners != null) {
       relationalModelValidationListeners.fireRelationalModelInValid();
     }
+  }
+  public void setPreviewValidated(boolean previewValidated) {
+    boolean prevVal = this.previewValidated;
+    this.previewValidated = previewValidated;
+    this.firePropertyChange("previewValidated", prevVal, previewValidated);
+  }
+  public boolean isPreviewValidated() {
+    return previewValidated;
   }
 }

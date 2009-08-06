@@ -191,8 +191,8 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     //columnFormatTreeCol = (XulTreeCol) document.getElementById("relationalColumnFormatTreeCol"); //$NON-NLS-1$
 
     bf.setBindingType(Binding.Type.ONE_WAY);
-    bf.createBinding(datasourceModel, "validated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "validated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getRelationalModel(), "previewValidated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getRelationalModel(), "previewValidated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
 
     BindingConvertor<String, Boolean> widgetBindingConvertor = new BindingConvertor<String, Boolean>() {
 
