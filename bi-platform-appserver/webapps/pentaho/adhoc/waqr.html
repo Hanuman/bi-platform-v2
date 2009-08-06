@@ -226,16 +226,16 @@
  				    var daBtnContainer = document.getElementById( "dataaccessButton" );
 					if(returnValue == "true") {
 				       /** Creating Add datasource button */
-					   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE );
+					   var dataAccessAddBtn = new ButtonCtrl( Messages.getString("dataaccessAddButtonText"), ButtonCtrl.LARGE, "dataaccessAddButton" );
 					   dataAccessAddBtn.setOnClickCallback(dataaccessAddBtnCallback, null);
 
 				       /** Creating Edit datasource button */
-					   dataAccessEditBtn = new ButtonCtrl( Messages.getString("dataaccessEditButtonText"), ButtonCtrl.LARGE );
+					   dataAccessEditBtn = new ButtonCtrl( Messages.getString("dataaccessEditButtonText"), ButtonCtrl.LARGE, "dataaccessEditButton" );
 					   dataAccessEditBtn.setOnClickCallback(dataaccessEditBtnCallback, null);
 					   dataAccessEditBtn.setEnabled(false);
 					   
 					   /** Creating Delete datasource button */
-					   var dataAccessDeleteBtn = new ButtonCtrl( Messages.getString("dataaccessDeleteButtonText"), ButtonCtrl.LARGE );
+					   var dataAccessDeleteBtn = new ButtonCtrl( Messages.getString("dataaccessDeleteButtonText"), ButtonCtrl.LARGE, "dataaccessDeleteButton" );
 					   dataAccessDeleteBtn.setOnClickCallback(dataaccessDeleteBtnCallback, null);
 
 					   var table = document.createElement( "table" );

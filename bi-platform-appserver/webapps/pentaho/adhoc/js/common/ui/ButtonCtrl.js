@@ -19,7 +19,7 @@
  * "label" for the button. If an HTML element, the element will be the "label" for the button
  * @param btnSize one of either ButtonCtrl.SMALL or ButtonCtrl.LARGE
  */
-ButtonCtrl = function( btnLabel, btnSize )
+ButtonCtrl = function( btnLabel, btnSize, btnId )
 {
 	HTMLCtrl.call( this, "table" );
 
@@ -43,6 +43,11 @@ ButtonCtrl = function( btnLabel, btnSize )
 	
 	var table = this.getRoot();
 	table.className = "buttonCtrl";
+
+	if (undefined != btnId) {
+		table.id = btnId;
+	}
+
 	//table.background = UIUtil.getImageFolderPath() + this.btnImgBaseName + "middle_hover.png";	// TODO see if we can get this into the style/class
 	table.cellSpacing = "0";
 	table.cellPadding = "0";
