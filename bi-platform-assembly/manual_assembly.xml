@@ -11,13 +11,12 @@
   <property name="plugins.dir" value="plugins" />
   <property name="solution-archives.dir" value="solution-archives" />
 
+  <property name="bi.platform.assembly.dir" value="." />
+  <!-- set license dir here before we import assembly_shared.xml since subfloor will set it also -->
+  <property name="license.dir" value="${bi.platform.assembly.dir}/licenses" />
 
   <!-- Import the ant script that includes targets share between manual and archive-based assemblies -->
   <import file="build-res/assembly_shared.xml" />
-
-  <property name="bi.platform.assembly.dir" value="." />
-
-  <property name="license.dir" value="licenses" />
 
   <property name="bi.platform.util.dir" value="../bi-platform-util" />
   <property name="bi.platform.engine.core.dir" value="../bi-platform-engine-core" />
