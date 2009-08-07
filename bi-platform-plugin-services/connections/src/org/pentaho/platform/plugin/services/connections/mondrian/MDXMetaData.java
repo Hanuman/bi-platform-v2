@@ -58,13 +58,13 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
   public MDXMetaData() {
     super();
   }
-  
+
   /**
    * @param connection
    */
   public MDXMetaData(final Result nativeResultSet, boolean useExtendedColumnNames) {
     super();
-    this.useExtendedColumnNames=useExtendedColumnNames;
+    this.useExtendedColumnNames = useExtendedColumnNames;
     this.nativeResultSet = nativeResultSet;
     columnHeaders = createColumnHeaders();
     rowHeaders = createRowHeaders();
@@ -81,19 +81,36 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
   protected Object[][] createColumnHeaders() {
     int rowCount = 0;
     int colCount = 0;
-
-    List positions = nativeResultSet.getAxes()[AXIS_COLUMN].getPositions();
-    if (positions != null && positions.size() > 0) {
-      rowCount = ((List) positions.get(0)).size();
-      colCount = positions.size();
-    }
-    Object[][] result = new Object[rowCount][colCount];
-    for (int c = 0; c < colCount; c++) {
-      List members = (List) positions.get(c);
-      Member member = null;
-      for (int r = 0; r < rowCount; r++) {
-        member = (Member) members.get(r);
-        result[r][c] = member.getCaption();
+    Object[][] result = null;
+    List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_COLUMN].getPositions();
+    if (useExtendedColumnNames) {
+      if (positions != null && positions.size() > 0) {
+        rowCount = ((List) positions.get(0)).size();
+        colCount = positions.size();
+      }
+      result = new Object[rowCount][colCount];
+      for (int c = 0; c < colCount; c++) {
+        List members = (List) positions.get(c);
+        Member member = null;
+        for (int r = 0; r < rowCount; r++) {
+          member = (Member) members.get(r);
+          result[r][c] = member.getCaption();
+        }
+      }
+    } else {
+      if ((positions != null) && (positions.size() > 0)) {
+        rowCount = ((List) positions.get(0)).size() + 1;
+        colCount = positions.size();
+      }
+      result = new Object[rowCount][colCount];
+      for (int c = 0; c < colCount; c++) {
+        List members = (List) positions.get(c);
+        Member member = null;
+        for (int r = 0; r < rowCount - 1; r++) {
+          member = (Member) members.get(r);
+          result[r][c] = member.getCaption();
+        }
+        result[rowCount - 1][c] = member.getHierarchy().getCaption();
       }
     }
     return result;
@@ -102,19 +119,36 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
   protected Object[][] createRowHeaders() {
     int rowCount = 0;
     int colCount = 0;
-
-    List positions = nativeResultSet.getAxes()[AXIS_ROW].getPositions();
-    if (positions != null && positions.size() > 0) {
-      rowCount = positions.size();
-      colCount = ((List) positions.get(0)).size();
-    }
-    Object[][] result = new Object[rowCount][colCount];
-    for (int r = 0; r < rowCount; r++) {
-      List members = (List) positions.get(r);
-      Member member = null;
-      for (int c = 0; c < colCount; c++) {
-        member = (Member) members.get(c);
-        result[r][c] = member.getCaption();
+    Object[][] result = null;
+    List positions = nativeResultSet.getAxes()[MDXMetaData.AXIS_ROW].getPositions();
+    if (useExtendedColumnNames) {
+      if (positions != null && positions.size() > 0) {
+        rowCount = positions.size();
+        colCount = ((List) positions.get(0)).size();
+      }
+      result = new Object[rowCount][colCount];
+      for (int r = 0; r < rowCount; r++) {
+        List members = (List) positions.get(r);
+        Member member = null;
+        for (int c = 0; c < colCount; c++) {
+          member = (Member) members.get(c);
+          result[r][c] = member.getCaption();
+        }
+      }
+    } else {
+      if ((positions != null) && (positions.size() > 0)) {
+        rowCount = positions.size();
+        colCount = ((List) positions.get(0)).size() + 1;
+      }
+      result = new Object[rowCount][colCount];
+      for (int r = 0; r < rowCount; r++) {
+        List members = (List) positions.get(r);
+        Member member = null;
+        for (int c = 0; c < colCount - 1; c++) {
+          member = (Member) members.get(c);
+          result[r][c] = member.getCaption();
+        }
+        result[r][colCount - 1] = member.getHierarchy().getCaption();
       }
     }
     return result;
@@ -129,21 +163,20 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
     String[] colNames = null;
 
     if (nativeResultSet != null) {
-      
+
       // HACK for BISERVER-2640; need backward compatibility to old format of column
       // names, yet with the old format cross joins will have problems (BISERVER-1266).
-      
-      if (useExtendedColumnNames){
-    	
+
+      if (useExtendedColumnNames) {
+
         colNames = new String[this.rowHeaders[0].length];
-  
+
         // Flatten out the column headers into one column-name
-        for (int i = 0; i < colNames.length; ++i) 
-        {
+        for (int i = 0; i < colNames.length; ++i) {
           Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
-          colNames[i] = "["+member.getDimension().getName()+"].["+member.getHierarchy().getName()+"].["+member.getLevel().getName()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+          colNames[i] = "[" + member.getDimension().getName() + "].[" + member.getHierarchy().getName() + "].[" + member.getLevel().getName() + "]";
         }
-      }else{
+      } else {
         colNames = new String[getColumnCount()];
 
         // Flatten out the column headers into one column-name
@@ -154,21 +187,17 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
             Hierarchy hierarchy = member.getHierarchy();
             colNames[i] = hierarchy.getCaption();
           } else {
-            colNames[i] = ((Member) ((List) positions.get(0)).get(((List) positions.get(0)).size() - 1)).getHierarchy()
-                .getName()
-                + "{" + i + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+            colNames[i] = ((Member) ((List) positions.get(0)).get(((List) positions.get(0)).size() - 1)).getHierarchy().getName() + "{" + i + "}"; //$NON-NLS-1$ //$NON-NLS-2$
           }
         }
       }
     }
 
-
     return colNames;
   }
 
   public String getColumnName(final int columnNumber) {
-    return ((columnNames != null) && (columnNumber >= 0) && (columnNumber < columnNames.length) ? columnNames[columnNumber]
-        : ""); //$NON-NLS-1$
+    return ((columnNames != null) && (columnNumber >= 0) && (columnNumber < columnNames.length) ? columnNames[columnNumber] : ""); //$NON-NLS-1$
   }
 
   /*
@@ -201,14 +230,14 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
     return rowHeaders;
   }
 
-  protected void setColumnHeaders( Object[][] columnHeaders ) {
+  protected void setColumnHeaders(Object[][] columnHeaders) {
     this.columnHeaders = columnHeaders;
   }
-  
-  protected void setRowHeaders( Object[][] rowHeaders ) {
+
+  protected void setRowHeaders(Object[][] rowHeaders) {
     this.rowHeaders = rowHeaders;
   }
-  
+
   public String[] getRowHeaderNames() {
     return columnNames;
   }
@@ -223,7 +252,7 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
   }
 
   public String[] getFlattenedColumnNames() {
-    if( columnNamesFlattened == null ) {
+    if (columnNamesFlattened == null) {
       generateColumnNames();
     }
     return columnNamesFlattened;

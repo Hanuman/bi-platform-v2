@@ -135,7 +135,9 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
     if (rowHeaders != null) {
       if (columnNumber < rowHeaders[0].length) {
         if (resultSet instanceof IMultiDimensionalResultSet) {
-          return ((IMultiDimensionalMetaData) resultSet.getMetaData()).getRowHeaderNames()[columnNumber];
+          // If the requested column number is in the range, return it. Otherwise return a blank string
+          final String[] columnNames = ((IMultiDimensionalMetaData) resultSet.getMetaData()).getRowHeaderNames();
+          return (columnNumber >= 0 && columnNumber < columnNames.length) ? columnNames[columnNumber] : "";
         }
       } else {
         columnNumber -= rowHeaders[0].length;
