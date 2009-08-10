@@ -157,12 +157,12 @@ public class ChartComponent {
         AbstractChartThemeFactory chartThemeFactory = new AbstractChartThemeFactory() {
           protected List<File> getThemeFiles() {
             ArrayList<File> themeFiles = new ArrayList<File>();
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme1.xml"))); //$NON-NLS-1$
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme2.xml"))); //$NON-NLS-1$
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme3.xml"))); //$NON-NLS-1$
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme4.xml"))); //$NON-NLS-1$
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme5.xml"))); //$NON-NLS-1$
-            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/dashboards/resources/gwt/Theme6.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme1.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme2.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme3.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme4.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme5.xml"))); //$NON-NLS-1$
+            themeFiles.add(new File(PentahoSystem.getApplicationContext().getSolutionPath("system/chartbeans/themes/Theme6.xml"))); //$NON-NLS-1$
             return themeFiles;
               }
         };
