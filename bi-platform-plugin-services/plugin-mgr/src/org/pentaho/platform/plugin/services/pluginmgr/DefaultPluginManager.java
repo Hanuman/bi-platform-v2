@@ -589,7 +589,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
 
     for (IPlatformPlugin plugin : registeredPlugins.values()) {
-      String pluginId = isStaticResource(plugin, path);
+      String pluginId = getStaticResourcePluginId(plugin, path);
       if (pluginId != null) {
         return pluginId;
       }
@@ -606,7 +606,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     return null;
   }
   
-  public String isStaticResource(IPlatformPlugin plugin, String path) {
+  private String getStaticResourcePluginId(IPlatformPlugin plugin, String path) {
     Map<String, String> resourceMap = plugin.getStaticResourceMap();
     for (String url : resourceMap.keySet()) {
       //normalize static url for comparison
@@ -622,7 +622,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     // normalize path for comparison
     path = (path.startsWith("/")) ? path.substring(1) : path; //$NON-NLS-1$
     for (IPlatformPlugin plugin : registeredPlugins.values()) {
-      String pluginId = isStaticResource(plugin, path);
+      String pluginId = getStaticResourcePluginId(plugin, path);
       if (pluginId != null) {
         return true;
       }
