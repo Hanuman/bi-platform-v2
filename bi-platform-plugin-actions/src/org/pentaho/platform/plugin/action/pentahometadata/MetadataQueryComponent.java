@@ -68,8 +68,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  *
  */
 public class MetadataQueryComponent {
-  // This is also defined in UploadFileServlet and DatasourceServiceImpl, so don't change it in just one place
-  private static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  public static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   static final Log logger = LogFactory.getLog(MetadataQueryComponent.class);
   String query;

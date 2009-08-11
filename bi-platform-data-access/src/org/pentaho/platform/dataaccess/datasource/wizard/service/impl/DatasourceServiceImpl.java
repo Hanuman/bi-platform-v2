@@ -59,6 +59,7 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.action.pentahometadata.MetadataQueryComponent;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import org.pentaho.platform.util.messages.LocaleHelper;
@@ -66,10 +67,6 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 public class DatasourceServiceImpl implements IDatasourceService {
 
   private static final Log logger = LogFactory.getLog(DatasourceServiceImpl.class);
-
-  // This is also defined in UploadFileServlet and MetadataQueryComponent, so don't change it in just one place
-  private static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar
-      + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
 
@@ -335,7 +332,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
 
       String relativePath = PentahoSystem.getSystemSetting(
-          "file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH)); //$NON-NLS-1$
+          "file-upload-defaults/relative-path", String.valueOf(MetadataQueryComponent.DEFAULT_RELATIVE_UPLOAD_FILE_PATH)); //$NON-NLS-1$
       String csvFileLoc = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
 
       InlineEtlModelGenerator inlineEtlModelGenerator = new InlineEtlModelGenerator(modelName, csvFileLoc,
@@ -423,7 +420,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
       InlineEtlPhysicalModel model = (InlineEtlPhysicalModel) domain.getPhysicalModels().get(0);
 
       String relativePath = PentahoSystem.getSystemSetting(
-          "file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH)); //$NON-NLS-1$
+          "file-upload-defaults/relative-path", String.valueOf(MetadataQueryComponent.DEFAULT_RELATIVE_UPLOAD_FILE_PATH)); //$NON-NLS-1$
       String csvFileLoc = PentahoSystem.getApplicationContext().getSolutionPath(relativePath);
 
       data = DatasourceServiceHelper.getCsvDataSample(csvFileLoc + model.getFileLocation(), model.getHeaderPresent(),

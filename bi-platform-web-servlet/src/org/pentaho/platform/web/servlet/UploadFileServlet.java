@@ -27,14 +27,14 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
   private static final long serialVersionUID = 8305367618713715640L;
   private static final long MAX_FILE_SIZE = 300000;
   private static final long MAX_FOLDER_SIZE = 3000000;
-  public static final String RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar ;
+  public static final String DEFAULT_RELATIVE_UPLOAD_FILE_PATH = File.separatorChar + "system" + File.separatorChar + "metadata" + File.separatorChar + "csvfiles" + File.separatorChar; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
   public static final String CSV_EXT = ".csv"; //$NON-NLS-1$
   public static final String EXCEL_EXT = ".excel"; //$NON-NLS-1$
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
       try {
         // Retrieving the file upload defaults from pentaho.xml
-        String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$ 
+        String relativePath = PentahoSystem.getSystemSetting("file-upload-defaults/relative-path", String.valueOf(DEFAULT_RELATIVE_UPLOAD_FILE_PATH));  //$NON-NLS-1$ 
         String maxFileLimit = PentahoSystem.getSystemSetting("file-upload-defaults/max-file-limit", String.valueOf(MAX_FILE_SIZE));  //$NON-NLS-1$    
         String maxFolderLimit = PentahoSystem.getSystemSetting("file-upload-defaults/max-folder-limit", String.valueOf(MAX_FOLDER_SIZE));  //$NON-NLS-1$
         
