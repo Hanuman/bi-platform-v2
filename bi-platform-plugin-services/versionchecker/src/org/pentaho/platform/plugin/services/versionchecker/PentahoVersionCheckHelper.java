@@ -22,6 +22,8 @@ package org.pentaho.platform.plugin.services.versionchecker;
 
 import java.util.ArrayList;
 
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.versionchecker.IVersionCheckDataProvider;
 import org.pentaho.versionchecker.IVersionCheckErrorHandler;
 import org.pentaho.versionchecker.IVersionCheckResultHandler;
 import org.pentaho.versionchecker.VersionChecker;
@@ -68,7 +70,12 @@ public class PentahoVersionCheckHelper {
       }
     };
 
-    PentahoVersionCheckDataProvider dataProvider = new PentahoVersionCheckDataProvider();
+//    PentahoVersionCheckDataProvider dataProvider = new PentahoVersionCheckDataProvider();
+    IVersionCheckDataProvider dataProvider = PentahoSystem.get(IVersionCheckDataProvider.class, "IVersionCheckDataProvider", null); //$NON-NLS-1$
+    if (dataProvider == null) {
+      dataProvider = new PentahoVersionCheckDataProvider();
+    }
+      
     if (versionRequestFlags != -1) {
       dataProvider.setVersionRequestFlags(versionRequestFlags);
     }
