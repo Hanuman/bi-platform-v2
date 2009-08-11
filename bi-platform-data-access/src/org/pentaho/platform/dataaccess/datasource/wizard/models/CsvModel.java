@@ -80,59 +80,11 @@ public class CsvModel extends XulEventSourceAdapter{
     return businessData;
   }
 
-  public void setBusinessData(BusinessData businessData) {
-    this.businessData = businessData;
-    setModelData(businessData);  
-  }
-
-  public boolean isHeadersPresent() {
-    return headersPresent;
-  }
-
-  public void setHeadersPresent(boolean headersPresent) {
-    boolean previousVal = this.headersPresent;
-    this.headersPresent = headersPresent;
-    this.firePropertyChange("headersPresent", previousVal, headersPresent); //$NON-NLS-1$
-    validate();
-  }
-
-
-  public String getSelectedFile() {
-    return selectedFile;
-  }
-
-  public void setSelectedFile(String selectedFile) {
-    String previousVal = this.selectedFile;
-    this.selectedFile = selectedFile;
-    this.firePropertyChange("selectedFile", previousVal, selectedFile); //$NON-NLS-1$
-    validate();
-  }
-
-  public boolean isValidated() {
-    return validated;
-  }
-
-
-  private void setValidated(boolean validated) {
-    boolean prevVal = validated;
-    this.validated = validated;
-    this.firePropertyChange("validated", prevVal, validated);//$NON-NLS-1$
-  }
-
-  public void validate() {
-    if (getSelectedFile() != null && getSelectedFile().length() > 0) {
-      fireCsvModelValid();
-      this.setValidated(true);
-    } else {
-      fireCsvModelInValid();
-      this.setValidated(false);
-    }
-  }
-
-  public void setModelData(BusinessData businessData) {
-    if (businessData != null) {
-      Domain domain = businessData.getDomain();
-      List<List<String>> data = businessData.getData();
+  public void setBusinessData(BusinessData value) {
+    this.businessData = value;
+    if (value != null) {
+      Domain domain = value.getDomain();
+      List<List<String>> data = value.getData();
       List<LogicalModel> logicalModels = domain.getLogicalModels();
       int columnNumber = 0;
       for (LogicalModel logicalModel : logicalModels) {
@@ -154,7 +106,53 @@ public class CsvModel extends XulEventSourceAdapter{
     }
   }
 
-  public void addCsvModelDataRow(LogicalColumn column, List<String> columnData,String locale) {
+  public boolean isHeadersPresent() {
+    return headersPresent;
+  }
+
+  public void setHeadersPresent(boolean value) {
+    if(value != this.headersPresent) {
+      this.headersPresent = value;
+      this.firePropertyChange("headersPresent", !value, this.headersPresent); //$NON-NLS-1$
+      validate();      
+    }
+  }
+
+
+  public String getSelectedFile() {
+    return selectedFile;
+  }
+
+  public void setSelectedFile(String value) {
+    String previousVal = this.selectedFile;
+    this.selectedFile = value;
+    this.firePropertyChange("selectedFile", previousVal, value); //$NON-NLS-1$
+    validate();
+  }
+
+  public boolean isValidated() {
+    return validated;
+  }
+
+
+  private void setValidated(boolean value) {
+    if(value != this.validated) {
+      this.validated = value;
+      this.firePropertyChange("validated", !value, this.validated);//$NON-NLS-1$
+    }
+  }
+
+  public void validate() {
+    if (getSelectedFile() != null && getSelectedFile().length() > 0) {
+      fireCsvModelValid();
+      this.setValidated(true);
+    } else {
+      fireCsvModelInValid();
+      this.setValidated(false);
+    }
+  }
+
+  private void addCsvModelDataRow(LogicalColumn column, List<String> columnData,String locale) {
     if (dataRows == null) {
       dataRows = new ArrayList<CsvModelDataRow>();
     }
@@ -185,20 +183,20 @@ public class CsvModel extends XulEventSourceAdapter{
     return enclosure;
   }
 
-  public void setEnclosure(Enclosure enclosure) {
+  public void setEnclosure(Enclosure value) {
     Enclosure previousValue = this.enclosure;
-    this.enclosure = enclosure;
-    this.firePropertyChange("enclosure", previousValue, enclosure); //$NON-NLS-1$
+    this.enclosure = value;
+    this.firePropertyChange("enclosure", previousValue, value); //$NON-NLS-1$
   }
 
   public Delimiter getDelimiter() {
     return delimiter;
   }
 
-  public void setDelimiter(Delimiter delimiter) {
+  public void setDelimiter(Delimiter value) {
     Delimiter previousValue = this.delimiter;
-    this.delimiter = delimiter;
-    this.firePropertyChange("delimiter", previousValue, delimiter); //$NON-NLS-1$
+    this.delimiter = value;
+    this.firePropertyChange("delimiter", previousValue, value); //$NON-NLS-1$
   }
 
   
@@ -206,8 +204,8 @@ public class CsvModel extends XulEventSourceAdapter{
     return messages;
   }
 
-  public void setMessages(DatasourceMessages messages) {
-    this.messages = messages;
+  public void setMessages(DatasourceMessages value) {
+    this.messages = value;
   }
   /*
    * Clears out the model

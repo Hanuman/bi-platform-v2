@@ -57,6 +57,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServi
 import org.pentaho.platform.dataaccess.datasource.wizard.service.QueryValidationException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceInMemoryServiceHelper;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.DatasourceServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
@@ -220,8 +221,10 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
 
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
+      MarshallableResultSet resultSet = DatasourceInMemoryServiceHelper.getMarshallableResultSet(connectionName, query,
+          Integer.parseInt(previewLimit), null);
       SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName,
-          DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName), query, securityEnabled,
+          resultSet, query, securityEnabled,
           getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), "joe");
       Domain domain = sqlModelGenerator.generate();
       List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer
@@ -232,56 +235,6 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
           smge.getLocalizedMessage()), smge);
       throw new DatasourceServiceException(Messages
           .getErrorString("InMemoryDatasourceServiceImpl.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), smge); //$NON-NLS-1$
-    } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
-          "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
-    }
-  }
-
-  /**
-   * This method generates the business mode from the query and save it
-   * 
-   * @param modelName, connection, query, previewLimit
-   * @return BusinessData
-   * @throws DatasourceServiceException
-   */
-  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query,
-      boolean overwrite, String previewLimit) throws DatasourceServiceException {
-    Domain domain = null;
-    try {
-      executeQuery(connectionName, query, previewLimit);
-      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-          || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName,
-          DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName), query, securityEnabled,
-          getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), "joe");
-      domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer
-          .parseInt(previewLimit), null);
-      getMetadataDomainRepository().storeDomain(domain, overwrite);
-      return new BusinessData(domain, data);
-    } catch (SQLModelGeneratorException smge) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL",
-          smge.getLocalizedMessage()), smge);
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "InMemoryDatasourceServiceImpl.ERROR_0015_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge); //$NON-NLS-1$
-    } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN",
-          modelName), dse);
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_STORE_DOMAIN", modelName), dse); //$NON-NLS-1$      
-    } catch (DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0018_DOMAIN_ALREADY_EXIST",
-          modelName), dae);
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "InMemoryDatasourceServiceImpl.ERROR_0018_DOMAIN_ALREADY_EXIST", modelName), dae); //$NON-NLS-1$      
-    } catch (DomainIdNullException dne) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne);
-      throw new DatasourceServiceException(Messages
-          .getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$     
     } catch (QueryValidationException e) {
       logger.error(Messages.getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$

@@ -35,7 +35,6 @@ public interface IGwtDatasourceServiceAsync {
   void deleteLogicalModel(String domainId, String modelName, AsyncCallback<Boolean> callback);
   void doPreview(String connectionName, String query, String previewLimit, AsyncCallback<SerializedResultSet> callback);
   void generateLogicalModel(String modelName, String connectionName, String query, String previewLimit, AsyncCallback<BusinessData> callback);
-  void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit, AsyncCallback<BusinessData> callback);
   void saveLogicalModel(Domain domain, boolean overwrite,AsyncCallback<Boolean> callback);
   void generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent, String delimeter, String enclosure, AsyncCallback<BusinessData> callback);
   void hasPermission(AsyncCallback<Boolean> callback);

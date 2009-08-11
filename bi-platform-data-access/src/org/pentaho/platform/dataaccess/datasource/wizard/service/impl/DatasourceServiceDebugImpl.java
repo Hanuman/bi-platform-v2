@@ -52,14 +52,6 @@ public class DatasourceServiceDebugImpl implements IXulAsyncDatasourceService{
         callback.error(e.getLocalizedMessage(), e);
       }
   }
-  public void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit,
-      XulServiceCallback<BusinessData> callback){
-    try {    
-      callback.success(SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit));
-    } catch (DatasourceServiceException e) {
-      callback.error(e.getLocalizedMessage(), e);
-    }
-  }
 
   public void saveLogicalModel(Domain domain, boolean overwrite, XulServiceCallback<Boolean> callback) {
     try {

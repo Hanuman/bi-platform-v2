@@ -66,19 +66,6 @@ public interface IDatasourceService {
    */    
   public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit) throws DatasourceServiceException;
   /**
-   * Returns the generated logical model along with the sample data for the given connection name and query.
-   * This method also saves the model
-   *
-   * @param modelName - Name of the model to be generated   
-   * @param connectionName - Name of the connection
-   * @param query - Query which needs to be executed
-   * @param previewLimit - Number of row which needs to be returned for this query
-   * 
-   * @throws DatasourceServiceException 
-   * @return BusinessData - This object contains the data, column name, column types and sample data
-   */    
-  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit) throws DatasourceServiceException;  
-  /**
    * Save the generated model. This could be either Relational or CSV based model
    *
    * @param domain - generated Domain     

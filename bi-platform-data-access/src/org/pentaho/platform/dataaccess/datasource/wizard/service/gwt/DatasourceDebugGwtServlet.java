@@ -51,9 +51,6 @@ public class DatasourceDebugGwtServlet extends RemoteServiceServlet implements I
   public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit) throws DatasourceServiceException {
     return SERVICE.generateLogicalModel(modelName, connectionName, query, previewLimit);
    }
-  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit) throws DatasourceServiceException {
-    return SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit);
-  }
   public boolean saveLogicalModel(Domain modelName, boolean overwrite) throws DatasourceServiceException {
     return SERVICE.saveLogicalModel(modelName, overwrite);
   }

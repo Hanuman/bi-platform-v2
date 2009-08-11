@@ -287,7 +287,9 @@ public class DatasourceServiceImpl implements IDatasourceService {
       conn.setReadOnly(true);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, conn, query,
+      MarshallableResultSet resultSet = DatasourceServiceHelper.getMarshallableResultSet(connectionName, query,
+          Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, resultSet, query,
           securityEnabled, getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), (PentahoSessionHolder
               .getSession() != null) ? PentahoSessionHolder.getSession().getName() : null);
       Domain domain = sqlModelGenerator.generate();
@@ -311,64 +313,6 @@ public class DatasourceServiceImpl implements IDatasourceService {
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
    }
-
-  /**
-   * This method generates the business mode from the query and save it
-   * 
-   * @param modelName, connection, query
-   * @return BusinessData
-   * @throws DatasourceServiceException
-   */
-  public BusinessData generateAndSaveLogicalModel(String modelName, String connectionName, String query,
-      boolean overwrite, String previewLimit) throws DatasourceServiceException {
-    if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
-          .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-    }
-    Domain domain = null;
-    try {
-      // Testing whether the query is correct or not
-      executeQuery(connectionName, query, previewLimit);
-      Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
-          || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      Connection conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder
-          .getSession());
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, conn, query,
-          securityEnabled, getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), (PentahoSessionHolder
-              .getSession() != null) ? PentahoSessionHolder.getSession().getName() : null);
-      domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connectionName, query, Integer
-          .parseInt(previewLimit), PentahoSessionHolder.getSession());
-      getMetadataDomainRepository().storeDomain(domain, overwrite);
-      return new BusinessData(domain, data);
-    } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domain.getId(), dse.getLocalizedMessage()), dse);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domain.getId(), dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
-    } catch (DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domain.getId(), dae.getLocalizedMessage()), dae);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domain.getId(), dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
-    } catch (DomainIdNullException dne) {
-      logger.error(Messages
-          .getErrorString("DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
-    } catch (SQLModelGeneratorException smge) {
-      logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge); //$NON-NLS-1$
-    } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$
-    }
-  }
 
   public IMetadataDomainRepository getMetadataDomainRepository() {
     return metadataDomainRepository;

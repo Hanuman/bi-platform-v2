@@ -105,21 +105,6 @@ public class DatasourceServiceGwtImpl implements IXulAsyncDatasourceService {
     });
   }
 
-  public void generateAndSaveLogicalModel(String modelName, String connectionName, String query, boolean overwrite, String previewLimit,
-      final XulServiceCallback<BusinessData> callback) {
-    SERVICE.generateAndSaveLogicalModel(modelName, connectionName, query, overwrite, previewLimit, new AsyncCallback<BusinessData>() {
-
-      public void onFailure(Throwable arg0) {
-        callback.error(arg0.getLocalizedMessage(), arg0); //$NON-NLS-1$
-      }
-
-      public void onSuccess(BusinessData arg0) {
-        callback.success(arg0);
-      }
-
-    });
-  }
-
   public void saveLogicalModel(Domain domain, boolean overwrite, final XulServiceCallback<Boolean> callback) {
     SERVICE.saveLogicalModel(domain, overwrite, new AsyncCallback<Boolean>() {
 

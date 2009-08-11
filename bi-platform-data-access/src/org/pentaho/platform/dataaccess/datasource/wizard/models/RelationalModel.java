@@ -54,18 +54,18 @@ public class RelationalModel extends XulEventSourceAdapter{
     return editType;
   }
 
-  public void setEditType(ConnectionEditType editType) {
-    this.editType = editType;
+  public void setEditType(ConnectionEditType value) {
+    this.editType = value;
   }
 
   public IConnection getSelectedConnection() {
     return selectedConnection;
   }
 
-  public void setSelectedConnection(IConnection selectedConnection) {
+  public void setSelectedConnection(IConnection value) {
     IConnection previousValue = this.selectedConnection;
-    this.selectedConnection = selectedConnection;
-    this.firePropertyChange("selectedConnection", previousValue, selectedConnection);
+    this.selectedConnection = value;
+    this.firePropertyChange("selectedConnection", previousValue, value);
     validate();
   }
 
@@ -112,30 +112,30 @@ public class RelationalModel extends XulEventSourceAdapter{
     }
   }
 
-  public void setConnections(List<IConnection> connections) {
+  public void setConnections(List<IConnection> value) {
     List<IConnection> previousValue = getPreviousValue();
-    this.connections = connections;
-    this.firePropertyChange("connections", previousValue, connections); //$NON-NLS-1$
+    this.connections = value;
+    this.firePropertyChange("connections", previousValue, value); //$NON-NLS-1$
   }
 
   public String getQuery() {
     return query;
   }
 
-  public void setQuery(String query) {
+  public void setQuery(String value) {
     String previousVal = this.query;
-    this.query = query;
-    this.firePropertyChange("query", previousVal, query); //$NON-NLS-1$
+    this.query = value;
+    this.firePropertyChange("query", previousVal, value); //$NON-NLS-1$
     validate();
   }
   public String getPreviewLimit() {
     return previewLimit;
   }
 
-  public void setPreviewLimit(String previewLimit) {
+  public void setPreviewLimit(String value) {
     String previousVal = this.previewLimit;
-    this.previewLimit = previewLimit;
-    this.firePropertyChange("previewLimit", previousVal, previewLimit); //$NON-NLS-1$
+    this.previewLimit = value;
+    this.firePropertyChange("previewLimit", previousVal, value); //$NON-NLS-1$
   }
 
   public IConnection getConnectionByName(String name) {
@@ -156,10 +156,11 @@ public class RelationalModel extends XulEventSourceAdapter{
     return validated;
   }
 
-  private void setValidated(boolean validated) {
-    boolean prevVal = this.validated;
-    this.validated = validated;
-    this.firePropertyChange("validated", prevVal, validated);
+  private void setValidated(boolean value) {
+    if(value != this.validated) {
+      this.validated = value;
+      this.firePropertyChange("validated", !value, value);
+    }
   }
 
   public void validate() {
@@ -181,24 +182,11 @@ public class RelationalModel extends XulEventSourceAdapter{
     return businessData;
   }
 
-  public void setBusinessData(BusinessData businessData) {
-    this.businessData = businessData;
-    setModelData(businessData);
-    validate();
-  }
-  public IDatasource getDatasource() {
-    IDatasource datasource = new Datasource();
-    datasource.setBusinessData(getBusinessData());
-    datasource.setConnections(getConnections());
-    datasource.setQuery(getQuery());
-    datasource.setSelectedConnection(getSelectedConnection());
-    return datasource;
-  }
-
-  private void setModelData(BusinessData businessData) {
-    if (businessData != null) {
-      Domain domain = businessData.getDomain();
-      List<List<String>> data = businessData.getData();
+  public void setBusinessData(BusinessData value) {
+    this.businessData = value;
+    if (value != null) {
+      Domain domain = value.getDomain();
+      List<List<String>> data = value.getData();
       List<LogicalModel> logicalModels = domain.getLogicalModels();
       int columnNumber = 0;
       for (LogicalModel logicalModel : logicalModels) {
@@ -218,8 +206,18 @@ public class RelationalModel extends XulEventSourceAdapter{
         firePropertyChange("dataRows", previousValue, null);
       }
     }
+    validate();
   }
-  public void addModelDataRow(LogicalColumn column, List<String> columnData, String locale) {
+  public IDatasource getDatasource() {
+    IDatasource datasource = new Datasource();
+    datasource.setBusinessData(getBusinessData());
+    datasource.setConnections(getConnections());
+    datasource.setQuery(getQuery());
+    datasource.setSelectedConnection(getSelectedConnection());
+    return datasource;
+  }
+
+  private void addModelDataRow(LogicalColumn column, List<String> columnData, String locale) {
     if (dataRows == null) {
       dataRows = new ArrayList<ModelDataRow>();
     }
@@ -230,8 +228,8 @@ public class RelationalModel extends XulEventSourceAdapter{
     return dataRows;
   }
 
-  public void setDataRows(List<ModelDataRow> dataRows) {
-    this.dataRows = dataRows;
+  public void setDataRows(List<ModelDataRow> value) {
+    this.dataRows = value;
     firePropertyChange("dataRows", null, dataRows);
   }
 
@@ -288,12 +286,13 @@ public class RelationalModel extends XulEventSourceAdapter{
       relationalModelValidationListeners.fireRelationalModelInValid();
     }
   }
-  public void setPreviewValidated(boolean previewValidated) {
-    boolean prevVal = this.previewValidated;
-    this.previewValidated = previewValidated;
-    this.firePropertyChange("previewValidated", prevVal, previewValidated);
+  public void setPreviewValidated(boolean value) {
+    if (value != this.previewValidated) {
+      this.previewValidated = value;
+      this.firePropertyChange("previewValidated", !value, this.previewValidated);
+    }
   }
   public boolean isPreviewValidated() {
-    return previewValidated;
+    return this.previewValidated;
   }
 }
