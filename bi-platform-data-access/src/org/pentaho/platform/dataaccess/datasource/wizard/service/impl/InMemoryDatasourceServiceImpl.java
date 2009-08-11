@@ -145,16 +145,10 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
   public SerializedResultSet doPreview(String connectionName, String query, String previewLimit)
       throws DatasourceServiceException {
     SerializedResultSet returnResultSet;
-    SQLConnection sqlConnection = null; 
-    int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
       executeQuery(connectionName, query, previewLimit);
-      sqlConnection = DatasourceInMemoryServiceHelper.getConnection(connectionName);
-      sqlConnection.setMaxRows(limit);
-      sqlConnection.setReadOnly(true);
-      IPentahoResultSet resultSet = sqlConnection.executeQuery(query);
-      MarshallableResultSet marshallableResultSet = new MarshallableResultSet();
-      marshallableResultSet.setResultSet(resultSet);
+      MarshallableResultSet marshallableResultSet = DatasourceInMemoryServiceHelper.getMarshallableResultSet(connectionName, query,
+          Integer.parseInt(previewLimit), null);
       String[][] data = new String[marshallableResultSet.getRows().length][];
       int rowCount = 0;
       for (MarshallableRow row : marshallableResultSet.getRows()) {
@@ -168,15 +162,6 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
-    } catch (PentahoSystemException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
-    } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
-    } catch (InterruptedException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
     return returnResultSet;
 
@@ -227,8 +212,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
           resultSet, query, securityEnabled,
           getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), "joe");
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(connectionName, query, Integer
-          .parseInt(previewLimit), null);
+      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(resultSet);
       return new BusinessData(domain, data);
     } catch (SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL",
@@ -301,8 +285,8 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
     } else {
       SqlPhysicalModel model = (SqlPhysicalModel) domain.getPhysicalModels().get(0);
       String query = model.getPhysicalTables().get(0).getTargetTable();
-      data = DatasourceInMemoryServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5,
-          null);
+      data = DatasourceInMemoryServiceHelper.getRelationalDataSample(DatasourceInMemoryServiceHelper.getMarshallableResultSet(model.getDatasource().getDatabaseName(), query, 5,
+          null));
     }
     return new BusinessData(domain, data);
   }

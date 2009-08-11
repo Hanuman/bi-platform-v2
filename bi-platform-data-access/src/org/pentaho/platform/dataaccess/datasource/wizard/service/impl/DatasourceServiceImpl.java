@@ -20,7 +20,6 @@
  */
 package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -45,7 +44,6 @@ import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.metadata.util.SQLModelGenerator;
 import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
-import org.pentaho.platform.api.engine.PentahoSystemException;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
@@ -194,16 +192,10 @@ public class DatasourceServiceImpl implements IDatasourceService {
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
     SerializedResultSet returnResultSet;
-    SQLConnection sqlConnection = null; 
-    int limit = (previewLimit != null && previewLimit.length() > 0) ? Integer.parseInt(previewLimit): -1;
     try {
       executeQuery(connectionName, query, previewLimit);
-      sqlConnection = (SQLConnection) PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connectionName, PentahoSessionHolder.getSession(), new SimpleLogger(DatasourceServiceHelper.class.getName()));
-      sqlConnection.setMaxRows(limit);
-      sqlConnection.setReadOnly(true);
-      IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
-      MarshallableResultSet marshallableResultSet = new MarshallableResultSet();
-      marshallableResultSet.setResultSet(resultSet);
+      MarshallableResultSet marshallableResultSet = DatasourceServiceHelper.getMarshallableResultSet(connectionName, query,
+          Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
       String[][] data = new String[marshallableResultSet.getRows().length][];
       int rowCount = 0;
       for (MarshallableRow row : marshallableResultSet.getRows()) {
@@ -217,15 +209,6 @@ public class DatasourceServiceImpl implements IDatasourceService {
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
-    } catch (PentahoSystemException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
-    } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
-    } catch (InterruptedException e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceImpl.ERROR_0010_PREVIEW_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
     return returnResultSet;
 
@@ -279,9 +262,6 @@ public class DatasourceServiceImpl implements IDatasourceService {
     try {
       // Testing whether the query is correct or not
       executeQuery(connectionName, query, previewLimit);
-      Connection conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder
-          .getSession());
-      conn.setReadOnly(true);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
       MarshallableResultSet resultSet = DatasourceServiceHelper.getMarshallableResultSet(connectionName, query,
@@ -290,14 +270,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
           securityEnabled, getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), (PentahoSessionHolder
               .getSession() != null) ? PentahoSessionHolder.getSession().getName() : null);
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(connectionName, query, Integer
-          .parseInt(previewLimit), PentahoSessionHolder.getSession());
+      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(resultSet);
       return new BusinessData(domain, data);
-    } catch (SQLException sqle) {
-      logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GET_READONLY_CONNECTION", sqle.getLocalizedMessage()), sqle);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GET_READONLY_CONNECTION", sqle.getLocalizedMessage()), sqle); //$NON-NLS-1$
     } catch (SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge);//$NON-NLS-1$
@@ -428,8 +402,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
     } else {
       SqlPhysicalModel model = (SqlPhysicalModel) domain.getPhysicalModels().get(0);
       String query = model.getPhysicalTables().get(0).getTargetTable();
-      data = DatasourceServiceHelper.getRelationalDataSample(model.getDatasource().getDatabaseName(), query, 5,
-          PentahoSessionHolder.getSession());
+      data = DatasourceServiceHelper.getRelationalDataSample(DatasourceServiceHelper.getMarshallableResultSet(model.getDatasource().getDatabaseName(), query, 5,
+          PentahoSessionHolder.getSession()));
     }
     return new BusinessData(domain, data);
   }

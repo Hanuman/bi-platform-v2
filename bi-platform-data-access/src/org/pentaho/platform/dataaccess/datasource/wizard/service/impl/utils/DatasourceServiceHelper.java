@@ -47,9 +47,8 @@ public class DatasourceServiceHelper {
     return sqlConnection.getNativeConnection(); 
   }
   
-  public static List<List<String>> getRelationalDataSample(String connectionName, String query, int rowLimit, IPentahoSession session) throws DatasourceServiceException{
-    List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
-    MarshallableResultSet resultSet  = getMarshallableResultSet(connectionName, query, rowLimit, session);
+  public static List<List<String>> getRelationalDataSample(MarshallableResultSet resultSet) throws DatasourceServiceException{
+    List<List<String>> dataSample = new ArrayList<List<String>>();
     MarshallableRow[] rows =  resultSet.getRows();
     for(int i=0;i<rows.length;i++) {
       MarshallableRow row = rows[i];
