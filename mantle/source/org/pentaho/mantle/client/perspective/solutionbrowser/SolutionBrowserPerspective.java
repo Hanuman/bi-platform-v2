@@ -1083,11 +1083,18 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
-            if (collapse) {
-              for (TreeItem item : solutionTree.getAllNodes()) {
+            
+            // IE has difficulty rendering the tree if the nodes have changed. We can get around 
+            // that by collapsing the top level nodes and then re-opening them.
+            for (TreeItem item : solutionTree.getAllNodes()) {
+              if(item.getState()){
                 item.setState(false);
+                if (collapse == false ) {
+                  item.setState(true);
+                }
               }
             }
+
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
