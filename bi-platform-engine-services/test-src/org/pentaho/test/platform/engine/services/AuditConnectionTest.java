@@ -29,12 +29,33 @@ import org.pentaho.platform.engine.services.audit.AuditConnection;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class AuditConnectionTest extends BaseTest {
-	private static final String SOLUTION_PATH = "test-src/solution";
+	private static String SOLUTION_PATH = "test-src/solution";
+	
 	public String getSolutionPath() {
        return SOLUTION_PATH;  
  	}
-  public void testAuditConnection() {
+
+	public void testAuditConnection() {
     startTest();
+    AuditConnection auditConnection = new AuditConnection();
+    auditConnection.initialize();
+    try {
+      Connection connection = auditConnection.getAuditConnection();
+      System.out.println("Audit Connection Is  " + connection); //$NON-NLS-1$  
+      
+      DataSource datasource = auditConnection.getAuditDatasource();
+      System.out.println("Datasource Is  " + datasource); //$NON-NLS-1$      
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+    assertTrue(true);
+    finishTest();
+  }
+
+  public void testAuditConnectionNoConfigFile() {
+    startTest();
+    SOLUTION_PATH = ""; // We want to test what happens when the config file can't be found
     AuditConnection auditConnection = new AuditConnection();
     auditConnection.initialize();
     try {
@@ -55,6 +76,7 @@ public class AuditConnectionTest extends BaseTest {
     AuditConnectionTest test = new AuditConnectionTest();
     test.setUp();
     test.testAuditConnection();
+    test.testAuditConnectionNoConfigFile();
     try {
 
     } finally {

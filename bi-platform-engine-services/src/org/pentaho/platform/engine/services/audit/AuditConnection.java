@@ -45,25 +45,27 @@ public class AuditConnection {
 
   private boolean initialized;
 
-  private static final String DRIVER_URL = PentahoSystem.getSystemSetting(
-      "auditConnection/driverURL", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_URL")); //$NON-NLS-1$ //$NON-NLS-2$
+  private static String DRIVER_URL;
 
-  private static final String DRIVER_CLASS = PentahoSystem.getSystemSetting(
-      "auditConnection/driverCLASS", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_DRIVER")); //$NON-NLS-1$ //$NON-NLS-2$
+  private static String DRIVER_CLASS;
+    
+  private static String DRIVER_USERID; 
 
-  private static final String DRIVER_USERID = PentahoSystem.getSystemSetting("auditConnection/userid", "sa"); //$NON-NLS-1$ //$NON-NLS-2$
-
-  private static final String DRIVER_PASSWORD = PentahoSystem.getSystemSetting("auditConnection/password", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
-  private static final String AUDIT_JNDI = PentahoSystem.getSystemSetting("auditConnection/JNDI", "Hibernate"); //$NON-NLS-1$ //$NON-NLS-2$
-
+  private static String DRIVER_PASSWORD; 
+    
+  private static String AUDIT_JNDI; 
+    
   private static final Log logger = LogFactory.getLog(AuditConnection.class);
 
   private boolean useNewDatasourceService = false;
   
+  private static final String auditConfigFile = "audit_sql.xml";
+  
+
   public void initialize() {
 
     if (!initialized) {
+      retrieveParameters();
       try {
         IDatasourceService datasourceService = getDatasourceService(); 
         auditDs = datasourceService.getDataSource(AuditConnection.AUDIT_JNDI);
@@ -80,7 +82,7 @@ public class AuditConnection {
       } else {
         try {
           AuditConnection.logger.warn(Messages.getString("AUDCONN.WARN_FALLING_BACK_TO_DRIVERMGR")); //$NON-NLS-1$
-          Class.forName(AuditConnection.DRIVER_CLASS).newInstance();
+          Class.forName(DRIVER_CLASS).newInstance();
           initialized = true;
         } catch (IllegalAccessException ex) {
           AuditConnection.logger.error(Messages.getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), ex); //$NON-NLS-1$
@@ -91,6 +93,37 @@ public class AuditConnection {
         }
       }
     }
+  }
+
+  /**
+   * This ugliness exists because of bug http://jira.pentaho.com/browse/BISERVER-3478. Once this 
+   * is fixed, we can move this initialization into a one liner for each setting in the class construction. 
+   * 
+   * The logic needs to be that if the config file does not exist, we can fall over to the
+   * pentaho.xml file for the attribute value (for backward compatibility). 
+   */
+  private void retrieveParameters(){
+    
+    String tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverURL", null);//$NON-NLS-1$ //$NON-NLS-2$
+    DRIVER_URL = (tmp !=null) ? tmp:
+      PentahoSystem.getSystemSetting("auditConnection/driverURL", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_URL"));//$NON-NLS-1$ //$NON-NLS-2$
+
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverCLASS", null);//$NON-NLS-1$ //$NON-NLS-2$
+    DRIVER_CLASS = (tmp !=null) ? tmp: 
+      PentahoSystem.getSystemSetting("auditConnection/driverCLASS", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_DRIVER"));//$NON-NLS-1$ //$NON-NLS-2$
+      
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/userid", null);//$NON-NLS-1$ //$NON-NLS-2$
+    DRIVER_USERID = (tmp !=null) ? tmp:  
+      PentahoSystem.getSystemSetting("auditConnection/userid", "sa");//$NON-NLS-1$ //$NON-NLS-2$
+
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/password", null);//$NON-NLS-1$ //$NON-NLS-2$
+    DRIVER_PASSWORD = (tmp !=null) ? tmp:   
+      PentahoSystem.getSystemSetting("auditConnection/password", "");//$NON-NLS-1$ //$NON-NLS-2$
+      
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/JNDI", null);//$NON-NLS-1$ //$NON-NLS-2$
+    AUDIT_JNDI = (tmp !=null) ? tmp:   
+          PentahoSystem.getSystemSetting("auditConnection/JNDI", "Hibernate");//$NON-NLS-1$ //$NON-NLS-2$
+    
   }
 
   public void setUseNewDatasourceService(boolean useNewService) {
