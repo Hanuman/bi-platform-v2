@@ -892,7 +892,7 @@ public class KettleComponent extends ComponentBase implements RowListener {
           }
           job.waitUntilFinished(5000000);
           job.endProcessing("end", job.getResult()); //$NON-NLS-1$
-          if ((job.getErrors() > 0) || (job.getResult().getNrErrors() > 0)) {
+          if (job.getResult().getNrErrors() > 0) {
             debug(kettleUserAppender.getBuffer().toString());
             throw new KettleComponentException(Messages.getErrorString("Kettle.ERROR_0014_ERROR_DURING_EXECUTE")); //$NON-NLS-1$
           }
