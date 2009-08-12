@@ -23,12 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
+import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
 import org.pentaho.mantle.client.toolbars.MainToolbarModel;
+import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.XulOverlay;
@@ -120,11 +124,18 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     //unfortunately hosted mode won't resolve the image with 'mantle/' in it
     cleanImageUrlsForHostedMode();
     
+    fetchOverlays();
     
+    // Fix for IE 6 transparent PNGs
+    ElementUtils.convertPNGs();
+    
+  }
+  
+  private void fetchOverlays(){
     AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
 
       public void onFailure(Throwable caught) {
-        Window.alert("Error fetching XulOverlay list");
+        doLogin();
       }
 
       public void onSuccess(List<MantleXulOverlay> overlays) {
@@ -133,12 +144,36 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
       }
     };
     MantleServiceCache.getService().getOverlays(callback);    
-    
-    // Fix for IE 6 transparent PNGs
-    ElementUtils.convertPNGs();
-    
   }
   
+  private void doLogin(){
+    MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
+
+      public void onFailure(Throwable caught) {
+        MessageDialogBox dialogBox = new MessageDialogBox(
+            Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true) {
+          
+        }; //$NON-NLS-1$ //$NON-NLS-2$
+        
+        dialogBox.setCallback(new IDialogCallback() {
+          public void cancelPressed() {
+            // do nothing
+          }
+
+          public void okPressed() {
+            doLogin();
+          }
+        });
+        
+        dialogBox.center();
+      }
+
+      public void onSuccess(Object result) {
+        fetchOverlays();
+      }
+
+    });
+  }
   
   private void cleanImageUrlsForHostedMode(){
     if (!GWT.isScript()) {
