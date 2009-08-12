@@ -59,6 +59,14 @@
       <entry key="impl.builddate" type="date" value="now" />
     </propertyfile>
   </target>
+  
+  <!-- ================================= 
+          target: clean-all (override)         
+         ================================= -->
+  <target name="clean-all" depends="subfloor.clean-all">
+    <delete dir="${plugins.dir}" />
+    <delete dir="${solution-archives.dir}" />
+  </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
           target: assemble-message-bundles                      
