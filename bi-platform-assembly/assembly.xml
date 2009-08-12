@@ -183,6 +183,7 @@
           <exclude name="webapps/tomcat-docs/**" />
           <exclude name="webapps/docs/**" />
           <exclude name="webapps/webdav/**" />
+          <exclude name="webapps/ROOT/**" />
           <exclude name="bin/setclasspath.bat" />
         </fileset>
       </copy>
