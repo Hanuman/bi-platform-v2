@@ -97,7 +97,7 @@ public class NewScheduleDialog extends AbstractWizardDialog {
     int startMin = getStartMin(startTime);
     int startYear = startDate.getYear();
     int startMonth = startDate.getMonth();
-    int startDay = startDate.getDay();
+    int startDay = startDate.getDate();
     Date startDateTime = new Date(startYear, startMonth, startDay, startHour, startMin );
     int repeatCount = scheduleEditorWizardPanel.getRepeatCount();
     int repeatInterval = 0;
