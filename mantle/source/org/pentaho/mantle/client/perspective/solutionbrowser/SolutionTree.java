@@ -63,7 +63,7 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionTree extends Tree implements IFileItemCallback {
-  PopupPanel popupMenu = new PopupPanel(true);
+  PopupPanel popupMenu = new MantlePopupPanel(true);
   boolean showLocalizedFileNames = true;
   boolean showHiddenFiles = false;
   Document solutionDocument;

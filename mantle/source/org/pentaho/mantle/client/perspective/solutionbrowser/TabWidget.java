@@ -22,6 +22,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.FrameUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -55,7 +57,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
 
   private static final int TAB_TEXT_LENGTH = 12;
 
-  private PopupPanel popupMenu = new PopupPanel(true);
+  private PopupPanel popupMenu = new MantlePopupPanel(true);
+  
   private TabPanel tabPanel;
   private Widget tabContent;
   private SolutionBrowserPerspective perspective;

@@ -83,51 +83,8 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   
   // by creating a single popupMenu, we're reducing total # of widgets used
   // and we can be sure to hide any existing ones by calling hide
-  static PopupPanel popupMenu = new PopupPanel(true){
-
-    @Override
-    public void hide() {
-      super.hide();
-
-      ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
-      if(iframeTab == null || iframeTab.getFrame() == null){
-        return;
-      }
-      Frame currentFrame = iframeTab.getFrame();
-      FrameUtils.setEmbedVisibility(currentFrame, true);
-    }
-
-    @Override
-    public void show() {
-
-      super.show();
-      ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
-      if(iframeTab == null || iframeTab.getFrame() == null){
-        return;
-      }
-      Frame currentFrame = iframeTab.getFrame();
-      if(ElementUtils.elementsOverlap(this.getElement(), 
-          currentFrame.getElement())){
-        FrameUtils.setEmbedVisibility(currentFrame, false);
-      }
-    }
-    
-  };
-  static{
-    popupMenu.addPopupListener(new PopupListener(){
-
-      public void onPopupClosed(PopupPanel arg0, boolean arg1) {
-
-        ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
-        if(iframeTab == null || iframeTab.getFrame() == null){
-          return;
-        }
-        Frame currentFrame = iframeTab.getFrame();
-        FrameUtils.setEmbedVisibility(currentFrame, true);
-      }
-      
-    });
-  }
+  static PopupPanel popupMenu = new MantlePopupPanel(true);
+  
   Label fileLabel = new Label();
   IFileItemCallback fileItemCallback;
   String name;
