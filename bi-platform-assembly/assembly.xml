@@ -72,7 +72,7 @@
           target: assemble-no-plugins                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-no-plugins"
-          depends="check-blacklist,assemble.styles,prep-pentaho-tomcat,validate-mantle-svn-revisions,install-management-console,install-solutions,init-pentaho-data,install-resources">
+          depends="check-blacklist,assemble-styles,assemble-pentaho-webapp,assemble-tomcat-biserver,validate-mantle-svn-revisions,install-management-console,install-solutions,init-pentaho-data,install-resources">
     <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
   </target>
 
@@ -92,9 +92,6 @@
     <delete dir="${plugins.dir}" />
     <delete dir="${solution-archives.dir}" />
   </target>
-
-
-
 
 
   <!-- - - - - - - - - - - - - - - - - - 
@@ -117,7 +114,7 @@
   <!-- - - - - - - - - - - - - - - - - - 
           target: assemble.styles                  
          - - - - - - - - - - - - - - - - - -->
-  <target name="assemble.styles" depends="prep-pentaho-style,prep-sw-style" />
+  <target name="assemble-styles" depends="assemble-pentaho-style-webapp,assemble-sw-style-webapp" />
 
 
   <!-- - - - - - - - - - - - - - - - - - 
@@ -141,9 +138,9 @@
 
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: prep-pentaho-style                      
+          target: assemble-pentaho-style-webapp                   
          - - - - - - - - - - - - - - - - - -->
-  <target name="prep-pentaho-style" depends="init.stage.pentaho">
+  <target name="assemble-pentaho-style-webapp" depends="init.stage.pentaho">
     <copy todir="${container.deploy.dir}/pentaho-style">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style">
         <include name="**/**" />
@@ -153,9 +150,9 @@
 
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: prep-sw-style (steel wheels)                     
+          target: assemble-sw-style-webapp (steel wheels)                     
          - - - - - - - - - - - - - - - - - -->
-  <target name="prep-sw-style" depends="init.stage.pentaho">
+  <target name="assemble-sw-style-webapp" depends="init.stage.pentaho">
     <copy todir="${container.deploy.dir}/sw-style">
       <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style">
         <include name="**/**" />
@@ -165,12 +162,12 @@
 
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: prep-pentaho-tomcat     
+          target: assemble-tomcat-biserver   
       		This is the primary target for setting up the container structure
       		and the structure for the wars that will go into the container.  This
       		task does not zip, tar or compress.                            
          - - - - - - - - - - - - - - - - - -->
-  <target name="prep-pentaho-tomcat" depends="install-antcontrib,init.stage.pentaho">
+  <target name="assemble-tomcat-biserver" depends="install-antcontrib,init.stage.pentaho">
     <sequential>
 
       <!-- Copy pure tomcat 5.5.26 -->
@@ -222,8 +219,65 @@
         </fileset>
       </copy>
 
-      <!-- Add general libs -->
+	<antcall target="assemble-pentaho-webapp"/>
+      
+      <!-- Add scripts to appropriate locations based on desired rdbms -->
+      <if>
+        <equals arg1="${rdbms}" arg2="hsqldb" />
+        <then>
+          <copy todir="${stage.dir.server}">
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/hsqldb">
+              <include name="**" />
+            </fileset>
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
+              <include name="**" />
+            </fileset>
+          </copy>
+        </then>
+      </if>
+      <if>
+        <equals arg1="${rdbms}" arg2="mysql5" />
+        <then>
+          <copy todir="${stage.dir.server}">
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/mysql5">
+              <include name="**" />
+            </fileset>
+            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
+              <include name="**" />
+            </fileset>
+          </copy>
+        </then>
+      </if>
 
+      <!-- Replace tomcat's setclasspath.bat -->
+      <copy todir="${stage.dir.server}/tomcat/bin">
+        <fileset dir="${package-res-archive.dir}/scripts/tomcat">
+          <include name="*.bat" />
+        </fileset>
+      </copy>
+
+
+      <!-- Explode the mantle generated files -->
+      <unzip dest="${prep.pentaho.war.dir}">
+        <fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
+      </unzip>
+
+      <!-- Add licenses -->
+      <copy todir="${stage.dir.server}/licenses">
+        <fileset dir="${bi.platform.open.assembly.dir}/licenses">
+          <include name="**/**" />
+        </fileset>
+      </copy>
+
+    </sequential>
+
+  </target>
+  
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: prep-pentaho-webapp                    
+         - - - - - - - - - - - - - - - - - -->
+    <target name="assemble-pentaho-webapp">
+      <!-- Add general libs -->
       <copy todir="${prep.pentaho.war.lib.dir}">
         <fileset dir="${lib.dir}">
           <include name="*.jar" />
@@ -260,48 +314,6 @@
       </copy>
       <delete dir="${prep.pentaho.war.dir}/.settings" />
 
-      <copy todir="${prep.pentaho.war.lib.dir}">
-        <!-- get all pentaho jars from the build process -->
-        <fileset dir="${lib.dir}">
-          <include name="bi-platform*.jar" />
-        </fileset>
-      </copy>
-
-      <!-- Add scripts to appropriate locations based on desired rdbms -->
-      <if>
-        <equals arg1="${rdbms}" arg2="hsqldb" />
-        <then>
-          <copy todir="${stage.dir.server}">
-            <fileset dir="${package-res-archive.dir}/scripts/tomcat/hsqldb">
-              <include name="**" />
-            </fileset>
-            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
-              <include name="**" />
-            </fileset>
-          </copy>
-        </then>
-      </if>
-      <if>
-        <equals arg1="${rdbms}" arg2="mysql5" />
-        <then>
-          <copy todir="${stage.dir.server}">
-            <fileset dir="${package-res-archive.dir}/scripts/tomcat/mysql5">
-              <include name="**" />
-            </fileset>
-            <fileset dir="${package-res-archive.dir}/scripts/tomcat/general">
-              <include name="**" />
-            </fileset>
-          </copy>
-        </then>
-      </if>
-
-      <!-- Replace tomcat's setclasspath.bat -->
-      <copy todir="${stage.dir.server}/tomcat/bin">
-        <fileset dir="${package-res-archive.dir}/scripts/tomcat">
-          <include name="*.bat" />
-        </fileset>
-      </copy>
-
       <!-- Add additional Pentaho resources -->
       <copy todir="${prep.pentaho.war.classes.dir}">
         <fileset dir="${bi.platform.plugin.actions.dir}/src/org/pentaho/platform/plugin/action/jfreereport/res" />
@@ -309,28 +321,7 @@
         <fileset dir="${bi.platform.plugin.actions.dir}/res/log4j" />
         <fileset dir="${bi.platform.engine.services.dir}/res/ehcache" />
       </copy>
-
-      <!-- Explode the mantle generated files -->
-      <unzip dest="${prep.pentaho.war.dir}">
-        <fileset dir="${lib.dir}" includes="mantle-package-*.zip" />
-      </unzip>
-
-      <!-- Add licenses -->
-      <copy todir="${stage.dir.server}/licenses">
-        <fileset dir="${bi.platform.open.assembly.dir}/licenses">
-          <include name="**/**" />
-        </fileset>
-      </copy>
-
-      <!-- Copy style and steel wheel wars to webapps -->
-      <copy todir="${container.deploy.dir}/">
-        <fileset dir="${dist.dir}">
-          <include name="*.war" />
-        </fileset>
-      </copy>
-    </sequential>
-
-  </target>
+    </target>
 
 
   <!-- ===================================================================
