@@ -13,6 +13,10 @@
 	<property file="override.properties" />
 	<property file="version.properties" />
 	<property file="build.properties" />
+  
+  <!-- the impl properties are used to create the manifest file -->
+  <property name="impl.title" value="Pentaho BI Platform Community Edition" />
+  <property name="impl.vendor" value="Pentaho Corporation" />
 
 	<!-- library.path contains the libraries that compose the classpath, which is used in the MANIFEST.MF file -->
 	<path id="library.path">
