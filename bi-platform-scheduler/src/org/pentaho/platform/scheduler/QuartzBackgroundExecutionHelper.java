@@ -109,7 +109,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       if (actionSeqPath == null || actionSeqPath.length() <= 0) {
         actionSeqPath = solutionName + ISolutionRepository.SEPARATOR + actionPath + ISolutionRepository.SEPARATOR + actionName;
       }
-
+      actionSeqPath = cleanActionPath(actionSeqPath);
       String description = parameterProvider.getStringParameter(StandardSettings.DESCRIPTION, null);
       String scheduleName = null;
       String scheduleGroupName = null;
@@ -383,5 +383,26 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
 
   private static String getUserName(IPentahoSession userSession) {
     return userSession.isAuthenticated() ? userSession.getName() : IBackgroundExecution.DEFAULT_USER_NAME;
+  }
+  /*
+   * cleanActionPath cleans action path like steelswheels////myreport.xaction to steelwheels/myreport.xaction
+   */
+  private String cleanActionPath(String actionPath) {
+   boolean done = false;
+   StringBuffer returnValue = new StringBuffer(actionPath);
+   StringBuffer buffer  = new StringBuffer();
+   buffer.append(ISolutionRepository.SEPARATOR);
+   buffer.append(ISolutionRepository.SEPARATOR);
+   
+   String stringToSearch = buffer.toString();
+   while(!done) {
+     int index = returnValue.indexOf(stringToSearch);
+     if(index < 0) {
+      done = true; 
+     } else {
+       returnValue.replace(index, index+1, "");
+     }
+   }
+   return returnValue.toString();
   }
 }
