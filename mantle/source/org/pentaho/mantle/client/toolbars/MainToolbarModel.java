@@ -28,6 +28,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTab
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 import com.google.gwt.user.client.ui.Widget;
 
@@ -58,16 +59,19 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     this.main = main;
   }
 
+  @Bindable
   public void setSaveEnabled(Boolean enabled) {
     boolean prevVal = this.saveEnabled;
     saveEnabled = enabled;
     this.firePropertyChange("saveEnabled", prevVal, saveEnabled);
   }
 
+  @Bindable
   public boolean isSaveEnabled() {
     return this.saveEnabled;
   }
 
+  @Bindable
   public void setSaveAsEnabled(Boolean enabled) {
     boolean prevVal = this.saveAsEnabled;
     saveAsEnabled = enabled;
@@ -75,6 +79,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     this.firePropertyChange("saveAsEnabled", prevVal, saveAsEnabled);
   }
 
+  @Bindable
   public void setPrintEnabled(Boolean enabled) {
     boolean prevVal = this.printEnabled;
     printEnabled = enabled;
@@ -82,6 +87,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     this.firePropertyChange("printEnabled", prevVal, enabled);
   }
 
+  @Bindable
   public void setNewAnalysisEnabled(Boolean enabled) {
     boolean prevVal = this.newAnalysisEnabled;
     newAnalysisEnabled = enabled;
@@ -89,32 +95,38 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     this.firePropertyChange("newAnalysisEnabled", prevVal, newAnalysisEnabled);
   }
 
+  @Bindable
   public void executeOpenFileCommand() {
     OpenFileCommand openFileCommand = new OpenFileCommand(solutionBrowser);
     openFileCommand.execute();
   }
 
+  @Bindable
   public void executeAnalysisViewCommand() {
     AnalysisViewCommand analysisViewCommand = new AnalysisViewCommand(
         solutionBrowser);
     analysisViewCommand.execute();
   }
 
+  @Bindable
   public void executePrintCommand() {
     PrintCommand printCommand = new PrintCommand(solutionBrowser);
     printCommand.execute();
   }
 
+  @Bindable
   public void executeSaveCommand() {
     SaveCommand saveCommand = new SaveCommand(solutionBrowser, false);
     saveCommand.execute();
   }
 
+  @Bindable
   public void executeSaveAsCommand() {
     SaveCommand saveCommand = new SaveCommand(solutionBrowser, true);
     saveCommand.execute();
   }
 
+  @Bindable
   public void executeWAQRCommand() {
     WAQRCommand wAQRCommand = new WAQRCommand(solutionBrowser);
     wAQRCommand.execute();
@@ -163,14 +175,17 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     }
   }
 
+  @Bindable
   public boolean isShowBrowserSelected() {
     return showBrowserSelected;
   }
 
+  @Bindable
   public boolean isWorkspaceSelected() {
     return workspaceSelected;
   }
 
+  @Bindable
   public void setShowBrowserSelected(boolean showBrowserSelected) {
     boolean prevVal = this.showBrowserSelected;
 
@@ -179,6 +194,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
         .firePropertyChange("showBrowserSelected", prevVal, showBrowserSelected);
   }
 
+  @Bindable
   public void setWorkspaceSelected(boolean workspaceSelected) {
     boolean prevVal = this.workspaceSelected;
 
@@ -186,12 +202,14 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     this.firePropertyChange("workspaceSelected", prevVal, workspaceSelected);
   }
 
+  @Bindable
   public void setContentEditEnabled(boolean enable) {
     boolean prevVal = this.contentEditEnabled;
     contentEditEnabled = enable;
     this.firePropertyChange("contentEditEnabled", prevVal, contentEditEnabled);
   }
 
+  @Bindable
   public void setContentEditSelected(boolean selected) {
     boolean prevVal = this.contentEditSelected;
     contentEditSelected = selected;
@@ -199,14 +217,17 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
         .firePropertyChange("contentEditSelected", prevVal, contentEditSelected);
   }
 
+  @Bindable
   public boolean isContentEditSelected() {
     return this.contentEditSelected;
   }
 
+  @Bindable
   public void setContentEditToggled() {
     setContentEditSelected(!this.contentEditSelected);
   }
 
+  @Bindable
   public boolean isContentEditEnabled() {
     return contentEditEnabled;
   }

@@ -28,6 +28,7 @@ import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -62,7 +63,7 @@ public class MainToolbarController extends AbstractXulEventHandler{
   /** 
    * Called when the Xul Dom is ready, grab all Xul references here.
    */
-  @EventMethod
+  @Bindable
   public void init(){
     openBtn = (XulToolbarbutton) document.getElementById("openButton");
     saveBtn = (XulToolbarbutton) document.getElementById("saveButton");
@@ -83,42 +84,43 @@ public class MainToolbarController extends AbstractXulEventHandler{
     
     
   }
-  
+
+  @Bindable
   public void setEditContentSelected(boolean selected){
     contentEditBtn.setSelected(selected, false);
   }
-
-  @EventMethod
+  
+  @Bindable
   public void openClicked(){
     model.executeOpenFileCommand();
   }
 
-  @EventMethod
+  @Bindable
   public void newAnalysisClicked(){
     model.executeAnalysisViewCommand();
   }
-  
-  @EventMethod
+
+  @Bindable
   public void newAdhocClicked(){
     model.executeWAQRCommand();
   }
 
-  @EventMethod
+  @Bindable
   public void printClicked(){
     model.executePrintCommand();
   }
   
-  @EventMethod
+  @Bindable
   public void saveClicked(){
     model.executeSaveCommand();
   }
   
-  @EventMethod
+  @Bindable
   public void saveAsClicked(){
     model.executeSaveAsCommand();
   }
   
-  @EventMethod
+  @Bindable
   public void workspaceClicked(){
 
     ToggleWorkspaceCommand toggleWorkspaceCommand = new ToggleWorkspaceCommand(solutionBrowser);
@@ -126,52 +128,62 @@ public class MainToolbarController extends AbstractXulEventHandler{
     model.setWorkspaceSelected(solutionBrowser.isWorkspaceShowing());
   }  
   
-  @EventMethod
+  @Bindable
   public void showBrowserClicked(){
     ShowBrowserCommand showBrowserCommand = new ShowBrowserCommand(solutionBrowser);
     showBrowserCommand.execute();
     model.setShowBrowserSelected(solutionBrowser.isExplorerViewShowing());
   }  
   
+  @Bindable
   public void setShowBrowserSelected(boolean flag) {
     //called by the MainToolbarModel to change state.
     showBrowserBtn.setSelected(flag);
   }
   
+  @Bindable
   public void setWorkspaceSelected(boolean flag) {
     //called by the MainToolbarModel to change state.
     workspaceBtn.setSelected(flag);
   }
   
+  @Bindable
   public void setSaveEnabled(boolean flag){
     //called by the MainToolbarModel to change state.
     saveBtn.setDisabled(!flag); 
   }
 
+  @Bindable
   public void setSaveAsEnabled(boolean flag){
     //called by the MainToolbarModel to change state.
     saveAsBtn.setDisabled(!flag); 
   }
 
+  @Bindable
   public void setPrintEnabled(boolean flag){
     //called by the MainToolbarModel to change state.
     printBtn.setDisabled(!flag); 
   }
   
+  @Bindable
   public void setNewAnalysisEnabled(boolean flag){
     //called by the MainToolbarModel to change state.
     newAnalysisBtn.setDisabled(!flag); 
   }
+  
   @Override
   public String getName() {
     return "mainToolbarHandler";
   }
   
+  @Bindable
   public void executeCallback(String jsScript){
     for(JavaScriptObject callback : callbacks){
       executeJS(callback, jsScript);
     }
   }
+  
+  @Bindable
   public void executeMantleFunc(String funct){
     executeMantleCall(funct);
   }
@@ -196,6 +208,7 @@ public class MainToolbarController extends AbstractXulEventHandler{
     }
   }-*/;
   
+  @Bindable
   public native void openUrl(String title, String name, String uri)/*-{
     try{
       $wnd.eval("openURL('"+name+"','"+title+"','"+uri+"')");
@@ -208,14 +221,17 @@ public class MainToolbarController extends AbstractXulEventHandler{
     callbacks.add(obj);
   }
   
+  @Bindable
   public void setContentEditEnabled(boolean enable){
     contentEditBtn.setDisabled(!enable);
   }
   
+  @Bindable
   public void setContentEditSelected(boolean selected){
     contentEditBtn.setSelected(selected);  
   }
   
+  @Bindable
   public void editContentClicked(){
     for(JavaScriptObject callback : callbacks){
       model.setContentEditToggled();
