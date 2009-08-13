@@ -245,14 +245,13 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       JobDetail jobDetail = sched.getJobDetail(jobName, groupName);
       if (jobDetail == null) {
-        throw new ComponentException("Failed to execute job {0}. Job with that name does not exist in scheduler. "
-            + jobName);
+        throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0429_FAILED_TO_EXECUTE_NON_EXISTENT_JOB",jobName));
       } else {
         jobDetail.setGroup("Immediate"); //$NON-NLS-1$
         sched.scheduleJob(jobDetail, trigger);
       }
     } catch (SchedulerException e) {
-      throw new ComponentException("Failed to execute job {0}." + jobName, e);
+      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0428_FAILED_TO_EXECUTE",jobName), e);
     }
 
     return doGetJobNames();
@@ -364,9 +363,10 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       sched.resumeJob(jobName, groupName);
     } catch (SchedulerException e) {
-      throw new ComponentException("Failed to resume job {0}." + jobName, e);
+      throw new ComponentException(Messages.getErrorString(
+          "SchedulerAdminUIComponent.ERROR_0426_FAILED_TO_RESUME", jobName, groupName), e);
     }
-
+    
     return doGetJobNames();
   }
 
@@ -376,7 +376,9 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       sched.pauseJob(jobName, groupName);
     } catch (SchedulerException e) {
-      throw new ComponentException("Failed to pause job {0}." + jobName, e);
+      throw new ComponentException(Messages.getErrorString(
+          "SchedulerAdminUIComponent.ERROR_0427_FAILED_TO_PAUSE", jobName, groupName), e);
+      
     }
     return doGetJobNames();
   }
@@ -396,7 +398,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
               RESULT,
               isInStandby ? Messages.getString("SchedulerAdminUIComponent.USER_isPaused") : Messages.getString("SchedulerAdminUIComponent.USER_isRunning")); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (SchedulerException e) {
-      throw new ComponentException("Failed to determine if scheduler is paused. ", e);
+      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0425_FAILED_TO_DETERMINE_STATE"), e);
     }
     return document;
   }

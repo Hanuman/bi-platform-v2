@@ -584,7 +584,8 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       }
       job.addElement("repeat-time-millisecs").addText(Integer.toString(sched.getRepeatInterval())); //$NON-NLS-1$
     } else {
-      throw new IllegalStateException( "Schedule with id: " + sched.getId() + " has neither a Cron string nor a repeat count/interval specified." );
+      throw new IllegalStateException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0104_INCOMPLETE_SCHEDULE", sched.getId()));
+      
     }
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
     Date d = sched.getStartDate();
@@ -628,7 +629,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     for ( ISubscribeContent content : scList ) {
       ActionInfo actionInfo = ActionInfo.parseActionString( content.getActionReference() );
       if ( null == actionInfo ) {
-        throw new ActionInfoParseException( "Failed to parse Solution Repository action sequence path: " + content.getActionReference() );
+        throw new ActionInfoParseException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0103_FAILED_PARSE_SOLUTION_REPOSITORY", content.getActionReference()));
       }
       Element actionEl = contentEl.addElement( "action" );
       actionEl.addAttribute( StandardSettings.SOLUTION, actionInfo.getSolutionName() );
@@ -696,10 +697,10 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     if ( null == repeatCount || null == repeatInterval ) {
       StringBuilder sb = new StringBuilder();
       if ( null == repeatCount || repeatCount < 0 ) {
-        sb.append( "Repeat schedule has an invalid repeat count. " );
+        sb.append(Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_COUNT_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
       }
       if ( null == repeatInterval || repeatInterval < 0 ) {
-        sb.append( "Repeat schedule has an invalid repeat interval. " );
+        sb.append(Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
       }
       return getErrorMessage( sb.toString() );
     } else {
@@ -854,24 +855,24 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
     Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
-    assert repeatInterval == null || repeatInterval >= 0 : "Invalid repeat interval " + repeatInterval;
+    assert repeatInterval == null || repeatInterval >= 0 : Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
     Date startDate;
     Date endDate;
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate));
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate));
     }
     
     SubscriptionRepositoryHelper.editScheduleWithoutContent( subscriptionRepository, schedId, title, schedRef, desc,
@@ -957,7 +958,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
@@ -968,12 +969,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.addScheduleWithoutContent( subscriptionRepository, title, schedRef, desc,
@@ -1049,7 +1050,8 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
+        
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
@@ -1060,12 +1062,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.addScheduleAndContent( subscriptionRepository, title, schedRef, desc,
@@ -1096,24 +1098,25 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException( "Schedule must have either a cron string or a repeat interval. It has neither." );
+        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
     Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
-    assert repeatInterval == null || repeatInterval >= 0 : "Invalid repeat interval " + repeatInterval;
+    assert repeatInterval == null || repeatInterval >= 0 : Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
+    
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
     Date startDate;
     Date endDate;
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid start date parameter: " + strStartDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException( "Invalid end date parameter: " + strEndDate );
+      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.editScheduleAndContent( subscriptionRepository, schedId, title, schedRef, desc,
@@ -1193,7 +1196,8 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
         } else if ( sched.isRepeatSchedule() ){
           errorEle = validateRepeatSpec( sched.getRepeatCount(), sched.getRepeatInterval() );
         } else {
-          errorEle = getErrorMessage( "Schedule with id: " + sched.getId() + " has neither a Cron string nor a repeat count/interval specified." );
+          errorEle = getErrorMessage(Messages.getString("SubscriptionAdminUIComponent.INCOMPLETE_SCHEDULE", sched.getId()));
+          
         }
         if (errorEle != null) {
           Document document = showCommandResultUI(errorEle, SubscriptionAdminUIComponent.NODE_STATUS_ERROR);
@@ -1693,7 +1697,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       } catch (PentahoAccessControlException e) {
         status = ISolutionRepository.FILE_ADD_FAILED;
         if (SubscriptionAdminUIComponent.logger.isErrorEnabled()) {
-          SubscriptionAdminUIComponent.logger.error("an error occurred", e);
+          SubscriptionAdminUIComponent.logger.error(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0104_USER_ERROR"), e);
         }
       } finally {
         PentahoSystem.systemExitPoint();
@@ -1762,7 +1766,6 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
             "SubscriptionAdminUIComponent.USER_DELETED_SUBSCRIPTION", getParameter("title", subscriptionId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  // >>>>>>>>>>>>>>>>>
 
   /** *** Generic Utility Methods ******* */
 
@@ -1905,7 +1908,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     }
     if ( missingParams.size() > 0 ) {
       StringBuilder sb = new StringBuilder();
-      sb.append( "Error, these parameters are missing: " );
+      sb.append(Messages.getString("SubscriptionAdminUIComponent.MISSING_PARAMETERS"));
       for ( String paramName : missingParams ) {
         String friendlyName = PARAM_NAME_TO_FRIENDLY_NAME.get( paramName );
         sb.append( friendlyName ).append( ", " ); //$NON-NLS-1$

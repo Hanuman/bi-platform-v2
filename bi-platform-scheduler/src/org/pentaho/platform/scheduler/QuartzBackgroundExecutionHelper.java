@@ -165,9 +165,9 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB", ex.getLocalizedMessage()), ex);
     } catch (ParseException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT", ex.getLocalizedMessage()), ex);
     }
   }
 
@@ -201,7 +201,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       }
       return rtn;
     } catch (SchedulerException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER"), ex);
+      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER", ex.getLocalizedMessage()), ex);
     }
   }
 
@@ -387,22 +387,19 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
   /*
    * cleanActionPath cleans action path like steelswheels////myreport.xaction to steelwheels/myreport.xaction
    */
-  private String cleanActionPath(String actionPath) {
-   boolean done = false;
-   StringBuffer returnValue = new StringBuffer(actionPath);
-   StringBuffer buffer  = new StringBuffer();
-   buffer.append(ISolutionRepository.SEPARATOR);
-   buffer.append(ISolutionRepository.SEPARATOR);
-   
-   String stringToSearch = buffer.toString();
-   while(!done) {
-     int index = returnValue.indexOf(stringToSearch);
-     if(index < 0) {
-      done = true; 
-     } else {
-       returnValue.replace(index, index+1, "");
-     }
-   }
-   return returnValue.toString();
+  private String cleanActionPath(String s) {
+    StringBuffer buffer  = new StringBuffer();
+    buffer.append(ISolutionRepository.SEPARATOR);
+    buffer.append(ISolutionRepository.SEPARATOR);
+    String from = buffer.toString();
+    buffer  = new StringBuffer();
+    buffer.append(ISolutionRepository.SEPARATOR);
+    String to = buffer.toString();    
+    
+    while (s.indexOf(from)>=0) {
+      return cleanActionPath(s.replaceAll(from, to));
+    }
+    return s;
   }
+
 }

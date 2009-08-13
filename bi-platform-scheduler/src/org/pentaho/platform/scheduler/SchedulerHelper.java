@@ -25,6 +25,7 @@ import java.util.List;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.scheduler.IJobSchedule;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.platform.scheduler.messages.Messages;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -223,7 +224,7 @@ public class SchedulerHelper {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
       JobDetail jobDetail = sched.getJobDetail(jobName, jobGroup);
       if (jobDetail == null) {
-        throw new SchedulerException("Trying to execute a job that doesn't exist" + jobName); //$NON-NLS-1$
+        throw new SchedulerException(Messages.getErrorString("SchedulerHelper.ERROR_0001_FAILED_TO_EXECUTE_NONEXISTENT_JOB",jobName)); //$NON-NLS-1$
       } else {
         jobDetail.setGroup("Immediate"); //$NON-NLS-1$
         sched.scheduleJob(jobDetail, trigger);
