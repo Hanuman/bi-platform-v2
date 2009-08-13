@@ -123,7 +123,7 @@ INSTRUCTIONS
   <!-- - - - - - - - - - - - - - - - - - 
           target: prep-dev-tomcat                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="prep-dev-biserver" depends="clean-all,xresolve,fake-jre,assemble">
+  <target name="prep-dev-biserver" depends="clean-all,resolve,fake-jre,assemble">
     <!-- Remove pentaho-bi-platform-*.jar since we want to use classes instead. -->
     <delete>
       <fileset dir="${prep.pentaho.war.lib.dir}">
