@@ -574,7 +574,7 @@
         <column name="PASSWORD" length="150" not-null="false" />
       </property>
       <property name="url" type="string" not-null="true">
-        <column name="URL" length="100" not-null="true" />
+        <column name="URL" length="512" not-null="true" />
       </property>
       <property name="query" type="string" not-null="false">
         <column name="QUERY" length="100" not-null="false" />
