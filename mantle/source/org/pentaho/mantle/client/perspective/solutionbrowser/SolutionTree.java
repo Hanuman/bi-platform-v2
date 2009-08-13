@@ -38,6 +38,8 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.File
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -56,6 +58,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -93,6 +96,13 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.setIntStyleAttribute(focusable.getElement(), "zIndex", -1); //$NON-NLS-1$
     DOM.appendChild(getElement(), focusable.getElement());
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
+
+    // By default, expanding a node does not select it. Add that in here
+    this.addOpenHandler(new OpenHandler<TreeItem>(){
+      public void onOpen(OpenEvent<TreeItem> event) {
+        SolutionTree.this.setSelectedItem(event.getTarget());
+      }
+    });
   }
 
   public void onBrowserEvent(Event event) {
@@ -106,7 +116,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         int[] offsets = ElementUtils.calculateOffsets(getElement());
         DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (Exception ex) {
-        // wtf!
+        // ignore any exceptions fired by this. Most likely a result of the 
       }
       break;
     }
