@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class Aggregation  extends XulEventSourceAdapter{
   
@@ -64,6 +65,7 @@ public class Aggregation  extends XulEventSourceAdapter{
   /**
    * @param aggregationList the aggregationList to set
    */
+  @Bindable
   public void setAggregationList(List<AggregationType> aggregationList) {
     this.aggregationList.clear();
     if(aggregationList != null && aggregationList.size() > 0) {
@@ -77,15 +79,18 @@ public class Aggregation  extends XulEventSourceAdapter{
   /**
    * @return the aggregationList
    */
+  @Bindable
   public List<AggregationType> getAggregationList() {
     return aggregationList;
   }
 
+  @Bindable
   public void setDefaultAggregationType(AggregationType defaultAggregationType) {
     this.defaultAggregationType = defaultAggregationType;
     firePropertyChange("defaultAggregationType", null, defaultAggregationType);//$NON-NLS-1$
   }
 
+  @Bindable
   public AggregationType getDefaultAggregationType() {
     return defaultAggregationType;
   }

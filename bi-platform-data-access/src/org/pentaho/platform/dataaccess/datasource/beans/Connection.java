@@ -22,6 +22,7 @@ package org.pentaho.platform.dataaccess.datasource.beans;
 
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class Connection extends XulEventSourceAdapter implements IConnection{
 
@@ -43,40 +44,52 @@ public class Connection extends XulEventSourceAdapter implements IConnection{
     setUsername(connection.getUsername());
   }
 
+  @Bindable
   public void setName(String name) {
     this.name = name;
   }
 
+  @Bindable
   public String getName() {
     return name;
   }
 
+  @Bindable
   public void setDriverClass(String driverClass) {
     this.driverClass = driverClass;
   }
 
+  @Bindable
   public String getDriverClass() {
     return driverClass;
   }
   
+  @Bindable
   public void setUsername(String username) {
     this.username = username;
   }
 
+  @Bindable
   public String getUsername() {
     return username;
   }
+  
+  @Bindable
   public void setPassword(String password) {
     this.password = password;
   }
 
+  @Bindable
   public String getPassword() {
     return password;
   }
+  
+  @Bindable
   public void setUrl(String url) {
     this.url = url;
   }
 
+  @Bindable
   public String getUrl() {
     return url;
   }

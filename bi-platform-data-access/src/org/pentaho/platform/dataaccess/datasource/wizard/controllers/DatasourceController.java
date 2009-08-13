@@ -54,6 +54,7 @@ import org.pentaho.ui.xul.containers.XulTabbox;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulTreeChildren;
 import org.pentaho.ui.xul.containers.XulTreeRow;
+import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
 public class DatasourceController extends AbstractXulDialogController<Domain> {
@@ -124,6 +125,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     this.datasourceTypeControllers = datasourceTypeControllers;
   }
 
+  @Bindable
   public void init() {
     clearModelWarningDialog = (XulDialog) document.getElementById("clearModelWarningDialog");//$NON-NLS-1$
     //databaseButtonBox = (XulHbox) document.getElementById("databaseButtonBox");
@@ -287,10 +289,12 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     this.bf = bf;
   }
 
+  @Bindable
   public void setDatasourceModel(DatasourceModel model) {
     this.datasourceModel = model;
   }
 
+  @Bindable
   public DatasourceModel getDatasourceModel() {
     return this.datasourceModel;
   }
@@ -299,6 +303,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     return "datasourceController"; //$NON-NLS-1$
   }
 
+  @Bindable
   public void saveModel() {
     try {
       if (datasourceModel.getDatasourceType() == DatasourceType.SQL) {
@@ -315,6 +320,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
+  @Bindable
   private void saveCsvModel() throws DatasourceServiceException {
     List<CsvModelDataRow> dataRows = datasourceModel.getCsvModel().getDataRows();
       // Get the domain from the business data
@@ -403,6 +409,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
       });
   }
 
+  @Bindable
   public void overwriteDialogAccept() {
     try {
       overwriteDialog.hide();
@@ -424,6 +431,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     }
   }
   
+  @Bindable
   public void overwriteDialogCancel() {
     overwriteDialog.hide();
   }
@@ -454,10 +462,14 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     tabValueSelected = value;
     clearModelWarningDialog.show();
   }
+  
+  @Bindable
   public void closeClearModelWarningDialog() {
     clearModelWarningDialog.hide();
     clearModelWarningShown = false;
   }
+  
+  @Bindable
   public void switchTab() {
     closeClearModelWarningDialog();
     if(tabValueSelected == DatasourceType.SQL) {
@@ -471,6 +483,7 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     }
   }
   
+  @Bindable
   public Boolean beforeTabSwitch(Integer tabIndex) {
     if(RELATIONAL_TAB == tabIndex) {
       if(!clearModelWarningShown  && datasourceModel.getCsvModel().getBusinessData() != null) {
@@ -493,15 +506,18 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     return true;
   }
 
+  @Bindable
   public void selectCsv() {
     csvDataTable.update();
     datasourceModel.setDatasourceType(DatasourceType.CSV);
   }
 
+  @Bindable
   public void selectOlap() {
 
   }
   
+  @Bindable
   public void selectSql() {
     modelDataTable.update();
     datasourceModel.setDatasourceType(DatasourceType.SQL);      
@@ -523,24 +539,28 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     this.service = service;
   }
 
+  @Bindable
   public void openErrorDialog(String title, String message) {
     errorDialog.setTitle(title);
     errorLabel.setValue(message);
     errorDialog.show();
   }
 
+  @Bindable
   public void closeErrorDialog() {
     if (!errorDialog.isHidden()) {
       errorDialog.hide();
     }
   }
 
+  @Bindable
   public void openSuccesDialog(String title, String message) {
     successDialog.setTitle(title);
     successLabel.setValue(message);
     successDialog.show();
   }
 
+  @Bindable
   public void closeSuccessDialog() {
     if (!successDialog.isHidden()) {
       successDialog.hide();
@@ -558,15 +578,17 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
   }
 
   @Override
+  @Bindable
   public void onDialogAccept() {
     saveModel(); 
   }
   
+  @Bindable
   private void saveModelDone() {
     super.onDialogAccept();
   }
   
-    private void buildCsvEmptyTable() {
+  private void buildCsvEmptyTable() {
     // Create the tree children and setting the data
     csvAggregationListCol.setEditable(false);
     csvSampleDataTreeCol.setEditable(false);

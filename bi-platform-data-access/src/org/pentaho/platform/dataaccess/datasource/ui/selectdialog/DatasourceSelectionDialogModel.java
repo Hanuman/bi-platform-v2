@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 /**
  * The state (a.k.a. model) of this dialog.
@@ -64,12 +65,14 @@ public class DatasourceSelectionDialogModel extends XulEventSourceAdapter {
     setSelectedIndex(-1);
   }
 
+  @Bindable
   public void setSelectedIndex(final int selectedIndex) {
     final int previousVal = this.selectedIndex;
     this.selectedIndex = selectedIndex;
     this.firePropertyChange("selectedIndex", previousVal, selectedIndex); //$NON-NLS-1$
   }
 
+  @Bindable
   public int getSelectedIndex() {
     return selectedIndex;
   }

@@ -89,9 +89,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
       datasourceSelectionDialogController = new DatasourceSelectionDialogController();
       datasourceSelectionDialogController.setBindingFactory(bf);
       datasourceSelectionDialogController.setDatasourceService(datasourceService);
-      EventHandlerWrapper editPanelControllerWrapper = GWT.create(DatasourceSelectionDialogController.class);
-      editPanelControllerWrapper.setHandler(datasourceSelectionDialogController);
-      container.addEventHandler(editPanelControllerWrapper);
+      container.addEventHandler(datasourceSelectionDialogController);
       // end DatasourceSelectionDialogController setup
 
       datasourceSelectionDialogController.setDatasourceDialogController(gwtDatasourceEditor);

@@ -32,6 +32,7 @@ import org.pentaho.platform.dataaccess.datasource.Enclosure;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class CsvModel extends XulEventSourceAdapter{
   private CsvModelValidationListenerCollection csvModelValidationListeners;
@@ -50,10 +51,12 @@ public class CsvModel extends XulEventSourceAdapter{
   public CsvModel() {
   }
 
+  @Bindable
   public List<String> getEnclosureList() {
     return enclosureList;
   }
 
+  @Bindable
   public void setEnclosureList() {
     enclosureList = new ArrayList<String>();
     Enclosure[] enclosureArray = Enclosure.values();
@@ -63,10 +66,12 @@ public class CsvModel extends XulEventSourceAdapter{
     this.firePropertyChange("enclosureList", null, enclosureList); //$NON-NLS-1$
   }
 
+  @Bindable
   public List<String> getDelimiterList() {
     return delimiterList;
   }
 
+  @Bindable
   public void setDelimiterList() {
     delimiterList = new ArrayList<String>();
     Delimiter[] delimiterArray = Delimiter.values();
@@ -76,10 +81,12 @@ public class CsvModel extends XulEventSourceAdapter{
     this.firePropertyChange("delimiterList", null, delimiterList); //$NON-NLS-1$
   }
 
+  @Bindable
   public BusinessData getBusinessData() {
     return businessData;
   }
 
+	@Bindable
   public void setBusinessData(BusinessData value) {
     this.businessData = value;
     if (value != null) {
@@ -106,10 +113,12 @@ public class CsvModel extends XulEventSourceAdapter{
     }
   }
 
+  @Bindable
   public boolean isHeadersPresent() {
     return headersPresent;
   }
 
+  @Bindable
   public void setHeadersPresent(boolean value) {
     if(value != this.headersPresent) {
       this.headersPresent = value;
@@ -119,10 +128,12 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
 
+  @Bindable
   public String getSelectedFile() {
     return selectedFile;
   }
 
+  @Bindable
   public void setSelectedFile(String value) {
     String previousVal = this.selectedFile;
     this.selectedFile = value;
@@ -130,11 +141,13 @@ public class CsvModel extends XulEventSourceAdapter{
     validate();
   }
 
+  @Bindable
   public boolean isValidated() {
     return validated;
   }
 
 
+  @Bindable
   private void setValidated(boolean value) {
     if(value != this.validated) {
       this.validated = value;
@@ -152,6 +165,7 @@ public class CsvModel extends XulEventSourceAdapter{
     }
   }
 
+  @Bindable
   private void addCsvModelDataRow(LogicalColumn column, List<String> columnData,String locale) {
     if (dataRows == null) {
       dataRows = new ArrayList<CsvModelDataRow>();
@@ -160,14 +174,17 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
 
+  @Bindable
   public List<CsvModelDataRow> getDataRows() {
     return dataRows;
   }
 
+  @Bindable
   public void setDataRows(List<CsvModelDataRow> dataRows) {
     this.dataRows = dataRows;
   }
 
+  @Bindable
   private List<String> getColumnData(int columnNumber, List<List<String>> data) {
     List<String> column = new ArrayList<String>();
     for (List<String> row : data) {
@@ -179,20 +196,24 @@ public class CsvModel extends XulEventSourceAdapter{
   }
   
   
+  @Bindable
   public Enclosure getEnclosure() {
     return enclosure;
   }
 
+  @Bindable
   public void setEnclosure(Enclosure value) {
     Enclosure previousValue = this.enclosure;
     this.enclosure = value;
     this.firePropertyChange("enclosure", previousValue, value); //$NON-NLS-1$
   }
 
+  @Bindable
   public Delimiter getDelimiter() {
     return delimiter;
   }
 
+  @Bindable
   public void setDelimiter(Delimiter value) {
     Delimiter previousValue = this.delimiter;
     this.delimiter = value;

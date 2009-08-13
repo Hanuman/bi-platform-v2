@@ -28,6 +28,7 @@ import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 
 public class ModelDataRow extends XulEventSourceAdapter{
@@ -56,60 +57,72 @@ public class ModelDataRow extends XulEventSourceAdapter{
   }
 
 
+  @Bindable
   public String getColumnName() {
     return columnName;
   }
 
 
+  @Bindable
   public void setColumnName(String columnName) {
     this.columnName = columnName;
   }
 
 
+  @Bindable
   public String getSampleData() {
     return sampleData;
   }
 
 
+  @Bindable
   public void setSampleData(String sampleData) {
     this.sampleData = sampleData;
   }
 
 
+  @Bindable
   public List<DataType> getDataTypes() {
     return dataTypes;
   }
 
 
+  @Bindable
   public void setDataTypes(List<DataType> dataTypes) {
     this.dataTypes = dataTypes;
   }
 
 
+  @Bindable
   public List<String> getSampleDataList() {
     return sampleDataList;
   }
 
 
+  @Bindable
   public void setSampleDataList(List<String> sampleDataList) {
     this.sampleDataList = sampleDataList;
   }
 
 
+  @Bindable
   public DataType getSelectedDataType() {
     return selectedDataType;
   }
 
 
+  @Bindable
   public void setSelectedDataType(DataType selectedDataType) {
     this.selectedDataType = selectedDataType;
   }
 
 
+  @Bindable
   public void setSelectedDataType(Object o){
     setSelectedDataType((DataType)  o);
   }
   
+  @Bindable
   public Vector getBindingDataTypes(){
     Vector v = new Vector();
     //for(DataType t : this.dataTypes){
@@ -120,11 +133,13 @@ public class ModelDataRow extends XulEventSourceAdapter{
   }
 
 
+  @Bindable
   public void setAggregation(Aggregation aggregation) {
     this.aggregation = aggregation;
   }
 
 
+  @Bindable
   public Aggregation getAggregation() {
     return aggregation;
   }

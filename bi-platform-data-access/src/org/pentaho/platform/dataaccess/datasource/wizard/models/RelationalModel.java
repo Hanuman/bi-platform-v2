@@ -32,6 +32,7 @@ import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 
 public class RelationalModel extends XulEventSourceAdapter{
@@ -50,18 +51,23 @@ public class RelationalModel extends XulEventSourceAdapter{
   public RelationalModel() {
     previewLimit = "10";
   }
+  
+  @Bindable
   public ConnectionEditType getEditType() {
     return editType;
   }
 
+  @Bindable
   public void setEditType(ConnectionEditType value) {
     this.editType = value;
   }
 
+  @Bindable
   public IConnection getSelectedConnection() {
     return selectedConnection;
   }
 
+  @Bindable
   public void setSelectedConnection(IConnection value) {
     IConnection previousValue = this.selectedConnection;
     this.selectedConnection = value;
@@ -69,6 +75,7 @@ public class RelationalModel extends XulEventSourceAdapter{
     validate();
   }
 
+  @Bindable
   public List<IConnection> getConnections() {
     return connections;
   }
@@ -89,6 +96,7 @@ public class RelationalModel extends XulEventSourceAdapter{
     this.firePropertyChange("connections", previousValue, connections); //$NON-NLS-1$
   }
 
+  @Bindable
   private List<IConnection> getPreviousValue() {
     List<IConnection> previousValue = new ArrayList<IConnection>();
     for (IConnection conn : connections) {
@@ -112,26 +120,32 @@ public class RelationalModel extends XulEventSourceAdapter{
     }
   }
 
+  @Bindable
   public void setConnections(List<IConnection> value) {
     List<IConnection> previousValue = getPreviousValue();
     this.connections = value;
     this.firePropertyChange("connections", previousValue, value); //$NON-NLS-1$
   }
 
+  @Bindable
   public String getQuery() {
     return query;
   }
 
+  @Bindable
   public void setQuery(String value) {
     String previousVal = this.query;
     this.query = value;
     this.firePropertyChange("query", previousVal, value); //$NON-NLS-1$
     validate();
   }
+  
+  @Bindable
   public String getPreviewLimit() {
     return previewLimit;
   }
 
+  @Bindable
   public void setPreviewLimit(String value) {
     String previousVal = this.previewLimit;
     this.previewLimit = value;
@@ -152,10 +166,12 @@ public class RelationalModel extends XulEventSourceAdapter{
     return connections.indexOf(connection);
   }
 
+  @Bindable
   public boolean isValidated() {
     return validated;
   }
 
+  @Bindable
   private void setValidated(boolean value) {
     if(value != this.validated) {
       this.validated = value;
@@ -178,10 +194,12 @@ public class RelationalModel extends XulEventSourceAdapter{
     }
   }
 
+  @Bindable
   public BusinessData getBusinessData() {
     return businessData;
   }
 
+  @Bindable
   public void setBusinessData(BusinessData value) {
     this.businessData = value;
     if (value != null) {
@@ -224,10 +242,12 @@ public class RelationalModel extends XulEventSourceAdapter{
     this.dataRows.add(new ModelDataRow(column, columnData, locale));
   }
 
+  @Bindable
   public List<ModelDataRow> getDataRows() {
     return dataRows;
   }
 
+  @Bindable
   public void setDataRows(List<ModelDataRow> value) {
     this.dataRows = value;
     firePropertyChange("dataRows", null, dataRows);
@@ -246,6 +266,7 @@ public class RelationalModel extends XulEventSourceAdapter{
   /*
    * Clears out the model
    */
+  @Bindable
   public void clearModel() {
     setBusinessData(null);
     setDataRows(null);

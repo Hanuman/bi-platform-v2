@@ -38,6 +38,7 @@ import org.pentaho.ui.xul.components.XulMessageBox;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.dom.Document;
+import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
 public class DatasourceSelectionDialogController extends AbstractXulDialogController<LogicalModelSummary> {
@@ -83,6 +84,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
   /**
    * Sets up bindings.
    */
+  @Bindable
   public void init() {
     internalInit();    
     datasourceService.hasPermission(new XulServiceCallback<Boolean>() {
@@ -289,6 +291,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     this.datasourceEditor = gwtDatasourceEditor;
   }
 
+  @Bindable
   public void addDatasource() {
     datasourceEditor.addDialogListener(new DialogListener<Domain>() {
       public void onDialogAccept(final Domain domain) {
@@ -300,7 +303,8 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     });
     datasourceEditor.showDialog();
   }
-  
+
+  @Bindable
   public void editDatasource() {
     
     // logicalModelSummary.getDomainId(), logicalModelSummary.getModelId()
@@ -318,14 +322,17 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     datasourceEditor.showEditDialog(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId());
   }
 
+  @Bindable
   public void removeDatasourceConfirm() {
     removeDatasourceConfirmationDialog.show();
   }
 
+  @Bindable
   public void removeDatasourceCancel() {
     removeDatasourceConfirmationDialog.hide();
   }
 
+  @Bindable
   public void removeDatasourceAccept() {
     LogicalModelSummary logicalModelSummary = getDialogResult();
     datasourceService.deleteLogicalModel(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId(), new XulServiceCallback<Boolean>() {

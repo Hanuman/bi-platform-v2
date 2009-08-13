@@ -42,7 +42,6 @@ import org.pentaho.ui.xul.gwt.GwtXulRunner;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
 import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
-import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -134,32 +133,25 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
       datasourceMessages.setMessageBundle((ResourceBundle) container.getResourceBundles().get(0));
       GwtBindingFactory bf = new GwtBindingFactory(container.getDocumentRoot());
       
-      EventHandlerWrapper wrapper = GWT.create(DatasourceController.class);
       datasourceController.setBindingFactory(bf);
       datasourceController.setDatasourceMessages(datasourceMessages);
       waitingDialog = new GwtWaitingDialog(datasourceMessages.getString("waitingDialog.previewLoading"),datasourceMessages.getString("waitingDialog.generatingPreview"));
-      wrapper.setHandler(datasourceController);      
-      container.addEventHandler(wrapper);
+      container.addEventHandler(datasourceController);
 
-      wrapper = GWT.create(CsvDatasourceController.class);
       csvDatasourceController.setBindingFactory(bf);
       csvDatasourceController.setDatasourceMessages(datasourceMessages);
       csvDatasourceController.setWaitingDialog(waitingDialog);
-      wrapper.setHandler(csvDatasourceController);      
-      container.addEventHandler(wrapper);
+      container.addEventHandler(csvDatasourceController);
 
-      wrapper = GWT.create(RelationalDatasourceController.class);
       relationalDatasourceController.setBindingFactory(bf);
       relationalDatasourceController.setDatasourceMessages(datasourceMessages);
       relationalDatasourceController.setWaitingDialog(waitingDialog);
-      wrapper.setHandler(relationalDatasourceController);      
-      container.addEventHandler(wrapper);
+      container.addEventHandler(relationalDatasourceController);
 
       
-      wrapper = GWT.create(ConnectionController.class);
       connectionController.setDatasourceMessages(datasourceMessages);      
-      wrapper.setHandler(connectionController);      
-      container.addEventHandler(wrapper);
+      container.addEventHandler(connectionController);
+      
       datasourceModel.getCsvModel().setMessages(datasourceMessages);
       datasourceController.setDatasourceModel(datasourceModel);
       csvDatasourceController.setDatasourceModel(datasourceModel);

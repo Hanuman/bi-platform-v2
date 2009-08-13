@@ -28,6 +28,7 @@ import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IDatasource;
 import org.pentaho.platform.dataaccess.datasource.beans.Datasource;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class DatasourceModel extends XulEventSourceAdapter implements IRelationalModelValidationListener, ICsvModelValidationListener{
   private boolean validated;
@@ -43,27 +44,33 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
     csvModel.addCsvModelValidationListener(this);
   }
 
+  @Bindable
   public RelationalModel getRelationalModel() {
     return relationalModel;
   }
 
+  @Bindable
   public void setRelationalModel(RelationalModel relationalModel) {
     this.relationalModel = relationalModel;
   }
 
+  @Bindable
   public CsvModel getCsvModel() {
     return csvModel;
   }
 
+  @Bindable
   public void setCsvModel(CsvModel csvModel) {
     this.csvModel = csvModel;
   }
 
 
+  @Bindable
   public String getDatasourceName() {
     return datasourceName;
   }
 
+  @Bindable
   public void setDatasourceName(String datasourceName) {
     String previousVal = this.datasourceName;
     this.datasourceName = datasourceName;
@@ -92,20 +99,24 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
     validate();
   }
 
+  @Bindable
   public boolean isValidated() {
     return validated;
   }
 
+  @Bindable
   private void setValidated(boolean validated) {
     boolean prevVal = this.validated;
     this.validated = validated;
     this.firePropertyChange("validated", prevVal, validated); //$NON-NLS-1$
   }
   
+  @Bindable
   public DatasourceType getDatasourceType() {
     return this.datasourceType;
   }
 
+  @Bindable
   public void setDatasourceType(DatasourceType datasourceType) {
     DatasourceType previousVal = this.datasourceType;
     this.datasourceType = datasourceType;
@@ -135,6 +146,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
     setDatasourceType(DatasourceType.SQL);
   }
   
+  @Bindable
   public IDatasource getDatasource() {
     IDatasource datasource = new Datasource();
     if(DatasourceType.SQL == getDatasourceType()) {

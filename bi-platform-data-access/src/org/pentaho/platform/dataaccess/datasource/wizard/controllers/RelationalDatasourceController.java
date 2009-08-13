@@ -57,6 +57,7 @@ import org.pentaho.ui.xul.containers.XulTreeCols;
 import org.pentaho.ui.xul.containers.XulTreeRow;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
@@ -149,6 +150,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
   }
 
+  @Bindable
   public void init() {
     //rows = (XulRows) document.getElementById("relationalSampleDataRows");//$NON-NLS-1$
     //grid = (XulGrid) document.getElementById("relationalSampleDataGrid");//$NON-NLS-1$
@@ -281,10 +283,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     this.bf = bf;
   }
 
+  @Bindable
   public void setDatasourceModel(DatasourceModel model) {
     this.datasourceModel = model;
   }
 
+  @Bindable
   public DatasourceModel getDatasourceModel() {
     return this.datasourceModel;
   }
@@ -293,6 +297,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     return "relationalDatasourceController";
   }
 
+  @Bindable
   public void applyQuery() {
     if (datasourceModel.getRelationalModel().getBusinessData() != null) {
       applyQueryConfirmationDialog.show();
@@ -301,6 +306,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     }
   }
 
+  @Bindable
   public void generateModel() {
     if (validateInputs()) {
       query.setDisabled(true);
@@ -377,14 +383,17 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
   }
 
+  @Bindable
   public void closeConnectionDialog() {
     connectionDialog.hide();
   }
 
+  @Bindable
   public void closeApplyQueryConfirmationDialog() {
     applyQueryConfirmationDialog.hide();
   }
 
+  @Bindable
   public void displayPreview() {
 
     if (!validateInputs()) {
@@ -478,6 +487,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     }
   }
 
+  @Bindable
   public void closePreviewResultsDialog() {
     previewResultsDialog.hide();
   }
@@ -490,24 +500,28 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     this.service = service;
   }
 
+  @Bindable
   public void openErrorDialog(String title, String message) {
     errorDialog.setTitle(title);
     errorLabel.setValue(message);
     errorDialog.show();
   }
 
+  @Bindable
   public void closeErrorDialog() {
     if (!errorDialog.isHidden()) {
       errorDialog.hide();
     }
   }
 
+  @Bindable
   public void openSuccesDialog(String title, String message) {
     successDialog.setTitle(title);
     successLabel.setValue(message);
     successDialog.show();
   }
 
+  @Bindable
   public void closeSuccessDialog() {
     if (!successDialog.isHidden()) {
       successDialog.hide();
@@ -525,6 +539,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     }
   */
 
+  @Bindable
   public void showWaitingDialog(String title, String message) {
     waitingDialog.setTitle(title);
     waitingDialogLabel.setValue(message);
@@ -532,6 +547,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
   }
 
+  @Bindable
   public void hideWaitingDialog() {
     waitingDialog.hide();
   }
@@ -570,14 +586,17 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     this.waitingDialogBox = waitingDialog;
   }
 
+  @Bindable
   public void closeAggregationEditorDialog() {
     aggregationCellEditor.hide();
   }
 
+  @Bindable
   public void saveAggregationValues() {
     aggregationCellEditor.notifyListeners();
   }
 
+  @Bindable
   public void closeSampleDataDialog() {
     sampleDataCellEditor.hide();
   }

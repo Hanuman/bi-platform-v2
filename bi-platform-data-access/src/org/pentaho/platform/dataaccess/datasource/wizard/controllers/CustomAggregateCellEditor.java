@@ -46,6 +46,7 @@ import org.pentaho.ui.xul.containers.XulMenupopup;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.gwt.AbstractGwtXulContainer;
+import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 
@@ -85,6 +86,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     dialog.hide();
   }
 
+  @Bindable
   public void setCheckboxChanged() {
     List<AggregationType> aggTypeList = new ArrayList<AggregationType>();
     for (XulCheckbox checkbox : aggregationCheckboxList) {

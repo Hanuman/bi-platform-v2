@@ -23,6 +23,7 @@ package org.pentaho.platform.dataaccess.datasource.beans;
 import java.io.Serializable;
 
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 /**
  * A summary of a logical model consisting of domain id, model id, and localized model name. This thin object is for UI
@@ -81,6 +82,7 @@ public class LogicalModelSummary extends XulEventSourceAdapter implements Compar
     return modelId;
   }
 
+  @Bindable
   public String getModelName() {
     return modelName;
   }

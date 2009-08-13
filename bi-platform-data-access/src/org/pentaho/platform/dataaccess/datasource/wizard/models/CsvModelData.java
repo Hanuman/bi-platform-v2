@@ -28,6 +28,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
+import org.pentaho.ui.xul.stereotype.Bindable;
 
 
 public class CsvModelData extends XulEventSourceAdapter{
@@ -53,11 +54,13 @@ public class CsvModelData extends XulEventSourceAdapter{
     firePropertyChange("csvDataRows", null, csvDataRows);//$NON-NLS-1$
   }
 
+  @Bindable
   public List<CsvModelDataRow> getModelData() {
     return csvDataRows;
   }
 
 
+  @Bindable
   public void setModelData(List<CsvModelDataRow> csvDataRows) {
     this.csvDataRows = csvDataRows;
     firePropertyChange("csvDataRows", null, csvDataRows);//$NON-NLS-1$

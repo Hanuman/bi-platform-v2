@@ -53,6 +53,7 @@ import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulTree;
 import org.pentaho.ui.xul.containers.XulVbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.TreeCellEditor;
 import org.pentaho.ui.xul.util.TreeCellEditorCallback;
 import org.pentaho.ui.xul.util.TreeCellRenderer;
@@ -133,6 +134,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
 
   }
 
+  @Bindable
   public void init() {
     fileUpload = (XulFileUpload) document.getElementById("fileUpload"); //$NON-NLS-1$
     applyCsvButton = (XulButton) document.getElementById("applyCsvButton"); //$NON-NLS-1$
@@ -261,6 +263,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     datasourceModel.getCsvModel().setEnclosure(Enclosure.DOUBLEQUOTE);
   }
 
+  @Bindable
   public void setSelectedCsvDataRow(int row) {
 
   }
@@ -285,10 +288,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     this.service = service;
   }
 
+  @Bindable
   public void submitCsv() {
     fileUpload.submit();
   }
 
+  @Bindable
   public void applyCsv() {
     if (datasourceModel.getCsvModel().getBusinessData() != null) {
       applyCsvConfirmationDialog.show();
@@ -297,10 +302,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     }
   }
 
+  @Bindable
   public void closeApplyCsvConfirmationDialog() {
     applyCsvConfirmationDialog.hide();
   }
 
+  @Bindable
   public void generateModel() {
     if (validateIputForCsv()) {
       if (applyCsvConfirmationDialog.isVisible()) {
@@ -347,6 +354,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     }
   }
 
+  @Bindable
   private boolean validateIputForCsv() {
     return (datasourceModel.getCsvModel().getSelectedFile() != null
         && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0));
@@ -375,24 +383,28 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0005_UPLOAD_FAILED"), t.getLocalizedMessage()); //$NON-NLS-1$
   }
 
+  @Bindable
   public void openErrorDialog(String title, String message) {
     errorDialog.setTitle(title);
     errorLabel.setValue(message);
     errorDialog.show();
   }
 
+  @Bindable
   public void closeErrorDialog() {
     if (!errorDialog.isHidden()) {
       errorDialog.hide();
     }
   }
 
+  @Bindable
   public void openSuccesDialog(String title, String message) {
     successDialog.setTitle(title);
     successLabel.setValue(message);
     successDialog.show();
   }
 
+  @Bindable
   public void closeSuccessDialog() {
     if (!successDialog.isHidden()) {
       successDialog.hide();
@@ -409,6 +421,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
      getWaitingDialog().hide();
    }
   */
+  @Bindable
   public void showWaitingDialog(String title, String message) {
     waitingDialog.setTitle(title);
     waitingDialogLabel.setValue(message);
@@ -416,10 +429,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
 
   }
 
+  @Bindable
   public void hideWaitingDialog() {
     waitingDialog.hide();
   }
 
+  @Bindable
   public void closeRegenerateModelConfirmationDialog() {
     regenerateModelConfirmationDialog.hide();
   }
@@ -458,14 +473,17 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     return datasourceMessages;
   }
 
+  @Bindable
   public void closeAggregationEditorDialog() {
     aggregationCellEditor.hide();
   }
 
+  @Bindable
   public void saveAggregationValues() {
     aggregationCellEditor.notifyListeners();
   }
 
+  @Bindable
   public void closeSampleDataDialog() {
     sampleDataCellEditor.hide();
   }

@@ -41,6 +41,9 @@ import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
+import org.pentaho.ui.xul.stereotype.Bindable;
+
+import com.google.gwt.user.client.Window;
 
 public class ConnectionController extends AbstractXulEventHandler implements DatabaseDialogListener {
 
@@ -76,10 +79,13 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
   }
 
+  @Bindable
   public void init() {
 
     XulServiceCallback<List<IDatabaseType>> callback = new XulServiceCallback<List<IDatabaseType>>() {
       public void error(String message, Throwable error) {
+        Window.alert(message);
+        error.printStackTrace();
       }
 
       public void success(List<IDatabaseType> retVal) {
@@ -98,24 +104,28 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     removeConfirmationDialog = (XulDialog) document.getElementById("removeConfirmationDialog"); //$NON-NLS-1$
   }
 
+  @Bindable
   public void openErrorDialog(String title, String message) {
     errorDialog.setTitle(title);
     errorLabel.setValue(message);
     errorDialog.show();
   }
 
+  @Bindable
   public void closeErrorDialog() {
     if (!errorDialog.isHidden()) {
       errorDialog.hide();
     }
   }
 
+  @Bindable
   public void openSuccesDialog(String title, String message) {
     successDialog.setTitle(title);
     successLabel.setValue(message);
     successDialog.show();
   }
 
+  @Bindable
   public void closeSuccessDialog() {
     if (!successDialog.isHidden()) {
       successDialog.hide();
@@ -134,16 +144,19 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     return "connectionController";//$NON-NLS-1$
   }
 
+  @Bindable
   public void closeDialog() {
     for (ConnectionDialogListener listener : listeners) {
       listener.onDialogCancel();
     }
   }
 
+  @Bindable
   public void closeSaveConnectionConfirmationDialog() {
     saveConnectionConfirmationDialog.hide();
   }
 
+  @Bindable
   public void addConnection() {
     try {
       service.testConnection(currentConnection, new XulServiceCallback<Boolean>() {
@@ -163,6 +176,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     }
   }
 
+  @Bindable
   public void testConnection() {
     try {
       service.testConnection(currentConnection, new XulServiceCallback<Boolean>() {
@@ -190,6 +204,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     }
   }
 
+  @Bindable
   public void deleteConnection() {
     removeConfirmationDialog.hide();
     service.deleteConnection(datasourceModel.getRelationalModel().getSelectedConnection().getName(),
@@ -225,6 +240,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
         });
   }
 
+  @Bindable
   public void saveConnection() {
     if (!saveConnectionConfirmationDialog.isHidden()) {
       saveConnectionConfirmationDialog.hide();
@@ -329,20 +345,24 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     });
   }
 
+  @Bindable
   public void onDialogCancel() {
     // do nothing
   }
 
+  @Bindable
   public void onDialogReady() {
     // TODO: enable the database edit and add buttons
   }
 
+  @Bindable
   public void showAddConnectionDialog() {
     datasourceModel.getRelationalModel().setEditType(ConnectionEditType.ADD);
     databaseDialog.setDatabaseConnection(null);
     databaseDialog.show();
   }
 
+  @Bindable
   public void showEditConnectionDialog() {
     datasourceModel.getRelationalModel().setEditType(ConnectionEditType.EDIT);
     IConnection connection = datasourceModel.getRelationalModel().getSelectedConnection();
@@ -358,12 +378,14 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     });
   }
 
+  @Bindable
   public void showRemoveConnectionDialog() {
     // Display the warning message. 
     // If ok then remove the connection from the list
     removeConfirmationDialog.show();
   }
   
+  @Bindable
   public void closeRemoveConfirmationDialog() {
     removeConfirmationDialog.hide();
   }
