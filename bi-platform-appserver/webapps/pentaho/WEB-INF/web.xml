@@ -132,27 +132,27 @@
 
 	<filter-mapping>
 		<filter-name>Proxy Trusting Filter</filter-name>
-		<url-pattern>/SchedulerAdmin</url-pattern>
+		<url-pattern>/SchedulerAdminService</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>Proxy Trusting Filter</filter-name>
-		<url-pattern>/SubscriptionAdmin</url-pattern>
+		<url-pattern>/SubscriptionAdminService</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>Proxy Trusting Filter</filter-name>
-		<url-pattern>/ServiceAction</url-pattern>
+		<url-pattern>/ServiceActionService</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>Proxy Trusting Filter</filter-name>
-		<url-pattern>/Publish</url-pattern>
+		<url-pattern>/PublishService</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>Proxy Trusting Filter</filter-name>
-		<url-pattern>/ResetRepository</url-pattern>
+		<url-pattern>/ResetRepositoryService</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
@@ -477,7 +477,7 @@
 		<jsp-file>/jsp/PUCLogin.jsp</jsp-file>
 		<init-param>
 			<param-name>send401List</param-name>
-			<param-value>AdhocWebService,AnalysisViewService,MondrianCatalogPublisher</param-value>
+			<param-value>AdhocWebService,AnalysisViewService,MondrianCatalogPublisher, SchedulerAdminService, SubscriptionAdminService, PublishService, ResetRepositoryService, ServiceActionService,SolutionRepositoryService,GwtRpcPluginProxyServlet</param-value>
 			<description>List of things to throw a 401 to when seen in the login</description>
 		</init-param>
 	</servlet>
@@ -514,16 +514,6 @@
 		<servlet-name>MantleLoginService</servlet-name>
 		<servlet-class>org.pentaho.mantle.login.server.MantleLoginServlet</servlet-class>
 	</servlet>
-
-	<!-- servlet>
-		<servlet-name>ConnectionServlet</servlet-name>
-		<servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionGwtServlet</servlet-class>
-	</servlet>
-    
-	<servlet>
-		<servlet-name>DatasourceServlet</servlet-name>
-		<servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceGwtServlet</servlet-class>
-	</servlet-->
 
   	<servlet>
 		<servlet-name>UploadService</servlet-name>
@@ -601,8 +591,18 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
+		<servlet-name>Publish</servlet-name>
+		<url-pattern>/PublishService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
 		<servlet-name>SchedulerAdmin</servlet-name>
 		<url-pattern>/SchedulerAdmin</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SchedulerAdmin</servlet-name>
+		<url-pattern>/SchedulerAdminService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -670,6 +670,11 @@
 	<servlet-mapping>
 		<servlet-name>ServiceAction</servlet-name>
 		<url-pattern>/ServiceAction</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ServiceAction</servlet-name>
+		<url-pattern>/ServiceActionService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -780,6 +785,11 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
+		<servlet-name>SubscriptionAdmin</servlet-name>
+		<url-pattern>/SubscriptionAdminService</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>ManageUsers</servlet-name>
 		<url-pattern>/ManageUsers</url-pattern>
 	</servlet-mapping>
@@ -797,6 +807,11 @@
 	<servlet-mapping>
 		<servlet-name>ResetRepository</servlet-name>
 		<url-pattern>/ResetRepository</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ResetRepository</servlet-name>
+		<url-pattern>/ResetRepositoryService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -823,16 +838,6 @@
 		<servlet-name>NewAnalysisView</servlet-name>
 		<url-pattern>/NewAnalysisView</url-pattern>
 	</servlet-mapping>
-
-	<!-- servlet-mapping>
-		<servlet-name>ConnectionServlet</servlet-name>
-		<url-pattern>/content/data-access/resources/gwt/ConnectionService</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>DatasourceServlet</servlet-name>
-		<url-pattern>/content/data-access/resources/gwt/DatasourceService</url-pattern>
-	</servlet-mapping-->
 
   <servlet-mapping>
     <servlet-name>UploadService</servlet-name>
