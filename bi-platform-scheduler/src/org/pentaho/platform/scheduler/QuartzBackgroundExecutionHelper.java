@@ -386,20 +386,16 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
   }
   /*
    * cleanActionPath cleans action path like steelswheels////myreport.xaction to steelwheels/myreport.xaction
+   * Note - the ISolutionRepository.SEPARATOR could be used here, but it's hardcoded to
+   * forward slash and has been for two years. So - Changing to be clean with no
+   * additional temporary object allocations. MB 2009-08-13
    */
   private String cleanActionPath(String s) {
-    StringBuffer buffer  = new StringBuffer();
-    buffer.append(ISolutionRepository.SEPARATOR);
-    buffer.append(ISolutionRepository.SEPARATOR);
-    String from = buffer.toString();
-    buffer  = new StringBuffer();
-    buffer.append(ISolutionRepository.SEPARATOR);
-    String to = buffer.toString();    
-    
-    while (s.indexOf(from)>=0) {
-      return cleanActionPath(s.replaceAll(from, to));
+    while (s.indexOf("//")>=0) { //$NON-NLS-1$
+      return cleanActionPath(s.replaceAll("//", "/")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return s;
   }
+
 
 }
