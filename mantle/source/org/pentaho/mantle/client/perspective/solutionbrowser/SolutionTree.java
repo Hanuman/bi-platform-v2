@@ -115,8 +115,9 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         int[] scrollOffsets = ElementUtils.calculateScrollOffsets(getElement());
         int[] offsets = ElementUtils.calculateOffsets(getElement());
         DOM.setStyleAttribute(focusable.getElement(), "top", (event.getClientY() + scrollOffsets[1] - offsets[1]) + "px"); //$NON-NLS-1$ //$NON-NLS-2$
-      } catch (Exception ex) {
-        // ignore any exceptions fired by this. Most likely a result of the 
+      } catch (Exception ignored) {
+        // ignore any exceptions fired by this. Most likely a result of the element
+        // not being on the DOM
       }
       break;
     }
