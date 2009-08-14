@@ -147,13 +147,13 @@ public class PMDUIComponent extends XmlComponent {
       if (model.getId() != null) {
         modelNode.addElement("model_id").setText(model.getId()); //$NON-NLS-1$
       }
-      String modelName = model.getName().getString(locale);
+      String modelName = model.getName(locale);
       if (modelName != null) {
         modelNode.addElement("model_name").setText(modelName); //$NON-NLS-1$
       }
       
       if (model.getDescription() != null) {
-        String modelDescription = model.getDescription().getString(locale);
+        String modelDescription = model.getDescription(locale);
         if (modelDescription != null) {
           modelNode.addElement("model_description").setText(modelDescription); //$NON-NLS-1$
         }

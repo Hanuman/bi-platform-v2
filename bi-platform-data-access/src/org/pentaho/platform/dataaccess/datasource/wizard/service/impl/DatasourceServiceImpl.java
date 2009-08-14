@@ -381,7 +381,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
       locale = LocaleHelper.getClosestLocale(locale, locales);
 
       for (LogicalModel model : domain.getLogicalModels()) {
-        logicalModelSummaries.add(new LogicalModelSummary(domainId, model.getId(), model.getName().getString(locale)));
+        logicalModelSummaries.add(new LogicalModelSummary(domainId, model.getId(), model.getName(locale)));
       }
     }
     return logicalModelSummaries;
