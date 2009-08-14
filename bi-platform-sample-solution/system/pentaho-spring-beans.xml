@@ -11,9 +11,9 @@
   <import resource="adminPlugins.xml" />
   <import resource="systemListeners.xml" />
   <import resource="sessionStartupActions.xml" />
-  <import resource="applicationContext-acegi-security.xml" />
+  <import resource="applicationContext-spring-security.xml" />
   <import resource="applicationContext-common-authorization.xml" />
-  <import resource="applicationContext-acegi-security-hibernate.xml" />
+  <import resource="applicationContext-spring-security-hibernate.xml" />
   <import resource="applicationContext-pentaho-security-hibernate.xml" />
   <import resource="pentahoObjects.spring.xml" />
 

@@ -29,11 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.web.http.messages.Messages;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 /**
@@ -65,7 +65,7 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
 
   /**
    * This should be the same URL that is set for
-   * <code>org.acegisecurity.ui.webapp.AuthenticationProcessingFilter</code>.
+   * <code>org.springframework.security.ui.webapp.AuthenticationProcessingFilter</code>.
    */
   private String filterProcessesUrl;
 
@@ -100,7 +100,7 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
         HttpSessionReuseDetectionFilter.logger.debug(Messages.getString("HttpSessionReuseDetectionFilter.DEBUG_PROCESS_AUTHN")); //$NON-NLS-1$
       }
 
-      // TODO: this should use LogoutHandlers in latest Acegi Security
+      // TODO: this should use LogoutHandlers in latest Spring Security
 
       if (null != httpRequest) {
         String remoteUser = httpRequest.getRemoteUser();

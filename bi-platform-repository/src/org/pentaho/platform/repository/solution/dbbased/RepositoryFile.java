@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IFileFilter;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -37,6 +36,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
+import org.springframework.security.acl.basic.AclObjectIdentity;
 
 public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentity, IAclSolutionFile, ISolutionFile {
   public static final char EXTENSION_CHAR = '.';

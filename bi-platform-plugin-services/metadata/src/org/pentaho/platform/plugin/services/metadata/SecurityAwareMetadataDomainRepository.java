@@ -20,8 +20,6 @@ package org.pentaho.platform.plugin.services.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
@@ -29,6 +27,8 @@ import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.metadata.util.RowLevelSecurityHelper;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 
 /**
  * This is the platform implementation which implements security.

@@ -140,34 +140,36 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
                 .getString(
                     "SearchResultToAttrValueList.DEBUG_ATTRIBUTE_VALUE", attributeName, (null != attr) ? attr.toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      try {
-        NamingEnumeration values = attr.getAll();
-        while (values.hasMore()) {
-          // if tokenName was specified, extract from value; otherwise
-          // store value unchanged
-          Object value = values.next();
-          if (StringUtils.hasLength(tokenName)) {
-            if ((null != value) && (value instanceof String)) {
-              String tokenValue = extract((String) value, tokenName);
-              if (null != tokenValue) {
-                valueSet.add(tokenValue);
+      if (attr != null) { // check for null as node might not have attribute we're looking for
+        try {
+          NamingEnumeration values = attr.getAll();
+          while (values.hasMore()) {
+            // if tokenName was specified, extract from value; otherwise
+            // store value unchanged
+            Object value = values.next();
+            if (StringUtils.hasLength(tokenName)) {
+              if ((null != value) && (value instanceof String)) {
+                String tokenValue = extract((String) value, tokenName);
+                if (null != tokenValue) {
+                  valueSet.add(tokenValue);
+                }
+              } else {
+                if (SearchResultToAttrValueList.logger.isWarnEnabled()) {
+                  SearchResultToAttrValueList.logger.warn(Messages
+                      .getString("SearchResultToAttrValueList.WARN_ATTRIBUTE_NOT_A_STRING")); //$NON-NLS-1$
+                }
               }
             } else {
-              if (SearchResultToAttrValueList.logger.isWarnEnabled()) {
-                SearchResultToAttrValueList.logger.warn(Messages
-                    .getString("SearchResultToAttrValueList.WARN_ATTRIBUTE_NOT_A_STRING")); //$NON-NLS-1$
+              if (null != value) {
+                valueSet.add(value.toString());
               }
             }
-          } else {
-            if (null != value) {
-              valueSet.add(value.toString());
-            }
           }
-        }
-      } catch (NamingException e) {
-        if (SearchResultToAttrValueList.logger.isErrorEnabled()) {
-          SearchResultToAttrValueList.logger.error(Messages
-              .getErrorString("SearchResultToAttrValueList.ERROR_0001_NAMING_EXCEPTION"), e); //$NON-NLS-1$
+        } catch (NamingException e) {
+          if (SearchResultToAttrValueList.logger.isErrorEnabled()) {
+            SearchResultToAttrValueList.logger.error(Messages
+                .getErrorString("SearchResultToAttrValueList.ERROR_0001_NAMING_EXCEPTION"), e); //$NON-NLS-1$
+          }
         }
       }
       return transformed;

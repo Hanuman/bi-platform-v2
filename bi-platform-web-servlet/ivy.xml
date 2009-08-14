@@ -25,8 +25,8 @@
       <exclude org="xml-apis" name="xml-apis" />
     </dependency>
     <dependency org="jfree" name="jcommon" rev="1.0.14" />
-    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
-    <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
+    <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
+    <dependency org="org.springframework" name="spring" rev="2.5.6" transitive="false" />
     <dependency org="javax.servlet" name="servlet-api" rev="2.4" />
 
         <!-- reporting -->
@@ -86,7 +86,7 @@
     <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
       conf="test->default" transitive="false" />
     <dependency org="com.mockrunner" name="mockrunner-servlet" rev="0.3.7" conf="test->default" />
-    <dependency org="org.springframework" name="spring-mock" rev="2.0.6" conf="test->default">
+    <dependency org="org.springframework" name="spring-mock" rev="2.0.8" conf="test->default">
       <!--
         prevent Spring from grabbing these jars. We are already getting the versions we need in our default
         configuration

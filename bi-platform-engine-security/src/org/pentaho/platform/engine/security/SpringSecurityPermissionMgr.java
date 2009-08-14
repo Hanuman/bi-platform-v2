@@ -21,23 +21,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionMgr;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.springframework.security.GrantedAuthorityImpl;
 
-public class AcegiPermissionMgr implements IPermissionMgr {
+public class SpringSecurityPermissionMgr implements IPermissionMgr {
 
-  private static final AcegiPermissionMgr singletonPermMgr = new AcegiPermissionMgr();
+  private static final SpringSecurityPermissionMgr singletonPermMgr = new SpringSecurityPermissionMgr();
 
-  private AcegiPermissionMgr() {
+  private SpringSecurityPermissionMgr() {
   }
 
-  public static AcegiPermissionMgr instance() {
-    return AcegiPermissionMgr.singletonPermMgr;
+  public static SpringSecurityPermissionMgr instance() {
+    return SpringSecurityPermissionMgr.singletonPermMgr;
   }
 
   public Map<IPermissionRecipient, IPermissionMask> getPermissions(final Object domainInstance) {

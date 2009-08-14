@@ -62,7 +62,7 @@ import org.springframework.beans.factory.FactoryBean;
  *                  ref=&quot;userRoleListEnhancedUserMapFactoryBean&quot; /&gt;
  *                &lt;property name=&quot;allAuthorities&quot;&gt;
  *                  &lt;list&gt;
- *                    &lt;bean class=&quot;org.acegisecurity.GrantedAuthorityImpl&quot;&gt;
+ *                    &lt;bean class=&quot;org.springframework.security.GrantedAuthorityImpl&quot;&gt;
  *                      &lt;constructor-arg value=&quot;Authenticated&quot; /&gt;
  *                      ...
  *                    &lt;/bean&gt;

@@ -18,14 +18,14 @@
 
 package org.pentaho.platform.engine.security.acls.voter;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public abstract class AbstractPentahoAclVoter implements IAclVoter, IPentahoInitializer {
   protected GrantedAuthority adminRole;

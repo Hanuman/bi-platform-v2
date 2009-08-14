@@ -23,12 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.schema.security.SecurityOwner;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class CWMAclHolder implements IAclHolder {
 

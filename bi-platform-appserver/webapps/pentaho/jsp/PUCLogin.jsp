@@ -1,7 +1,7 @@
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core'%>
 <%@
     page language="java"
-	import="org.acegisecurity.ui.AbstractProcessingFilter,org.acegisecurity.ui.webapp.AuthenticationProcessingFilter,org.acegisecurity.ui.savedrequest.SavedRequest,org.acegisecurity.AuthenticationException,org.pentaho.platform.uifoundation.component.HtmlComponent,org.pentaho.platform.engine.core.system.PentahoSystem,org.pentaho.platform.util.messages.LocaleHelper,org.pentaho.platform.api.engine.IPentahoSession,org.pentaho.platform.web.http.WebTemplateHelper,org.pentaho.platform.api.engine.IUITemplater,org.pentaho.platform.web.jsp.messages.Messages,java.util.List,java.util.ArrayList,java.util.StringTokenizer,org.apache.commons.lang.StringEscapeUtils,org.pentaho.platform.web.http.PentahoHttpSessionHelper"%>
+	import="org.springframework.security.ui.AbstractProcessingFilter,org.springframework.security.ui.webapp.AuthenticationProcessingFilter,org.springframework.security.ui.savedrequest.SavedRequest,org.springframework.security.AuthenticationException,org.pentaho.platform.uifoundation.component.HtmlComponent,org.pentaho.platform.engine.core.system.PentahoSystem,org.pentaho.platform.util.messages.LocaleHelper,org.pentaho.platform.api.engine.IPentahoSession,org.pentaho.platform.web.http.WebTemplateHelper,org.pentaho.platform.api.engine.IUITemplater,org.pentaho.platform.web.jsp.messages.Messages,java.util.List,java.util.ArrayList,java.util.StringTokenizer,org.apache.commons.lang.StringEscapeUtils,org.pentaho.platform.web.http.PentahoHttpSessionHelper"%>
 
 
 
@@ -33,11 +33,10 @@
 
 	IPentahoSession userSession = PentahoHttpSessionHelper
 			.getPentahoSession(request);
-	// ACEGI_SAVED_REQUEST_KEY contains the URL the user originally wanted before being redirected to the login page
+	// SPRING_SECURITY_SAVED_REQUEST_KEY contains the URL the user originally wanted before being redirected to the login page
 	// if the requested url is in the list of URLs specified in the web.xml's init-param send401List,
 	// then return a 401 status now and don't show a login page (401 means not authenticated)
-	Object reqObj = request.getSession().getAttribute(
-			"ACEGI_SAVED_REQUEST_KEY"); //$NON-NLS-1$
+	Object reqObj = request.getSession().getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
 	String requestedURL = "";
 	if (reqObj != null) {
 		requestedURL = ((SavedRequest) reqObj).getFullRequestUrl();

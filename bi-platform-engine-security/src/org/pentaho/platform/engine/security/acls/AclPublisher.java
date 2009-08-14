@@ -32,7 +32,7 @@ import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
@@ -197,8 +197,8 @@ public class AclPublisher implements IAclPublisher {
   private void publishDefaultFolderAcls(final IAclSolutionFile rootFile) {
     if ((rootFile != null) && (rootFile.isDirectory())) {
       // publish acl for folder if it doesn't already exist...
-      if (AcegiPermissionMgr.instance().getPermissions(rootFile).size() == 0) {
-        AcegiPermissionMgr.instance().setPermissions(getDefaultAclList(), rootFile);
+      if (SpringSecurityPermissionMgr.instance().getPermissions(rootFile).size() == 0) {
+        SpringSecurityPermissionMgr.instance().setPermissions(getDefaultAclList(), rootFile);
       }
       // Now, recurse through kids looking for folders...
       Set kids = rootFile.getChildrenFiles();
@@ -218,12 +218,12 @@ public class AclPublisher implements IAclPublisher {
 
   private void publishOverrideAcls(final IAclSolutionFile rootFile) {
     Map<IPermissionRecipient, IPermissionMask> overridePerms = getOverrideAclList(rootFile.getFullPath());
-    Map<IPermissionRecipient, IPermissionMask> currentPerms = AcegiPermissionMgr.instance().getPermissions(rootFile);
+    Map<IPermissionRecipient, IPermissionMask> currentPerms = SpringSecurityPermissionMgr.instance().getPermissions(rootFile);
     if ((overridePerms.size() > 0)
         && ((currentPerms.size() == 0) || (currentPerms.entrySet().containsAll(defaultAcls.entrySet()) && (currentPerms
             .size() == defaultAcls.size())))) {
       // We've got overridden acls and the file contains ONLY the default acls or NO acls at all
-      AcegiPermissionMgr.instance().setPermissions(overridePerms, rootFile);
+      SpringSecurityPermissionMgr.instance().setPermissions(overridePerms, rootFile);
     }
 
     // Recurse through this files children

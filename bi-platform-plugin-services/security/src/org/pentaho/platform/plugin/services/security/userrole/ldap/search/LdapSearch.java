@@ -26,7 +26,7 @@ import java.util.List;
  * 
  * <p>
  * Can also be seen as a generalization of
- * <code>org.acegisecurity.ldap.LdapUserSearch</code>.
+ * <code>org.springframework.security.ldap.LdapUserSearch</code>.
  * </p>
  * 
  * @author mlowery

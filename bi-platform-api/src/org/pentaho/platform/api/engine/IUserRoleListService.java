@@ -20,7 +20,7 @@
 
 package org.pentaho.platform.api.engine;
 
-import org.acegisecurity.GrantedAuthority;
+import org.springframework.security.GrantedAuthority;
 
 public interface IUserRoleListService {
 

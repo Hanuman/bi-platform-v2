@@ -17,9 +17,9 @@
 */
 package org.pentaho.platform.plugin.services.security.userrole.memory;
 
-import org.acegisecurity.userdetails.memory.UserMap;
-import org.acegisecurity.userdetails.memory.UserMapEditor;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.security.userdetails.memory.UserMap;
+import org.springframework.security.userdetails.memory.UserMapEditor;
 
 /**
  * Takes as input the string that defines a <code>UserMap</code>. When
@@ -54,7 +54,7 @@ import org.springframework.beans.factory.FactoryBean;
  *     &lt;/bean&gt;
  *
  *     &lt;bean id=&quot;memoryAuthenticationDao&quot;
- *       class=&quot;org.acegisecurity.userdetails.memory.InMemoryDaoImpl&quot;&gt;
+ *       class=&quot;org.springframework.security.userdetails.memory.InMemoryDaoImpl&quot;&gt;
  *       &lt;property name=&quot;userMap&quot; ref=&quot;userMapFactoryBean&quot; /&gt;
  *     &lt;/bean&gt;
  * </pre>

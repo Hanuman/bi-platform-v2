@@ -81,7 +81,7 @@
      <appender-ref ref="PENTAHOFILE"/>
    </category>
 
-   <category name="org.acegisecurity">
+   <category name="org.springframework.security">
      <priority value="ERROR"/>
      <appender-ref ref="PENTAHOFILE"/>
    </category>

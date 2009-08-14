@@ -23,12 +23,12 @@ package org.pentaho.platform.dataaccess.datasource.wizard.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 
 public class SimpleDataAccessViewPermissionHandler implements IDataAccessViewPermissionHandler {
 

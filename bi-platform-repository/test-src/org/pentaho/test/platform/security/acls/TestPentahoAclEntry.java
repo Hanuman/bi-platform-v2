@@ -23,11 +23,11 @@ package org.pentaho.test.platform.security.acls;
 
 import java.io.File;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class TestPentahoAclEntry extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";

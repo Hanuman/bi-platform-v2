@@ -36,7 +36,7 @@ import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
@@ -46,7 +46,7 @@ import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.platform.util.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
-public class AcegiPermissionMgrTest extends BaseTest {
+public class SpringSecurityPermissionMgrTest extends BaseTest {
   private StringBuffer longString = new StringBuffer();
   private static final String SOLUTION_PATH = "test-src/solution";
 
@@ -63,7 +63,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
     }
   }
   public static void main(String[] args) {
-    AcegiPermissionMgrTest test = new AcegiPermissionMgrTest();
+    SpringSecurityPermissionMgrTest test = new SpringSecurityPermissionMgrTest();
     test.setUp();
     try {
 //      test.testHasPermission();
@@ -75,12 +75,12 @@ public class AcegiPermissionMgrTest extends BaseTest {
     }
   }
 
-  public AcegiPermissionMgrTest(String arg0) {
+  public SpringSecurityPermissionMgrTest(String arg0) {
     super(arg0);
     addProperties();
   }
 
-  public AcegiPermissionMgrTest() {
+  public SpringSecurityPermissionMgrTest() {
     super();
     addProperties();
   }
@@ -106,7 +106,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //    org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repo = (org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository) getSolutionRepository(session);
 //    RepositoryFile aFile = (RepositoryFile) repo
 //        .getFileByPath("samples/reporting/MDX_report.xaction"); //$NON-NLS-1$      
-//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = AcegiPermissionMgr.instance().getPermissions(
+//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = SpringSecurityPermissionMgr.instance().getPermissions(
 //        (IAclHolder) aFile).entrySet();
 //    Map permissionsMap = PentahoAclEntry.getValidPermissionsNameMap();
 //    int count = 0;
@@ -119,7 +119,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //        String permName = keyIterator.next().toString();
 //        int permMask = ((Integer) permissionsMap.get(permName)).intValue();
 //        IPermissionMask permissionMask2 = new SimplePermissionMask(permMask);
-//        boolean isPermitted = AcegiPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask2, aFile);
+//        boolean isPermitted = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask2, aFile);
 //        System.out.println("For " + recipient + " permission " + permName + " is " + (isPermitted ? "" : " not ")
 //            + " set.");
 //        if (isPermitted) {
@@ -159,7 +159,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //        permMap.put(permissionRecipientRole, permissionMask);
 //        permMap.put(permissionRecipientUser, permissionMask);
 //        if (aFile instanceof IAclSolutionFile) {
-//          AcegiPermissionMgr.instance().setPermissions(permMap, (IAclSolutionFile) aFile);
+//          SpringSecurityPermissionMgr.instance().setPermissions(permMap, (IAclSolutionFile) aFile);
 //        }
 //        HibernateUtil.commitTransaction();
 //        assertTrue("Permissions are set successfully", true);
@@ -190,7 +190,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //      ;
 //      permissionMask.addPermission(((Integer) PentahoAclEntry.getValidPermissionsNameMap().get(perm)).intValue());
 //      if (aFile instanceof IAclSolutionFile) {
-//        AcegiPermissionMgr.instance().setPermission(permissionRecipientRole, permissionMask, (IAclSolutionFile) aFile);
+//        SpringSecurityPermissionMgr.instance().setPermission(permissionRecipientRole, permissionMask, (IAclSolutionFile) aFile);
 //      }
 //      HibernateUtil.commitTransaction();
 //      assertTrue("Permission is set successfully", true);
@@ -218,7 +218,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //      boolean hasPermission = false;
 //      permissionMask.addPermission(((Integer) PentahoAclEntry.getValidPermissionsNameMap().get(perm)).intValue());
 //      if (aFile instanceof IAclSolutionFile) {
-//        hasPermission = AcegiPermissionMgr.instance().hasPermission(permissionRecipientUser, permissionMask,
+//        hasPermission = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipientUser, permissionMask,
 //            (IAclSolutionFile) aFile);
 //      }
 //      assertEquals(Boolean.TRUE, Boolean.valueOf(hasPermission));
@@ -255,7 +255,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //    permMap1.put(permissionRecipientUser, permissionMask1);
 //    HibernateUtil.beginTransaction();
 //    if (aFile instanceof IAclSolutionFile) {
-//      AcegiPermissionMgr.instance().setPermission(permissionRecipientUser, permissionMask1, (IAclSolutionFile) aFile);
+//      SpringSecurityPermissionMgr.instance().setPermission(permissionRecipientUser, permissionMask1, (IAclSolutionFile) aFile);
 //    }
 //    HibernateUtil.commitTransaction();
 //    for (int i = 0; i < perm.length; i++) {
@@ -264,18 +264,18 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //    permMap2.put(permissionRecipientUser, permissionMask2);
 //    HibernateUtil.beginTransaction();
 //    if (aFile instanceof IAclSolutionFile) {
-//      AcegiPermissionMgr.instance().setPermissions(permMap2, (IAclSolutionFile) aFile);
+//      SpringSecurityPermissionMgr.instance().setPermissions(permMap2, (IAclSolutionFile) aFile);
 //    }
 //    HibernateUtil.commitTransaction();
 //
 //    boolean hasPermission = false;
 //    permissionMask3.addPermission(((Integer) PentahoAclEntry.getValidPermissionsNameMap().get(perm[0])).intValue());
 //    if (aFile instanceof IAclSolutionFile) {
-//      hasPermission = AcegiPermissionMgr.instance().hasPermission(permissionRecipientUser, permissionMask3,
+//      hasPermission = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipientUser, permissionMask3,
 //          (IAclSolutionFile) aFile);
 //    }
 //    assertEquals(hasPermission, true);
-//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = AcegiPermissionMgr.instance().getPermissions(
+//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = SpringSecurityPermissionMgr.instance().getPermissions(
 //        (IAclHolder) aFile).entrySet();
 //    Map permissionsMap = PentahoAclEntry.getValidPermissionsNameMap();
 //    List updatedRecipientList = new ArrayList();
@@ -292,7 +292,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //        String permName = keyIterator.next().toString();
 //        int permMask = ((Integer) permissionsMap.get(permName)).intValue();
 //        IPermissionMask permissionMask4 = new SimplePermissionMask(permMask);
-//        boolean isPermitted = AcegiPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask4, aFile);
+//        boolean isPermitted = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask4, aFile);
 //        if (isPermitted) {
 //          count++;
 //        }
@@ -328,7 +328,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //    HibernateUtil.beginTransaction();
 //    permissionMask1.addPermission(permission.intValue());
 //    if (aFile instanceof IAclSolutionFile) {
-//      AcegiPermissionMgr.instance().setPermission(permissionRecipientRole, permissionMask1, (IAclSolutionFile) aFile);
+//      SpringSecurityPermissionMgr.instance().setPermission(permissionRecipientRole, permissionMask1, (IAclSolutionFile) aFile);
 //    }
 //    HibernateUtil.commitTransaction();
 //
@@ -338,18 +338,18 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //    HibernateUtil.beginTransaction();
 //    permMap1.put(permissionRecipientRole, permissionMask2);
 //    if (aFile instanceof IAclSolutionFile) {
-//      AcegiPermissionMgr.instance().setPermissions(permMap1, (IAclSolutionFile) aFile);
+//      SpringSecurityPermissionMgr.instance().setPermissions(permMap1, (IAclSolutionFile) aFile);
 //    }
 //    HibernateUtil.commitTransaction();
 //
 //    boolean hasPermission = false;
 //    permissionMask3.addPermission(((Integer) PentahoAclEntry.getValidPermissionsNameMap().get(perm[0])).intValue());
 //    if (aFile instanceof IAclSolutionFile) {
-//      hasPermission = AcegiPermissionMgr.instance().hasPermission(permissionRecipientRole, permissionMask3,
+//      hasPermission = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipientRole, permissionMask3,
 //          (IAclSolutionFile) aFile);
 //    }
 //    assertEquals(hasPermission, true);
-//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = AcegiPermissionMgr.instance().getPermissions(
+//    Set<Map.Entry<IPermissionRecipient, IPermissionMask>> mapEntrySet = SpringSecurityPermissionMgr.instance().getPermissions(
 //        (IAclHolder) aFile).entrySet();
 //    Map permissionsMap = PentahoAclEntry.getValidPermissionsNameMap();
 //    List updatedRecipientList = new ArrayList();
@@ -366,7 +366,7 @@ public class AcegiPermissionMgrTest extends BaseTest {
 //        String permName = keyIterator.next().toString();
 //        int permMask = ((Integer) permissionsMap.get(permName)).intValue();
 //        IPermissionMask permissionMask4 = new SimplePermissionMask(permMask);
-//        boolean isPermitted = AcegiPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask4, aFile);
+//        boolean isPermitted = SpringSecurityPermissionMgr.instance().hasPermission(permissionRecipient, permissionMask4, aFile);
 //        if (isPermitted) {
 //          count++;
 //        }

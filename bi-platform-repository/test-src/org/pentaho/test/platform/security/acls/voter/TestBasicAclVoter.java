@@ -28,7 +28,7 @@ import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
@@ -66,7 +66,7 @@ public class TestBasicAclVoter extends BaseTest {
     perms.put(new SimpleUser("suzy"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE));
     perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_SUBSCRIBE));
     perms.put(new SimpleRole("ROLE_IS"), new SimplePermissionMask(IPentahoAclEntry.PERM_ADMINISTRATION));
-    AcegiPermissionMgr.instance().setPermissions(perms, testFile);
+    SpringSecurityPermissionMgr.instance().setPermissions(perms, testFile);
     PentahoBasicAclVoter voter = new PentahoBasicAclVoter();
     assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_EXECUTE));
     assertTrue(voter.hasAccess(session, testFile, IPentahoAclEntry.PERM_SUBSCRIBE));

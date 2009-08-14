@@ -16,8 +16,8 @@
  */
 package org.pentaho.platform.api.engine;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.acl.AclEntry;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.acl.AclEntry;
 
 public interface IAclVoter {
 

@@ -43,7 +43,7 @@ import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
@@ -161,9 +161,9 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     RepositoryFile aFile = (RepositoryFile) repo
         .getSolutionFile("samples/reporting/jasper-reports-test-1.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
 
-    AcegiPermissionMgr.instance().setPermission(new SimpleRole("ROLE_ADMIN"), new SimplePermissionMask(7), aFile);
-    AcegiPermissionMgr.instance().setPermission(new SimpleRole("ROLE_DEVMGR"), new SimplePermissionMask(6), aFile);
-    AcegiPermissionMgr.instance().setPermission(new SimpleRole("ROLE_DEV"), new SimplePermissionMask(2), aFile);
+    SpringSecurityPermissionMgr.instance().setPermission(new SimpleRole("ROLE_ADMIN"), new SimplePermissionMask(7), aFile);
+    SpringSecurityPermissionMgr.instance().setPermission(new SimpleRole("ROLE_DEVMGR"), new SimplePermissionMask(6), aFile);
+    SpringSecurityPermissionMgr.instance().setPermission(new SimpleRole("ROLE_DEV"), new SimplePermissionMask(2), aFile);
   }
 
 //  public void testAclRepositoryLoadingForPat() {

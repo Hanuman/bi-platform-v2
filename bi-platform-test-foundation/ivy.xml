@@ -21,7 +21,7 @@
     <dependency org="commons-logging" name="commons-logging" rev="1.1" transitive="false" />
     <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
     <dependency org="junit" name="junit" rev="4.4" conf="default->default" />
-    <dependency org="org.springframework" name="spring" rev="2.0"   transitive="false"/>
+    <dependency org="org.springframework" name="spring" rev="2.5.6"   transitive="false"/>
     <dependency org="junit" name="junit" rev="4.4"/>
 
         <!--  internal dependencies -->

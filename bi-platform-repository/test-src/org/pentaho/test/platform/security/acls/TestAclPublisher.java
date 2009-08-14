@@ -31,7 +31,7 @@ import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.acls.AclPublisher;
@@ -80,7 +80,7 @@ public class TestAclPublisher extends BaseTest {
 
   public void checkAcls(IAclSolutionFile solnFile) {
     if (solnFile.isDirectory()) {
-      Map<IPermissionRecipient, IPermissionMask> perms = AcegiPermissionMgr.instance().getPermissions(solnFile);
+      Map<IPermissionRecipient, IPermissionMask> perms = SpringSecurityPermissionMgr.instance().getPermissions(solnFile);
       assertEquals(perms.size(), defaultAcls.size());
       assertTrue(perms.entrySet().containsAll(defaultAcls.entrySet()));
       Set kidsSet = solnFile.getChildrenFiles();

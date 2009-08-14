@@ -24,10 +24,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.ui.AuthenticationEntryPoint;
-import org.acegisecurity.ui.basicauth.BasicProcessingFilter;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.ui.AuthenticationEntryPoint;
+import org.springframework.security.ui.basicauth.BasicProcessingFilter;
 
 /**
  * Used by the <code>SecurityEnforcementFilter</code> to commence

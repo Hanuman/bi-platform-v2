@@ -27,18 +27,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.acl.basic.AbstractBasicAclEntry;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.security.messages.Messages;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.acl.basic.AbstractBasicAclEntry;
 
 /**
- * Base Pentaho Access Control entry. Subclassed <tt>AbstractBasicAclEntry</tt> from Acegi Security project. Provides 
+ * Base Pentaho Access Control entry. Subclassed <tt>AbstractBasicAclEntry</tt> from Spring Security project. Provides 
  * known access controls.
  * 
  * @author mbatchel

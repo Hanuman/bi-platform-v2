@@ -18,12 +18,12 @@
  */
 package org.pentaho.platform.engine.security;
 
-import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.Validate;
 import org.pentaho.platform.engine.security.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.providers.encoding.PasswordEncoder;
 
 /**
  * Default password encoder for the BI Server.

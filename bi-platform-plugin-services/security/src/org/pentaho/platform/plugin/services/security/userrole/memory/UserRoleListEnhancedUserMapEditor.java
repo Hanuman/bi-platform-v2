@@ -36,11 +36,11 @@ package org.pentaho.platform.plugin.services.security.userrole.memory;
 import java.beans.PropertyEditorSupport;
 import java.util.Properties;
 
-import org.acegisecurity.userdetails.User;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.memory.UserAttribute;
-import org.acegisecurity.userdetails.memory.UserAttributeEditor;
 import org.springframework.beans.propertyeditors.PropertiesEditor;
+import org.springframework.security.userdetails.User;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.memory.UserAttribute;
+import org.springframework.security.userdetails.memory.UserAttributeEditor;
 
 /**
  * Property editor to assist with the setup of a

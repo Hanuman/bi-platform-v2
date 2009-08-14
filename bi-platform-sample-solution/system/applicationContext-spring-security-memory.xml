@@ -9,7 +9,7 @@
 <beans>
 
 	<bean id="daoAuthenticationProvider"
-		class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+		class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
 		<property name="userDetailsService">
 			<ref bean="userDetailsService" />
 		</property>
@@ -19,7 +19,7 @@
 	</bean>
 
 	<bean id="userDetailsService"
-		class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+		class="org.springframework.security.userdetails.memory.InMemoryDaoImpl">
 		<property name="userMap">
 			<ref local="userMapFactoryBean" />
 		</property>
@@ -47,6 +47,6 @@
 	</bean>
 
 	<bean id="passwordEncoder"
-		class="org.acegisecurity.providers.encoding.PlaintextPasswordEncoder" />
+		class="org.springframework.security.providers.encoding.PlaintextPasswordEncoder" />
 
 </beans>

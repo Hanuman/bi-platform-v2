@@ -20,10 +20,6 @@ package org.pentaho.platform.engine.security;
 import java.security.Principal;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclHolder;
@@ -35,6 +31,10 @@ import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 /**
  * A utility class with several static methods that are used to
@@ -58,7 +58,7 @@ public class SecurityHelper {
       "anonymous-authentication/anonymous-user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
 
   /**
-   * Looks in the provided session to get the ACEGI Authentication object out.
+   * Looks in the provided session to get the Spring Security Authentication object out.
    * Optionally returns an "anonymous" Authentication if desired.
    * @param session Users' IPentahoSession object
    * @param allowAnonymous If true, will return an anonymous Authentication object.
@@ -83,7 +83,7 @@ public class SecurityHelper {
         SecurityHelper.logger.debug("attempting role fetch with username"); //$NON-NLS-1$
       }
 
-      // OK - Not ACEGI somehow.
+      // OK - Not Spring Security somehow.
       // However, since the principal interface doesn't specify the
       // roles a user is in, we need to dispatch a call to the
       // UserRoleListProvider to get that information from there.

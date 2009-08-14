@@ -20,18 +20,18 @@ package org.pentaho.platform.engine.security.userroledao.userdetailsservice;
 import java.util.Arrays;
 import java.util.List;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.userdetails.User;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.pentaho.platform.engine.security.userroledao.IPentahoRole;
 import org.pentaho.platform.engine.security.userroledao.IPentahoUser;
 import org.pentaho.platform.engine.security.userroledao.IUserRoleDao;
 import org.pentaho.platform.engine.security.userroledao.UncategorizedUserRoleDaoException;
 import org.pentaho.platform.engine.security.userroledao.messages.Messages;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.userdetails.User;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 
 /**
  * A <code>UserDetailsService</code> that delegates to an {@link IUserRoleDao} to load users by username.
@@ -103,7 +103,7 @@ public class UserRoleDaoUserDetailsService implements UserDetailsService {
   /**
    * Allows a default role prefix to be specified. If this is set to a non-empty value, then it is
    * automatically prepended to any roles read in from the db. This may for example be used to add the
-   * <code>ROLE_</code> prefix expected to exist in role names (by default) by some other Acegi Security framework
+   * <code>ROLE_</code> prefix expected to exist in role names (by default) by some other Spring Security framework
    * classes, in the case that the prefix is not already present in the db.
    *
    * @param rolePrefix the new prefix

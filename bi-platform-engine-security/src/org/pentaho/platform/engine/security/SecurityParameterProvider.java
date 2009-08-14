@@ -26,12 +26,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 
 public class SecurityParameterProvider implements IParameterProvider {
 

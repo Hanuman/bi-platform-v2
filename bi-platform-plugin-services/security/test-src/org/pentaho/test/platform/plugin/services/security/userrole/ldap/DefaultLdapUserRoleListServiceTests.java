@@ -18,6 +18,8 @@
 package org.pentaho.test.platform.plugin.services.security.userrole.ldap;
 
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -25,17 +27,17 @@ import java.util.Set;
 
 import javax.naming.directory.SearchControls;
 
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.ldap.LdapUserSearch;
-import org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
+import org.pentaho.platform.engine.core.audit.NullAuditEntry;
 import org.pentaho.platform.engine.security.DefaultGrantedAuthorityComparator;
 import org.pentaho.platform.engine.security.DefaultUsernameComparator;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.DefaultLdapUserRoleListService;
-import org.pentaho.platform.plugin.services.security.userrole.ldap.LdapUserDetailsService;
+import org.pentaho.platform.plugin.services.security.userrole.ldap.NoOpLdapAuthoritiesPopulator;
+import org.pentaho.platform.plugin.services.security.userrole.ldap.RolePreprocessingMapper;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.search.GenericLdapSearch;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.search.LdapSearch;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.search.LdapSearchParamsFactory;
@@ -44,6 +46,11 @@ import org.pentaho.platform.plugin.services.security.userrole.ldap.search.Unioni
 import org.pentaho.platform.plugin.services.security.userrole.ldap.transform.GrantedAuthorityToString;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.transform.SearchResultToAttrValueList;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.transform.StringToGrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.ldap.LdapUserSearch;
+import org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulator;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.userdetails.ldap.LdapUserDetailsService;
 
 /**
  * Tests for the <code>DefaultLdapUserRoleListService</code> class. The ways
@@ -52,10 +59,14 @@ import org.pentaho.platform.plugin.services.security.userrole.ldap.transform.Str
  * 
  * @author mlowery
  */
-public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestCase {
+public class DefaultLdapUserRoleListServiceTests extends AbstractPentahoLdapIntegrationTests {
 
   private static final Log logger = LogFactory.getLog(DefaultLdapUserRoleListServiceTests.class);
 
+  private LdapUserSearch getUserSearch(final String searchBase, final String searchFilter) {
+    return new FilterBasedLdapUserSearch(searchBase, searchFilter, getContextSource());
+  }
+  
   /**
    * Get the roles of user <code>suzy</code> by extracting the
    * <code>cn</code> token from the <code>uniqueMember</code> attribute of
@@ -63,26 +74,22 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * <code>(uid={0})</code>.
    * 
    * <p>
-   * Note that the UserDetailsService used by Acegi Security is re-used here.
+   * Note that the UserDetailsService used by Spring Security is re-used here.
    * </p>
    * @throws Exception 
    */
-/*  public void testGetAuthoritiesForUser1() throws Exception {
-    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})", //$NON-NLS-1$//$NON-NLS-2$
-        getInitialCtxFactory());
+  public void testGetAuthoritiesForUser1() throws Exception {
+    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})"); //$NON-NLS-1$//$NON-NLS-2$
 
-    LdapUserDetailsService service = new LdapUserDetailsService();
-    service.setPopulator(new NoOpLdapAuthoritiesPopulator());
-    service.setUserSearch(userSearch);
+
+    LdapUserDetailsService service = new LdapUserDetailsService(userSearch, new NoOpLdapAuthoritiesPopulator());
 
     RolePreprocessingMapper mapper = new RolePreprocessingMapper();
     mapper.setRoleAttributes(new String[] { "uniqueMember" }); //$NON-NLS-1$
     mapper.setTokenName("cn"); //$NON-NLS-1$
     service.setUserDetailsMapper(mapper);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
-
-    service.afterPropertiesSet();
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUserDetailsService(service);
 
@@ -94,7 +101,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
       logger.debug("results of getAuthoritiesForUser1(): " + res); //$NON-NLS-1$
     }
 
-  }*/
+  }
 
   /**
    * Get the roles of user <code>suzy</code> by returning the
@@ -102,22 +109,20 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * <code>ou=roles</code> and filter of <code>(roleOccupant={0})</code>.
    * 
    * <p>
-   * Note that the UserDetailsService used by Acegi Security is re-used here.
+   * Note that the UserDetailsService used by Spring Security is re-used here.
    * </p>
    */
+  @Test
   public void testGetAuthoritiesForUser2() {
-    DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(getInitialCtxFactory(), "ou=roles"); //$NON-NLS-1$
+    DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(getContextSource(), "ou=roles"); //$NON-NLS-1$
     populator.setGroupRoleAttribute("cn"); //$NON-NLS-1$
     populator.setGroupSearchFilter("(roleOccupant={0})"); //$NON-NLS-1$
 
-    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})", //$NON-NLS-1$//$NON-NLS-2$
-        getInitialCtxFactory());
+    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})"); //$NON-NLS-1$//$NON-NLS-2$
 
-    LdapUserDetailsService service = new LdapUserDetailsService();
-    service.setPopulator(populator);
-    service.setUserSearch(userSearch);
+    LdapUserDetailsService service = new LdapUserDetailsService(userSearch, populator);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUserDetailsService(service);
 
@@ -134,19 +139,17 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
   /**
    * Same as above except sorted.
    */
+  @Test
   public void testGetAuthoritiesForUser2Sorted() {
-    DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(getInitialCtxFactory(), "ou=roles"); //$NON-NLS-1$
+    DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(getContextSource(), "ou=roles"); //$NON-NLS-1$
     populator.setGroupRoleAttribute("cn"); //$NON-NLS-1$
     populator.setGroupSearchFilter("(roleOccupant={0})"); //$NON-NLS-1$
 
-    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})", //$NON-NLS-1$//$NON-NLS-2$
-        getInitialCtxFactory());
+    LdapUserSearch userSearch = getUserSearch("ou=users", "(uid={0})"); //$NON-NLS-1$//$NON-NLS-2$
 
-    LdapUserDetailsService service = new LdapUserDetailsService();
-    service.setPopulator(populator);
-    service.setUserSearch(userSearch);
+    LdapUserDetailsService service = new LdapUserDetailsService(userSearch, populator);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUserDetailsService(service);
     userRoleListService.setGrantedAuthorityComparator(new DefaultGrantedAuthorityComparator());
@@ -169,6 +172,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * extracting the <code>uid</code> token of the <code>uniqueMember</code>
    * attribute.
    */
+  @Test
   public void testGetAllUserNames1() throws Exception {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uniqueMember" }); //$NON-NLS-1$
@@ -179,10 +183,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     Transformer transformer1 = new SearchResultToAttrValueList("uniqueMember", "uid"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    GenericLdapSearch allUsernamesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1);
+    GenericLdapSearch allUsernamesSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1);
     allUsernamesSearch.afterPropertiesSet();
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllUsernamesSearch(allUsernamesSearch);
 
@@ -199,6 +203,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
   /**
    * Same as above except sorted.
    */
+  @Test
   public void testGetAllUserNames1Sorted() throws Exception {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uniqueMember" }); //$NON-NLS-1$
@@ -209,10 +214,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     Transformer transformer1 = new SearchResultToAttrValueList("uniqueMember", "uid"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    GenericLdapSearch allUsernamesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1);
+    GenericLdapSearch allUsernamesSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1);
     allUsernamesSearch.afterPropertiesSet();
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllUsernamesSearch(allUsernamesSearch);
     userRoleListService.setUsernameComparator(new DefaultUsernameComparator());
@@ -231,6 +236,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * objects with <code>objectClass=person</code>, and returning the
    * <code>uniqueMember</code> attribute.
    */
+  @Test
   public void testGetAllUserNames2() {
     SearchControls con2 = new SearchControls();
     con2.setReturningAttributes(new String[] { "uid" }); //$NON-NLS-1$
@@ -239,9 +245,9 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     Transformer transformer2 = new SearchResultToAttrValueList("uid"); //$NON-NLS-1$
 
-    LdapSearch allUsernamesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer2);
+    LdapSearch allUsernamesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer2);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllUsernamesSearch(allUsernamesSearch);
 
@@ -261,6 +267,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * extracting the <code>uid</code> token of the <code>roleOccupant</code>
    * attribute.
    */
+  @Test
   public void testGetAllUserNames3() {
     SearchControls con3 = new SearchControls();
     con3.setReturningAttributes(new String[] { "roleOccupant" }); //$NON-NLS-1$
@@ -270,9 +277,9 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     Transformer transformer3 = new SearchResultToAttrValueList("roleOccupant", "uid"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    LdapSearch allUsernamesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer3);
+    LdapSearch allUsernamesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer3);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllUsernamesSearch(allUsernamesSearch);
 
@@ -293,6 +300,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * <code>uid</code> attribute. This search implies that the schema is
    * setup such that a user's roles come from one of the user's attributes.
    */
+  @Test
   public void testGetUsernamesInRole1() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uid" }); //$NON-NLS-1$
@@ -304,10 +312,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer2 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1,
+    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1,
         transformer2);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUsernamesInRoleSearch(usernamesInRoleSearch);
 
@@ -324,6 +332,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
   /**
    * Same as above except sorted.
    */
+  @Test
   public void testGetUsernamesInRole1Sorted() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uid" }); //$NON-NLS-1$
@@ -335,10 +344,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer2 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1,
+    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1,
         transformer2);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUsernamesInRoleSearch(usernamesInRoleSearch);
     userRoleListService.setUsernameComparator(new DefaultUsernameComparator());
@@ -364,6 +373,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * present in the <code>roleOccupant</code> attribute of a child object
    * under the <code>ou=roles</code> object.
    */
+  @Test
   public void testGetUsernamesInRole2() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "roleOccupant" }); //$NON-NLS-1$
@@ -375,10 +385,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer2 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1,
+    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1,
         transformer2);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUsernamesInRoleSearch(usernamesInRoleSearch);
 
@@ -401,6 +411,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * present in the <code>uniqueMember</code> attribute of a child object
    * under the <code>ou=groups</code> object.
    */
+  @Test
   public void testGetUsernamesInRole3() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uniqueMember" }); //$NON-NLS-1$
@@ -412,10 +423,10 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer2 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1,
+    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1,
         transformer2);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUsernamesInRoleSearch(usernamesInRoleSearch);
 
@@ -439,6 +450,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * under the <code>ou=groups</code> object.
    * @throws Exception 
    */
+  @Test
   public void testGetUsernamesInRole4() throws Exception {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "uniqueMember" }); //$NON-NLS-1$
@@ -450,7 +462,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer2 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getInitialCtxFactory(), paramFactory, transformer1,
+    LdapSearch usernamesInRoleSearch = new GenericLdapSearch(getContextSource(), paramFactory, transformer1,
         transformer2);
 
     SearchControls con2 = new SearchControls();
@@ -463,7 +475,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
 
     GrantedAuthorityToString transformer4 = new GrantedAuthorityToString();
 
-    LdapSearch usernamesInRoleSearch2 = new GenericLdapSearch(getInitialCtxFactory(), paramFactory2, transformer3,
+    LdapSearch usernamesInRoleSearch2 = new GenericLdapSearch(getContextSource(), paramFactory2, transformer3,
         transformer4);
 
     Set searches = new HashSet();
@@ -472,7 +484,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     UnionizingLdapSearch unionSearch = new UnionizingLdapSearch(searches);
     unionSearch.afterPropertiesSet();
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setUsernamesInRoleSearch(unionSearch);
 
@@ -501,6 +513,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * looking for objects with <code>objectClass=organizationalRole</code>,
    * and returning the <code>cn</code> attribute.
    */
+  @Test 
   public void testGetAllAuthorities1() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "cn" }); //$NON-NLS-1$
@@ -513,9 +526,9 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     Transformer[] transformers = { one, two };
     Transformer transformer = new ChainedTransformer(transformers);
 
-    LdapSearch rolesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer);
+    LdapSearch rolesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllAuthoritiesSearch(rolesSearch);
 
@@ -532,6 +545,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
   /**
    * Same as above except sorted.
    */
+  @Test
   public void testGetAllAuthorities1Sorted() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "cn" }); //$NON-NLS-1$
@@ -544,9 +558,9 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     Transformer[] transformers = { one, two };
     Transformer transformer = new ChainedTransformer(transformers);
 
-    LdapSearch rolesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer);
+    LdapSearch rolesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllAuthoritiesSearch(rolesSearch);
     userRoleListService.setGrantedAuthorityComparator(new DefaultGrantedAuthorityComparator());
@@ -568,6 +582,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * looking for objects with <code>objectClass=groupOfUniqueNames</code>,
    * and returning the <code>cn</code> attribute.
    */
+  @Test
   public void testGetAllAuthorities2() {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "cn" }); //$NON-NLS-1$
@@ -580,9 +595,9 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     Transformer[] transformers = { one, two };
     Transformer transformer = new ChainedTransformer(transformers);
 
-    LdapSearch rolesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer);
+    LdapSearch rolesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllAuthoritiesSearch(rolesSearch);
 
@@ -609,6 +624,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
    * <code>cn</code> attribute.</li>
    * </ul>
    */
+  @Test
   public void testGetAllAuthorities3() throws Exception {
     SearchControls con1 = new SearchControls();
     con1.setReturningAttributes(new String[] { "cn" }); //$NON-NLS-1$
@@ -621,7 +637,7 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     Transformer[] transformers = { one, two };
     Transformer transformer = new ChainedTransformer(transformers);
 
-    LdapSearch rolesSearch = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory, transformer);
+    LdapSearch rolesSearch = new GenericLdapSearch(getContextSource(), paramsFactory, transformer);
 
     SearchControls con2 = new SearchControls();
     con1.setReturningAttributes(new String[] { "cn" }); //$NON-NLS-1$
@@ -634,14 +650,14 @@ public class DefaultLdapUserRoleListServiceTests extends AbstractLdapServerTestC
     Transformer[] transformers2 = { oneB, twoB };
     Transformer transformer2 = new ChainedTransformer(transformers2);
 
-    LdapSearch rolesSearch2 = new GenericLdapSearch(getInitialCtxFactory(), paramsFactory2, transformer2);
+    LdapSearch rolesSearch2 = new GenericLdapSearch(getContextSource(), paramsFactory2, transformer2);
 
     Set searches = new HashSet();
     searches.add(rolesSearch);
     searches.add(rolesSearch2);
     UnionizingLdapSearch unionSearch = new UnionizingLdapSearch(searches);
 
-    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService(getInitialCtxFactory());
+    DefaultLdapUserRoleListService userRoleListService = new DefaultLdapUserRoleListService();
 
     userRoleListService.setAllAuthoritiesSearch(unionSearch);
 

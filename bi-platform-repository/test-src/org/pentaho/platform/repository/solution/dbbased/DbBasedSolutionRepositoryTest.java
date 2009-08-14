@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
@@ -70,6 +66,10 @@ import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.hibernate.HibernateUtilTestHelper;
 import org.pentaho.platform.repository.subscription.SubscriptionRepository;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 /**
  * Unit test for {@link DbBasedSolutionRepository}.

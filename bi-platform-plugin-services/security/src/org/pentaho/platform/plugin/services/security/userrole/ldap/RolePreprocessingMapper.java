@@ -17,12 +17,12 @@
  */
 package org.pentaho.platform.plugin.services.security.userrole.ldap;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.ldap.LdapUserDetailsMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.ldap.LdapUserDetailsMapper;
 
 /**
  * Extension of <code>LdapUserDetailsMapper</code> which extracts the value of

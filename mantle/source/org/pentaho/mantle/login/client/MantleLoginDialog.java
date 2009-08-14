@@ -85,7 +85,7 @@ public class MantleLoginDialog extends PromptDialogBox {
       if (!path.endsWith("/")) { //$NON-NLS-1$
         path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
       }
-      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, path + "j_acegi_security_check"); //$NON-NLS-1$
+      RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, path + "j_spring_security_check"); //$NON-NLS-1$
       builder.setHeader("Content-Type", "application/x-www-form-urlencoded"); //$NON-NLS-1$ //$NON-NLS-2$
       RequestCallback callback = new RequestCallback() {
 

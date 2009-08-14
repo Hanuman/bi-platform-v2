@@ -21,9 +21,9 @@
  */
 package org.pentaho.test.platform.security;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IUserRoleListService;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class MockUserRoleListService implements IUserRoleListService {
 

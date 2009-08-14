@@ -21,26 +21,21 @@
  */
 package org.pentaho.test.platform.security;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.TestingAuthenticationToken;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 public class MockSecurityUtility {
-
-  private static String DefaultApplicationXML = "org/pentaho/test/platform/security/applicationContext-test-security.xml"; //$NON-NLS-1$
 
   public static void createPat(StandaloneSession session) {
     session.setAuthenticated("pat"); //$NON-NLS-1$
     GrantedAuthority[] auths = new GrantedAuthority[2];
     auths[0] = new GrantedAuthorityImpl("ROLE_DEV"); //$NON-NLS-1$
     auths[1] = new GrantedAuthorityImpl("ROLE_AUTHENTICATED"); //$NON-NLS-1$
-    TestingAuthenticationToken auth = new TestingAuthenticationToken("pat", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("pat", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
     );
     auth.setAuthenticated(true);
     // We now have a credential. We need to bind it into the IPentahoSession
@@ -54,7 +49,7 @@ public class MockSecurityUtility {
     auths[0] = new GrantedAuthorityImpl("ROLE_CTO"); //$NON-NLS-1$
     auths[1] = new GrantedAuthorityImpl("ROLE_IS"); //$NON-NLS-1$
     auths[2] = new GrantedAuthorityImpl("ROLE_AUTHENTICATED"); //$NON-NLS-1$
-    TestingAuthenticationToken auth = new TestingAuthenticationToken("suzy", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("suzy", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
     );
     auth.setAuthenticated(true);
     // We now have a credential. We need to bind it into the IPentahoSession
@@ -68,7 +63,7 @@ public class MockSecurityUtility {
     auths[0] = new GrantedAuthorityImpl("ceo"); //$NON-NLS-1$
     auths[1] = new GrantedAuthorityImpl("Admin"); //$NON-NLS-1$
     auths[2] = new GrantedAuthorityImpl("Authenticated"); //$NON-NLS-1$
-    TestingAuthenticationToken auth = new TestingAuthenticationToken("joe", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("joe", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
     );
     auth.setAuthenticated(true);
     // We now have a credential. We need to bind it into the IPentahoSession
@@ -82,7 +77,7 @@ public class MockSecurityUtility {
     auths[0] = new GrantedAuthorityImpl("ROLE_DEV"); //$NON-NLS-1$
     auths[1] = new GrantedAuthorityImpl("ROLE_DEVMGR"); //$NON-NLS-1$
     auths[2] = new GrantedAuthorityImpl("ROLE_AUTHENTICATED"); //$NON-NLS-1$
-    TestingAuthenticationToken auth = new TestingAuthenticationToken("tiffany", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("tiffany", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
     );
     auth.setAuthenticated(true);
     // We now have a credential. We need to bind it into the IPentahoSession
@@ -93,25 +88,12 @@ public class MockSecurityUtility {
   public static void createNoRolesGuy(StandaloneSession session) {
     session.setAuthenticated("fred"); //$NON-NLS-1$
     GrantedAuthority[] auths = new GrantedAuthority[] {};
-    TestingAuthenticationToken auth = new TestingAuthenticationToken("fred", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("fred", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
     );
     auth.setAuthenticated(true);
     // We now have a credential. We need to bind it into the IPentahoSession
     SecurityHelper.setPrincipal(auth, session);
     // We should be good to go now...
-  }
-
-  public static GenericApplicationContext setupApplicationContext() {
-    return setupApplicationContext(DefaultApplicationXML);
-  }
-
-  public static GenericApplicationContext setupApplicationContext(String applicationXML) {
-    GenericApplicationContext applContext = new GenericApplicationContext();
-    XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applContext);
-    // Read in a test bean-creation object.
-    xmlReader.loadBeanDefinitions(new ClassPathResource(applicationXML));
-    applContext.refresh();
-    return applContext;
   }
 
   public static RepositoryFile getPopulatedSolution() {

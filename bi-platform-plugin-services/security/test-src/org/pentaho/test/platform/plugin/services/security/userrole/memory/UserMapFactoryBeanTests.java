@@ -17,12 +17,22 @@
 */
 package org.pentaho.test.platform.plugin.services.security.userrole.memory;
 
+import static org.junit.Assert.assertNotNull;
 
-import org.acegisecurity.userdetails.memory.UserMap;
+import org.junit.Before;
+import org.junit.Test;
 import org.pentaho.platform.plugin.services.security.userrole.memory.UserMapFactoryBean;
+import org.springframework.security.userdetails.memory.UserMap;
 
 public class UserMapFactoryBeanTests extends AbstractUserMapFactoryBeanTestBase {
 
+  @Before
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+  }
+
+  @Test
 	public void testGetObject() throws Exception {
 		UserMapFactoryBean bean = new UserMapFactoryBean();
 		bean.setUserMap(userMapText);

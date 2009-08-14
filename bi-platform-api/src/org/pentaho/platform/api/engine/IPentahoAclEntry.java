@@ -19,10 +19,10 @@
  */
 package org.pentaho.platform.api.engine;
 
-import org.acegisecurity.acl.basic.BasicAclEntry;
+import org.springframework.security.acl.basic.BasicAclEntry;
 
 /**
- * Base Pentaho Access Control entry. Subclassed <tt>BasicAclEntry</tt> from Acegi Security. Provides known access 
+ * Base Pentaho Access Control entry. Subclassed <tt>BasicAclEntry</tt> from Spring Security. Provides known access 
  * controls.
  * 
  * @author mbatchel

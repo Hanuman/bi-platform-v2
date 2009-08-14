@@ -54,7 +54,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
@@ -1359,7 +1359,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       // get the file
       ISolutionFile justPublishedFile = internalGetFileByPath(fullPath);
       // entire ACL is replaced for new files
-      AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       HibernateUtil.beginTransaction();
       if (SecurityHelper.canHaveACLS(justPublishedFile)) {
         permissionMgr.setPermissions(getDefaultPublishAcl(), justPublishedFile);
@@ -1405,7 +1405,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   public void share(final ISolutionFile file, final List<IPermissionRecipient> shareRecipients) {
-    AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+    SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
     for (IPermissionRecipient shareRecipient : shareRecipients) {
       addPermission(file, shareRecipient, new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
     }
@@ -1419,7 +1419,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   public void addPermission(final ISolutionFile file, final IPermissionRecipient recipient,
       final IPermissionMask permission) {
     if (hasAccess(file, ISolutionRepository.ACTION_SHARE)) {
-      AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       Map<IPermissionRecipient, IPermissionMask> acl = permissionMgr.getPermissions(file);
       if (acl.isEmpty()) {
         // no direct permissions; get the effective acls
@@ -1441,7 +1441,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           "SolutionRepository.ACCESS_DENIED", file.getFullPath(), Integer.toString(ISolutionRepository.ACTION_SHARE))); //$NON-NLS-1$
     }
     if (hasAccess(file, ISolutionRepository.ACTION_SHARE)) {
-      AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       permissionMgr.setPermissions(acl, file);
     } else {
       throw new PentahoAccessControlException(Messages.getString(
@@ -1457,7 +1457,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       return Collections.emptyMap();
     }
     if (hasAccess(file, ISolutionRepository.ACTION_EXECUTE)) {
-      AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       return permissionMgr.getPermissions(file);
     } else {
       return null;
@@ -1472,7 +1472,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       return Collections.emptyMap();
     }
     if (hasAccess(file, ISolutionRepository.ACTION_EXECUTE)) {
-      AcegiPermissionMgr permissionMgr = AcegiPermissionMgr.instance();
+      SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       return permissionMgr.getEffectivePermissions(file);
     } else {
       return null;

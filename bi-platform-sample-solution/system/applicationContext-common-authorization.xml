@@ -7,7 +7,7 @@
 
 <beans>
 
-  <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter">
+  <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
     <property name="rolePrefix" value="" />
   </bean>
 

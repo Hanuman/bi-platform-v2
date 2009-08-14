@@ -16,7 +16,7 @@
   <dependencies defaultconf="default-ext->default">
     
         <!--  external dependencies -->
-    <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.6" transitive="false" />
+    <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
     <dependency org="batik" name="batik-awt-util" rev="1.6" />
     <dependency org="batik" name="batik-dom" rev="1.6" />
     <dependency org="batik" name="batik-svggen" rev="1.6" />

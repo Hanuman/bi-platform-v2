@@ -19,16 +19,16 @@ package org.pentaho.platform.engine.security.acls.voter;
 
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.acl.AclEntry;
-import org.acegisecurity.acl.basic.BasicAclEntry;
-import org.acegisecurity.acl.basic.GrantedAuthorityEffectiveAclsResolver;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.springframework.security.Authentication;
+import org.springframework.security.acl.AclEntry;
+import org.springframework.security.acl.basic.BasicAclEntry;
+import org.springframework.security.acl.basic.GrantedAuthorityEffectiveAclsResolver;
 
 /**
  * Standard basic ACL Voter. This voter simply aggregates all the applicable

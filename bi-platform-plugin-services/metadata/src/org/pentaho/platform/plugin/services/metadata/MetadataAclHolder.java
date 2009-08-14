@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.Security;
@@ -29,6 +28,7 @@ import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class MetadataAclHolder implements IAclHolder {
 

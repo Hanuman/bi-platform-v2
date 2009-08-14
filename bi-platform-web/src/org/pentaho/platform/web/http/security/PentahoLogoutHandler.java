@@ -20,21 +20,21 @@ package org.pentaho.platform.web.http.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.ui.logout.LogoutHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
 import org.pentaho.platform.web.http.messages.Messages;
+import org.springframework.security.Authentication;
+import org.springframework.security.ui.logout.LogoutHandler;
 
 /**
  * Pentaho behavior that should be invoked when a web user logs out.
  * 
  * @author mlowery
- * @see org.acegisecurity.ui.logout.LogoutHandler
- * @see org.acegisecurity.ui.logout.LogoutFilter
+ * @see org.springframework.security.ui.logout.LogoutHandler
+ * @see org.springframework.security.ui.logout.LogoutFilter
  */
 public class PentahoLogoutHandler implements LogoutHandler {
   private static final Log logger = LogFactory.getLog(PentahoLogoutHandler.class);

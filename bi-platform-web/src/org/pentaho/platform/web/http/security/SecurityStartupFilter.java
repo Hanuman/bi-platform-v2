@@ -30,7 +30,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -39,6 +38,7 @@ import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.web.http.PentahoHttpSessionHelper;
+import org.springframework.security.context.SecurityContextHolder;
 
 public class SecurityStartupFilter implements Filter {
   private static final Log logger = LogFactory.getLog(SecurityStartupFilter.class);

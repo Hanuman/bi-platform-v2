@@ -17,13 +17,13 @@
  */
 package org.pentaho.platform.engine.security.session;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.SystemStartupSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 /**
  * A "bootstrap" session used to initialize the platform.

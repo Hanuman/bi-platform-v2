@@ -17,7 +17,7 @@
         <!--  external dependencies -->
         <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
         <dependency org="dom4j"               name="dom4j"               rev="1.6.1" transitive="false"/>
-        <dependency org="org.acegisecurity"   name="acegi-security"      rev="1.0.6" transitive="false"/>
+        <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
         
         
         <!--  internal dependencies -->

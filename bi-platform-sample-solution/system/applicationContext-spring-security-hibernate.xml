@@ -8,7 +8,7 @@
 
 <beans>
 
-  <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+  <bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
     <property name="userDetailsService">
       <ref local="userDetailsService" />
     </property>
@@ -93,7 +93,7 @@
   <bean id="passwordEncoder" class="org.pentaho.platform.engine.security.DefaultPentahoPasswordEncoder" />
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="applicationContext-acegi-security-hibernate.properties" />
+    <property name="location" value="applicationContext-spring-security-hibernate.properties" />
   </bean>
 
 </beans>

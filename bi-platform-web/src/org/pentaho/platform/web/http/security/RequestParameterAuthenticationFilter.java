@@ -28,17 +28,17 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import org.acegisecurity.ui.AuthenticationEntryPoint;
-import org.acegisecurity.ui.WebAuthenticationDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.web.http.messages.Messages;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.AuthenticationManager;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ui.AuthenticationEntryPoint;
+import org.springframework.security.ui.WebAuthenticationDetails;
 import org.springframework.util.Assert;
 
 /**
@@ -63,7 +63,7 @@ import org.springframework.util.Assert;
  * <p>
  * <b>Do not use this class directly.</b> Instead configure
  * <code>web.xml</code> to use the {@link
- * org.acegisecurity.util.FilterToBeanProxy}.
+ * org.springframework.security.util.FilterToBeanProxy}.
  * </p>
  *
  */

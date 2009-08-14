@@ -20,8 +20,6 @@ package org.pentaho.platform.engine.services.metadata.cwm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclHolder;
@@ -33,6 +31,8 @@ import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 
 /**
  * This class is no longer used, it has been replaced with MetadataDomainRepository.

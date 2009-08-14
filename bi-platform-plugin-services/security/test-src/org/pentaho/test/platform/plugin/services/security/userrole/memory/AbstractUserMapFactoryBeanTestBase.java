@@ -18,19 +18,15 @@
 package org.pentaho.test.platform.plugin.services.security.userrole.memory;
 
 
-import junit.framework.TestCase;
-
-
 /**
  * Superclass of UserMap factory bean tests.
  * 
  * @author mlowery
  */
-public class AbstractUserMapFactoryBeanTestBase extends TestCase {
+public class AbstractUserMapFactoryBeanTestBase {
 	protected String userMapText;
 
 	protected void setUp() throws Exception {
-		super.setUp();
 		StringBuffer buf = new StringBuffer();
 		buf
 				.append("joe=password,ROLE_ADMIN,ROLE_CEO,ROLE_AUTHENTICATED\n") //$NON-NLS-1$

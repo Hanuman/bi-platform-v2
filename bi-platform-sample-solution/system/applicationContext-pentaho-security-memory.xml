@@ -21,28 +21,28 @@
 		<property name="userDetailsService" ref="userDetailsService" />
 		<property name="allAuthorities">
 			<list>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="Authenticated" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="Admin" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="ceo" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="cto" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="is" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="dev" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="devmgr" />
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="Anonymous" />
 				</bean>
 			</list>

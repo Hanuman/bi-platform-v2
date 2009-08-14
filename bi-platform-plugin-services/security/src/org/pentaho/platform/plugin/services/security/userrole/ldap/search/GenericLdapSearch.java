@@ -27,11 +27,11 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 
-import org.acegisecurity.ldap.InitialDirContextFactory;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.util.Assert;
 
 public class GenericLdapSearch implements LdapSearch, InitializingBean {
@@ -69,25 +69,25 @@ public class GenericLdapSearch implements LdapSearch, InitializingBean {
    */
   private Transformer filterArgsTransformer;
 
-  private InitialDirContextFactory initialDirContextFactory;
+	private ContextSource contextSource;
 
   // ~ Constructors ==========================================================
 
-  public GenericLdapSearch(final InitialDirContextFactory initialDirContextFactory,
+  public GenericLdapSearch(final ContextSource contextSource,
       final LdapSearchParamsFactory paramsFactory) {
-    this(initialDirContextFactory, paramsFactory, null, null);
+    this(contextSource, paramsFactory, null, null);
   }
 
-  public GenericLdapSearch(final InitialDirContextFactory initialDirContextFactory,
+  public GenericLdapSearch(final ContextSource contextSource,
       final LdapSearchParamsFactory paramsFactory, final Transformer resultsTransformer) {
-    this(initialDirContextFactory, paramsFactory, resultsTransformer, null);
+    this(contextSource, paramsFactory, resultsTransformer, null);
   }
 
-  public GenericLdapSearch(final InitialDirContextFactory initialDirContextFactory,
+  public GenericLdapSearch(final ContextSource contextSource,
       final LdapSearchParamsFactory paramsFactory, final Transformer resultsTransformer,
       final Transformer filterArgsTransformer) {
     super();
-    this.initialDirContextFactory = initialDirContextFactory;
+    this.contextSource = contextSource;
     this.paramsFactory = paramsFactory;
     this.resultsTransformer = resultsTransformer;
     this.filterArgsTransformer = filterArgsTransformer;
@@ -106,7 +106,7 @@ public class GenericLdapSearch implements LdapSearch, InitializingBean {
     Set results = new HashSet();
     NamingEnumeration matches = null;
     try {
-      matches = this.initialDirContextFactory.newInitialDirContext().search(params.getBase(), params.getFilter(),
+      matches = contextSource.getReadOnlyContext().search(params.getBase(), params.getFilter(),
           params.getFilterArgs(), params.getSearchControls());
     } catch (NamingException e1) {
       if (GenericLdapSearch.logger.isErrorEnabled()) {
@@ -134,7 +134,7 @@ public class GenericLdapSearch implements LdapSearch, InitializingBean {
   }
 
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(initialDirContextFactory);
+    Assert.notNull(contextSource);
     Assert.notNull(paramsFactory);
   }
 }

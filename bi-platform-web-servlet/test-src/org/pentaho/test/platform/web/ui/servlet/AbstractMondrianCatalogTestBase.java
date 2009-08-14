@@ -25,10 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.TestingAuthenticationToken;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -37,6 +33,10 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.web.doubles.PentahoSessionDouble;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 /**
  * Superclass of tests for IMondrianCatalogService and MondrianCatalogPublisher instances.
@@ -124,7 +124,7 @@ public abstract class AbstractMondrianCatalogTestBase extends BaseTest {
     GrantedAuthority[] roles = new GrantedAuthority[2];
     roles[0] = new GrantedAuthorityImpl("Authenticated"); //$NON-NLS-1$
     roles[1] = new GrantedAuthorityImpl("Admin"); //$NON-NLS-1$
-    Authentication auth = new TestingAuthenticationToken(USERNAME, "password", roles); //$NON-NLS-1$
+    Authentication auth = new UsernamePasswordAuthenticationToken(USERNAME, "password", roles); //$NON-NLS-1$
     auth.setAuthenticated(true);
     pentahoSession.setAttribute(SecurityHelper.SESSION_PRINCIPAL, auth);
   }

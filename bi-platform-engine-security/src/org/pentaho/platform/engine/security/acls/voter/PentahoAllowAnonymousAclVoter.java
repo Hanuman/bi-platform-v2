@@ -17,9 +17,9 @@
  */
 package org.pentaho.platform.engine.security.acls.voter;
 
-import org.acegisecurity.Authentication;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.springframework.security.Authentication;
 
 /**
  * Extends the BasicAclVoter, but overrides the getAuthentication() method to

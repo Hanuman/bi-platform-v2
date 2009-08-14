@@ -28,7 +28,7 @@ import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.AcegiPermissionMgr;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
@@ -59,7 +59,7 @@ public class TestPentahoUserOverridesVoter extends BaseTest {
     Map<IPermissionRecipient, IPermissionMask> perms = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
     perms.put(new SimpleUser("suzy"), new SimplePermissionMask(IPentahoAclEntry.PERM_NOTHING));
     perms.put(new SimpleRole("ROLE_CTO"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL));
-    AcegiPermissionMgr.instance().getPermissions(testFile);
+    SpringSecurityPermissionMgr.instance().getPermissions(testFile);
 
     // Now, the stage is set. We should be able to double-check that suzy
     // has no access to the testFile.

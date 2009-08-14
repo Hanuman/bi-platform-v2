@@ -17,12 +17,12 @@
  */
 package org.pentaho.platform.engine.security.acls.voter;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.acl.AclEntry;
-import org.acegisecurity.acl.basic.BasicAclEntry;
-import org.acegisecurity.userdetails.UserDetails;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.springframework.security.Authentication;
+import org.springframework.security.acl.AclEntry;
+import org.springframework.security.acl.basic.BasicAclEntry;
+import org.springframework.security.userdetails.UserDetails;
 
 /**
  * Extends the PentahoBasicAclVoter class, and overrides the getEffectiveAcls method

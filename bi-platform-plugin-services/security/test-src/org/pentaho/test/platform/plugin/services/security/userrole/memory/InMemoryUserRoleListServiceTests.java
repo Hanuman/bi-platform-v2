@@ -18,25 +18,29 @@
 package org.pentaho.test.platform.plugin.services.security.userrole.memory;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.userdetails.memory.InMemoryDaoImpl;
-import org.acegisecurity.userdetails.memory.UserMap;
-import org.acegisecurity.userdetails.memory.UserMapEditor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
 import org.pentaho.platform.engine.security.DefaultGrantedAuthorityComparator;
 import org.pentaho.platform.engine.security.DefaultUsernameComparator;
 import org.pentaho.platform.plugin.services.security.userrole.memory.InMemoryUserRoleListService;
 import org.pentaho.platform.plugin.services.security.userrole.memory.UserRoleListEnhancedUserMap;
 import org.pentaho.platform.plugin.services.security.userrole.memory.UserRoleListEnhancedUserMapEditor;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.userdetails.memory.InMemoryDaoImpl;
+import org.springframework.security.userdetails.memory.UserMap;
+import org.springframework.security.userdetails.memory.UserMapEditor;
 
-public class InMemoryUserRoleListServiceTests extends TestCase {
+public class InMemoryUserRoleListServiceTests {
 
   private static final Log logger = LogFactory.getLog(InMemoryUserRoleListServiceTests.class);
 
@@ -46,12 +50,8 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     super();
   }
 
-  public InMemoryUserRoleListServiceTests(String arg0) {
-    super(arg0);
-  }
-
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
     dao = new InMemoryUserRoleListService();
     dao.setUserRoleListEnhancedUserMap(makeUserRoleListEnhancedUserMap());
     dao.setAllAuthorities(makeAllAuthorities());
@@ -69,6 +69,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     return new GrantedAuthority[] { one, two, three };
   }
 
+  @Test
   public void testGetAllUserNames() throws Exception {
     String[] allUserNames = dao.getAllUsernames();
     assertTrue("User list should not be empty", allUserNames.length > 0); //$NON-NLS-1$
@@ -81,6 +82,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     }
   }
 
+  @Test
   public void testGetAllUserNamesSorted() throws Exception {
     dao.setUsernameComparator(new DefaultUsernameComparator());
     List<String> usernames = Arrays.asList(dao.getAllUsernames());
@@ -90,6 +92,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     assertTrue(usernames.indexOf("marissa") < usernames.indexOf("scott"));
   }
 
+  @Test
   public void testGetAllAuthorities() throws Exception {
     GrantedAuthority[] allAuthorities = dao.getAllAuthorities();
     assertTrue("Authority list should contain three roles", allAuthorities.length == 3); //$NON-NLS-1$
@@ -105,6 +108,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     }
   }
 
+  @Test
   public void testGetAllAuthoritiesSorted() throws Exception {
     dao.setGrantedAuthorityComparator(new DefaultGrantedAuthorityComparator());
     List<GrantedAuthority> authorities = Arrays.asList(dao.getAllAuthorities());
@@ -115,6 +119,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
         .indexOf(new GrantedAuthorityImpl("ROLE_TWO")));
   }
 
+  @Test
   public void testGetAllUserNamesInRole() throws Exception {
     String[] allUserNames = dao.getUsernamesInRole(new GrantedAuthorityImpl("ROLE_ONE")); //$NON-NLS-1$
     assertTrue("Two users should be in the role ROLE_ONE", allUserNames.length == 2); //$NON-NLS-1$
@@ -127,6 +132,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     }
   }
 
+  @Test
   public void testGetAllUserNamesInRoleSorted() throws Exception {
     dao.setUsernameComparator(new DefaultUsernameComparator());
     List<String> usernames = Arrays.asList(dao.getUsernamesInRole(new GrantedAuthorityImpl("ROLE_ONE")));
@@ -136,6 +142,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     assertTrue(usernames.indexOf("marissa") < usernames.indexOf("scott"));
   }
 
+  @Test
   public void testGetRolesForUser() throws Exception {
     GrantedAuthority[] userAuths = dao.getAuthoritiesForUser("marissa"); //$NON-NLS-1$
     if (logger.isDebugEnabled()) {
@@ -147,6 +154,7 @@ public class InMemoryUserRoleListServiceTests extends TestCase {
     assertEquals(userAuths[1].getAuthority(), "ROLE_TWO"); //$NON-NLS-1$
   }
 
+  @Test
   public void testGetRolesForUserSorted() throws Exception {
     dao.setGrantedAuthorityComparator(new DefaultGrantedAuthorityComparator());
     List<GrantedAuthority> authorities = Arrays.asList(dao.getAuthoritiesForUser("scott")); //$NON-NLS-1$

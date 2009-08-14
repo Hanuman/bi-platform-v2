@@ -18,8 +18,6 @@
 package org.pentaho.test.platform.web;
 
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IParameterProvider;
@@ -32,6 +30,8 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.pentaho.platform.web.servlet.AdhocWebService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;

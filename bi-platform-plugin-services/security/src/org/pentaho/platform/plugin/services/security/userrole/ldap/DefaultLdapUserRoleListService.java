@@ -22,23 +22,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.ldap.InitialDirContextFactory;
-import org.acegisecurity.userdetails.UserDetails;
 import org.pentaho.platform.api.engine.IUserRoleListService;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.search.LdapSearch;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.ldap.LdapUserDetailsService;
 import org.springframework.util.Assert;
 
 public class DefaultLdapUserRoleListService implements IUserRoleListService, InitializingBean {
 
   // ~ Static fields/initializers ======================================================================================
 
-  // private static final Log logger = LogFactory.getLog(DefaultLdapUserRoleListService.class);
-
   // ~ Instance fields =================================================================================================
-
-  // private InitialDirContextFactory initialDirContextFactory;
 
   private LdapSearch allUsernamesSearch;
 
@@ -67,17 +63,16 @@ public class DefaultLdapUserRoleListService implements IUserRoleListService, Ini
 
   // ~ Constructors ====================================================================================================
 
-  public DefaultLdapUserRoleListService(final InitialDirContextFactory initialDirContextFactory) {
-    // this.initialDirContextFactory = initialDirContextFactory;
+  public DefaultLdapUserRoleListService() {
+    super();
   }
-
-  public DefaultLdapUserRoleListService(final InitialDirContextFactory initialDirContextFactory,
-      final Comparator<String> usernameComparator, final Comparator<GrantedAuthority> grantedAuthorityComparator) {
-    // this.initialDirContextFactory = initialDirContextFactory;
+  
+  public DefaultLdapUserRoleListService(final Comparator<String> usernameComparator, final Comparator<GrantedAuthority> grantedAuthorityComparator) {
+    super();
     this.usernameComparator = usernameComparator;
     this.grantedAuthorityComparator = grantedAuthorityComparator;
   }
-
+  
   // ~ Methods =========================================================================================================
 
   public void afterPropertiesSet() throws Exception {

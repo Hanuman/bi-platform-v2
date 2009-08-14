@@ -32,9 +32,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.HttpSessionContextIntegrationFilter;
-import org.acegisecurity.context.SecurityContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -42,6 +39,9 @@ import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.context.SecurityContext;
 
 
 /**
@@ -198,7 +198,7 @@ public class ProxyTrustingFilter implements Filter {
               }; // end anonymous inner class
               
               authWrapper.setAuthentication(auth);
-              httpSession.setAttribute(HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
+              httpSession.setAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY,
                   authWrapper);
               PentahoSessionHolder.setSession(userSession);
             }

@@ -24,12 +24,12 @@ package org.pentaho.test.platform.security;
 import java.io.File;
 import java.security.Principal;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class TestSecurityUtils extends BaseTest {
 

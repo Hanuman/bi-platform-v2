@@ -16,7 +16,7 @@ package org.pentaho.platform.engine.security;
 
 import java.util.Comparator;
 
-import org.acegisecurity.GrantedAuthority;
+import org.springframework.security.GrantedAuthority;
 
 public class DefaultGrantedAuthorityComparator implements Comparator<GrantedAuthority> {
 

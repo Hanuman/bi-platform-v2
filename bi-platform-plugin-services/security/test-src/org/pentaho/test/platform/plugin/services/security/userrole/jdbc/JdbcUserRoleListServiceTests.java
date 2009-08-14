@@ -17,19 +17,21 @@
 */
 package org.pentaho.test.platform.plugin.services.security.userrole.jdbc;
 
+import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.PopulatedDatabase;
-import org.acegisecurity.userdetails.jdbc.JdbcDaoImpl;
+import org.junit.Test;
 import org.pentaho.platform.plugin.services.security.userrole.jdbc.JdbcUserRoleListService;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.PopulatedDatabase;
+import org.springframework.security.userdetails.jdbc.JdbcDaoImpl;
 
-public class JdbcUserRoleListServiceTests extends TestCase {
+public class JdbcUserRoleListServiceTests {
 
+  @Test
 	public void testGetAllUsernames() throws Exception {
 		JdbcUserRoleListService dao = makePopulatedJdbcUserRoleListService();
 		dao
@@ -42,6 +44,7 @@ public class JdbcUserRoleListServiceTests extends TestCase {
 		}
 	}
 
+  @Test
 	public void testGetAllAuthorities() throws Exception {
 		JdbcUserRoleListService dao = makePopulatedJdbcUserRoleListService();
 		dao
@@ -54,6 +57,7 @@ public class JdbcUserRoleListServiceTests extends TestCase {
 		}
 	}
 
+  @Test
 	public void testGetAllAuthoritiesWithRolePrefix() throws Exception {
 		JdbcUserRoleListService dao = makePopulatedJdbcUserRoleListService();
 		dao
@@ -68,6 +72,7 @@ public class JdbcUserRoleListServiceTests extends TestCase {
 		}
 	}
 
+  @Test
 	public void testGetAllUsernamesInRole() throws Exception {
 		JdbcUserRoleListService dao = makePopulatedJdbcUserRoleListService();
 		dao
@@ -81,14 +86,16 @@ public class JdbcUserRoleListServiceTests extends TestCase {
 		}
 	}
 
+  @Test
 	public void testGetRolesForUser() throws Exception {
 		JdbcUserRoleListService dao = makePopulatedJdbcUserRoleListService();
 		dao.setUserDetailsService(makePopulatedJdbcDao()); 
 		dao.afterPropertiesSet();
-		GrantedAuthority[] roles = dao.getAuthoritiesForUser("marissa"); //$NON-NLS-1$
-		HashSet authorities = new HashSet(2);
+		GrantedAuthority[] roles = dao.getAuthoritiesForUser("rod"); //$NON-NLS-1$
+		HashSet<String> authorities = new HashSet<String>(2);
 		authorities.add(roles[0].getAuthority());
 		authorities.add(roles[1].getAuthority());
+		System.out.println(Arrays.toString(roles));
 		assertTrue(authorities.contains("ROLE_TELLER")); //$NON-NLS-1$
 		assertTrue(authorities.contains("ROLE_SUPERVISOR")); //$NON-NLS-1$
 

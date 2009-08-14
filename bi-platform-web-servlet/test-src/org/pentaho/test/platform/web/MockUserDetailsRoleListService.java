@@ -23,10 +23,6 @@ package org.pentaho.test.platform.web;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
@@ -35,6 +31,10 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.messages.Messages;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 public class MockUserDetailsRoleListService implements IUserDetailsRoleListService {
   

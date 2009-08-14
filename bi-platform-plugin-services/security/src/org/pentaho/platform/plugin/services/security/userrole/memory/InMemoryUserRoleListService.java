@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.pentaho.platform.api.engine.IUserRoleListService;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 /**

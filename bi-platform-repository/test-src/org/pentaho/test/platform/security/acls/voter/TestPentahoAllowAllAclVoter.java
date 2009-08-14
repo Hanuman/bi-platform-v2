@@ -23,7 +23,6 @@ package org.pentaho.test.platform.security.acls.voter;
 
 import java.io.File;
 
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
@@ -31,6 +30,7 @@ import org.pentaho.platform.engine.security.acls.voter.PentahoAllowAllAclVoter;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.security.MockSecurityUtility;
+import org.springframework.security.GrantedAuthorityImpl;
 
 public class TestPentahoAllowAllAclVoter extends BaseTest {
 

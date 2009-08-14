@@ -39,9 +39,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.memory.UserMap;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.memory.UserMap;
 
 public class UserRoleListEnhancedUserMap extends UserMap {
   // ~ Static fields/initializers

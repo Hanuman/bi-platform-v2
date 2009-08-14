@@ -22,10 +22,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.ldap.InitialDirContextFactory;
-import org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulator;
 import org.springframework.util.Assert;
 
 /**
@@ -64,9 +64,9 @@ public class NestedLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopula
 
   // ~ Constructors ==========================================================
 
-  public NestedLdapAuthoritiesPopulator(final InitialDirContextFactory initialDirContextFactory,
+  public NestedLdapAuthoritiesPopulator(final ContextSource contextSource,
       final String groupSearchBase) {
-    super(initialDirContextFactory, groupSearchBase);
+    super(contextSource, groupSearchBase);
   }
 
   // ~ Methods ===============================================================
