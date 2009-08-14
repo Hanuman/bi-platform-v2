@@ -41,8 +41,20 @@ import org.pentaho.platform.util.logging.Logger;
 public class AuditSQLEntry implements IAuditEntry {
   private static AuditConnection audc;
 
-  // 
+  /**
+   * This ugliness exists because of bug http://jira.pentaho.com/browse/BISERVER-3478. Once this 
+   * is fixed, we can move this initialization into a one liner for each setting in the class construction. 
+   * 
+   * The logic needs to be that if the config file does not exist, we can fall over to the
+   * pentaho.xml file for the attribute value (for backward compatibility). 
+   */
   private static String INSERT_STMT; 
+  static {
+    
+    String tmp = PentahoSystem.getSystemSetting("audit_sql.xml", "auditConnection/insertSQL", null);//$NON-NLS-1$ //$NON-NLS-2$
+    INSERT_STMT = (tmp != null) ? tmp:
+      PentahoSystem.getSystemSetting("auditConnection/insertSQL", Messages.getString("AUDSQLENT.CODE_AUDIT_INSERT_STATEMENT"));//$NON-NLS-1$ //$NON-NLS-2$
+  }
 
 
   static {
