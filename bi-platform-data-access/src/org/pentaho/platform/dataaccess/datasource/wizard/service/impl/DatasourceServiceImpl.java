@@ -72,9 +72,9 @@ public class DatasourceServiceImpl implements IDatasourceService {
 
   private IMetadataDomainRepository metadataDomainRepository;
 
-  private static final String BEFORE_QUERY = " SELECT * FROM (";
+  private static final String BEFORE_QUERY = " SELECT * FROM ("; //$NON-NLS-1$
 
-  private static final String AFTER_QUERY = ")";
+  private static final String AFTER_QUERY = ") tbl"; //$NON-NLS-1$
 
   public DatasourceServiceImpl() {
     metadataDomainRepository = PentahoSystem.get(IMetadataDomainRepository.class, null);
@@ -176,7 +176,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
     } catch (Exception e) {
       logger.error(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new QueryValidationException(e.getLocalizedMessage(), e); //$NON-NLS-1$      
+      throw new QueryValidationException(e.getLocalizedMessage(), e);
     } finally {
       if (sqlConnection != null) {
         sqlConnection.close();
