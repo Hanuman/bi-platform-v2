@@ -48,13 +48,13 @@ public class StringUtilTest extends TestCase {
         "..//bart/maggie.xml", //$NON-NLS-1$
         "/bart//..", //$NON-NLS-1$
         "/bart//../maggie/homer.xml", //$NON-NLS-1$
-        "/bart/judi.xml%00", //$NON-NLS-1$
+        "/bart/judi" + '\0' + ".xml", //$NON-NLS-1$ //$NON-NLS-2$
         "/../", //$NON-NLS-1$
         "/..", //$NON-NLS-1$
         "../", //$NON-NLS-1$
         "..\\bart\\maggie.xml", //$NON-NLS-1$
         "\\bart\\..", //$NON-NLS-1$
-        "\\bart\\%00.png", //$NON-NLS-1$
+        "\\bart\\" + '\0' + ".png", //$NON-NLS-1$ //$NON-NLS-2$
         "\\bart\\..\\maggie\\homer.xml", //$NON-NLS-1$
         ".." //$NON-NLS-1$
     };
