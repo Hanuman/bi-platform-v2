@@ -38,7 +38,7 @@ public class RefreshMetaDataCommand extends AbstractCommand {
 
       public void onSuccess(String result) {
         MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("info"), result, false, false, true); //$NON-NLS-1$
+            Messages.getString("info"), result, true, false, true); //$NON-NLS-1$
         dialogBox.center();
       }
     };
