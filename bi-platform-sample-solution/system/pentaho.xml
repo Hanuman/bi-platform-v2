@@ -119,7 +119,7 @@
 				<acl-files>xaction,url,prpt,xdash,xcdf</acl-files>
 
 				<anonymous-authentication>
-				  <anonymous-user>anonymous</anonymous-user>
+				  <anonymous-user>anonymousUser</anonymous-user>
 				  <anonymous-role>Anonymous</anonymous-role>
                                 </anonymous-authentication>
 	<!-- Insert additional pentaho-system -->
