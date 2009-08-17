@@ -54,7 +54,7 @@ public class AnalysisViewCommand implements Command {
             String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if (!GWT.isScript()) {
-              newAnalysisViewURL = "http://localhost:8080" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
+              newAnalysisViewURL = "http://localhost:8080/pentaho/" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             
             navigatorPerspective.getPerspectiveCallback().activatePerspective(navigatorPerspective);

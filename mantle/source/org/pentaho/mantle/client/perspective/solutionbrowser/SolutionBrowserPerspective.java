@@ -38,6 +38,9 @@ import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
+import org.pentaho.mantle.client.commands.AnalysisViewCommand;
+import org.pentaho.mantle.client.commands.UrlCommand;
+import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
@@ -109,7 +112,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private DeckPanel contentPanel = new DeckPanel();
   private LaunchPanel launchPanel = new LaunchPanel(this);
   private WorkspacePerspective workspacePanel = null;
-
+  private String newAnalysisViewOverrideCommandUrl;
+  private String newAnalysisViewOverrideCommandTitle;
+  private String newReportOverrideCommandUrl;
+  private String newReportOverrideCommandTitle;
+  
   protected TabPanel contentTabPanel = new TabPanel();
   private HashMap<Widget, TabWidget> contentTabMap = new HashMap<Widget, TabWidget>();
   private boolean hasBeenLoaded = false;
@@ -297,6 +304,22 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     frame.setVisible(false);
   }
 
+  public Command getNewAnalysisViewCommand() {
+    if (newAnalysisViewOverrideCommandUrl == null) {
+      return new AnalysisViewCommand(this);
+    } else {
+      return new UrlCommand(this, newAnalysisViewOverrideCommandUrl, newAnalysisViewOverrideCommandTitle);
+    }
+  }
+
+  public Command getNewReportCommand() {
+    if (newReportOverrideCommandUrl == null) {
+      return new WAQRCommand(this); 
+    } else {
+      return new UrlCommand(this, newReportOverrideCommandUrl, newReportOverrideCommandTitle);
+    }
+  }
+  
   public void buildUI() {
     clear();
     if (explorerMode) {
@@ -1747,6 +1770,51 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     enabledOptionsList.clear();
     contentTypePluginList.clear();
 
+    // Check for override of NewAnalysisView
+    // Poked in via pentaho.xml entry
+    if (settings.containsKey("new-analysis-view-command-url")) { //$NON-NLS-1$
+      newAnalysisViewOverrideCommandUrl = settings.get("new-analysis-view-command-url"); //$NON-NLS-1$
+      newAnalysisViewOverrideCommandTitle = settings.get("new-analysis-view-command-title"); //$NON-NLS-1$
+    }
+    // Check for override of New Report
+    // Poked in via pentaho.xml entry
+//    <new-analysis-view>
+//      <command-url>http://www.google.com</command-url>
+//      <command-title>Marc Analysis View</command-title>
+//    </new-analysis-view>
+//    <new-report>
+//      <command-url>http://www.yahoo.com</command-url>
+//      <command-title>Marc New Report</command-title>
+//    </new-report>
+    // 
+    if (settings.containsKey("new-report-command-url")) { //$NON-NLS-1$
+      newReportOverrideCommandUrl = settings.get("new-report-command-url"); //$NON-NLS-1$
+      newReportOverrideCommandTitle = settings.get("new-report-command-title"); //$NON-NLS-1$
+    }
+    // Another way to override is from a plugin.xml...
+    // 
+    // <menu-item id="waqr_menu_item" anchor="file-new-submenu-waqr_menu_item" label="New WAQR" command="http://www.amazon.com" type="MENU_ITEM" how="REPLACE"/>
+    // <menu-item id="new_analysis_view_menu_item" anchor="file-new-submenu-new_analysis_view_menu_item" label="New Analysis" command="http://www.dogpile.com" type="MENU_ITEM" how="REPLACE"/>
+
+    if (settings.get("file-newMenuOverrideTitle0" )!= null ) { //$NON-NLS-1$
+      // For now, only support override of these two menus
+      for (int i=0; i<2; i++) {
+        String title = settings.get("file-newMenuOverrideTitle" + i); //$NON-NLS-1$
+        String command = settings.get("file-newMenuOverrideCommand" + i); //$NON-NLS-1$
+        String menuItem = settings.get("file-newMenuOverrideMenuItem" + i); //$NON-NLS-1$
+        if ( (menuItem != null) && (command != null) && (title != null) ) {
+          if (menuItem.equals("waqr_menu_item")) { //$NON-NLS-1$
+            newReportOverrideCommandUrl = command;
+            newReportOverrideCommandTitle = title;
+          } else if (menuItem.equals("new_analysis_view_menu_item") ) { //$NON-NLS-1$
+            newAnalysisViewOverrideCommandUrl = command;
+            newAnalysisViewOverrideCommandTitle = title;
+          }
+        }
+      }
+    }
+    
+    
     // load plugins
     int index = 0;
     String pluginSetting = "plugin-content-type-" + index; //$NON-NLS-1$

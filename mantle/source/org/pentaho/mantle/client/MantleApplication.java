@@ -481,6 +481,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   }
 
   private void customizeMenu(final MenuBar menu, final String menuId, final HashMap<String, String> settings) {
+
     // see if we have any plugins to add
     if (settings.get(menuId + "MenuTitle0") != null) { //$NON-NLS-1$
       // we have at least one so we add a separator first
@@ -527,10 +528,10 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
         fileMenu.getElement().setId("file_menu");
         MenuBar newMenu = new MantleMenuBar(true);
         newMenu.getElement().setId("new_menu");
-        MenuItem waqrMenuItem = new MenuItem(Messages.getString("newAdhocReport"), new WAQRCommand(solutionBrowserPerspective));//$NON-NLS-1$
+        MenuItem waqrMenuItem = new MenuItem(Messages.getString("newAdhocReport"), solutionBrowserPerspective.getNewReportCommand());//$NON-NLS-1$
         waqrMenuItem.getElement().setId("waqr_menu_item");
         newMenu.addItem(waqrMenuItem);
-        MenuItem analysisMenuItem = new MenuItem(Messages.getString("newAnalysisViewEllipsis"), new AnalysisViewCommand(solutionBrowserPerspective));//$NON-NLS-1$
+        MenuItem analysisMenuItem = new MenuItem(Messages.getString("newAnalysisViewEllipsis"), solutionBrowserPerspective.getNewAnalysisViewCommand());//$NON-NLS-1$
         analysisMenuItem.getElement().setId("new_analysis_view_menu_item");
         newMenu.addItem(analysisMenuItem); //$NON-NLS-1$
         // add additions to the file menu

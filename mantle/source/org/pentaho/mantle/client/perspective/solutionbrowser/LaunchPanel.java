@@ -16,7 +16,6 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
-import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.ManageContentCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 
@@ -94,11 +93,11 @@ public class LaunchPanel extends Frame {
   }-*/;
   
   public void openWAQR(){
-    new WAQRCommand(perspective).execute();
+    perspective.getNewReportCommand().execute();
   }
 
   public void openAnalysis(){
-    new AnalysisViewCommand(perspective).execute();
+    perspective.getNewAnalysisViewCommand().execute();
   }
 
   public void openManage(){

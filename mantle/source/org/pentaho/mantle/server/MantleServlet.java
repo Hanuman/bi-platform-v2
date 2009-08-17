@@ -652,6 +652,30 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       settings.put("login-show-users-list", PentahoSystem.getSystemSetting("login-show-users-list", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       settings.put("documentation-url", PentahoSystem.getSystemSetting("documentation-url", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+      // Check for override of New Analysis View via pentaho.xml 
+      // Poked in via pentaho.xml entries
+      //    <new-analysis-view>
+      //      <command-url>http://www.google.com</command-url>
+      //      <command-title>Marc Analysis View</command-title>
+      //    </new-analysis-view>
+      //    <new-report>
+      //      <command-url>http://www.yahoo.com</command-url>
+      //      <command-title>Marc New Report</command-title>
+      //    </new-report>
+      // 
+      String overrideNewAnalysisViewCommmand = PentahoSystem.getSystemSetting("new-analysis-view/command-url", null); //$NON-NLS-1$
+      String overrideNewAnalysisViewTitle = PentahoSystem.getSystemSetting("new-analysis-view/command-title", null); //$NON-NLS-1$
+      if ( (overrideNewAnalysisViewCommmand != null) && (overrideNewAnalysisViewTitle != null) ) {
+        settings.put("new-analysis-view-command-url", overrideNewAnalysisViewCommmand); //$NON-NLS-1$
+        settings.put("new-analysis-view-command-title", overrideNewAnalysisViewTitle); //$NON-NLS-1$
+      }
+      String overrideNewReportCommmand = PentahoSystem.getSystemSetting("new-report/command-url", null); //$NON-NLS-1$
+      String overrideNewReportTitle = PentahoSystem.getSystemSetting("new-report/command-title", null); //$NON-NLS-1$
+      if ( (overrideNewReportCommmand != null) && (overrideNewReportTitle != null) ) {
+        settings.put("new-report-command-url", overrideNewReportCommmand); //$NON-NLS-1$
+        settings.put("new-report-command-title", overrideNewReportTitle); //$NON-NLS-1$
+      }
+      
       // see if we have any plugin settings
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginManager != null) {
@@ -664,6 +688,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
         int toolsIdx = 0;
         int toolsRefreshIdx = 0;
         int aboutIdx = 0;
+        int overrideIdx = 0;
         // process each customization
         for (IMenuCustomization custom : customs) {
           // we only support appending children to the first level sub-menus
@@ -707,6 +732,35 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
               settings.put("helpMenuTitle" + aboutIdx, custom.getLabel()); //$NON-NLS-1$
               settings.put("helpMenuCommand" + aboutIdx, custom.getCommand()); //$NON-NLS-1$
               aboutIdx++;
+            }
+          } else if ( custom.getCustomizationType() == CustomizationType.REPLACE) {
+            // Support replace of new analysis view and new report only
+            //
+            // Example of overriding via plugin.xml
+            // <menu-item id="waqr_menu_item" 
+            //       anchor="file-new-submenu-waqr_menu_item" 
+            //       label="New WAQR" 
+            //       command="http://www.amazon.com" 
+            //       type="MENU_ITEM"
+            //       how="REPLACE"/>
+            // <menu-item id="new_analysis_view_menu_item" 
+            //       anchor="file-new-submenu-new_analysis_view_menu_item" 
+            //       label="New Analysis" 
+            //       command="http://www.dogpile.com" 
+            //       type="MENU_ITEM" 
+            //       how="REPLACE"/>
+            //
+            String anchor = custom.getAnchorId();
+            String anchorStart = "file-new-submenu-"; //$NON-NLS-1$
+            if (anchor.startsWith(anchorStart)) { 
+              // Anchor needs to be in two parts
+              // file-new-submenu and the submenu being replaced
+              // e.g. file-new-submenu-waqr_menu_item
+              String overrideMenuItem = anchor.substring(anchorStart.length());
+              settings.put("file-newMenuOverrideTitle" + overrideIdx, custom.getLabel()); //$NON-NLS-1$
+              settings.put("file-newMenuOverrideCommand" + overrideIdx, custom.getCommand()); //$NON-NLS-1$
+              settings.put("file-newMenuOverrideMenuItem" + overrideIdx, overrideMenuItem); //$NON-NLS-1$
+              overrideIdx++;
             }
           }
         }

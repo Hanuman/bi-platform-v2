@@ -18,11 +18,9 @@
 package org.pentaho.mantle.client.toolbars;
 
 import org.pentaho.mantle.client.XulMain;
-import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
-import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
@@ -30,6 +28,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.stereotype.Bindable;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -103,8 +102,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executeAnalysisViewCommand() {
-    AnalysisViewCommand analysisViewCommand = new AnalysisViewCommand(
-        solutionBrowser);
+    Command analysisViewCommand = solutionBrowser.getNewAnalysisViewCommand();
     analysisViewCommand.execute();
   }
 
@@ -128,7 +126,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executeWAQRCommand() {
-    WAQRCommand wAQRCommand = new WAQRCommand(solutionBrowser);
+    Command wAQRCommand = solutionBrowser.getNewReportCommand();
     wAQRCommand.execute();
   }
 
