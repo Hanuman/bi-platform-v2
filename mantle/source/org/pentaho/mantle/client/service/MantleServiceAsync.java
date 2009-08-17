@@ -43,7 +43,7 @@ public interface MantleServiceAsync {
 
   // admin actions
   public void executeGlobalActions(AsyncCallback<Void> callback);
-  public void refreshMetadata(AsyncCallback<Void> callback);
+  public void refreshMetadata(AsyncCallback<String> callback);
   public void refreshSystemSettings(AsyncCallback<Void> callback);
   public void refreshRepository(AsyncCallback<Void> callback);
   public void cleanContentRepository(int daysBack, AsyncCallback<Integer> callback);

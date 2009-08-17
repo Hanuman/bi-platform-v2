@@ -170,7 +170,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
         domains.put(solution, domain);
       } catch (Throwable t) {
         logger.error(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), t); //$NON-NLS-1$
-        result |= MetadataPublisher.UNABLE_TO_IMPORT;
+        throw new RuntimeException(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), t); //$NON-NLS-1$
       }
     } else {
       return result;

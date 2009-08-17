@@ -195,10 +195,12 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  public void refreshMetadata() {
+  public String refreshMetadata() {
+    String result = null;
     if (isAdministrator()) {
-      PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
+      result = PentahoSystem.publish(getPentahoSession(), org.pentaho.platform.engine.services.metadata.MetadataPublisher.class.getName());
     }
+    return result;
   }
 
   public void refreshSystemSettings() {

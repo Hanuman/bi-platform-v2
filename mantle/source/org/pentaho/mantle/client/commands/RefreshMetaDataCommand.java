@@ -28,7 +28,7 @@ public class RefreshMetaDataCommand extends AbstractCommand {
   }
 
   protected void performOperation() {
-    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+    AsyncCallback<String> callback = new AsyncCallback<String>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(
@@ -36,9 +36,9 @@ public class RefreshMetaDataCommand extends AbstractCommand {
         dialogBox.center();
       }
 
-      public void onSuccess(Void result) {
+      public void onSuccess(String result) {
         MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("info"), Messages.getString("refreshReportingMetadataSuccess"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("info"), result, false, false, true); //$NON-NLS-1$
         dialogBox.center();
       }
     };

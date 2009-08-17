@@ -45,7 +45,7 @@ public interface MantleService extends RemoteService {
   
   // admin
   public void executeGlobalActions();
-  public void refreshMetadata();
+  public String refreshMetadata();
   public void refreshSystemSettings();
   public void refreshRepository();
   public int cleanContentRepository(int daysBack);
