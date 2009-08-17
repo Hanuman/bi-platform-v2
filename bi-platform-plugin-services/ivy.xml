@@ -38,9 +38,7 @@
     <dependency org="org.springframework.security" name="spring-security-core" rev="2.0.5.RELEASE" transitive="false" />
 
     <!-- Necessary because Pentaho's security tests re-use Spring's Security test classes. -->
-    <dependency org="org.springframework.security" name="spring-security-core" rev="2.0.5.RELEASE" transitive="false" conf="test->default">
-      <artifact name="spring-security-core" type="tests" ext="jar" m:classifier="tests"/>
-    </dependency>
+    <dependency org="org.springframework.security" name="spring-security-core-tests" rev="2.0.5.RELEASE" transitive="false" conf="test->default" />
     <dependency org="org.apache.directory.server" name="apacheds-core" rev="1.0.2" conf="test->default"/>
     <dependency org="org.apache.directory.server" name="apacheds-server-jndi" rev="1.0.2" conf="test->default"/>
     <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf="test->default" />
