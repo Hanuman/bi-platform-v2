@@ -373,12 +373,12 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     }
     return buffer.toString();
   }
-
+  @Bindable
   public void uploadSuccess(String results) {
     datasourceModel.getCsvModel().setSelectedFile(results);
     applyCsv();
   }
-
+  @Bindable
   public void uploadFailure(Throwable t) {
     openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0005_UPLOAD_FAILED"), t.getLocalizedMessage()); //$NON-NLS-1$
   }
