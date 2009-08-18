@@ -90,8 +90,6 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
       public void success(List<IDatabaseType> retVal) {
         databaseTypeHelper = new DatabaseTypeHelper(retVal);
-        databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
-            "dataaccess-databasedialog.xul", ConnectionController.this); //$NON-NLS-1$
       }
     };
     connService.getDatabaseTypes(callback);
@@ -357,25 +355,61 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
   @Bindable
   public void showAddConnectionDialog() {
-    datasourceModel.getRelationalModel().setEditType(ConnectionEditType.ADD);
-    databaseDialog.setDatabaseConnection(null);
-    databaseDialog.show();
+    if(databaseDialog != null){
+      datasourceModel.getRelationalModel().setEditType(ConnectionEditType.ADD);
+      databaseDialog.setDatabaseConnection(null);
+      databaseDialog.show();
+    } else {
+
+      databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
+          "dataaccess-databasedialog.xul", new DatabaseDialogListener(){
+
+            public void onDialogAccept(IDatabaseConnection connection) {
+            }
+
+            public void onDialogCancel() {
+            }
+
+            public void onDialogReady() {
+              showAddConnectionDialog();
+            }
+        
+      }); //$NON-NLS-1$
+    }
   }
 
   @Bindable
   public void showEditConnectionDialog() {
-    datasourceModel.getRelationalModel().setEditType(ConnectionEditType.EDIT);
-    IConnection connection = datasourceModel.getRelationalModel().getSelectedConnection();
-    service.convertFromConnection(connection, new XulServiceCallback<IDatabaseConnection>() {
-      public void error(String message, Throwable error) {
-        displayErrorMessage(error);
-      }
 
-      public void success(IDatabaseConnection conn) {
-        databaseDialog.setDatabaseConnection(conn);
-        databaseDialog.show();
-      }
-    });
+    if(databaseDialog != null){
+      datasourceModel.getRelationalModel().setEditType(ConnectionEditType.EDIT);
+      IConnection connection = datasourceModel.getRelationalModel().getSelectedConnection();
+      service.convertFromConnection(connection, new XulServiceCallback<IDatabaseConnection>() {
+        public void error(String message, Throwable error) {
+          displayErrorMessage(error);
+        }
+
+        public void success(IDatabaseConnection conn) {
+          databaseDialog.setDatabaseConnection(conn);
+          databaseDialog.show();
+        }
+      });
+      
+    } else {
+
+      databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
+          "dataaccess-databasedialog.xul", new DatabaseDialogListener(){
+
+            public void onDialogAccept(IDatabaseConnection connection) {}
+
+            public void onDialogCancel() {}
+
+            public void onDialogReady() {
+              showEditConnectionDialog();
+            }
+        
+      }); //$NON-NLS-1$
+    }
   }
 
   @Bindable
