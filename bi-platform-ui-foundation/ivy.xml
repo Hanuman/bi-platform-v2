@@ -21,7 +21,7 @@
     <dependency org="batik" name="batik-dom" rev="1.6" />
     <dependency org="batik" name="batik-svggen" rev="1.6" />
     <dependency org="jfree" name="jcommon" rev="1.0.14" />
-    <dependency org="jfree" name="jfreechart" rev="1.0.4">
+    <dependency org="jfree" name="jfreechart" rev="1.0.9">
       <exclude org="jfree" name="jcommon" />
     </dependency>
 
