@@ -16,7 +16,7 @@
       <exclude org="xml-apis" name="xml-apis" />
     </dependency>
     <dependency org="jfree" name="jcommon" rev="1.0.14" />
-    <dependency org="jfree" name="jfreechart" rev="1.0.4">
+    <dependency org="jfree" name="jfreechart" rev="${dependency.jfreechart.revision}">
       <exclude org="jfree" name="jcommon" />
     </dependency>
     <dependency org="quartz" name="quartz" rev="1.5.2">

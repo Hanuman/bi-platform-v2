@@ -60,7 +60,7 @@
     <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
     <dependency org="jfree" name="jcommon" rev="1.0.14" />
     <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
-    <dependency org="jfree" name="jfreechart" rev="1.0.4">
+    <dependency org="jfree" name="jfreechart" rev="${dependency.jfreechart.revision}">
       <exclude org="jfree" name="jcommon" />
     </dependency>
     <dependency org="jasperreports" name="jasperreports" rev="2.0.5" transitive="false" />
