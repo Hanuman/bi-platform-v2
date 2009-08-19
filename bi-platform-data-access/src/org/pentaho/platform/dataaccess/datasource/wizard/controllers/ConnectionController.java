@@ -330,7 +330,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
   public DatasourceMessages getDatasourceMessages() {
     return datasourceMessages;
   }
-
+  @Bindable
   public void onDialogAccept(IDatabaseConnection arg0) {
     service.convertToConnection(arg0, new XulServiceCallback<IConnection>() {
       public void error(String message, Throwable error) {
