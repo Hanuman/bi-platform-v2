@@ -641,7 +641,6 @@ public class AdhocWebService extends ServletBase {
     
     
     // first see if it's a thin model...
-    Exception thinException = null;
     QueryXmlHelper helper = new QueryXmlHelper();
     IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
     Query queryObject = null;
@@ -660,6 +659,8 @@ public class AdhocWebService extends ServletBase {
     if (model == null) {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
     }
+    
+    String locale = PMDUIComponent.getClosestLocaleInDomain(queryObject.getDomain());
     
     String reportXMLEncoding = XmlHelper.getEncoding(reportXML);
     ByteArrayInputStream reportSpecInputStream = new ByteArrayInputStream(reportXML.getBytes( reportXMLEncoding ));
@@ -737,7 +738,7 @@ public class AdhocWebService extends ServletBase {
       Field field = reportSpec.getField()[i];
       LogicalColumn column = columns[i];
       
-      AdhocWebService.applyMetadata( field, column, columnWidthUnitsConsistent);
+      applyMetadata( field, column, columnWidthUnitsConsistent, locale);
       
       // Template properties have the lowest priority, merge them last
       if (bUseTemplate) {
@@ -942,7 +943,7 @@ public class AdhocWebService extends ServletBase {
    * @param columnWidthUnitsConsistent this value should always be the result of a call to areMetadataColumnUnitsConsistent()
    */
   private static void applyMetadata( final Field field, final LogicalColumn column, 
-      boolean columnWidthUnitsConsistent ) {
+      final boolean columnWidthUnitsConsistent, final String locale ) {
 
     if ( columnWidthUnitsConsistent ) {
       ColumnWidth property = (ColumnWidth)column.getProperty(DefaultPropertyID.COLUMN_WIDTH.getId());
@@ -1008,14 +1009,14 @@ public class AdhocWebService extends ServletBase {
       field.setFontColor(htmlColor);
     }
 
-    String metaDataDisplayName = column.getName(LocaleHelper.getLocale().toString());
+    String metaDataDisplayName = column.getName(locale);
 
     if (field.getIsDetail()) {
       field.setDisplayName(metaDataDisplayName);
     } else {
       String reportSpecDisplayName = field.getDisplayName();
       if (AdhocWebService.isDefaultStringProperty(reportSpecDisplayName)) {
-        String displayName = column.getName(LocaleHelper.getLocale().toString());
+        String displayName = column.getName(locale);
         field.setDisplayName(displayName + ": $(" + field.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$           
       }
     }
