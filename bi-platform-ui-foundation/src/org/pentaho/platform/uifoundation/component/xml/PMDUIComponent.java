@@ -127,18 +127,28 @@ public class PMDUIComponent extends XmlComponent {
     return doc;
   }
 
+  /**
+   * this utility method returns the closest locale match in 
+   * a domain
+   * @param domain the domain in which to find the closest locale
+   * @return the closest locale
+   */
+  public static String getClosestLocaleInDomain(Domain domain) {
+    String locale = LocaleHelper.getLocale().toString();
+    String locales[] = new String[domain.getLocales().size()];
+    for (int i = 0; i < domain.getLocales().size(); i++) {
+      locales[i] = domain.getLocales().get(i).getCode();
+    }
+    return LocaleHelper.getClosestLocale( locale, locales );
+  }
+
   private void addThinDomainModels(final String domain, final Element modelsNode, final Element root) {
 
     IMetadataDomainRepository repo = getMetadataRepository();
     
     Domain domainObject = repo.getDomain(domain);
 
-    String locale = LocaleHelper.getLocale().toString();
-    String locales[] = new String[domainObject.getLocales().size()];
-    for (int i = 0; i < domainObject.getLocales().size(); i++) {
-      locales[i] = domainObject.getLocales().get(i).getCode();
-    }
-    locale = LocaleHelper.getClosestLocale( locale, locales );
+    String locale = getClosestLocaleInDomain(domainObject);
 
     Element modelNode;    
     for (LogicalModel model : domainObject.getLogicalModels()) {
@@ -188,13 +198,7 @@ public class PMDUIComponent extends XmlComponent {
       root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
-    String locale = LocaleHelper.getLocale().toString();
-    String locales[] = new String[domain.getLocales().size()];
-    for (int i = 0; i < domain.getLocales().size(); i++) {
-      locales[i] = domain.getLocales().get(i).getCode();
-    }
-    
-    locale = LocaleHelper.getClosestLocale( locale, locales );
+    String locale = getClosestLocaleInDomain(domain);
     LogicalModel model = domain.findLogicalModel(modelId); 
     
     if (model == null) {
@@ -290,13 +294,7 @@ public class PMDUIComponent extends XmlComponent {
     }
 
     Domain domain = getMetadataRepository().getDomain(domainName);
-    String locale = LocaleHelper.getLocale().toString();
-    String locales[] = new String[domain.getLocales().size()];
-    for (int i = 0; i < domain.getLocales().size(); i++) {
-      locales[i] = domain.getLocales().get(i).getCode();
-    }
-
-    locale = LocaleHelper.getClosestLocale( locale, locales );
+    String locale = getClosestLocaleInDomain(domain);
 
     LogicalModel model = domain.findLogicalModel(modelId); // This is the business view that was selected.
     if (model == null) {
