@@ -46,6 +46,23 @@ public class SQLMetaData extends AbstractPentahoMetaData {
     this.nativeMetaData = nativeMetaData;
   }
 
+  public int[] getJDBCColumnTypes() throws SQLException {
+    if ( nativeMetaData != null) {
+      int colCount = nativeMetaData.getColumnCount();
+      if (colCount > 0) {
+        int[] rtn = new int[colCount];
+        for (int i=0; i< colCount; i++) {
+          rtn[i] = nativeMetaData.getColumnType(i+1); // JDBC is 1-based
+        }
+        return rtn;
+      } else {
+        return new int[]{};
+      }
+    } else {
+      throw new IllegalStateException();
+    }
+  }
+
   /*
    * (non-Javadoc)
    * 

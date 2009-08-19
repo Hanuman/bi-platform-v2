@@ -18,15 +18,17 @@
  * Created April 21, 2009
  * @author rmansoor
  */
-package org.pentaho.platform.dataaccess.datasource.utils;
+package org.pentaho.platform.dataaccess.datasource.beans;
+
+import java.util.List;
 
 public class SerializedResultSet implements java.io.Serializable{
   private static final long serialVersionUID = 8275330793662889379L;
   private String[] columns;// contains column names
-  private String[] columnTypes;// contains column types
-  private String[][] data;// 2 dimensional array
+  private int[] columnTypes;// contains column types
+  private List<List<String>> data;// 2 dimensional array
 
-  public SerializedResultSet(String[] columnTypes, String[] columns, String[][] data) {
+  public SerializedResultSet(int[] columnTypes, String[] columns, List<List<String>> data) {
     super();
     this.columnTypes = columnTypes;
     this.columns = columns;
@@ -43,16 +45,16 @@ public class SerializedResultSet implements java.io.Serializable{
   public void setColumns(String[] columns) {
     this.columns = columns;
   }
-  public String[] getColumnTypes() {
+  public int[] getColumnTypes() {
     return columnTypes;
   }
-  public void setColumnTypes(String[] columnTypes) {
+  public void setColumnTypes(int[] columnTypes) {
     this.columnTypes = columnTypes;
   }
-  public String[][] getData() {
+  public List<List<String>> getData() {
     return data;
   }
-  public void setData(String[][] data) {
+  public void setData(List<List<String>> data) {
     this.data = data;
   }
 }

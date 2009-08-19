@@ -47,7 +47,7 @@ import org.pentaho.platform.api.engine.IPluginResourceLoader;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.beans.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.QueryValidationException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
@@ -194,16 +194,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
     SerializedResultSet returnResultSet;
     try {
       executeQuery(connectionName, query, previewLimit);
-      MarshallableResultSet marshallableResultSet = DatasourceServiceHelper.getMarshallableResultSet(connectionName, query,
+      returnResultSet = DatasourceServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
-      String[][] data = new String[marshallableResultSet.getRows().length][];
-      int rowCount = 0;
-      for (MarshallableRow row : marshallableResultSet.getRows()) {
-        data[rowCount++] = row.getCell();
-      }
-      returnResultSet = new SerializedResultSet(marshallableResultSet.getColumnTypes().getColumnType(),
-          marshallableResultSet.getColumnNames().getColumnName(), data);
-
     } catch (QueryValidationException e) {
       logger.error(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
@@ -264,14 +256,13 @@ public class DatasourceServiceImpl implements IDatasourceService {
       executeQuery(connectionName, query, previewLimit);
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      MarshallableResultSet resultSet = DatasourceServiceHelper.getMarshallableResultSet(connectionName, query,
+      SerializedResultSet resultSet = DatasourceServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
-      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, resultSet, query,
+      SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName, resultSet.getColumnTypes(), resultSet.getColumns(), query,
           securityEnabled, getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), (PentahoSessionHolder
               .getSession() != null) ? PentahoSessionHolder.getSession().getName() : null);
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceServiceHelper.getRelationalDataSample(resultSet);
-      return new BusinessData(domain, data);
+      return new BusinessData(domain, resultSet.getData());
     } catch (SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge);//$NON-NLS-1$
@@ -402,8 +393,9 @@ public class DatasourceServiceImpl implements IDatasourceService {
     } else {
       SqlPhysicalModel model = (SqlPhysicalModel) domain.getPhysicalModels().get(0);
       String query = model.getPhysicalTables().get(0).getTargetTable();
-      data = DatasourceServiceHelper.getRelationalDataSample(DatasourceServiceHelper.getMarshallableResultSet(model.getDatasource().getDatabaseName(), query, 5,
-          PentahoSessionHolder.getSession()));
+      SerializedResultSet resultSet = DatasourceServiceHelper.getSerializeableResultSet(model.getDatasource().getDatabaseName(), query, 5,
+          PentahoSessionHolder.getSession());
+      data = resultSet.getData();
     }
     return new BusinessData(domain, data);
   }

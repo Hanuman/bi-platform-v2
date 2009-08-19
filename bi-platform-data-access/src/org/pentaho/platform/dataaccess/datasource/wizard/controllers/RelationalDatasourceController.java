@@ -30,8 +30,8 @@ import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
+import org.pentaho.platform.dataaccess.datasource.beans.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.utils.ExceptionParser;
-import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.DatasourceMessages;
 import org.pentaho.platform.dataaccess.datasource.wizard.WaitingDialog;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.Aggregation;
@@ -413,7 +413,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
             public void success(SerializedResultSet rs) {
               try {
-                String[][] data = rs.getData();
+                List<List<String>> data = rs.getData();
                 String[] columns = rs.getColumns();
                 int columnCount = columns.length;
                 // Remove any existing children
@@ -458,12 +458,11 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
                 int count = previewResultsTable.getColumns().getColumnCount();
                 // Create the tree children and setting the data
                 try {
-                  for (int i = 0; i < data.length; i++) {
+                  for (int i = 0; i < data.size(); i++) {
                     XulTreeRow row = (XulTreeRow) document.createElement("treerow");
-
                     for (int j = 0; j < columnCount; j++) {
                       XulTreeCell cell = (XulTreeCell) document.createElement("treecell");
-                      cell.setLabel(data[i][j]);
+                      cell.setLabel(getCellData(data, i, j));
                       row.addCell(cell);
                     }
 
@@ -741,5 +740,17 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
   public boolean supportsBusinessData(BusinessData businessData) {
     return (businessData.getDomain().getPhysicalModels().get(0) instanceof SqlPhysicalModel);
+  }
+  
+  private String getCellData(List<List<String>> data, int rowNumber,  int columnNumber) {
+    String returnValue = null;
+    int rowCount = 0;
+    for (List<String> row : data) {
+      if(rowCount == rowNumber) {
+        returnValue = row.get(columnNumber);
+      }
+      rowCount++;
+    }
+    return returnValue;
   }
 }

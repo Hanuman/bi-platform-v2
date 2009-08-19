@@ -26,7 +26,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.beans.SerializedResultSet;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

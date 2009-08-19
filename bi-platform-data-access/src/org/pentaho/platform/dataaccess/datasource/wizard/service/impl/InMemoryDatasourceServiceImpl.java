@@ -52,7 +52,7 @@ import org.pentaho.platform.api.engine.PentahoSystemException;
 import org.pentaho.platform.dataaccess.datasource.beans.BogoPojo;
 import org.pentaho.platform.dataaccess.datasource.beans.BusinessData;
 import org.pentaho.platform.dataaccess.datasource.beans.LogicalModelSummary;
-import org.pentaho.platform.dataaccess.datasource.utils.SerializedResultSet;
+import org.pentaho.platform.dataaccess.datasource.beans.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.QueryValidationException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IDatasourceService;
@@ -147,16 +147,8 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
     SerializedResultSet returnResultSet;
     try {
       executeQuery(connectionName, query, previewLimit);
-      MarshallableResultSet marshallableResultSet = DatasourceInMemoryServiceHelper.getMarshallableResultSet(connectionName, query,
+      returnResultSet = DatasourceInMemoryServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), null);
-      String[][] data = new String[marshallableResultSet.getRows().length][];
-      int rowCount = 0;
-      for (MarshallableRow row : marshallableResultSet.getRows()) {
-        data[rowCount++] = row.getCell();
-      }
-      returnResultSet = new SerializedResultSet(marshallableResultSet.getColumnTypes().getColumnType(),
-          marshallableResultSet.getColumnNames().getColumnName(), data);
-
     } catch (QueryValidationException e) {
       logger.error(Messages.getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
@@ -206,14 +198,13 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
 
       Boolean securityEnabled = (getPermittedRoleList() != null && getPermittedRoleList().size() > 0)
           || (getPermittedUserList() != null && getPermittedUserList().size() > 0);
-      MarshallableResultSet resultSet = DatasourceInMemoryServiceHelper.getMarshallableResultSet(connectionName, query,
+      SerializedResultSet resultSet = DatasourceInMemoryServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), null);
       SQLModelGenerator sqlModelGenerator = new SQLModelGenerator(modelName, connectionName,
-          resultSet, query, securityEnabled,
+           resultSet.getColumnTypes(), resultSet.getColumns(),query, securityEnabled,
           getPermittedRoleList(), getPermittedUserList(), getDefaultAcls(), "joe");
       Domain domain = sqlModelGenerator.generate();
-      List<List<String>> data = DatasourceInMemoryServiceHelper.getRelationalDataSample(resultSet);
-      return new BusinessData(domain, data);
+      return new BusinessData(domain, resultSet.getData());
     } catch (SQLModelGeneratorException smge) {
       logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL",
           smge.getLocalizedMessage()), smge);
@@ -285,8 +276,8 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
     } else {
       SqlPhysicalModel model = (SqlPhysicalModel) domain.getPhysicalModels().get(0);
       String query = model.getPhysicalTables().get(0).getTargetTable();
-      data = DatasourceInMemoryServiceHelper.getRelationalDataSample(DatasourceInMemoryServiceHelper.getMarshallableResultSet(model.getDatasource().getDatabaseName(), query, 5,
-          null));
+      SerializedResultSet resultSet = DatasourceInMemoryServiceHelper.getSerializeableResultSet(model.getDatasource().getDatabaseName(), query, 5,null);
+      data = resultSet.getData();
     }
     return new BusinessData(domain, data);
   }

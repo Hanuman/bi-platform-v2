@@ -39,11 +39,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.commons.connection.IPentahoMetaData;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableColumnNames;
 import org.pentaho.commons.connection.marshal.MarshallableResultSet;
 import org.pentaho.commons.connection.marshal.MarshallableRow;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.dataaccess.datasource.IConnection;
+import org.pentaho.platform.dataaccess.datasource.beans.SerializedResultSet;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.DatasourceServiceException;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet;
@@ -51,6 +54,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messag
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
+import org.pentaho.platform.plugin.services.connections.sql.SQLMetaData;
 
 public class DatasourceInMemoryServiceHelper {
   private static final Log logger = LogFactory.getLog(DatasourceInMemoryServiceHelper.class);
@@ -120,31 +124,33 @@ public class DatasourceInMemoryServiceHelper {
     }
   }
   
-  public static List<List<String>> getRelationalDataSample(MarshallableResultSet resultSet) throws DatasourceServiceException{
-    List<List<String>> dataSample = new ArrayList<List<String>>();
-    MarshallableRow[] rows =  resultSet.getRows();
-    for(int i=0;i<rows.length;i++) {
-      MarshallableRow row = rows[i];
-      String[] rowData = row.getCell();
-      List<String> rowDataList = new ArrayList<String>(rowData.length);
-      for(int j=0;j<rowData.length;j++) {
-        rowDataList.add(rowData[j]);
-      }
-      dataSample.add(rowDataList);
-    }
-    return dataSample;
-  }
-
-  public static MarshallableResultSet getMarshallableResultSet(String connectionName, String query, int rowLimit, IPentahoSession session) throws DatasourceServiceException{
-    MarshallableResultSet marshallableResultSet = null;
+  public static SerializedResultSet getSerializeableResultSet(String connectionName, String query, int rowLimit, IPentahoSession session) throws DatasourceServiceException{
+    SerializedResultSet serializedResultSet = null;
     SQLConnection sqlConnection = null; 
     try {
       sqlConnection = getConnection(connectionName);
       sqlConnection.setMaxRows(rowLimit);
       sqlConnection.setReadOnly(true);
       IPentahoResultSet resultSet =  sqlConnection.executeQuery(query);
-      marshallableResultSet = new MarshallableResultSet();
+      MarshallableResultSet marshallableResultSet = new MarshallableResultSet();
       marshallableResultSet.setResultSet(resultSet);
+      IPentahoMetaData ipmd = resultSet.getMetaData();
+      if (ipmd instanceof SQLMetaData) {
+        // Hack warning - get JDBC column types
+        // TODO: Need to generalize this amongst all IPentahoResultSets
+        SQLMetaData smd = (SQLMetaData)ipmd;
+        int[] columnTypes = smd.getJDBCColumnTypes();
+        List<List<String>> data = new ArrayList<List<String>>();
+        for (MarshallableRow row : marshallableResultSet.getRows()) {
+          String[] rowData = row.getCell();
+          List<String> rowDataList = new ArrayList<String>(rowData.length);
+          for(int j=0;j<rowData.length;j++) {
+            rowDataList.add(rowData[j]);
+          }
+          data.add(rowDataList);
+        }
+        serializedResultSet = new SerializedResultSet(columnTypes, marshallableResultSet.getColumnNames().getColumnName(), data);
+      }
     } catch (Exception e) {
       logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
@@ -153,10 +159,12 @@ public class DatasourceInMemoryServiceHelper {
           sqlConnection.close();
         }
     }
-    return marshallableResultSet;
+
+    return serializedResultSet;
 
   }
 
+  
   public static List<List<String>> getCsvDataSample(String fileLocation, boolean headerPresent, String delimiter, String enclosure, int rowLimit) {
     String line = null;
     int row = 0;
