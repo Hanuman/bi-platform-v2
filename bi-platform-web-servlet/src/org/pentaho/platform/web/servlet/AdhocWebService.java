@@ -91,6 +91,7 @@ import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.repository.ISolutionRepositoryService;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -1419,16 +1420,18 @@ public class AdhocWebService extends ServletBase {
     String msg = ""; //$NON-NLS-1$
     String xactionFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xaction"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     
-    boolean success = SolutionRepositoryService.delete(userSession, solution, path, xactionFile);
+    ISolutionRepositoryService solutionRepositoryService = PentahoSystem.get(ISolutionRepositoryService.class, userSession);
+    
+    boolean success = solutionRepositoryService.delete(userSession, solution, path, xactionFile);
     // if we fail to delete the protected xaction file, don't delete the xml or reportspec files
     if (success) {
       String jfreeFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      if (!SolutionRepositoryService.delete(userSession, solution, path, jfreeFile)) {
+      if (!solutionRepositoryService.delete(userSession, solution, path, jfreeFile)) {
         msg = jfreeFile + " "; //$NON-NLS-1$
       }
 
       String reportSpecFile = "/" + baseFilename + "." + AdhocWebService.WAQR_EXTENSION + ".xreportspec"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      if (!SolutionRepositoryService.delete(userSession, solution, path, reportSpecFile)) {
+      if (!solutionRepositoryService.delete(userSession, solution, path, reportSpecFile)) {
         msg += reportSpecFile + " "; //$NON-NLS-1$
       }
     } else {

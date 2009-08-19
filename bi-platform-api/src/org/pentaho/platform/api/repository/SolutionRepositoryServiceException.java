@@ -14,8 +14,8 @@
  *
  * Copyright 2005 - 2009 Pentaho Corporation.  All rights reserved.
  *
-*/
-package org.pentaho.platform.web.servlet;
+ */
+package org.pentaho.platform.api.repository;
 
 import org.pentaho.platform.api.util.PentahoCheckedChainedException;
 
