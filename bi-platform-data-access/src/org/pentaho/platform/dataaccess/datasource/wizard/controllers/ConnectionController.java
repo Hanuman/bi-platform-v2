@@ -350,7 +350,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
   @Bindable
   public void onDialogReady() {
-    // TODO: enable the database edit and add buttons
+    showAddConnectionDialog();
   }
 
   @Bindable
@@ -360,21 +360,8 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
       databaseDialog.setDatabaseConnection(null);
       databaseDialog.show();
     } else {
-
       databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
-          "dataaccess-databasedialog.xul", new DatabaseDialogListener(){
-
-            public void onDialogAccept(IDatabaseConnection connection) {
-            }
-
-            public void onDialogCancel() {
-            }
-
-            public void onDialogReady() {
-              showAddConnectionDialog();
-            }
-        
-      }); //$NON-NLS-1$
+          "dataaccess-databasedialog.xul", this); //$NON-NLS-1$
     }
   }
 
@@ -398,17 +385,7 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
     } else {
 
       databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
-          "dataaccess-databasedialog.xul", new DatabaseDialogListener(){
-
-            public void onDialogAccept(IDatabaseConnection connection) {}
-
-            public void onDialogCancel() {}
-
-            public void onDialogReady() {
-              showEditConnectionDialog();
-            }
-        
-      }); //$NON-NLS-1$
+          "dataaccess-databasedialog.xul", this); //$NON-NLS-1$
     }
   }
 
