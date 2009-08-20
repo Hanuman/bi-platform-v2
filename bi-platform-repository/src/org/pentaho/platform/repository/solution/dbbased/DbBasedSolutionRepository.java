@@ -1410,7 +1410,6 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   }
 
   public void share(final ISolutionFile file, final List<IPermissionRecipient> shareRecipients) {
-    SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
     for (IPermissionRecipient shareRecipient : shareRecipients) {
       addPermission(file, shareRecipient, new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE));
     }
