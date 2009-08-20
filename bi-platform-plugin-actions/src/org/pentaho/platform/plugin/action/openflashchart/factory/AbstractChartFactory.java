@@ -581,6 +581,7 @@ public abstract class AbstractChartFactory implements IChartFactory {
   // Data Related Methods
   // 
   
+  @SuppressWarnings("deprecation")
   public void setData(IPentahoResultSet data) {
     hasRowHeaders = data.getMetaData().getRowHeaders() != null;
     hasColumnHeaders = data.getMetaData().getColumnHeaders() != null;

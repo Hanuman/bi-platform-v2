@@ -31,6 +31,7 @@ import org.pentaho.reporting.engine.classic.core.MasterReport;
  */
 public abstract class AbstractGenerateStreamContentComponent extends AbstractGenerateContentComponent {
 
+  private static final long serialVersionUID = -4562767913928444314L;
   private IContentItem contentItem = null;
 
   protected AbstractGenerateStreamContentComponent() {
@@ -83,6 +84,7 @@ public abstract class AbstractGenerateStreamContentComponent extends AbstractGen
 
   protected abstract boolean performExport(final MasterReport report, final OutputStream outputStream);
 
+  @SuppressWarnings("deprecation")
   protected OutputStream createOutputStream() {
     // Try to get the output from the action-sequence document.
     final String mimeType = getMimeType();

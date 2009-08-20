@@ -36,7 +36,9 @@ import org.pentaho.di.trans.steps.tableoutput.TableOutputMeta;
 
 public class Custom1 extends KettleComponent {
 
-	@Override 
+  private static final long serialVersionUID = -3534575935705861245L;
+
+  @Override 
 	  protected boolean customizeTrans( Trans trans, LogWriter logWriter ) {
 		  // override this to customize the transformation before it runs
 		  // by default there is no transformation
@@ -45,7 +47,8 @@ public class Custom1 extends KettleComponent {
 		  return true;
 	  }
 	
-	private void execSQL( TransMeta transMeta, String targetDatabaseName ) throws KettleStepException, KettleDatabaseException {
+	@SuppressWarnings("unused")
+  private void execSQL( TransMeta transMeta, String targetDatabaseName ) throws KettleStepException, KettleDatabaseException {
 		
 		// OK, What's the SQL we need to execute to generate the target table?
 		String sql = transMeta.getSQLStatementsString();
@@ -63,7 +66,7 @@ public class Custom1 extends KettleComponent {
 			String targetTableName, String[] targetFields, LogWriter logWriter)
 			throws KettleException {
 
-		LogWriter log = LogWriter.getInstance();
+//		LogWriter log = LogWriter.getInstance();
 
 		try
 		{
@@ -92,16 +95,16 @@ public class Custom1 extends KettleComponent {
 			String fromstepname = "read from [" + sourceTableName + "]";
 			TableInputMeta tii = new TableInputMeta();
 			tii.setDatabaseMeta(sourceDBInfo);
-			String selectSQL = "SELECT " + Const.CR;
+			String selectSQL = "SELECT " + Const.CR; //$NON-NLS-1$
 
 			for (int i = 0; i < sourceFields.length; i++) {
 				if (i > 0)
-					selectSQL += ", ";
+					selectSQL += ", "; //$NON-NLS-1$
 				else
-					selectSQL += " ";
+					selectSQL += " "; //$NON-NLS-1$
 				selectSQL += sourceFields[i] + Const.CR;
 			}
-			selectSQL += "FROM " + sourceTableName;
+			selectSQL += "FROM " + sourceTableName; //$NON-NLS-1$
 			tii.setSQL(selectSQL);
 
 			StepLoader steploader = StepLoader.getInstance();

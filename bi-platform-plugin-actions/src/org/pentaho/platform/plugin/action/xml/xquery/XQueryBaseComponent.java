@@ -63,6 +63,8 @@ import org.pentaho.platform.plugin.services.connections.xquery.XQConnection;
  */
 public abstract class XQueryBaseComponent extends ComponentBase implements IPreparedComponent {
 
+  private static final long serialVersionUID = -4390530975622541328L;
+
   private IPentahoResultSet rSet;
 
   /** reference to connection object */
@@ -75,7 +77,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
 
   private static final String EXTENSION = ".xml"; //$NON-NLS-1$
 
-  private static final String TEMP_DIRECTORY = "system/tmp/"; //$NON-NLS-1$
+//  private static final String TEMP_DIRECTORY = "system/tmp/"; //$NON-NLS-1$
 
   private static final String XML_DOCUMENT_TAG = "XML_DOCUMENT"; //$NON-NLS-1$
 
@@ -136,8 +138,8 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
   protected boolean executeAction() {
     boolean result = false;
     IActionDefinition actionDefinition = getActionDefinition();
-    int maxRows = -1;
-    int queryTimeout = -1;
+//    int maxRows = -1;
+//    int queryTimeout = -1;
     if (actionDefinition instanceof XQueryAction) {
       XQueryAction xQueryAction = (XQueryAction) actionDefinition;
 

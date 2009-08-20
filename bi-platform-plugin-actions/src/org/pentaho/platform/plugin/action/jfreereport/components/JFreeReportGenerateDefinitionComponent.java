@@ -134,7 +134,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
     IPentahoConnection connection = null;
     if (reportSpec.getIsMDX()) {
       // did this ever work??
-      String connectStr = "";
+      String connectStr = ""; //$NON-NLS-1$
       IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       String dsName = datasourceService.getDSBoundName(jndiName);
       if (dsName != null) {
@@ -171,7 +171,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
 
         // if that parameter is not defined, we do query for backward compatibility.
         if (!isDefinedInput(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY)
-            || "true".equals(getInputParameter(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY))) {
+            || "true".equals(getInputParameter(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY))) { //$NON-NLS-1$
           if (reportSpec.getReportSpecChoice().getXqueryUrl() != null) {
             // handle xquery
           } else {

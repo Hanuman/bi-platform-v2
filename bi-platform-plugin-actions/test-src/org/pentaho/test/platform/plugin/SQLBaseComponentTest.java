@@ -19,6 +19,7 @@ import com.mockrunner.mock.jdbc.MockPreparedStatement;
 import com.mockrunner.mock.jdbc.MockResultSet;
 import com.mockrunner.mock.jdbc.MockStatement;
 
+@SuppressWarnings("nls")
 public class SQLBaseComponentTest {
 
   public static final MockResultSet set = new MockResultSet("id");

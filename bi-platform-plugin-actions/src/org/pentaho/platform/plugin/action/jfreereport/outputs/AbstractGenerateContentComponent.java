@@ -41,6 +41,8 @@ import org.pentaho.reporting.engine.classic.core.ResourceBundleFactory;
  * @author Thomas Morgner
  */
 public abstract class AbstractGenerateContentComponent extends AbstractJFreeReportComponent {
+  private static final long serialVersionUID = -5240026550908859563L;
+
   protected AbstractGenerateContentComponent() {
   }
 

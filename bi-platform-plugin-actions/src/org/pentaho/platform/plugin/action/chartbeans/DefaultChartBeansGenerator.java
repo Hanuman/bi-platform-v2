@@ -317,7 +317,7 @@ public class DefaultChartBeansGenerator implements IChartBeansGenerator {
     // populate the flash html template
     Properties props = new Properties();
     props.setProperty("dataFunction", "getChartData"); // + chartId); //$NON-NLS-1$ //$NON-NLS-2$
-    props.setProperty("chartJson", "{}"); //$NON-NLS-1$
+    props.setProperty("chartJson", "{}"); //$NON-NLS-1$ //$NON-NLS-2$
 
     String flashHtml = MessageFormat.format(getHtmlTemplate(), new String[] {
         TemplateUtil.applyTemplate(getFlashScriptFragment(), props, null),

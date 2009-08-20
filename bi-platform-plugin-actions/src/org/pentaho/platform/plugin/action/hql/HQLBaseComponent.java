@@ -45,6 +45,8 @@ import org.pentaho.platform.plugin.services.connections.hql.HQLConnection;
 
 public abstract class HQLBaseComponent extends ComponentBase implements IPreparedComponent {
 
+  private static final long serialVersionUID = 5949258346877934670L;
+
   private IPentahoResultSet rSet;
 
   /** reference to connection object */

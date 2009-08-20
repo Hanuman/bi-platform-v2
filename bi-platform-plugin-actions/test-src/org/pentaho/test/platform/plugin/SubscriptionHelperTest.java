@@ -26,23 +26,24 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Locale;
-
-import org.pentaho.platform.api.engine.IScheduler;
-import org.pentaho.platform.api.repository.ISubscriptionRepository;
-import org.pentaho.platform.engine.core.output.SimpleContentItem;
-import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+//import java.util.List;
+//import java.util.Locale;
+//
+//import org.pentaho.platform.api.engine.IScheduler;
+//import org.pentaho.platform.api.repository.ISubscriptionRepository;
+//import org.pentaho.platform.engine.core.output.SimpleContentItem;
+//import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
+//import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+//import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.core.system.UserSession;
-import org.pentaho.platform.repository.messages.Messages;
-import org.pentaho.platform.repository.subscription.Subscription;
-import org.pentaho.platform.repository.subscription.SubscriptionHelper;
+//import org.pentaho.platform.engine.core.system.UserSession;
+//import org.pentaho.platform.repository.messages.Messages;
+//import org.pentaho.platform.repository.subscription.Subscription;
+//import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class SubscriptionHelperTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";
@@ -51,7 +52,7 @@ public class SubscriptionHelperTest extends BaseTest {
     return SOLUTION_PATH;
   }
 
-  private StandaloneApplicationContext applicationContext;
+//  private StandaloneApplicationContext applicationContext;
 
   public SubscriptionHelperTest() {
     startTest();
@@ -404,7 +405,7 @@ public class SubscriptionHelperTest extends BaseTest {
   public void testDummyTest() {}
 
   public static void main(String[] args) {
-    SubscriptionHelperTest test = new SubscriptionHelperTest();
+//    SubscriptionHelperTest test = new SubscriptionHelperTest();
     //test.testCreateSubscriptionArchive();
     //test.testDeleteSubscriptionArchive();
     //test.testSaveSubscription();

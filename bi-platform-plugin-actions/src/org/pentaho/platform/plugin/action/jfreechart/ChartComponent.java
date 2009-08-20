@@ -46,7 +46,6 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.util.XmlParseException;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -547,7 +546,7 @@ public class ChartComponent extends ComponentBase {
 
             } else if (outputName.equals(ChartComponent.HTML_IMG_TAG)) {
               
-              outputValue = hasTemplate ? mapString : "";
+              outputValue = hasTemplate ? mapString : ""; //$NON-NLS-1$
 
               outputValue += "<img border=\"0\" "; //$NON-NLS-1$
               outputValue += "width=\"" + width + "\" "; //$NON-NLS-1$//$NON-NLS-2$

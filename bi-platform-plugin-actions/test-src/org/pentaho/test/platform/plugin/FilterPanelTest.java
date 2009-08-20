@@ -17,23 +17,24 @@
 */
 package org.pentaho.test.platform.plugin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.services.BaseRequestHandler;
-import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.uifoundation.component.xml.FilterPanelComponent;
-import org.pentaho.platform.util.FileHelper;
-import org.pentaho.platform.util.web.SimpleUrlFactory;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//
+//import org.pentaho.platform.api.engine.IParameterProvider;
+//import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
+//import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.engine.services.BaseRequestHandler;
+//import org.pentaho.platform.plugin.services.messages.Messages;
+//import org.pentaho.platform.uifoundation.component.xml.FilterPanelComponent;
+//import org.pentaho.platform.util.FileHelper;
+//import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class FilterPanelTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

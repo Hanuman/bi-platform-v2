@@ -46,6 +46,8 @@ import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 
 public abstract class MDXBaseComponent extends ComponentBase implements IDataComponent, IPreparedComponent {
 
+  private static final long serialVersionUID = 495868243986115468L;
+
   private static final String RETURN_NULL_CELLS = "returnNullCells"; //$NON-NLS-1$
 
   private IPentahoResultSet rSet;

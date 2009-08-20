@@ -22,7 +22,6 @@ package org.pentaho.test.platform.plugin.chartbeans;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
@@ -32,13 +31,15 @@ import org.pentaho.platform.plugin.action.chartbeans.ChartBeansSystemListener;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 import org.pentaho.test.platform.engine.core.XmlSimpleSystemSettings;
 
+@SuppressWarnings("nls")
 public class ChartBeansSystemListenerTest {
 
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@SuppressWarnings("deprecation")
+  @Before
 	public void setUp() throws Exception {
 		
 		String solutionsRelativePath = "test-src/org/pentaho/test/platform/plugin/chartbeans/solutions";

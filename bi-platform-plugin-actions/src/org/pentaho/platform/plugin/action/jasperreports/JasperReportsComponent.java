@@ -159,10 +159,10 @@ public class JasperReportsComponent extends ComponentBase {
     // development purposes we are calling it every time
 
     // get and validate system settings
-    String imageUrl = PentahoSystem.getSystemSetting(CONFIG_XML, "jasperreports/imageHandling/imageUrl", null); //$NON-NLS-1$ //$NON-NLS-2$
-    String imageDir = PentahoSystem.getSystemSetting(CONFIG_XML, "jasperreports/imageHandling/imageDir", null); //$NON-NLS-1$ //$NON-NLS-2$
+    String imageUrl = PentahoSystem.getSystemSetting(CONFIG_XML, "jasperreports/imageHandling/imageUrl", null); //$NON-NLS-1$ 
+    String imageDir = PentahoSystem.getSystemSetting(CONFIG_XML, "jasperreports/imageHandling/imageDir", null); //$NON-NLS-1$ 
     String removeEmptyRows = PentahoSystem.getSystemSetting(CONFIG_XML,
-        "jasperreports/htmlExportOptions/removeEmptySpaceBetweenRows", "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        "jasperreports/htmlExportOptions/removeEmptySpaceBetweenRows", "false"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
     if (debug) {
       debug(Messages.getString("JasperReport.DEBUG_IMAGE_URL") + imageUrl); //$NON-NLS-1$
@@ -221,7 +221,7 @@ public class JasperReportsComponent extends ComponentBase {
         }
       }
       // check the inputs, we cannot reply on input values during validation
-      if (actionValidated && reportAction.getOutputType() == ActionInputConstant.NULL_INPUT) { //$NON-NLS-1$
+      if (actionValidated && reportAction.getOutputType() == ActionInputConstant.NULL_INPUT) { 
         error(Messages.getErrorString("JasperReport.ERROR_0006_OUTPUT_TYPE_NOT_SPECIFIED")); //$NON-NLS-1$
         actionValidated = false;
       }
@@ -258,7 +258,7 @@ public class JasperReportsComponent extends ComponentBase {
    */
   private JRExporter getExporter(String outputType, String reportName) {
     JRExporter exporter = null;
-    if (HTML.equals(outputType)) { //$NON-NLS-1$
+    if (HTML.equals(outputType)) { 
       String removeEmptyRows = getStringSetting("removeEmptyRows"); //$NON-NLS-1$
       exporter = new JRHtmlExporter();
       exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
@@ -286,25 +286,25 @@ public class JasperReportsComponent extends ComponentBase {
       if (debug) {
         debug(Messages.getString("JasperReport.DEBUG_IMAGE_DIRECTORY", imagePath)); //$NON-NLS-1$
       }
-    } else if (PDF.equals(outputType)) { //$NON-NLS-1$
+    } else if (PDF.equals(outputType)) { 
       exporter = new JRPdfExporter();
-    } else if (XLS.equals(outputType)) { //$NON-NLS-1$
+    } else if (XLS.equals(outputType)) { 
       exporter = new JRXlsExporter();
       // Some cleaning in order to make excel reports look better
       exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
       exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
       exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.TRUE);
       exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-    } else if (CSV.equals(outputType)) { //$NON-NLS-1$
+    } else if (CSV.equals(outputType)) { 
       exporter = new JRCsvExporter();
-    } else if (XML.equals(outputType)) { //$NON-NLS-1$
+    } else if (XML.equals(outputType)) { 
       exporter = new JRXmlExporter();
-    } else if (TXT.equals(outputType)) { //$NON-NLS-1$
+    } else if (TXT.equals(outputType)) { 
       exporter = new JRTextExporter();
       // Add required parameters
-      exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, new Integer("120"));
-      exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, new Integer("120"));
-    } else if (RTF.equals(outputType)) { //$NON-NLS-1$
+      exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, new Integer("120")); //$NON-NLS-1$
+      exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, new Integer("120")); //$NON-NLS-1$
+    } else if (RTF.equals(outputType)) { 
       exporter = new JRRtfExporter();
     }
     return exporter;
@@ -391,7 +391,7 @@ public class JasperReportsComponent extends ComponentBase {
     
     boolean continueProcessing = true;
     String reportDefinitionPath = getReportDefinitionPath(resource);
-    String compiledReportPath = "";
+    String compiledReportPath = ""; //$NON-NLS-1$
 
     if (reportDefinitionPath == null) {
       error(Messages.getErrorString("JasperReport.ERROR_0008_REPORT_DEFINITION_UNREADABLE")); //$NON-NLS-1$
@@ -475,7 +475,7 @@ public class JasperReportsComponent extends ComponentBase {
     }
 
     try {
-      String reportBaseName = "";
+      String reportBaseName = ""; //$NON-NLS-1$
       List jasperPrintList = new ArrayList();
 
       for (String compiledReportPath : compiledReportPaths) {
@@ -544,7 +544,7 @@ public class JasperReportsComponent extends ComponentBase {
       IActionInput actionInput = getActionDefinition().getInput(parameterName);
 
       if (actionInput != null) {
-        if ((actionInput instanceof ActionInput) && ((ActionInput) actionInput).getType().equals("string-list")) {
+        if ((actionInput instanceof ActionInput) && ((ActionInput) actionInput).getType().equals("string-list")) { //$NON-NLS-1$
           Object parameterObject = getInputValue(parameterName);
           parameterValue = sqlQuote(parameterObject);
         } else {
@@ -713,26 +713,27 @@ public class JasperReportsComponent extends ComponentBase {
   private static String getMimeType(String reportOutputType) {
     String mimeType = null;
 
-    if (HTML.equals(reportOutputType)) { //$NON-NLS-1$
-      mimeType = TEXT_HTML; //$NON-NLS-1$
-    } else if (PDF.equals(reportOutputType)) { //$NON-NLS-1$
+    if (HTML.equals(reportOutputType)) { 
+      mimeType = TEXT_HTML; 
+    } else if (PDF.equals(reportOutputType)) { 
       mimeType = "application/pdf"; //$NON-NLS-1$
-    } else if (XLS.equals(reportOutputType)) { //$NON-NLS-1$
+    } else if (XLS.equals(reportOutputType)) { 
       mimeType = "application/vnd.ms-excel"; //$NON-NLS-1$
-    } else if (CSV.equals(reportOutputType)) { //$NON-NLS-1$
+    } else if (CSV.equals(reportOutputType)) { 
       mimeType = "text/text"; //$NON-NLS-1$
-    } else if (XML.equals(reportOutputType)) { //$NON-NLS-1$
+    } else if (XML.equals(reportOutputType)) { 
       mimeType = "text/xml"; //$NON-NLS-1$
-    } else if (TXT.equals(reportOutputType)) { //$NON-NLS-1$
+    } else if (TXT.equals(reportOutputType)) { 
       mimeType = "text/plain"; //$NON-NLS-1$
-    } else if (RTF.equals(reportOutputType)) { //$NON-NLS-1$
+    } else if (RTF.equals(reportOutputType)) { 
       mimeType = "application/rtf"; //$NON-NLS-1$
     } else {
-      mimeType = "application/octet-stream";
+      mimeType = "application/octet-stream"; //$NON-NLS-1$
     }
     return mimeType;
   }
 
+  @SuppressWarnings("deprecation")
   private OutputStream getOutputStream(String mimeType, String extension, IContentItem contentItem) {
     OutputStream outputStream = null;
     JasperReportAction reportAction = (JasperReportAction) getActionDefinition();
@@ -821,23 +822,23 @@ public class JasperReportsComponent extends ComponentBase {
       out = quoteMe((Collection) obj);
     } else {
       if (!(obj instanceof String)) {
-        warn("Unknown type " + obj.getClass() + " in object " + obj);
+        warn("Unknown type " + obj.getClass() + " in object " + obj); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      out = "'" + obj.toString().replaceAll("'", "'") + "'";
+      out = "'" + obj.toString().replaceAll("'", "'") + "'";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }
     return out;
   }
 
   private static String quoteMe(Collection c) {
     if (c.size() == 0) {
-      return "";
+      return ""; //$NON-NLS-1$
     }
 
     StringBuffer sb = new StringBuffer();
     for (Object value : c) {
-      sb.append(",'");
-      sb.append(value.toString().replaceAll("'", "''"));
-      sb.append("'");
+      sb.append(",'"); //$NON-NLS-1$
+      sb.append(value.toString().replaceAll("'", "''")); //$NON-NLS-1$ //$NON-NLS-2$
+      sb.append("'"); //$NON-NLS-1$
     }
     return sb.substring(1);
   }

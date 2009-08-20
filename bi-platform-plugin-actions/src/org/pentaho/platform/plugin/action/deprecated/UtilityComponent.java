@@ -57,6 +57,7 @@ import org.pentaho.platform.plugin.action.messages.Messages;
  * action-input</li>
  * <li><i></i> - </li>
  */
+@SuppressWarnings("deprecation")
 public class UtilityComponent extends ComponentBase {
 
   /**
@@ -89,12 +90,12 @@ public class UtilityComponent extends ComponentBase {
   @Deprecated
   private boolean validateAction(final IActionDefinition actionDefinition) {
     boolean result = true;
-    Element[] elements = actionDefinition.getComponentDefElements("*");
+    Element[] elements = actionDefinition.getComponentDefElements("*"); //$NON-NLS-1$
     for (Element element : elements) {
       String commandName = element.getName();
       if ("format".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
-        if (element.selectSingleNode("format-string") == null) {
-          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$
+        if (element.selectSingleNode("format-string") == null) { //$NON-NLS-1$
+          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
       } else if ("print".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
@@ -102,14 +103,14 @@ public class UtilityComponent extends ComponentBase {
       } else if ("copy".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
         // Do nothing.
       } else if ("getmapvalues".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
-        if (element.selectSingleNode("property-map") == null) {
-          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$
+        if (element.selectSingleNode("property-map") == null) { //$NON-NLS-1$
+          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
-        List paramList = element.selectNodes("arg");
+        List paramList = element.selectNodes("arg"); //$NON-NLS-1$
         if (paramList.size() < 1) {
           error(Messages.getErrorString(
-              "TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), String.valueOf(paramList.size()))); //$NON-NLS-1$
+              "TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), String.valueOf(paramList.size()))); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
       }
@@ -124,7 +125,7 @@ public class UtilityComponent extends ComponentBase {
   private boolean validateFormatAction(final FormatMsgAction formatMsgAction) {
     boolean result = true;
     if (formatMsgAction.getFormatString() == null) {
-      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$
+      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
       result = false;
     }
     return result;
@@ -137,11 +138,11 @@ public class UtilityComponent extends ComponentBase {
   private boolean validateGetMapValuesAction(final PrintMapValsAction getMapValsAction) {
     boolean result = true;
     if (getMapValsAction.getPropertyMap() == ActionInputConstant.NULL_INPUT) {
-      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$
+      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
       result = false;
     }
     if (getMapValsAction.getKeys().length < 1) {
-      error(Messages.getErrorString("TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), "0")); //$NON-NLS-1$
+      error(Messages.getErrorString("TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), "0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       result = false;
     }
     return result;
@@ -153,7 +154,7 @@ public class UtilityComponent extends ComponentBase {
   @Deprecated
   private boolean executeAction(final IActionDefinition actionDefinition) {
     boolean result = true;
-    Element[] elements = actionDefinition.getComponentDefElements("*");
+    Element[] elements = actionDefinition.getComponentDefElements("*"); //$NON-NLS-1$
     for (Element element : elements) {
       String commandName = element.getName();
       if ("format".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
@@ -188,13 +189,13 @@ public class UtilityComponent extends ComponentBase {
     boolean result = true;
 
     String inputName = null;
-    Element element = componentDefinition.element("from");
+    Element element = componentDefinition.element("from"); //$NON-NLS-1$
     if (element != null) {
       inputName = element.getText();
     }
 
     String outputName = null;
-    element = componentDefinition.element("return");
+    element = componentDefinition.element("return"); //$NON-NLS-1$
     if (element != null) {
       outputName = element.getText();
     }
@@ -216,16 +217,16 @@ public class UtilityComponent extends ComponentBase {
    */
   @Deprecated
   private boolean executeFormatAction(final Element componentDefinition) {
-    String formatString = componentDefinition.element("format-string").getText();
+    String formatString = componentDefinition.element("format-string").getText(); //$NON-NLS-1$
 
     String outputName = null;
-    Element element = componentDefinition.element("return");
+    Element element = componentDefinition.element("return"); //$NON-NLS-1$
     if (element != null) {
       outputName = element.getText();
     }
 
     ArrayList formatArgs = new ArrayList();
-    List paramList = componentDefinition.selectNodes("arg");
+    List paramList = componentDefinition.selectNodes("arg"); //$NON-NLS-1$
     for (Iterator it = paramList.iterator(); it.hasNext();) {
       formatArgs.add(((Node) it.next()).getText());
     }
@@ -247,14 +248,14 @@ public class UtilityComponent extends ComponentBase {
    */
   @Deprecated
   private boolean executePrintParamAction(final Element componentDefinition) {
-    String delimiter = "";
-    Element element = componentDefinition.element("delimiter");
+    String delimiter = ""; //$NON-NLS-1$
+    Element element = componentDefinition.element("delimiter"); //$NON-NLS-1$
     if (element != null) {
       delimiter = element.getText();
     }
 
     ArrayList paramNames = new ArrayList();
-    List paramList = componentDefinition.selectNodes("arg");
+    List paramList = componentDefinition.selectNodes("arg"); //$NON-NLS-1$
     for (Iterator it = paramList.iterator(); it.hasNext();) {
       paramNames.add(((Node) it.next()).getText());
     }
@@ -280,13 +281,13 @@ public class UtilityComponent extends ComponentBase {
   @Deprecated
   private boolean executeGetMapValuesAction(final Element componentDefinition) {
     String propertyMapName = null;
-    Element element = componentDefinition.element("property-map");
+    Element element = componentDefinition.element("property-map"); //$NON-NLS-1$
     if (element != null) {
       propertyMapName = element.getText();
     }
 
     ArrayList keyNames = new ArrayList();
-    List paramList = componentDefinition.selectNodes("arg");
+    List paramList = componentDefinition.selectNodes("arg"); //$NON-NLS-1$
     for (Iterator it = paramList.iterator(); it.hasNext();) {
       keyNames.add(((Node) it.next()).getText());
     }
@@ -354,13 +355,13 @@ public class UtilityComponent extends ComponentBase {
   }
 
   private boolean executePrintParamAction(final PrintParamAction printParamAction) {
-    String delimiter = printParamAction.getDelimiter().getStringValue("");
+    String delimiter = printParamAction.getDelimiter().getStringValue(""); //$NON-NLS-1$
     IActionInput[] inputsToPrint = printParamAction.getInputsToPrint();
     boolean result = true;
     try {
       StringBuffer sb = new StringBuffer("\n***************************************************************\n"); //$NON-NLS-1$
       for (IActionInput element : inputsToPrint) {
-        sb.append(element.getStringValue("")).append(delimiter);
+        sb.append(element.getStringValue("")).append(delimiter); //$NON-NLS-1$
       }
       sb.append("\n***************************************************************\n"); //$NON-NLS-1$
       info(sb.toString());

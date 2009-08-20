@@ -116,7 +116,7 @@ public class SQLExecute extends SQLLookupRule {
 
         // tokenize the rawQuery passed into method to find if there are multiple updates to be executed.
         StringTokenizer st = new StringTokenizer(rawQuery, sqlExecuteAction.getMultiStatementSeparator()
-            .getStringValue(";"));
+            .getStringValue(";")); //$NON-NLS-1$
 
         while (st.hasMoreTokens()) {
           //set rawQuery equal to the nextToken.

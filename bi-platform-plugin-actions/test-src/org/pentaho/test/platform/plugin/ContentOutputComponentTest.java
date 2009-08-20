@@ -33,6 +33,7 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.FileHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ContentOutputComponentTest extends BaseTest {
 
   private static final String CO_TEST_NAME = "MultipleComponentTest_ContentOutput_"; //$NON-NLS-1$

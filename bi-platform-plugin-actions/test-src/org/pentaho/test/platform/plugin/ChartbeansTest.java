@@ -39,6 +39,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 @SuppressWarnings("nls")
 public class ChartbeansTest {
+  @SuppressWarnings("serial")
   protected class ChartbeansActionComponent extends ActionComponent {
 
     public ChartbeansActionComponent(String actionString, String instanceId, int outputPreference,
@@ -65,6 +66,7 @@ public class ChartbeansTest {
     session = new StandaloneSession();
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testChartbeansActionComponentJFree() throws IOException {
     //IMPORTANT: This test will fail on local machines, the image being compared against was generated on Hudson!!!
@@ -96,6 +98,7 @@ public class ChartbeansTest {
     assertTrue("Generated content is incorrect", Arrays.equals(generatedContents, originalContents)); //$NON-NLS-1$
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testChartbeansActionComponentOFC() {
     microPlatform.init();

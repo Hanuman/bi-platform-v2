@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.platform.api.engine.AuditException;
-import org.pentaho.platform.api.engine.IActionParameter;
+//import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.InvalidParameterException;
@@ -59,6 +59,7 @@ import org.pentaho.platform.util.FileHelper;
 import org.pentaho.platform.util.JVMParameterProvider;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class MultipleComponentTest extends BaseTest {
 
   /**
@@ -71,11 +72,11 @@ public class MultipleComponentTest extends BaseTest {
 
   private static final String RC_TEST_NAME = "MultipleComponentTest_ReportCharts_"; //$NON-NLS-1$
 
-  private static final String RC_TEST_EXTN = ".html"; //$NON-NLS-1$
-
-  private static final String DS_TEST_NAME = "MultipleComponentTest_DynamicSQL_"; //$NON-NLS-1$
-
-  private static final String DS_TEST_EXTN = ".html"; //$NON-NLS-1$
+//  private static final String RC_TEST_EXTN = ".html"; //$NON-NLS-1$
+//
+//  private static final String DS_TEST_NAME = "MultipleComponentTest_DynamicSQL_"; //$NON-NLS-1$
+//
+//  private static final String DS_TEST_EXTN = ".html"; //$NON-NLS-1$
 
   private ByteArrayOutputStream lastStream;
 
@@ -158,6 +159,7 @@ public class MultipleComponentTest extends BaseTest {
     return MemoryResultSet.createFromArrays(columnHeaders, row);
   }
 
+  @SuppressWarnings("unused")
   private IPentahoResultSet getResultSetFromList() {
     List columnHeadersList = new ArrayList();
     columnHeadersList.add("COL1");//$NON-NLS-1$

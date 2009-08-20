@@ -26,6 +26,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.uifoundation.chart.FlashChartHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class FlashChartHelperTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

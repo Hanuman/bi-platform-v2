@@ -83,6 +83,7 @@ public class SubActionComponent extends ComponentBase {
   public void done() {
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   protected boolean executeAction() throws Throwable {
     SubActionAction subAction = (SubActionAction) getActionDefinition();

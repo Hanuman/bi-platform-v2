@@ -27,6 +27,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
 
+@SuppressWarnings("nls")
 public class HQLConnectionTest extends BaseTestCase {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";

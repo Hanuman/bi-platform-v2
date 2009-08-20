@@ -25,6 +25,7 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class PublishTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

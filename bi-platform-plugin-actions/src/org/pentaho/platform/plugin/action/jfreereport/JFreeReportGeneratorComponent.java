@@ -200,7 +200,7 @@ public class JFreeReportGeneratorComponent extends ComponentBase {
               new PentahoEntityResolver());
           componentNode = settingsDoc.getRootElement();
         } catch (Exception e) {
-          error("Could not get settings from action sequence document", e);
+          error("Could not get settings from action sequence document", e); //$NON-NLS-1$
           return false;
         }
       } else {
@@ -310,6 +310,7 @@ public class JFreeReportGeneratorComponent extends ComponentBase {
     return true;
   }
 
+  @SuppressWarnings("deprecation")
   public String process() {
     // CREATE report-spec.xml
     // USE passed in jfreeReportTemplate as "include" -- stuff in

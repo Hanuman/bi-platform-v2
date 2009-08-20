@@ -17,14 +17,15 @@
 */
 package org.pentaho.test.platform.plugin;
 
-import java.text.SimpleDateFormat;
-
-import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.commons.connection.PentahoDataTransmuter;
-import org.pentaho.platform.api.engine.IActionParameter;
-import org.pentaho.platform.api.engine.IRuntimeContext;
+//import java.text.SimpleDateFormat;
+//
+//import org.pentaho.commons.connection.IPentahoResultSet;
+//import org.pentaho.commons.connection.PentahoDataTransmuter;
+//import org.pentaho.platform.api.engine.IActionParameter;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class PentahoDataTransmuterTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

@@ -68,8 +68,8 @@ public class AnalysisSaver extends PentahoMessenger {
 
   public static int saveAnalysis(final IPentahoSession session, final HashMap props, final String path, String fileName, final boolean overwrite) {
 
-    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
-      throw new RuntimeException(Messages.getErrorString("ANALYSISSAVER.ERROR_0006_SAVE_IS_DISABLED"));
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      throw new RuntimeException(Messages.getErrorString("ANALYSISSAVER.ERROR_0006_SAVE_IS_DISABLED")); //$NON-NLS-1$
     }
 
     int result = 0;
@@ -134,7 +134,7 @@ public class AnalysisSaver extends PentahoMessenger {
       Element asElement = ((Element)actionSequence);
       Node title = null;
       String propertyTitle = (String) props.get(AnalysisSaver.TITLE_NODE_NAME);
-      title = asElement.selectSingleNode(AnalysisSaver.TITLE_NODE_NAME); //$NON-NLS-1$)
+      title = asElement.selectSingleNode(AnalysisSaver.TITLE_NODE_NAME);
       if ( (title == null) && (propertyTitle != null) ) {
         title = asElement.addElement(AnalysisSaver.TITLE_NODE_NAME);
       }

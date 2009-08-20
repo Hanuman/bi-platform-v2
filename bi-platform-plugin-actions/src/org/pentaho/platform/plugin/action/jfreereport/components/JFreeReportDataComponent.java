@@ -90,6 +90,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
     dataComponent = null;
   }
 
+  @SuppressWarnings("unused")
   private PentahoTableDataFactory getQueryComponentDataFactory() throws ClassNotFoundException, InstantiationException,
       IllegalAccessException, Exception {
     PentahoTableDataFactory factory = null;
@@ -123,7 +124,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
             factory = new PentahoTableDataFactory(AbstractJFreeReportComponent.DATACOMPONENT_DEFAULTINPUT,
                 new PentahoTableModel(resultset));
           } else {
-            throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"));
+            throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
           }
         } catch (ClassNotFoundException e) {
         } catch (InstantiationException e) {
@@ -138,6 +139,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
     return factory;
   }
 
+  @SuppressWarnings("unused")
   private PentahoTableDataFactory getJarDataFactory() throws Exception {
     PentahoTableDataFactory factory = null;
     if (isDefinedResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT)) {
@@ -191,15 +193,16 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
             }
           }
         } catch (Exception e) {
-          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE"));
+          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
         }
       } catch (FileNotFoundException e1) {
-        throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress()));
+        throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
       }
     }
     return factory;
   }
 
+  @SuppressWarnings("unused")
   private PentahoTableDataFactory getInputParamDataFactory() {
 
     PentahoTableDataFactory factory = null;

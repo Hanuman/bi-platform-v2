@@ -106,13 +106,13 @@ public class ResultSetCompareComponent extends ComponentBase {
 
     String tempOutputMismatches = compareAction.getOutputMismatches().getStringValue();
     boolean outputMismatches = false;
-    if ((tempOutputMismatches != null) && tempOutputMismatches.trim().toLowerCase().equals("true")) {
+    if ((tempOutputMismatches != null) && tempOutputMismatches.trim().toLowerCase().equals("true")) { //$NON-NLS-1$
       outputMismatches = true;
     }
 
     boolean stopOnError = false;
     String tempStopOnError = compareAction.getStopOnError().getStringValue();
-    if ((tempStopOnError != null) && tempStopOnError.trim().toLowerCase().equals("true")) {
+    if ((tempStopOnError != null) && tempStopOnError.trim().toLowerCase().equals("true")) { //$NON-NLS-1$
       stopOnError = true;
     }
 

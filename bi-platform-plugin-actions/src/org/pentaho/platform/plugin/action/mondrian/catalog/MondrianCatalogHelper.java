@@ -224,8 +224,8 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     }
     // remove EnableXmla if necessary before building the key  
     PropertyList propertyList = Util.parseConnectString(dataSourceInfo);
-    if (propertyList.get("EnableXmla") != null) {
-      propertyList.remove("EnableXmla");
+    if (propertyList.get("EnableXmla") != null) { //$NON-NLS-1$
+      propertyList.remove("EnableXmla"); //$NON-NLS-1$
     }
     return propertyList.toString();
   }
@@ -627,7 +627,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    // DataSources where ProviderType=None are filtered by PentahoXmlaServlet
 	    String dsProviderType = enableXmla ? DataSource.PROVIDER_TYPE_MDP : "None"; //$NON-NLS-1$
 
-	    String catDef = "solution:" + schemaSolutionPath; //$NON-NLS-1$//$NON-NLS-2$
+	    String catDef = "solution:" + schemaSolutionPath; //$NON-NLS-1$
 
 	    MondrianSchema mondrianSchema = mondrianCatalogService.loadMondrianSchema(catDef, session);
 	    
@@ -640,9 +640,9 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
      	  IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);	    	
      	  datasourceService.getDSBoundName(jndiName);
 	    } catch (ObjectFactoryException objface) {
-	      Logger.error("MondrianCatalogHelper",Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$
+	      Logger.error("MondrianCatalogHelper",Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$ //$NON-NLS-2$
 	    } catch (DatasourceServiceException dse) {
-	      Logger.error( "MondrianCatalogHelper", Messages.getErrorString("MondrianCatalogPublisher.ERROR_0001_JNDI_NAMING_ERROR", jndiName), dse); //$NON-NLS-1$
+	      Logger.error( "MondrianCatalogHelper", Messages.getErrorString("MondrianCatalogPublisher.ERROR_0001_JNDI_NAMING_ERROR", jndiName), dse); //$NON-NLS-1$ //$NON-NLS-2$
 	      return -1;
 	    }
 
@@ -660,7 +660,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    try {
 	      mondrianCatalogService.addCatalog(cat, overwrite, session);
 	    } catch (MondrianCatalogServiceException e) {
-	        Logger.error( "MondrianCatalogHelper", Messages.getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$
+	        Logger.error( "MondrianCatalogHelper", Messages.getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$ //$NON-NLS-2$
 	      return -1;
 	    }
 

@@ -32,6 +32,7 @@ import org.pentaho.platform.uifoundation.component.HtmlComponent;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class HTMLComponentTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

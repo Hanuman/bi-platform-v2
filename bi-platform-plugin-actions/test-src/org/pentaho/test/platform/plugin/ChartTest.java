@@ -26,7 +26,7 @@ import java.util.Locale;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
@@ -36,12 +36,13 @@ import org.pentaho.platform.engine.services.BaseRequestHandler;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.uifoundation.chart.CategoryDatasetChartComponent;
 import org.pentaho.platform.uifoundation.chart.ChartHelper;
-import org.pentaho.platform.uifoundation.chart.JFreeChartEngine;
-import org.pentaho.platform.uifoundation.chart.PieDatasetChartComponent;
+//import org.pentaho.platform.uifoundation.chart.JFreeChartEngine;
+//import org.pentaho.platform.uifoundation.chart.PieDatasetChartComponent;
 import org.pentaho.platform.uifoundation.chart.TimeSeriesCollectionChartComponent;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
 
+@SuppressWarnings("nls")
 public class ChartTest extends BaseTestCase {
   StandaloneApplicationContext applicationContext = null;
 

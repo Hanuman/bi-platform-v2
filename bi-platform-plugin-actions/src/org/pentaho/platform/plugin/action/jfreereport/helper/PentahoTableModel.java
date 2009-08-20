@@ -59,6 +59,7 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
     return LogFactory.getLog(getClass());
   }
 
+  @SuppressWarnings("deprecation")
   public int getColumnCount() {
     if (resultSet == null) {
       return 0;
@@ -75,6 +76,7 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
     }
   }
 
+  @SuppressWarnings("deprecation")
   public Object getValueAt(final int rowIndex, int columnIndex) {
     if (resultSet == null) {
       return null;
@@ -120,6 +122,7 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
     return 0;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public String getColumnName(int columnNumber) {
     if (resultSet == null) {
@@ -137,7 +140,7 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
         if (resultSet instanceof IMultiDimensionalResultSet) {
           // If the requested column number is in the range, return it. Otherwise return a blank string
           final String[] columnNames = ((IMultiDimensionalMetaData) resultSet.getMetaData()).getRowHeaderNames();
-          return (columnNumber >= 0 && columnNumber < columnNames.length) ? columnNames[columnNumber] : "";
+          return (columnNumber >= 0 && columnNumber < columnNames.length) ? columnNames[columnNumber] : ""; //$NON-NLS-1$
         }
       } else {
         columnNumber -= rowHeaders[0].length;

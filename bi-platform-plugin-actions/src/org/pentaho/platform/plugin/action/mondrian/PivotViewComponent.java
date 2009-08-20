@@ -183,6 +183,7 @@ public class PivotViewComponent extends ComponentBase {
   public void done() {
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   protected boolean executeAction() throws Throwable {
 
@@ -453,7 +454,7 @@ public class PivotViewComponent extends ComponentBase {
 
     // process the data source connection
     String dataSource = getInputStringValue(StandardSettings.JNDI);
-    setOutputValue(StandardSettings.CONNECTION, dataSource); //$NON-NLS-1$
+    setOutputValue(StandardSettings.CONNECTION, dataSource); 
 
     // process the query
     String queryName = StandardSettings.SQL_QUERY;

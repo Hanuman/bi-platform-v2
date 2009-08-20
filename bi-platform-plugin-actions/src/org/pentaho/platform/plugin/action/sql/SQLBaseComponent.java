@@ -461,7 +461,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
       if (connection instanceof SQLConnection){
         if (((SQLConnection)connection).isForcedForwardOnly()){
-          warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE"));
+          warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
         }
       }
 
@@ -547,7 +547,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       if (sqlConnection.isForcedForwardOnly()){
         isForwardOnly = true;
         live = false;
-        warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE"));
+        warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
       }
 
       if (live) {
@@ -627,7 +627,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           resultSet = sqlConnection.prepareAndExecuteQuery(query, preparedParameters,
               SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
         } else {
-          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE"));
+          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
         }
       }
     } else {
@@ -638,7 +638,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           resultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY,
               SQLConnection.CONCUR_READONLY);
         } else {
-          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE"));
+          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
         }
       }
     }

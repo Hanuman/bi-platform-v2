@@ -54,6 +54,7 @@ public class JFreeReportStreamHtmlComponent extends AbstractGenerateStreamConten
     return ".html"; //$NON-NLS-1$
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {

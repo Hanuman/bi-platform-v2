@@ -27,6 +27,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * @author Michael D'Amour
  * 
  */
+@SuppressWarnings("nls")
 public class RhinoTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

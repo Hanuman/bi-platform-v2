@@ -33,7 +33,8 @@ import org.pentaho.reporting.engine.classic.core.modules.misc.datafactory.Static
  * @author Thomas Morgner
  */
 public class PentahoDataFactory extends StaticDataFactory {
-	private ClassLoader classLoader;
+  private static final long serialVersionUID = 1235223223457803299L;
+  private ClassLoader classLoader;
 
 	public PentahoDataFactory(final ClassLoader classLoader) {
 		this.classLoader = classLoader;

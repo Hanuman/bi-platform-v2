@@ -27,12 +27,13 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
-import org.pentaho.test.platform.engine.core.BaseTestCase;
+//import org.pentaho.test.platform.engine.core.BaseTestCase;
 
+@SuppressWarnings("nls")
 public class XQConnectionTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
-  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
+//  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 
   public String getSolutionPath() {
     File file = new File(SOLUTION_PATH );

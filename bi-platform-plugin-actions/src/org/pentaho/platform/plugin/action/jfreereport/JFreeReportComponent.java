@@ -160,6 +160,7 @@ import org.xml.sax.InputSource;
  * @author mbatchel
  * @created Sep 8, 2005
  */
+@SuppressWarnings("deprecation")
 public class JFreeReportComponent extends AbstractJFreeReportComponent {
   protected static final Log logger = LogFactory.getLog(JFreeReportComponent.class);
 
@@ -338,7 +339,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       factory = getJarDataFactory();
     }
     if (factory == null) {
-      throw new Exception(Messages.getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT"));
+      throw new Exception(Messages.getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
     }
     return factory;
   }
@@ -384,7 +385,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
           factory = new PentahoTableDataFactory(AbstractJFreeReportComponent.DATACOMPONENT_DEFAULTINPUT,
               new PentahoTableModel(resultset));
         } else {
-          throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"));
+          throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
         }
       } catch (ClassNotFoundException e) {
         JFreeReportComponent.logger.error(null, e);
@@ -450,11 +451,11 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
             }
           }
         } catch (Exception e) {
-          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE"));
+          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
         }
       }
     } catch (FileNotFoundException e1) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", jFreeReportAction
+      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", jFreeReportAction //$NON-NLS-1$
           .getDataJar().toString()));
     }
     return factory;
@@ -834,17 +835,17 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
   private String getMimeType(final String outputFormat) {
     String mimeType = null;
     if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_HTML.equals(outputFormat)) {
-      mimeType = "text/html";
+      mimeType = "text/html"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_PDF.equals(outputFormat)) {
-      mimeType = "application/pdf";
+      mimeType = "application/pdf"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_XLS.equals(outputFormat)) {
-      mimeType = "application/vnd.ms-excel";
+      mimeType = "application/vnd.ms-excel"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_CSV.equals(outputFormat)) {
-      mimeType = "text/csv";
+      mimeType = "text/csv"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_RTF.equals(outputFormat)) {
-      mimeType = "application/rtf";
+      mimeType = "application/rtf"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_XML.equals(outputFormat)) {
-      mimeType = "text/xml";
+      mimeType = "text/xml"; //$NON-NLS-1$
     }
     return mimeType;
   }
@@ -852,17 +853,17 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
   private String getFileExtension(final String outputFormat) {
     String fileExtension = null;
     if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_HTML.equals(outputFormat)) {
-      fileExtension = ".html";
+      fileExtension = ".html"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_PDF.equals(outputFormat)) {
-      fileExtension = ".pdf";
+      fileExtension = ".pdf"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_XLS.equals(outputFormat)) {
-      fileExtension = ".xls";
+      fileExtension = ".xls"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_CSV.equals(outputFormat)) {
-      fileExtension = ".csv";
+      fileExtension = ".csv"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_RTF.equals(outputFormat)) {
-      fileExtension = ".rtf";
+      fileExtension = ".rtf"; //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_XML.equals(outputFormat)) {
-      fileExtension = ".xml";
+      fileExtension = ".xml"; //$NON-NLS-1$
     }
     return fileExtension;
   }

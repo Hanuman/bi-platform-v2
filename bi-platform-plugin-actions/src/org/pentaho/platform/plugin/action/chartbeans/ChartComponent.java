@@ -186,10 +186,10 @@ public class ChartComponent {
         if(JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)){
           BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
           Graphics2D graphics = image.createGraphics();
-          graphics.setFont(new Font("serif", Font.BOLD, 20));
+          graphics.setFont(new Font("serif", Font.BOLD, 20)); //$NON-NLS-1$
           graphics.setColor(Color.BLACK);
-          graphics.drawString("No Data", 20, 20);
-          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png";
+          graphics.drawString("No Data", 20, 20); //$NON-NLS-1$
+          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           ImageIO.write(image, outputType, outputStream);
         } else {
           String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("No Data"); //$NON-NLS-1$
@@ -212,8 +212,8 @@ public class ChartComponent {
             sb.append((char)c);
           }
           
-          String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), 
-                                PentahoSystem.getApplicationContext().getBaseUrl() + this.getSwfPath() + "/" + getSwfName());  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+          String flashContent = ChartBeansGeneratorUtil.mergeOpenFlashChartHtmlTemplate(sb.toString().replaceAll("\"", "\\\\\""), //$NON-NLS-1$ //$NON-NLS-2$
+                                PentahoSystem.getApplicationContext().getBaseUrl() + this.getSwfPath() + "/" + getSwfName());  //$NON-NLS-1$
           
           is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
         }
@@ -555,10 +555,10 @@ public class ChartComponent {
   }
   
   public String getSwfPath(){
-    return "openflashchart";
+    return "openflashchart"; //$NON-NLS-1$
   }
   
   public String getSwfName(){
-    return  "open-flash-chart-full-embedded-font.swf";
+    return  "open-flash-chart-full-embedded-font.swf"; //$NON-NLS-1$
   }
 }

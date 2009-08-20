@@ -21,6 +21,8 @@ import org.pentaho.platform.engine.services.solution.ComponentBase;
 
 public abstract class AbstractJFreeReportComponent extends ComponentBase {
 
+  private static final long serialVersionUID = -8064236773763629440L;
+
   protected AbstractJFreeReportComponent() {
   }
 

@@ -88,6 +88,7 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
     return result;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public MasterReport getReport() throws Exception {
 	  MasterReport report = null;
@@ -108,7 +109,7 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
     PentahoTableDataFactory factory = null;
     if (reportSpec != null) {
       if (!isDefinedInput(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY)
-          || "true".equals(getInputParameter(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY))) {
+          || "true".equals(getInputParameter(AbstractJFreeReportComponent.REPORTGENERATEDEFN_REPORTTEMP_PERFQRY))) { //$NON-NLS-1$
         if (reportSpec.getReportSpecChoice().getXqueryUrl() != null) {
           // handle xquery
         } else {
@@ -127,6 +128,7 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
     return factory;
   }
 
+  @SuppressWarnings("deprecation")
   public ReportSpec getReportSpec() throws IOException {
     JFreeReportAction jFreeReportAction = (JFreeReportAction) getActionDefinition();
     DataSource dataSource = new ActivationHelper.PentahoStreamSourceWrapper(jFreeReportAction
@@ -141,6 +143,7 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
     return reportSpec;
   }
 
+  @SuppressWarnings("deprecation")
   private ReportSpec loadFromZip(final InputStream reportSpecInputStream) {
     try {
       ZipInputStream zis = new ZipInputStream(reportSpecInputStream);
@@ -184,7 +187,7 @@ public class ReportWizardSpecComponent extends JFreeReportComponent {
     IPentahoConnection connection = null;
     if (reportSpec.getIsMDX()) {
       // did this ever work??
-      String connectStr = "";
+      String connectStr = ""; //$NON-NLS-1$
       IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       String dsName = datasourceService.getDSBoundName(jndiName);
       if (dsName != null) {

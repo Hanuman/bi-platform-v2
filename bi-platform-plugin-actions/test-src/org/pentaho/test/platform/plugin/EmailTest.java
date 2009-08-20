@@ -28,6 +28,7 @@ import org.pentaho.test.platform.engine.core.BaseTestCase;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 
+@SuppressWarnings("nls")
 @Ignore
 public class EmailTest extends BaseTestCase {
 

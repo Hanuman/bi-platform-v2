@@ -20,6 +20,7 @@ package org.pentaho.test.platform.plugin;
 import org.pentaho.platform.plugin.action.mondrian.MissingParameterException;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class MissingParameterExceptionTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

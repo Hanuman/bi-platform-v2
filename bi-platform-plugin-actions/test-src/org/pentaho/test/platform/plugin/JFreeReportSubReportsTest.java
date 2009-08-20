@@ -17,14 +17,14 @@
 */
 package org.pentaho.test.platform.plugin;
 
-import java.io.OutputStream;
+//import java.io.OutputStream;
 import java.util.Map;
 
-import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.plugin.services.messages.Messages;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
+//import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 /**
@@ -33,6 +33,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * @author Will Gorman
  *
  */
+@SuppressWarnings("nls")
 public class JFreeReportSubReportsTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

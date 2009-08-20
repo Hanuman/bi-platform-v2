@@ -24,8 +24,8 @@ import java.util.Map;
 import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
-import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -34,6 +34,7 @@ import org.pentaho.platform.uifoundation.component.ActionComponent;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ReportingTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

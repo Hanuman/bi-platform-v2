@@ -59,6 +59,8 @@ import org.pentaho.platform.plugin.action.messages.Messages;
 
 public abstract class XMLABaseComponent extends ComponentBase implements IDataComponent {
 
+  private static final long serialVersionUID = 8405489984774339891L;
+
   private static final String MDD_URI = "urn:schemas-microsoft-com:xml-analysis:mddataset"; //$NON-NLS-1$
 
   private static final String ROWS_URI = "urn:schemas-microsoft-com:xml-analysis:rowset"; //$NON-NLS-1$
@@ -363,7 +365,7 @@ public abstract class XMLABaseComponent extends ComponentBase implements IDataCo
               }
               SOAPElement el = (SOAPElement) n;
               String enam = el.getElementName().getLocalName();
-              if (enam.equals("Caption")) {
+              if (enam.equals("Caption")) { //$NON-NLS-1$
                 caption = el.getValue();
               }
             }

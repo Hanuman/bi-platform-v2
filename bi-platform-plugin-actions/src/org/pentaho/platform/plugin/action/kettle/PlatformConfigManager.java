@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.pentaho.di.core.config.BasicConfigManager;
 import org.pentaho.di.core.plugins.PluginLocation;
-import org.pentaho.platform.api.engine.ISolutionFile;
 
 /**
  * This configuration manager can be used to load kettle plugins located at ${PENTAHO_SOLUTIONS}/system/kettle/plugins

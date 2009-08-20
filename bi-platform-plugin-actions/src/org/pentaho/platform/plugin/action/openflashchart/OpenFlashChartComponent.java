@@ -89,9 +89,9 @@ public class OpenFlashChartComponent extends ComponentBase {
 
   private static final String BY_ROW_PROP = "by-row"; //$NON-NLS-1$
 
-  private static final String DEFAULT_WIDTH = "100%";
+  private static final String DEFAULT_WIDTH = "100%"; //$NON-NLS-1$
 
-  private static final String DEFAULT_HEIGHT = "100%";
+  private static final String DEFAULT_HEIGHT = "100%"; //$NON-NLS-1$
 
   protected String template = null;
 

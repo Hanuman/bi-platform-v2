@@ -156,7 +156,7 @@ public class JavascriptRule extends ComponentBase {
         int i = 1;
         while (true) {
           if (jscriptAction.getInput("output" + i) != ActionInputConstant.NULL_INPUT) { //$NON-NLS-1$
-            outputNames.add(jscriptAction.getInput("output" + i).getStringValue());
+            outputNames.add(jscriptAction.getInput("output" + i).getStringValue()); //$NON-NLS-1$
           } else {
             break;
           }

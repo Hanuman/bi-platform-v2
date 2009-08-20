@@ -137,7 +137,7 @@ public class MondrianDataSource {
   }
 
   protected boolean isXmla() {
-    return !"False".equals(propertyList.get("EnableXmla")); //$NON-NLS-1$
+    return !"False".equals(propertyList.get("EnableXmla")); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   @Override

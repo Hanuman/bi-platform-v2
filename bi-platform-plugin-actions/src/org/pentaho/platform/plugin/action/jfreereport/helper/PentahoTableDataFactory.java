@@ -19,7 +19,6 @@ package org.pentaho.platform.plugin.action.jfreereport.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.table.TableModel;
@@ -44,6 +43,8 @@ import org.pentaho.reporting.engine.classic.core.util.CloseableTableModel;
  * @author Will Gorman
  */
 public class PentahoTableDataFactory implements DataFactory, Cloneable {
+
+  private static final long serialVersionUID = -338882557376609479L;
 
   /** map of tables to keep track of */
   private HashMap<String, TableModel> tables;

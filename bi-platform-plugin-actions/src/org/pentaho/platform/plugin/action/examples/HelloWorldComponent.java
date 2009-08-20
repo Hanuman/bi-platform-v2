@@ -75,7 +75,7 @@ public class HelloWorldComponent extends ComponentBase {
     boolean result = true;
 
     // return the quote as the result of this component
-    String msg = Messages.getString("HelloWorld.USER_HELLO_WORLD_TEXT", helloWorldAction.getQuote().getStringValue("")); //$NON-NLS-1$
+    String msg = Messages.getString("HelloWorld.USER_HELLO_WORLD_TEXT", helloWorldAction.getQuote().getStringValue("")); //$NON-NLS-1$ //$NON-NLS-2$
 
     OutputStream outputStream = getDefaultOutputStream("text/html"); //$NON-NLS-1$
     if (outputStream != null) {

@@ -52,7 +52,7 @@ public class SQLDdlComponent extends SQLLookupRule {
 		        int n = ((SQLConnection)connection).execute(query);
 
 		          Object columnHeaders[][] = new Object[1][1];
-		          columnHeaders[0][0] = "result";
+		          columnHeaders[0][0] = "result"; //$NON-NLS-1$
 		          IPentahoMetaData metadata = new MemoryMetaData(columnHeaders, null);
 
 		          resultSet = new MemoryResultSet(metadata);

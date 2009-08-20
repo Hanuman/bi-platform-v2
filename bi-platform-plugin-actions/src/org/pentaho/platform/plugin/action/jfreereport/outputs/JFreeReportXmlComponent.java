@@ -47,6 +47,7 @@ public class JFreeReportXmlComponent extends AbstractGenerateStreamContentCompon
     return ".xml"; //$NON-NLS-1$
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   protected boolean performExport(final MasterReport report, final OutputStream outputStream) {
     try {

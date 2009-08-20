@@ -17,13 +17,14 @@
 */
 package org.pentaho.test.platform.plugin;
 
-import org.pentaho.commons.connection.IPentahoMetaData;
-import org.pentaho.commons.connection.IPentahoResultSet;
+//import org.pentaho.commons.connection.IPentahoMetaData;
+//import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class RulesTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";
