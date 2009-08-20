@@ -29,11 +29,8 @@ import org.pentaho.ui.xul.gwt.GwtXulRunner;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
 import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
-import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 import org.pentaho.ui.xul.util.DialogController;
-
-import com.google.gwt.core.client.GWT;
 
 public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogController<LogicalModelSummary> {
 

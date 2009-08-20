@@ -28,6 +28,7 @@ import org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceMessages;
 
 public class CsvModelTest {
   
+  @SuppressWarnings("nls")
   @Test
   public void test() {
   

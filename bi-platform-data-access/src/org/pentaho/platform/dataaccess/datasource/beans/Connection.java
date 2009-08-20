@@ -26,6 +26,7 @@ import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class Connection extends XulEventSourceAdapter implements IConnection{
 
+  private static final long serialVersionUID = 5825649640767205332L;
   private String name;
   private String driverClass;
   private String username;

@@ -163,7 +163,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
         public Boolean sourceToTarget(final Integer value) {
           return 
               value > -1 && administrator && 
-              datasourceSelectionDialogModel.getLogicalModelSummaries().get(value).getModelId().equals("MODEL_1")
+              datasourceSelectionDialogModel.getLogicalModelSummaries().get(value).getModelId().equals("MODEL_1") //$NON-NLS-1$
           ;
         }
 

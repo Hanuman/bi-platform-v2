@@ -46,6 +46,7 @@ import java.lang.Boolean;
  */
 public class BogoPojo implements Serializable{
 
+  private static final long serialVersionUID = 7542132543385685472L;
   TargetTableType targetTableType;
   LocalizedString localizedString;
   DataType dataType;

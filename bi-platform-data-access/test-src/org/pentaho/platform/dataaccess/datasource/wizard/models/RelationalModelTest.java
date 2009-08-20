@@ -27,6 +27,7 @@ import org.pentaho.platform.dataaccess.datasource.beans.Connection;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.RelationalModel.ConnectionEditType;
 
 
+@SuppressWarnings("nls")
 public class RelationalModelTest {
   
   @Test

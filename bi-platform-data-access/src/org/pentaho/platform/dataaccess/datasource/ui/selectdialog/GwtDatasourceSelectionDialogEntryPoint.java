@@ -55,6 +55,7 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
     }
   }-*/;
 
+  @SuppressWarnings("unused")
   private void show(final JavaScriptObject callback) {
     final DialogListener<LogicalModelSummary> listener = new DialogListener<LogicalModelSummary>(){
       public void onDialogCancel() {
