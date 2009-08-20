@@ -69,6 +69,7 @@ import org.springframework.security.userdetails.UserDetails;
  *
  */
 
+@SuppressWarnings("deprecation")
 public class PentahoUserOverridesVoter extends PentahoBasicAclVoter {
 
   @Override

@@ -44,6 +44,7 @@ import org.springframework.security.acl.basic.AbstractBasicAclEntry;
  * @author mbatchel
  */
 
+@SuppressWarnings("deprecation")
 public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAclEntry {
 
   private static final Log logger = LogFactory.getLog(PentahoAclEntry.class);
@@ -113,7 +114,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
             && Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers())
             && field.getName().startsWith(PERMISSION_PREFIX)) {
           if (PentahoAclEntry.logger.isDebugEnabled()) {
-            PentahoAclEntry.logger.debug("Candidate field: " + field.getName());
+            PentahoAclEntry.logger.debug("Candidate field: " + field.getName()); //$NON-NLS-1$
           }
 
           // power of two (0-based)
@@ -127,7 +128,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
           if (powerOfTwo == (int) powerOfTwo) {
             if (powerOfTwo > maxPower) {
               if (PentahoAclEntry.logger.isDebugEnabled()) {
-                PentahoAclEntry.logger.debug("Found new power of two.");
+                PentahoAclEntry.logger.debug("Found new power of two."); //$NON-NLS-1$
               }
               maxPower = (int) powerOfTwo;
             }
@@ -135,7 +136,7 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
         }
       }
       if (PentahoAclEntry.logger.isDebugEnabled()) {
-        PentahoAclEntry.logger.debug("Max power of two: " + maxPower);
+        PentahoAclEntry.logger.debug("Max power of two: " + maxPower); //$NON-NLS-1$
       }
 
       int numberOfPermutations = (int) Math.pow(2, maxPower + 1);

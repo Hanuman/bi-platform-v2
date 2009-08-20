@@ -74,6 +74,7 @@ import org.springframework.security.acl.basic.GrantedAuthorityEffectiveAclsResol
  *
  */
 
+@SuppressWarnings("deprecation")
 public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAclVoter {
 
   // Allow overriding of the obtaining of the authentication. This

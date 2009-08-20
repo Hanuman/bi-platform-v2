@@ -55,6 +55,7 @@ public class SpringSecurityPermissionMgr implements IPermissionMgr {
   /**
    * Converts from List&lt;IPentahoAclEntry&gt; to Map&lt;IPermissionRecipient, IPermissionMask&gt;.
    */
+  @SuppressWarnings("deprecation")
   protected Map<IPermissionRecipient, IPermissionMask> transformEntries(List<IPentahoAclEntry> entriesFromHolder) {
     Map<IPermissionRecipient, IPermissionMask> permissionsMap = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
     for (IPentahoAclEntry pentahoAclEntry : entriesFromHolder) {
@@ -73,6 +74,7 @@ public class SpringSecurityPermissionMgr implements IPermissionMgr {
     return permissionsMap;
   }
   
+  @SuppressWarnings("deprecation")
   public void setPermission(final IPermissionRecipient permissionRecipient, final IPermissionMask permission,
       final Object object) {
     if (object == null || !(object instanceof IAclHolder)) {
@@ -93,6 +95,7 @@ public class SpringSecurityPermissionMgr implements IPermissionMgr {
     //    HibernateUtil.commitTransaction(); - This should be covered by the exitPoint call
   }
 
+  @SuppressWarnings("deprecation")
   public void setPermissions(final Map<IPermissionRecipient, IPermissionMask> permissionsMap, final Object object) {
     if (object == null || !(object instanceof IAclHolder)) {
       // i would argue that the "object" parameter should be IAclHolder!

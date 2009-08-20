@@ -28,6 +28,7 @@ import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.acl.AclEntry;
 
+@SuppressWarnings("deprecation")
 public class PentahoAllowAllAclVoter extends AbstractPentahoAclVoter {
 
   public boolean hasAccess(final IPentahoSession session, final IAclHolder holder, final int mask) {

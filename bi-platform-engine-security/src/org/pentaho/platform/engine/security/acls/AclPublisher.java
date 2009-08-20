@@ -119,6 +119,7 @@ public class AclPublisher implements IAclPublisher {
     defaultAcls = aclFromNodeList(sysAcls);
   }
 
+  @SuppressWarnings("deprecation")
   private Map<IPermissionRecipient, IPermissionMask> aclFromNodeList(final List sysAcls) {
     Map<IPermissionRecipient, IPermissionMask> pentahoAclEntries = new LinkedHashMap<IPermissionRecipient, IPermissionMask>();
 
