@@ -89,6 +89,7 @@ import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISolutionRepositoryService;
@@ -98,7 +99,6 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
@@ -1839,23 +1839,26 @@ public class AdhocWebService extends ServletBase {
     return folderElement;
   }
 
-  private Document getFullSolutionDoc( final IPentahoSession userSession ) {
+  private Document getWaqrTemplates( final IPentahoSession userSession, String path ) {
     
     Document fullDoc = null;
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     ICacheManager cacheManager = PentahoSystem.getCacheManager( userSession );
+    ISolutionFile startingFile = repository.getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE);
+    ISolutionFilter waqrTemplateFilter = new ISolutionFilter() {
+      public boolean keepFile(ISolutionFile solutionFile, int actionOperation) {
+        return (solutionFile.isDirectory() || solutionFile.getFullPath().toLowerCase().contains(WAQR_REPOSITORY_PATH));
+      }     
+    };
 
-    if ( null != cacheManager )
-    {
+    if ( cacheManager != null ) {
       fullDoc = (Document) cacheManager.getFromSessionCache(userSession, AdhocWebService.FULL_SOLUTION_DOC );
       if (fullDoc == null) {
-        fullDoc = repository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
+        fullDoc = repository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, waqrTemplateFilter, startingFile);
         cacheManager.putInSessionCache(userSession, AdhocWebService.FULL_SOLUTION_DOC, fullDoc);
       }
-    }
-    else
-    {
-      fullDoc = repository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
+    } else {
+      fullDoc = repository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, waqrTemplateFilter, startingFile);
     }
     return fullDoc;
   }
@@ -1873,7 +1876,7 @@ public class AdhocWebService extends ServletBase {
       path += folderPath;
     }
 
-    Document fullDoc = getFullSolutionDoc( userSession );
+    Document fullDoc = getWaqrTemplates( userSession, path );
     
     Element folderElement = AdhocWebService.getFolderElement( fullDoc, path );
     Document systemDoc = null;
@@ -1886,8 +1889,6 @@ public class AdhocWebService extends ServletBase {
       String msg = Messages.getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
-    // TODO sbarkdull
-    //String tmp = systemDoc.asXML();
     return systemDoc;
   }
   

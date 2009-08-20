@@ -749,14 +749,17 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public Document getFullSolutionTree(final int actionOperation, final ISolutionFilter filter) {
-
+    return getFullSolutionTree(actionOperation, filter, null);
+  }
+  
+  public Document getFullSolutionTree(final int actionOperation, final ISolutionFilter filter, ISolutionFile startingFile) {
+    startingFile = startingFile == null ? new FileSolutionFile(rootFile, rootFile) : startingFile;
     Document document = DocumentHelper.createDocument();
     Element root = document.addElement(SolutionReposHelper.TREE_NODE_NAME);
 
-    SolutionReposHelper.processSolutionTree(root, new FileSolutionFile(rootFile, rootFile), SolutionReposHelper.KEEP_ALL_FILTER,
-        SolutionReposHelper.ADD_NOTHING_CONTRIBUTOR, null, null, actionOperation);
+    SolutionReposHelper.processSolutionTree(root, startingFile, filter, SolutionReposHelper.ADD_NOTHING_CONTRIBUTOR, actionOperation);
 
-    return document;
+    return document;  
   }
 
   protected boolean isCachingAvailable() {

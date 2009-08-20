@@ -216,6 +216,8 @@ public interface ISolutionRepository extends ILogger {
   public ClassLoader getClassLoader(String path);
 
   public Document getFullSolutionTree(int actionOperation, ISolutionFilter filter);
+  
+  public Document getFullSolutionTree(int actionOperation, ISolutionFilter filter, ISolutionFile startFile);
 
   /**
    * Returns an XML document that defines the entire solution tree.  This general purpose method

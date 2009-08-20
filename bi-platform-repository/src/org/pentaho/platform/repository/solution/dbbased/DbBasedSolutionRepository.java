@@ -993,6 +993,11 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     return rootDirectory;
   }
 
+  public Document getFullSolutionTree(final int actionOperation, final ISolutionFilter filter, ISolutionFile startingFile) {
+    startingFile = startingFile == null ? getRootFolder(actionOperation) : startingFile;
+    return super.getFullSolutionTree(actionOperation, filter, startingFile);
+  }
+  
   protected RepositoryFile getSolutionById(final String anId) {
     Session hibSession = HibernateUtil.getSession();
     RepositoryFile rtn = (RepositoryFile) hibSession.load(RepositoryFile.class, anId);
