@@ -41,6 +41,7 @@ import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+@SuppressWarnings("nls")
 public class SystemSettingsTest extends TestCase {
 
 	private static final String SOLUTION_PATH = "projects/core/test-src/solution";
@@ -115,6 +116,7 @@ public class SystemSettingsTest extends TestCase {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void testPublishers() {
     	Assert.assertTrue( "Initialization of the platform failed", init() );
         String publishersXml = null;

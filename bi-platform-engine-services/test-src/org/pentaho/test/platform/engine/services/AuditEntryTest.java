@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import org.pentaho.platform.engine.core.audit.AuditEntry;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class AuditEntryTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   public String getSolutionPath() {

@@ -30,6 +30,7 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class AuditHelperTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   public String getSolutionPath() {

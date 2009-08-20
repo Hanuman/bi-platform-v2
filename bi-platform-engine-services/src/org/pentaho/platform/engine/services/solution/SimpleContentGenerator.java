@@ -26,6 +26,8 @@ import org.pentaho.platform.engine.services.messages.Messages;
 
 public abstract class SimpleContentGenerator extends BaseContentGenerator {
 
+  private static final long serialVersionUID = -8882315618256741737L;
+
   @Override
   public void createContent() throws Exception {
     OutputStream out = null;

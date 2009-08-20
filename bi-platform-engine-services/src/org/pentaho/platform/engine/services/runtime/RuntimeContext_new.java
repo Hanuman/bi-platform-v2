@@ -67,13 +67,13 @@ public class RuntimeContext_new extends RuntimeContextBase implements IRuntimeCo
    */
   private static final long serialVersionUID = -1179016850860938879L;
 
-  private IRuntimeElement runtimeData;
+//  private IRuntimeElement runtimeData;
 
   private String currentComponent;
 
   private int promptStatus = IRuntimeContext.PROMPT_NO;
 
-  private int contentSequenceNumber; // = 0
+//  private int contentSequenceNumber; // = 0
 
   /*
    * public RuntimeContext( IApplicationContext applicationContext, String

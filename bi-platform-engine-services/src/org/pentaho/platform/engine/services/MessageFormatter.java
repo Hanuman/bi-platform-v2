@@ -27,7 +27,6 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
-import org.pentaho.platform.util.VersionHelper;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class MessageFormatter implements IMessageFormatter {
@@ -78,8 +77,8 @@ public class MessageFormatter implements IMessageFormatter {
       final StringBuffer messageBuffer) {
     // TODO make this template or XSL based
 
-    String product = VersionHelper.getVersionInfo().getProductID();
-    String version = VersionHelper.getVersionInfo().getVersionNumber();
+//    String product = VersionHelper.getVersionInfo().getProductID();
+//    String version = VersionHelper.getVersionInfo().getVersionNumber();
     if ("text/html".equals(mimeType)) { //$NON-NLS-1$
       messageBuffer
           .append("<html><head><title>") //$NON-NLS-1$
@@ -139,6 +138,7 @@ public class MessageFormatter implements IMessageFormatter {
     formatFailureMessage(mimeType, context, messageBuffer, null);
   }
 
+  @SuppressWarnings("deprecation")
   public void formatResultSetAsHTMLRows(final IPentahoResultSet resultSet, final StringBuffer messageBuffer) {
     boolean hasColumnHeaders = false;
     boolean hasRowHeaders = false;
@@ -200,6 +200,7 @@ public class MessageFormatter implements IMessageFormatter {
     formatSuccessMessage(mimeType, context, messageBuffer, doMessages, true);
   }
 
+  @SuppressWarnings("deprecation")
   public void formatSuccessMessage(final String mimeType, final IRuntimeContext context,
       final StringBuffer messageBuffer, final boolean doMessages, final boolean doWrapper) {
 

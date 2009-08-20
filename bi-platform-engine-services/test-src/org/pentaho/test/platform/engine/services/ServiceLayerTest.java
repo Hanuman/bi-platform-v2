@@ -39,6 +39,7 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.objfac.StandaloneSpringPentahoObjectFactory;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 
+@SuppressWarnings("nls")
 public class ServiceLayerTest extends TestCase {
 
   final String SYSTEM_FOLDER = "/system";

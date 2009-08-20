@@ -52,6 +52,8 @@ import org.pentaho.platform.engine.services.messages.Messages;
  */
 public abstract class ComponentBase extends PentahoMessenger implements IComponent, IParameterResolver {
 
+  private static final long serialVersionUID = -1344533990604702214L;
+
   protected static final String UNKNOWN_COMPONENT_ID = "unknown"; //$NON-NLS-1$
 
   public static final String MISSING_SESSION = "session missing"; //$NON-NLS-1$
@@ -421,7 +423,7 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
     // Fix regression issue - BISERVER-3004 (MB) --- Start
     String xsl = null;
     // see if we have a custom XSL for the parameter page, if required
-    if (isDefinedInput("xsl")) {
+    if (isDefinedInput("xsl")) { //$NON-NLS-1$
       xsl = getComponentSetting("xsl"); //$NON-NLS-1$
     }
     if (xsl != null) {

@@ -31,7 +31,9 @@ import org.pentaho.platform.engine.core.system.PentahoBase;
 
 public abstract class BaseContentGenerator extends PentahoBase implements IContentGenerator {
 
-	protected String instanceId;
+  private static final long serialVersionUID = 393425104931794680L;
+
+  protected String instanceId;
 	
 	protected Map<String, IParameterProvider> parameterProviders;
 	

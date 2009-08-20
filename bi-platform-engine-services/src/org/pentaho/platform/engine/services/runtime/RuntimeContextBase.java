@@ -95,6 +95,12 @@ import org.pentaho.platform.util.xml.XForm;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
+/*
+ * 
+ * This isn't used right now.
+ * 
+ */
+
 /**
  * @author James Dixon
  * 
@@ -179,6 +185,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
 
   private static final Log logger = LogFactory.getLog(RuntimeContextBase.class);
 
+  @SuppressWarnings("unused")
   private ICreateFeedbackParameterCallback createFeedbackParameterCallback;
   
   static {
@@ -611,14 +618,14 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
 					  byte buffer[] = new byte[4096];
 					  int n = in.read( buffer );
 					  while( n != -1 ) {
-						  str.append( new String( buffer, 0, n, "UTF-8" ) );
+						  str.append( new String( buffer, 0, n, "UTF-8" ) ); //$NON-NLS-1$
 						  n = in.read( buffer );
 					  }
 					  // we have the text now generate a DOM
 					  Document doc = DocumentHelper.parseText( str.toString() );
 					  if( doc != null ) {
 						  // look for nodes 
-						  List nodes = doc.selectNodes( ActionFactory.PLUGIN_ROOT_NODE+"/"+"bi-component" );
+						  List nodes = doc.selectNodes( ActionFactory.PLUGIN_ROOT_NODE+"/bi-component" ); //$NON-NLS-1$
 						  Iterator it = nodes.iterator();
 						  while( it.hasNext() ) {
 							  // make sure that one failed class will not affect any others
@@ -626,7 +633,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
 								  // pull the class name from each node
 								  Element node = (Element) it.next();
 								  String className = node.getText();
-								  String id = node.attributeValue( "id" );
+								  String id = node.attributeValue( "id" ); //$NON-NLS-1$
 								  if( id != null ) {
 									  knownComponents.put( id , className );
 								  }
@@ -663,7 +670,7 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
         }
       }
     } catch (Exception ex) {
-      RuntimeContextBase.logger.warn("Could not read plugin.properties from the runtime package.");
+      RuntimeContextBase.logger.warn("Could not read plugin.properties from the runtime package."); //$NON-NLS-1$
     }
     
     // next load from resources, this lets plugin jars get in there
@@ -674,20 +681,20 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
     // Note - If the override wants to remove an existing "known" plugin, 
     // simply adding an empty value will cause the "known" plugin to be removed.
     //
-    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, new StandaloneSession("system"));
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, new StandaloneSession("system")); //$NON-NLS-1$
     if (solutionRepository == null) {
       // this is ok
       return knownComponents;
     }
     try {
-      InputStream is = solutionRepository.getResourceInputStream("system/plugin.properties", false, ISolutionRepository.ACTION_EXECUTE);
+      InputStream is = solutionRepository.getResourceInputStream("system/plugin.properties", false, ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
       Properties overrideComponents = new Properties();
       overrideComponents.load(is);
       knownComponents.putAll(overrideComponents); // load over the top of the known properties
     } catch (FileNotFoundException ignored) {
-      RuntimeContextBase.logger.warn("No override plugin properties found in the system solution");
+      RuntimeContextBase.logger.warn("No override plugin properties found in the system solution"); //$NON-NLS-1$
     } catch (IOException ignored) {
-      RuntimeContextBase.logger.warn("Exception reading override properties");
+      RuntimeContextBase.logger.warn("Exception reading override properties"); //$NON-NLS-1$
     }
 
     return knownComponents;
@@ -869,11 +876,11 @@ public abstract class RuntimeContextBase extends PentahoMessenger implements IRu
         name = element.getName();
         value = element.getText();
         // see if we have a target window for the output
-        if ("target".equals(name)) {
+        if ("target".equals(name)) { //$NON-NLS-1$
           setParameterTarget(value);
         } else {
           // see if we have a custom XSL for the parameter page, if required
-          if ("xsl".equals(name)) {
+          if ("xsl".equals(name)) { //$NON-NLS-1$
             setParameterXsl(value);
           } else {
             //Proposed fix for bug BISERVER-97 by Ezequiel Cuellar

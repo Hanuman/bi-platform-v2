@@ -28,6 +28,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 
+@SuppressWarnings("nls")
 public class ServiceTestHelper {
 
 	public static String getXAction( String solutionRoot, String actionPath ) {

@@ -49,7 +49,7 @@ public class AuditConnection {
 
   private boolean useNewDatasourceService = false;
   
-  private static final String auditConfigFile = "audit_sql.xml";
+  private static final String auditConfigFile = "audit_sql.xml"; //$NON-NLS-1$
   
   /**
    * This ugliness exists because of bug http://jira.pentaho.com/browse/BISERVER-3478. Once this 
@@ -70,23 +70,23 @@ public class AuditConnection {
     
   static {
     
-    String tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverURL", null);//$NON-NLS-1$ //$NON-NLS-2$
+    String tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverURL", null);//$NON-NLS-1$
     DRIVER_URL = (tmp !=null) ? tmp:
       PentahoSystem.getSystemSetting("auditConnection/driverURL", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_URL"));//$NON-NLS-1$ //$NON-NLS-2$
 
-    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverCLASS", null);//$NON-NLS-1$ //$NON-NLS-2$
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverCLASS", null);//$NON-NLS-1$
     DRIVER_CLASS = (tmp !=null) ? tmp: 
       PentahoSystem.getSystemSetting("auditConnection/driverCLASS", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_DRIVER"));//$NON-NLS-1$ //$NON-NLS-2$
       
-    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/userid", null);//$NON-NLS-1$ //$NON-NLS-2$
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/userid", null);//$NON-NLS-1$
     DRIVER_USERID = (tmp !=null) ? tmp:  
       PentahoSystem.getSystemSetting("auditConnection/userid", "sa");//$NON-NLS-1$ //$NON-NLS-2$
 
-    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/password", null);//$NON-NLS-1$ //$NON-NLS-2$
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/password", null);//$NON-NLS-1$
     DRIVER_PASSWORD = (tmp !=null) ? tmp:   
       PentahoSystem.getSystemSetting("auditConnection/password", "");//$NON-NLS-1$ //$NON-NLS-2$
       
-    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/JNDI", null);//$NON-NLS-1$ //$NON-NLS-2$
+    tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/JNDI", null);//$NON-NLS-1$
     AUDIT_JNDI = (tmp !=null) ? tmp:   
           PentahoSystem.getSystemSetting("auditConnection/JNDI", "Hibernate");//$NON-NLS-1$ //$NON-NLS-2$
     

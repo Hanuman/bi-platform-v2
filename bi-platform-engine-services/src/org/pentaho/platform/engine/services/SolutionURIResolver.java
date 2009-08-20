@@ -37,7 +37,6 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.logging.Logger;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader {
 

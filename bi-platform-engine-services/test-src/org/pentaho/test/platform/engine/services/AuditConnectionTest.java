@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 import org.pentaho.platform.engine.services.audit.AuditConnection;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class AuditConnectionTest extends BaseTest {
 	private static String SOLUTION_PATH = "test-src/solution";
 	

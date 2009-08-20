@@ -30,6 +30,7 @@ import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.schema.security.SecurityOwner;
 import org.springframework.security.GrantedAuthorityImpl;
 
+@SuppressWarnings("deprecation")
 public class CWMAclHolder implements IAclHolder {
 
   List accessControls = new ArrayList();

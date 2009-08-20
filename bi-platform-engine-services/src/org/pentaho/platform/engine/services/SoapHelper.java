@@ -220,6 +220,7 @@ public class SoapHelper {
     return null;
   }
 
+  @SuppressWarnings("deprecation")
   private static String toSOAP(final String name, final IPentahoResultSet resultSet) {
     StringBuffer messageBuffer = new StringBuffer();
     messageBuffer.append("<" + name + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
