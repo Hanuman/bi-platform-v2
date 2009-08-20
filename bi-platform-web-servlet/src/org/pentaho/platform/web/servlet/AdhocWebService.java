@@ -661,8 +661,8 @@ public class AdhocWebService extends ServletBase {
       throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
     }
     
-    String locale = PMDUIComponent.getClosestLocaleInDomain(queryObject.getDomain());
-    
+    String locale = LocaleHelper.getClosestLocale(LocaleHelper.getLocale().toString(), queryObject.getDomain().getLocaleCodes());
+
     String reportXMLEncoding = XmlHelper.getEncoding(reportXML);
     ByteArrayInputStream reportSpecInputStream = new ByteArrayInputStream(reportXML.getBytes( reportXMLEncoding ));
     ReportSpec reportSpec = (ReportSpec) CastorUtility.getInstance().readCastorObject(reportSpecInputStream,
