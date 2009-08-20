@@ -30,6 +30,8 @@ import org.pentaho.platform.engine.core.messages.Messages;
 
 public abstract class BaseSession extends PentahoBase implements IPentahoSession {
 
+  private static final long serialVersionUID = -8559249546126139228L;
+
   /**
    * key into the server provided session's attributes to retrieve the IPentahoSession
    */

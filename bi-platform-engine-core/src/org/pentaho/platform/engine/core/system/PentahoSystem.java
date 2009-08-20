@@ -199,7 +199,7 @@ public class PentahoSystem {
   }
 
   public static boolean init() {
-    return PentahoSystem.init( new StandaloneApplicationContext(".", ".") );
+    return PentahoSystem.init( new StandaloneApplicationContext(".", ".") );  //$NON-NLS-1$ //$NON-NLS-2$
   }
   
   public static boolean init(final IApplicationContext pApplicationContext) {
@@ -904,7 +904,7 @@ public class PentahoSystem {
       return cacheManager;
     } catch (ObjectFactoryException e) {
     	ICacheManager cacheManager = SimpleMapCacheManager.getInstance();
-      Logger.warn( PentahoSystem.class.getName(), "Using default cache manager" );
+      Logger.warn( PentahoSystem.class.getName(), "Using default cache manager" ); //$NON-NLS-1$
       return cacheManager;
     }
   }

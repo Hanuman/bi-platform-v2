@@ -33,6 +33,8 @@ import org.pentaho.platform.util.logging.Logger;
 
 public abstract class PentahoBase implements ILogger, Serializable {
 
+  private static final long serialVersionUID = 1376440889763516196L;
+
   protected int loggingLevel = ILogger.UNKNOWN;
 
   public static final String LOGID_MASK1 = "{0}:{1}:{2}: "; //$NON-NLS-1$
@@ -160,7 +162,7 @@ public abstract class PentahoBase implements ILogger, Serializable {
     if (loggingLevel <= ILogger.ERROR) {
       IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null);
       if( helper != null ) {
-        getLogger().error("Error Start: Pentaho " + helper.getVersionInformation(PentahoSystem.class) ); //$NON-NLS-1$ //$NON-NLS-2$
+        getLogger().error("Error Start: Pentaho " + helper.getVersionInformation(PentahoSystem.class) ); //$NON-NLS-1$
       } else {
         getLogger().error("Error Start: Pentaho " ); //$NON-NLS-1$
       }
@@ -174,7 +176,7 @@ public abstract class PentahoBase implements ILogger, Serializable {
     if (loggingLevel <= ILogger.FATAL) {
       IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null);
       if( helper != null ) {
-        getLogger().error("Error Start: Pentaho " + helper.getVersionInformation(PentahoSystem.class) ); //$NON-NLS-1$ //$NON-NLS-2$
+        getLogger().error("Error Start: Pentaho " + helper.getVersionInformation(PentahoSystem.class) ); //$NON-NLS-1$
       } else {
         getLogger().error("Error Start: Pentaho " ); //$NON-NLS-1$
       }

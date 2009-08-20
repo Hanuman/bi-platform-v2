@@ -21,7 +21,6 @@
 package org.pentaho.test.platform.engine.core;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -32,6 +31,7 @@ import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.StandaloneTempFileDeleter;
 import org.pentaho.platform.util.UUIDUtil;
 
+@SuppressWarnings("nls")
 public class StandaloneSessionTest extends TestCase {
 
   private static final String SolutionDeleterTopFolderName = "test-session-solution";

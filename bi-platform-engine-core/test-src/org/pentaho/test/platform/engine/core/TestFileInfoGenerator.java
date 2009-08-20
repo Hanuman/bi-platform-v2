@@ -27,6 +27,7 @@ import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IFileInfoGenerator;
 import org.pentaho.platform.api.engine.ILogger;
 
+@SuppressWarnings({ "deprecation" })
 public class TestFileInfoGenerator implements IFileInfoGenerator {
 
   public ContentType getContentType() {

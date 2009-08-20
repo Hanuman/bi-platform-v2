@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoInitializer;
-import org.pentaho.platform.api.engine.IPentahoObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.messages.Messages;

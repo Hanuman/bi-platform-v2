@@ -18,17 +18,12 @@
 package org.pentaho.platform.engine.core.system;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Behavior is identical to <code>SystemSettings</code> except that the settings

@@ -37,27 +37,27 @@ public class SimpleSystemSettings implements ISystemSettings {
   }
 
   public void addSetting( String name, String value ) {
-    settings.put( "pentaho-root|||"+name , value);
+    settings.put( "pentaho-root|||"+name , value); //$NON-NLS-1$
   }
   
   public String getSystemCfgSourceName() {
-    return "";
+    return ""; //$NON-NLS-1$
   }
 
   public String getSystemSetting(String path, String settingName, String defaultValue) {
-    String value = settings.get( path+"|||"+settingName);
-    if( value == null ) {
+    String value = settings.get( path+"|||"+settingName); //$NON-NLS-1$
+    if( value == null ) { 
       return defaultValue;
     }
     return value;
   }
 
   public String getSystemSetting(String settingName, String defaultValue) {
-    return getSystemSetting( "pentaho-root", settingName, defaultValue );
+    return getSystemSetting( "pentaho-root", settingName, defaultValue ); //$NON-NLS-1$
   }
 
   public List getSystemSettings(String path, String settingSection) {
-    String keyPrefix = path+"|||"+settingSection;
+    String keyPrefix = path+"|||"+settingSection; //$NON-NLS-1$
     Set<String> keys = settings.keySet();
     Iterator<String> keyIterator = keys.iterator();
     List<String[]> results = new ArrayList<String[]>();

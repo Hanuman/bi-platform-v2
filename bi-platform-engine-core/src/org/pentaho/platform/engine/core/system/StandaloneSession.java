@@ -47,7 +47,7 @@ public class StandaloneSession extends BaseSession {
   private HashMap attributes;
 
   public StandaloneSession() {
-    this("unknown");
+    this("unknown"); //$NON-NLS-1$
   }
 
   public StandaloneSession(final String name) {

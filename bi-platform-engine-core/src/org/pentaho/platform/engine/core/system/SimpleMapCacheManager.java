@@ -171,7 +171,7 @@ public class SimpleMapCacheManager implements ICacheManager {
       Iterator it = simpleMap.entrySet().iterator();
       while (it.hasNext()) {
         Map.Entry entry = (Map.Entry) it.next();
-        String key = (entry.getKey()!= null) ? entry.getKey().toString(): "";
+        String key = (entry.getKey()!= null) ? entry.getKey().toString(): ""; //$NON-NLS-1$
         if(key.indexOf(id) >= 0) {
           list.add(entry.getValue());  
         }
@@ -185,7 +185,7 @@ public class SimpleMapCacheManager implements ICacheManager {
       Iterator it = simpleMap.entrySet().iterator();
       while (it.hasNext()) {
         Map.Entry entry = (Map.Entry) it.next();
-        String key = entry.getKey() != null ? (String) entry.getKey() : "";
+        String key = entry.getKey() != null ? (String) entry.getKey() : ""; //$NON-NLS-1$
         if(key.indexOf(id) >= 0) {
           it.remove();  
         }
