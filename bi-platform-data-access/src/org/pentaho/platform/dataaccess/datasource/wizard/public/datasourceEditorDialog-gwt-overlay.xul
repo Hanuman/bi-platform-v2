@@ -4,7 +4,7 @@
   <textbox id="relationalDatasourceName" width="185"/>
   <textbox id="csvDatasourceName" width="185"/>
   <listbox id="connectionList" height="87" width="187"/>
-  <textbox flex="0" id="query" rows="6" cols="80" height="90" width="356" />
-  <tree flex="0" width="563" height="163" id="modelDataTable"/>
-  <tree flex="0" width="563" height="201" id="csvDataTable"/>
+  <textbox flex="0" id="query" rows="6" cols="80" height="90" width="338" />
+  <tree flex="0" width="551" height="163" id="modelDataTable"/>
+  <tree flex="0" width="551" height="201" id="csvDataTable"/>
 </overlay>
