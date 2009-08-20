@@ -33,6 +33,8 @@ import org.pentaho.platform.plugin.services.webservices.messages.Messages;
  */
 public abstract class AxisWebServiceRequestDispatcher extends AbstractAxisServiceContentGenerator {
   
+  private static final long serialVersionUID = 8314157642653305277L;
+
   /**
    * Parses the path parameter to find the web service name, makes sure it is 
    * valid, and the calls the current subclass to create the required content

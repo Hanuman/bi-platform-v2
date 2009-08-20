@@ -39,7 +39,6 @@ import org.apache.axis2.transport.http.AxisServlet;
  *
  */
 
-@SuppressWarnings({"deprecation"})
 public class AxisServletHooks extends AxisServlet {
 
   private static final long serialVersionUID = 3169157817280586159L;

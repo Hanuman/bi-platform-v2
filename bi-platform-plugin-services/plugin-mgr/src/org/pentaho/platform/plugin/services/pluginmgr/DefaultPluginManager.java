@@ -57,12 +57,12 @@ import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 import org.pentaho.platform.util.logging.Logger;
 
+@SuppressWarnings("deprecation")
 public class DefaultPluginManager extends AbstractPluginManager {
 
   private Map<String, ClassLoader> classLoaderMap = Collections.synchronizedMap(new HashMap<String, ClassLoader>());
 
   public DefaultPluginManager() {
-    
   }
   
   /**

@@ -129,7 +129,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
  
   public synchronized void removeLegacyDomain(String domainId) {
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-    repo.removeSolutionFile(domainId + "/" + XMI_FILENAME);
+    repo.removeSolutionFile(domainId + "/" + XMI_FILENAME); //$NON-NLS-1$
   }
   
   @SuppressWarnings("unchecked")
@@ -165,7 +165,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       try {
         xmiInputStream = repo.getResourceInputStream(resourceName, true, ISolutionRepository.ACTION_EXECUTE);
         Domain domain = new XmiParser().parseXmi(xmiInputStream);
-        domain.setProperty(LEGACY_LOCATION, resourceName); //$NON-NLS-1$
+        domain.setProperty(LEGACY_LOCATION, resourceName);
         domain.setId(solution);
         domains.put(solution, domain);
       } catch (Throwable t) {
@@ -209,8 +209,8 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     String xmi = parser.generateXmi(domain);
     try {
       ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-      String solutionPath = PentahoSystem.getApplicationContext().getSolutionPath("");
-      repo.addSolutionFile(solutionPath, domain.getId(), XMI_FILENAME, xmi.getBytes(LocaleHelper.getSystemEncoding()), true); //$NON-NLS-1$
+      String solutionPath = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
+      repo.addSolutionFile(solutionPath, domain.getId(), XMI_FILENAME, xmi.getBytes(LocaleHelper.getSystemEncoding()), true); 
     } catch (Exception e) {
       throw new DomainStorageException("Failed to store legacy domain", e); //$NON-NLS-1$
     }

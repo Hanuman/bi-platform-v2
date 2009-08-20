@@ -37,6 +37,7 @@ public class AxisConfiguratorTest {
     StubServiceSetup setup = new StubServiceSetup();
     setup.setSession(session);
     
+    @SuppressWarnings("unused")
     AxisConfiguration config = AxisWebServiceManager.currentAxisConfiguration;
     assertNotNull( "AxisConfig is null", AxisWebServiceManager.currentAxisConfiguration ); //$NON-NLS-1$
     
