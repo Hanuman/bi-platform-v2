@@ -17,13 +17,12 @@
 */
 package org.pentaho.test.platform.plugin.services.cache;
 
-import java.sql.Connection;
-
-import javax.sql.DataSource;
+//import java.sql.Connection;
+//import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
+//import org.pentaho.platform.engine.services.connection.datasource.dbcp.JndiDatasourceService;
 
 public class JndiDatasourceServiceTest extends TestCase {
 
@@ -53,7 +52,7 @@ public class JndiDatasourceServiceTest extends TestCase {
   }
   
   public static void main(String[] args) {
-    JndiDatasourceServiceTest test = new JndiDatasourceServiceTest();
+//    JndiDatasourceServiceTest test = new JndiDatasourceServiceTest();
     try {
 //      test.testGetDatasource();
     } finally {

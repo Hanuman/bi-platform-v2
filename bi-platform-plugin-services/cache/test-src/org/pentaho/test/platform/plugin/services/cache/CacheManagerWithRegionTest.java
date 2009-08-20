@@ -30,6 +30,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class CacheManagerWithRegionTest extends BaseTest {
 
 	private static final String SOLUTION_PATH = "cache/test-src/solution";
@@ -46,7 +47,7 @@ public class CacheManagerWithRegionTest extends BaseTest {
 	        return ALT_SOLUTION_PATH;
 	      }
 	  }
-	private final StringBuffer longString = new StringBuffer();
+//	private final StringBuffer longString = new StringBuffer();
 
 	public void testCacheRegion() {
 

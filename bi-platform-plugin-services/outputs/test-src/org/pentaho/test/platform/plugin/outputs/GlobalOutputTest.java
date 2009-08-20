@@ -20,25 +20,26 @@ package org.pentaho.test.platform.plugin.outputs;
 
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.pentaho.platform.api.engine.ILogger;
-import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IPentahoUrlFactory;
-import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.api.engine.ISolutionEngine;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.util.web.SimpleUrlFactory;
+//import java.io.FileReader;
+//import java.io.Reader;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.List;
+//
+//import org.pentaho.platform.api.engine.ILogger;
+//import org.pentaho.platform.api.engine.IParameterProvider;
+//import org.pentaho.platform.api.engine.IPentahoSession;
+//import org.pentaho.platform.api.engine.IPentahoUrlFactory;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.api.engine.ISolutionEngine;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 
+@SuppressWarnings("nls")
 public class GlobalOutputTest extends BaseTest {
 
 	  private static final String SOLUTION_PATH = "outputs/test-src/solution";

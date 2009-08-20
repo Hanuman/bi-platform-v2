@@ -18,15 +18,16 @@
 package org.pentaho.test.platform.plugin.services.cache;
 
 import java.io.File;
-import java.sql.Connection;
-
-import javax.sql.DataSource;
+//import java.sql.Connection;
+//
+//import javax.sql.DataSource;
 
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService;
+//import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService;
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ConnectionPoolingTest extends BaseTest {
   PooledDatasourceSystemListener listener;
   StandaloneSession session;
@@ -107,7 +108,7 @@ public class ConnectionPoolingTest extends BaseTest {
     
   
   public static void main(String[] args) {
-    ConnectionPoolingTest test = new ConnectionPoolingTest();
+//    ConnectionPoolingTest test = new ConnectionPoolingTest();
     try {
 //      test.testConnectionPoolWhenExhausted();
 //      test.testConnectionPoolWhenClosed();

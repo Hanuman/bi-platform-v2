@@ -34,10 +34,11 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.engine.core.system.PentahoBase;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.plugin.services.pluginmgr.servicemgr.ServiceConfig;
 import org.pentaho.platform.util.logging.Logger;
 
 public abstract class AbstractAxisConfigurator extends PentahoBase implements AxisConfigurator {
+
+  private static final long serialVersionUID = 1931282897052453845L;
 
   protected AxisConfiguration axisConfig = null;
 

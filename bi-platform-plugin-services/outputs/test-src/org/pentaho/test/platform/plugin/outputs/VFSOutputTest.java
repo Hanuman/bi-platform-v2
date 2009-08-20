@@ -21,11 +21,12 @@ package org.pentaho.test.platform.plugin.outputs;
 
 import java.io.File;
 
-import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
-import org.pentaho.platform.plugin.services.messages.Messages;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+//import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class VFSOutputTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "outputs/test-src/solution";

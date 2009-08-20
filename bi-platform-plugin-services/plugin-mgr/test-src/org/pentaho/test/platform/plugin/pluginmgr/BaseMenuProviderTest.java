@@ -39,6 +39,7 @@ public class BaseMenuProviderTest {
   private StandaloneSession session;
   private MenuProvider menuProvider;
 
+  @SuppressWarnings("deprecation")
   @Before
   public void init0() {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/BaseMenuProviderTest/");

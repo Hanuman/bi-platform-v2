@@ -40,6 +40,7 @@ import org.springframework.security.userdetails.memory.InMemoryDaoImpl;
 import org.springframework.security.userdetails.memory.UserMap;
 import org.springframework.security.userdetails.memory.UserMapEditor;
 
+@SuppressWarnings("nls")
 public class InMemoryUserRoleListServiceTests {
 
   private static final Log logger = LogFactory.getLog(InMemoryUserRoleListServiceTests.class);

@@ -18,24 +18,25 @@
 package org.pentaho.test.platform.plugin.services.cache;
 
 import java.io.File;
-import java.sql.Connection;
-import java.util.List;
-
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.pentaho.platform.api.data.IDatasourceService;
-import org.pentaho.platform.api.engine.ICacheManager;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.SimpleMapCacheManager;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener;
+//import java.sql.Connection;
+//import java.util.List;
+//
+//import org.apache.commons.dbcp.PoolingDataSource;
+//import org.pentaho.platform.api.data.IDatasourceService;
+//import org.pentaho.platform.api.engine.ICacheManager;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.engine.core.system.SimpleMapCacheManager;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class DatasourceSystemListenerWithoutCacheManagerInstantiatedTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "cache/test-src/solution2";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
   private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";  
+//  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";  
   final String SYSTEM_FOLDER = "/system";
   public String getSolutionPath() {
       File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);

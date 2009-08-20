@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService;
 
+@SuppressWarnings("nls")
 public class PooledDatasourceServiceTest extends TestCase {
 
   public void setUp() {

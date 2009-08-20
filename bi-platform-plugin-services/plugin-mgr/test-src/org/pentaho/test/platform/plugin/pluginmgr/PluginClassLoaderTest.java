@@ -27,7 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+//import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 
+@SuppressWarnings("nls")
 public class PluginClassLoaderTest {
   
   private PluginClassLoader loader;

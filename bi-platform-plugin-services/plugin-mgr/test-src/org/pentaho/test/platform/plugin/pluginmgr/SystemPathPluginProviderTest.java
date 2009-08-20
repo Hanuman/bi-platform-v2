@@ -57,6 +57,7 @@ public class SystemPathPluginProviderTest {
     provider = new SystemPathXmlPluginProvider();
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testLoad_Good() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
@@ -79,6 +80,7 @@ public class SystemPathPluginProviderTest {
     }
   }
 
+  @SuppressWarnings("deprecation")
   @Test(expected = PlatformPluginRegistrationException.class)
   public void testLoad_NoSolutionRepo() throws PlatformPluginRegistrationException {
     microPlatform.init();
@@ -86,6 +88,7 @@ public class SystemPathPluginProviderTest {
     provider.getPlugins(new StandaloneSession());
   }
 
+  @SuppressWarnings("deprecation")
   @Test(expected = PlatformPluginRegistrationException.class)
   public void testLoad_BadSolutionPath() throws PlatformPluginRegistrationException {
     MicroPlatform mp = new MicroPlatform("plugin-mgr/test-res/SystemPathPluginProviderTest/system");
@@ -109,6 +112,7 @@ public class SystemPathPluginProviderTest {
 
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void tesLoadtLifecycleListener() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
@@ -132,6 +136,7 @@ public class SystemPathPluginProviderTest {
     }
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testLoadBeanDefinition() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
@@ -159,6 +164,7 @@ public class SystemPathPluginProviderTest {
     }));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testLoadLifeCycleListener() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
@@ -171,6 +177,7 @@ public class SystemPathPluginProviderTest {
     assertEquals("org.pentaho.test.platform.plugin.pluginmgr.FooInitializer", plugin.getLifecycleListenerClassname());
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void testLoadWebservices() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();
@@ -204,6 +211,7 @@ public class SystemPathPluginProviderTest {
     assertEquals("java.lang.String", wsDfn.getExtraClasses().iterator().next());
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void testLoadContentGenerators() throws PlatformPluginRegistrationException {
     microPlatform.define(ISolutionRepository.class, FileBasedSolutionRepository.class).init();

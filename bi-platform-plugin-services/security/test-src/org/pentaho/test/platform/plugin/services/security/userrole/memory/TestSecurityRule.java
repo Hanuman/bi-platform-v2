@@ -20,11 +20,11 @@
  */
 package org.pentaho.test.platform.plugin.services.security.userrole.memory;
 
-import org.pentaho.platform.api.engine.IActionParameter;
-import org.pentaho.platform.api.engine.IRuntimeContext;
-import org.pentaho.platform.engine.core.messages.Messages;
-import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.api.engine.IActionParameter;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.engine.core.messages.Messages;
+//import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 public class TestSecurityRule extends BaseTest {

@@ -25,6 +25,7 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.plugin.outputs.ApacheVFSOutputHandler;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ApacheVFSOutputHandlerTest extends BaseTest {
   private static final String SOLUTION_PATH = "outputs/test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";

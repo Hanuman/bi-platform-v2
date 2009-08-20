@@ -26,12 +26,12 @@ import java.util.Properties;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.engine.IRuntimeContext;
+//import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
-import org.pentaho.platform.plugin.services.messages.Messages;
-import org.pentaho.platform.util.xml.dom4j.DataGrid;
+//import org.pentaho.platform.plugin.services.messages.Messages;
+//import org.pentaho.platform.util.xml.dom4j.DataGrid;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 /**
@@ -40,6 +40,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
+@SuppressWarnings("nls")
 public class ConnectionTest extends BaseTest {
 	 private static final String SOLUTION_PATH = "connections/test-src/solution";
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
@@ -215,6 +216,7 @@ public class ConnectionTest extends BaseTest {
     /**
      * 
      */
+    @SuppressWarnings("deprecation")
     public void testMDXConnection() {
         startTest();
         IPentahoSession session = new StandaloneSession("Joe");
@@ -261,6 +263,7 @@ public class ConnectionTest extends BaseTest {
      * This test currently fails, due to Mondrian not understanding the catalog URL.  I'm guessing
      * we're not using the latest mondrian libs that support mondrian
      */
+    @SuppressWarnings("deprecation")
     public void testMDX_VFS_zipped_Schema() {
         startTest();
 

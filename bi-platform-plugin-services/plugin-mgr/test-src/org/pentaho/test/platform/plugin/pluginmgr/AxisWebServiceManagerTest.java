@@ -62,6 +62,7 @@ public class AxisWebServiceManagerTest {
   /*
    * Wire up an in-memory platform to register and expose plug-in web services.
    */
+  @SuppressWarnings("deprecation")
   @Before
   public void init0() throws ServiceInitializationException {
     //set solution path to a place that hosts an axis config file

@@ -42,6 +42,7 @@ import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginResourceLoader;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+@SuppressWarnings("nls")
 @RunWith(JMock.class)
 public class PluginResourceLoaderTest {
 
@@ -93,6 +94,7 @@ public class PluginResourceLoaderTest {
 
   @Test(expected = UnsupportedEncodingException.class)
   public void testBadStringEncoding() throws UnsupportedEncodingException {
+    @SuppressWarnings("unused")
     String s = resLoader.getResourceAsString(pluginClass, "pluginResourceTest.properties", "bogus encoding");
   }
 

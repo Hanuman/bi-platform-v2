@@ -32,7 +32,7 @@ import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.pentaho.platform.engine.core.audit.NullAuditEntry;
+//import org.pentaho.platform.engine.core.audit.NullAuditEntry;
 import org.pentaho.platform.engine.security.DefaultGrantedAuthorityComparator;
 import org.pentaho.platform.engine.security.DefaultUsernameComparator;
 import org.pentaho.platform.plugin.services.security.userrole.ldap.DefaultLdapUserRoleListService;
@@ -59,6 +59,7 @@ import org.springframework.security.userdetails.ldap.LdapUserDetailsService;
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public class DefaultLdapUserRoleListServiceTests extends AbstractPentahoLdapIntegrationTests {
 
   private static final Log logger = LogFactory.getLog(DefaultLdapUserRoleListServiceTests.class);

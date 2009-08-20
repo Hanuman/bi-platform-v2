@@ -24,6 +24,7 @@ import org.springframework.security.ldap.SpringSecurityContextSource;
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public abstract class AbstractPentahoLdapIntegrationTests {
   private static ClassPathXmlApplicationContext appContext;
   protected static final String ROOT_DN = "dc=pentaho,dc=org"; //$NON-NLS-1$

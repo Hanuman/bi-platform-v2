@@ -49,6 +49,7 @@ public class PluginAdapterTest {
   private IPentahoSession session;
   private PluginAdapter pluginAdapter;
 
+  @SuppressWarnings("deprecation")
   @Before
   public void init0() {
     microPlatform = new MicroPlatform("plugin-mgr/test-res/PluginManagerTest/");

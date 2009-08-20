@@ -94,6 +94,7 @@ public class DefaultPluginManagerTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void INTEGRATION_test1_Reload() {
     microPlatform.init();
 
@@ -105,6 +106,7 @@ public class DefaultPluginManagerTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void test2_Plugin1ReceivesLifecycleEvents() {
     microPlatform.define(IPluginProvider.class, Tst2PluginProvider.class).init();
 
@@ -123,6 +125,7 @@ public class DefaultPluginManagerTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void test3_Plugin3FailsToLoad() {
     microPlatform.define(IPluginProvider.class, Tst3PluginProvider.class).init();
 
@@ -136,6 +139,7 @@ public class DefaultPluginManagerTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void INTEGRATION_test4_GetOverlays() throws Exception {
     microPlatform.init();
 
@@ -171,6 +175,7 @@ public class DefaultPluginManagerTest {
   }
   
   @Test
+  @SuppressWarnings("deprecation")
   public void test5a_getBean() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
 
@@ -187,6 +192,7 @@ public class DefaultPluginManagerTest {
     assertTrue(pojo instanceof String);
   }
 
+  @SuppressWarnings("deprecation")
   @Test(expected = PluginBeanException.class)
   public void test5b_getUnregisteredBean() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
@@ -200,6 +206,7 @@ public class DefaultPluginManagerTest {
     pluginManager.getBean("IWasNotRegistered");
   }
 
+  @SuppressWarnings("deprecation")
   @Test(expected = PluginBeanException.class)
   public void test5c_getBeanBadClassname() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst5PluginProvider.class).init();
@@ -213,6 +220,7 @@ public class DefaultPluginManagerTest {
     assertNotNull(pluginManager.getBean("TestClassNotFoundComponent"));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test6_beanNameCollision() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst6PluginProvider.class).init();
@@ -231,6 +239,7 @@ public class DefaultPluginManagerTest {
     //we cannot until plugin registration becomes transactional
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test8_getBeanFromPluginClassloader() throws PluginBeanException {
     microPlatform.define(IPluginProvider.class, Tst8PluginProvider.class).init();
@@ -249,6 +258,7 @@ public class DefaultPluginManagerTest {
         pluginManager.getBean("PluginOnlyClass"));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test8b_getBeanFromPluginClassloader_altSolutionPath() throws PluginBeanException {
     //This test is to validate a bug that had existed where a solution path ending in '/' was causing
@@ -274,6 +284,7 @@ public class DefaultPluginManagerTest {
         pluginManager.getBean("PluginOnlyClass"));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void INTEGRATION_getBeanFromPluginClassloader() throws PluginBeanException {
     microPlatform.init();
@@ -290,6 +301,7 @@ public class DefaultPluginManagerTest {
         pluginManager.getBean("TestClassForClassloader"));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test9_ContentGenerationRegistration() throws ObjectFactoryException {
     microPlatform.define(IPluginProvider.class, Tst9PluginProvider.class).init();
@@ -328,6 +340,7 @@ public class DefaultPluginManagerTest {
     assertEquals("/test9url", pluginManager.getContentGeneratorUrlForType("test9type", session));
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test10_ContentTypeRegistration() {
     microPlatform.define(IPluginProvider.class, Tst10PluginProvider.class).init();
@@ -360,6 +373,7 @@ public class DefaultPluginManagerTest {
     assertEquals("Operation command is wrong", "test10type1-oper2-cmd", ops.get(1).getCommand());
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test12_MenuCustomizationRegistration() {
     microPlatform.define(IPluginProvider.class, Tst12PluginProvider.class);
@@ -372,6 +386,7 @@ public class DefaultPluginManagerTest {
     assertEquals("menuCust12label", menuCust.getLabel());
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void test13_getServicePlugin() {
     microPlatform.define(IPluginProvider.class, Tst13PluginProvider.class);
@@ -397,6 +412,7 @@ public class DefaultPluginManagerTest {
     assertEquals("The service plugin should have been the same for both paths", plugin1, plugin2);
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void test14_webservice_registration() {
     microPlatform.define(IPluginProvider.class, Tst14PluginProvider.class);
@@ -426,6 +442,7 @@ public class DefaultPluginManagerTest {
     assertEquals(EchoServiceBean.class, config.getServiceClass());
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void test15_pluginNameCollision_DistinctNames() {
     microPlatform.define(IPluginProvider.class, Tst15PluginProvider_DistinctNames.class);
@@ -436,6 +453,7 @@ public class DefaultPluginManagerTest {
     System.out.println(PluginMessageLogger.prettyPrint());
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void test15_pluginNameCollision_DupNames() {
     microPlatform.define(IPluginProvider.class, Tst15PluginProvider_DupNames.class);
