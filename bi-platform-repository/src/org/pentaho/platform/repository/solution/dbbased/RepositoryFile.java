@@ -38,6 +38,7 @@ import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.util.UUIDUtil;
 import org.springframework.security.acl.basic.AclObjectIdentity;
 
+@SuppressWarnings("deprecation")
 public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentity, IAclSolutionFile, ISolutionFile {
   public static final char EXTENSION_CHAR = '.';
 

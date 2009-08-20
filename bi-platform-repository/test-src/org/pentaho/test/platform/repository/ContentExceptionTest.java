@@ -22,13 +22,14 @@ import java.io.File;
 import org.pentaho.platform.api.repository.ContentException;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ContentExceptionTest extends BaseTest {
 
 	public static final String SOLUTION_PATH = "test-src/solution";
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
 	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 	  final String SYSTEM_FOLDER = "/system";
-	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+//	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
 		  public String getSolutionPath() {
 		      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);

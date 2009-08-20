@@ -53,7 +53,6 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISessionContainer;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.ISolutionFilter;
-import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.audit.AuditHelper;
 import org.pentaho.platform.engine.core.audit.MessageTypes;
@@ -230,7 +229,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     try {
       fc= aFile.getCanonicalPath();
     } catch (IOException logitOnly) {
-      debug("", logitOnly);
+      debug("", logitOnly); //$NON-NLS-1$
       return false;
     }
     return ( fc.startsWith(rootCanonicalName) );
@@ -839,7 +838,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   public ISolutionFile createFolder(final File newFolder) throws IOException {
       if (!(isPathedUnderSolutionRoot(newFolder))) {
-        throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName()));
+        throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName())); //$NON-NLS-1$
       }
     newFolder.mkdirs();
     FileSolutionFile fsf = new FileSolutionFile(newFolder, rootFile);

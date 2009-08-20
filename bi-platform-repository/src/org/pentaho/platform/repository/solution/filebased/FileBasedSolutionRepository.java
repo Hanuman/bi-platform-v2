@@ -105,7 +105,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
       URLClassLoader loader = new URLClassLoader(new URL[] { localeDir.toURL() }, null);
       return loader;
     } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0024_CREATING_CLASSLOADER"));
+      error(Messages.getErrorString("SolutionRepository.ERROR_0024_CREATING_CLASSLOADER")); //$NON-NLS-1$
     }
     return null;
   }
@@ -135,7 +135,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     actionSequence = SequenceDefinition.ActionSequenceFactory(actionSequenceDocument, sequenceName, actionPath,
         solutionName, this, PentahoSystem.getApplicationContext(), localLoggingLevel);
     if (actionSequence == null) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", action));
+      error(Messages.getErrorString("SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", action)); //$NON-NLS-1$
       return null;
     }
 
@@ -307,15 +307,15 @@ protected void processFile( String fileName, File element, final Element parentN
       if ("url".equals( extension )) { //$NON-NLS-1$
         addUrlToRepository(element, parentNode, solutionPath, actionOperation);
       }
-    boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
-  IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());; //$NON-NLS-1$
-if( pluginManager != null ) {
-    Set<String> types = pluginManager.getContentTypes();
-    addFile |= types != null && types.contains( extension );
-}
-if( !addFile ) {
-  return;
-}
+      boolean addFile = "xaction".equals( extension ); //$NON-NLS-1$
+      IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, getSession());
+      if( pluginManager != null ) {
+          Set<String> types = pluginManager.getContentTypes();
+          addFile |= types != null && types.contains( extension );
+      }
+      if( !addFile ) {
+        return;
+      }
       String path = element.getAbsolutePath().substring(pathIdx);
       if (!path.equals(fileName)) {
         path = path.substring(0, path.length() - fileName.length() - 1);

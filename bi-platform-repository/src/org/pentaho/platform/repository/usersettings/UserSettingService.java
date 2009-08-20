@@ -31,7 +31,7 @@ import org.pentaho.platform.repository.usersettings.pojo.UserSetting;
 
 public class UserSettingService implements IUserSettingService {
 
-  public static final String GLOBAL_SETTING = "_GLOBAL";
+  public static final String GLOBAL_SETTING = "_GLOBAL"; //$NON-NLS-1$
   IPentahoSession            session        = null;
 
   public UserSettingService() {

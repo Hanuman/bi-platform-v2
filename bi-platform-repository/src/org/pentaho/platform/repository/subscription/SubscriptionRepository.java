@@ -362,7 +362,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     }
     for ( String actionRef : actionRefs ) {
       if ( !existingContentActionRef.containsKey( actionRef ) ) {
-        ISubscribeContent newContent = addContent( actionRef, "" );
+        ISubscribeContent newContent = addContent( actionRef, "" ); //$NON-NLS-1$
         newContents.add( newContent );
       } else {
         newContents.add( existingContentActionRef.get( actionRef) );
@@ -512,7 +512,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       rtn = qry.uniqueResult();
     } catch (Exception ignored) {
       // sbarkdull, added the logging statement, original author believed the exception can be ignored.
-      logger.error( "Exception being ignored: ", ignored );
+      logger.error( "Exception being ignored: ", ignored ); //$NON-NLS-1$
     }
     return (SubscribeContent) rtn;
   }
@@ -861,7 +861,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     } catch (SubscriptionSchedulerException e) {
       // TODO sbarkdull, at this point the transaction needs to be aborted, but how!!!
       HibernateUtil.rollbackTransaction();
-      throw new SubscriptionRepositoryCheckedException( "", e ); // TODO sbarkdull, error msg?
+      throw new SubscriptionRepositoryCheckedException( "", e ); // TODO sbarkdull, error msg? //$NON-NLS-1$
     }
   }
 

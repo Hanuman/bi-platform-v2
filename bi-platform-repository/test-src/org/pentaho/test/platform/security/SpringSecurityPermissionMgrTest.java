@@ -22,30 +22,31 @@
 package org.pentaho.test.platform.security;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.Iterator;
+//import java.util.List;
+//import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
-import org.pentaho.platform.api.engine.IAclHolder;
-import org.pentaho.platform.api.engine.IAclSolutionFile;
-import org.pentaho.platform.api.engine.IPermissionMask;
-import org.pentaho.platform.api.engine.IPermissionRecipient;
+//import java.util.Set;
+//
+//import org.pentaho.platform.api.engine.IAclHolder;
+//import org.pentaho.platform.api.engine.IAclSolutionFile;
+//import org.pentaho.platform.api.engine.IPermissionMask;
+//import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
-import org.pentaho.platform.engine.security.SimplePermissionMask;
-import org.pentaho.platform.engine.security.SimpleRole;
-import org.pentaho.platform.engine.security.SimpleUser;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
-import org.pentaho.platform.repository.hibernate.HibernateUtil;
-import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
-import org.pentaho.platform.util.messages.Messages;
+//import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
+//import org.pentaho.platform.engine.security.SimplePermissionMask;
+//import org.pentaho.platform.engine.security.SimpleRole;
+//import org.pentaho.platform.engine.security.SimpleUser;
+//import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+//import org.pentaho.platform.repository.hibernate.HibernateUtil;
+//import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
+//import org.pentaho.platform.util.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class SpringSecurityPermissionMgrTest extends BaseTest {
   private StringBuffer longString = new StringBuffer();
   private static final String SOLUTION_PATH = "test-src/solution";

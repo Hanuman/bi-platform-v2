@@ -23,7 +23,6 @@
 package org.pentaho.platform.repository.content;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;

@@ -42,6 +42,7 @@ import org.pentaho.platform.repository.subscription.SubscriptionRepository;
 import org.pentaho.platform.util.UUIDUtil;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class SubscriptionTests extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

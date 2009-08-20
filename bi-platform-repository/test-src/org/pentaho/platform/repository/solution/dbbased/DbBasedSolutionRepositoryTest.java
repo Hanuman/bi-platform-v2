@@ -76,6 +76,7 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public class DbBasedSolutionRepositoryTest {
   private static final String JDBC_PASSWORD = ""; //$NON-NLS-1$
 
@@ -727,6 +728,7 @@ public class DbBasedSolutionRepositoryTest {
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     ISolutionFile f2 = repo.getFileByPath("mysolution2", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+    @SuppressWarnings("unused")
     ISolutionFile f3 = repo.getFileByPath("", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     ISolutionFile f4 = repo.getFileByPath("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     assertTrue(repo.hasAccess(f2, ISolutionRepository.ACTION_CREATE));
@@ -742,8 +744,8 @@ public class DbBasedSolutionRepositoryTest {
     ISolutionFile f2 = repo.getFileByPath("mysolution2", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     ISolutionFile f3 = repo.getFileByPath("", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     // admins can do anything
-    assertTrue(repo.hasAccess(f2, ISolutionRepository.ACTION_CREATE)); //$NON-NLS-1$//$NON-NLS-2$
-    assertTrue(repo.hasAccess(f3, ISolutionRepository.ACTION_DELETE)); //$NON-NLS-1$//$NON-NLS-2
+    assertTrue(repo.hasAccess(f2, ISolutionRepository.ACTION_CREATE)); 
+    assertTrue(repo.hasAccess(f3, ISolutionRepository.ACTION_DELETE)); 
   }
 
   /**
@@ -843,6 +845,7 @@ public class DbBasedSolutionRepositoryTest {
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.mondrian.xml", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
     assertEquals(ISolutionRepository.FILE_ADD_SUCCESSFUL, res);
+    @SuppressWarnings("unused")
     ISolutionFile publishedFile = repo.getFileByPath(
         "mysolution2/HelloWorld3.mondrian.xml", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
   }
@@ -1017,23 +1020,23 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void showInputPage() throws Exception {
     String TYPE_PARAM = "type"; //$NON-NLS-1$
-    String ACTION_PARAM = "action"; //$NON-NLS-1$
-    String ADD_NAME_PARAM = "add_name"; //$NON-NLS-1$
-    String PATH_PARAM = "path"; //$NON-NLS-1$
-    String LIST_ACTION = "list"; //$NON-NLS-1$
-    String ADD_BTN_PARAM = "addBtn"; //$NON-NLS-1$
-    String UPDATE_BTN_PARAM = "updateBtn"; //$NON-NLS-1$
+//    String ACTION_PARAM = "action"; //$NON-NLS-1$
+//    String ADD_NAME_PARAM = "add_name"; //$NON-NLS-1$
+//    String PATH_PARAM = "path"; //$NON-NLS-1$
+//    String LIST_ACTION = "list"; //$NON-NLS-1$
+//    String ADD_BTN_PARAM = "addBtn"; //$NON-NLS-1$
+//    String UPDATE_BTN_PARAM = "updateBtn"; //$NON-NLS-1$
     String ROLE_TYPE = "role"; //$NON-NLS-1$
-    String PERM_TYPE = "perm"; //$NON-NLS-1$
-    String ROLE_PREFIX = ROLE_TYPE + "_"; //$NON-NLS-1$
-    String PERMISSION_PREFIX = PERM_TYPE + "_"; //$NON-NLS-1$
+//    String PERM_TYPE = "perm"; //$NON-NLS-1$
+//    String ROLE_PREFIX = ROLE_TYPE + "_"; //$NON-NLS-1$
+//    String PERMISSION_PREFIX = PERM_TYPE + "_"; //$NON-NLS-1$
     String USER_TYPE = "user"; //$NON-NLS-1$
-    String USER_PREFIX = USER_TYPE + "_"; //$NON-NLS-1$
-    String PERMISSION_SEPERATOR = "#"; //$NON-NLS-1$
-    String DELETE_PREFIX = "delete_"; //$NON-NLS-1$
-    String NO_FILE_PATH_NODE_NAME = "no-file-path"; //$NON-NLS-1$
-    String SET_PERMISSIONS_DENIED_NAME = "set-permissions-denied"; //$NON-NLS-1$
-    String NO_ACLS_NODE_NAME = "no-acls"; //$NON-NLS-1$
+//    String USER_PREFIX = USER_TYPE + "_"; //$NON-NLS-1$
+//    String PERMISSION_SEPERATOR = "#"; //$NON-NLS-1$
+//    String DELETE_PREFIX = "delete_"; //$NON-NLS-1$
+//    String NO_FILE_PATH_NODE_NAME = "no-file-path"; //$NON-NLS-1$
+//    String SET_PERMISSIONS_DENIED_NAME = "set-permissions-denied"; //$NON-NLS-1$
+//    String NO_ACLS_NODE_NAME = "no-acls"; //$NON-NLS-1$
     String INPUT_PAGE_NODE_NAME = "input-page"; //$NON-NLS-1$
     String FILE_PATH_NODE_NAME = "file-path"; //$NON-NLS-1$
     String IS_DIR_NODE_NAME = "is-directory"; //$NON-NLS-1$
@@ -1050,7 +1053,7 @@ public class DbBasedSolutionRepositoryTest {
     String EMPTY_STRING = ""; //$NON-NLS-1$
     String TRUE = "true"; //$NON-NLS-1$
     String FALSE = "false"; //$NON-NLS-1$
-    String ON = "on"; //$NON-NLS-1$
+//    String ON = "on"; //$NON-NLS-1$
     String DISPLAY_PATH_NODE_NAME = "display-path"; //$NON-NLS-1$
     printTestHeader("testTemporaryTest"); //$NON-NLS-1$
     login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
@@ -1120,7 +1123,9 @@ public class DbBasedSolutionRepositoryTest {
         Element aPermission = acNode.addElement(PERMISSION_NODE_NAME);
         String permName = keyIterator.next().toString();
         aPermission.addElement(NAME_NODE_NAME).setText(permName);
+
         int permMask = ((Integer) permissionsMap.get(permName)).intValue();
+        // TODO: Fix this test
         boolean isPermitted = true;//repo.hasAccess(permissionRecipient, file, permMask);
         aPermission.addElement(PERMITTED_NODE_NAME).addText(isPermitted ? TRUE : FALSE);
       }

@@ -34,6 +34,7 @@ import org.pentaho.platform.engine.security.acls.voter.PentahoAllowAnonymousAclV
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class TestPentahoAllowAnonymousAclVoter extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";

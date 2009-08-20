@@ -41,6 +41,7 @@ import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.test.platform.repository.RepositoryTestCase;
 
+@SuppressWarnings("nls")
 public class ContentRepositoryTest extends RepositoryTestCase {
   private static final String SOLUTION_PATH = "test-src/solution";
   public String getSolutionPath() {
@@ -121,6 +122,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private IContentLocation createContentLocation(IPentahoSession sess, String path, String folderName,
       String folderDesc, String solnId) {
     // IContentRepository repo = ContentRepository.getInstance(sess);
@@ -147,6 +149,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private IContentItem createContentItem(IPentahoSession sess, String contPath, String itemName, String itemTitle,
       String itemExtension, String mimeType, StringBuffer theContent, String actionName) {
     // IContentRepository repo = ContentRepository.getInstance(sess);
@@ -171,6 +174,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private IContentItem getContentItem(IPentahoSession sess, String folderPath, String itemName) {
     IContentRepository repo = ContentRepository.getInstance(sess);
     try {
@@ -199,6 +203,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private void exerciseContentItem(IContentItem contItem) {
     info(Messages.getString("CONTREPTEST.DEBUG_CONTENT_ITEM") + contItem.getName()); //$NON-NLS-1$
     info(Messages.getString("CONTREPTEST.DEBUG_PATH") + contItem.getPath()); //$NON-NLS-1$

@@ -29,6 +29,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 
+@SuppressWarnings("nls")
 public class TestPentahoAclEntry extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
@@ -48,6 +49,7 @@ public class TestPentahoAclEntry extends BaseTest {
     System.exit(0);
   }
 
+  @SuppressWarnings("deprecation")
   public void testAcls() {
     PentahoAclEntry aclEntry = null;
 

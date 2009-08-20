@@ -22,42 +22,42 @@
 package org.pentaho.test.platform.repository.subscription;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+//import java.io.FileInputStream;
+//import java.io.Reader;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
-import org.dom4j.Document;
-import org.pentaho.commons.connection.IPentahoStreamSource;
-import org.pentaho.platform.api.engine.IAclSolutionFile;
-import org.pentaho.platform.api.engine.IActionSequenceResource;
+//import java.util.Set;
+//import org.dom4j.Document;
+//import org.pentaho.commons.connection.IPentahoStreamSource;
+//import org.pentaho.platform.api.engine.IAclSolutionFile;
+//import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPermissionMask;
 import org.pentaho.platform.api.engine.IPermissionRecipient;
 import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
-import org.pentaho.platform.engine.security.SimpleUser;
+//import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.security.acls.AclPublisher;
-import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
-import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
-import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
+//import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
+//import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
+//import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
-import org.pentaho.platform.repository.solution.filebased.FileSolutionFile;
+//import org.pentaho.platform.repository.solution.filebased.FileSolutionFile;
 import org.pentaho.test.platform.repository.RepositoryTestCase;
 import org.pentaho.test.platform.security.MockSecurityUtility;
 
+@SuppressWarnings("nls")
 public class SolutionRepositoryTest extends RepositoryTestCase {
   private StringBuffer longString = new StringBuffer();
 
@@ -75,7 +75,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
 	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 	  final String SYSTEM_FOLDER = "/system";
-	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+//	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
 		  public String getSolutionPath() {
 		      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
@@ -654,6 +654,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     System.exit(0);
   }
 
+  @SuppressWarnings("unused")
   private void showMessages() {
     List messages = this.getMessages();
     for (int i = 0; i < messages.size(); i++) {

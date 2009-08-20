@@ -29,14 +29,14 @@ public class UserSettingDAO {
   // only the org.pentaho.platform.repository.usersettings package can execute these methods!
   // we do not want to generically expose these methods
   static List<IUserSetting> getUserSettings(Session session, String username) {
-    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSettings").setParameter("username", username)
+    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSettings").setParameter("username", username) //$NON-NLS-1$ //$NON-NLS-2$
         .setCacheable(true);
     return qry.list();
   }
 
   static IUserSetting getUserSetting(Session session, String username, String settingName) {
-    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSetting").setParameter("username", username)
-        .setParameter("settingName", settingName).setCacheable(true);
+    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSetting").setParameter("username", username) //$NON-NLS-1$ //$NON-NLS-2$
+        .setParameter("settingName", settingName).setCacheable(true); //$NON-NLS-1$
     List list = qry.list();
     if (list != null && list.size() > 0) {
       return (IUserSetting)list.get(0);
@@ -56,8 +56,8 @@ public class UserSettingDAO {
 
   // remove all settings for a given settingName
   static void removeUserSetting(Session session, String username, String settingName) {
-    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSetting").setParameter("username", username)
-        .setParameter("settingName", settingName).setCacheable(true);
+    Query qry = session.getNamedQuery("org.pentaho.platform.repository.usersettings.pojo.UserSetting.getUserSetting").setParameter("username", username) //$NON-NLS-1$ //$NON-NLS-2$
+        .setParameter("settingName", settingName).setCacheable(true); //$NON-NLS-1$
     List settings = qry.list();
     for (int i = 0; i < settings.size(); i++) {
       IUserSetting setting = (IUserSetting) settings.get(i);

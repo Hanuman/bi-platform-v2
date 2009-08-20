@@ -19,20 +19,19 @@
 package org.pentaho.test.platform.repository.datasource;
 
 import java.io.File;
-import java.sql.Connection;
-
-import javax.sql.DataSource;
-
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService;
+//import java.sql.Connection;
+//import javax.sql.DataSource;
+//import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class PooledDatasourceServiceTest extends BaseTest {
 
 	public static final String SOLUTION_PATH = "test-src/solution";
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
 	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 	  final String SYSTEM_FOLDER = "/system";
-	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+//	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
 		  public String getSolutionPath() {
 		      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
@@ -81,7 +80,7 @@ public class PooledDatasourceServiceTest extends BaseTest {
 
   
   public static void main(String[] args) {
-    ConnectionPoolingTest test = new ConnectionPoolingTest();
+//    ConnectionPoolingTest test = new ConnectionPoolingTest();
     try {
 //      test.testConnectionPoolWhenClosed();
     } finally {

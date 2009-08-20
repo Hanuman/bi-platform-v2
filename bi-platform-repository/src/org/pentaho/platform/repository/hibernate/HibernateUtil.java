@@ -189,12 +189,12 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         // -------- Begin Contribution --------
         // Build the initial context to use when looking up the session
         Properties contextProperties = new Properties();
-        if (configuration.getProperty("hibernate.jndi.url") != null) {
-          contextProperties.put(Context.PROVIDER_URL, configuration.getProperty("hibernate.jndi.url"));
+        if (configuration.getProperty("hibernate.jndi.url") != null) { //$NON-NLS-1$
+          contextProperties.put(Context.PROVIDER_URL, configuration.getProperty("hibernate.jndi.url")); //$NON-NLS-1$
         }
         
-        if (configuration.getProperty("hibernate.jndi.class") != null) {
-          contextProperties.put(Context.INITIAL_CONTEXT_FACTORY, configuration.getProperty("hibernate.jndi.class"));
+        if (configuration.getProperty("hibernate.jndi.class") != null) { //$NON-NLS-1$
+          contextProperties.put(Context.INITIAL_CONTEXT_FACTORY, configuration.getProperty("hibernate.jndi.class")); //$NON-NLS-1$
         }
         iniCtx = new InitialContext(contextProperties);
         // --------- End Contribution ---------

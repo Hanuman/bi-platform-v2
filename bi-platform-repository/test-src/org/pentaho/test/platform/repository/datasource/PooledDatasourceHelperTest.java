@@ -19,22 +19,22 @@
 package org.pentaho.test.platform.repository.datasource;
 
 import java.io.File;
-import java.sql.Connection;
-
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.pentaho.platform.api.repository.datasource.IDatasource;
-import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.core.system.StandaloneSession;
-import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceHelper;
+//import java.sql.Connection;
+//import org.apache.commons.dbcp.PoolingDataSource;
+//import org.pentaho.platform.api.repository.datasource.IDatasource;
+//import org.pentaho.platform.api.repository.datasource.IDatasourceMgmtService;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.engine.core.system.StandaloneSession;
+//import org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceHelper;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class PooledDatasourceHelperTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "/test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";
   private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
-  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";  
+//  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";  
   final String SYSTEM_FOLDER = "/system";
   public String getSolutionPath() {
       File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
@@ -79,7 +79,7 @@ public class PooledDatasourceHelperTest extends BaseTest {
   }
   
   public static void main(String[] args) {
-    PooledDatasourceHelperTest test = new PooledDatasourceHelperTest();
+//    PooledDatasourceHelperTest test = new PooledDatasourceHelperTest();
     try {
 //      test.testSetupPooledDatasource();
     } finally {

@@ -22,12 +22,13 @@
 package org.pentaho.test.platform.repository;
 
 import java.io.File;
-import java.io.OutputStream;
+//import java.io.OutputStream;
 import java.util.Properties;
 
-import org.pentaho.platform.api.repository.ISolutionRepository;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
+//import org.pentaho.platform.api.repository.ISolutionRepository;
+//import org.pentaho.platform.engine.core.system.PentahoSystem;
 
+@SuppressWarnings("nls")
 public class SolutionRepositoryTest extends RepositoryTestCase {
   private StringBuffer longString = new StringBuffer();
 

@@ -32,6 +32,7 @@ import java.sql.Statement;
 import org.pentaho.platform.repository.messages.Messages;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class SampleDataTest extends BaseTest {
   private static final String SOLUTION_PATH = "projects/actions/test-src/solution";
 

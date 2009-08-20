@@ -350,14 +350,14 @@ public class SubscriptionHelper {
           generator.createContent();
           // we succeeded
           if (!outputHandler.contentDone()) {
-            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", subscriptionName);
+            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", subscriptionName); //$NON-NLS-1$
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
           if (!outputHandler.contentDone()) {
-            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", subscriptionName);
+            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", subscriptionName); //$NON-NLS-1$
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
         }

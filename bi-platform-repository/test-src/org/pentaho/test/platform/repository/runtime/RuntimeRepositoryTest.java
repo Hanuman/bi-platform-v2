@@ -23,7 +23,7 @@
 package org.pentaho.test.platform.repository.runtime;
 
 import java.io.File;
-import java.io.OutputStream;
+//import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +42,7 @@ import org.pentaho.platform.repository.runtime.RuntimeElement;
 import org.pentaho.platform.repository.runtime.RuntimeRepository;
 import org.pentaho.test.platform.repository.RepositoryTestCase;
 
+@SuppressWarnings("nls")
 public class RuntimeRepositoryTest extends RepositoryTestCase {
 
   private StringBuffer longString = new StringBuffer();
@@ -52,7 +53,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
 	  private static final String ALT_SOLUTION_PATH = "test-src/solution";
 	  private static final String PENTAHO_XML_PATH = "/system/pentaho.xml";
 	  final String SYSTEM_FOLDER = "/system";
-	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
+//	  private static final String DEFAULT_SPRING_CONFIG_FILE_NAME = "pentahoObjects.spring.xml";
 
 		  public String getSolutionPath() {
 		      File file = new File(SOLUTION_PATH + PENTAHO_XML_PATH);
@@ -82,6 +83,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     System.exit(0);
   }
 
+  @SuppressWarnings("unused")
   private String getMessagesText() {
     List messages = this.getMessages();
     StringBuffer sb = new StringBuffer();
@@ -118,6 +120,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     // TODO: remove once tests are passing
   }
   
+  @SuppressWarnings("unused")
   private void doReadOnlyTest(String elementId) {
     info(Messages.getString("RUNTIMEREPOTEST.USER_TESTINGREADONLY")); //$NON-NLS-1$
     HibernateUtil.beginTransaction();
@@ -167,6 +170,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private void cleanupElement(String elementId) {
     HibernateUtil.beginTransaction();
     IRuntimeRepository repo = new RuntimeRepository();
@@ -178,6 +182,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     HibernateUtil.clear();
   }
 
+  @SuppressWarnings("unused")
   private void modifyAdd(RuntimeElement baseElement) {
     HibernateUtil.beginTransaction();
     try {
@@ -191,6 +196,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     }
   }
 
+  @SuppressWarnings("unused")
   private RuntimeElement createRuntimeElement() {
     IRuntimeRepository repo = new RuntimeRepository();
     repo.setSession(getPentahoSession());
@@ -230,6 +236,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
         expected.toString(), value.toString()), expected, value);
   }
 
+  @SuppressWarnings("unused")
   private void readElementTest(String instanceId) {
     HibernateUtil.beginTransaction();
     IRuntimeRepository repo = new RuntimeRepository();

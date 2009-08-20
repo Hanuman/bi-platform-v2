@@ -31,6 +31,7 @@ import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 
+@SuppressWarnings("nls")
 public class TestSecurityUtils extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

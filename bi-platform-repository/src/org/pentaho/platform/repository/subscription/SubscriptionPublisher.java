@@ -47,6 +47,8 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
  *
  */
 public class SubscriptionPublisher extends BasePublisher {
+
+  private static final long serialVersionUID = -2578938864526146490L;
   private static final Log logger = LogFactory.getLog(SubscriptionPublisher.class);
 
    public Log getLogger() {

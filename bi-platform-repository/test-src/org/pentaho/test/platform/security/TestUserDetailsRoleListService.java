@@ -29,6 +29,7 @@ import org.pentaho.platform.api.engine.IUserRoleListService;
 import org.pentaho.platform.engine.security.userrole.UserDetailsRoleListService;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class TestUserDetailsRoleListService extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";

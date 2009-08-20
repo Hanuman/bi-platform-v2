@@ -160,8 +160,8 @@ public class SubscriptionExecute extends PentahoBase {
         paramMap.put("SUB_NAME", sub.getTitle()); //$NON-NLS-1$
         paramMap.put("SUB_ID", sub.getId()); //$NON-NLS-1$
 
-        paramMap.put("useContentRepository", Boolean.TRUE);
-        paramMap.put("content-handler-pattern", PentahoSystem.getApplicationContext().getBaseUrl() + "GetContent?id={0}");
+        paramMap.put("useContentRepository", Boolean.TRUE); //$NON-NLS-1$
+        paramMap.put("content-handler-pattern", PentahoSystem.getApplicationContext().getBaseUrl() + "GetContent?id={0}"); //$NON-NLS-1$ //$NON-NLS-2$
 
         
         execute(jobName, paramMap, userSession);
@@ -228,14 +228,14 @@ public class SubscriptionExecute extends PentahoBase {
         outputHandler = new CoreContentRepositoryOutputHandler(contentPath, subscriptionId, solutionName, userSession);
         ((CoreContentRepositoryOutputHandler) outputHandler).setWriteMode(IContentItem.WRITEMODE_KEEPVERSIONS);
       }
-      parametersMap.put("useContentRepository", Boolean.TRUE);
+      parametersMap.put("useContentRepository", Boolean.TRUE); //$NON-NLS-1$
 
       String contentUrlPattern = PentahoSystem.getApplicationContext().getBaseUrl();
-      if (!contentUrlPattern.endsWith("/")) {
-        contentUrlPattern += "/";
+      if (!contentUrlPattern.endsWith("/")) { //$NON-NLS-1$
+        contentUrlPattern += "/"; //$NON-NLS-1$
       }
-      contentUrlPattern += "GetContent?id={0}";
-      parametersMap.put("content-handler-pattern", contentUrlPattern);
+      contentUrlPattern += "GetContent?id={0}"; //$NON-NLS-1$
+      parametersMap.put("content-handler-pattern", contentUrlPattern); //$NON-NLS-1$
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parametersMap);
       IParameterProvider sessionParams = new PentahoSessionParameterProvider(userSession);
       
@@ -288,14 +288,14 @@ public class SubscriptionExecute extends PentahoBase {
           generator.createContent();
           // we succeeded
           if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
-            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName);
+            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
           if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
-            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName);
+            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         }

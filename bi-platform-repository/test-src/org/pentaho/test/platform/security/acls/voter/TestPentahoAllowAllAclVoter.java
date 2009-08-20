@@ -32,6 +32,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.security.MockSecurityUtility;
 import org.springframework.security.GrantedAuthorityImpl;
 
+@SuppressWarnings("nls")
 public class TestPentahoAllowAllAclVoter extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";
@@ -52,6 +53,7 @@ public class TestPentahoAllowAllAclVoter extends BaseTest {
     System.exit(0);
   }
 
+  @SuppressWarnings("deprecation")
   public void testVoter() {
     StandaloneSession session = new StandaloneSession("suzy"); //$NON-NLS-1$
     MockSecurityUtility.createSuzy(session);

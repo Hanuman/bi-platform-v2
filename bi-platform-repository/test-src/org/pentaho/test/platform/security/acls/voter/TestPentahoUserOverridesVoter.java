@@ -37,6 +37,7 @@ import org.pentaho.platform.repository.solution.dbbased.RepositoryFile;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.security.MockSecurityUtility;
 
+@SuppressWarnings("nls")
 public class TestPentahoUserOverridesVoter extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

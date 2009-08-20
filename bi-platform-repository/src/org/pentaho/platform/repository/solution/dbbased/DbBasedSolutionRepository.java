@@ -945,7 +945,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     try {
       rtn = (RepositoryFile) qry.uniqueResult();
     } catch (HibernateException ex) {
-      logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootRepositoryName), ex);
+      logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootRepositoryName), ex); //$NON-NLS-1$
       throw ex;
     }
     return rtn;
@@ -969,7 +969,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         try {
           rtn = (RepositoryFile) qry.uniqueResult();
         } catch (HibernateException ex) {
-          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory
+          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory //$NON-NLS-1$
               .getFullPath()), ex);
           throw ex;
         }
@@ -1198,6 +1198,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
    * @param entry PentahoAclEntry
    * @param node Element
    */
+  @SuppressWarnings("deprecation")
   private void setXMLPermissionAttributes(final IPentahoAclEntry entry, final Element node) {
     node.addAttribute("aclAdministration", //$NON-NLS-1$
         Boolean.toString(entry.isPermitted(IPentahoAclEntry.PERM_ADMINISTRATION)));
@@ -1323,7 +1324,6 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     List rtn = qry.list();
     List<String> values = new ArrayList<String>();
     Iterator iter = rtn.iterator();
-    int i = 0;
     while (iter.hasNext()) {
       RepositoryFile file = (RepositoryFile) iter.next();
       if (defaultSolutionFilter.keepFile(file, actionOperation)) {
@@ -1366,7 +1366,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       }
     }
     if ((res == ISolutionRepository.FILE_ADD_SUCCESSFUL) && (fileName != null)
-        && (fileName.toLowerCase().endsWith(".xmi"))) {
+        && (fileName.toLowerCase().endsWith(".xmi"))) { //$NON-NLS-1$
 
       IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, null);
       // this call forces a reload of the domains
@@ -1486,7 +1486,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       try {
 
         if (!(isPathedUnderSolutionRoot(newFolder))) {
-          throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder
+          throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder //$NON-NLS-1$
               .getName()));
         }
 
@@ -1506,7 +1506,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           return null;
         }
 
-        String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath("");
+        String solutionRoot = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
         File solutionFile = new File(solutionRoot);
         if (solutionFile.isDirectory()) {
           Map reposFileStructure = this.getAllRepositoryModDates();
