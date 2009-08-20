@@ -27,6 +27,7 @@ import org.springframework.security.acl.basic.BasicAclEntry;
  * 
  * @author mbatchel
  * */
+@SuppressWarnings("deprecation")
 public interface IPentahoAclEntry extends BasicAclEntry {
   /**
    * No access (0)

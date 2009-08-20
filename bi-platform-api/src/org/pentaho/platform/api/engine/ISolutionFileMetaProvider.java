@@ -27,6 +27,7 @@ import java.io.InputStream;
  * This interface supercedes the deprecated {@link IFileInfoGenerator}.
  * @author aphillips
  */
+@SuppressWarnings("deprecation")
 public interface ISolutionFileMetaProvider extends IFileInfoGenerator {
   public IFileInfo getFileInfo(ISolutionFile solutionFile, InputStream in);
 }

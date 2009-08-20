@@ -93,6 +93,7 @@ public interface IContentLocation {
    * 
    * @return Iterator of the child content
    */
+  @SuppressWarnings("unchecked")
   public Iterator getContentItemIterator();
 
   /**

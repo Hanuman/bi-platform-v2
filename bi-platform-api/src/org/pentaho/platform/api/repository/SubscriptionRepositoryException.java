@@ -28,7 +28,10 @@ public class SubscriptionRepositoryException extends RepositoryException {
 
   /**
    * Constructor
+   * 
+   * Prevent zero-argument construction by making it public
    */
+  @SuppressWarnings("unused")
   private SubscriptionRepositoryException() {
     super();
   }

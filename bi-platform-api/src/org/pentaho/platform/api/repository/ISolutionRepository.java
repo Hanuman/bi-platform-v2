@@ -578,6 +578,7 @@ public interface ISolutionRepository extends ILogger {
    *   
    * @param messages a List that String messages will be appended to
    */
+  @SuppressWarnings("unchecked")
   public void setMessages(List messages);
 
   /**
@@ -586,6 +587,7 @@ public interface ISolutionRepository extends ILogger {
    *   
    * @return List of String messages
    */
+  @SuppressWarnings("unchecked")
   public List getMessages();
 
   /**

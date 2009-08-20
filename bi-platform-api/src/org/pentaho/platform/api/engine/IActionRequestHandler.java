@@ -61,6 +61,7 @@ public interface IActionRequestHandler {
    * user as execution feedback.
    * @return list of messages
    */
+  @SuppressWarnings("unchecked")
   public List getMessages();
 
   public void setCreateFeedbackParameterCallback(ICreateFeedbackParameterCallback createFeedbackParameterCallback);

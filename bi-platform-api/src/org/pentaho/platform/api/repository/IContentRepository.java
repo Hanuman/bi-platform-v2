@@ -100,6 +100,7 @@ public interface IContentRepository extends ISessionContainer {
   /**
    * @return A list of all content locations
    */
+  @SuppressWarnings("unchecked")
   public List getAllContentLocations();
 
   /**
@@ -112,6 +113,7 @@ public interface IContentRepository extends ISessionContainer {
    * @see org.pentaho.platform.api.repository.ISearchable
    * @return List of matching Content Locations.
    */
+  @SuppressWarnings("unchecked")
   public List searchLocationsForTerms(String searchTerm, int searchType);
 
   /**
@@ -123,6 +125,7 @@ public interface IContentRepository extends ISessionContainer {
    * @see org.pentaho.platform.api.repository.ISearchable
    * @return List of matching Content Items.
    */
+  @SuppressWarnings("unchecked")
   public List searchContentItemsForTerms(String searchTerm, int searchType);
 
   /**
@@ -136,6 +139,7 @@ public interface IContentRepository extends ISessionContainer {
    * @return List of matching Content Locations first, followed by Content
    *         Items.
    */
+  @SuppressWarnings("unchecked")
   public List searchLocationsAndItemsForTerms(String searchTerm, int searchType);
 
   /**
@@ -171,6 +175,7 @@ public interface IContentRepository extends ISessionContainer {
    * @param session The users' session
    * @return List of IContentItem objects
    */
+  @SuppressWarnings("unchecked")
   public List getBackgroundExecutedContentItemsForUser(IPentahoSession session);
 
   /**
@@ -178,6 +183,7 @@ public interface IContentRepository extends ISessionContainer {
    * @param session Users session
    * @return List of IContentItem objects
    */
+  @SuppressWarnings("unchecked")
   public List getAllBackgroundExecutedContentItems(IPentahoSession session);
 
   /**

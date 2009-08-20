@@ -29,9 +29,9 @@ import javax.sql.DataSource;
  *
  */
 public interface IDatasourceService {
-   public static final String JDBC_POOL = "JDBC_POOL" ;
-   public static final String JDBC_DATASOURCE = "DataSource" ;
-   public static final String IDATASOURCE_SERVICE = "IDatasourceService" ;
+   public static final String JDBC_POOL = "JDBC_POOL" ; //$NON-NLS-1$
+   public static final String JDBC_DATASOURCE = "DataSource" ; //$NON-NLS-1$
+   public static final String IDATASOURCE_SERVICE = "IDatasourceService" ; //$NON-NLS-1$
   /**
    * This method clears the JNDI DS cache.  The need exists because after a JNDI
    * connection edit the old DS must be removed from the cache.

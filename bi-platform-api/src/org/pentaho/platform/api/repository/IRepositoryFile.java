@@ -34,8 +34,10 @@ public interface IRepositoryFile extends ISearchable, IAclSolutionFile {
   /**
    * This method's purpose is to allow Hibernate to initialize the ACLs from the data-store. Application clients should likely use resetAccessControls.
    */
+  @SuppressWarnings("unchecked")
   public void setAccessControls(List acls);
 
+  @SuppressWarnings("unchecked")
   public void resetAccessControls(List acls);
 
   public int getRevision();
@@ -82,12 +84,14 @@ public interface IRepositoryFile extends ISearchable, IAclSolutionFile {
   /**
    * @return Returns the childrenResources.
    */
+  @SuppressWarnings("unchecked")
   public Set getChildrenFiles();
 
   /**
    * @param childrenResources
    *          The childrenResources to set.
    */
+  @SuppressWarnings("unchecked")
   public void setChildrenFiles(Set childrenFiles);
 
   public void addChildFile(IRepositoryFile file);

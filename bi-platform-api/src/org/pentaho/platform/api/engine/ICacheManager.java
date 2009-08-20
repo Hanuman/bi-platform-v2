@@ -21,8 +21,8 @@ import java.util.Properties;
 import java.util.Set;
 
 public interface ICacheManager extends ILogoutListener {
-  public static final String SESSION ="SESSION";
-  public static final String GLOBAL ="GLOBAL";
+  public static final String SESSION ="SESSION"; //$NON-NLS-1$
+  public static final String GLOBAL ="GLOBAL"; //$NON-NLS-1$
   /**
    * Stops the cache by calling the cacheProvider stop method. This method
    * should be called either when the VM goes away, or when the web context
@@ -188,6 +188,7 @@ public interface ICacheManager extends ILogoutListener {
    *            the region where the object was put in the cache
    * @return The corresponding list of objects
    */   
+  @SuppressWarnings("unchecked")
    public Set getAllEntriesFromRegionCache(String region);
    /**
     * Get a Set of Key objects from the cache within a specific region
@@ -195,6 +196,7 @@ public interface ICacheManager extends ILogoutListener {
     *            the region where the object was put in the cache
     * @return The corresponding list of objects
     */   
+  @SuppressWarnings("unchecked")
     public Set getAllKeysFromRegionCache(String region);
     /**
      * Get a list of values from the cache within a specific region
@@ -202,6 +204,7 @@ public interface ICacheManager extends ILogoutListener {
      *            the region where the object was put in the cache
      * @return The corresponding list of objects
      */   
+  @SuppressWarnings("unchecked")
      public List getAllValuesFromRegionCache(String region);    
    
    /**

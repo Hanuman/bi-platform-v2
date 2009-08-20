@@ -82,6 +82,7 @@ public interface ISolutionEngine extends ILogger {
    * 
    * @see org.pentaho.platform.api.engine.IRuntimeContext
    */
+  @SuppressWarnings("unchecked")
   public IRuntimeContext execute(String solutionName, String actionPath, String actionName, String processId,
       boolean async, boolean instanceEnds, String instanceId, boolean persisted, Map parameterProviderMap,
       IOutputHandler outputHandler, IActionCompleteListener listener, IPentahoUrlFactory urlFactory, List messages);
@@ -102,6 +103,7 @@ public interface ISolutionEngine extends ILogger {
    * @see IParameterProvider
    * @see IActionSequence
    */
+  @SuppressWarnings("unchecked")
   public IRuntimeContext execute(IRuntimeContext runtime, String solutionName, String sequencePath,
       String sequenceName, String processId, boolean async, boolean instanceEnds, Map parameterProviderMap,
       IOutputHandler outputHandler);
@@ -120,6 +122,7 @@ public interface ISolutionEngine extends ILogger {
    * @see IParameterProvider
    * @see IActionSequence
    */
+  @SuppressWarnings("unchecked")
   public IRuntimeContext execute(String actionSequenceXML, String sequenceName, String processId, boolean async,
       boolean instanceEnds, String instanceId, boolean persisted, Map parameterProviderMap,
       IOutputHandler outputHandler, IActionCompleteListener pListener, IPentahoUrlFactory urlFactory, List messages);

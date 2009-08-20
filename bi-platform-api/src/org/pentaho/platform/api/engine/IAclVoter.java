@@ -19,6 +19,7 @@ package org.pentaho.platform.api.engine;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.acl.AclEntry;
 
+@SuppressWarnings("deprecation") // to handle the deprecation of AclEntry
 public interface IAclVoter {
 
   /**

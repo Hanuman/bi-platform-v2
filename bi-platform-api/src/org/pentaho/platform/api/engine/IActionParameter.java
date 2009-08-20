@@ -112,6 +112,7 @@ public interface IActionParameter {
    * @return the ActionParameter value as a List. getType() should be
    *         referenced first to be sure the value type is TYPE_LIST.
    */
+  @SuppressWarnings("unchecked")
   public List getValueAsList();
 
   /**
@@ -141,6 +142,7 @@ public interface IActionParameter {
   /**
    * @return List of where the parameter may come from (request, session, etc)
    */
+  @SuppressWarnings("unchecked")
   public List getVariables();
 
   /**
@@ -229,6 +231,7 @@ public interface IActionParameter {
    * Unused in the platform
    */
   @Deprecated
+  @SuppressWarnings("unchecked")
   public Map getSelectionNameMap();
 
   /**
@@ -236,6 +239,7 @@ public interface IActionParameter {
    * Unused in the platform
    */
   @Deprecated
+  @SuppressWarnings("unchecked")
   public List getSelectionValues();
 
   /**
@@ -243,6 +247,7 @@ public interface IActionParameter {
    * Unused in the platform
    */
   @Deprecated
+  @SuppressWarnings("unchecked")
   public void setParamSelections(List selValues, Map selNames, String displayname);
 
 }

@@ -51,6 +51,7 @@ public interface IOutputHandler {
    * 
    * @return Map of parameters in name-value or name-list form
    */
+  @SuppressWarnings("unchecked")
   public Map getOutputDefs();
 
   public void setSession(IPentahoSession session);

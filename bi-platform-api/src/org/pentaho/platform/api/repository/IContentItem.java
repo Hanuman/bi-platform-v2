@@ -97,6 +97,7 @@ public interface IContentItem extends IMimeTypeListener {
    * @return If this is a multiple-versioned style of content item, return the
    *         whole list for admin purposes
    */
+  @SuppressWarnings("unchecked")
   public List getFileVersions();
 
   /**

@@ -31,8 +31,10 @@ public interface ISelectionMapper {
 
   public String getSelectionNameForValue(String val);
 
+  @SuppressWarnings("unchecked")
   public List getSelectionValues();
 
+  @SuppressWarnings("unchecked")
   public Map getSelectionNameMap();
 
   public boolean hasValue(String value);

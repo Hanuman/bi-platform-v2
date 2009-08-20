@@ -25,6 +25,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 
 public interface IUIComponent {
 
+  @SuppressWarnings("unchecked")
   public void handleRequest(OutputStream outputStream, IActionRequestHandler actionRequestHandler, String contentType,
       HashMap requestParameterProviders) throws IOException;
 

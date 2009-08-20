@@ -34,5 +34,6 @@ public interface IAclSolutionFile extends ISolutionFile, IAclHolder {
    * Each child must be an instance of IAclSolutionFile.
    * @return <tt>Set</tt> of IAclSolutionFile objects
    */
+  @SuppressWarnings("unchecked")
   public Set getChildrenFiles();
 }

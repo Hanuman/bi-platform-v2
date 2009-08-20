@@ -20,6 +20,7 @@ public interface IVersionHelper {
 
   public String getVersionInformation();
 
+  @SuppressWarnings("unchecked")
   public String getVersionInformation(Class clazz);
 
 }

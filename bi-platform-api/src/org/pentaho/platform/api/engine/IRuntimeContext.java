@@ -386,16 +386,19 @@ public interface IRuntimeContext extends IAuditable, ILogger {
   /**
    * @return a <tt>Set</tt> containing all the inputs in the current action.
    */
+  @SuppressWarnings("unchecked")
   public Set getInputNames();
 
   /**
    * @return a <tt>Set</tt> containing the resource names in the action
    */
+  @SuppressWarnings("unchecked")
   public Set getResourceNames();
 
   /**
    * @return a <tt>Set</tt> containing the output names in the current action
    */
+  @SuppressWarnings("unchecked")
   public Set getOutputNames();
 
   /**
@@ -551,6 +554,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * @param displayStyle how to display the control
    * @see XForm
    */
+  @SuppressWarnings("unchecked")
   public void createFeedbackParameter(String fieldName, String displayName, String hint, Object defaultValues,
       List values, Map dispNames, String displayStyle);
 
@@ -566,6 +570,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * @parm optional specifies if the feedback parameter is required or not
    * @see XForm
    */
+  @SuppressWarnings("unchecked")
   public void createFeedbackParameter(String fieldName, String displayName, String hint, Object defaultValues,
       List values, Map dispNames, String displayStyle, boolean optional);
 
@@ -578,6 +583,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * @return List of messages saved up during execution. This is used to provide
    * failure feedback to the user.
    */
+  @SuppressWarnings("unchecked")
   public List getMessages();
 
   /**
@@ -599,6 +605,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    *            parameters for the new instance
    * @return Instance id of the new RuntimeContext
    */
+  @SuppressWarnings("unchecked")
   public String createNewInstance(boolean persisted, Map parameters);
 
   /**
@@ -616,10 +623,12 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    *            before returning.
    * @return Instance id of the new RuntimeContext
    */
+  @SuppressWarnings("unchecked")
   public String createNewInstance(boolean persisted, Map parameters, boolean forceImmediateWrite);
 
   public void dispose();
 
+  @SuppressWarnings("unchecked")
   public void dispose(List exceptParameters);
 
   /**
@@ -676,6 +685,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
 
   public IParameterManager getParameterManager();
 
+  @SuppressWarnings("unchecked")
   public Map getParameterProviders();
   
 }

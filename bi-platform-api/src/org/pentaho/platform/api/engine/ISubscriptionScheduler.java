@@ -55,6 +55,7 @@ public interface ISubscriptionScheduler {
    * 
    * @return list of exception messages
    */
+  @SuppressWarnings("unchecked")
   public List syncSchedule(List newSchedules) throws Exception;
 
   /**
@@ -62,6 +63,7 @@ public interface ISubscriptionScheduler {
    * scheduling system
    * 
    */
+  @SuppressWarnings("unchecked")
   public List getScheduledJobs();
 
   /**

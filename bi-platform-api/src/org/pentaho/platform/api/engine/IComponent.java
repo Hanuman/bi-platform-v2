@@ -96,8 +96,10 @@ public interface IComponent extends IAuditable, ILogger {
 
   public IPentahoSession getSession();
 
+  @SuppressWarnings("unchecked")
   public void setMessages(List messaes);
 
+  @SuppressWarnings("unchecked")
   public List getMessages();
 
   public void setActionDefinition(IActionDefinition actionDefinition);

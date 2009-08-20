@@ -20,7 +20,8 @@ public abstract class SolutionFileMetaAdapter implements
 		this.logger = logger;
 	}
 
-	public ContentType getContentType() {
+	@SuppressWarnings("deprecation")
+  public ContentType getContentType() {
 		return null;
 	}
 

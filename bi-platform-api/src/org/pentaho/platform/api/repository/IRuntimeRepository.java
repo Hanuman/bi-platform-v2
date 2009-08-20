@@ -24,7 +24,6 @@ package org.pentaho.platform.api.repository;
 import java.util.Collection;
 
 import org.pentaho.platform.api.engine.ILogger;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISessionContainer;
 
 public interface IRuntimeRepository extends ILogger, ISessionContainer {
@@ -40,6 +39,7 @@ public interface IRuntimeRepository extends ILogger, ISessionContainer {
    * @return The RuntimeElement
    * @throws RepositoryException
    */
+  @SuppressWarnings("unchecked")
   public IRuntimeElement loadElementById(String instanceId, Collection allowableReadAttributeNames)
       throws RepositoryException;
 

@@ -202,6 +202,7 @@ public interface ISubscriptionRepository extends IPentahoInitializer {
 
   public List<ISubscription> getSubscriptionsForSchedule(ISchedule schedule);
 
+  @SuppressWarnings("unchecked")
   public List getSubscriptionArchives(final String subscriptionName, final IPentahoSession session);
   
   public IPentahoResultSet getSubscriptions(String scheduleId, IPentahoSession session, String solution, String path,

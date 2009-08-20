@@ -63,6 +63,7 @@ public interface INavigationComponent {
 
   public void setUrlFactory(IPentahoUrlFactory urlFactory);
 
+  @SuppressWarnings("unchecked")
   public void setMessages(List messages);
 
   public void setLoggingLevel(int logLevel);
