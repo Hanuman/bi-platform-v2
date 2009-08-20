@@ -66,11 +66,11 @@ public class SwingDatasourceSelectionDialog implements DialogController<LogicalM
 
     datasourceSelectionDialogController.addDialogListener(new DialogListener<LogicalModelSummary>() {
       public void onDialogAccept(LogicalModelSummary logicalModelSummary) {
-        System.out.printf("OK (returned %s)\n", logicalModelSummary);
+//        System.out.printf("OK (returned %s)\n", logicalModelSummary);
       }
 
       public void onDialogCancel() {
-        System.out.println("Cancel");
+//        System.out.println("Cancel");
       }
     });
     runner.initialize();
