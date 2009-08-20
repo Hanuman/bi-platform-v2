@@ -364,6 +364,7 @@ public class CategoryDatasetChartDefinition extends DefaultCategoryDataset imple
     setDataByRow(PentahoDataTransmuter.pivot(data));
   }
 
+  @SuppressWarnings("deprecation")
   private void setDataByRow(IPentahoResultSet data) {
     if (data == null) {
       noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$

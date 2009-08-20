@@ -58,8 +58,8 @@ public class ChartContentGenerator extends BaseXmlContentGenerator {
 			    barChart.setValues(results);
 				barChart.validate( userSession, null );
 				
-				barChart.setParameterProvider( IParameterProvider.SCOPE_REQUEST, requestParameters ); //$NON-NLS-1$
-				barChart.setParameterProvider( IParameterProvider.SCOPE_SESSION, sessionParameters ); //$NON-NLS-1$
+				barChart.setParameterProvider( IParameterProvider.SCOPE_REQUEST, requestParameters ); 
+				barChart.setParameterProvider( IParameterProvider.SCOPE_SESSION, sessionParameters ); 
 				
 				content = barChart.getContent( "text/html" ); //$NON-NLS-1$
 		    } finally {

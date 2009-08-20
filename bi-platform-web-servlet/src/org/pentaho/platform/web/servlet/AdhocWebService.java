@@ -396,14 +396,14 @@ public class AdhocWebService extends ServletBase {
   {
     String outputType = parameterProvider.getStringParameter("outputType", null); //$NON-NLS-1$
     String mimeType = MimeHelper.getMimeTypeFromExtension("." + outputType); //$NON-NLS-1$
-    HttpMimeTypeListener listener = new HttpMimeTypeListener(request, response ); //$NON-NLS-1$
+    HttpMimeTypeListener listener = new HttpMimeTypeListener(request, response );
     listener.setMimeType(mimeType);
-    listener.setName( Messages.getString("AdhocWebService.USER_REPORT_PREVIEW") );
+    listener.setName( Messages.getString("AdhocWebService.USER_REPORT_PREVIEW") ); //$NON-NLS-1$
     String reportXML = parameterProvider.getStringParameter("reportXml", null); //$NON-NLS-1$   
     String templatePath = parameterProvider.getStringParameter("templatePath", null); //$NON-NLS-1$
     try {
-      boolean interactive = "true".equals( parameterProvider.getStringParameter( "interactive", null ) );
-      createJFreeReportAsStream(reportXML, templatePath, outputType, outputStream, userSession, "debug", wrapWithSoap, interactive);
+      boolean interactive = "true".equals( parameterProvider.getStringParameter( "interactive", null ) );  //$NON-NLS-1$//$NON-NLS-2$
+      createJFreeReportAsStream(reportXML, templatePath, outputType, outputStream, userSession, "debug", wrapWithSoap, interactive); //$NON-NLS-1$
     } catch (Exception e) {
       response.setContentType( "text/html" ); //$NON-NLS-1$
       String msg = Messages.getString( "AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW" ); //$NON-NLS-1$
@@ -557,7 +557,7 @@ public class AdhocWebService extends ServletBase {
 
     if ( IRuntimeContext.RUNTIME_STATUS_SUCCESS != solutionEngine.getStatus() ) {
       try {
-        outputStream.write(Messages.getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes());
+        outputStream.write(Messages.getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes()); //$NON-NLS-1$
       } catch (IOException e) {
         logger.error(e);
       }
@@ -662,7 +662,7 @@ public class AdhocWebService extends ServletBase {
     }
     
     String locale = LocaleHelper.getClosestLocale(LocaleHelper.getLocale().toString(), queryObject.getDomain().getLocaleCodes());
-
+    
     String reportXMLEncoding = XmlHelper.getEncoding(reportXML);
     ByteArrayInputStream reportSpecInputStream = new ByteArrayInputStream(reportXML.getBytes( reportXMLEncoding ));
     ReportSpec reportSpec = (ReportSpec) CastorUtility.getInstance().readCastorObject(reportSpecInputStream,
@@ -1399,12 +1399,12 @@ public class AdhocWebService extends ServletBase {
   private void deleteWaqrReport(final IParameterProvider parameterProvider, final OutputStream outputStream,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
-    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
       String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
       WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
       return;
     }
-    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+//    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     // NOTE: sbarkdull, shouldn't have to place the "/" on the front of the path segments.
     String solution = "/" + parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ //$NON-NLS-2$
     String path = "/" + parameterProvider.getStringParameter("path", null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1451,7 +1451,7 @@ public class AdhocWebService extends ServletBase {
   private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
-  if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {
+  if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
     WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
     return;
@@ -1553,7 +1553,7 @@ public class AdhocWebService extends ServletBase {
     // create .xaction to save
     ByteArrayOutputStream xactionOutputStream = createMQLReportActionSequenceAsStream( reportName,
         reportDesc, mqlNode, outputTypeList, 
-        xactionFilename, jfreeString, jfreeFilename, "warn", userSession);
+        xactionFilename, jfreeString, jfreeFilename, "warn", userSession); //$NON-NLS-1$
     solutionPath = StringUtils.isEmpty(solutionPath) ? "" : "/" + solutionPath; //$NON-NLS-1$ //$NON-NLS-2$
     String path = solutionName + solutionPath + "/"; //$NON-NLS-1$ 
 
@@ -1981,7 +1981,7 @@ public class AdhocWebService extends ServletBase {
     Set<Integer> validEmtpy = new HashSet<Integer>();
     assert isSetConsistent( validEmtpy ) : "validEmtpy set should succeed"; //$NON-NLS-1$
     
-    System.out.println( "looks like it worked." );
+    System.out.println( "looks like it worked." ); //$NON-NLS-1$
 
   }
 

@@ -38,7 +38,6 @@ import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.platform.uifoundation.messages.Messages;
@@ -257,7 +256,7 @@ public class FlashChartComponent extends AbstractChartComponent {
       span = value;
     }
 
-    String solutionDir = "system/tmp/"; //$NON-NLS-1$
+//    String solutionDir = "system/tmp/"; //$NON-NLS-1$
     String fileNamePrefix = "tmp_flash_"; //$NON-NLS-1$
     String extension = ".xml"; //$NON-NLS-1$
     String fileName = null;
@@ -569,7 +568,7 @@ public class FlashChartComponent extends AbstractChartComponent {
     }
     String baseUrl = PentahoSystem.getApplicationContext().getBaseUrl();
 
-    String solutionDir = "system/tmp/"; //$NON-NLS-1$
+//    String solutionDir = "system/tmp/"; //$NON-NLS-1$
     String fileNamePrefix = "tmp_flash_"; //$NON-NLS-1$
     String extension = ".xml"; //$NON-NLS-1$
     String fileName = null;

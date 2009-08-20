@@ -512,6 +512,7 @@ public class ChartTest extends BaseTestCase {
   }
 
   public static void main(String[] args) {
+    @SuppressWarnings("unused")
     ChartTest test = new ChartTest();
 
     try {

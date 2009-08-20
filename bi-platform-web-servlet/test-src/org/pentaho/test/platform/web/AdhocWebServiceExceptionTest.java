@@ -22,6 +22,7 @@ import org.pentaho.platform.web.servlet.AdhocWebServiceException;
 import org.pentaho.test.platform.engine.core.BaseTest;
 import org.pentaho.test.platform.engine.core.BaseTestCase;
 
+@SuppressWarnings("nls")
 public class AdhocWebServiceExceptionTest extends BaseTestCase {
   private static final String SOLUTION_PATH = "test-src/solution";
   public String getSolutionPath() {

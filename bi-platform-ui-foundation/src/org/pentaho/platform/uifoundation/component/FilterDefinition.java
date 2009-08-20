@@ -191,9 +191,9 @@ abstract public class FilterDefinition {
     // this assume that the list of valid values does not have to be populated
 
     // This is a new field which let the user specify whether an empty value is a valide value or not
-    String empty = XmlDom4JHelper.getNodeText("empty-accepted", node);
+    String empty = XmlDom4JHelper.getNodeText("empty-accepted", node);  //$NON-NLS-1$
     // This is a new field which let the user specify if the value select has to be in the list or values or not
-    String valueInList = XmlDom4JHelper.getNodeText("value-in-list", node);
+    String valueInList = XmlDom4JHelper.getNodeText("value-in-list", node);  //$NON-NLS-1$
     boolean isEmptyAccepted = Boolean.parseBoolean(empty);
     boolean mustExistInList = ((valueInList != null) && (valueInList.length() > 0)) ? Boolean.parseBoolean(valueInList)
         : true;

@@ -41,6 +41,7 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public class HttpWebServiceTest extends BaseTestCase {
   private static final String SOLUTION_PATH = "test-src/solution";
 

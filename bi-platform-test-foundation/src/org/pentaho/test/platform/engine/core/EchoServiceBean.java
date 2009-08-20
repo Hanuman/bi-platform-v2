@@ -5,7 +5,7 @@ import java.util.Date;
 public class EchoServiceBean {
   
   public String echo(String message) {
-    return new Date().toString()+":"+message;
+    return new Date().toString()+":"+message; //$NON-NLS-1$
   }
 
 }

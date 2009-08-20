@@ -29,6 +29,7 @@ import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
 
+@SuppressWarnings("nls")
 public class FlashChartTests extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

@@ -69,6 +69,7 @@ public class HelloWorldComponent extends ComponentBase {
   public void done() {
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   protected boolean executeAction() {
     HelloWorldAction helloWorldAction = (HelloWorldAction) getActionDefinition();

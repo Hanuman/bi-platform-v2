@@ -44,6 +44,7 @@ import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
 public abstract class AbstractJFreeChartComponent extends AbstractChartComponent {
 
+  private static final long serialVersionUID = 1244685089926020547L;
   private static final int DEFAULT_HEIGHT = 125;
   private static final int DEFAULT_WIDTH = 125;
   
@@ -169,7 +170,6 @@ public abstract class AbstractJFreeChartComponent extends AbstractChartComponent
       final IActionSequenceResource actionResource) throws IOException  {
     // TODO support locales here
     byte[] xmlBytes = PentahoSystem.get(ISolutionRepository.class, userSession).getResourceAsBytes(actionResource, false, ISolutionRepository.ACTION_EXECUTE);
-    Document document = null;
     if (xmlBytes == null) {
       return null;
     }

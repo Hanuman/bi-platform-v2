@@ -390,7 +390,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
   protected IPentahoConnection getConnection(final File hbmCfgFile, final String classNames[]) {
     IPentahoConnection conn = null;
     try {
-      conn = (HQLConnection) PentahoConnectionFactory.getConnection("HQL", getSession(), this);
+      conn = (HQLConnection) PentahoConnectionFactory.getConnection("HQL", getSession(), this); //$NON-NLS-1$
       HQLConnection hconn = (HQLConnection) conn;
       hconn.setConfigFile(hbmCfgFile);
       hconn.setClassNames(classNames);

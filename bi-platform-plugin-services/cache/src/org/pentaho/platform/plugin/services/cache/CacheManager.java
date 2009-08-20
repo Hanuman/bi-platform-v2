@@ -415,7 +415,7 @@ public class CacheManager implements ICacheManager {
       Iterator it = regionCache.entrySet().iterator();
       while (it.hasNext()) {
         Map.Entry entry = (Map.Entry) it.next();
-        String key = (entry.getKey()!= null) ? entry.getKey().toString(): "";
+        String key = (entry.getKey()!= null) ? entry.getKey().toString(): ""; //$NON-NLS-1$
         if(key != null) {
           Cache cache = regionCache.get(key); 
           cache.clear();

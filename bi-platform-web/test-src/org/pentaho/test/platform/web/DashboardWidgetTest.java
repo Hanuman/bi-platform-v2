@@ -31,12 +31,12 @@ import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.services.BaseRequestHandler;
 import org.pentaho.platform.uifoundation.chart.DashboardWidgetComponent;
-import org.pentaho.platform.uifoundation.component.xml.WidgetGridComponent;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class DashboardWidgetTest extends BaseTest {
   
   private static final String SOLUTION_PATH = "test-src/solution";

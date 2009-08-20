@@ -279,6 +279,7 @@ public class HttpWebService extends ServletBase {
     outputStream.write(SoapHelper.getSoapFooter().getBytes(LocaleHelper.getSystemEncoding()));
   }
 
+  @SuppressWarnings("deprecation")
   private void doDial(final String solutionName, final String actionPath, final String actionName, final IParameterProvider parameterProvider,
       final OutputStream outputStream, final IPentahoSession userSession) {
 
@@ -361,6 +362,7 @@ public class HttpWebService extends ServletBase {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private void doPieChart(final String solutionName, final String actionPath, final String actionName,
       final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession) {
 

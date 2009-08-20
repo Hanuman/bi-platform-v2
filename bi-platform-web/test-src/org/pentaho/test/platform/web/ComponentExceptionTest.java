@@ -22,6 +22,7 @@ import java.io.File;
 import org.pentaho.platform.api.engine.ComponentException;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ComponentExceptionTest extends BaseTest {
 
   private static final String SOLUTION_PATH = "test-src/solution";

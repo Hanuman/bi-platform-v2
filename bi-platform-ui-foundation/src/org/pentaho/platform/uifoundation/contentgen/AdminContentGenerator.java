@@ -69,28 +69,28 @@ public class AdminContentGenerator extends BaseXmlContentGenerator {
 		sb.append( 		"</tr>\n" );//$NON-NLS-1$
 		sb.append( "</table>\n" );//$NON-NLS-1$
 		
-		return sb.toString(); //$NON-NLS-1$
+		return sb.toString(); 
 	}
 
 	private final String getAdminLinks( IPentahoSession userSession ) {
         SimpleParameterProvider parameters = new SimpleParameterProvider();
-    	parameters.setParameter( "solution", "admin" );
-	String navigateUrl = PentahoSystem.getApplicationContext().getBaseUrl() + "/Navigate?";
+    	parameters.setParameter( "solution", "admin" ); //$NON-NLS-1$ //$NON-NLS-2$
+	String navigateUrl = PentahoSystem.getApplicationContext().getBaseUrl() + "/Navigate?"; //$NON-NLS-1$
 	SimpleUrlFactory urlFactory = new SimpleUrlFactory( navigateUrl );
 	ArrayList messages = new ArrayList();
 	INavigationComponent navigate = PentahoSystem.get(INavigationComponent.class, userSession);
 	navigate.setHrefUrl(PentahoSystem.getApplicationContext().getBaseUrl());
-	navigate.setOnClick("");
-	navigate.setSolutionParamName("solution");
-	navigate.setPathParamName("path");
+	navigate.setOnClick(""); //$NON-NLS-1$
+	navigate.setSolutionParamName("solution"); //$NON-NLS-1$
+	navigate.setPathParamName("path"); //$NON-NLS-1$
 	navigate.setAllowNavigation( new Boolean(false) );
-	navigate.setOptions("");
+	navigate.setOptions(""); //$NON-NLS-1$
 	navigate.setUrlFactory(urlFactory);
 	navigate.setMessages(messages);
 	// navigate.setLoggingLevel( org.pentaho.platform.api.engine.ILogger.DEBUG );
 	navigate.validate( userSession, null );
-	navigate.setParameterProvider( IParameterProvider.SCOPE_REQUEST, parameters ); //$NON-NLS-1$
-	navigate.setXsl( "text/html", "admin-mini.xsl" );
+	navigate.setParameterProvider( IParameterProvider.SCOPE_REQUEST, parameters );
+	navigate.setXsl( "text/html", "admin-mini.xsl" ); //$NON-NLS-1$ //$NON-NLS-2$
 	String content = navigate.getContent( "text/html" ); //$NON-NLS-1$
 	return content;
 }

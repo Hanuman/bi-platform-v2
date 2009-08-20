@@ -58,7 +58,7 @@ public class ContextDiscoveryServlet extends HttpServlet {
     try {
       DocumentBuilder builder = factory.newDocumentBuilder();
       Document document = builder.newDocument();
-      Element epath = document.createElement("application-context-root");
+      Element epath = document.createElement("application-context-root"); //$NON-NLS-1$
       epath.setTextContent(path);
       document.appendChild(epath);
       Transformer trans = tf.newTransformer();

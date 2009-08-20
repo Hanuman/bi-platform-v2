@@ -47,6 +47,8 @@ import org.pentaho.platform.util.messages.LocaleHelper;
  */
 public abstract class BaseUIComponent extends PentahoMessenger implements IUIComponent {
 
+  private static final long serialVersionUID = -6768653568134000758L;
+
   public static final boolean debug = PentahoSystem.debug;
 
   protected HashMap xslProperties;

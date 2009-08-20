@@ -33,7 +33,7 @@ public class AdhocWebServiceInteractXml {
 		
         // get the list of headers
         List<String> headerList = new ArrayList<String>();
-        List<?> nodes = reportXml.selectNodes( "/report/groupheader/@name" );
+        List<?> nodes = reportXml.selectNodes( "/report/groupheader/@name" ); //$NON-NLS-1$
         // find all the unique group header names
 
         Iterator<?> it = nodes.iterator();
@@ -43,7 +43,7 @@ public class AdhocWebServiceInteractXml {
         	// we only need to go until we get the first duplicate
         	attr = (Attribute) it.next();
         	name = attr.getText();
-        	if( !"dummy".equals( name ) ) {
+        	if( !"dummy".equals( name ) ) { //$NON-NLS-1$
         		if( !headerList.contains( name ) ) {
         			headerList.add( name );
                 	System.out.println(name);
@@ -60,15 +60,15 @@ public class AdhocWebServiceInteractXml {
         Element columnHeaderNodes[] = new Element[0];
         headerList.toArray( headerNames );
         for( int idx=0; idx<headerValues.length; idx++ ) {
-        	headerValues[ idx ] = "";
+        	headerValues[ idx ] = ""; //$NON-NLS-1$
         }
 
       Document reportDoc = DocumentHelper.createDocument();
-      Element reportNode = DocumentHelper.createElement("report");
+      Element reportNode = DocumentHelper.createElement("report"); //$NON-NLS-1$
       reportDoc.setRootElement( reportNode );
 
       // process the top-level nodes
-      nodes = reportXml.selectNodes( "/report/*" );
+      nodes = reportXml.selectNodes( "/report/*" ); //$NON-NLS-1$
         
       Node node;
       // go thru all the nodes
@@ -76,13 +76,13 @@ public class AdhocWebServiceInteractXml {
       while( it.hasNext() ) {
       	node = (Node) it.next();
       	name = node.getName();
-      	if( "groupheader".equals( name ) ) {
+      	if( "groupheader".equals( name ) ) { //$NON-NLS-1$
             // process the group headers
       		// get the group header name
-      		String headerName = node.selectSingleNode( "@name" ).getText();
-      		if( !"dummy".equals( headerName ) ) {
+      		String headerName = node.selectSingleNode( "@name" ).getText(); //$NON-NLS-1$
+      		if( !"dummy".equals( headerName ) ) { //$NON-NLS-1$
       			// find the header index
-      			String headerValue = node.selectSingleNode( "element[1]" ).getText();
+      			String headerValue = node.selectSingleNode( "element[1]" ).getText();//$NON-NLS-1$
           		int headerIdx=-1;
           		for( int idx=0; idx<headerNames.length; idx++ ) {
           			if( headerNames[idx].equals( headerName ) ) {
@@ -102,18 +102,18 @@ public class AdhocWebServiceInteractXml {
           			}
           			
           			// create a group header node for this
-                    Element headerNode = DocumentHelper.createElement( "groupheader" );
+                    Element headerNode = DocumentHelper.createElement( "groupheader" );//$NON-NLS-1$
           			parentNode.add( headerNode );
           			headerNodes[headerIdx] = headerNode;
 
           			// create the name attribute
-                    attr = DocumentHelper.createAttribute( headerNode, "name", headerName);
+                    attr = DocumentHelper.createAttribute( headerNode, "name", headerName);//$NON-NLS-1$
                     headerNode.add( attr );
                     
                     // create the value node
-                    Element elementNode = DocumentHelper.createElement( "element" );
+                    Element elementNode = DocumentHelper.createElement( "element" );//$NON-NLS-1$
           			headerNode.add( elementNode );
-                    attr = DocumentHelper.createAttribute( elementNode, "name", headerName);
+                    attr = DocumentHelper.createAttribute( elementNode, "name", headerName);//$NON-NLS-1$
                     elementNode.add( attr );
                     elementNode.setText( headerValue );
                     
@@ -121,9 +121,9 @@ public class AdhocWebServiceInteractXml {
       		}
       		
             // see if there are any column headers
-      		List<?> elements = node.selectNodes( "element" );
+      		List<?> elements = node.selectNodes( "element" );//$NON-NLS-1$
       		if( elements.size() == 0 ) {
-      			elements = node.selectNodes( "band/element" );
+      			elements = node.selectNodes( "band/element" );//$NON-NLS-1$
       		}
       		if( elements.size() > 1 ) {
       			// there are column headers here, get them and store them for the next set of rows
@@ -134,7 +134,7 @@ public class AdhocWebServiceInteractXml {
       			}
       		}
       	}
-      	else if( "items".equals( name ) ) {
+      	else if( "items".equals( name ) ) {//$NON-NLS-1$
             // process items (rows)
       		// get the parent node, this should always be the last one on the list
       		Element parentNode;
@@ -144,46 +144,46 @@ public class AdhocWebServiceInteractXml {
           		parentNode = headerNodes[headerNodes.length-1];
       		}
             // create the items node
-            Element itemsNode = DocumentHelper.createElement( "items" );
+            Element itemsNode = DocumentHelper.createElement( "items" );//$NON-NLS-1$
   			parentNode.add( itemsNode );
             // create the headers node
-            Element headersNode = DocumentHelper.createElement( "headers" );
+            Element headersNode = DocumentHelper.createElement( "headers" );//$NON-NLS-1$
   			itemsNode.add( headersNode );
             // create the rows node
-            Element itemBandsNode = DocumentHelper.createElement( "itembands" );
+            Element itemBandsNode = DocumentHelper.createElement( "itembands" );//$NON-NLS-1$
   			itemsNode.add( itemBandsNode );
   			for( int idx=0; idx<columnHeaders.length; idx++ ) {
-                Element headerNode = DocumentHelper.createElement( "header" );
+                Element headerNode = DocumentHelper.createElement( "header" );//$NON-NLS-1$
                 headerNode.setText( columnHeaders[idx] );
       			headersNode.add( headerNode );
       			columnHeaderNodes[ idx ] = headerNode;
   				
   			}
   			// now copy the item bands over
-      		List<?> itembands = node.selectNodes( "itemband" );
+      		List<?> itembands = node.selectNodes( "itemband" );//$NON-NLS-1$
       		Iterator<?> bands = itembands.iterator();
       		boolean first = true;
       		while( bands.hasNext() ) {
       			Element itemband = (Element) bands.next();
-                Element itemBandNode = DocumentHelper.createElement( "itemband" );
+                Element itemBandNode = DocumentHelper.createElement( "itemband" );//$NON-NLS-1$
                 itemBandsNode.add( itemBandNode );
-          		List<?> elementList = itemband.selectNodes( "element" );
+          		List<?> elementList = itemband.selectNodes( "element" );//$NON-NLS-1$
           		Iterator<?> elements = elementList.iterator();
           		int idx = 0;
           		while( elements.hasNext() ) {
           			Element element = (Element) elements.next();
-                    Element elementNode = DocumentHelper.createElement( "element" );
+                    Element elementNode = DocumentHelper.createElement( "element" );//$NON-NLS-1$
                     itemBandNode.add( elementNode );
                     elementNode.setText( element.getText() );
-                    name = element.selectSingleNode("@name").getText();
-                    if( name.endsWith( "Element" ) ) {
-                    	name = name.substring(0, name.length()-"Element".length() );
+                    name = element.selectSingleNode("@name").getText();//$NON-NLS-1$
+                    if( name.endsWith( "Element" ) ) {//$NON-NLS-1$
+                    	name = name.substring(0, name.length()-"Element".length() );//$NON-NLS-1$
                     }
-                    attr = DocumentHelper.createAttribute( elementNode, "name", name );
+                    attr = DocumentHelper.createAttribute( elementNode, "name", name );//$NON-NLS-1$
                     elementNode.add( attr );
           			if( first ) {
           				// copy the item name over to the column header
-                        attr = DocumentHelper.createAttribute( columnHeaderNodes[idx], "name", name );
+                        attr = DocumentHelper.createAttribute( columnHeaderNodes[idx], "name", name );//$NON-NLS-1$
                         columnHeaderNodes[idx].add( attr );
           			}
           			idx++;

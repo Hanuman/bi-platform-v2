@@ -42,13 +42,16 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public class AdhocWebServiceTest extends BaseTestCase {
 
   private static final String userName = "joe"; //$NON-NLS-1$
   private static final String role = "Admin"; //$NON-NLS-1$   
   private static final MockHttpServletRequest request = new MockHttpServletRequest();
   private static final AdhocWebService servlet = new AdhocWebService();
+  @SuppressWarnings("unused")
   private static final String templatePath = "/templates/Pentaho/jfreereport-template.xml"; //$NON-NLS-1$   
+  @SuppressWarnings("unused")
   private static final AdhocWebServiceTestUserRoleListService userRolesLS = new AdhocWebServiceTestUserRoleListService();
   private static final MockHttpSession session = new MockHttpSession();
   private static final String SOLUTION_PATH = "test-src/solution";
@@ -79,6 +82,7 @@ public class AdhocWebServiceTest extends BaseTestCase {
   
   }
   
+  @SuppressWarnings("unused")
   private static final String reportSpecContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
     + "<report-spec tool='waqr' tool-version='1.0' template-name='Pentaho'>" //$NON-NLS-1$
     + "<jndi-source><![CDATA[SampleData]]></jndi-source>" //$NON-NLS-1$
@@ -134,6 +138,7 @@ public class AdhocWebServiceTest extends BaseTestCase {
     + "<field is-detail=\"true\" name=\"BC_PRODUCTS_PRODUCTLINE\" horizontal-alignment=\"left\" expression=\"none\" type=\"12\"/>" //$NON-NLS-1$
     + "</report-spec>"; //$NON-NLS-1$
   
+    @SuppressWarnings("unused")
     private static final String ACL_TEST_DOC =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
       + "<acl>" //$NON-NLS-1$
       + "<entry name='suzy' permissions='3'/>" //$NON-NLS-1$

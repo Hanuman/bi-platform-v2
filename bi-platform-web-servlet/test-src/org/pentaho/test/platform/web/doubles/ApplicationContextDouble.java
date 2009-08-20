@@ -51,6 +51,7 @@ public class ApplicationContextDouble implements IApplicationContext {
 
   // ~ Constructors ====================================================================================================
 
+  @SuppressWarnings("nls")
   public ApplicationContextDouble() {
     super();
     if (logger.isDebugEnabled()) {

@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.pentaho.platform.util.web.HttpUtil;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class HttpUtilTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
   private static final String ALT_SOLUTION_PATH = "test-src/solution";

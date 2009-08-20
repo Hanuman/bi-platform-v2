@@ -34,6 +34,7 @@ import org.pentaho.test.platform.engine.core.BaseTest;
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  */
+@SuppressWarnings("nls")
 public class AnalysisViewServiceTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

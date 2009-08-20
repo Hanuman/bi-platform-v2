@@ -41,7 +41,6 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.platform.uifoundation.component.xml.XmlComponent;
@@ -52,6 +51,8 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 // ESCA-JAVA0136:
 // ESCA-JAVA0054:
 public abstract class AbstractChartComponent extends XmlComponent {
+
+  private static final long serialVersionUID = -3700747149855352376L;
 
   /**
    * XML Node for the chart configuration

@@ -43,6 +43,7 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public abstract class AbstractMondrianCatalogTestBase extends BaseTest {
 
   // ~ Static fields/initializers ======================================================================================

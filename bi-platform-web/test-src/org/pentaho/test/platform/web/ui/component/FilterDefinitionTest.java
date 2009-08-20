@@ -41,6 +41,7 @@ import org.pentaho.platform.web.http.request.HttpRequestParameterProvider;
 import org.pentaho.platform.web.http.session.HttpSessionParameterProvider;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class FilterDefinitionTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 

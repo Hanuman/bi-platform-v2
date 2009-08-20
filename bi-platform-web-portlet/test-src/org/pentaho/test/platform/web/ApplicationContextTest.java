@@ -32,6 +32,7 @@ import org.pentaho.platform.web.http.context.WebApplicationContext;
 import org.pentaho.platform.web.portal.PortletApplicationContext;
 import org.pentaho.test.platform.engine.core.BaseTest;
 
+@SuppressWarnings("nls")
 public class ApplicationContextTest extends BaseTest {
   private static final String SOLUTION_PATH = "test-src/solution";
 
@@ -80,7 +81,7 @@ public class ApplicationContextTest extends BaseTest {
     
     WebApplicationContext wac = new WebApplicationContext(PentahoSystem.getApplicationContext().getSolutionPath("test"), "http://localhost:8080/pentaho", "http://localhost:8080/pentaho",  new Object()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     wac.setBaseUrl("http://localhost:8080/pentaho");
-    String url = wac.getBaseUrl();
+//    String url = wac.getBaseUrl();
     WebApplicationContext wac1 = new WebApplicationContext(PentahoSystem.getApplicationContext().getSolutionPath("test"), "http://localhost:8080/pentaho", "http://localhost:8080/pentaho"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
     wac1.setBaseUrl("http://localhost:8080/pentaho");
 

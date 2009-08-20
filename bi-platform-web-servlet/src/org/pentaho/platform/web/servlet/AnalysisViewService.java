@@ -259,7 +259,7 @@ public class AnalysisViewService extends ServletBase {
     	IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
         jndi = datasourceService.getDSUnboundName(datasource.getJndi());    	
         } catch (ObjectFactoryException objface) {
-		      Logger.error("AnalysisViewService",Messages.getErrorString("AnalysisViewService.ERROR_0001_UNABLE_TO_FACTORY_OBJECT", jndi), objface); //$NON-NLS-1$
+		      Logger.error("AnalysisViewService",Messages.getErrorString("AnalysisViewService.ERROR_0001_UNABLE_TO_FACTORY_OBJECT", jndi), objface); //$NON-NLS-1$ //$NON-NLS-2$
         }
       } else {
         jdbc = datasource.getJdbc();

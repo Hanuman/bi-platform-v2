@@ -40,6 +40,7 @@ import com.mockrunner.mock.web.MockServletContext;
  * 
  * @author mlowery
  */
+@SuppressWarnings("nls")
 public class GetImageTest extends BaseTestCase {
   private static final String SOLUTION_PATH = "test-src/solution";
 

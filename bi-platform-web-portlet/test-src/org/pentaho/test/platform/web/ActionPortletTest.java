@@ -42,6 +42,7 @@ import org.springframework.mock.web.portlet.MockPortletSession;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 
+@SuppressWarnings("nls")
 public class ActionPortletTest extends BaseTestCase {
 
 
@@ -65,7 +66,7 @@ public class ActionPortletTest extends BaseTestCase {
   public void testDoPortletView() throws ServletException, IOException {
     setUp();
     MockPortletContext portletContext = new MockPortletContext();
-    MockPortletConfig portletConfig = new MockPortletConfig(portletContext, "ActionPortlet") ;
+//    MockPortletConfig portletConfig = new MockPortletConfig(portletContext, "ActionPortlet") ;
     MockPortletSession session = new MockPortletSession(portletContext);
     MockRenderRequest renderRequest = new MockRenderRequest(portletContext);
     MockRenderResponse renderResponse = new MockRenderResponse();

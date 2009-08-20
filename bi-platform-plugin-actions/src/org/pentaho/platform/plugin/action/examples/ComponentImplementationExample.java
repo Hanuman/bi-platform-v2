@@ -680,6 +680,7 @@ public class ComponentImplementationExample extends Object implements IComponent
     return null;
   }
 
+  @SuppressWarnings("deprecation")
   protected void createFeedbackParameter(final IActionParameter actionParam) {
     runtimeContext.createFeedbackParameter(actionParam);
     runtimeContext.promptNeeded();

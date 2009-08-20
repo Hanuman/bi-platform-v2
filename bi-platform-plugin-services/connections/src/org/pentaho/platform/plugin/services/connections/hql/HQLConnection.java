@@ -35,6 +35,7 @@ import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
+import org.pentaho.platform.plugin.services.messages.Messages;
 
 /**
  * @author mdamour
@@ -149,7 +150,7 @@ public class HQLConnection implements IPentahoLoggingConnection, ILimitableConne
         }
      } catch (Exception e) {
         // Doesn't seem like we would get any exception from sess.close()
-        logger.error("Exception closing connection", e);
+        logger.error(Messages.getErrorString("HQLConnection.ERROR_0001_UNABLE_TO_CLOSE"), e); //$NON-NLS-1$
       }
     }
 
