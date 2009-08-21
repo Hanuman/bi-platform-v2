@@ -2,6 +2,7 @@
 <%@page import="org.dom4j.Document"%>
 <%@ page language="java" 
 	import="org.pentaho.platform.engine.core.system.PentahoSystem,
+	        org.pentaho.platform.engine.core.system.PentahoSessionHolder,
 			org.pentaho.platform.api.engine.IPentahoSession,
 			org.pentaho.platform.util.xml.XmlHelper,
 			org.pentaho.platform.engine.services.SolutionURIResolver,
@@ -35,6 +36,8 @@
 	String path = request.getContextPath();
 
 	IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession( request );
+	//PPP-2148, BISERVER-3521: have to set the session back to the thread local since J2EE filters may have prematurely cleared it
+	PentahoSessionHolder.setSession(userSession);
 
 	String publish = request.getParameter( "publish" ); //$NON-NLS-1$	
 	String style = request.getParameter( "style" ); //$NON-NLS-1$	
