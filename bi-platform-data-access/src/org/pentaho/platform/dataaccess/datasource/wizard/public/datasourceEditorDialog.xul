@@ -24,7 +24,7 @@
 					<!--  ###############################################################################  -->
 			    	<tabpanel id="datasourceDialogDatabaseTabPanel">
 			       		<vbox flex="1">
-							<vbox>
+						    <vbox>
 						      <label value="${datasourceDialog.DatasourceName}" tooltiptext="${datasourceDialog.DatasourceNameToolTip}"/>
 						      <hbox>
 						        	<textbox id="relationalDatasourceName" width="200" multiline="false"/>
@@ -32,10 +32,10 @@
 						      </hbox>
 						    </vbox>
 			       		
-		                    <hbox width="551">
-							  	<vbox width="187">
+		                    <hbox>
+							<vbox height="50">
 						          <hbox>
-			                        <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
+			                        	    <label value="${datasourceDialog.Connection}" tooltiptext="${datasourceDialog.ConnectionToolTip}"/>
 						            <spacer flex="1"/>
 						            <button id="editConnection" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editConnectionImageToolTip}" onclick="connectionController.showEditConnectionDialog()"  disabled="true"/>
 						            <button id="addConnection" image="images/add.png" tooltiptext="${datasourceDialog.addConnectionImageToolTip}" pen:disabledimage="images/add_disabled.png"  onclick="connectionController.showAddConnectionDialog()"  disabled="false"/>
@@ -44,7 +44,7 @@
 			                      <listbox id="connectionList" pen:binding="name" disabled="true"/>
 						        </vbox>
 						        <spacer width="10"/>
-						        <vbox width="330">
+						        <vbox>
 						            <hbox>
 						                <label value="${datasourceDialog.Query}" tooltiptext="${datasourceDialog.QueryToolTip}"/>
 						                <!--<spacer flex="1"/>-->
@@ -54,7 +54,7 @@
 						            <hbox>
 						                <spacer flex="1"/>
 						                <label value="Limit:" height="16"/>
-								        <textbox id="previewLimit" value="10" height="16" width="20"/>
+								        <textbox id="previewLimit" value="10" height="20" width="22"/>
 						                <button id="preview"  label="${datasourceDialog.PREVIEW}" tooltiptext="${datasourceDialog.previewToolTip}" onclick="relationalDatasourceController.displayPreview()"  disabled="true" height="16"/>
 										<button id="apply"  label="${datasourceDialog.APPLY}" tooltiptext="${datasourceDialog.applyToolTip}" onclick="relationalDatasourceController.applyQuery()"  disabled="true" height="16"/>                
 						            </hbox>
