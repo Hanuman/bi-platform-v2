@@ -287,7 +287,9 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
           // must be a plugin - make it look like a URL
           try {
             // get the file info object for this file
-            InputStream inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
+            // not all plugins are going to actually use the inputStream, so we have a special
+            // wrapper inputstream so that we can pay that price when we need to (2X speed boost)
+            PluginFileInputStream inputStream = new PluginFileInputStream(repository, file);
             fileInfo = pluginManager.getFileInfo(extension, session, file, inputStream);
             String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
             String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
@@ -329,7 +331,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
             
             child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
             
-          } catch (FileNotFoundException e) {
+          } catch (Exception e) {
             logger.warn(e.getMessage(), e);
           } catch (Throwable t) {
             t.printStackTrace();
@@ -567,4 +569,96 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     }
     return threadLocalSAXParserFactory;
   }
+  
+  
+
+  /**
+   * This class is basically a wrapper for the solution file inputstream, but it will only
+   * pay the price *IF* we need to actually open the inputstream.  This has a huge performance
+   * benefit (9s down to 3s).
+   */
+  private class PluginFileInputStream extends InputStream {
+    
+    private ISolutionRepository repository;
+    private ISolutionFile file;
+    private InputStream inputStream;
+    
+    public PluginFileInputStream(ISolutionRepository repository, ISolutionFile file)
+    {
+      this.repository = repository;
+      this.file = file;
+    }
+    
+    public int read() throws IOException
+    {
+      if (inputStream == null) {
+        inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
+      }
+      return inputStream.read();
+    }
+    
+    public int read(byte[] b) throws IOException
+    {
+      if (inputStream == null) {
+        inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
+      }
+      return inputStream.read(b);
+    }
+    
+    public int read(byte[] b, int off, int len) throws IOException
+    {
+      if (inputStream == null) {
+        inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
+      }
+      return inputStream.read(b, off, len);
+    }
+
+    public synchronized void mark(int readlimit)
+    {
+      if (inputStream != null) {
+        inputStream.mark(readlimit);
+      }
+    }
+
+    public boolean markSupported()
+    {
+      if (inputStream != null) {
+        return inputStream.markSupported();
+      }
+      return super.markSupported();
+    }
+
+    public synchronized void reset() throws IOException
+    {
+      if (inputStream != null) {
+        inputStream.reset();
+      }
+      super.reset();
+    }
+    
+    public long skip(long n) throws IOException
+    {
+      if (inputStream != null) {
+        inputStream.skip(n);
+      }
+      return super.skip(n);
+    }
+    
+    public void close() throws IOException
+    {
+      if (inputStream != null) {
+        inputStream.close();
+      }
+    }
+    
+    public int available() throws IOException
+    {
+      if (inputStream != null) {
+        return inputStream.available();
+      }
+      return 0;
+    }
+    
+  }
+  
 }
