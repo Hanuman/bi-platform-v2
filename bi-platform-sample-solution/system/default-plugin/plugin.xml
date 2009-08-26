@@ -13,7 +13,7 @@
     </content-generator>
     
     <menu-items>
-        <menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/>
+        <!--menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/-->
     
         <!--menu-item id="pluginupdate1" anchor="tools-refresh-submenu" label="Plugins" command="Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter" type="MENU_ITEM" how="LAST_CHILD"/-->
         <!--menu-item id="pluginupdate2" anchor="tools-refresh-submenu-classic" label="Plugins" command="javascript:popPage('Publish?publish=now&amp;style=popup&amp;class=org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter')" type="MENU_ITEM" how="LAST_CHILD"/-->
