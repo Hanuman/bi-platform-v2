@@ -56,7 +56,7 @@
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
                     changing="true"/>
-        <dependency org="pentaho-library" name="libformula" rev="${dependency.pentaho-reporting-libformula.revision}"/>
+        <dependency org="pentaho-library" name="libformula" rev="${dependency.libformula.revision}"/>
         <dependency org="pentaho" name="pentaho-publisher" rev="${dependency.pentaho-pentaho-publisher.revision}"/>
     	<dependency org="pentaho" name="pentaho-bi-platform-api" rev="${dependency.bi-platform.revision}" changing="true" transitive="false" conf="default->default"/>
     	<dependency org="pentaho" name="pentaho-bi-platform-util" rev="${dependency.bi-platform.revision}" changing="true" transitive="false" conf="default->default"/>
@@ -88,7 +88,7 @@
         <dependency org="com.allen_sauer" name="gwt-dnd" rev="2.5.6" conf="codegen->default"/>
         <dependency org="com.google.code.gwtx" name="gwtx" rev="1.5-20081002" conf="codegen->default"/>
         
-        <dependency org="pentaho" name="pentaho-database-gwt" rev="${dependency.pentaho-database-gwt.revision}"
+        <dependency org="pentaho" name="pentaho-database-gwt" rev="${dependency.pentaho-database.revision}"
                     conf="codegen->default" transitive="false"
                     changing="true">
             <artifact name="pentaho-database-gwt"/>
