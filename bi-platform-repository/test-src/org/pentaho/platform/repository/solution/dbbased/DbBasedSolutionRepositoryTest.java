@@ -466,7 +466,8 @@ public class DbBasedSolutionRepositoryTest {
     repo.init(pentahoSession);
     Document doc = repo.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
     prettyPrint(doc);
-    assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/system/hibernate']")); //$NON-NLS-1$
+    // getFullSolutionTree no longer returns the system folder or anything in it.
+//    assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/system/hibernate']")); //$NON-NLS-1$
     assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/mysolution2']")); //$NON-NLS-1$
 
   }
@@ -480,7 +481,8 @@ public class DbBasedSolutionRepositoryTest {
     repo.init(pentahoSession);
     Document doc = repo.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
     prettyPrint(doc);
-    assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/system/hibernate']")); //$NON-NLS-1$
+    // getFullSolutionTree no longer returns the system folder or anything in it.
+//    assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/system/hibernate']")); //$NON-NLS-1$
     assertNotNull(doc.selectSingleNode("//branch[@id='/DbBasedSolutionRepositoryTest/mysolution2']")); //$NON-NLS-1$
   }
 
