@@ -146,9 +146,9 @@ public class SolutionReposHelper {
     SolutionReposHelper.processSolutionTree(parentNode, targetFile, solutionFilter, SolutionReposHelper.ADD_NOTHING_CONTRIBUTOR, actionOperation);
   }
 
-  public static void processSolutionTree(final Element parentNode, final ISolutionFile targetFile, ISolutionFilter solutionFilter, final ISolutionAttributeContributor contributor, final int actionOperation) {
-    solutionFilter = solutionFilter == null ? DEFAULT_FILTER : solutionFilter;
-    if (solutionFilter.keepFile(targetFile, actionOperation)) {
+  public static void processSolutionTree(final Element parentNode, final ISolutionFile targetFile, final ISolutionFilter solutionFilter, final ISolutionAttributeContributor contributor, final int actionOperation) {
+    ISolutionFilter sFilter = solutionFilter == null ? DEFAULT_FILTER : solutionFilter;
+    if (sFilter.keepFile(targetFile, actionOperation)) {
       if (targetFile.isDirectory()) {
         Element childNode = parentNode.addElement(SolutionReposHelper.BRANCH_NODE_NAME).addAttribute(SolutionReposHelper.ID_ATTR_NAME, targetFile.getFullPath()).addAttribute(SolutionReposHelper.IS_DIR_ATTR_NAME, "true"); //$NON-NLS-1$
         contributor.contributeAttributes(targetFile, childNode);
@@ -159,7 +159,7 @@ public class SolutionReposHelper {
         }
         ISolutionFile files[] = targetFile.listFiles();
         for (ISolutionFile file : files) {
-          SolutionReposHelper.processSolutionTree(childNode, file, solutionFilter, contributor, actionOperation);
+          SolutionReposHelper.processSolutionTree(childNode, file, sFilter, contributor, actionOperation);
         }
       } else {
         Element childNode = parentNode.addElement(SolutionReposHelper.LEAF_NODE_NAME).addAttribute(SolutionReposHelper.IS_DIR_ATTR_NAME, "false"); //$NON-NLS-1$
@@ -186,8 +186,9 @@ public class SolutionReposHelper {
   }
 
   public static void processSolutionStructure(final Element parentNode, final ISolutionFile targetFile, final ISolutionFilter solutionFilter, final ISolutionAttributeContributor contributor, final int actionOperation) {
+	ISolutionFilter sFilter = solutionFilter == null ? DEFAULT_FILTER : solutionFilter;
     if (targetFile.isDirectory()) {
-      if (!SolutionReposHelper.ignoreDirectories.contains(targetFile.getFileName()) && solutionFilter.keepFile(targetFile, actionOperation)) {
+      if (!SolutionReposHelper.ignoreDirectories.contains(targetFile.getFileName()) && sFilter.keepFile(targetFile, actionOperation)) {
         Element childNode = parentNode.addElement(SolutionReposHelper.ENTRY_NODE_NAME).addAttribute(SolutionReposHelper.TYPE_ATTR_NAME, SolutionReposHelper.DIRECTORY_ATTR).addAttribute(SolutionReposHelper.NAME_ATTR_NAME, targetFile.getFileName());
         contributor.contributeAttributes(targetFile, childNode);
         ISolutionFile files[] = targetFile.listFiles();
@@ -196,7 +197,7 @@ public class SolutionReposHelper {
         }
       }
     } else {
-      if (!SolutionReposHelper.ignoreFiles.contains(targetFile.getFileName()) && solutionFilter.keepFile(targetFile, actionOperation)) {
+      if (!SolutionReposHelper.ignoreFiles.contains(targetFile.getFileName()) && sFilter.keepFile(targetFile, actionOperation)) {
         Element childNode = parentNode.addElement(SolutionReposHelper.ENTRY_NODE_NAME).addAttribute(SolutionReposHelper.TYPE_ATTR_NAME, SolutionReposHelper.FILE_ATTR).addAttribute(SolutionReposHelper.NAME_ATTR_NAME, targetFile.getFileName());
         contributor.contributeAttributes(targetFile, childNode);
       }
