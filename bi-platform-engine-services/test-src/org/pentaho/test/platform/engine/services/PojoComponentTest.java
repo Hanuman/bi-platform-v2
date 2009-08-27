@@ -282,7 +282,11 @@ public class PojoComponentTest extends BaseTest {
 	        finishTest();
 	  }
 
-	  public void testBadInput() {
+	  /**
+	   * Test that unused parameters being passed in do not impact the running of the PojoComponent.
+	   * A warning is written to the log for user feedback on execution.
+	   */
+	  public void testUnusedInput() {
 	      startTest();
 	        ISolutionEngine solutionEngine = ServiceTestHelper.getSolutionEngine();
 	        try {
@@ -293,7 +297,7 @@ public class PojoComponentTest extends BaseTest {
 	            IRuntimeContext runtimeContext = solutionEngine.execute( 
 	                xactionStr, "test", "invalid class setting test", false, true, null, false, new HashMap(), null, null, new SimpleUrlFactory(""), new ArrayList()); //$NON-NLS-1$ //$NON-NLS-2$
 	            assertNotNull( "RuntimeContext is null", runtimeContext );
-	            assertEquals( "Action sequence succeeded", IRuntimeContext.RUNTIME_STATUS_FAILURE, runtimeContext.getStatus() );
+	            assertEquals( "Action sequence succeeded", IRuntimeContext.RUNTIME_STATUS_SUCCESS, runtimeContext.getStatus() );
 	        } catch (Exception e) {
 	          // we should not get here
 	          e.printStackTrace();
