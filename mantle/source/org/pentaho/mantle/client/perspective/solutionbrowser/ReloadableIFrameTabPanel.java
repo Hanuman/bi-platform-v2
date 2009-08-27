@@ -24,6 +24,7 @@ import java.util.Stack;
 
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.user.client.Window;
@@ -37,7 +38,12 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   CustomFrame frame;
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
-  protected boolean saveEnabled, editContentEnabled, editContentSelected ;
+  protected boolean saveEnabled, editContentEnabled, editContentSelected;
+  
+
+  // We hold onto a Javascript object that gets various notifications of PUC events. 
+  // (edit content button clicked, etc.)
+  protected JavaScriptObject jsCallback;
   
   private Set<String> overlayIds;
   
@@ -253,5 +259,19 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   
   public boolean isEditSelected(){
     return this.editContentSelected;
+  }
+  
+  /**
+   * Return the JavaScript callback object registered to receive notifications 
+   * regarding this tab's content.
+   * 
+   * @return JavaScriptObject callback
+   */
+  public JavaScriptObject getContentCallback(){
+    return jsCallback;
+  }
+  
+  public void setContentCallback(JavaScriptObject callback){
+    this.jsCallback = callback;
   }
 }

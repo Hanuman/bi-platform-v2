@@ -319,7 +319,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     }
     
     $wnd.registerContentCallback = function(callback) { 
-      main.@org.pentaho.mantle.client.XulMain::registerContentCallback(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
+      mantle.@org.pentaho.mantle.client.MantleApplication::registerContentCallback(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
     }
     
     
@@ -338,6 +338,11 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
     
   }-*/;
 
+  // Content frames can register a Javascript object to receive various PUC notifications. 
+  public void registerContentCallback(JavaScriptObject obj){
+    this.solutionBrowserPerspective.setCurrentTabJSCallback(obj);
+  }
+  
   public void addGlassPaneListener(JavaScriptObject obj){
     GlassPane.getInstance().addGlassPaneListener(new GlassPaneNativeListener(obj));
   }

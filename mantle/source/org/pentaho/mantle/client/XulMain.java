@@ -259,10 +259,6 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     
   }
   
-  public void registerContentCallback(JavaScriptObject obj){
-    this.controller.addJSCallback(obj);
-  }
-  
 }
 
   

@@ -59,6 +59,7 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -1763,6 +1764,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setEditSelected(selected);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
+  }
+  
+  // Content frames can register a Javascript object to receive various PUC notifications. We broker that out 
+  // to the appropriate ReloadableIFrameTabPanel here.
+  public void setCurrentTabJSCallback(JavaScriptObject obj){
+    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    panel.setContentCallback(obj);
   }
   
   public void buildEnabledOptionsList(Map<String, String> settings) {

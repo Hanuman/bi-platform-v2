@@ -28,6 +28,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.stereotype.Bindable;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,15 +43,16 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   private SolutionBrowserPerspective solutionBrowser;
   private XulMain main;
-  private boolean saveEnabled = false;
-  private boolean saveAsEnabled = false;
-  private boolean printEnabled = false;
-  private boolean newAnalysisEnabled = false;
-  private boolean contentEditEnabled = false;
-  private boolean contentEditSelected = false;
-  private boolean showBrowserSelected = false;
-  private boolean workspaceSelected = false;
-
+  private boolean saveEnabled;
+  private boolean saveAsEnabled;
+  private boolean printEnabled;
+  private boolean newAnalysisEnabled;
+  private boolean contentEditEnabled;
+  private boolean contentEditSelected;
+  private boolean showBrowserSelected;
+  private boolean workspaceSelected;
+  private JavaScriptObject callback;
+  
   public MainToolbarModel(final SolutionBrowserPerspective solutionBrowser,
       XulMain main) {
     this.solutionBrowser = solutionBrowser;
@@ -132,6 +134,8 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   /**
    * Process incoming events from the SolutionBrowser here
+   * 
+   * @TODO Move this listener to a controller where it really belongs, models shouldn't do this.
    */
   public void solutionBrowserEvent(SolutionBrowserListener.EventType type,
       Widget panel, FileItem selectedFileItem) {
@@ -139,12 +143,15 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     boolean saveEnabled = false;
     boolean editIsEnabled = false;
     boolean editSelected = false;
+    JavaScriptObject callback = null;
 
     if (panel != null && panel instanceof ReloadableIFrameTabPanel) {
-      selectedTabURL = ((ReloadableIFrameTabPanel) panel).getUrl();
-      saveEnabled = ((ReloadableIFrameTabPanel) panel).isSaveEnabled();
-      editIsEnabled = ((ReloadableIFrameTabPanel) panel).isEditEnabled();
-      editSelected = ((ReloadableIFrameTabPanel) panel).isEditSelected();
+      ReloadableIFrameTabPanel tbp = (ReloadableIFrameTabPanel) panel;
+      selectedTabURL = tbp.getUrl();
+      saveEnabled = tbp.isSaveEnabled();
+      editIsEnabled = tbp.isEditEnabled();
+      editSelected = tbp.isEditSelected();
+      callback = tbp.getContentCallback();
     }
 
     setPrintEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$
@@ -152,6 +159,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     setSaveAsEnabled(saveEnabled);
     setContentEditEnabled(editIsEnabled);
     setContentEditSelected(editSelected);
+    setCallback(callback);
 
     setWorkspaceSelected(solutionBrowser.isWorkspaceShowing());
     setShowBrowserSelected(solutionBrowser.isNavigatorShowing());
@@ -230,4 +238,12 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     return contentEditEnabled;
   }
 
+  public JavaScriptObject getCallback() {
+    return callback;
+  }
+
+  public void setCallback(JavaScriptObject callback) {
+    this.callback = callback;
+  }
+  
 }

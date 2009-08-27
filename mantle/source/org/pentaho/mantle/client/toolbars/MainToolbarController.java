@@ -52,9 +52,6 @@ public class MainToolbarController extends AbstractXulEventHandler{
   private XulToolbarbutton contentEditBtn;
   private SolutionBrowserPerspective solutionBrowser;
   
-  private List<JavaScriptObject> callbacks = new ArrayList<JavaScriptObject>();
-  
-  
   public MainToolbarController(SolutionBrowserPerspective solutionBrowser, MainToolbarModel model){
     this.solutionBrowser = solutionBrowser;
     this.model = model;
@@ -178,9 +175,7 @@ public class MainToolbarController extends AbstractXulEventHandler{
   
   @Bindable
   public void executeCallback(String jsScript){
-    for(JavaScriptObject callback : callbacks){
-      executeJS(callback, jsScript);
-    }
+    executeJS(model.getCallback(), jsScript);
   }
   
   @Bindable
@@ -216,10 +211,6 @@ public class MainToolbarController extends AbstractXulEventHandler{
       $wnd.mantle_showMessage("Javascript Error",e.message);
     }
   }-*/;
-
-  public void addJSCallback(JavaScriptObject obj){
-    callbacks.add(obj);
-  }
   
   @Bindable
   public void setContentEditEnabled(boolean enable){
@@ -232,11 +223,12 @@ public class MainToolbarController extends AbstractXulEventHandler{
   }
   
   @Bindable
+  /**
+   * Notifies currently active Javascript callback of an edit event.
+   */
   public void editContentClicked(){
-    for(JavaScriptObject callback : callbacks){
-      model.setContentEditToggled();
-      executeEditContentCallback(callback, model.isContentEditSelected());
-    }
+    model.setContentEditToggled();
+    executeEditContentCallback(model.getCallback(), model.isContentEditSelected());
   }
 
   private native void executeEditContentCallback(JavaScriptObject obj, boolean selected)/*-{
