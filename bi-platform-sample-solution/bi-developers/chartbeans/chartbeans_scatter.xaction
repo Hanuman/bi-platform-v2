@@ -10,7 +10,26 @@
     <help/>
   </documentation>
 
-  <inputs/>
+  <inputs>
+    <series-column type="string">
+      <sources>
+        <request>series-column</request>
+      </sources>
+      <default-value>DEPT</default-value>
+    </series-column>
+    <category-column type="string">
+      <sources>
+        <request>category-column</request>
+      </sources>
+      <default-value>ACTUAL</default-value>
+    </category-column>
+    <value-column type="string">
+      <sources>
+        <request>value-column</request>
+      </sources>
+      <default-value>BUDGET</default-value>
+    </value-column>
+  </inputs>
 
   <outputs>
     <outputstream type="string"> 
@@ -41,14 +60,10 @@
       <component-definition> 
         <jndi><![CDATA[SampleData]]></jndi>  
         <live><![CDATA[true]]></live>  
-        <query><![CDATA[SELECT PRODUCTS.PRODUCTLINE AS LINE,
-				ORDERFACT.YEAR_ID AS "YEAR",
-                        SUM(ORDERFACT.TOTALPRICE) AS "PRICE"
-                        FROM
-     				PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
-     				INNER JOIN CUSTOMER_W_TER ON ORDERFACT.CUSTOMERNUMBER = CUSTOMER_W_TER.CUSTOMERNUMBER 
-     				GROUP BY LINE, YEAR
-     				ORDER BY 2 ASC]]></query> 
+        <query><![CDATA[SELECT QUADRANT_ACTUALS.DEPARTMENT AS DEPT,
+				QUADRANT_ACTUALS.ACTUAL AS ACTUAL,
+                        QUADRANT_ACTUALS.BUDGET AS BUDGET
+                        FROM QUADRANT_ACTUALS]]></query> 
       </component-definition> 
     </action-definition>
 
@@ -67,7 +82,7 @@
       <action-outputs>
         <outputstream/>
       </action-outputs>
-      <component-definition/> 
+      <component-definition/>
       <action-name>ChartBeans Scatter Chart</action-name>  
       <logging-level>DEBUG</logging-level> 
     </action-definition>
