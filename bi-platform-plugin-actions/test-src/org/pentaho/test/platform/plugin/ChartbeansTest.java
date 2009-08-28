@@ -68,38 +68,6 @@ public class ChartbeansTest {
 
   @SuppressWarnings("deprecation")
   @Test
-  public void testChartbeansActionComponentJFree() throws IOException {
-    //IMPORTANT: This test will fail on local machines, the image being compared against was generated on Hudson!!!
-    microPlatform.init();
-
-    IPentahoUrlFactory urlFactory = new SimpleUrlFactory(PentahoSystem.getApplicationContext().getBaseUrl());
-    ArrayList messages = new ArrayList();
-    SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
-    parameterProvider.setParameter("solution", "test"); //$NON-NLS-1$ //$NON-NLS-2$
-    parameterProvider.setParameter("path", "chartbeans"); //$NON-NLS-1$ //$NON-NLS-2$
-    parameterProvider.setParameter("action", "Chartbeans_All_Inclusive_JFree.xaction"); //$NON-NLS-1$ //$NON-NLS-2$
-    ChartbeansActionComponent component = new ChartbeansActionComponent(
-        "test/chartbeans/Chartbeans_All_Inclusive_JFree.xaction", null, IOutputHandler.OUTPUT_TYPE_DEFAULT, urlFactory, messages); //$NON-NLS-1$
-    component.setParameterProvider(IParameterProvider.SCOPE_REQUEST, parameterProvider);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
-    component.validate(session, null);
-    OutputStream outputStream = getOutputStream("Chartbeans.testChartbeansAllInclusive_JFree", ".png"); //$NON-NLS-1$ //$NON-NLS-2$
-
-    // Compare resultant byte array to the originally generated one
-    byte[] generatedContents = component.getContentBytes();
-
-    File hFile = getOriginalFile("Chartbeans.testChartbeansAllInclusive_JFree.png"); //$NON-NLS-1$
-
-    byte[] originalContents = new byte[(int) hFile.length()];
-
-    outputStream.write(generatedContents);
-    
-    new FileInputStream(hFile).read(originalContents);
-    assertTrue("Generated content is incorrect", Arrays.equals(generatedContents, originalContents)); //$NON-NLS-1$
-  }
-
-  @SuppressWarnings("deprecation")
-  @Test
   public void testChartbeansActionComponentOFC() {
     microPlatform.init();
 
