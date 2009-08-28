@@ -523,6 +523,16 @@
   <!-- insert additional servlets -->
 
 	<servlet-mapping>
+    	<servlet-name>WebContextServlet</servlet-name>
+    	<url-pattern>/js/webcontext.js</url-pattern>
+  	</servlet-mapping>
+
+  	<servlet-mapping>
+    	<servlet-name>UploadService</servlet-name>
+    	<url-pattern>/UploadService</url-pattern>
+  	</servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>MantleService</servlet-name>
 		<url-pattern>/mantle/MantleService</url-pattern>
 	</servlet-mapping>
@@ -747,13 +757,7 @@
 		<url-pattern>/Map</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>WebContextServlet</servlet-name>
-		<url-pattern>/js/webcontext.js</url-pattern>
-	</servlet-mapping>
-
-
-	<!-- =============================== merged servlet-mappings ============================= -->
+<!-- =============================== merged servlet-mappings ============================= -->
 	<servlet-mapping>
 		<servlet-name>RepositoryTree</servlet-name>
 		<url-pattern>/RepositoryTree</url-pattern>
@@ -839,13 +843,7 @@
 		<url-pattern>/NewAnalysisView</url-pattern>
 	</servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>UploadService</servlet-name>
-    <url-pattern>/UploadService</url-pattern>
-  </servlet-mapping>
-
 	<!-- insert additional servlet mappings -->
-
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
