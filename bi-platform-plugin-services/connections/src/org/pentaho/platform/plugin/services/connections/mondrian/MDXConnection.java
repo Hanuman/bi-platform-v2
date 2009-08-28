@@ -67,8 +67,6 @@ public class MDXConnection implements IPentahoLoggingConnection {
 
   private boolean useExtendedColumnNames = false;
   
-  private boolean returnNullCells = true;
-
   public MDXConnection() {
     super();
   }
@@ -244,7 +242,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
   public IPentahoResultSet executeQuery(final String query) {
     Query mdxQuery = nativeConnection.parseQuery(query);
     Result result = nativeConnection.execute(mdxQuery);
-    resultSet = new MDXResultSet(result, nativeConnection, useExtendedColumnNames, returnNullCells);
+    resultSet = new MDXResultSet(result, nativeConnection, useExtendedColumnNames);
     return resultSet;
   }
 
@@ -326,9 +324,5 @@ public class MDXConnection implements IPentahoLoggingConnection {
   
   public void setUseExtendedColumnNames(boolean useExtendedColumnNames) {
     this.useExtendedColumnNames = useExtendedColumnNames;
-  }
-  
-  public void setReturnNullCells(boolean returnNullCells) {
-    this.returnNullCells = returnNullCells;
   }
 }

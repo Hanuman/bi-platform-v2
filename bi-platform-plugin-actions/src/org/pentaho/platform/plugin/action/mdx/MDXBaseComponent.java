@@ -48,8 +48,6 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
   private static final long serialVersionUID = 495868243986115468L;
 
-  private static final String RETURN_NULL_CELLS = "returnNullCells"; //$NON-NLS-1$
-
   private IPentahoResultSet rSet;
 
   /** is set to false if using another IPreparedComponents connection vs own */
@@ -481,9 +479,6 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           if ((connAction.getExtendedColumnNames() != ActionInputConstant.NULL_INPUT)){
             mdxConn.setUseExtendedColumnNames(connAction.getExtendedColumnNames().getBooleanValue());
           }
-        }
-        if (isDefinedInput(RETURN_NULL_CELLS)) {
-          mdxConn.setReturnNullCells(getInputBooleanValue(RETURN_NULL_CELLS, true));
         }
       }
       return localConnection;
