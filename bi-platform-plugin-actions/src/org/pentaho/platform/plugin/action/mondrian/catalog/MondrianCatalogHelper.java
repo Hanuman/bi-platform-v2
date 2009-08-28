@@ -43,6 +43,7 @@ import mondrian.xmla.DataSourcesConfig.DataSources;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileSystemException;
@@ -510,12 +511,20 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
       List<MondrianCube> mondrianCubes = new ArrayList<MondrianCube>();
       for (MondrianDef.Cube cube : schemaFromXml.cubes) {
         if (cube.enabled == null || cube.enabled.booleanValue()) {
-          mondrianCubes.add(new MondrianCube(cube.name));
+          String name = cube.caption;
+          if (StringUtils.isBlank(name)) {
+            name = cube.name;
+          }
+          mondrianCubes.add(new MondrianCube(name));
         }
       }
       for (MondrianDef.VirtualCube cube : schemaFromXml.virtualCubes) {
+        String name = cube.caption;
+        if (StringUtils.isBlank(name)) {
+          name = cube.name;
+        }
         if (cube.enabled == null || cube.enabled.booleanValue()) {
-          mondrianCubes.add(new MondrianCube(cube.name));
+          mondrianCubes.add(new MondrianCube(name));
         }
       }
       schema = new MondrianSchema(schemaName, mondrianCubes);
