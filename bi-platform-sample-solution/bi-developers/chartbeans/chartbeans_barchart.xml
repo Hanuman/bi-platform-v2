@@ -1,6 +1,5 @@
 <chartModel chartEngine="OpenFlashChart" style="border-top-width: 5; border-top-color: #987654; background-color: #b09a6b;">
-  <title location="BOTTOM" style="font-family: courier; color: #ffaa00; font-size: 20px; font-weight: bold; text-align: left; font-style: oblique; background-color: #880a0f;">Chart Title</title>
-  <subtitle style="font-family: monospace; color: #00ff00; font-size: 12px; font-weight: bold; font-style: italic; background-color: #0000ff;">subtitle</subtitle>
+  <title location="BOTTOM" style="font-family: courier; color: #ffaa00; font-size: 20px; font-weight: bold; text-align: left;">Chart Title</title>
   <legend style="font-family: verdana; font-size: 18px; font-weight: bold; border-top-width: 10; border-top-color: #880a0f; font-style: italic;"/>
   <barPlot orientation="VERTICAL" style="opacity: 0.75; background-color: #aa6611;" flavor="PLAIN">
     <palette>
