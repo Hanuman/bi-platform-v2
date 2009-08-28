@@ -123,8 +123,8 @@ public class ChartbeansTest {
       assertTrue(result.startsWith("<html><head>")); //$NON-NLS-1$
       assertEquals("function getChartData()", result.substring(74, 97)); //$NON-NLS-1$
       assertEquals("/*JSON*/", result.substring(107, 115)); //$NON-NLS-1$
-      assertEquals("/*END_JSON*/", result.substring(1306, 1318)); //$NON-NLS-1$
-      assertEquals("</body></html>", result.substring(2241)); //$NON-NLS-1$
+      assertEquals("/*END_JSON*/", result.substring(1148, 1160)); //$NON-NLS-1$
+      assertEquals("</body></html>", result.substring(2083)); //$NON-NLS-1$
     } catch (Exception e) {
       assertTrue("An exception has been thrown: " + e.getMessage(), false); //$NON-NLS-1$
     }
