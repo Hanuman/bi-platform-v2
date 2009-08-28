@@ -10,9 +10,6 @@
   <groupbox id="pooling-group" removeelement="true"/>
   <groupbox id="place-holder-box-2" removeelement="true"/>
   
-  <!-- once we enable options, remove these overlays -->
-  <listitem id="options-item" removeelement="true"/>
-  <groupbox id="options-group-box" removeelement="true"/>  
   <listbox id="connection-type-list" flex="0" width="250" height="175"/>
   <listbox id="access-type-list" flex="0" width="250"  height="85"/>
   

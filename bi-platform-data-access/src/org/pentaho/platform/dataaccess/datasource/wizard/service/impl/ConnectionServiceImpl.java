@@ -299,7 +299,7 @@ public class ConnectionServiceImpl implements IConnectionService {
       conn.setName(connection.getName());
       conn.setUsername(connection.getUsername());
       conn.setPassword(connection.getPassword());
-      String url = dialect.getURL(connection);
+      String url = dialect.getURLWithExtraOptions(connection);
       conn.setUrl(url);
       if (connection.getDatabaseType().getShortName().equals("GENERIC")) { //$NON-NLS-1$
         conn.setDriverClass(connection.getAttributes().get(GenericDatabaseDialect.ATTRIBUTE_CUSTOM_DRIVER_CLASS));
