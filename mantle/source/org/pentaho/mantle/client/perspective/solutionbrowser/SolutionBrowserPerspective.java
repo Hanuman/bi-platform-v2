@@ -1162,7 +1162,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     } else if (force) {
       fetchSolutionDocument(showStatus, /*collapse*/false);
     }
-    workspacePanel.refreshWorkspace();
     installViewMenu(perspectiveCallback);
   }
 
