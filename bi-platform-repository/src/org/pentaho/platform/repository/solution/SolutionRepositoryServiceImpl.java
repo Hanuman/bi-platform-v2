@@ -19,7 +19,6 @@ package org.pentaho.platform.repository.solution;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
+import org.pentaho.platform.api.engine.ICacheManager;
 import org.pentaho.platform.api.engine.IContentInfo;
 import org.pentaho.platform.api.engine.IFileInfo;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -331,8 +331,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
             
             child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
             
-          } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
           } catch (Throwable t) {
             t.printStackTrace();
           }
@@ -385,18 +383,47 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     } // else isfile
   }
 
-  public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters)
-      throws ParserConfigurationException {
-    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
-    ISolutionFile rootFile = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE);
-    org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-    org.w3c.dom.Element root = document.createElement("repository"); //$NON-NLS-1$
-    document.appendChild(root);
-    root.setAttribute("path", rootFile.getFullPath()); //$NON-NLS-1$
-    boolean isAdministrator = SecurityHelper.isPentahoAdministrator(session);
-    processRepositoryFile(session, isAdministrator, repository, root, rootFile, filters);
+  public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
+    // The SolutionRepositoryService creates/uses the ICacheManager from PentahoSystem to create a new
+    // cache region specifically for the caching of the solution repository document. This is not put
+    // into a session cache intentionally. Client tools like PRD do not maintain a session and would
+    // thus never have any benefit from this. Since we are using a cache manager, if the cache is
+    // unused long enough entries will age out.
+
+    // We are caching the solution repository document on a per-user basis, as required, because the
+    // document is that user's view of the repository, with respect to ACLs.
+
+    // Upon publish, reload, or reset repository calls this cache is cleared in the reset method
+    // of SolutionRepositoryBase.
+
+    ICacheManager cacheManager = PentahoSystem.getCacheManager(session);
+    if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+      cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
+    }
+    org.w3c.dom.Document document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session
+        .getName());
+
+    if (document == null) {
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
+      ISolutionFile rootFile = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE);
+      document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+      org.w3c.dom.Element root = document.createElement("repository"); //$NON-NLS-1$
+      document.appendChild(root);
+      root.setAttribute("path", rootFile.getFullPath()); //$NON-NLS-1$
+      boolean isAdministrator = SecurityHelper.isPentahoAdministrator(session);
+      processRepositoryFile(session, isAdministrator, repository, root, rootFile, filters);
+      // only attempt to add to the cache if by this point it exists, it's possible that
+      // the implementation of the ICacheManager might not allow the creation of new
+      // or custom caches like this.
+      if (cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+        cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName(), document);
+      }
+
+    }
+
     return document;
   }
+
   
   /**
    * Returns an XML snippet consisting of a single <code>file</code> element. The <code>file</code> element is the same 

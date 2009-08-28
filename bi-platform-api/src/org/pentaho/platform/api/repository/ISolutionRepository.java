@@ -86,6 +86,8 @@ public interface ISolutionRepository extends ILogger {
 
   public static final char SEPARATOR = '/';
   
+  public static final String REPOSITORY_SERVICE_CACHE_REGION = "repository-service-cache";
+  
   /**
    * Retrieves the action sequence from the repository. Should return <code>null</code> if the
    * requested action seqeuence is not found.

@@ -560,6 +560,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
     if (cacheManager != null) {
       cacheManager.killSessionCaches();
+      cacheManager.clearRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
     }
     // clear propertymap
     SolutionRepositoryBase.propertyMap.clear();
