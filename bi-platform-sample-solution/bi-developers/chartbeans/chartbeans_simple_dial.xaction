@@ -47,7 +47,7 @@
     
     <action-definition>
       <action-name>Simple demonstration Flash dial chart.</action-name>  
-      <component-name>org.pentaho.platform.engine.services.solution.PojoComponent</component-name>
+      <component-name>ChartBeansComponent</component-name>
       <action-inputs> 
         <chartdata type="result-set" />
       </action-inputs>
@@ -57,8 +57,7 @@
       <action-resources> 
         <chart-model-xml type="resource" mapping="dial"/>
       </action-resources>
-      <component-definition> 
-        <class>ChartBeansComponent</class> 
+      <component-definition>  
         <value-column>DIAL_DATA</value-column>
       </component-definition>
       <logging-level>DEBUG</logging-level> 
