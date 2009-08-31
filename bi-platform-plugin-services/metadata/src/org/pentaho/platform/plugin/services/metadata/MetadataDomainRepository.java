@@ -94,26 +94,36 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     // double check that all the legacy domains are loaded
     // this is necessary because the reloading of domains might have been done by 
     // a user who might not have permissions to all solutions
-    reloadLegacyDomains(false);
+    
+    // the super call is made to avoid having it called twice, the logic in getDomainIds
+    // calls reload if the map is empty.
+    synchronized(domains) {
+      super.reloadDomains();
+      reloadLegacyDomains(false);
+    }
     return super.getDomainIds();
   }
   
-  public synchronized void reloadDomains() {
-    // first reload new metadata domains
-    super.reloadDomains();
-    // then populate the legacy domains
-    reloadLegacyDomains(true);
+  public void reloadDomains() {
+    synchronized(domains) {
+      // first reload new metadata domains
+      super.reloadDomains();
+      // then populate the legacy domains
+      reloadLegacyDomains(true);
+    }
   }
   
-  public synchronized void removeDomain(String domainId) {
-    // determine if domain is legacy or not
-    Domain domain = domains.get(domainId);
-    
-    if (domain.getProperty(LEGACY_LOCATION) != null) {
-      // this is an xmi based domain, remove it
-      removeLegacyDomain(domainId);
-    } else {
-      super.removeDomain(domainId);
+  public void removeDomain(String domainId) {
+    synchronized(domains) {
+      // determine if domain is legacy or not
+      Domain domain = domains.get(domainId);
+      
+      if (domain.getProperty(LEGACY_LOCATION) != null) {
+        // this is an xmi based domain, remove it
+        removeLegacyDomain(domainId);
+      } else {
+        super.removeDomain(domainId);
+      }
     }
   }
   
@@ -128,34 +138,32 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     }
   }
  
-  public synchronized void removeLegacyDomain(String domainId) {
+  private void removeLegacyDomain(String domainId) {
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
     repo.removeSolutionFile(domainId + "/" + XMI_FILENAME); //$NON-NLS-1$
   }
   
   @SuppressWarnings("unchecked")
-  public synchronized void reloadLegacyDomains(boolean overwrite) {
-    // also load the XMI domains
-    if (domains == null) {
-      // we're too early for this call, it will be called again after domains are initialized.
-      return;
-    }
-    ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-    Document doc = repo.getSolutions(ISolutionRepository.ACTION_EXECUTE);
-    List nodes = doc.selectNodes("/repository/file[@type='FILE.FOLDER']"); //$NON-NLS-1$
-    int allSuccess = MetadataPublisher.NO_ERROR;
-    for (Object node : nodes) {
-      Node elem = ((Element) node).selectSingleNode("solution"); //$NON-NLS-1$
-      if (elem != null) {
-        String solution = elem.getText();
-        if (overwrite || domains == null || !domains.containsKey(solution)) {
-          allSuccess |= loadMetadata(solution);
+  private void reloadLegacyDomains(boolean overwrite) {
+    synchronized(domains) {
+      // also load the XMI domains
+      ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
+      Document doc = repo.getSolutions(ISolutionRepository.ACTION_EXECUTE);
+      List nodes = doc.selectNodes("/repository/file[@type='FILE.FOLDER']"); //$NON-NLS-1$
+      int allSuccess = MetadataPublisher.NO_ERROR;
+      for (Object node : nodes) {
+        Node elem = ((Element) node).selectSingleNode("solution"); //$NON-NLS-1$
+        if (elem != null) {
+          String solution = elem.getText();
+          if (overwrite || !domains.containsKey(solution)) {
+            allSuccess |= loadMetadata(solution);
+          }
         }
       }
     }
   }
 
-  public int loadMetadata(final String solution) {
+  private int loadMetadata(final String solution) {
     int result = MetadataPublisher.NO_ERROR;
     String resourceName;
     InputStream xmiInputStream;
@@ -188,23 +196,25 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     return result;
   }
   
-  public synchronized void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
-    if (domain.getId() == null) {
-      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
-    }
-
-    if (!overwrite && domains != null && domains.get(domain.getId()) != null) {
-      throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
-    }
-
-    if (domain.getProperty(LEGACY_LOCATION) != null) {
-      storeLegacyDomain(domain, overwrite);
-    } else {
-      super.storeDomain(domain, overwrite);
+  public void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+    synchronized(domains) {
+      if (domain.getId() == null) {
+        throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+      }
+  
+      if (!overwrite && domains.get(domain.getId()) != null) {
+        throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+      }
+  
+      if (domain.getProperty(LEGACY_LOCATION) != null) {
+        storeLegacyDomain(domain, overwrite);
+      } else {
+        super.storeDomain(domain, overwrite);
+      }
     }
   }
   
-  public synchronized void storeLegacyDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+  private void storeLegacyDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
 
     if (domain.getId() == null) {
       throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
