@@ -18,6 +18,7 @@
 package org.pentaho.platform.plugin.services.metadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
@@ -171,6 +172,15 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       } catch (Throwable t) {
         logger.error(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), t); //$NON-NLS-1$
         throw new RuntimeException(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), t); //$NON-NLS-1$
+      } finally {
+        if (xmiInputStream != null) {
+          try {
+            xmiInputStream.close();
+          } catch (IOException ex) {
+            logger.error(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), ex); //$NON-NLS-1$
+            throw new RuntimeException(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), ex); //$NON-NLS-1$
+          }
+        }
       }
     } else {
       return result;
