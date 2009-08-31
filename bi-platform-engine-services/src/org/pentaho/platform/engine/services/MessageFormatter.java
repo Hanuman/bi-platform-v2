@@ -27,6 +27,8 @@ import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.engine.services.runtime.ParameterManager.ReturnParameter;
+
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class MessageFormatter implements IMessageFormatter {
@@ -231,12 +233,20 @@ public class MessageFormatter implements IMessageFormatter {
         } else if (value instanceof IPentahoResultSet) {
           formatResultSetAsHTMLRows((IPentahoResultSet) value, messageBuffer);
         } else {
-          if (doWrapper) {
-            messageBuffer.append(outputName).append("="); //$NON-NLS-1$
-          }
-          messageBuffer.append(value.toString());
-          if (doWrapper) {
-            messageBuffer.append("<br/>"); //$NON-NLS-1$
+          // Temporary fix for BISERVER-3348
+          ReturnParameter rpm = (ReturnParameter)context.getParameterManager().getReturnParameters().get(outputName);
+          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) && ("header".equalsIgnoreCase(rpm.destinationParameter))){
+            // we don't want to output response header parameters to the browser...
+          }else{
+
+            if (doWrapper) {
+              messageBuffer.append(outputName).append("="); //$NON-NLS-1$
+            }
+            messageBuffer.append(value.toString());
+            if (doWrapper) {
+              messageBuffer.append("<br/>"); //$NON-NLS-1$
+            }
+          
           }
         }
       }
@@ -304,7 +314,13 @@ public class MessageFormatter implements IMessageFormatter {
             currentRow++;
           }
         } else {
-          messageBuffer.append(outputName).append("=").append(value.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+          // Temporary fix for BISERVER-3348
+          ReturnParameter rpm = (ReturnParameter)context.getParameterManager().getReturnParameters().get(outputName);
+          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) && ("header".equalsIgnoreCase(rpm.destinationParameter))){
+            // we don't want to output response header parameters to the browser...
+          }else{
+            messageBuffer.append(outputName).append("=").append(value.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+          }
         }
       }
       if (doMessages) {
