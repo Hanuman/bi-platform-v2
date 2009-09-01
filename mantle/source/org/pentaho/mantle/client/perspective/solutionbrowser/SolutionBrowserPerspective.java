@@ -461,7 +461,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return false;
   }
 
-  public void showNewURLTab(String tabName, String tabTooltip, String url) {
+  public void showNewURLTab(final String tabName, final String tabTooltip, final String url) {
     final int elementId = contentTabPanel.getWidgetCount();
     String frameName = "frameID: " + elementId; //$NON-NLS-1$
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
@@ -578,7 +578,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, url);
+              UrlCommand cmd = new UrlCommand(this, url, selectedFileItem.localizedName);
+              cmd.execute();
             }
           }
         } else {

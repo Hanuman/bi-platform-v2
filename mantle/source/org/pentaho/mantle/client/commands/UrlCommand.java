@@ -17,9 +17,8 @@
 package org.pentaho.mantle.client.commands;
 
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
-import com.google.gwt.user.client.Command;
 
-public class UrlCommand implements Command {
+public class UrlCommand extends AbstractCommand {
 
   SolutionBrowserPerspective navigatorPerspective;
   String url;
@@ -31,7 +30,13 @@ public class UrlCommand implements Command {
     this.title = title;
   }
 
-  public void execute() {
+  protected void performOperation()
+  {
+    navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
+  }
+
+  protected void performOperation(boolean feedback)
+  {
     navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
   }
 }
