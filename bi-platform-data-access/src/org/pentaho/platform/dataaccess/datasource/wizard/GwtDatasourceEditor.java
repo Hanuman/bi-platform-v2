@@ -32,8 +32,8 @@ import org.pentaho.platform.dataaccess.datasource.wizard.controllers.DatasourceC
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.IDatasourceTypeController;
 import org.pentaho.platform.dataaccess.datasource.wizard.controllers.RelationalDatasourceController;
 import org.pentaho.platform.dataaccess.datasource.wizard.models.DatasourceModel;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.ui.xul.XulServiceCallback;
 import org.pentaho.ui.xul.components.XulLabel;
 import org.pentaho.ui.xul.containers.XulDialog;
@@ -43,8 +43,6 @@ import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;
 import org.pentaho.ui.xul.gwt.util.AsyncConstructorListener;
 import org.pentaho.ui.xul.gwt.util.AsyncXulLoader;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
-
-import com.google.gwt.core.client.GWT;
 
 /**
  * GWT implementation of a datasource editor. Constructor takes all external dependencies. Dialog is shown/hidden via
@@ -66,10 +64,37 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   private boolean initialized;
   
   public GwtDatasourceEditor(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService, final AsyncConstructorListener constructorListener) {
+    this(datasourceService, connectionService, constructorListener, true);
+  }
+  
+  public GwtDatasourceEditor(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService, final AsyncConstructorListener constructorListener, boolean checkHasAccess) {
     this.constructorListener = constructorListener;
+    if (checkHasAccess) {
+      datasourceService.hasPermission(new XulServiceCallback<Boolean>() {
+        public void error(String message, Throwable error) {
+          showErrorDialog(
+              datasourceMessages.getString("DatasourceEditor.ERROR"), //$NON-NLS-1$
+              datasourceMessages.getString("DatasourceEditor.ERROR_0002_UNABLE_TO_SHOW_DIALOG",error.getLocalizedMessage())); //$NON-NLS-1$
+        }
+        public void success(Boolean retVal) {
+          if (retVal) {
+            init(datasourceService, connectionService);
+          } else {
+            if (constructorListener != null) {
+              constructorListener.asyncConstructorDone();
+            }
+          }
+        }
+      });
+    } else {
+      init(datasourceService, connectionService);
+    }
+  }
+  
+  private void init(final IXulAsyncDatasourceService datasourceService, final IXulAsyncConnectionService connectionService) {
     setDatasourceService(datasourceService);
     setConnectionService(connectionService);
-    AsyncXulLoader.loadXulFromUrl("datasourceEditorDialog.xul", "datasourceEditorDialog", this); //$NON-NLS-1$//$NON-NLS-2$
+    AsyncXulLoader.loadXulFromUrl("datasourceEditorDialog.xul", "datasourceEditorDialog", GwtDatasourceEditor.this); //$NON-NLS-1$//$NON-NLS-2$
   }
   
   private void reloadConnections() {

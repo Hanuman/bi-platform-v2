@@ -22,8 +22,8 @@ package org.pentaho.platform.dataaccess.datasource.wizard;
 
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.dataaccess.datasource.wizard.jsni.WAQRTransport;
-import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncConnectionService;
+import org.pentaho.platform.dataaccess.datasource.wizard.service.IXulAsyncDatasourceService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceGwtImpl;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.DatasourceServiceGwtImpl;
 import org.pentaho.ui.xul.XulServiceCallback;
@@ -43,10 +43,26 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
 
   public void onModuleLoad() {
     datasourceService = new DatasourceServiceGwtImpl();
-    connectionService = new ConnectionServiceGwtImpl();
-    editor = new GwtDatasourceEditor(datasourceService, connectionService, null);
-    setupNativeHooks(this);
+    // only init the app if the user has permissions
+    datasourceService.hasPermission(new XulServiceCallback<Boolean>() {
+      public void error(String message, Throwable error) {
+        initDashboardButtons(false);
+      }
+      public void success(Boolean retVal) {
+        if (retVal) {
+          connectionService = new ConnectionServiceGwtImpl();
+          editor = new GwtDatasourceEditor(datasourceService, connectionService, null, false);
+          setupNativeHooks(GwtDatasourceEditorEntryPoint.this);
+        }
+        initDashboardButtons(retVal);
+      }
+    });
   }
+  
+  public native void initDashboardButtons(boolean val) /*-{
+    $wnd.initDataAccess(val);
+  }-*/;
+
 
   private native void setupNativeHooks(GwtDatasourceEditorEntryPoint editor)/*-{
     $wnd.openDatasourceEditor= function(callback) {
