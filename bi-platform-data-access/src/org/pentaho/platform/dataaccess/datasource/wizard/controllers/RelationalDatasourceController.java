@@ -210,9 +210,12 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
     };
 
-    bf.createBinding(datasourceName, "value", connections, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceName, "value", query, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceName, "value", modelDataTable, "!disabled", widgetBindingConvertor);//$NON-NLS-1$ //$NON-NLS-2$
+    List<Binding> bindingsThatNeedInitialized = new ArrayList<Binding>();
+    
+    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", connections, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
+    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", query, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
+    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", modelDataTable, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
+    
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
       @Override
@@ -277,6 +280,18 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
+    
+
+    for(Binding b : bindingsThatNeedInitialized){
+      try {
+        b.fireSourceChanged();
+
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+      }
+    }
+    
   }
 
   public void setBindingFactory(BindingFactory bf) {
