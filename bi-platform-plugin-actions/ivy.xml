@@ -82,7 +82,7 @@
     <dependency org="com.thoughtworks.xstream" name="xstream"            rev="1.3" />
     
     <!--  this is a runtime dependency, used sometimes in JavascriptRules (CDF) as well as plugins (XDASH) -->
-    <dependency org="org.json" name="json" rev="${dependency.json.revision}" transitive="false"/>
+    <dependency org="org.json" name="json" rev="${dependency.json.revision}" transitive="false" changing="true"/>
     
     <!--  external lib/xml dependencies -->
     <dependency org="jaxen" name="jaxen" rev="1.1" transitive="false" />
