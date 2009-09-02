@@ -423,16 +423,6 @@
 
 	<!-- ================================= merged servlets =================================== -->
 	<servlet>
-		<servlet-name>ManageUsers</servlet-name>
-		<servlet-class>org.pentaho.platform.web.servlet.SubscriptionUserCleanup</servlet-class>
-		<init-param>
-			<param-name>password</param-name>
-			<param-value />
-			<description>password used for protecting access to servlet</description>
-		</init-param>
-	</servlet>
-
-	<servlet>
 		<servlet-name>AdhocWebService</servlet-name>
 		<servlet-class>org.pentaho.platform.web.servlet.AdhocWebService</servlet-class>
 	</servlet>
@@ -786,11 +776,6 @@
 	<servlet-mapping>
 		<servlet-name>SubscriptionAdmin</servlet-name>
 		<url-pattern>/SubscriptionAdminService</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>ManageUsers</servlet-name>
-		<url-pattern>/ManageUsers</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
