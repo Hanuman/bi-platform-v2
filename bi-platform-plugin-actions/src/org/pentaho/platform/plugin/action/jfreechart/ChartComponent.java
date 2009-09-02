@@ -609,7 +609,7 @@ public class ChartComponent extends ComponentBase {
       File file = PentahoSystem.getApplicationContext().createTempFile(getSession(), ChartComponent.FILENAME_PREFIX, extension, trackFile);
       results[ChartComponent.FILE_NAME] = file;
       if (includeMapFile) {
-        file = PentahoSystem.getApplicationContext().createTempFile(getSession(), ChartComponent.MAP_EXTENSION, extension, trackFile);
+        file = PentahoSystem.getApplicationContext().createTempFile(getSession(), ChartComponent.FILENAME_PREFIX,ChartComponent.MAP_EXTENSION, trackFile);
         results[ChartComponent.MAP_NAME] = file;
       }
     } catch (IOException e) {
