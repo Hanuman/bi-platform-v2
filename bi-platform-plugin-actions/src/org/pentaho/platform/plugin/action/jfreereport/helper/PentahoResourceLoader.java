@@ -149,9 +149,7 @@ public class PentahoResourceLoader implements ResourceLoader {
     } else {
       resource = LoaderUtils.mergePaths((String) parent.getIdentifier(), path);
     }
-    if (!resource.startsWith(getSchema())) {
-        throw new ResourceKeyCreationException("Assertation: Unsupported key type"); //$NON-NLS-1$
-    }
+
     final Map map;
     if (data != null) {
       map = new HashMap();
