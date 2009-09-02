@@ -33,6 +33,8 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
 
   private static final String CATEGORY_TAG = "category="; //$NON-NLS-1$
 
+  private static final String ITEM_TAG = "item="; //$NON-NLS-1$
+
   String urlFragment;
 
   Dataset dataset;
@@ -69,8 +71,7 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
     this.urlTarget = urlTarget;
     this.useBaseUrl = useBaseUrl;
   	this.data = data;
-    if(dataset instanceof TimeTableXYDatasetChartDefinition)
-    	this.data.beforeFirst();
+   	this.data.beforeFirst();
   }
 
   public PentahoChartURLTagFragmentGenerator(final String urlTemplate, final Dataset dataDefinition,
