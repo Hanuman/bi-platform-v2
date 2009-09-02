@@ -313,10 +313,6 @@
     <jsp-file>/jsp/SchedulerAdmin.jsp</jsp-file>
   </servlet>
   <servlet>
-    <servlet-name>TestSuite</servlet-name>
-    <jsp-file>/jsp/TestSuite.jsp</jsp-file>
-  </servlet>
-  <servlet>
     <servlet-name>UpdateSampleEmails</servlet-name>
     <jsp-file>/jsp/UpdateSampleEmails.jsp</jsp-file>
   </servlet>
