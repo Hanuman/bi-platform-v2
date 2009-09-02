@@ -95,19 +95,13 @@
 
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: package-targz (override to exlude jre folder)                  
+          target: package-zip (override to include jre folder in windows variant)                  
          - - - - - - - - - - - - - - - - - -->
-  <target name="package-targz">
-    <tar destfile="${dist.dir}/${package.basename}.tar.gz" longfile="gnu" compression="gzip">
-      <tarfileset dir="${stage.dir}" mode="755">
-        <include name="**/*.sh" />
-        <exclude name="jre/" />
-      </tarfileset>
-      <tarfileset dir="${stage.dir}">
-        <exclude name="**/*.sh" />
-        <exclude name="jre/" />
-      </tarfileset>
-    </tar>
+  <target name="package-zip" depends="package.init">
+    <zip destfile="${dist.dir}/${package.basename}.zip">
+      <zipfileset dir="${stage.dir}" />
+      <zipfileset dir="${jre.dir}" prefix="${package.id}/jre" />
+    </zip>
   </target>
 
 
@@ -131,7 +125,6 @@
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${admin-console.dir}" />
     <mkdir dir="${stage.dir.server}/tomcat" />
-    <mkdir dir="${stage.dir.server}/jre" />
     <mkdir dir="${prep.pentaho.war.dir}" />
     <mkdir dir="${container.deploy.dir}" />
   </target>
@@ -204,12 +197,6 @@
         </fileset>
       </copy>
 
-      <!-- Add jre -->
-      <copy todir="${stage.dir.server}/jre">
-        <fileset dir="${jre.dir}">
-          <exclude name="**/servlet-api.jar" />
-        </fileset>
-      </copy>
 
       <!-- Add libs needed by tomcat -->
       <copy todir="${stage.dir.server}/tomcat/server/lib">
