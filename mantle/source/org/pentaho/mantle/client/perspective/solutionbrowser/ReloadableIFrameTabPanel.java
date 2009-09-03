@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
 
   String url;
+  String name;
   CustomFrame frame;
   protected SolutionFileInfo fileInfo;
   protected FormPanel form;
@@ -48,21 +49,24 @@ public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadab
   private Set<String> overlayIds;
   
   public ReloadableIFrameTabPanel() {
-    frame = new CustomFrame(""+System.currentTimeMillis(), "about:blank");
+    this.name = ""+System.currentTimeMillis();
+    this.frame = new CustomFrame(name, "about:blank");
   }
   
   public ReloadableIFrameTabPanel(String url) {
     this.url = url;
-    frame = new CustomFrame(""+System.currentTimeMillis(), url); //$NON-NLS-1$
+    this.name = ""+System.currentTimeMillis();
+    this.frame = new CustomFrame(name, url); //$NON-NLS-1$
     add(frame);
   }  
   
   public ReloadableIFrameTabPanel(String name, String url) {
     this.url = url;
+    this.name = name;
     
     setSaveEnabled(url.endsWith("analysisview.xaction")); //$NON-NLS-1$
     
-    frame = new CustomFrame(name, url);
+    this.frame = new CustomFrame(name, url);
     add(frame);
   }
 

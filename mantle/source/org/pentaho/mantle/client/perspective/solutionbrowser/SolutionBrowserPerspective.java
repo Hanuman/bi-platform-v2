@@ -33,12 +33,12 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
-import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
@@ -74,9 +74,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Frame;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -85,7 +83,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -101,6 +98,7 @@ import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionBrowserPerspective extends HorizontalPanel implements IPerspective, IFileItemCallback, IWorkspaceCallback {
 
+  private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
   private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
   private static PopupPanel popupMenu = new PopupPanel(true);
 
@@ -461,9 +459,25 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return false;
   }
 
+  public String getUniqueFrameName() {
+    int maxId = -1;
+    for(int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
+      if (contentTabPanel.getWidget(i) instanceof ReloadableIFrameTabPanel) {
+        String name = ((ReloadableIFrameTabPanel)contentTabPanel.getWidget(i)).name;
+        if (name != null && name.startsWith(FRAME_ID_PRE)) {
+          int frameVal = Integer.parseInt(name.substring(6)); 
+          if (frameVal > maxId) {
+            maxId = frameVal;
+          }
+        }
+      }
+    }
+    return FRAME_ID_PRE + (maxId+1);
+  }
+  
   public void showNewURLTab(final String tabName, final String tabTooltip, final String url) {
     final int elementId = contentTabPanel.getWidgetCount();
-    String frameName = "frameID: " + elementId; //$NON-NLS-1$
+    String frameName = getUniqueFrameName();
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
 
     Frame frame = panel.getFrame();
