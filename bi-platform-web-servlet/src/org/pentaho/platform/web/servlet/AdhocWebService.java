@@ -1554,7 +1554,11 @@ public class AdhocWebService extends ServletBase {
     ByteArrayOutputStream xactionOutputStream = createMQLReportActionSequenceAsStream( reportName,
         reportDesc, mqlNode, outputTypeList, 
         xactionFilename, jfreeString, jfreeFilename, "warn", userSession); //$NON-NLS-1$
-    solutionPath = StringUtils.isEmpty(solutionPath) ? "" : "/" + solutionPath; //$NON-NLS-1$ //$NON-NLS-2$
+    if(StringUtils.isEmpty(solutionPath)) {
+       solutionPath = "";        
+    } else {
+        solutionPath = solutionPath.equals("/") ? "" : "/" + solutionPath; //$NON-NLS-1$ //$NON-NLS-2$
+    }
     String path = solutionName + solutionPath + "/"; //$NON-NLS-1$ 
 
     int jfreeSaveStatus = ISolutionRepository.FILE_ADD_FAILED;
