@@ -22,7 +22,25 @@ FOR %%b IN (sampledata,hibernate,quartz) DO call :runCommand %%b
 GOTO end
 
 :runCommand
-SET command=java -cp %tempclasspath% org.hsqldb.util.ShutdownServer -url "jdbc:hsqldb:hsql://localhost/%1" -user "SA" -password ""
+
+if defined JAVA_HOME goto use_java_home
+if defined JRE_HOME goto use_jre_home
+pushd ..
+set PENTAHO_PATH=%CD%\
+popd
+set PENTAHO_JAVA="%PENTAHO_PATH%jre\bin\java"
+goto db
+
+:use_java_home
+set PENTAHO_JAVA="%JAVA_HOME%\bin\java"
+goto db
+
+:use_jre_home
+set PENTAHO_JAVA="%JRE_HOME%\bin\java"
+goto db
+
+:db
+SET command=%PENTAHO_JAVA% -cp %tempclasspath% org.hsqldb.util.ShutdownServer -url "jdbc:hsqldb:hsql://localhost/%1" -user "SA" -password ""
 echo %command%
 %command%
 GOTO :end
