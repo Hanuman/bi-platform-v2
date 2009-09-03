@@ -7,6 +7,7 @@ This module serves as the Debuging environment and default implementation for in
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.googlecode.gwtx.Java'/>
   <inherits name='com.google.gwt.xml.XML'/>
+  <inherits name="org.pentaho.platform.login.Login"/>
   <inherits name="org.pentaho.gwt.widgets.Widgets"/>
   <inherits name="org.pentaho.ui.xul.Gwt"/>
   <inherits name="org.pentaho.metadata.Model"/>
@@ -43,6 +44,8 @@ This module serves as the Debuging environment and default implementation for in
         <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>
         <exclude name="**/DebugDataAccessViewPermissionHandler*"/>
         <exclude name="**/DatasourceInMemoryServiceHelper*"/>
+        <exclude name="**/ConnectionInMemoryServiceHelper*"/>
+        <exclude name="**/ConnectionServiceHelper*"/>        
         <exclude name="**/DatasourceServiceHelper*"/>
     	<exclude name="**/DataAccessDatabaseConnectionService*"/>        
         <exclude name="**/Messages*"/>                

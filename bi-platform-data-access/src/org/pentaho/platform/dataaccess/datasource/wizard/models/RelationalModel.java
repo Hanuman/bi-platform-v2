@@ -226,14 +226,6 @@ public class RelationalModel extends XulEventSourceAdapter{
     }
     validate();
   }
-  public IDatasource getDatasource() {
-    IDatasource datasource = new Datasource();
-    datasource.setBusinessData(getBusinessData());
-    datasource.setConnections(getConnections());
-    datasource.setQuery(getQuery());
-    datasource.setSelectedConnection(getSelectedConnection());
-    return datasource;
-  }
 
   private void addModelDataRow(LogicalColumn column, List<String> columnData, String locale) {
     if (dataRows == null) {
