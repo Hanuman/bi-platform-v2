@@ -606,11 +606,6 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>TestSuite</servlet-name>
-		<url-pattern>/TestSuite</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
 		<servlet-name>UpdateSampleEmails</servlet-name>
 		<url-pattern>/UpdateSampleEmails</url-pattern>
 	</servlet-mapping>
