@@ -18,7 +18,8 @@
         <include name="lib/**" />
         <include name="start_*" />
         <include name="stop_*" />
-      	<include name="README.TXT"/>
+        <include name="set-pentaho-java.*" />
+        <include name="README.TXT"/>
       </zipfileset>
     </zip>
   </target>
