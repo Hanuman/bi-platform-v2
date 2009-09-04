@@ -281,6 +281,7 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
     }
     $wnd.mantle_initialized = true;
+    $wnd.mantle_repository_loaded = false;
     $wnd.sendMouseEvent = function(event) {
       return solutionNavigator.@org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
     }

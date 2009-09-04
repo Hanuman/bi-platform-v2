@@ -1120,6 +1120,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             // ok, we have a repository document, we can build the GUI
             // consider caching the document
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
+            
+            // flat that we have the document so that other things might start to use it (PDB-500)
+            flagSolutionDocumentLoaded();
+            
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
             
@@ -1673,19 +1677,25 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     return null;
   }
 
+  public native void flagSolutionDocumentLoaded()
+  /*-{
+    $wnd.mantle_repository_loaded = true;
+  }-*/;
+  
   /**
    * This method will check if the given frame(by id) is jpivot.
    * 
    * @param elementId
    */
-  public static native boolean isPivot(String elementId) /*-{
-         var frame = $doc.getElementById(elementId);
-         if (!frame) { 
-           return false; 
-       }
-         frame = frame.contentWindow;
-         return true == frame.pivot_initialized;
-       }-*/;
+  public static native boolean isPivot(String elementId) 
+  /*-{
+    var frame = $doc.getElementById(elementId);
+    if (!frame) { 
+      return false; 
+    }
+    frame = frame.contentWindow;
+    return true == frame.pivot_initialized;
+  }-*/;
 
   public static SolutionBrowserPerspective getInstance() {
     return instance;
