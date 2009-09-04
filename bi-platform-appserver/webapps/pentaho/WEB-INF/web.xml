@@ -462,7 +462,7 @@
 		<jsp-file>/jsp/PUCLogin.jsp</jsp-file>
 		<init-param>
 			<param-name>send401List</param-name>
-			<param-value>AdhocWebService,AnalysisViewService,MondrianCatalogPublisher, SchedulerAdminService, SubscriptionAdminService, PublishService, ResetRepositoryService, ServiceActionService,SolutionRepositoryService,GwtRpcPluginProxyServlet</param-value>
+			<param-value>AdhocWebService,AnalysisViewService,MondrianCatalogPublisher, SchedulerAdminService, SubscriptionAdminService, PublishService, ResetRepositoryService, ServiceActionService,SolutionRepositoryService,gwtrpc,mantle/images/spacer.gif</param-value>
 			<description>List of things to throw a 401 to when seen in the login</description>
 		</init-param>
 	</servlet>

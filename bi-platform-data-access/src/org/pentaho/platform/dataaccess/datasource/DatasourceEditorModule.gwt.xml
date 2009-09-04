@@ -6,6 +6,7 @@
   <inherits name="org.pentaho.ui.xul.Gwt"/>
   <inherits name="org.pentaho.metadata.Model"/>
   <inherits name="org.pentaho.ui.database.DatabaseDialog"/>
+  <inherits name="org.pentaho.gwt.widgets.login.Login"/>
   <source path="">
     <exclude name="**/MQLEditorDebugGwtServlet*"/>
     <exclude name="**/SwingMqlEditor*"/>
@@ -38,7 +39,9 @@
     <exclude name="**/SimpleDataAccessViewPermissionHandler*"/>   
     <exclude name="**/DebugDataAccessViewPermissionHandler*"/> 
     <exclude name="**/DatasourceInMemoryServiceHelper*"/>
-    <exclude name="**/DatasourceServiceHelper*"/>     
+    <exclude name="**/DatasourceServiceHelper*"/>
+    <exclude name="**/ConnectionInMemoryServiceHelper*"/>
+    <exclude name="**/ConnectionServiceHelper*"/>   
     <exclude name="**/DataAccessDatabaseConnectionService*"/>
     <exclude name="**/Messages*"/>      
   </source>
