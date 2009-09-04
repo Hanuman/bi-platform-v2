@@ -1,14 +1,12 @@
 @echo on
 setlocal
-set PENTAHO_PATH=%~dp0
-if defined JAVA_HOME goto tomcat
-if defined JRE_HOME goto tomcat
-set JAVA_HOME=
-set JRE_HOME=%PENTAHO_PATH%jre
-set PATH=%JRE_HOME%\bin;%PATH%;
-:tomcat
+
+if exist "%~dp0jre" call "%~dp0set-pentaho-java.bat" "%~dp0jre"
+if not exist "%~dp0jre" call "%~dp0set-pentaho-java.bat"
+
 cd tomcat\bin
-set CATALINA_HOME=%PENTAHO_PATH%tomcat
+set CATALINA_HOME=%~dp0tomcat
+set JAVA_HOME=%_PENTAHO_JAVA_HOME%
 shutdown.bat
 endlocal
 exit

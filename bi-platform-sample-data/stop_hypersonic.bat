@@ -1,5 +1,7 @@
 @Echo Off
 
+setlocal 
+
 REM ---------------------------------------------
 REM - Create the classpath for this application -
 REM ---------------------------------------------
@@ -23,24 +25,10 @@ GOTO end
 
 :runCommand
 
-if defined JAVA_HOME goto use_java_home
-if defined JRE_HOME goto use_jre_home
-pushd ..
-set PENTAHO_PATH=%CD%\
-popd
-set PENTAHO_JAVA="%PENTAHO_PATH%jre\bin\java"
-goto db
+if exist "%~dp0..\jre" call "%~dp0set-pentaho-java.bat" "%~dp0..\jre"
+if not exist "%~dp0..\jre" call "%~dp0set-pentaho-java.bat"
 
-:use_java_home
-set PENTAHO_JAVA="%JAVA_HOME%\bin\java"
-goto db
-
-:use_jre_home
-set PENTAHO_JAVA="%JRE_HOME%\bin\java"
-goto db
-
-:db
-SET command=%PENTAHO_JAVA% -cp %tempclasspath% org.hsqldb.util.ShutdownServer -url "jdbc:hsqldb:hsql://localhost/%1" -user "SA" -password ""
+"%_PENTAHO_JAVA%" -cp %tempclasspath% org.hsqldb.util.ShutdownServer -url "jdbc:hsqldb:hsql://localhost/%1" -user "SA" -password ""
 echo %command%
 %command%
 GOTO :end
