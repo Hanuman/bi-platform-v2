@@ -39,6 +39,7 @@ public class RelationalModelTest {
     Assert.assertEquals(ConnectionEditType.ADD,relationalModel.getEditType());
     Assert.assertNull(relationalModel.getQuery());
     Assert.assertNull(relationalModel.getSelectedConnection());
+    Assert.assertNull(relationalModel.getDatasourceName());
     Assert.assertEquals(false, relationalModel.isValidated());
     IConnection connection = new Connection();
     connection.setDriverClass("org.hsqldb.jdbcDriver");
@@ -53,6 +54,7 @@ public class RelationalModelTest {
     relationalModel.setEditType(ConnectionEditType.EDIT);
     relationalModel.setQuery("select * from customers");
     relationalModel.setPreviewLimit("10");
+    relationalModel.setDatasourceName("newdatasource");
     relationalModel.validate();
     Assert.assertEquals(true, relationalModel.isPreviewValidated());
     Assert.assertEquals(false, relationalModel.isValidated());

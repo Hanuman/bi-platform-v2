@@ -39,8 +39,10 @@ public class CsvModelTest {
     Assert.assertNull(csvModel.getDelimiterList());
     Assert.assertNull(csvModel.getEnclosureList());
     Assert.assertNull(csvModel.getSelectedFile());
+    Assert.assertNull(csvModel.getDatasourceName());
     Assert.assertEquals(0, csvModel.getDataRows().size());
     Assert.assertEquals(false, csvModel.isValidated());
+    csvModel.setDatasourceName("newdatasource");
     csvModel.setSelectedFile("user/local/myfile.csv");
     csvModel.setDelimiter(Delimiter.COMMA);
     csvModel.setEnclosure(Enclosure.DOUBLEQUOTE);

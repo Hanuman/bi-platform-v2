@@ -37,17 +37,15 @@ public class DatasourceModelTest {
     DatasourceModel datasourceModel = new DatasourceModel();
     Assert.assertNull(datasourceModel.getCsvModel().getSelectedFile());
     Assert.assertNull(datasourceModel.getRelationalModel().getQuery());
-    Assert.assertNull(datasourceModel.getDatasourceName());
     Assert.assertEquals(DatasourceType.NONE, datasourceModel.getDatasourceType());
     datasourceModel.setDatasourceType(DatasourceType.SQL);
     Assert.assertEquals(false, datasourceModel.isValidated());
-    datasourceModel.setDatasourceName("newdatasource");    
     datasourceModel.setRelationalModel(contructRelationalModel(datasourceModel.getRelationalModel()));
-    Assert.assertEquals(true, datasourceModel.isValidated());
+    Assert.assertEquals(false, datasourceModel.isValidated());
     datasourceModel.setDatasourceType(DatasourceType.CSV);    
     Assert.assertEquals(false, datasourceModel.isValidated());
     datasourceModel.setCsvModel(constructCsvModel(datasourceModel.getCsvModel()));    
-    Assert.assertEquals(true, datasourceModel.isValidated());    
+    Assert.assertEquals(false, datasourceModel.isValidated());    
   }
   
   private RelationalModel contructRelationalModel(RelationalModel relationalModel) {
