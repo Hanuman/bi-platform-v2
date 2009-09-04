@@ -57,7 +57,6 @@
 	      <fileset dir="${gwt.output.dir}/mantle">
 	        <include name="**/loginsettings.properties"/>
 	        <include name="**/mantleLogin.jsp"/>
-	        <include name="**/MantleLoginMessages*.properties"/>
 	      </fileset>
 	    </delete>
 	  
