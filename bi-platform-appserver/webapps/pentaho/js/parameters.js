@@ -111,6 +111,13 @@ function executeAction (target, submitUrl) {
 	return false;
 }
 
+// convert characters from entities like &#305; to display characters (HTML)
+function convertHtmlEntitiesToCharacters(theStr) {
+    var newDiv = document.createElement(newDiv);
+    newDiv.innerHTML = theStr;
+    return newDiv.innerHTML;
+}
+
 function checkParams(form, type, lastName, gotOne ) {
     // pentaho_optionalParams is defined in the XSL file
 	if( gotOne == 0 && type != 'hidden' ) {
@@ -127,7 +134,8 @@ function checkParams(form, type, lastName, gotOne ) {
 			}
 		} catch (e) {
 		}		
-		alert( pentaho_notOptionalMessage.replace("{0}", pentaho_paramName[form.name + '.' + lastName] ));
+		var msg = convertHtmlEntitiesToCharacters(pentaho_notOptionalMessage.replace("{0}", pentaho_paramName[form.name + '.' + lastName] ));
+		alert( msg );
 		return 0;
 	}
 	return 1;
