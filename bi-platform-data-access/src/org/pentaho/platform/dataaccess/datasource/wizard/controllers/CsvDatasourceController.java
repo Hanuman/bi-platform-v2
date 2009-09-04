@@ -189,7 +189,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       }
     };
 
-    bf.createBinding(datasourceModel, "datasourceName", applyCsvButton, "!disabled", buttonConverter); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "datasourceName", applyCsvButton, "!disabled", buttonConverter); //$NON-NLS-1$ //$NON-NLS-2$
     BindingConvertor<Integer, Enclosure> indexToEnclosureConverter = new BindingConvertor<Integer, Enclosure>() {
 
       @Override
@@ -261,6 +261,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     datasourceModel.getCsvModel().setDelimiterList();
     datasourceModel.getCsvModel().setDelimiter(Delimiter.COMMA);
     datasourceModel.getCsvModel().setEnclosure(Enclosure.DOUBLEQUOTE);
+    datasourceModel.getCsvModel().setSelectedFile(null);
   }
 
   @Bindable
@@ -315,7 +316,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
       }
       showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages //$NON-NLS-1$
           .getString("DatasourceController.WAIT")); //$NON-NLS-1$
-      service.generateInlineEtlLogicalModel(datasourceModel.getDatasourceName(), datasourceModel.getCsvModel()
+      service.generateInlineEtlLogicalModel(datasourceModel.getCsvModel().getDatasourceName(), datasourceModel.getCsvModel()
           .getSelectedFile(), datasourceModel.getCsvModel().isHeadersPresent(), datasourceModel.getCsvModel()
           .getDelimiter().getValue(), datasourceModel.getCsvModel().getEnclosure().getValue(),
           new XulServiceCallback<BusinessData>() {
@@ -357,18 +358,18 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
   @Bindable
   private boolean validateIputForCsv() {
     return (datasourceModel.getCsvModel().getSelectedFile() != null
-        && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName().length() > 0));
+        && (datasourceModel.getCsvModel().getDatasourceName() != null && datasourceModel.getCsvModel().getDatasourceName().length() > 0));
   }
 
   private String getMissingInputs() {
     StringBuffer buffer = new StringBuffer();
     if (datasourceModel.getCsvModel().getSelectedFile() == null
         && datasourceModel.getCsvModel().getSelectedFile().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.File"));//$NON-NLS-1$
+      buffer.append(datasourceMessages.getString("datasourceDialog.FileMissing"));//$NON-NLS-1$
       buffer.append(" \n");//$NON-NLS-1$
     }
-    if (datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));//$NON-NLS-1$
+    if (datasourceModel.getCsvModel().getDatasourceName() == null || datasourceModel.getCsvModel().getDatasourceName().length() <= 0) {
+      buffer.append(datasourceMessages.getString("datasourceDialog.DatasourceNameMissing"));//$NON-NLS-1$
       buffer.append(" \n");//$NON-NLS-1$
     }
     return buffer.toString();
@@ -604,7 +605,7 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     // modelDataTable.update();
     InlineEtlPhysicalModel model = (InlineEtlPhysicalModel) businessData.getDomain().getPhysicalModels().get(0);
     datasourceModel.setDatasourceType(DatasourceType.CSV);
-    datasourceModel.setDatasourceName(businessData.getDomain().getId());
+    datasourceModel.getCsvModel().setDatasourceName(businessData.getDomain().getId());
     datasourceModel.getCsvModel().setDelimiter(Delimiter.lookupValue(model.getDelimiter()));
     datasourceModel.getCsvModel().setEnclosure(Enclosure.lookupValue(model.getEnclosure()));
     datasourceModel.getCsvModel().setHeadersPresent(model.getHeaderPresent());

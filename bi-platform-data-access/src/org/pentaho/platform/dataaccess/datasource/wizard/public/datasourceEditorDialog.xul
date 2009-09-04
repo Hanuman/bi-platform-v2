@@ -50,7 +50,7 @@
 						                <!--<spacer flex="1"/>-->
 						                <!--<button id="editQuery" image="images/update.png" pen:disabledimage="images/update_disabled.png" tooltiptext="${datasourceDialog.editQueryImageToolTip}" onclick="relationalDatasourceController.editQuery()"  disabled="true"/>-->
 						            </hbox>
-			                        <textbox flex="1" id="query" rows="5" cols="80" multiline="true" disabled="true"/>
+			                        <textbox flex="1" id="query" rows="5" cols="80" multiline="true" disabled="false"/>
 						            <hbox>
 						                <spacer flex="1"/>
 						                <label value="Limit:" height="16"/>

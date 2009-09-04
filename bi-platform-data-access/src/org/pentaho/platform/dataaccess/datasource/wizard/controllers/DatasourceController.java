@@ -27,6 +27,7 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.platform.dataaccess.datasource.DatasourceType;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.platform.dataaccess.datasource.DatasourceType;
@@ -159,8 +160,8 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
     overwriteDialog = (XulDialog)document.getElementById("overwriteDialog"); //$NON-NLS-1$
     
     bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
-    final Binding domainBinding = bf.createBinding(datasourceModel, "datasourceName", relationalDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel, "datasourceName", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Binding domainBinding = bf.createBinding(datasourceModel.getRelationalModel(), "datasourceName", relationalDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getCsvModel(), "datasourceName", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.createBinding(relationalDatasourceName, "value", csvDatasourceName, "value"); //$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel, "validated", okButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
@@ -317,7 +318,13 @@ public class DatasourceController extends AbstractXulDialogController<Domain> {
   }
   
   private void handleSaveError(DatasourceModel datasourceModel, Throwable xe) {
-    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceModel.getDatasourceName(),xe.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
+    String datasourceName = null;
+    if(datasourceModel.getDatasourceType() == DatasourceType.CSV) {
+      datasourceName =  datasourceModel.getCsvModel().getDatasourceName();
+    } else if(datasourceModel.getDatasourceType() == DatasourceType.SQL) {
+      datasourceName =  datasourceModel.getRelationalModel().getDatasourceName();
+    }
+    openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages.getString("DatasourceController.ERROR_0003_UNABLE_TO_SAVE_MODEL",datasourceName,xe.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   @Bindable

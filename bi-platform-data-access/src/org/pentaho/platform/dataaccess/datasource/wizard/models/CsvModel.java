@@ -37,6 +37,7 @@ import org.pentaho.ui.xul.stereotype.Bindable;
 public class CsvModel extends XulEventSourceAdapter{
   private CsvModelValidationListenerCollection csvModelValidationListeners;
   private boolean validated;
+  private String datasourceName;
   private BusinessData businessData;
   private boolean headersPresent = false;
   private List<CsvModelDataRow> dataRows = new ArrayList<CsvModelDataRow>();
@@ -82,6 +83,31 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
   @Bindable
+  public String getDatasourceName() {
+    return datasourceName;
+  }
+
+  @Bindable
+  public void setDatasourceName(String datasourceName) {
+    String previousVal = this.datasourceName;
+    this.datasourceName = datasourceName;
+    
+    // if we're editing a generated or already defined domain,
+    // we need to keep the datasource name in sync
+    if (getBusinessData() != null &&
+        getBusinessData().getDomain() != null) {
+      Domain domain = getBusinessData().getDomain(); 
+      domain.setId(datasourceName);
+      LogicalModel model = domain.getLogicalModels().get(0);
+      String localeCode = domain.getLocales().get(0).getCode();
+      model.getName().setString(localeCode, datasourceName);
+    }
+    
+    this.firePropertyChange("datasourcename", previousVal, datasourceName); //$NON-NLS-1$
+    validate();
+  }
+  
+  @Bindable
   public BusinessData getBusinessData() {
     return businessData;
   }
@@ -111,6 +137,7 @@ public class CsvModel extends XulEventSourceAdapter{
         firePropertyChange("dataRows", previousValue, null);//$NON-NLS-1$
       }
     }
+    validate();
   }
 
   @Bindable
@@ -156,7 +183,7 @@ public class CsvModel extends XulEventSourceAdapter{
   }
 
   public void validate() {
-    if (getSelectedFile() != null && getSelectedFile().length() > 0) {
+    if (datasourceName != null && datasourceName.length() > 0 && getSelectedFile() != null && getSelectedFile().length() > 0 && getBusinessData() != null) {
       fireCsvModelValid();
       this.setValidated(true);
     } else {
@@ -238,6 +265,7 @@ public class CsvModel extends XulEventSourceAdapter{
     setDelimiter(Delimiter.COMMA);
     setEnclosure(Enclosure.DOUBLEQUOTE);
     setHeadersPresent(true);
+    setDatasourceName("");
   }
 
   public void addCsvModelValidationListener(ICsvModelValidationListener listener) {

@@ -194,7 +194,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
     bf.setBindingType(Binding.Type.ONE_WAY);
     bf.createBinding(datasourceModel.getRelationalModel(), "previewValidated", previewButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
-    bf.createBinding(datasourceModel.getRelationalModel(), "previewValidated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(datasourceModel.getRelationalModel(), "applyValidated", applyButton, "!disabled");//$NON-NLS-1$ //$NON-NLS-2$
 
     BindingConvertor<String, Boolean> widgetBindingConvertor = new BindingConvertor<String, Boolean>() {
 
@@ -211,10 +211,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     };
 
     List<Binding> bindingsThatNeedInitialized = new ArrayList<Binding>();
-    
-    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", connections, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
-    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", query, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
-    bindingsThatNeedInitialized.add(bf.createBinding(datasourceName, "value", modelDataTable, "!disabled", widgetBindingConvertor));//$NON-NLS-1$ //$NON-NLS-2$
     
     BindingConvertor<IConnection, Boolean> buttonConvertor = new BindingConvertor<IConnection, Boolean>() {
 
@@ -323,14 +319,13 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
 
   @Bindable
   public void generateModel() {
-    if (validateInputs()) {
       query.setDisabled(true);
       if (applyQueryConfirmationDialog.isVisible()) {
         applyQueryConfirmationDialog.hide();
       }
       showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_MODEL"), datasourceMessages
           .getString("DatasourceController.WAIT"));
-      service.generateLogicalModel(datasourceModel.getDatasourceName(), datasourceModel.getRelationalModel()
+      service.generateLogicalModel(datasourceModel.getRelationalModel().getDatasourceName(), datasourceModel.getRelationalModel()
           .getSelectedConnection().getName(), datasourceModel.getRelationalModel().getQuery(), datasourceModel
           .getRelationalModel().getPreviewLimit(), new XulServiceCallback<BusinessData>() {
 
@@ -363,35 +358,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
           }
         }
       });
-    } else {
-      openErrorDialog(datasourceMessages.getString("DatasourceController.ERROR_0001_MISSING_INPUTS"),
-          getMissingInputs());
-    }
-  }
-
-  private boolean validateInputs() {
-    return (datasourceModel.getRelationalModel().getSelectedConnection() != null
-        && (datasourceModel.getRelationalModel().getQuery() != null && datasourceModel.getRelationalModel().getQuery()
-            .length() > 0) && (datasourceModel.getDatasourceName() != null && datasourceModel.getDatasourceName()
-        .length() > 0));
-  }
-
-  private String getMissingInputs() {
-    StringBuffer buffer = new StringBuffer();
-    if (datasourceModel.getRelationalModel().getSelectedConnection() == null) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Connection"));
-      buffer.append(" \n");
-    }
-    if (datasourceModel.getRelationalModel().getQuery() == null
-        && datasourceModel.getRelationalModel().getQuery().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Query"));
-      buffer.append(" \n");
-    }
-    if (datasourceModel.getDatasourceName() == null || datasourceModel.getDatasourceName().length() <= 0) {
-      buffer.append(datasourceMessages.getString("datasourceDialog.Name"));
-      buffer.append(" \n");
-    }
-    return buffer.toString();
   }
 
   public void editQuery() {
@@ -411,10 +377,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
   @Bindable
   public void displayPreview() {
 
-    if (!validateInputs()) {
-      openErrorDialog(datasourceMessages.getString("ERROR"), datasourceMessages
-          .getString("DatasourceController.ERROR_0001_MISSING_INPUTS"));
-    } else {
       showWaitingDialog(datasourceMessages.getString("DatasourceController.GENERATE_PREVIEW_DATA"), datasourceMessages
           .getString("DatasourceController.WAIT"));
       service.doPreview(datasourceModel.getRelationalModel().getSelectedConnection().getName(), datasourceModel
@@ -498,7 +460,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
               }
             }
           });
-    }
   }
 
   @Bindable
@@ -735,7 +696,7 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     SqlPhysicalModel model = (SqlPhysicalModel) businessData.getDomain().getPhysicalModels().get(0);
     String queryStr = model.getPhysicalTables().get(0).getTargetTable();
     //    datasourceModel.setDatasourceType(DatasourceType.SQL);
-    datasourceModel.setDatasourceName(businessData.getDomain().getId());
+    datasourceModel.getRelationalModel().setDatasourceName(businessData.getDomain().getId());
     datasourceModel.getRelationalModel().setQuery(queryStr);
     for (IConnection conn : datasourceModel.getRelationalModel().getConnections()) {
       if (model.getDatasource().getDatabaseName().equals(conn.getName())) {

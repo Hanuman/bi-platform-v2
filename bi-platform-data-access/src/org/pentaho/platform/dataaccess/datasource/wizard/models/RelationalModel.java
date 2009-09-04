@@ -39,6 +39,8 @@ public class RelationalModel extends XulEventSourceAdapter{
   private RelationalModelValidationListenerCollection relationalModelValidationListeners;
   private boolean validated;
   private boolean previewValidated;
+  private boolean applyValidated;
+  private String datasourceName;
   public static enum ConnectionEditType {ADD, EDIT};
   private IConnection selectedConnection;
   private List<IConnection> connections = new ArrayList<IConnection>();
@@ -61,7 +63,32 @@ public class RelationalModel extends XulEventSourceAdapter{
   public void setEditType(ConnectionEditType value) {
     this.editType = value;
   }
-
+  
+  @Bindable
+  public String getDatasourceName() {
+    return datasourceName;
+  }
+  
+  @Bindable
+  public void setDatasourceName(String datasourceName) {
+    String previousVal = this.datasourceName;
+    this.datasourceName = datasourceName;
+    
+    // if we're editing a generated or already defined domain,
+    // we need to keep the datasource name in sync
+    if (getBusinessData() != null &&
+        getBusinessData().getDomain() != null) {
+      Domain domain = getBusinessData().getDomain(); 
+      domain.setId(datasourceName);
+      LogicalModel model = domain.getLogicalModels().get(0);
+      String localeCode = domain.getLocales().get(0).getCode();
+      model.getName().setString(localeCode, datasourceName);
+    }
+   
+    this.firePropertyChange("datasourcename", previousVal, datasourceName); //$NON-NLS-1$
+    validate();
+  }
+  
   @Bindable
   public IConnection getSelectedConnection() {
     return selectedConnection;
@@ -182,15 +209,25 @@ public class RelationalModel extends XulEventSourceAdapter{
   public void validate() {
     if((getQuery() != null && getQuery().length() > 0)&& (getSelectedConnection() != null)) {
       this.setPreviewValidated(true);
-      if(getBusinessData() != null) {
-        this.setValidated(true);
-        fireRelationalModelValid();
+      if(datasourceName != null && datasourceName.length() > 0) {
+        this.setApplyValidated(true);
+        if(getBusinessData() != null) {
+          this.setValidated(true);
+          fireRelationalModelValid();
+        } else {
+          this.setValidated(false);
+          fireRelationalModelInValid();
+        }
       } else {
+        this.setApplyValidated(false);
         this.setValidated(false);
         fireRelationalModelInValid();
       }
     } else {
+      this.setApplyValidated(false);
       this.setPreviewValidated(false);
+      this.setValidated(false);
+      fireRelationalModelInValid();
     }
   }
 
@@ -265,6 +302,7 @@ public class RelationalModel extends XulEventSourceAdapter{
     setPreviewLimit("10");
     setQuery("");
     setSelectedConnection(null);
+    setDatasourceName("");
   }
 
   public void addRelationalModelValidationListener(IRelationalModelValidationListener listener) {
@@ -307,5 +345,16 @@ public class RelationalModel extends XulEventSourceAdapter{
   }
   public boolean isPreviewValidated() {
     return this.previewValidated;
+  }
+  
+  public boolean isApplyValidated() {
+    return applyValidated;
+  }
+
+  public void setApplyValidated(boolean value) {
+    if (value != this.applyValidated) {
+      this.applyValidated = value;
+      this.firePropertyChange("applyValidated", !value, this.applyValidated);
+    }    
   }
 }

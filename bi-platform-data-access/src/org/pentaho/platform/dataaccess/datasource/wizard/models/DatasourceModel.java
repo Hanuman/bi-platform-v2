@@ -32,7 +32,6 @@ import org.pentaho.ui.xul.stereotype.Bindable;
 
 public class DatasourceModel extends XulEventSourceAdapter implements IRelationalModelValidationListener, ICsvModelValidationListener{
   private boolean validated;
-  private String datasourceName;
   private DatasourceType datasourceType = DatasourceType.NONE;
   private RelationalModel relationalModel;
   private CsvModel csvModel;
@@ -62,41 +61,6 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
   @Bindable
   public void setCsvModel(CsvModel csvModel) {
     this.csvModel = csvModel;
-  }
-
-
-  @Bindable
-  public String getDatasourceName() {
-    return datasourceName;
-  }
-
-  @Bindable
-  public void setDatasourceName(String datasourceName) {
-    String previousVal = this.datasourceName;
-    this.datasourceName = datasourceName;
-    
-    // if we're editing a generated or already defined domain,
-    // we need to keep the datasource name in sync
-    if (csvModel != null && csvModel.getBusinessData() != null &&
-        csvModel.getBusinessData().getDomain() != null) {
-      Domain domain = csvModel.getBusinessData().getDomain(); 
-      domain.setId(datasourceName);
-      LogicalModel model = domain.getLogicalModels().get(0);
-      String localeCode = domain.getLocales().get(0).getCode();
-      model.getName().setString(localeCode, datasourceName);
-    }
-
-    if (relationalModel != null && relationalModel.getBusinessData() != null &&
-        relationalModel.getBusinessData().getDomain() != null) {
-      Domain domain = relationalModel.getBusinessData().getDomain(); 
-      domain.setId(datasourceName);
-      LogicalModel model = domain.getLogicalModels().get(0);
-      String localeCode = domain.getLocales().get(0).getCode();
-      model.getName().setString(localeCode, datasourceName);
-    }
-    
-    this.firePropertyChange("datasourcename", previousVal, datasourceName); //$NON-NLS-1$
-    validate();
   }
 
   @Bindable
@@ -131,7 +95,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
     } else if(DatasourceType.CSV == getDatasourceType()){
       value = csvModel.isValidated();
     }
-    setValidated(datasourceName != null && datasourceName.length() > 0 && value);
+    setValidated(value);
   }
 
   /*
@@ -142,7 +106,6 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
     // an error is presented to the user.
     relationalModel.clearModel();
     csvModel.clearModel();
-    setDatasourceName("");
     setDatasourceType(DatasourceType.SQL);
   }
   
@@ -170,7 +133,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
 
   public void onRelationalModelValid() {
     if(DatasourceType.SQL == getDatasourceType()) {
-      setValidated(datasourceName != null && datasourceName.length() > 0 && true);
+      setValidated(true);
     }
   }
 
@@ -182,7 +145,7 @@ public class DatasourceModel extends XulEventSourceAdapter implements IRelationa
 
   public void onCsvModelValid() {
     if(DatasourceType.CSV == getDatasourceType()) {
-      setValidated(datasourceName != null && datasourceName.length() > 0 && true);
+      setValidated(true);
     }
   }
   
