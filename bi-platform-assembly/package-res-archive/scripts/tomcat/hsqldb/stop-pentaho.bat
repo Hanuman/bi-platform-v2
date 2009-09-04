@@ -1,4 +1,4 @@
-@echo on
+@echo off
 setlocal
 
 if exist "%~dp0jre" call "%~dp0set-pentaho-java.bat" "%~dp0jre"
