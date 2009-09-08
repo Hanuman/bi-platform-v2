@@ -213,24 +213,25 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 */	    
 	}
 	protected void postExecute( IRuntimeContext runtime, boolean doMessages, boolean doWrapper ) throws Exception {
-        // see if we need to provide feedback to the caller
-        if (!outputHandler.contentDone() || doMessages ) {
+    // see if we need to provide feedback to the caller
+    if (!outputHandler.contentDone() || doMessages ) {
 
-          IContentItem contentItem = outputHandler.getOutputContentItem( IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, "text/html" );//$NON-NLS-1$
-          OutputStream outputStream = contentItem.getOutputStream(null);
-
-          StringBuffer buffer = new StringBuffer();
-          if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
-            PentahoSystem.get( IMessageFormatter.class, userSession).formatSuccessMessage(
-                "text/html", runtime, buffer, doMessages, doWrapper); //$NON-NLS-1$
-          } else {
-            // we need an error message...
-            PentahoSystem.get( IMessageFormatter.class, userSession).formatFailureMessage(
-                "text/html", runtime, buffer, messages); //$NON-NLS-1$
-          }
-          outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
-          contentItem.closeOutputStream();
+      IContentItem contentItem = outputHandler.getOutputContentItem( IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, "text/html" );//$NON-NLS-1$
+      OutputStream outputStream = contentItem.getOutputStream(null);
+      if (outputStream != null) {
+        StringBuffer buffer = new StringBuffer();
+        if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
+          PentahoSystem.get( IMessageFormatter.class, userSession).formatSuccessMessage(
+              "text/html", runtime, buffer, doMessages, doWrapper); //$NON-NLS-1$
+        } else {
+          // we need an error message...
+          PentahoSystem.get( IMessageFormatter.class, userSession).formatFailureMessage(
+              "text/html", runtime, buffer, messages); //$NON-NLS-1$
         }
+        outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
+        contentItem.closeOutputStream();
+      }
+    }
 	}
 	
 }
