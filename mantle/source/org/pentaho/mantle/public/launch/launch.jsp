@@ -326,17 +326,61 @@ window.onresize = function(){
      window.selectedButton.onmouseout();
   }
   
-  // IE Specific fix for Albolutely positioned items not positioning properly while the browser is resizing
-  if(document.all){
-	  document.getElementById("launchPanel").style.height="99%";
-	  document.getElementById("launchPanel").style.height="100%";
-	  document.getElementById("launchPanel").style.width="99%";
-	  document.getElementById("launchPanel").style.width="100%";
+    
+  // IE_6_FIX: When resized by PUC, IE will display rendering issues. This is accounted for by the code below. 
+  if(isIE6){
+    
+    // IE6 has a rate limit on the number of resize events that it will fire. This means we cannot rely on the
+    // resize event alone to determine when the reisize is complete. The timer ensures that the layout is
+    // recomputed after PUC is done resizing the iframe.
+    setTimeout(function(){
+      window.tableWrapperDiv.style.top = "1px";
+      window.tableWrapperDiv.style.top = "0px";
+    }, 350);
+    
   }
 
 }
 
 function loader(){
+  
+  // IE_6_FIX: We're using a CSS filter to enable transparany in IE 6. This has the side-effect of trapping mouse events in the
+  // filtered area. The standard workaround is to wrap that area in two divs, one absolutely positioned inside a relative one.
+
+  var navAgent = window.navigator.userAgent;
+  window.isIE6 = false;
+  var reg = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navAgent)
+  if (reg != null) {
+    var version = parseFloat( RegExp.$1 );
+    window.isIE6 = version >= 6.0 && version < 7.0;
+  }
+
+  // The following wrapps the button table with two DIVs, one positioned relative and the other absolute.
+  if(window.isIE6){
+    var buttonTable = document.getElementById("buttonTable");
+    var parent = buttonTable.parentNode;
+    window.tableWrapperDiv = document.createElement("div");
+    var absDiv = document.createElement("div");
+    
+    with(tableWrapperDiv.style){
+      position = "relative";
+      width = "100%";
+      height = "100%";
+    }
+    with(absDiv.style){
+      position = "absolute";
+      top = "0px";
+      left = "0px";
+    }
+    
+    parent.removeChild(buttonTable);
+    parent.appendChild(tableWrapperDiv);
+    tableWrapperDiv.appendChild(absDiv);
+    absDiv.appendChild(buttonTable);
+    tableWrapperDiv.id = "buttonWrapperDiv";
+  }
+  // End IE_6_FIX
+  
     new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" )%>", "launch_new_report").onClick("openWAQR()");
     new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" )%>", "launch_new_analysis").onClick("openAnalysis()");
 <%!
@@ -429,10 +473,9 @@ function loader(){
           src="images/ql_icon_bar_left.png" width="41"
           height="147" /></td>
         <td class="ql_icon_bar_middle" >
-                
-                    <div style="position: relative; width: 100%; height: 100%;">
-                        <div style="position:absolute;  top:0px; left:0px">
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                <!--<div style="position: relative; width: 100%; height: 100%;">
+                       <div style="position:absolute;  top:0px; left:0px"> -->
+                    <table id="buttonTable" width="100%" border="0" cellspacing="0" cellpadding="0"
                       height="100%">
                       <tr>
                         <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
@@ -468,9 +511,9 @@ function loader(){
                         <td id="manage_content"><!--  container for manage content Button -->
                         </td>
                       </tr>
-                    </table>
-                        </div>
-                    </div>
+                  </table>
+                  <!--</div></div> -->
+                
         </td>
         <td class="ql_icon_bar_right"><img
           src="images/ql_icon_bar_right.png"
