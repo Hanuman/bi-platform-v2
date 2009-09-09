@@ -307,7 +307,12 @@
           }
         
         dataSource = context.getOutputParameter( PivotViewComponent.CONNECTION ).getStringValue(); //$NON-NLS-1$
-    
+        query = context.getOutputParameter( "mdx" ).getStringValue(); //$NON-NLS-1$
+
+        if (catalogUri == null || dataSource == null || query == null) {
+          throw new Exception(Messages.getErrorString("UI.ERROR_0003_XACTION_INVALID_OUTPUTS", ActionInfo.buildSolutionPath(solutionName,actionPath,actionName), "Catalog URI=" + catalogUri + "; Data Source=" + dataSource + "; MDX Query=" + query, "isPromptPending=" + context.isPromptPending()));
+        }
+        
         if (context.getOutputNames().contains(PivotViewComponent.ROLE)) { //$NON-NLS-1$
           role = context.getOutputParameter( PivotViewComponent.ROLE ).getStringValue(); //$NON-NLS-1$
         }
@@ -524,7 +529,7 @@
         }
         
         chartChange = true;
-        query = context.getOutputParameter( "mdx" ).getStringValue(); //$NON-NLS-1$
+        
         options = (ArrayList) context.getOutputParameter( PivotViewComponent.OPTIONS ).getValue(); //$NON-NLS-1$
         pivotTitle = context.getOutputParameter( PivotViewComponent.TITLE ).getStringValue(); //$NON-NLS-1$
         actionTitle = context.getActionTitle();
