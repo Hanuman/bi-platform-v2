@@ -132,6 +132,17 @@ public class PluginClassLoader extends ClassLoader {
       if (bytes == null) {
         throw new ClassNotFoundException(name);
       }
+      // BCHOW - Add package information
+      int i = name.lastIndexOf('.');
+      if (i != -1) {
+        String pkgname = name.substring(0, i);
+        // Check if package already loaded.
+        Package pkg = getPackage(pkgname);
+        if (pkg == null) {
+          // Package not found
+          definePackage(pkgname, null, null, null, null, null, null, null);
+        }
+      }      
       return defineClass(name, bytes, 0, bytes.length);
     } catch (IOException e) {
       throw new ClassNotFoundException(name, e);
@@ -139,6 +150,72 @@ public class PluginClassLoader extends ClassLoader {
 
   }
 
+  /*
+   * This code will allow manifest information to be exposed via class packages.
+   * To be enabled in Sugar.
+   * Access to the manifest for a class will need to be made possible
+   
+  protected Class<?> __defineClass( String name, byte b[], int off, int len ) {
+    
+    int i = name.lastIndexOf('.');
+    if (i != -1) {
+      String pkgname = name.substring(0, i);
+      // Check if package already loaded.
+      Package pkg = getPackage(pkgname);
+      Manifest man = res.getManifest();
+      if (pkg == null) {
+        // Package not found
+        if (man != null) {
+          definePackage(pkgname, man);
+        } else {
+          definePackage(pkgname, null, null, null, null, null, null, null);
+        }
+      }
+    }    
+    return super.defineClass(name, b, off, len);
+  }
+  
+  protected Package definePackage(String name, Manifest man)
+    throws IllegalArgumentException {
+
+    String path = name.replace('.', '/').concat("/");
+    String specTitle = null, specVersion = null, specVendor = null;
+    String implTitle = null, implVersion = null, implVendor = null;
+
+    Attributes attr = man.getAttributes(path);
+    if (attr != null) {
+      specTitle   = attr.getValue(Name.SPECIFICATION_TITLE);
+      specVersion = attr.getValue(Name.SPECIFICATION_VERSION);
+      specVendor  = attr.getValue(Name.SPECIFICATION_VENDOR);
+      implTitle   = attr.getValue(Name.IMPLEMENTATION_TITLE);
+      implVersion = attr.getValue(Name.IMPLEMENTATION_VERSION);
+      implVendor  = attr.getValue(Name.IMPLEMENTATION_VENDOR);
+    }
+    attr = man.getMainAttributes();
+    if (attr != null) {
+      if (specTitle == null) {
+        specTitle = attr.getValue(Name.SPECIFICATION_TITLE);
+      }
+      if (specVersion == null) {
+        specVersion = attr.getValue(Name.SPECIFICATION_VERSION);
+      }
+      if (specVendor == null) {
+        specVendor = attr.getValue(Name.SPECIFICATION_VENDOR);
+      }
+      if (implTitle == null) {
+        implTitle = attr.getValue(Name.IMPLEMENTATION_TITLE);
+      }
+      if (implVersion == null) {
+        implVersion = attr.getValue(Name.IMPLEMENTATION_VERSION);
+      }
+      if (implVendor == null) {
+        implVendor = attr.getValue(Name.IMPLEMENTATION_VENDOR);
+      }
+    }
+    return definePackage(name, specTitle, specVersion, specVendor,
+        implTitle, implVersion, implVendor, null);
+  }
+  */
   public List<String> listLoadedJars() {
     List<String> jarList = new ArrayList<String>();
     jarList.addAll(loadedFrom.keySet());
