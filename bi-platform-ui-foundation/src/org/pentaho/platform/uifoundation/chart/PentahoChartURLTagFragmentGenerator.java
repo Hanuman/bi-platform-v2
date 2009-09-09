@@ -21,14 +21,17 @@
 
 package org.pentaho.platform.uifoundation.chart;
 
+import java.util.Date;
+
 import org.jfree.chart.imagemap.StandardURLTagFragmentGenerator;
 import org.jfree.data.general.Dataset;
+import org.jfree.data.xy.XYDataset;
+import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.runtime.TemplateUtil;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.pentaho.commons.connection.IPentahoResultSet;
 
 public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentGenerator {
+
   private static final String SERIES_TAG = "series="; //$NON-NLS-1$
 
   private static final String CATEGORY_TAG = "category="; //$NON-NLS-1$
@@ -41,13 +44,15 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
 
   String parameterName;
 
-  String outerParameterName;
+  String seriesName;
 
   String urlTarget;
 
   boolean useBaseUrl;
 
   IPentahoResultSet data;
+  
+  int i =0;
 
   public PentahoChartURLTagFragmentGenerator(final String urlFragment, final Dataset dataset,
       final String parameterName, final String outerParameterName) {
@@ -56,22 +61,20 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
     this.urlFragment = urlFragment;
     this.dataset = dataset;
     this.parameterName = parameterName;
-    this.outerParameterName = outerParameterName;
+    this.seriesName = outerParameterName;
     this.urlTarget = "pentaho_popup";//$NON-NLS-1$ 
     this.useBaseUrl = true;
   }
 
-  public PentahoChartURLTagFragmentGenerator(IPentahoResultSet data,final String urlFragment, final String urlTarget,
+  public PentahoChartURLTagFragmentGenerator(final String urlFragment, final String urlTarget,
       final boolean useBaseUrl, final Dataset dataset, final String parameterName, final String outerParameterName) {
     super();
     this.urlFragment = urlFragment;
     this.dataset = dataset;
     this.parameterName = parameterName;
-    this.outerParameterName = outerParameterName;
+    this.seriesName = outerParameterName;
     this.urlTarget = urlTarget;
     this.useBaseUrl = useBaseUrl;
-  	this.data = data;
-   	this.data.beforeFirst();
   }
 
   public PentahoChartURLTagFragmentGenerator(final String urlTemplate, final Dataset dataDefinition,
@@ -92,62 +95,67 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
       if (!isScript) {
         if (useBaseUrl) {
           urlTemplate += PentahoSystem.getApplicationContext().getBaseUrl();
-
         }
       }
 
       // Handle " in the urlFragment
       urlTemplate += urlFragment.replaceAll("\"", "%22") + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 
-      int startIdx;
-      if (urlText.indexOf(PentahoChartURLTagFragmentGenerator.CATEGORY_TAG) != -1) {
-        startIdx = urlText.indexOf(PentahoChartURLTagFragmentGenerator.CATEGORY_TAG)
-            + PentahoChartURLTagFragmentGenerator.CATEGORY_TAG.length();
-      } else {
-        startIdx = 0;
+      String value = null;
+      String itemValue = null;
+      
+      // Do we have a 'category=' as part of the urlText in? If so, grab the value from the urlText
+      // this is the replacement value for the paramName parameter (when categorical). 
+      value = retrieveValue(PentahoChartURLTagFragmentGenerator.CATEGORY_TAG, urlText);
+
+      if (value != null){
+        urlTemplate = TemplateUtil.applyTemplate(urlTemplate, parameterName, value); // <paramName> replacement value
       }
 
-      int endIdx;
-      if (urlText.indexOf('&', startIdx) != -1) {
-        endIdx = urlText.indexOf('&', startIdx);
-      } else {
-        endIdx = urlText.length();
-      }
+      // Do we have a 'series=' as part of the urlText in? If so, grab the value from the urlText
+      // this is the replacement value for the series-name parameter. 
+      value = retrieveValue(PentahoChartURLTagFragmentGenerator.SERIES_TAG, urlText);
+      if (value != null){
+        
+        if ((dataset instanceof CategoryDatasetChartDefinition)|| (dataset instanceof XYZSeriesCollectionChartDefinition)) {
+          
+          urlTemplate = TemplateUtil.applyTemplate(urlTemplate, seriesName, value); // <series-name> replacement value
+          
+        }else if (dataset instanceof XYDataset) {
 
-      String value = urlText.substring(startIdx, endIdx).trim();
-      urlTemplate = TemplateUtil.applyTemplate(urlTemplate, parameterName, value);
-
-      if ((dataset instanceof CategoryDatasetChartDefinition)
-          || (dataset instanceof XYZSeriesCollectionChartDefinition)) {
-
-        if (urlText.indexOf(PentahoChartURLTagFragmentGenerator.SERIES_TAG) != -1) {
-          startIdx = urlText.indexOf(PentahoChartURLTagFragmentGenerator.SERIES_TAG)
-              + PentahoChartURLTagFragmentGenerator.SERIES_TAG.length();
-        } else {
-          startIdx = 0;
+          XYDataset set = (XYDataset)dataset;
+          Comparable <?> seriesKey = set.getSeriesKey(Integer.parseInt(value));
+          urlTemplate = TemplateUtil.applyTemplate(urlTemplate, seriesName, seriesKey.toString()); // <series-name> replacement value
+       
+          // Do we have an 'item=' as part of the urlText in? If so, grab the value from the urlText
+          // this is the replacement value for the paramName parameter, when the chart is an x/y plot. 
+          itemValue = retrieveValue(PentahoChartURLTagFragmentGenerator.ITEM_TAG, urlText);
+          
+          if(itemValue != null){
+            
+            int itemVal = Integer.parseInt(itemValue);
+            int val = Integer.parseInt(value);
+            
+            Object x = null;
+            Number xNum = set.getX(val, itemVal);
+            x = (xNum instanceof Long)? new Date((Long)xNum):xNum;
+            
+            urlTemplate = TemplateUtil.applyTemplate(urlTemplate, parameterName, x.toString()); // <paramName> replacement value
+            
+            // This value is NEW. We have never returned more than 2 parameters in the url-template.
+            // A logical extension for x/y plots is to return the series, the x value and the y value. 
+            // However, the item value is not plumbed through to the chart definition yet. 
+            Object y = null;
+            Number yNum = set.getY(val, itemVal);
+            y = (yNum instanceof Long)? new Date((Long)yNum):yNum;
+            
+            urlTemplate = TemplateUtil.applyTemplate(urlTemplate, "ITEM", y.toString()); // {ITEM} replacement value, in the 
+                                                                                         // url-template. There is no parameter
+                                                                                         // plumbed for this.
+          }
         }
-
-        if (urlText.indexOf('&', startIdx) != -1) {
-          endIdx = urlText.indexOf('&', startIdx);
-        } else {
-          endIdx = urlText.length();
-        }
-
-        value = urlText.substring(startIdx, endIdx).trim();
-        urlTemplate = TemplateUtil.applyTemplate(urlTemplate, outerParameterName, value);
-
       }
- 	    if(dataset instanceof TimeSeriesCollection || dataset instanceof TimeTableXYDatasetChartDefinition) {
-    	  Object[] rowData = data.next();
-    	  String seriesName = (String) rowData[0];
-    	  value = seriesName;
-    	  if(dataset instanceof TimeSeriesCollection || urlTemplate.indexOf("index.html") == -1)
-    		  urlTemplate = TemplateUtil.applyTemplate(urlTemplate, outerParameterName, value);
-    	  else{	
-    		  urlTemplate = urlTemplate.substring(0,urlTemplate.indexOf("index.html")) + "{PARAMETER}')\"";
-    		  urlTemplate = TemplateUtil.applyTemplate(urlTemplate, "PARAMETER", value);
-    	  }
-      }
+
       if (!isScript) {
         urlTemplate = urlTemplate + " target=\"" + urlTarget + "\""; //$NON-NLS-1$//$NON-NLS-2$ 
       }
@@ -156,5 +164,22 @@ public class PentahoChartURLTagFragmentGenerator extends StandardURLTagFragmentG
     } else {
       return super.generateURLFragment(urlText);
     }
+  }
+
+  private String retrieveValue(String tag, String urlText) {
+    String returnValue = null;
+    int startIdx, endIdx;
+
+    if (urlText.contains(tag)) {
+      startIdx = urlText.indexOf(tag) + tag.length();
+
+      if (urlText.indexOf('&', startIdx) != -1) {
+        endIdx = urlText.indexOf('&', startIdx);
+      } else {
+        endIdx = urlText.length();
+      }
+      returnValue = urlText.substring(startIdx, endIdx).trim();
+    }
+    return returnValue;
   }
 }

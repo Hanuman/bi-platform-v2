@@ -470,7 +470,7 @@ public class ChartComponent extends ComponentBase {
             String mapId = fileResults[ChartComponent.MAP_NAME].getName().substring(0,
                 fileResults[ChartComponent.MAP_NAME].getName().indexOf('.'));
             mapString = ImageMapUtilities.getImageMap(mapId, info, new StandardToolTipTagFragmentGenerator(),
-                new PentahoChartURLTagFragmentGenerator(data, urlTemplate, urlTarget, useBaseUrl, dataDefinition,
+                new PentahoChartURLTagFragmentGenerator(urlTemplate, urlTarget, useBaseUrl, dataDefinition,
                     parameterName, outerParameterName));
             
             if (createMapFile) {
