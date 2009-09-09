@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mondrian.i18n.LocalizingDynamicSchemaProcessor;
 import mondrian.olap.MondrianDef;
 import mondrian.olap.Util;
 import mondrian.olap.Util.PropertyList;
@@ -57,6 +58,7 @@ import org.eigenbase.xom.Parser;
 import org.eigenbase.xom.XMLOutput;
 import org.eigenbase.xom.XOMException;
 import org.eigenbase.xom.XOMUtil;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -471,18 +473,15 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     InputStream in = null;
     try {
       in = PentahoSystem.get(ISolutionRepository.class, pentahoSession).getResourceInputStream(relPath, true, ISolutionRepository.ACTION_EXECUTE);
-      in.mark(Integer.MAX_VALUE);
-      try {
-        // Read the encoding from the XML file - see BISERVER-895
-        // get as string with default encoding then re-get as string with encoding specified in xml
-        String encoding = XmlHelper.getEncoding(IOUtils.toString(in), null);
-        in.reset();
-        res = IOUtils.toString(in, encoding);
-      } catch (IOException ioe) {
-        throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0006_IO_PROBLEM"), ioe); //$NON-NLS-1$
-      }
+      
+      LocalizingDynamicSchemaProcessor schemaProcessor = new LocalizingDynamicSchemaProcessor();
+      PropertyList localeInfo = new PropertyList();
+      localeInfo.put("Locale", LocaleHelper.getLocale().toString()); //$NON-NLS-1$
+      res = schemaProcessor.filter(null, localeInfo, in);
     } catch (FileNotFoundException fnfe) {
       throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0007_FILE_NOT_FOUND"), fnfe); //$NON-NLS-1$
+    } catch (Exception e) {
+      throw new MondrianCatalogServiceException(Messages.getErrorString("MondrianCatalogHelper.ERROR_0006_IO_PROBLEM"), e); //$NON-NLS-1$
     } finally {
       IOUtils.closeQuietly(in);
     }
