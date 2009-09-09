@@ -1127,6 +1127,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
+
+            TreeItem selectedItem = solutionTree.getSelectedItem();
             
             // IE has difficulty rendering the tree if the nodes have changed. We can get around 
             // that by collapsing the top level nodes and then re-opening them.
@@ -1139,6 +1141,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
               }
             }
 
+            final List<TreeItem> items = new ArrayList<TreeItem>();
+            TreeItem tmpItem = selectedItem;
+            while (tmpItem != null) {
+              items.add(tmpItem);
+              tmpItem = tmpItem.getParentItem();
+            }
+            Collections.reverse(items);
+            for (TreeItem item : items) {
+              item.setState(true);
+              item.setSelected(false);
+            }
+            selectedItem.setSelected(true);
+            
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
