@@ -234,7 +234,7 @@ function getParameters( id ) {
 
 function closeMantleTab(){
   try{
-    window.parent.closeTab(window.location.href);
+    window.parent.closeTab('');
   } catch(e){
     alert("error closing tab: "+e);
   }
