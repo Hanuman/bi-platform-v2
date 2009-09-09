@@ -31,6 +31,7 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
@@ -1591,6 +1592,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
    */
   public void closeTab(String url) {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
+    if (StringUtils.isEmpty(url)) {
+      // if the url was not provided, simply remove the currently selected tab and then remove
+      if (curpos >= 0 && contentTabPanel.getWidgetCount() > 0) {
+        contentTabPanel.remove(curpos);
+      }
+      if (contentTabPanel.getWidgetCount() == 0) {
+        allTabsClosed();
+      }
+      return;
+    }
     ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
     if (url.contains(curPanel.url)) {
       contentTabPanel.remove(curpos);
