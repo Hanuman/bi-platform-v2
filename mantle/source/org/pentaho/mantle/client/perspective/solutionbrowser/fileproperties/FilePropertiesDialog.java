@@ -22,12 +22,15 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
+import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileTypeEnabledOptions;
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective.ContentTypePlugin;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
@@ -109,22 +112,13 @@ public class FilePropertiesDialog extends PromptDialogBox {
   }
 
   public void fetchFileInfoAndInitTabs() {
-    AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
+    final AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
       public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback() {
-
-          public void onFailure(Throwable caughtLogin) {
-            // we are already logged in, or something horrible happened
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
-                true);
-            dialogBox.center();
-          }
-
-          public void onSuccess(Object result) {
-            fetchFileInfoAndInitTabs();
-          }
-        });
+        // we are already logged in, or something horrible happened
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
+          true);
+        dialogBox.center();
       }
 
       public void onSuccess(SolutionFileInfo fileInfo) {
@@ -149,9 +143,41 @@ public class FilePropertiesDialog extends PromptDialogBox {
     };
     if ((fileItem.getPath() == null || "".equals(fileItem.getPath())) && (fileItem.getSolution().equals(fileItem.getName()))) {
       // no path, in this situation, we're probably looking at the solution itself
-      MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), "", "", callback);
+        AbstractCommand getSolutionFileCmd = new AbstractCommand() {
+
+          private void getFileInfo() {
+            MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), "", "", callback);
+          }
+          
+          protected void performOperation() {
+            getFileInfo();
+          }
+
+          protected void performOperation(boolean feedback) {
+            getFileInfo();
+          }
+          
+        };
+        getSolutionFileCmd.execute();
+        
+
     } else {
-      MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
+      AbstractCommand getSolutionFileCmd = new AbstractCommand() {
+
+        private void getFileInfo() {
+          MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
+        }
+        
+        protected void performOperation() {
+          getFileInfo();
+        }
+
+        protected void performOperation(boolean feedback) {
+          getFileInfo();
+        }
+        
+      };
+      getSolutionFileCmd.execute();      
     }
   }
 

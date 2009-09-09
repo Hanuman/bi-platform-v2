@@ -21,6 +21,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
+import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
@@ -99,18 +100,33 @@ public class GeneralPanel extends FlexTable implements IFileModifier {
   }
 
   public void populateUIFromServer() {
-    AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
+    AbstractCommand getSolutionFileCmd = new AbstractCommand() {
 
-      public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-        dialogBox.center();
+      private void getFileInfo() {
+        AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
+
+          public void onFailure(Throwable caught) {
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            dialogBox.center();
+          }
+
+          public void onSuccess(SolutionFileInfo fileInfo) {
+            init(fileItem, fileInfo);
+          }
+        };
+        MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
+      }
+      
+      protected void performOperation() {
+        getFileInfo();
       }
 
-      public void onSuccess(SolutionFileInfo fileInfo) {
-        init(fileItem, fileInfo);
+      protected void performOperation(boolean feedback) {
+        getFileInfo();
       }
+      
     };
-    MantleServiceCache.getService().getSolutionFileInfo(fileItem.getSolution(), fileItem.getPath(), fileItem.getName(), callback);
+    getSolutionFileCmd.execute();       
   }
 
 }

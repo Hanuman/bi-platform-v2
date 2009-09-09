@@ -34,6 +34,7 @@ import org.pentaho.gwt.widgets.client.utils.StringTokenizer;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
@@ -1301,41 +1302,49 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   public void createSchedule() {
-    AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
+    AbstractCommand scheduleCommand = new AbstractCommand() {
 
-      public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback() {
+      private void schedule() {
+        AsyncCallback<SolutionFileInfo> callback = new AsyncCallback<SolutionFileInfo>() {
 
           public void onFailure(Throwable caught) {
+            // show error
+            final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
+            dialogBox.center();
           }
 
-          public void onSuccess(Object result) {
-            createSchedule();
-          }
-        });
-      }
-
-      public void onSuccess(SolutionFileInfo fileInfo) {
-        if (fileInfo.isSubscribable) {
-          if (fileInfo.getType().equals(SolutionFileInfo.Type.PLUGIN)) {
-            // see if this file is a plugin
-            ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
-            String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
-            String displayName = fileInfo.getLocalizedName();
-            if (displayName == null || displayName.length()<1) {
-              displayName = fileInfo.getName();
+          public void onSuccess(SolutionFileInfo fileInfo) {
+            if (fileInfo.isSubscribable) {
+              if (fileInfo.getType().equals(SolutionFileInfo.Type.PLUGIN)) {
+                // see if this file is a plugin
+                ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
+                String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
+                String displayName = fileInfo.getLocalizedName();
+                if (displayName == null || displayName.length()<1) {
+                  displayName = fileInfo.getName();
+                }
+                showNewURLTab(displayName, displayName, url);
+              } else {
+                executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
+              }
+            } else {
+              showScheduleDialog(fileInfo);
             }
-            showNewURLTab(displayName, displayName, url);
-          } else {
-            executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
           }
-        } else {
-          showScheduleDialog(fileInfo);
-        }
+        };
+        MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), callback);
       }
-    };
-    MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), callback);
+      
+      protected void performOperation() {
+        schedule();
+      }
 
+      protected void performOperation(boolean feedback) {
+        schedule();
+      }
+      
+    };
+    scheduleCommand.execute();
   }
 
   public void loadPropertiesDialog() {
