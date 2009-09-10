@@ -60,16 +60,18 @@ public class MessageFormatter implements IMessageFormatter {
   public String getFirstError(final List messages) {
     // returns something like: "Error: {0} ({1})"
     String errorStart = PentahoMessenger.getUserString("ERROR"); //$NON-NLS-1$
-    int pos = errorStart.indexOf('{');
-    if (pos != -1) {
-      errorStart = errorStart.substring(0, pos);
-    }
-    Iterator messageIterator = messages.iterator();
-    while (messageIterator.hasNext()) {
-      String message = (String) messageIterator.next();
-      if (message.indexOf(errorStart) == 0) {
-        message = StringEscapeUtils.escapeHtml(message);  // Escape this to prevent CSS (PPP-1595)
-        return message;
+    if (errorStart != null) {
+      int pos = errorStart.indexOf('{');
+      if (pos != -1) {
+        errorStart = errorStart.substring(0, pos);
+      }
+      Iterator messageIterator = messages.iterator();
+      while (messageIterator.hasNext()) {
+        String message = (String) messageIterator.next();
+        if (message.indexOf(errorStart) == 0) {
+          message = StringEscapeUtils.escapeHtml(message);  // Escape this to prevent CSS (PPP-1595)
+          return message;
+        }
       }
     }
     return null;
