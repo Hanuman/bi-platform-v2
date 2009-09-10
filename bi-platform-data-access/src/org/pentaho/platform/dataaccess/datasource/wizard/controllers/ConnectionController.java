@@ -350,13 +350,17 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
   @Bindable
   public void onDialogReady() {
-    showAddConnectionDialog();
+    if (datasourceModel.getRelationalModel().getEditType().equals(ConnectionEditType.ADD)) {
+      showAddConnectionDialog();  
+    } else {
+      showEditConnectionDialog();
+    }
   }
 
   @Bindable
   public void showAddConnectionDialog() {
+    datasourceModel.getRelationalModel().setEditType(ConnectionEditType.ADD);
     if(databaseDialog != null){
-      datasourceModel.getRelationalModel().setEditType(ConnectionEditType.ADD);
       databaseDialog.setDatabaseConnection(null);
       databaseDialog.show();
     } else {
@@ -367,23 +371,19 @@ public class ConnectionController extends AbstractXulEventHandler implements Dat
 
   @Bindable
   public void showEditConnectionDialog() {
-
+    datasourceModel.getRelationalModel().setEditType(ConnectionEditType.EDIT);
     if(databaseDialog != null){
-      datasourceModel.getRelationalModel().setEditType(ConnectionEditType.EDIT);
       IConnection connection = datasourceModel.getRelationalModel().getSelectedConnection();
       service.convertFromConnection(connection, new XulServiceCallback<IDatabaseConnection>() {
         public void error(String message, Throwable error) {
           displayErrorMessage(error);
         }
-
         public void success(IDatabaseConnection conn) {
           databaseDialog.setDatabaseConnection(conn);
           databaseDialog.show();
         }
       });
-      
     } else {
-
       databaseDialog = new GwtDatabaseDialog(connService, databaseTypeHelper,
           "dataaccess-databasedialog.xul", this); //$NON-NLS-1$
     }
