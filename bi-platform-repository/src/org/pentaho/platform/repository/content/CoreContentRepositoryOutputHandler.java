@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IContentOutputHandler;
 import org.pentaho.platform.api.engine.IMimeTypeListener;
 import org.pentaho.platform.api.engine.IOutputDef;
 import org.pentaho.platform.api.engine.IOutputHandler;
@@ -42,6 +43,8 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
 
   public static final String DefaultExtension = ".bin"; //$NON-NLS-1$
 
+  public static final String FileObjectName = "file"; //$NON-NLS-1$
+  
   private boolean contentGenerated;
 
   private IContentItem outputContentItem;
@@ -136,6 +139,26 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
   public IContentItem getOutputContentItem(final String objectName, final String contentName, final String title,
       final String url, final String solution, final String instanceId, final String inMimeType) {
     contentGenerated = true;
+    
+    if (FileObjectName.equalsIgnoreCase(objectName)) {
+      IContentOutputHandler output = null;
+      // this code allows us to stay backwards compatible
+      if ((contentName != null) && (contentName.indexOf(":") == -1)) { //$NON-NLS-1$
+        output = PentahoSystem.getOutputDestinationFromContentRef(objectName + ":" + contentName, userSession); //$NON-NLS-1$
+      } else {
+        output = PentahoSystem.getOutputDestinationFromContentRef(contentName, userSession);
+        if (output == null) {
+          output = PentahoSystem.getOutputDestinationFromContentRef(objectName + ":" + contentName, userSession); //$NON-NLS-1$
+        }
+      }
+      if (output != null) {
+        output.setInstanceId(instanceId);
+        output.setMimeType(mimeType);
+        output.setSolutionName(solution);
+        return output.getFileOutputContentItem();
+      }
+    }      
+    
     if (outputContentItem == null) {
       if (inMimeType != null) {
         this.setMimeType(inMimeType);
