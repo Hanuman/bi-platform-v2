@@ -72,6 +72,10 @@ public class SwingDatasourceSelectionDialog implements DialogController<LogicalM
       public void onDialogCancel() {
 //        System.out.println("Cancel");
       }
+
+      public void onDialogReady() {
+//      System.out.println("Ready");
+      }
     });
     runner.initialize();
   }

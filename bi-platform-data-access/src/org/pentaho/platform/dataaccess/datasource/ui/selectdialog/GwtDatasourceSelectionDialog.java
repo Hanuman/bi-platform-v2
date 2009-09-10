@@ -100,6 +100,8 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
       if (constructorListener != null) {
         constructorListener.asyncConstructorDone();
       }
+      
+      datasourceSelectionDialogController.onDialogReady();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -117,6 +119,7 @@ public class GwtDatasourceSelectionDialog implements IXulLoaderCallback, DialogC
   public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<LogicalModelSummary> listener) {
     checkInitialized();
     datasourceSelectionDialogController.addDialogListener(listener);
+    datasourceSelectionDialogController.onDialogReady();
   }
 
   /**

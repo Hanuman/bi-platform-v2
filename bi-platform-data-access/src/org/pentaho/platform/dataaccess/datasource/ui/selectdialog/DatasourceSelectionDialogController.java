@@ -41,6 +41,9 @@ import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.stereotype.Bindable;
 import org.pentaho.ui.xul.util.AbstractXulDialogController;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.RootPanel;
+
 public class DatasourceSelectionDialogController extends AbstractXulDialogController<LogicalModelSummary> {
 
   // ~ Static fields/initializers ======================================================================================
@@ -300,7 +303,12 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
       public void onDialogCancel() {
       }
+
+      public void onDialogReady() {
+        DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "default");  
+      }
     });
+    DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "wait"); 
     datasourceEditor.showDialog();
   }
 
@@ -316,9 +324,14 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
 
       public void onDialogCancel() {
       }
+
+      public void onDialogReady() {
+        DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "default"); 
+      }
     });
     
     LogicalModelSummary logicalModelSummary = getDialogResult();
+    DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "wait"); 
     datasourceEditor.showEditDialog(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId());
   }
 

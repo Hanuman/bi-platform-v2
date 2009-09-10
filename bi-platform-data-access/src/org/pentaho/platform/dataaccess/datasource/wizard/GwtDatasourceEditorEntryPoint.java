@@ -95,6 +95,9 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
         WAQRTransport transport = WAQRTransport.createFromMetadata(domain);
         notifyCallbackSuccess(callback, true, transport);
       }
+      public void onDialogReady() {
+        notifyCallbackReady(callback);
+      }
     };
     editor.addDialogListener(listener);
     editor.showDialog();
@@ -118,6 +121,9 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
       public void onDialogAccept(final Domain domain) {
             WAQRTransport transport = WAQRTransport.createFromMetadata(domain);
             notifyCallbackSuccess(callback, true, transport);
+      }
+      public void onDialogReady() {
+        notifyCallbackReady(callback);
       }
     };
     editor.addDialogListener(listener);
@@ -160,5 +166,9 @@ public class GwtDatasourceEditorEntryPoint implements EntryPoint {
 
   private native void notifyCallbackCancel(JavaScriptObject callback)/*-{
     callback.onCancel();
+  }-*/;
+  
+  private native void notifyCallbackReady(JavaScriptObject callback)/*-{
+    callback.onReady();
   }-*/;
 }

@@ -65,6 +65,10 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
       public void onDialogAccept(final LogicalModelSummary logicalModelSummary) {
         notifyCallbackSuccess(callback, logicalModelSummary.getDomainId(), logicalModelSummary.getModelId());
       }
+
+      public void onDialogReady() {
+        notifyCallbackReady(callback);
+      }
     };
     selectDialog.addDialogListener(listener);
     selectDialog.showDialog();
@@ -77,4 +81,9 @@ public class GwtDatasourceSelectionDialogEntryPoint implements EntryPoint {
   private native void notifyCallbackCancel(JavaScriptObject callback) /*-{
     callback.onCancel();
   }-*/;
+  
+  private native void notifyCallbackReady(JavaScriptObject callback) /*-{
+  callback.onReady();
+}-*/;
+
 }
