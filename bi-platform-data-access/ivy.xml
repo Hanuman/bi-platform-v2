@@ -33,7 +33,7 @@
         <dependency org="log4j" name="log4j" rev="1.2.14"/>
         <dependency org="jfree" name="jcommon" rev="1.0.14"/>
         <!--  using libbase's CSVTokenizer -->
-        <dependency org="${dependency.libbase.group}" name="libbase" rev="${dependency.libbase.revision}" />
+        <dependency org="${dependency.reporting-library.group}" name="libbase" rev="${dependency.libbase.revision}" />
         <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
                     changing="true" transitive="false"/>
         <dependency org="pentaho" name="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" changing="true"
@@ -56,7 +56,7 @@
         <!--  internal dependencies -->
         <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}"
                     changing="true"/>
-        <dependency org="pentaho-library" name="libformula" rev="${dependency.libformula.revision}"/>
+        <dependency org="${dependency.reporting-library.group}" name="libformula" rev="${dependency.libformula.revision}"/>
         <dependency org="pentaho" name="pentaho-publisher" rev="${dependency.pentaho-pentaho-publisher.revision}"/>
     	<dependency org="pentaho" name="pentaho-bi-platform-api" rev="${dependency.bi-platform.revision}" changing="true" transitive="false" conf="default->default"/>
     	<dependency org="pentaho" name="pentaho-bi-platform-util" rev="${dependency.bi-platform.revision}" changing="true" transitive="false" conf="default->default"/>

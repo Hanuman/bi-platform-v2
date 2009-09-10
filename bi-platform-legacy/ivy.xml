@@ -26,7 +26,7 @@
     <!--  internal dependencies -->
         
     <!--  reporting -->
-    <dependency org="pentaho-reporting-engine" name="pentaho-reporting-engine-classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
+    <dependency org="${dependency.reporting-engine.group}" name="pentaho-reporting-engine-classic-extensions" rev="${dependency.pentaho-reporting-engine}" changing="true" />
 
     <!-- platform -->
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
