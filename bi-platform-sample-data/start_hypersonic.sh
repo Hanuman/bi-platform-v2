@@ -5,8 +5,9 @@
 ##                                                                          ##
 ### ====================================================================== ###
 
-cd $(dirname $0)
-DIR=$PWD
+DIR_REL=`dirname $0`
+cd $DIR_REL
+DIR=`pwd`
 cd -
 
 . "$DIR/set-pentaho-java.sh"
@@ -21,7 +22,7 @@ fi
 # dynamically build the classpath #
 #---------------------------------#
 THE_CLASSPATH=
-for i in `ls ./lib/hsqldb*.jar`
+for i in `ls $DIR_REL/lib/hsqldb*.jar`
 do
   THE_CLASSPATH=${THE_CLASSPATH}:${i}
 done

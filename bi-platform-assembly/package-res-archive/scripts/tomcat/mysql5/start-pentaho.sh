@@ -5,8 +5,9 @@
 ##                                                                          ##
 ### ====================================================================== ###
 
-cd $(dirname $0)
-DIR=$PWD
+DIR_REL=`dirname $0`
+cd $DIR_REL
+DIR=`pwd`
 cd -
 
 . "$DIR/set-pentaho-java.sh"
