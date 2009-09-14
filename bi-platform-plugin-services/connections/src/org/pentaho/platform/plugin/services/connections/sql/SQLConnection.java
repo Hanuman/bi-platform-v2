@@ -161,9 +161,11 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       Properties info = new Properties();
       info.put("user", userName); //$NON-NLS-1$
       info.put("password", password); //$NON-NLS-1$
-      nativeConnection = driver.connect(location, info);
+      nativeConnection = captureConnection(driver.connect(location, info));
       if (nativeConnection == null) {
         logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location)); //$NON-NLS-1$
+      } else {
+        enhanceConnection(nativeConnection);
       }
     } catch (Throwable t) {
       logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location), t); //$NON-NLS-1$
@@ -189,11 +191,13 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       DataSource dataSource = datasourceService.getDataSource(jndiName);      
       if (dataSource != null) {
-        nativeConnection = dataSource.getConnection();
+        nativeConnection = captureConnection(dataSource.getConnection());
         if (nativeConnection == null) {
           logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
           // clear datasource cache
           datasourceService.clearDataSource(jndiName);
+        } else {
+          enhanceConnection(nativeConnection);
         }
       } else {
         logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
@@ -211,7 +215,43 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       }
     }
   }
+  
+  /**
+   * Allows the native SQL Connection to be enhanced in a subclass. Best
+   * used when a connection needs to be enhanced with an "effective user"
+   * @param connection
+   */
+  protected void enhanceConnection(Connection connection) {
+  }
 
+  /**
+   * Allows enhancements to the native SQL Connection to be removed in a subclass. Best
+   * used when a connection needs to be enhanced with an "effective user"
+   * @param connection
+   */
+  protected void unEnhanceConnection(Connection connection) {
+  }
+
+  /**
+   * Allow wrapping/proxying of the native SQL connection by a subclass. Best
+   * used when a connection needs to be be enhanced or proxied for Single Signon
+   * or possibly tenenting.
+   * @param connection
+   * @return
+   */
+  protected Connection captureConnection(Connection connection) {
+    return connection;
+  }
+  
+  /**
+   * Allows the native SQL Statement to be enhanced by a subclass.
+   * Examples may be to allow additional information like a user to
+   * be bound to the statement.
+   * @param statement
+   */
+  protected void enhanceStatement(Statement statement) {
+  }
+  
   /**
    * iterate over and close all statements.  Remove each statement from the list.
    */
@@ -256,6 +296,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     closeStatements();
     if (nativeConnection != null) {
       try {
+        unEnhanceConnection(nativeConnection);
         if (getReadOnly()) {
           try {
             // Reset the readonly on the native connection before closing
@@ -318,6 +359,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
 
       stmt = nativeConnection.createStatement(scrollType, concur);
       stmts.add(stmt);
+      enhanceStatement(stmt);
       setStatementLimitations(stmt);
       resultSet = stmt.executeQuery(query);
       
@@ -328,6 +370,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
          // FORCE forward only
         stmt = nativeConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, concur);
         stmts.add(stmt);
+        enhanceStatement(stmt);
         setStatementLimitations(stmt);
         resultSet = stmt.executeQuery(query);
         setForcedForwardOnly(true);
@@ -411,6 +454,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       pStmt = nativeConnection.prepareStatement(query, scrollType, concur);
       // add to stmts list for closing when connection closes
       stmts.add(pStmt);
+      enhanceStatement(pStmt);
       setStatementLimitations(pStmt);
       for (int i = 0; i < parameters.size(); i++) {
         pStmt.setObject(i + 1, parameters.get(i));
@@ -425,6 +469,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
         pStmt = nativeConnection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, concur);
         // add to stmts list for closing when connection closes
         stmts.add(pStmt);
+        enhanceStatement(pStmt);
         setStatementLimitations(pStmt);
         for (int i = 0; i < parameters.size(); i++) {
           pStmt.setObject(i + 1, parameters.get(i));
@@ -516,6 +561,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
     Statement stmt = nativeConnection.createStatement(scrollType, concur);
 
     // add to stmts list for closing when connection closes
+    enhanceStatement(stmt);
     stmts.add(stmt);
     
     setStatementLimitations(stmt);
