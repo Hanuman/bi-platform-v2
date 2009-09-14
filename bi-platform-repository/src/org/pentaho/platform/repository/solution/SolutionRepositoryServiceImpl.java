@@ -76,6 +76,24 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
    */
   private static final ThreadLocal<SAXParserFactory> SAX_FACTORY = new ThreadLocal<SAXParserFactory>();
 
+  static {
+    // The SolutionRepositoryService creates/uses the ICacheManager from PentahoSystem to create a new
+    // cache region specifically for the caching of the solution repository document. This is not put
+    // into a session cache intentionally. Client tools like PRD do not maintain a session and would
+    // thus never have any benefit from this. Since we are using a cache manager, if the cache is
+    // unused long enough entries will age out.
+
+    // We are caching the solution repository document on a per-user basis, as required, because the
+    // document is that user's view of the repository, with respect to ACLs.
+
+    // Upon publish, reload, or reset repository calls this cache is cleared in the reset method
+    // of SolutionRepositoryBase.
+    ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+    if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+      cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
+    }    
+  }
+  
   public SolutionRepositoryServiceImpl() {
     super();
   }
@@ -396,13 +414,12 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     // Upon publish, reload, or reset repository calls this cache is cleared in the reset method
     // of SolutionRepositoryBase.
 
-    ICacheManager cacheManager = PentahoSystem.getCacheManager(session);
-    if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
-      cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
+    ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+    org.w3c.dom.Document document = null;
+    if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+      document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName());
     }
-    org.w3c.dom.Document document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session
-        .getName());
-
+      
     if (document == null) {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       ISolutionFile rootFile = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE);
@@ -415,7 +432,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       // only attempt to add to the cache if by this point it exists, it's possible that
       // the implementation of the ICacheManager might not allow the creation of new
       // or custom caches like this.
-      if (cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+      if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
         cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName(), document);
       }
 
