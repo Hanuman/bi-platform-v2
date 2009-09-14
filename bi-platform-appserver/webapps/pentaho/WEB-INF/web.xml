@@ -485,10 +485,6 @@
 		<servlet-name>ResetRepository</servlet-name>
 		<jsp-file>/jsp/ResetRepository.jsp</jsp-file>
 	</servlet>
-	<servlet>
-		<servlet-name>NewAnalysisView</servlet-name>
-		<jsp-file>/jsp/NewAnalysisView.jsp</jsp-file>
-	</servlet>
 
 	<servlet>
 		<servlet-name>MantleService</servlet-name>
@@ -811,11 +807,6 @@
 	<servlet-mapping>
 		<servlet-name>SolutionRepositoryService</servlet-name>
 		<url-pattern>/SolutionRepositoryService</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>NewAnalysisView</servlet-name>
-		<url-pattern>/NewAnalysisView</url-pattern>
 	</servlet-mapping>
 
 	<!-- insert additional servlet mappings -->

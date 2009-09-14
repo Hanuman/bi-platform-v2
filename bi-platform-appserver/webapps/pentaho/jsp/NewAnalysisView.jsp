@@ -33,6 +33,10 @@
        * 
        */
 
+       /*
+       * This jsp is deprecated and should no longer be used. It has been removed from the web.xml.
+       */
+       
       IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(request);
 
       String intro = "";
