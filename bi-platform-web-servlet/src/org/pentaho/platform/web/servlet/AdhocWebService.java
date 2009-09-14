@@ -1869,14 +1869,14 @@ public class AdhocWebService extends ServletBase {
 
   private Document getWaqrRepositoryDoc( final String folderPath, final IPentahoSession userSession ) throws AdhocWebServiceException {
 
-    if ( StringUtil.doesPathContainParentPathSegment( folderPath )) {
+    if ( (folderPath != null && StringUtil.doesPathContainParentPathSegment( folderPath ) )) {
       String msg = Messages.getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     String solutionRepositoryName = AdhocWebService.getSolutionRepositoryName( userSession );
 
     String path = "/" + solutionRepositoryName + AdhocWebService.WAQR_REPOSITORY_PATH; //$NON-NLS-1$
-    if (!folderPath.equals("/")) { //$NON-NLS-1$
+    if ( (folderPath != null) && (!folderPath.equals("/"))) { //$NON-NLS-1$
       path += folderPath;
     }
 
