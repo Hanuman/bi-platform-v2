@@ -356,6 +356,7 @@ public class MetadataQueryComponent {
     try {
       if ((sqlConnection == null) || !sqlConnection.initialized()) {
         logger.error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        // TODO: throw an exception up the stack.
         return false;
       }
 
@@ -364,8 +365,10 @@ public class MetadataQueryComponent {
         SqlGenerator sqlGenerator = createSqlGenerator();
         mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, activeDatabaseMeta, parameters, true);
       } catch (Exception e) {
-        logger.error("error", e); //$NON-NLS-1$ 
-        return false;      
+        // TODO: throw an exception up the stack.
+        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage())); //$NON-NLS-1$
+        logger.debug("error", e); //$NON-NLS-1$
+        return false;
       }
       
       if (timeout != null && timeout >= 0 ) {
@@ -433,8 +436,9 @@ public class MetadataQueryComponent {
         }
         
       } catch (Exception e) {
-        // TODO
-        logger.error("error", e); //$NON-NLS-1$
+        // TODO: throw an exception up the stack.
+        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage())); //$NON-NLS-1$
+        logger.debug("error", e); //$NON-NLS-1$
         return false;
       }
         
