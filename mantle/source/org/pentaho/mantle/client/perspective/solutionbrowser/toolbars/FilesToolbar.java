@@ -173,11 +173,17 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       } else {
         menuFileCommands[i] = new FileCommand(menuCommands[i], miscComboBtn.getPopup(), callback);
         menuItems[i] = miscMenus.addItem(Messages.getString(menuItemNames[i]), menuFileCommands[i]);
+        menuItems[i].getElement().setId(makeSafeId("file_toolbar_menuitem_" + Messages.getString(menuItemNames[i])));
       }
     }
     miscComboBtn.setMenu(miscMenus);
   }
 
+  private String makeSafeId(final String id) {
+    String safeid = id.replace(' ', '_').replaceAll("\\.", "").replaceAll(":", "");
+    return safeid.toLowerCase();
+  }
+  
   @Override
   public void popupClosed(PopupPanel panel) {
     ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
