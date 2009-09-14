@@ -168,13 +168,16 @@ public class MDXMetaData extends AbstractPentahoMetaData implements IMultiDimens
       // names, yet with the old format cross joins will have problems (BISERVER-1266).
 
       if (useExtendedColumnNames) {
-
-        colNames = new String[this.rowHeaders[0].length];
-
-        // Flatten out the column headers into one column-name
-        for (int i = 0; i < colNames.length; ++i) {
-          Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
-          colNames[i] = "[" + member.getDimension().getName() + "].[" + member.getHierarchy().getName() + "].[" + member.getLevel().getName() + "]";
+        if (this.rowHeaders.length > 0) {
+          colNames = new String[this.rowHeaders[0].length];
+  
+          // Flatten out the column headers into one column-name
+          for (int i = 0; i < colNames.length; ++i) {
+            Member member = (Member) ((List) nativeResultSet.getAxes()[AXIS_ROW].getPositions().get(0)).get(i);
+            colNames[i] = "[" + member.getDimension().getName() + "].[" + member.getHierarchy().getName() + "].[" + member.getLevel().getName() + "]";
+          }
+        } else {
+          colNames = new String[0];
         }
       } else {
         colNames = new String[getColumnCount()];
