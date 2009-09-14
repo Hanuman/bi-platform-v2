@@ -328,7 +328,7 @@ window.onresize = function(){
   
     
   // IE_6_FIX: When resized by PUC, IE will display rendering issues. This is accounted for by the code below. 
-  if(isIE6){
+  if(window.isIE6){
     
     // IE6 has a rate limit on the number of resize events that it will fire. This means we cannot rely on the
     // resize event alone to determine when the reisize is complete. The timer ensures that the layout is
@@ -473,47 +473,45 @@ function loader(){
           src="images/ql_icon_bar_left.png" width="41"
           height="147" /></td>
         <td class="ql_icon_bar_middle" >
-                <!--<div style="position: relative; width: 100%; height: 100%;">
-                       <div style="position:absolute;  top:0px; left:0px"> -->
-                    <table id="buttonTable" width="100%" border="0" cellspacing="0" cellpadding="0"
-                      height="100%">
-                      <tr>
-                        <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
-                          src="images/btn_ql_newreport.png"
-                          class="ql_new_report" /></td>
-                        <td align="center" valign="top">&nbsp;</td>
-                        <td align="center" valign="top"
-                          onClick="window.parent.openAnalysis()"><img
-                          src="images/btn_ql_newanalysis.png"
-                          class="ql_new_analysis" /></td>
-                        <td align="center" valign="top">&nbsp;</td>
+
+            <table id="buttonTable" width="100%" border="0" cellspacing="0" cellpadding="0"
+              height="100%">
+              <tr>
+                <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
+                  src="images/btn_ql_newreport.png"
+                  class="ql_new_report" /></td>
+                <td align="center" valign="top">&nbsp;</td>
+                <td align="center" valign="top"
+                  onClick="window.parent.openAnalysis()"><img
+                  src="images/btn_ql_newanalysis.png"
+                  class="ql_new_analysis" /></td>
+                <td align="center" valign="top">&nbsp;</td>
 <% if (pluginButton) { %>
-                        <td align="center" valign="top"
-                          onClick="window.parent.<%=buttonCommand %>"><img
-                          src="../../<%=buttonImage %>"
-                          class="ql_manage" /></td>
+                <td align="center" valign="top"
+                  onClick="window.parent.<%=buttonCommand %>"><img
+                  src="../../<%=buttonImage %>"
+                  class="ql_manage" /></td>
 <% } else { %>
-                        <td align="center" valign="top"
-                          onClick="window.parent.openManage()"><img
-                          src="images/btn_ql_manage.png"
-                          class="ql_manage" /></td>
+                <td align="center" valign="top"
+                  onClick="window.parent.openManage()"><img
+                  src="images/btn_ql_manage.png"
+                  class="ql_manage" /></td>
 <% } %>
-                      </tr>
-                      <tr>
-                        <td id="launch_new_report" height="100%"><!--  container for New Report Button -->
-                        </td>
-                        <td><img src="images/ql_spacer.png"
-                          class="ql_spacer" /></td>
-                        <td id="launch_new_analysis"><!--  container for New Analysis Button -->
-                        </td>
-                        <td><img src="images/ql_spacer.png"
-                          class="ql_spacer" /></td>
-                        <td id="manage_content"><!--  container for manage content Button -->
-                        </td>
-                      </tr>
-                  </table>
-                  <!--</div></div> -->
-                
+              </tr>
+              <tr>
+                <td id="launch_new_report" height="100%"><!--  container for New Report Button -->
+                </td>
+                <td><img src="images/ql_spacer.png"
+                  class="ql_spacer" /></td>
+                <td id="launch_new_analysis"><!--  container for New Analysis Button -->
+                </td>
+                <td><img src="images/ql_spacer.png"
+                  class="ql_spacer" /></td>
+                <td id="manage_content"><!--  container for manage content Button -->
+                </td>
+              </tr>
+          </table>
+        
         </td>
         <td class="ql_icon_bar_right"><img
           src="images/ql_icon_bar_right.png"
