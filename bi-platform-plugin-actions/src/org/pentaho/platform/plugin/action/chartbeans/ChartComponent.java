@@ -42,7 +42,9 @@ import org.pentaho.chart.model.PiePlot;
 import org.pentaho.chart.model.Theme;
 import org.pentaho.chart.model.util.ChartSerializer;
 import org.pentaho.chart.model.util.ChartSerializer.ChartSerializationFormat;
+import org.pentaho.chart.plugin.ChartDataOverflowException;
 import org.pentaho.chart.plugin.ChartProcessingException;
+import org.pentaho.chart.plugin.NoChartDataException;
 import org.pentaho.chart.plugin.api.PersistenceException;
 import org.pentaho.chart.plugin.api.IOutput.OutputTypes;
 import org.pentaho.chart.plugin.jfreechart.JFreeChartPlugin;
@@ -180,27 +182,10 @@ public class ChartComponent {
       // Set chart engine on chartModel for the ChartFactory to use
       chartModel.setChartEngineId(chartEngine);
       
-      InputStream is = ChartBeanFactory.createChart(data, scalingFactor, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
+      InputStream is = null;
       
-      if (is == null) {
-        if(JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)){
-          BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
-          Graphics2D graphics = image.createGraphics();
-          graphics.setFont(new Font("serif", Font.BOLD, 20)); //$NON-NLS-1$
-          graphics.setColor(Color.BLACK);
-          graphics.drawString("No Data", 20, 20); //$NON-NLS-1$
-          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          ImageIO.write(image, outputType, outputStream);
-        } else {
-          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("No Data"); //$NON-NLS-1$
-          is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
-          int val = 0;          
-          //TODO: Buffer for more efficiency
-          while((val = is.read()) != -1){
-            outputStream.write(val);
-          }
-        }
-      } else {
+      try {
+        is = ChartBeanFactory.createChart(data, scalingFactor, convertNullsToZero, valueColumn, seriesColumn, categoryColumn, chartModel, chartWidth, chartHeight, getOutputType());
         // Wrap output as necessary
         if(OpenFlashChartPlugin.PLUGIN_ID.equals(chartEngine)){
           // Convert stream to string, insert into HTML fragment and re-stream it
@@ -223,6 +208,44 @@ public class ChartComponent {
         //TODO: Buffer for more efficiency
         while((val = is.read()) != -1){
           outputStream.write(val);
+        }
+      } catch (NoChartDataException ex) {
+        if (JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)) {
+          BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
+          Graphics2D graphics = image.createGraphics();
+          graphics.setFont(new Font("serif", Font.BOLD, 14)); //$NON-NLS-1$
+          graphics.setColor(Color.BLACK);
+          graphics.drawString("The chart data query returned no data.", 5, 5); //$NON-NLS-1$
+          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          ImageIO.write(image, outputType, outputStream);
+        } else {
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("The chart data query returned no data."); //$NON-NLS-1$
+          is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
+          int val = 0;          
+          //TODO: Buffer for more efficiency
+          while((val = is.read()) != -1){
+            outputStream.write(val);
+          }
+        }
+      } catch (ChartDataOverflowException ex) {
+        if (JFreeChartPlugin.PLUGIN_ID.equals(chartEngine)) {
+          BufferedImage image = new BufferedImage(chartWidth, chartHeight, BufferedImage.TYPE_INT_ARGB);
+          Graphics2D graphics = image.createGraphics();
+          graphics.setFont(new Font("serif", Font.BOLD, 14)); //$NON-NLS-1$
+          graphics.setColor(Color.BLACK);
+          graphics.drawString("Too many data points.", 5, 5); //$NON-NLS-1$
+          graphics.drawString("A maximum of " + ex.getMaxAllowedDataPoints() + " points may be plotted on a single chart.", 5, 25);
+         
+          String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          ImageIO.write(image, outputType, outputStream);
+        } else {
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("The chart data query returned too many data points. <br/> A maximum of " + ex.getMaxAllowedDataPoints() + " points may be plotted on a single chart."); //$NON-NLS-1$
+          is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
+          int val = 0;          
+          //TODO: Buffer for more efficiency
+          while((val = is.read()) != -1){
+            outputStream.write(val);
+          }
         }
       }
     } catch(SQLException e){
