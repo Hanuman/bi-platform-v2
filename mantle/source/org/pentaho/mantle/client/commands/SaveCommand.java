@@ -41,7 +41,8 @@ public class SaveCommand implements Command {
   private String solution;
   private String path;
   private SolutionFileInfo.Type type;
-
+  private String tabName;
+  
   public SaveCommand(SolutionBrowserPerspective navigatorPerspective, boolean isSaveAs) {
     this.navigatorPerspective = navigatorPerspective;
     this.isSaveAs = isSaveAs;
@@ -71,16 +72,14 @@ public class SaveCommand implements Command {
           setName(name);
           setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
 
-          TabWidget tab = navigatorPerspective.getCurrentTab();
-          String tabName = name;
+          tabName = name;
           if (tabName.indexOf("analysisview.xaction") != -1) {
             // trim off the analysisview.xaction from the localized-name
             tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction")-1);
           } else if (tabName.indexOf("waqr.xaction") != -1) {
             tabName = tabName.substring(0, tabName.indexOf("waqr.xaction")-1);
           }
-          tab.setLabelText(tabName);
-          tab.setLabelTooltip(tabName);
+          
 
           if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
@@ -188,6 +187,7 @@ public class SaveCommand implements Command {
 
         // Perform the save
         frame.gCtrlr.repositoryBrowserController.remoteSave(filename, solution, path, saveType, overwrite);
+        this.@org.pentaho.mantle.client.commands.SaveCommand::doTabRename()();
         
       } catch(e){
         //TODO: externalize message once a solution to do so is found.
@@ -195,6 +195,12 @@ public class SaveCommand implements Command {
       }
     }
   }-*/;
+  
+  private void doTabRename(){
+    TabWidget tab = navigatorPerspective.getCurrentTab();
+    tab.setLabelText(tabName);
+    tab.setLabelTooltip(tabName);
+  }
 
   public String getName() {
 
