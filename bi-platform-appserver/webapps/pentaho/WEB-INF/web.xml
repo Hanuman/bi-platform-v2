@@ -342,16 +342,6 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>UpdateSampleEmails</servlet-name>
-		<jsp-file>/jsp/UpdateSampleEmails.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>Widgets</servlet-name>
-		<jsp-file>/jsp/Widgets.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
 		<servlet-name>PivotError</servlet-name>
 		<jsp-file>/jsp/PivotError.jsp</jsp-file>
 	</servlet>
@@ -364,26 +354,6 @@
 	<servlet>
 		<servlet-name>SolutionManager</servlet-name>
 		<jsp-file>/jsp/SolutionManager.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>SampleDashboard</servlet-name>
-		<jsp-file>/jsp/SampleDashboard.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ChartSamplesDashboard</servlet-name>
-		<jsp-file>/jsp/ChartSamplesDashboard.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>SampleDrill</servlet-name>
-		<jsp-file>/jsp/SampleDrill.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>SWDashboard</servlet-name>
-		<jsp-file>/jsp/SWDashboard.jsp</jsp-file>
 	</servlet>
 
 	<servlet>
@@ -414,11 +384,6 @@
 	<servlet>
 		<servlet-name>UserContent</servlet-name>
 		<jsp-file>/jsp/UserContent.jsp</jsp-file>
-	</servlet>
-
-	<servlet>
-		<servlet-name>Map</servlet-name>
-		<jsp-file>/jsp/Map.jsp</jsp-file>
 	</servlet>
 
 	<!-- ================================= merged servlets =================================== -->
@@ -473,10 +438,6 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>SampleFlashDashboard</servlet-name>
-		<jsp-file>/jsp/SampleFlashDashboard.jsp</jsp-file>
-	</servlet>
-	<servlet>
 		<servlet-name>GetResource</servlet-name>
 		<servlet-class>org.pentaho.platform.web.servlet.GetResource</servlet-class>
 	</servlet>
@@ -500,6 +461,48 @@
 		<servlet-name>UploadService</servlet-name>
 		<servlet-class>org.pentaho.platform.web.servlet.UploadFileServlet</servlet-class>
 	</servlet>
+	
+	<!-- [BEGIN SAMPLE SERVLETS] -->
+	<servlet>
+		<servlet-name>UpdateSampleEmails</servlet-name>
+		<jsp-file>/jsp/UpdateSampleEmails.jsp</jsp-file>
+	</servlet>
+
+	<servlet>
+		<servlet-name>Widgets</servlet-name>
+		<jsp-file>/jsp/Widgets.jsp</jsp-file>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SampleDashboard</servlet-name>
+		<jsp-file>/jsp/SampleDashboard.jsp</jsp-file>
+	</servlet>
+
+	<servlet>
+		<servlet-name>ChartSamplesDashboard</servlet-name>
+		<jsp-file>/jsp/ChartSamplesDashboard.jsp</jsp-file>
+	</servlet>
+
+	<servlet>
+		<servlet-name>SampleDrill</servlet-name>
+		<jsp-file>/jsp/SampleDrill.jsp</jsp-file>
+	</servlet>
+
+	<servlet>
+		<servlet-name>SWDashboard</servlet-name>
+		<jsp-file>/jsp/SWDashboard.jsp</jsp-file>
+	</servlet>
+		
+	<servlet>
+		<servlet-name>Map</servlet-name>
+		<jsp-file>/jsp/Map.jsp</jsp-file>
+	</servlet>	
+	
+	<servlet>
+		<servlet-name>SampleFlashDashboard</servlet-name>
+		<jsp-file>/jsp/SampleFlashDashboard.jsp</jsp-file>
+	</servlet>	
+	<!-- [END SAMPLE SERVLETS] -->
 
   <!-- insert additional servlets -->
 
@@ -602,38 +605,8 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>UpdateSampleEmails</servlet-name>
-		<url-pattern>/UpdateSampleEmails</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>Widgets</servlet-name>
-		<url-pattern>/Widgets</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
 		<servlet-name>SolutionManager</servlet-name>
 		<url-pattern>/SolutionManager</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SampleDashboard</servlet-name>
-		<url-pattern>/SampleDashboard</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>ChartSamplesDashboard</servlet-name>
-		<url-pattern>/ChartSamplesDashboard</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SampleDrill</servlet-name>
-		<url-pattern>/SampleDrill</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SWDashboard</servlet-name>
-		<url-pattern>/SWDashboard</url-pattern>
 	</servlet-mapping>
 
 	<!-- Pentaho Servlets -->
@@ -728,11 +701,6 @@
 		<url-pattern>/UserContent</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>Map</servlet-name>
-		<url-pattern>/Map</url-pattern>
-	</servlet-mapping>
-
 <!-- =============================== merged servlet-mappings ============================= -->
 	<servlet-mapping>
 		<servlet-name>RepositoryTree</servlet-name>
@@ -752,11 +720,6 @@
 	<servlet-mapping>
 		<servlet-name>DialPct</servlet-name>
 		<url-pattern>/DialPct</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SampleFlashDashboard</servlet-name>
-		<url-pattern>/SampleFlashDashboard</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -808,6 +771,48 @@
 		<servlet-name>SolutionRepositoryService</servlet-name>
 		<url-pattern>/SolutionRepositoryService</url-pattern>
 	</servlet-mapping>
+
+    <!-- [BEGIN SAMPLE SERVLET MAPPINGS] -->
+	<servlet-mapping>
+		<servlet-name>UpdateSampleEmails</servlet-name>
+		<url-pattern>/UpdateSampleEmails</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Widgets</servlet-name>
+		<url-pattern>/Widgets</url-pattern>
+	</servlet-mapping>
+	    
+	<servlet-mapping>
+		<servlet-name>SampleDashboard</servlet-name>
+		<url-pattern>/SampleDashboard</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ChartSamplesDashboard</servlet-name>
+		<url-pattern>/ChartSamplesDashboard</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SampleDrill</servlet-name>
+		<url-pattern>/SampleDrill</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SWDashboard</servlet-name>
+		<url-pattern>/SWDashboard</url-pattern>
+	</servlet-mapping>	
+	
+	<servlet-mapping>
+		<servlet-name>Map</servlet-name>
+		<url-pattern>/Map</url-pattern>
+	</servlet-mapping>	
+
+	<servlet-mapping>
+		<servlet-name>SampleFlashDashboard</servlet-name>
+		<url-pattern>/SampleFlashDashboard</url-pattern>
+	</servlet-mapping>	
+    <!-- [END SAMPLE SERVLET MAPPINGS] -->
 
 	<!-- insert additional servlet mappings -->
 	<session-config>
