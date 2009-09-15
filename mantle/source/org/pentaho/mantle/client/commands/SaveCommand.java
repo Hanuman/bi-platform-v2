@@ -147,7 +147,7 @@ public class SaveCommand implements Command {
    * 
    * @param elementId
    */
-  public static native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite) 
+  public native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite) 
   /*-{
     var frame = $doc.getElementById(elementId);
     frame = frame.contentWindow;
