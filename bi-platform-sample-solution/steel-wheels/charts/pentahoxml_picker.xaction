@@ -408,7 +408,7 @@ GROUP BY
      PRODUCTS.PRODUCTLINE
 ORDER BY
      PRODUCTS.PRODUCTLINE ASC]]></query>  
-          <live><![CDATA[true]]></live> 
+          <live><![CDATA[false]]></live> 
         </component-definition> 
       </action-definition>
   
