@@ -19,6 +19,7 @@ package org.pentaho.platform.plugin.action.jfreereport.helper;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.pentaho.actionsequence.dom.IActionResource;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
@@ -83,8 +84,12 @@ public class PentahoResourceData extends AbstractResourceData {
    * @return input stream
    */
   public InputStream getResourceAsStream(final ResourceManager caller) throws ResourceLoadingException {
+    int resourceType = IActionResource.SOLUTION_FILE_RESOURCE;
+    if (filename.contains("://")) {
+      resourceType =  IActionResource.URL_RESOURCE;
+    }
     final IActionSequenceResource resource = new ActionSequenceResource(
-        "", IActionResource.SOLUTION_FILE_RESOURCE, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
+        "", resourceType, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       return solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
     } catch (FileNotFoundException e) {
