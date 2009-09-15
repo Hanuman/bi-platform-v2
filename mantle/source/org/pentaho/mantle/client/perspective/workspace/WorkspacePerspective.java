@@ -424,29 +424,27 @@ public class WorkspacePerspective extends ScrollPanel {
    */
   private void deletePublicScheduleAndContents(final SubscriptionBean currPublicSchedule) {
     final String subscrName = currPublicSchedule.getId();
-    final List<String[]> scheduleList = currPublicSchedule.getContent();
+    final List<String[]> scheduleList = currPublicSchedule.getContent() == null ? new ArrayList<String[]>() : currPublicSchedule.getContent();
     final List<String> fileList = new ArrayList<String>();
 
-    if (scheduleList != null) {
-      AsyncCallback<String> callback = new AsyncCallback<String>() {
-        public void onFailure(Throwable caught) {
-          new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotDeletePublicScheduleAndContents"), false, false, true).center(); //$NON-NLS-1$
-        }
-
-        public void onSuccess(String result) {
-          refreshWorkspace();
-
-        }
-      };
-
-      final int scheduleSize = scheduleList.size();
-      for (int j = 0; j < scheduleSize; j++) {
-        final String[] currSchedule = scheduleList.get(j);
-        final String fileId = currSchedule[3];
-        fileList.add(fileId);
+    AsyncCallback<String> callback = new AsyncCallback<String>() {
+      public void onFailure(Throwable caught) {
+        new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotDeletePublicScheduleAndContents"), false, false, true).center(); //$NON-NLS-1$
       }
-      MantleServiceCache.getService().deletePublicScheduleAndContents(subscrName, fileList, callback);
+
+      public void onSuccess(String result) {
+        refreshWorkspace();
+
+      }
+    };
+
+    final int scheduleSize = scheduleList.size();
+    for (int j = 0; j < scheduleSize; j++) {
+      final String[] currSchedule = scheduleList.get(j);
+      final String fileId = currSchedule[3];
+      fileList.add(fileId);
     }
+    MantleServiceCache.getService().deletePublicScheduleAndContents(subscrName, fileList, callback);
   }
 
   private void performActionOnSubscriptionContent(final String action, final SubscriptionBean subscription, final String subscrName, final String contentID) {
