@@ -51,6 +51,7 @@ public class BarLineChartFactory extends BarChartFactory {
   @Override
   public void setData(IPentahoResultSet data) {
     super.setData(data);
+    data.beforeFirst();
     lineChartFactory.setData(data);
   }
   
