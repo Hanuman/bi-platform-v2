@@ -19,15 +19,8 @@
  */
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
-import java.util.Date;
-
-import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
-import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
-import org.pentaho.mantle.client.messages.Messages;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class FileCommand implements Command {
 
@@ -64,28 +57,6 @@ public class FileCommand implements Command {
       fileItemCallback.editActionFile();
     } else if (mode == COMMAND.SCHEDULE_NEW) {
       fileItemCallback.createSchedule();
-    } else if (mode == COMMAND.SCHEDULE_CUSTOM) {
-      Date now = new Date();
-      int second = now.getSeconds();
-      int minute = now.getMinutes();
-      int hour = now.getHours();
-      final TextBox cronTextBox = new TextBox();
-      cronTextBox.setText(second + " " + minute + " " + hour + " * * ?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      IDialogCallback callback = new IDialogCallback() {
-
-        public void cancelPressed() {
-        }
-
-        public void okPressed() {
-          TextBox cronTextBox = new TextBox();
-          fileItemCallback.createSchedule(cronTextBox.getText());
-        }
-
-      };
-      PromptDialogBox inputDialog = new PromptDialogBox(Messages.getString("customCRONSchedule"), Messages.getString("schedule"), Messages.getString("cancel"), false, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      inputDialog.setContent(cronTextBox);
-      inputDialog.setCallback(callback);
-      inputDialog.center();
     } else if (mode == COMMAND.SHARE) {
       fileItemCallback.shareFile();
     }

@@ -29,7 +29,6 @@ public interface IFileItemCallback {
   public void editActionFile();
   public void deleteFile();
   public void createNewFolder();
-  public void createSchedule(String cronExpression);
   public void loadPropertiesDialog();
   public void shareFile();
   public void createSchedule();

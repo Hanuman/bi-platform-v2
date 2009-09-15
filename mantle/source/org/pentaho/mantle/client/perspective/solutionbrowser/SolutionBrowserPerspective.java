@@ -1216,53 +1216,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     selectedFileItem = fileItem;
   }
 
-  public void createSchedule(final String cronExpression) {
-    // final AsyncCallback callback = new AsyncCallback() {
-    //
-    // public void onSuccess(Object result) {
-    // String solutionName = solutionTree.getSolution();
-    // String path = solutionTree.getPath();
-    // if (path.startsWith("/")) { //$NON-NLS-1$
-    // path = path.substring(1);
-    // }
-    // String actionName = selectedFileItem.getName();
-    //
-    // AsyncCallback callback = new AsyncCallback() {
-    //
-    // public void onFailure(Throwable caught) {
-    // MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotCreateSchedule"), false, false, //$NON-NLS-1$
-    // //$NON-NLS-2$
-    // true);
-    // dialogBox.center();
-    // }
-    //
-    // public void onSuccess(Object result) {
-    // MessageDialogBox dialogBox = new MessageDialogBox(
-    // Messages.getString("info"), //$NON-NLS-1$
-    // Messages.getString("actionSequenceScheduledSuccess"), //$NON-NLS-1$
-    // true, false, true);
-    // dialogBox.center();
-    // }
-    // };
-    // MantleServiceCache.getService().createCronJob(solutionName, path, actionName, cronExpression, callback);
-    // }
-    //
-    // public void onFailure(Throwable caught) {
-    // MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
-    //
-    // public void onFailure(Throwable caught) {
-    //
-    // }
-    //
-    // public void onSuccess(Boolean result) {
-    // createSchedule(cronExpression);
-    // }
-    // });
-    // }
-    // };
-    // MantleServiceCache.getService().isAuthenticated(callback);
-  }
-
   public void selectNextItem(FileItem currentItem) {
     if (currentItem == null) {
       return;
@@ -1328,7 +1281,35 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                 executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
               }
             } else {
-              showScheduleDialog(fileInfo);
+              if (fileInfo.getType().equals(SolutionFileInfo.Type.PLUGIN)) {
+                // see if this file is a plugin
+                ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
+                String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
+                if (StringUtils.isEmpty(url)) {
+                  // content is not subscribable but the schedule url (subscription) is empty
+                  final MessageDialogBox dialogBox = new MessageDialogBox(
+                      Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+
+                  dialogBox.setCallback(new IDialogCallback() {
+                    public void cancelPressed() {
+                    }
+
+                    public void okPressed() {
+                      dialogBox.hide();
+                    }
+                  });
+
+                  dialogBox.center();
+                  return;
+                }
+                // at this point we know that:
+                // 1. the file is not subscribable
+                // 2. there is a subscribe url in the plugin
+                // 3. the intention probably exists for the content to be schedulable
+                showScheduleDialog(fileInfo);
+              } else {
+                showScheduleDialog(fileInfo);
+              }
             }
           }
         };
