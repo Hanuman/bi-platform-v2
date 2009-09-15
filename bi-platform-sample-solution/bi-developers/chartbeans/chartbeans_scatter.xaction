@@ -63,7 +63,8 @@
         <query><![CDATA[SELECT QUADRANT_ACTUALS.DEPARTMENT AS DEPT,
 				QUADRANT_ACTUALS.ACTUAL AS ACTUAL,
                         QUADRANT_ACTUALS.BUDGET AS BUDGET
-                        FROM QUADRANT_ACTUALS]]></query> 
+                        FROM QUADRANT_ACTUALS
+                        WHERE DEPT='Sales' OR DEPT='Finance']]></query> 
       </component-definition> 
     </action-definition>
 
