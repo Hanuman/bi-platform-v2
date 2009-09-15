@@ -9,7 +9,7 @@
    -->
   <!-- <default-chart-engine>JFreeChart</default-chart-engine> -->
   <default-chart-engine>OpenFlashChart</default-chart-engine>
-
+  <max-data-points-per-chart>100</max-data-points-per-chart>
 
   <!-- 
     These are the default implementations for the engines supported by the platform.
