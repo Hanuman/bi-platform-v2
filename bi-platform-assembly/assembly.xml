@@ -175,6 +175,7 @@
           <exclude name="webapps/webdav/**" />
           <exclude name="webapps/ROOT/**" />
           <exclude name="server/webapps/**" />
+          <exclude name="conf/Catalina/*/*manager.xml" />
           <exclude name="bin/setclasspath.bat" />
         </fileset>
       </copy>
