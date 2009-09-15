@@ -45,6 +45,14 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 	public boolean startup(final IPentahoSession session) {
 		try {
 			ChartBeanFactory.loadDefaultChartPlugins(initPlugins());
+			List<Element> nodes = PentahoSystem.getSystemSettings().getSystemSettings(configFile, "max-data-points-per-chart"); //$NON-NLS-1$
+			if (nodes.size() > 0) {
+			  int maxDataPointsPerChart = Integer.parseInt(nodes.get(0).getText());
+			  if (maxDataPointsPerChart > 0) {
+			    ChartBeanFactory.setMaxDataPointsPerChart(maxDataPointsPerChart);
+			  }
+			}
+
 		} catch (Exception ex) {
 			Logger
 					.warn(
