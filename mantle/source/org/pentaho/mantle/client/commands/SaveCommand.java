@@ -197,9 +197,11 @@ public class SaveCommand implements Command {
   }-*/;
   
   private void doTabRename(){
-    TabWidget tab = navigatorPerspective.getCurrentTab();
-    tab.setLabelText(tabName);
-    tab.setLabelTooltip(tabName);
+    if(tabName != null){ // Save-As does not modify the name of the tab. 
+      TabWidget tab = navigatorPerspective.getCurrentTab();
+      tab.setLabelText(tabName);
+      tab.setLabelTooltip(tabName);
+    }
   }
 
   public String getName() {
