@@ -1893,7 +1893,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       // all files can share, delete, and have properties
       pluginMenu.addCommand(COMMAND.SHARE);
       pluginMenu.addCommand(COMMAND.DELETE);
-      pluginMenu.addCommand(COMMAND.SCHEDULE_NEW);
       pluginMenu.addCommand(COMMAND.PROPERTIES);
       
       contentTypePluginList.add(plugin);
