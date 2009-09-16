@@ -76,7 +76,8 @@ function doRun( id, baseUrl, target, background ) {
 				window.top.mantle_confirmBackgroundExecutionDialog(submitUrl);
 			} else {
 				// the old way
-				if(!confirm (pentaho_backgroundWarning)) {
+				var confirmMsg = convertHtmlEntitiesToCharacters(pentaho_backgroundWarning);
+				if(!confirm (confirmMsg)) {
 					return false;
 				}
 				return executeAction(target, submitUrl);
