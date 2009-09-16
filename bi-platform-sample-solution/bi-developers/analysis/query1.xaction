@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
   <name>query1.xaction</name>
-  <title>Slice and Dice</title>
+  <title>%title</title>
   <version>1</version>
   <logging-level>debug</logging-level>
   <documentation> 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
   <name>HQL_Datasource.xaction</name>
-  <title>Test</title>
+  <title>%title</title>
   <version>1</version>
   <logging-level>DEBUG</logging-level>
   <documentation> 

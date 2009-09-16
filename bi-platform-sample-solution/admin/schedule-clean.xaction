@@ -2,12 +2,12 @@
 <action-sequence> 
   <name>schedule-clean.xaction</name>  
   <version>1</version>  
-  <title>Schedule Cleaning of Content Repository</title>  
+  <title>%title</title>  
   <logging-level>debug</logging-level>  
   <documentation> 
     <author>William E. Seyler</author>  
     <icon>ScheduleAdmin.png</icon>  
-    <description>Schedules the clean content repository action to run daily</description>  
+    <description>%description</description>  
     <help/>  
     <result-type>rule</result-type>  
     <icon>Broom.PNG</icon> 

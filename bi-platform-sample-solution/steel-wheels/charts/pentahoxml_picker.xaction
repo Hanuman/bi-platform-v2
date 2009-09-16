@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action-sequence> 
   <name>JFreeReport_Chart_ChartTypes.xaction</name>
-  <title>Flash Chart List</title>
+  <title>%title</title>
   <version>1</version>
   <logging-level>DEBUG</logging-level>
   <documentation> 
     <author>Gretchen Moran / Nicholas Goodman / Jake Cornelius</author>  
-    <description>This demonstrates multiple chart types using the ChartComponent in the action sequence</description>  
+    <description>%description</description>  
     <icon>BarChart.png</icon>  
     <help>Help</help>  
     <result-type>\</result-type> 
