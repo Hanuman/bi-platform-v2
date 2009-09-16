@@ -132,7 +132,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   @Override
   protected void doUnexpectedFailure(Throwable e) {
     try {
-      getThreadLocalResponse().sendRedirect("Home"); //$NON-NLS-1$
+      getThreadLocalResponse().sendRedirect("../Home"); //$NON-NLS-1$
       PentahoSystem.systemExitPoint();
     } catch (IOException e1) {
       logger.error("doUnexpectedFailure", e);
@@ -143,7 +143,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     logger.warn("GET request not supported");
     try {
-      resp.sendRedirect("Home"); //$NON-NLS-1$
+      resp.sendRedirect("../Home"); //$NON-NLS-1$
     } catch (IOException e1) {
     }
   }

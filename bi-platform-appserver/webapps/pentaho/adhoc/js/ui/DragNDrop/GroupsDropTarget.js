@@ -134,8 +134,6 @@ dojo.lang.extend( GroupsDropTarget,
 		else
 		{
 		  DragNDropUtil.setCannotDropStyle( this.targetEl );
-		  // TODO sbarkdull, why doesnt this work?
-      dragObject.dragClone.style.cursor = "url(images/no-drop.cur)";
 		}
 		
 		var canDrop = false;
