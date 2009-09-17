@@ -58,8 +58,10 @@
       <entry key="impl.version" value="${project.revision}" />
       <entry key="impl.builddate" type="date" value="now" />
     </propertyfile>
+
+    <antcall target="create-production-webxml" />
   </target>
-  
+
   <!-- ================================= 
           target: clean-all (override)         
          ================================= -->
@@ -197,9 +199,58 @@
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
+          target: create-production-webxml    
+            Here we are removing the sample servlet sections from the web.xml.  It is very
+    		important that those sections be kept pure of any servlets other than samples, such as 
+    		servlets that are required for system operation.  The sample servlets sections in the web.xml must
+    		be bounded by '[BEGIN SAMPLE SERVLETS]' to '[END SAMPLE SERVLETS]' and 
+    		'[BEGIN SAMPLE SERVLET MAPPINGS]' to '[END SAMPLE SERVLET MAPPINGS]'            
+         - - - - - - - - - - - - - - - - - -->
+  <target name="create-production-webxml">
+    <loadfile srcfile="${approot.stage.dir}/pentaho-webapp/WEB-INF/web.xml"
+              property="web-xml-file"
+              failonerror="true" />
+
+    <!-- remove the sample servlet section -->
+    <propertyregex property="sample.servlets" input="${web-xml-file}" regexp="\[BEGIN SAMPLE SERVLETS\]" select="\0" />
+
+    <fail message="SAMPLE SERVLET section not found in web.xml!">
+      <condition>
+        <not>
+          <isset property="sample.servlets" />
+        </not>
+      </condition>
+    </fail>
+
+    <replaceregexp file="${approot.stage.dir}/pentaho-webapp/WEB-INF/web.xml"
+                   flags="s"
+                   match="\[BEGIN SAMPLE SERVLETS\].*\[END SAMPLE SERVLETS\]"
+                   replace="[SAMPLE SERVLETS GO HERE]" />
+
+    <!-- remove the sample servlet mapping section -->
+    <propertyregex property="sample.servlet.mappings"
+                   input="${web-xml-file}"
+                   regexp="\[BEGIN SAMPLE SERVLET MAPPINGS\]"
+                   select="\0" />
+
+    <fail message="SAMPLE SERVLET MAPPINGS section not found in web.xml!">
+      <condition>
+        <not>
+          <isset property="sample.servlet.mappings" />
+        </not>
+      </condition>
+    </fail>
+
+    <replaceregexp file="${approot.stage.dir}/pentaho-webapp/WEB-INF/web.xml"
+                   flags="s"
+                   match="\[BEGIN SAMPLE SERVLET MAPPINGS\].*\[END SAMPLE SERVLET MAPPINGS\]"
+                   replace="[SAMPLE SERVLET MAPPINGS GO HERE]" />
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - - 
           target: assemble-webapps                      
          - - - - - - - - - - - - - - - - - -->
-  <target name="assemble-webapps">
+  <target name="assemble-webapps" depends="install-antcontrib">
     <copy todir="${approot.stage.dir}/pentaho-webapp">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho">
         <exclude name="**/classes/loader.properties" />
@@ -212,9 +263,6 @@
 
     <copy todir="${approot.stage.dir}/pentaho-res/styles/pentaho-style.war">
       <fileset dir="${bi.platform.appserver.dir}/webapps/pentaho-style" />
-    </copy>
-    <copy todir="${approot.stage.dir}/pentaho-res/styles/sw-style.war">
-      <fileset dir="${bi.platform.appserver.dir}/webapps/sw-style" />
     </copy>
 
     <mkdir dir="${approot.stage.dir}/custom-pentaho-webapp/META-INF" />
@@ -238,23 +286,23 @@
   <target name="prepare-custom-solutions" />
 
   <!-- - - - - - - - - - - - - - - - - - 
-          target: assemble-solutions                      
+          target: assemble-solutions: install only those solution archives that are required for system operation                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-solutions" depends="resolve-solutions">
-    <unzip dest="${approot.stage.dir}/pentaho-data">
-      <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
-    </unzip>
-
     <!-- create pentaho-solutions folder -->
     <mkdir dir="${approot.stage.dir}/pentaho-solutions/tmp" />
 
+    <!-- copy over default system solution, but no samples -->
     <copy todir="${approot.stage.dir}/pentaho-solutions" overwrite="true">
-      <fileset dir="${bi.platform.sample.solution.dir}" />
+      <fileset dir="${bi.platform.sample.solution.dir}">
+        <exclude name="**/bi-developers**"/>
+        <exclude name="**/steel-wheels**"/>
+      </fileset>
     </copy>
 
     <!-- install solution archives -->
     <unzip dest="${approot.stage.dir}/pentaho-solutions" overwrite="true">
-      <fileset file="${solution-archives.dir}/*.zip" />
+      <fileset file="${solution-archives.dir}/pentaho-cdf-solution*.zip" />
     </unzip>
   </target>
 
