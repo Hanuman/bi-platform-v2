@@ -74,7 +74,6 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     this.datasourceMessages = datasourceMessages;
     this.document = document;
     this.bf = bf;
-    dialog.setBgcolor("#FFFFFF");//$NON-NLS-1$
   }
 
   public Object getValue() {

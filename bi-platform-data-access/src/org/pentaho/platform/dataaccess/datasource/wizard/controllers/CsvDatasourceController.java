@@ -497,7 +497,6 @@ public class CsvDatasourceController extends AbstractXulEventHandler implements 
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
-      dialog.setBgcolor("#FFFFFF");//$NON-NLS-1$
     }
 
     public Object getValue() {

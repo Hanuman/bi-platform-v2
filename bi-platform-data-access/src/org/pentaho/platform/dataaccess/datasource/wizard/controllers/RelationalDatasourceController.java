@@ -584,7 +584,6 @@ public class RelationalDatasourceController extends AbstractXulEventHandler impl
     public CustomSampleDataCellEditor(XulDialog dialog) {
       super();
       this.dialog = dialog;
-      dialog.setBgcolor("#FFFFFF");
     }
 
     public Object getValue() {
