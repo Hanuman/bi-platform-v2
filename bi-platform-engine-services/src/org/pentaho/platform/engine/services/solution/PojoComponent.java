@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.pentaho.actionsequence.dom.IActionOutput;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IActionParameter;
@@ -412,7 +413,13 @@ public class PojoComponent extends ComponentBase {
       //Get the first method to match
       Method method = getMethods.get( "MIMETYPE" ); //$NON-NLS-1$
       String mimeType = (String) method.invoke( pojo , new Object[] {} );
-      IContentItem contentItem = getOutputContentItem( "outputstream", mimeType ); //$NON-NLS-1$
+      String mappedOutputName = "outputstream";
+      if ((getActionDefinition() != null) && (getActionDefinition().getOutput("outputstream") != null)) {
+        mappedOutputName = getActionDefinition().getOutput("outputstream").getPublicName();
+      }
+      
+      
+      IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType ); //$NON-NLS-1$
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
