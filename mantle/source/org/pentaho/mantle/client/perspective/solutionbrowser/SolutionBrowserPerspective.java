@@ -101,6 +101,7 @@ import com.google.gwt.xml.client.XMLParser;
 public class SolutionBrowserPerspective extends HorizontalPanel implements IPerspective, IFileItemCallback, IWorkspaceCallback {
 
   private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
+  private static int frameIdCount = 0;
   private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
   private static PopupPanel popupMenu = new PopupPanel(true);
 
@@ -460,21 +461,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     return false;
   }
-
+  
   public String getUniqueFrameName() {
-    int maxId = -1;
-    for(int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
-      if (contentTabPanel.getWidget(i) instanceof ReloadableIFrameTabPanel) {
-        String name = ((ReloadableIFrameTabPanel)contentTabPanel.getWidget(i)).name;
-        if (name != null && name.startsWith(FRAME_ID_PRE)) {
-          int frameVal = Integer.parseInt(name.substring(6)); 
-          if (frameVal > maxId) {
-            maxId = frameVal;
-          }
-        }
-      }
-    }
-    return FRAME_ID_PRE + (maxId+1);
+    return FRAME_ID_PRE + frameIdCount++;
   }
   
   public void showNewURLTab(final String tabName, final String tabTooltip, final String url) {
