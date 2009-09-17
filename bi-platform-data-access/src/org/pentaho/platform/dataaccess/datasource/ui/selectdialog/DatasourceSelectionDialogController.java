@@ -294,8 +294,17 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     this.datasourceEditor = gwtDatasourceEditor;
   }
 
+  private void enableWaitCursor(final boolean enable) {
+    if (enable) {
+      DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "wait"); 
+    } else {
+      DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "default");  
+    }
+  }
+  
   @Bindable
   public void addDatasource() {
+    enableWaitCursor(true);
     datasourceEditor.addDialogListener(new DialogListener<Domain>() {
       public void onDialogAccept(final Domain domain) {
         refreshDatasources(domain.getId(), domain.getLogicalModels().get(0).getId());
@@ -305,10 +314,9 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       }
 
       public void onDialogReady() {
-        DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "default");  
+        enableWaitCursor(false);
       }
     });
-    DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "wait"); 
     datasourceEditor.showDialog();
   }
 
@@ -317,6 +325,7 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
     
     // logicalModelSummary.getDomainId(), logicalModelSummary.getModelId()
     
+    enableWaitCursor(true);
     datasourceEditor.addDialogListener(new DialogListener<Domain>() {
       public void onDialogAccept(final Domain domain) {
         refreshDatasources(domain.getId(), domain.getLogicalModels().get(0).getId());
@@ -326,12 +335,11 @@ public class DatasourceSelectionDialogController extends AbstractXulDialogContro
       }
 
       public void onDialogReady() {
-        DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "default"); 
+        enableWaitCursor(false);
       }
     });
     
     LogicalModelSummary logicalModelSummary = getDialogResult();
-    DOM.setStyleAttribute(RootPanel.get().getElement(), "cursor", "wait"); 
     datasourceEditor.showEditDialog(logicalModelSummary.getDomainId(), logicalModelSummary.getModelId());
   }
 

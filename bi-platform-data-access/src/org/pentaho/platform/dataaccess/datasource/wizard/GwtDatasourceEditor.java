@@ -83,6 +83,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
             if (constructorListener != null) {
               constructorListener.asyncConstructorDone();
             }
+            datasourceController.onDialogReady();
           }
         }
       });
@@ -195,6 +196,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
       if (constructorListener != null) {
         constructorListener.asyncConstructorDone();
       }
+      datasourceController.onDialogReady();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -232,6 +234,7 @@ public class GwtDatasourceEditor implements IXulLoaderCallback, IDatasourceEdito
   public void addDialogListener(org.pentaho.ui.xul.util.DialogController.DialogListener<Domain> listener) {
     checkInitialized();
     datasourceController.addDialogListener(listener);  
+    listener.onDialogReady();
   }
 
   /**
