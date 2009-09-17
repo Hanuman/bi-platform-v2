@@ -413,13 +413,13 @@ public class PojoComponent extends ComponentBase {
       //Get the first method to match
       Method method = getMethods.get( "MIMETYPE" ); //$NON-NLS-1$
       String mimeType = (String) method.invoke( pojo , new Object[] {} );
-      String mappedOutputName = "outputstream";
-      if ((getActionDefinition() != null) && (getActionDefinition().getOutput("outputstream") != null)) {
-        mappedOutputName = getActionDefinition().getOutput("outputstream").getPublicName();
+      String mappedOutputName = "outputstream"; //$NON-NLS-1$
+      if ((getActionDefinition() != null) && (getActionDefinition().getOutput("outputstream") != null)) { //$NON-NLS-1$
+        mappedOutputName = getActionDefinition().getOutput("outputstream").getPublicName(); //$NON-NLS-1$
       }
       
       
-      IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType ); //$NON-NLS-1$
+      IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType ); 
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
