@@ -30,7 +30,7 @@ public class ExceptionParser {
         if(index > 0) {
           return message.substring(index + 1);
         } else {
-          return defaultErrorMessage;
+          return message;
         }
       } else {
         return defaultErrorMessage;
