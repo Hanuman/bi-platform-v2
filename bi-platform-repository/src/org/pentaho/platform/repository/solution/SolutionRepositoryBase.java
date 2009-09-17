@@ -1063,4 +1063,12 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     return resourceSize(solutionPath, ISolutionRepository.ACTION_EXECUTE);
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  @Deprecated
+  public ISolutionFile getFileByPath(String path) {
+   return getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE); 
+  }
+  
 }

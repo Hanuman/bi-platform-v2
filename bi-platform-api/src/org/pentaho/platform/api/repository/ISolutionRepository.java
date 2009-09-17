@@ -800,4 +800,12 @@ public interface ISolutionRepository extends ILogger {
 
   public String getLocalizedFileProperty(ISolutionFile resourceFile, String key, int actionOperation);
 
+  /**
+   * @deprecated use {@link #getSolutionFile(String, int)}
+   * @param path the solution path to the desired resource
+   * @return the ISolutionFile for the given path
+   */
+  @Deprecated
+  public ISolutionFile getFileByPath(String path);
+  
 }
