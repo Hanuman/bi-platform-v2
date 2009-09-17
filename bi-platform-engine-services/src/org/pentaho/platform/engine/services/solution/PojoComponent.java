@@ -419,7 +419,8 @@ public class PojoComponent extends ComponentBase {
       }
       
       
-      IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType ); 
+      IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType );
+      setOutputValue("outputstream", contentItem); //$NON-NLS-1$
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
