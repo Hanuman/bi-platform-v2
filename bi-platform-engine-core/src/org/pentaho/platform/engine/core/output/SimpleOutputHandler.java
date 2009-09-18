@@ -215,17 +215,19 @@ public class SimpleOutputHandler implements IOutputHandler {
             }
 
             InputStream inStr = content.getInputStream();
-            try {
-              OutputStream outStr = response.getOutputStream(response.getActionName());
-              int inCnt = 0;
-              byte[] buf = new byte[4096];
-              while (-1 != (inCnt = inStr.read(buf))) {
-                outStr.write(buf, 0, inCnt);
-              }
-            } finally {
-              try {
-                inStr.close();
-              } catch (Exception ignored) {
+            if (inStr != null) {
+               try {
+                OutputStream outStr = response.getOutputStream(response.getActionName());
+                int inCnt = 0;
+                byte[] buf = new byte[4096];
+                while (-1 != (inCnt = inStr.read(buf))) {
+                  outStr.write(buf, 0, inCnt);
+                }
+              } finally {
+                try {
+                  inStr.close();
+                } catch (Exception ignored) {
+                }
               }
             }
             contentGenerated = true;
