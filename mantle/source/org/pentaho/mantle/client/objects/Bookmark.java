@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 public class Bookmark implements Serializable  {
 
+  private static final long serialVersionUID = 3195837993137235679L;
   String title;
   String url;
   String group;

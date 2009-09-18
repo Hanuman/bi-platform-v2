@@ -41,6 +41,7 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
 
+@SuppressWarnings("deprecation")
 public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallback {
 
   String currentSolutionPath = ""; //$NON-NLS-1$
@@ -109,7 +110,7 @@ public class ClassicNavigatorView extends DeckPanel implements IBreadCrumbCallba
       // get solution paths
       for (int i = 0; i < children.getLength(); i++) {
         Element childElement = (Element) children.item(i);
-        String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
+//        String fileName = childElement.getAttribute("name"); //$NON-NLS-1$
         String localizedName = childElement.getAttribute("localized-name"); //$NON-NLS-1$
         boolean isDirectory = "true".equals(childElement.getAttribute("isDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
         boolean visible = "true".equals(childElement.getAttribute("visible")); //$NON-NLS-1$ //$NON-NLS-2$

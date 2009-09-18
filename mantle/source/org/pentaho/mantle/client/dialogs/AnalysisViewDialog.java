@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 
+@SuppressWarnings("deprecation")
 public class AnalysisViewDialog extends PromptDialogBox {
 
   private ListBox lboxSchema = new ListBox();
@@ -116,7 +117,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
         });
       }
 
-      @SuppressWarnings("unchecked")//$NON-NLS-1$
+      @SuppressWarnings("unchecked")
       public void onSuccess(Object result) {
         if (result != null) {
           schemaCubeHashMap = (HashMap<String, List<String>>) result;

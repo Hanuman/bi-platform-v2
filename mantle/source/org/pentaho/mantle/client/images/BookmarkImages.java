@@ -24,6 +24,6 @@ public interface BookmarkImages extends TreeImages {
 
   AbstractImagePrototype treeClosed();
 
-  @Resource ("fileIcon.gif") //$NON-NLS-1$
+  @Resource ("fileIcon.gif")
   AbstractImagePrototype treeLeaf();
 }

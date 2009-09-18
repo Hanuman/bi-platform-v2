@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 
+@SuppressWarnings("deprecation")
 public class BreadCrumbsWidget extends HorizontalPanel {
 
   IBreadCrumbCallback breadCrumbCallback;
