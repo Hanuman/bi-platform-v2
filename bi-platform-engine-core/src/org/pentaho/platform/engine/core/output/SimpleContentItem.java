@@ -32,12 +32,14 @@ import java.util.List;
 import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.repository.ContentException;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.util.UUIDUtil;
 
 public class SimpleContentItem implements IContentItem {
 
   private String mimeType;
 
   private OutputStream outputStream;
+  private String simplePath = UUIDUtil.getUUIDAsString();
 
   public SimpleContentItem() {
     outputStream = null;
@@ -62,7 +64,8 @@ public class SimpleContentItem implements IContentItem {
   }
 
   public String getPath() {
-    return null;
+    // Ensure non-null output
+    return simplePath;
   }
 
   public String getName() {

@@ -417,14 +417,8 @@ public class PojoComponent extends ComponentBase {
         mappedOutputName = getActionDefinition().getOutput("outputstream").getPublicName(); //$NON-NLS-1$
       }
       
-      
       IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType );
-      if (contentItem != null) {
-        // If there's already an outputstream there, this will actually remove
-        // it from the map (passing in a null value will do that). So,
-        // don't break it.
-        setOutputValue("outputstream", contentItem); //$NON-NLS-1$
-      }
+      setOutputValue("outputstream", contentItem); //$NON-NLS-1$
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
