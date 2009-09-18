@@ -44,6 +44,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.core.solution.SystemSettingsParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
@@ -418,7 +419,12 @@ public class PojoComponent extends ComponentBase {
       }
       
       IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType );
-      setOutputValue("outputstream", contentItem); //$NON-NLS-1$
+      if (! (contentItem instanceof SimpleContentItem) ) { 
+        // SimpleContentItem can't handle being added to outputs because it
+        // doesn't have a getInputStream(), and the path used to return
+        // null.
+        setOutputValue("outputstream", contentItem); //$NON-NLS-1$
+      }
       // set the output stream
       OutputStream out = contentItem.getOutputStream( getActionName() );
       method = setMethods.get( "OUTPUTSTREAM" ).get(0); //$NON-NLS-1$
