@@ -352,10 +352,10 @@ public class SimpleRuntimeElement extends PentahoBase implements IRuntimeElement
   public void setStringProperty(final String key, final String value) {
     this.updateOk();
     trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setString", key)); //$NON-NLS-1$ //$NON-NLS-2$
-    checkType(key, value.getClass().getName(), true);
     Map theMapSS = getParamMapSS();
     Map theMapLS = getParamMapLS();
     if (value != null) {
+      checkType(key, value.getClass().getName(), true);
       if (value.length() > SimpleRuntimeElement.MAXSSLENGH) {
         theMapSS.remove(key); // Make sure it's not in the short map
         // first.
