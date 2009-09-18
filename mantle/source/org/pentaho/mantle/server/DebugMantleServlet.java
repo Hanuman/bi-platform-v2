@@ -37,6 +37,8 @@ import com.google.gwt.user.server.rpc.RPCServletUtils;
 
 public class DebugMantleServlet extends DebugRemoteServiceServlet {
 
+  private static final long serialVersionUID = -2907930444468382603L;
+
   public void doPost(HttpServletRequest req, HttpServletResponse resp) {
     // use HTTPClient to forward on the data to whatever server we want
     // eg. http://localhost:8080/pentaho/MantleService
@@ -92,6 +94,7 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
       postMethod.setRequestEntity(stringEntity);
 
       try {
+        @SuppressWarnings("unused")
         int status = client.executeMethod(postMethod);
         String postResult = postMethod.getResponseBodyAsString();
         resp.getOutputStream().write(postResult.getBytes("UTF-8")); //$NON-NLS-1$
@@ -130,6 +133,7 @@ public class DebugMantleServlet extends DebugRemoteServiceServlet {
       client.getParams().setAuthenticationPreemptive(true);
 
       try {
+        @SuppressWarnings("unused")
         int status = client.executeMethod(getMethod);
         String postResult = getMethod.getResponseBodyAsString();
         resp.getOutputStream().write(postResult.getBytes("UTF-8")); //$NON-NLS-1$
