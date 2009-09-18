@@ -213,7 +213,8 @@ public class OutputTest extends TestCase {
     content.setName( "testname" );
     
     assertEquals("wrong value", null, content.getId() );
-    assertEquals("wrong value", null, content.getPath() );
+//    assertEquals("wrong value", null, content.getPath() );
+    assertNotNull(content.getPath()); // SimpleContentItem changed to not return null for path.
     assertEquals("wrong value", null, content.getName() );
     assertEquals("wrong value", null, content.getTitle() );
     assertEquals("wrong value", "test/test", content.getMimeType() );
