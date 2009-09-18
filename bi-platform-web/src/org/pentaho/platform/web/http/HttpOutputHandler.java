@@ -225,27 +225,33 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
       try {
         if (value instanceof IContentItem) {
           IContentItem content = (IContentItem) value;
-          if ((response.getContentType() == null)
-              || (!response.getContentType().equalsIgnoreCase(content.getMimeType()))) {
-            // response.setContentType( content.getMimeType() );
-            setMimeType(content.getMimeType());
-          }
+          // See if we should process the input stream. If it's from
+          // the content repository, then there's an input stream.
+          // SimpleContentItem and HttpContentItem both return null from
+          // getInputStream().
           InputStream inStr = content.getInputStream();
-          try {
-            OutputStream outStr = response.getOutputStream();
-            int inCnt = 0;
-            byte[] buf = new byte[4096];
-            while (-1 != (inCnt = inStr.read(buf))) {
-              outStr.write(buf, 0, inCnt);
+          if (inStr != null) {
+            if ((response.getContentType() == null)
+                || (!response.getContentType().equalsIgnoreCase(content.getMimeType()))) {
+              // response.setContentType( content.getMimeType() );
+              setMimeType(content.getMimeType());
             }
-          } finally {
             try {
-              inStr.close();
-            } catch (IOException ignored) {
-              
+              OutputStream outStr = response.getOutputStream();
+              int inCnt = 0;
+              byte[] buf = new byte[4096];
+              while (-1 != (inCnt = inStr.read(buf))) {
+                outStr.write(buf, 0, inCnt);
+              }
+            } finally {
+              try {
+                inStr.close();
+              } catch (IOException ignored) {
+                
+              }
             }
+            contentGenerated = true;
           }
-          contentGenerated = true;
         } else {
           if (response.getContentType() == null) {
             setMimeType("text/html"); //$NON-NLS-1$

@@ -210,12 +210,15 @@ public class SimpleOutputHandler implements IOutputHandler {
         try {
           if (value instanceof IContentItem) {
             IContentItem content = (IContentItem) value;
-            if ((response.getMimeType() == null) || (!response.getMimeType().equalsIgnoreCase(content.getMimeType()))) {
-              response.setMimeType(content.getMimeType());
-            }
-
+            // See if we should process the input stream. If it's from
+            // the content repository, then there's an input stream.
+            // SimpleContentItem and HttpContentItem both return null from
+            // getInputStream().
             InputStream inStr = content.getInputStream();
             if (inStr != null) {
+              if ((response.getMimeType() == null) || (!response.getMimeType().equalsIgnoreCase(content.getMimeType()))) {
+                response.setMimeType(content.getMimeType());
+              }
                try {
                 OutputStream outStr = response.getOutputStream(response.getActionName());
                 int inCnt = 0;
@@ -229,8 +232,8 @@ public class SimpleOutputHandler implements IOutputHandler {
                 } catch (Exception ignored) {
                 }
               }
+              contentGenerated = true;
             }
-            contentGenerated = true;
           } else {
             if (response.getMimeType() == null) {
               response.setMimeType("text/html"); //$NON-NLS-1$
