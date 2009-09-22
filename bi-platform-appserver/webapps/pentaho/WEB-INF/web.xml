@@ -385,6 +385,13 @@
 		<servlet-name>UserContent</servlet-name>
 		<jsp-file>/jsp/UserContent.jsp</jsp-file>
 	</servlet>
+  
+  	<--   Temporary fix for GWT localization BISERVER-3640 -->
+    <servlet>
+      <servlet-name>BrowserLocale</servlet-name>
+      <jsp-file>/jsp/browserLocale.jsp</jsp-file>
+    </servlet>
+  	<--   End BISERVER-3640 -->
 
 	<!-- ================================= merged servlets =================================== -->
 	<servlet>
@@ -701,6 +708,13 @@
 		<url-pattern>/UserContent</url-pattern>
 	</servlet-mapping>
 
+  	<--   Temporary fix for GWT localization BISERVER-3640 -->
+    <servlet-mapping>
+      <servlet-name>BrowserLocale</servlet-name>
+      <url-pattern>js/browserLocale.js</url-pattern>
+    </servlet-mapping>
+  	<--   End BISERVER-3640 -->
+    
 <!-- =============================== merged servlet-mappings ============================= -->
 	<servlet-mapping>
 		<servlet-name>RepositoryTree</servlet-name>
