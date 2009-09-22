@@ -398,7 +398,7 @@ public class WorkspacePerspective extends ScrollPanel {
       VerticalPanel vp = new VerticalPanel();
       vp.add(new Label(Messages.getString("deletePublicSchedule"))); //$NON-NLS-1$
       final PromptDialogBox deleteConfirmDialog = new PromptDialogBox(
-          Messages.getString("deleteConfirm"), Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Messages.getString("delete"), Messages.getString("ok"), Messages.getString("cancel"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       final IDialogCallback callback = new IDialogCallback() {
         public void cancelPressed() {
