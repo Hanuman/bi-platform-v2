@@ -1675,6 +1675,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       return ((IContentItem) locObj).getDataSource();
     }
 
+    if (locObj == null) {
+      return null;
+    }
+    
     String location = locObj.toString();
 
     // get an output stream to hand to the caller
@@ -1956,6 +1960,13 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         boolean isSubscription = (parameterProvider.getStringParameter("subscribepage", "no").equalsIgnoreCase("yes")) || (editId != null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         subscriptionsNode.addAttribute("doSubscribe", isSubscription ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+        if (isSubscription) {
+          String val = PentahoSystem.getSystemSetting("smtp-email/email_config.xml", "email-subscriptions", "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          if (val != null && val.equals("true")) { //$NON-NLS-1$
+            subscriptionsNode.addAttribute("doSubscribeEmail", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+        }
+        
         if (getSession().getName() == null) {
           subscriptionsNode.addAttribute("valid-session", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {

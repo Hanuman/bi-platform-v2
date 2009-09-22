@@ -51,6 +51,7 @@ import org.pentaho.actionsequence.dom.IActionInput;
 import org.pentaho.actionsequence.dom.actions.EmailAction;
 import org.pentaho.actionsequence.dom.actions.EmailAttachment;
 import org.pentaho.commons.connection.ActivationHelper;
+import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
@@ -336,7 +337,12 @@ public class EmailComponent extends ComponentBase {
         }
 
         for (EmailAttachment element : emailAttachments) {
-          DataSource dataSource = new ActivationHelper.PentahoStreamSourceWrapper(element.getContent());
+          IPentahoStreamSource source = element.getContent();
+          if (source == null) {
+            error(Messages.getErrorString("Email.ERROR_0015_ATTACHMENT_FAILED")); //$NON-NLS-1$
+            return false;
+          }
+          DataSource dataSource = new ActivationHelper.PentahoStreamSourceWrapper(source);
           String attachmentName = element.getName();
           if (ComponentBase.debug) {
             debug(Messages.getString("Email.DEBUG_ADDING_ATTACHMENT", attachmentName)); //$NON-NLS-1$
