@@ -36,4 +36,8 @@
 		<property-ref name="report.date"/>
 		<function class="org.jfree.report.function.PageOfPagesFunction" name="PageofPages"/>
 	</functions>
+  <configuration>
+    <property name="org.pentaho.reporting.engine.classic.core.modules.output.table.html.AssumeOverflowX">false</property>
+    <property name="org.pentaho.reporting.engine.classic.core.modules.output.table.html.AssumeOverflowY">true</property>
+  </configuration>
 </report>
