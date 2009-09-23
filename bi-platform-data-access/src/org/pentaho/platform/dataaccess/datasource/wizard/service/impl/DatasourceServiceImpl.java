@@ -330,17 +330,20 @@ public class DatasourceServiceImpl implements IDatasourceService {
       return true;
     } catch (DomainStorageException dse) {
       logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse);//$NON-NLS-1$
+            "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()));//$NON-NLS-1$
+      logger.error("error", dse); //$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch (DomainAlreadyExistsException dae) {
       logger.error(Messages.getErrorString(
-          "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae);//$NON-NLS-1$
+          "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()));//$NON-NLS-1$
+      logger.error("error", dae); //$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
     } catch (DomainIdNullException dne) {
       logger.error(Messages
-          .getErrorString("DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne);//$NON-NLS-1$
+          .getErrorString("DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()));//$NON-NLS-1$
+      logger.error("error", dne); //$NON-NLS-1$
       throw new DatasourceServiceException(Messages.getErrorString(
           "DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
     }

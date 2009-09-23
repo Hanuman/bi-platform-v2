@@ -331,6 +331,7 @@ public class MetadataQueryComponent {
         DatabaseInterface di2 = (DatabaseInterface) di.clone();
         di2.setAccessType(databaseMeta.getAccessType());
         di2.setDatabaseName(databaseMeta.getDatabaseName());
+        di2.setAttributes(databaseMeta.getAttributes());
         meta.setDatabaseInterface(di2);
         return meta;
       } else {
@@ -353,6 +354,7 @@ public class MetadataQueryComponent {
     
     DatabaseMeta activeDatabaseMeta = getActiveDatabaseMeta(databaseMeta); 
     SQLConnection sqlConnection = getConnection(activeDatabaseMeta);
+    String sql = null;
     try {
       if ((sqlConnection == null) || !sqlConnection.initialized()) {
         logger.error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
@@ -384,8 +386,10 @@ public class MetadataQueryComponent {
       }
       
       IPentahoResultSet localResultSet = null;
-      String sql = mappedQuery.getQuery();
-      logger.debug("SQL: " + sql); //$NON-NLS-1$
+      sql = mappedQuery.getQuery();
+      if (logger.isDebugEnabled()) {
+        logger.debug("SQL: " + sql); //$NON-NLS-1$
+      }
       if (logSql) {
         logger.info("SQL: " + sql); //$NON-NLS-1$
       }
@@ -434,10 +438,9 @@ public class MetadataQueryComponent {
             sqlConnection = null;
           }
         }
-        
+
       } catch (Exception e) {
-        // TODO: throw an exception up the stack.
-        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage())); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage(), sql)); //$NON-NLS-1$
         logger.debug("error", e); //$NON-NLS-1$
         return false;
       }

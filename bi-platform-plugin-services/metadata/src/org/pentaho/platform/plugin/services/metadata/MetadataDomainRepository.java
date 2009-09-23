@@ -198,11 +198,11 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
   public void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
     synchronized(domains) {
       if (domain.getId() == null) {
-        throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+        throw new DomainIdNullException(org.pentaho.metadata.messages.Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
       }
   
       if (!overwrite && domains.get(domain.getId()) != null) {
-        throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+        throw new DomainAlreadyExistsException(org.pentaho.metadata.messages.Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
       }
   
       if (domain.getProperty(LEGACY_LOCATION) != null) {
@@ -216,12 +216,12 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
   private void storeLegacyDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
 
     if (domain.getId() == null) {
-      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+      throw new DomainIdNullException(org.pentaho.metadata.messages.Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
     }
     
     // only allow editing vs. creation
     if (!overwrite) {
-      throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+      throw new DomainAlreadyExistsException(org.pentaho.metadata.messages.Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
     }
     
     XmiParser parser = new XmiParser();
