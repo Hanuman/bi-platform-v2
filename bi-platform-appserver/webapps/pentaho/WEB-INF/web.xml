@@ -711,7 +711,7 @@
   	<!--   Temporary fix for GWT localization BISERVER-3640 -->
     <servlet-mapping>
       <servlet-name>BrowserLocale</servlet-name>
-      <url-pattern>js/browserLocale.js</url-pattern>
+      <url-pattern>/js/browserLocale.js</url-pattern>
     </servlet-mapping>
   	<!--   End BISERVER-3640 -->
     
