@@ -37,11 +37,11 @@ public class SwitchLocaleCommand implements Command {
     String newLocalePath = "Home?locale=" + locale;
     Window.alert("1)" + newLocalePath);
     if (GWT.isScript()) {
-      String currentPath = Window.Location.getPath();
-      Window.alert("2)" + currentPath);
-      int index = currentPath.indexOf("/mantle/");
+      String baseUrl = GWT.getModuleBaseURL();
+      Window.alert("2)" + baseUrl);
+      int index = baseUrl.indexOf("/mantle/");
       if (index >= 0) {
-        newLocalePath = currentPath.substring(0, index) + "/Home?locale=" + locale;
+        newLocalePath = baseUrl.substring(0, index) + "/Home?locale=" + locale;
         Window.alert("3)" + newLocalePath);
       }
      }    
