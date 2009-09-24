@@ -35,17 +35,13 @@ public class SwitchLocaleCommand implements Command {
     // to override the browser setting, as needed
     MantleServiceCache.getService().setLocaleOverride(locale, null);
     String newLocalePath = "Home?locale=" + locale;
-    Window.alert("1)" + newLocalePath);
     if (GWT.isScript()) {
       String baseUrl = GWT.getModuleBaseURL();
-      Window.alert("2)" + baseUrl);
       int index = baseUrl.indexOf("/mantle/");
       if (index >= 0) {
         newLocalePath = baseUrl.substring(0, index) + "/Home?locale=" + locale;
-        Window.alert("3)" + newLocalePath);
       }
      }    
-    Window.alert("4)" + newLocalePath);
     Window.Location.replace(newLocalePath);
   }
 
