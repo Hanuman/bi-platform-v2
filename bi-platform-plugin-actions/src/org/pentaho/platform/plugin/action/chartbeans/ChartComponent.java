@@ -32,6 +32,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.chart.AbstractChartThemeFactory;
 import org.pentaho.chart.ChartBeanFactory;
 import org.pentaho.chart.ChartBoot;
@@ -52,6 +53,7 @@ import org.pentaho.chart.plugin.openflashchart.OpenFlashChartPlugin;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
+
 
 /**
  * This is a bean that permits easy access to the ChartBeans functionality and was
@@ -233,13 +235,13 @@ public class ChartComponent {
           Graphics2D graphics = image.createGraphics();
           graphics.setFont(new Font("serif", Font.BOLD, 14)); //$NON-NLS-1$
           graphics.setColor(Color.BLACK);
-          graphics.drawString("Too many data points.", 5, 5); //$NON-NLS-1$
-          graphics.drawString("A maximum of " + ex.getMaxAllowedDataPoints() + " points may be plotted on a single chart.", 5, 25);
+          graphics.drawString(Messages.getErrorString("ChartComponent.TOO_MANY_DATA_POINTS"), 5, 5);  //$NON-NLS-1$
+          graphics.drawString(Messages.getErrorString("ChartComponent.MAX_ALLOWED_DATA_POINTS", Integer.toString(ex.getMaxAllowedDataPoints())), 5, 25); //$NON-NLS-1$
          
           String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           ImageIO.write(image, outputType, outputStream);
         } else {
-          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment("The chart data query returned too many data points. <br/> A maximum of " + ex.getMaxAllowedDataPoints() + " points may be plotted on a single chart."); //$NON-NLS-1$
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment(Messages.getErrorString("ChartComponent.MAX_ALLOWED_DATA_POINTS_HTML", Integer.toString(ex.getMaxAllowedDataPoints()))); //$NON-NLS-1$
           is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
           int val = 0;          
           //TODO: Buffer for more efficiency
