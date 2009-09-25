@@ -235,7 +235,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       domains.put(domain.getId(), domain);
       
     } catch (Exception e) {
-      throw new DomainStorageException("Failed to store legacy domain", e); //$NON-NLS-1$
+      throw new DomainStorageException(Messages.getErrorString("MetadataDomainRepository.ERROR_0006_FAILED_TO_STORE_LEGACY_DOMAIN", domain.getId()), e); //$NON-NLS-1$
     }
   }
 }
