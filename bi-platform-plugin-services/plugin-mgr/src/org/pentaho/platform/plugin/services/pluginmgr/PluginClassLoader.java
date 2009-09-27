@@ -287,6 +287,12 @@ public class PluginClassLoader extends ClassLoader {
   }
 
   private String prepareEntryName(String name) {
+    //now if the resource was requested by '/' delimiter, do not change any
+    //dots to slashes since the dots may be significant, i.e. part of the filename
+    if(name.contains("/")) { //$NON-NLS-1$
+      return name;
+    }
+      
     String entryName = name;
     String extension = ""; //$NON-NLS-1$
     if (entryName.endsWith(".xml")) { //$NON-NLS-1$
@@ -297,6 +303,7 @@ public class PluginClassLoader extends ClassLoader {
       extension = ".properties"; //$NON-NLS-1$
     }
     entryName = entryName.substring(0, entryName.length() - extension.length());
+    
     entryName = entryName.replace('.', '/');
     if ("".equals(extension)) { //$NON-NLS-1$
       entryName += ".class"; //$NON-NLS-1$

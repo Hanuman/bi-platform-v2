@@ -123,6 +123,10 @@ public class PluginResourceLoaderTest {
     //find a properties file at the classloader root directory
     assertNotNull("Could not find the properties file on the classloader root dir", resLoader.getResourceAsStream(
         pluginClass, "pluginResourceTest.properties"));
+    assertNotNull("Could not find the properties file embededd in the jar", resLoader.getResourceAsStream(pluginClass,
+      "org/pentaho/test/pluginResourceTest-deepinjar.properties"));
+    assertNotNull("Could not find the properties file embededd in the jar", resLoader.getResourceAsStream(pluginClass,
+    "org/pentaho/test/file.with.dots.in.name.properties"));
   }
 
   @Test
