@@ -15,12 +15,6 @@
             <context-root>/pentaho-style</context-root>
          </web>
       </module>
-      <module>
-         <web>
-            <web-uri>sw-style.war</web-uri>
-            <context-root>/sw-style</context-root>
-         </web>
-      </module>
       
 <!-- additional web apps -->
 				
