@@ -42,11 +42,11 @@
 
 
 	<outputs>
-   	  <outputstream type="content">
+   	  <myReport type="content">
    		  <destinations>
    			 <response>content</response>
    		  </destinations>
-   	  </outputstream>
+   	  </myReport>
 	</outputs>
 
 	<resources>
