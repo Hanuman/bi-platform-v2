@@ -289,6 +289,10 @@
           target: assemble-solutions: install only those solution archives that are required for system operation                      
          - - - - - - - - - - - - - - - - - -->
   <target name="assemble-solutions" depends="resolve-solutions">
+    <unzip dest="${approot.stage.dir}/pentaho-data">
+      <fileset dir="${lib.dir}" includes="pentaho-bi-platform-sample-data-*.zip" />
+    </unzip>
+    
     <!-- create pentaho-solutions folder -->
     <mkdir dir="${approot.stage.dir}/pentaho-solutions/tmp" />
 
