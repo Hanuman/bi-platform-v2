@@ -215,9 +215,13 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 	protected void postExecute( IRuntimeContext runtime, boolean doMessages, boolean doWrapper ) throws Exception {
     // see if we need to provide feedback to the caller
     if (!outputHandler.contentDone() || doMessages ) {
+      IParameterProvider requestParams = parameterProviders.get( IParameterProvider.SCOPE_REQUEST );
+      String solutionName = requestParams.getStringParameter("solution", null); //$NON-NLS-1$
+      String actionName = requestParams.getStringParameter("action", null); //$NON-NLS-1$
+      
+      IContentItem contentItem = outputHandler.getOutputContentItem( IOutputHandler.RESPONSE, IOutputHandler.CONTENT, solutionName, null, "text/html" );//$NON-NLS-1$
+      OutputStream outputStream = contentItem.getOutputStream(actionName);
 
-      IContentItem contentItem = outputHandler.getOutputContentItem( IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, "text/html" );//$NON-NLS-1$
-      OutputStream outputStream = contentItem.getOutputStream(null);
       if (outputStream != null) {
         StringBuffer buffer = new StringBuffer();
         if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
