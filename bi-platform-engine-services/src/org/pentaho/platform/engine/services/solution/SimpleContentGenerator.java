@@ -21,8 +21,10 @@ package org.pentaho.platform.engine.services.solution;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
 
+import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.util.UUIDUtil;
 
 public abstract class SimpleContentGenerator extends BaseContentGenerator {
 
@@ -36,7 +38,18 @@ public abstract class SimpleContentGenerator extends BaseContentGenerator {
       throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0001_NO_OUTPUT_HANDLER") );  //$NON-NLS-1$
     }
 
-    IContentItem contentItem = outputHandler.getOutputContentItem( "response", "content", "", instanceId, getMimeType() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    IParameterProvider requestParams = parameterProviders.get( IParameterProvider.SCOPE_REQUEST );
+    String solutionName = null;
+    if (requestParams != null){
+      solutionName = requestParams.getStringParameter("solution", null); //$NON-NLS-1$
+    }
+    if (solutionName == null){
+      solutionName = "NONE"; 
+    }
+    if (instanceId == null){
+      setInstanceId(UUIDUtil.getUUIDAsString()); 
+    }
+    IContentItem contentItem = outputHandler.getOutputContentItem( "response", "content", solutionName, instanceId, getMimeType() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     if( contentItem == null ) {
       error( Messages.getErrorString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") ); //$NON-NLS-1$
       throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") );  //$NON-NLS-1$
