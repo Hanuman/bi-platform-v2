@@ -5,13 +5,6 @@
     <content-generator id="ws-run" type="ws-run" title="Web services execution" class="org.pentaho.platform.plugin.services.webservices.content.AxisServiceExecutor"/>
     <content-generator id="ws-wsdl" type="ws-wsdl" title="Web services execution" class="org.pentaho.platform.plugin.services.webservices.content.AxisServiceWsdlGenerator"/>
     
-    <!-- TODO: update this syntax.  This is the old style of defining a content-generator. -->
-    <content-generator id="default-xaction" type="xaction">
-        <classname>org.pentaho.platform.engine.services.solution.ActionSequenceContentGenerator</classname>
-        <fileinfo-classname>org.pentaho.platform.engine.services.solution.ActionSequenceFileInfo</fileinfo-classname>
-        <title>The default action sequence handler</title>
-    </content-generator>
-    
     <menu-items>
         <!--menu-item id="webservices" anchor="tools-submenu" label="Web Services" command="content/ws-services" type="MENU_ITEM" how="LAST_CHILD"/-->
     
