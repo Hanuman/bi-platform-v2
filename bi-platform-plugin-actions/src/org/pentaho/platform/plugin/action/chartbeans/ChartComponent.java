@@ -241,7 +241,7 @@ public class ChartComponent {
           String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           ImageIO.write(image, outputType, outputStream);
         } else {
-          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment(Messages.getErrorString("ChartComponent.MAX_ALLOWED_DATA_POINTS_HTML", Integer.toString(ex.getMaxAllowedDataPoints()))); //$NON-NLS-1$
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment(Messages.getErrorString("ChartComponent.TOO_MANY_DATA_POINTS_HTML", Integer.toString(ex.getMaxAllowedDataPoints()))); //$NON-NLS-1$
           is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
           int val = 0;          
           //TODO: Buffer for more efficiency
