@@ -301,7 +301,11 @@ public class RelationalModel extends XulEventSourceAdapter{
     setDataRows(null);
     setPreviewLimit("10");
     setQuery("");
-    setSelectedConnection(null);
+    
+    // BISERVER-3664: Temporary solution for IE ListBoxs not accepting -1 selectedIndex.
+    // Explicitly selecting the first connection object makes all browsers behave the same.
+    IConnection firstConnection = connections.size() > 0 ? connections.get(0) : null;
+    setSelectedConnection(firstConnection);
     setDatasourceName("");
   }
 
