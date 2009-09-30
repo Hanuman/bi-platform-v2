@@ -153,7 +153,10 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     } catch (Throwable t) {
       // death to this browser event
     }
-    DOM.scrollIntoView(getSelectedItem().getElement());
+    TreeItem selItem = getSelectedItem();
+    if(selItem != null){
+      DOM.scrollIntoView(selItem.getElement());
+    }
   }
 
   public void buildSolutionTree(Document solutionDocument) {

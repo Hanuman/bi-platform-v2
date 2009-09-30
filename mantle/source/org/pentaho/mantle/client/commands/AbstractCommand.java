@@ -59,6 +59,49 @@ public abstract class AbstractCommand implements Command{
 		MantleServiceCache.getService().isAuthenticated(callback);
 
 	}
+	
+
+  /**
+   * Checks if the user is logged in, if the user is then it perform operation other
+   * wise user if ask to perform the login operation again.
+   * <p>
+   * After the operation is executed, the CommandCallback object receives an afterExecute() 
+   * notification. 
+   * 
+   * @param commandCallback CommandCallback object to receive execution notification.
+   */
+	public void execute(CommandCallback commandCallback){
+	  execute(commandCallback, false);
+	}
+
+  /**
+   * Checks if the user is logged in, if the user is then it perform operation other
+   * wise user if ask to perform the login operation again.
+   * <p>
+   * After the operation is executed, the CommandCallback object receives an afterExecute() 
+   * notification. 
+   * 
+   * @param commandCallback CommandCallback object to receive execution notification.
+   * @param feedback  if the feedback needs to be sent back to the caller. Not used currently
+   */
+  public void execute(final CommandCallback commandCallback, final boolean feedback){
+    final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+      public void onSuccess(Boolean result) {
+        if(result) {
+          performOperation(feedback); 
+          commandCallback.afterExecute();
+        } else {
+          doLogin(feedback);
+        }
+        
+      }
+
+      public void onFailure(Throwable caught) {
+        doLogin(feedback);
+      }
+    };
+    MantleServiceCache.getService().isAuthenticated(callback);
+  }
 
   /**
   * Checks if the user is logged in, if the user is then it perform operation other
