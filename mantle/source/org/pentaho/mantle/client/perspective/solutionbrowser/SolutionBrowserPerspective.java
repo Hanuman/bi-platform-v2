@@ -36,6 +36,7 @@ import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
+import org.pentaho.mantle.client.commands.CommandCallback;
 import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
@@ -520,6 +521,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
 
     perspectiveCallback.activatePerspective(this);
+    setFileInfoInFrame();
   }
 
   public TabWidget getCurrentTab() {
@@ -533,37 +535,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void openFile(final FileCommand.COMMAND mode) {
     String name = selectedFileItem.getName();
     if (name.endsWith(".xaction")) { //$NON-NLS-1$
-      //
-      // Commented out analysis view check, JPivot now supports multiple views
-      // in a single session.  Leaving the code here during testing phase.
-      //
-//      if (mode == FileCommand.COMMAND.RUN) {
-//        final Widget openAnalysisView = getOpenAnalysisView();
-//        if (openAnalysisView != null && name.endsWith(".analysisview.xaction")) { //$NON-NLS-1$
-//          String actionName = getTabForWidget(openAnalysisView).getText();
-//          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
-//          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//          dialog.setCallback(new IDialogCallback() {
-//
-//            public void cancelPressed() {
-//              // do nothing
-//            }
-//
-//            public void okPressed() {
-//              contentTabPanel.remove(openAnalysisView);
-//              executeActionSequence(mode);
-//            }
-//
-//          });
-//          dialog.center();
-//          dialog.show();
-//          return;
-//        } else {
-//          executeActionSequence(mode);
-//        }
-//      } else {
       executeActionSequence(mode);
-//      }
+      setFileInfoInFrame();
     } else if (name.endsWith(".url")) { //$NON-NLS-1$
       if (mode == FileCommand.COMMAND.NEWWINDOW) {
         Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -576,7 +549,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
       if (plugin != null && plugin.hasCommand(mode)) {
         // load the editor for this plugin
-        String url = plugin.getCommandUrl(selectedFileItem, mode);
+        String url = selectedFileItem.getURL();
+        if (StringUtils.isEmpty(url)) {
+          url = plugin.getCommandUrl(selectedFileItem, mode);
+        }
         if (GWT.isScript()) {
           if (url != null && !"".equals(url)) { //$NON-NLS-1$
             // we have a URL so open it in a new tab
@@ -584,7 +560,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
               UrlCommand cmd = new UrlCommand(this, url, selectedFileItem.localizedName);
-              cmd.execute();
+              cmd.execute(new CommandCallback(){
+                public void afterExecute(){
+                  setFileInfoInFrame();
+                }
+              });
             }
           }
         } else {
@@ -613,13 +593,22 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           }
         }
       }
-
-      // Store representation of file in the frame for reference later when save is called
+    }
+  }
+  
+  /**
+   * Store representation of file in the frame for reference later when save is called
+   * 
+   * @param selectedFileItem
+   */
+  private void setFileInfoInFrame(){
+    ReloadableIFrameTabPanel tp = SolutionBrowserPerspective.this.getCurrentFrame();
+    if(tp != null){
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
       fileInfo.setPath(selectedFileItem.getPath());
-      this.getCurrentFrame().setFileInfo(fileInfo);
+      tp.setFileInfo(fileInfo);
     }
   }
 
