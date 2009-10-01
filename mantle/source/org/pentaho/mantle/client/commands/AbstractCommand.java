@@ -24,6 +24,7 @@ import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -36,6 +37,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public abstract class AbstractCommand implements Command{
 
+  private CommandCallback commandCallback;
+  
   /**
    * Checks if the user is logged in, if the user is then it perform operation other
    * wise user if ask to perform the login operation again
@@ -85,6 +88,8 @@ public abstract class AbstractCommand implements Command{
    * @param feedback  if the feedback needs to be sent back to the caller. Not used currently
    */
   public void execute(final CommandCallback commandCallback, final boolean feedback){
+    this.commandCallback = commandCallback;
+    
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
       public void onSuccess(Boolean result) {
         if(result) {
@@ -156,7 +161,11 @@ public abstract class AbstractCommand implements Command{
 			}
 
 			public void onSuccess(Object result) {
-				execute(feedback);
+			  if(commandCallback != null){
+			    execute(commandCallback, feedback);
+			  } else {
+			    execute(feedback);
+			  }
 			}
 
 		});
@@ -170,29 +179,41 @@ public abstract class AbstractCommand implements Command{
    * or user is successfully authenticated
    *  */
 	private void doLogin() {
-		MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
+	  Timer t = new Timer() {
+      
+      @Override
+      public void run() {
 
-			public void onFailure(Throwable caught) {
-				MessageDialogBox dialogBox = new MessageDialogBox(
-						Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-				dialogBox.setCallback(new IDialogCallback() {
-					public void cancelPressed() {
-						// do nothing
-					}
+        MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
 
-					public void okPressed() {
-						doLogin();
-					}
-					
-				});
-				dialogBox.center();
-			}
+          public void onFailure(Throwable caught) {
+            MessageDialogBox dialogBox = new MessageDialogBox(
+                Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            dialogBox.setCallback(new IDialogCallback() {
+              public void cancelPressed() {
+                // do nothing
+              }
 
-			public void onSuccess(Object result) {
-				execute();
-			}
+              public void okPressed() {
+                doLogin();
+              }
+              
+            });
+            dialogBox.center();
+          }
 
-		});
+          public void onSuccess(Object result) {
+            if(commandCallback != null){
+              execute(commandCallback);
+            } else {
+              execute();
+            }
+          }
+
+        });
+      }
+    };
+    t.schedule(1);
 	}
   /**
    * This is an abstract method which the extending class with implement with logic of performing
