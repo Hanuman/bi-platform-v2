@@ -211,6 +211,8 @@ public class MetadataQueryComponent {
       }
     }
     
+    IPhysicalModel physicalModel = queryObject.getLogicalModel().getPhysicalModel();
+    
     // determine parameter values
     Map<String, Object> parameters = null;
     if (queryObject.getParameters() != null) {
@@ -225,14 +227,18 @@ public class MetadataQueryComponent {
         }
         if (value != null) {
           // convert object to correct type based on input here?
-          parameters.put(param.getName(), value);
+          if (physicalModel instanceof InlineEtlPhysicalModel) {
+            Object paramVal = convertParameterValue(param, inputs);
+            parameters.put(param.getName(), paramVal);
+          } else {
+            parameters.put(param.getName(), value);
+          }
         } else {
           parameters.put(param.getName(), param.getDefaultValue());
         }
       }
     }
     
-    IPhysicalModel physicalModel = queryObject.getLogicalModel().getPhysicalModel();
     if (physicalModel instanceof SqlPhysicalModel) {
       return executeSqlPhysicalModel(queryObject, repo, parameters);
     } else if (physicalModel instanceof InlineEtlPhysicalModel) {
@@ -471,5 +477,46 @@ public class MetadataQueryComponent {
   
   public IPentahoResultSet getResultSet() {
     return resultSet;
+  }
+  
+  /**
+   * Convert a parameter to it's expected query input type.
+   * 
+   * @param param the expected query parameter
+   * @param parameters the list of inputs
+   * 
+   * @return the converted value
+   */
+  private Object convertParameterValue(Parameter param, Map<String, Object> parameters) {
+    Object paramObj = null;
+    if (parameters != null) {
+      paramObj = parameters.get(param.getName());
+      if (paramObj == null) {
+        return null;
+      }
+      // convert the input parameter to the right parameter type
+      switch(param.getType()) {
+        case NUMERIC:
+          if (!(paramObj instanceof Number)) {
+            try  {
+              paramObj = Double.parseDouble(paramObj.toString());
+            } catch (NumberFormatException e) {
+              // ignore failed conversion
+            }
+          }
+          break;
+        case BOOLEAN:
+          if (!(paramObj instanceof Boolean)) {
+            paramObj = Boolean.parseBoolean(paramObj.toString());
+          }
+          break;
+        case STRING:
+          if (!(paramObj instanceof String)) {
+            paramObj = paramObj.toString();
+          }
+          break;
+      }
+    }
+    return paramObj;
   }
 }
