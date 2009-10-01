@@ -603,7 +603,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
    */
   private void setFileInfoInFrame(){
     ReloadableIFrameTabPanel tp = SolutionBrowserPerspective.this.getCurrentFrame();
-    if(tp != null){
+    if(tp != null && selectedFileItem != null){
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
