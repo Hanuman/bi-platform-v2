@@ -41,9 +41,9 @@
         -->
 
     <defaultCache
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToIdleSeconds="0"
         timeToLiveSeconds="0"
         diskPersistent="false"
@@ -64,9 +64,9 @@
 	<!--  NOTE: this cache name should be "libloader-data", but this entry should exist until such time -->
 	<!--        that the cache name has been changed in the libloader code. - dkincade                  -->
 	<cache name="liblayout-data"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToIdleSeconds="0"
         timeToLiveSeconds="0"
         diskPersistent="false"
@@ -77,7 +77,7 @@
 	<!--  NOTE: this cache name should be "libloader-factory", but this entry should exist until such time -->
 	<!--        that the cache name has been changed in the libloader code. - dkincade                     -->
 	<cache name="liblayout-factory"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false"
         timeToIdleSeconds="0"
@@ -90,7 +90,7 @@
     <!--  This cache will replace the improperly named 'liblayout-data' cache in the near future -->
     <!--  so it is being added now so it doesn't get forgotten                                   -->
 	<cache name="libloader-data"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="0"
@@ -103,7 +103,7 @@
     <!--  This cache will replace the improperly named 'liblayout-factory' cache in the near future  -->
     <!--  so it is being added now so it doesn't get forgotten                                       -->
 	<cache name="libloader-factory"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false"
         timeToIdleSeconds="0"
