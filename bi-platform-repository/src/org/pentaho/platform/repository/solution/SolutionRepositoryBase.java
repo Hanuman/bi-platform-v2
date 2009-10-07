@@ -480,6 +480,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
 
     public InputStream getInputStream() throws IOException {
+      if (inputStream != null){
+        inputStream.reset();
+      }
       return inputStream;
     }
 
