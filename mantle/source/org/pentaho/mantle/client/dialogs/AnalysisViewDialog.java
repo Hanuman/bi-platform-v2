@@ -48,8 +48,11 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public AnalysisViewDialog(Document solutionRepositoryDoc) {
     super(Messages.getString("newAnalysisView"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new VerticalPanel()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     buildAnalysisView(solutionRepositoryDoc);
+    lboxSchema.getElement().setId("schemaList");
     lboxSchema.setTabIndex(1);
+    lboxCube.getElement().setId("cubeList");
     lboxCube.setTabIndex(2);
+    
     setFocusWidget(lboxSchema);
   }
 
