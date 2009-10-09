@@ -24,6 +24,17 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================-->
+<!--===========================================================================
+    == SUBFLOOR-PKG ==
+    
+    $Rev: 65 $
+    $Date: 2009-05-26 14:56:40 -0400 (Tue, 26 May 2009) $
+    Project Home: http://code.google.com/p/subfloor/
+    
+    Provides default targets for creating application archives such as zip and tar.gzip
+    files.
+    ============================================================================-->
+
 <project name="subfloor-pkg" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- Define the default location of the common build file -->
