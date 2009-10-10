@@ -1,4 +1,4 @@
-<project name="Echo Plugin" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="GWT Echo Plugin" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- Import the subfloor-gwt.xml file which contains all the default tasks -->
   <import file="build-res/subfloor-gwt.xml" />
@@ -60,7 +60,7 @@
   -->
 
   <!-- Set default target to skip the ivy "resolve" step -->
-  <target name="default" depends="clean-all,dist,package" />
+  <target name="default" depends="clean,dist,package" />
 
   <!-- Set the clean-all target to skip the "clean-jars" step.  We do not want our build
   process to delete the "lib" dir -->
