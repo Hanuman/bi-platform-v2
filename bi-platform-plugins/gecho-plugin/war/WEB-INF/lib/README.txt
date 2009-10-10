@@ -1,2 +1,0 @@
-Place any jars that your plugin requires in this folder.  Note: do NOT place any Pentaho platform jars here.  
-The path to your platform jars should be referenced by the property pentaho.lib.dir in build.properties. 
