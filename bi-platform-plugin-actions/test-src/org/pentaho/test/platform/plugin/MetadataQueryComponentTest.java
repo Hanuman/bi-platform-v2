@@ -183,7 +183,9 @@ public class MetadataQueryComponentTest {
    
    MetadataQueryComponent component = new MetadataQueryComponent();
    component.setQuery(mql);
-   component.execute();
+   boolean result = component.execute();
+   
+   Assert.assertTrue(result);
    
    IPentahoResultSet rs = component.getResultSet();
    try {
@@ -196,8 +198,10 @@ public class MetadataQueryComponentTest {
      }
      
    } finally {
-     rs.close();
-     rs.closeConnection();
+     if (rs != null) {
+       rs.close();
+       rs.closeConnection();
+     }
    }
    
    // second, test with forceDb = true
@@ -205,7 +209,7 @@ public class MetadataQueryComponentTest {
    MetadataQueryComponent component2 = new MetadataQueryComponent();
    component2.setQuery(mql);
    component2.setForceDbDialect(true);
-   boolean result = component2.execute();
+   result = component2.execute();
    Assert.assertFalse(result);
    Assert.assertNull(component2.getResultSet());
  }
@@ -352,7 +356,7 @@ public class MetadataQueryComponentTest {
     
     SqlPhysicalColumn column = new SqlPhysicalColumn(table);
     column.setId("PC1");
-    column.setTargetColumn("customername");
+    column.setTargetColumn("CUSTOMERNAME");
     column.setName(new LocalizedString("en_US", "Customer Name"));
     column.setDescription(new LocalizedString("en_US", "Customer Name Desc"));
     column.setDataType(DataType.STRING);
