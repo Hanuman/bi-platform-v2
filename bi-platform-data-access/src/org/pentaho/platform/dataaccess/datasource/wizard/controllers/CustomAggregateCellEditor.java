@@ -119,7 +119,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         XulCheckbox aggregationCheckBox;
         aggregationCheckBox = (XulCheckbox) document.createElement("checkbox");//$NON-NLS-1$
         aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[i].getDescription()));
-        aggregationCheckBox.setID(aggregationTypeArray[i].name());
+        aggregationCheckBox.setId(aggregationTypeArray[i].name());
         aggregationCheckBox.setCommand(null);
         if (aggregationList.contains(aggregationTypeArray[i])) {
           aggregationCheckBox.setChecked(true);
@@ -134,7 +134,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
         XulCheckbox aggregationCheckBox;
         aggregationCheckBox = (XulCheckbox) document.createElement("checkbox"); //$NON-NLS-1$
         aggregationCheckBox.setLabel(datasourceMessages.getString(aggregationTypeArray[j].getDescription()));
-        aggregationCheckBox.setID(aggregationTypeArray[j].name());
+        aggregationCheckBox.setId(aggregationTypeArray[j].name());
         aggregationCheckBox.setCommand(null);
         if (aggregationList.contains(aggregationTypeArray[j])) {
           aggregationCheckBox.setChecked(true);
@@ -158,7 +158,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       listbox = (XulMenuList) document.createElement("menulist");//$NON-NLS-1$
       XulMenupopup menuPopup = (XulMenupopup) document.createElement("menupopup");//$NON-NLS-1$
       listbox.addChild(menuPopup);
-      listbox.setID("DefaultAggregationType");//$NON-NLS-1$
+      listbox.setId("DefaultAggregationType");//$NON-NLS-1$
       listbox.setBinding("name");//$NON-NLS-1$
       dialog.addChild(label);
       dialog.addChild(listbox);
