@@ -90,7 +90,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
     List<AggregationType> aggTypeList = new ArrayList<AggregationType>();
     for (XulCheckbox checkbox : aggregationCheckboxList) {
       if (checkbox.isChecked()) {
-        aggTypeList.add(AggregationType.valueOf(checkbox.getID()));
+        aggTypeList.add(AggregationType.valueOf(checkbox.getId()));
       }
     }
     aggregation.setAggregationList(aggTypeList);
@@ -246,7 +246,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       if (component instanceof XulCheckbox) {
         XulCheckbox checkbox = (XulCheckbox) component;
         if (checkbox.isChecked()) {
-          aggregationTypeList.add(AggregationType.valueOf(checkbox.getID()));
+          aggregationTypeList.add(AggregationType.valueOf(checkbox.getId()));
         }
       }
     }
@@ -254,7 +254,7 @@ public class CustomAggregateCellEditor extends XulEventSourceAdapter implements 
       if (component instanceof XulCheckbox) {
         XulCheckbox checkbox = (XulCheckbox) component;
         if (checkbox.isChecked()) {
-          aggregationTypeList.add(AggregationType.valueOf(checkbox.getID()));
+          aggregationTypeList.add(AggregationType.valueOf(checkbox.getId()));
         }
       }
     }    
