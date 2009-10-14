@@ -12,7 +12,6 @@ public class MantlePopupPanel extends PopupPanel{
   
   public MantlePopupPanel(){
     this(true);
-    DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
   public MantlePopupPanel(boolean autohide){

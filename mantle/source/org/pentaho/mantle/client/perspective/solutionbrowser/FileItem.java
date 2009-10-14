@@ -103,6 +103,10 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
       IFileItemCallback fileItemCallback, FileTypeEnabledOptions options,
       boolean supportsACLs, String fileIconStr) {
     sinkEvents(Event.ONDBLCLICK | Event.ONMOUSEUP);
+    
+    DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
+    DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
+
     fileLabel.setWordWrap(false);
     fileLabel.setText(localizedName);
     fileLabel.setTitle(tooltip);
