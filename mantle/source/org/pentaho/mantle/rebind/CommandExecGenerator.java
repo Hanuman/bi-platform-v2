@@ -93,7 +93,7 @@ public class CommandExecGenerator  extends Generator {
   private void generateMethods(SourceWriter sourceWriter) {
 
     sourceWriter.println("SolutionBrowserPerspective solutionBrowserPerspective;");
-    sourceWriter.println("public void setPerspective(SolutionBrowserPerspective solutionBrowserPerspective){ this.solutionBrowserPerspective = solutionBrowserPerspective;}");
+    sourceWriter.println("public void setSolutionBrowserPerspective(SolutionBrowserPerspective solutionBrowserPerspective){ this.solutionBrowserPerspective = solutionBrowserPerspective;}");
     
     sourceWriter.println("public void execute(String commandName) { ");
     sourceWriter.indent();

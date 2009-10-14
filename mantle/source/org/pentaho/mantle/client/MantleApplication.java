@@ -128,7 +128,6 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   
   private CommandExec commandExec = GWT.create(CommandExec.class);
   
-
   public void activatePerspective(IPerspective perspective) {
     for (int i = 0; i < perspectivesPanel.getWidgetCount(); i++) {
       Widget unloadWidget = perspectivesPanel.getWidget(i);
@@ -180,6 +179,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
 
   public void bundleLoaded(String bundleName) {
     solutionBrowserPerspective = new SolutionBrowserPerspective(this);
+    commandExec.setSolutionBrowserPerspective(solutionBrowserPerspective);
+    
     propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null, solutionBrowserPerspective);
     refreshRepositoryCommand = new RefreshRepositoryCommand(solutionBrowserPerspective);
 
