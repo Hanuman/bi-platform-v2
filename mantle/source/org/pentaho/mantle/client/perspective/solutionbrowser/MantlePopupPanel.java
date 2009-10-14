@@ -3,6 +3,7 @@ package org.pentaho.mantle.client.perspective.solutionbrowser;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -11,6 +12,7 @@ public class MantlePopupPanel extends PopupPanel{
   
   public MantlePopupPanel(){
     this(true);
+    DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
   public MantlePopupPanel(boolean autohide){
