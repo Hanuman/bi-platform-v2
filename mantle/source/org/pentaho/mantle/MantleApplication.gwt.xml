@@ -12,6 +12,10 @@
     <inherits name='org.pentaho.gwt.widgets.Widgets'/>
     <inherits name='org.pentaho.mantle.login.MantleLogin' />
 
+    <generate-with class="org.pentaho.mantle.rebind.CommandExecGenerator" > 
+        <when-type-assignable class="org.pentaho.mantle.client.commands.CommandExec"/> 
+    </generate-with>
+
     <set-property name="gwt.suppressNonStaticFinalFieldWarnings" value="true" /> 
 
 	<!-- Specify the app entry point class.                   -->

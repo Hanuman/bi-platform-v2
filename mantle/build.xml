@@ -38,6 +38,11 @@
       Performs the required gwt compiles
       ====================================================================-->
 	<target name="gwt-compile" description="Performs the required GWT Compilation">
+		<copy todir="${codegenlib.dir}">
+          <fileset dir="${dist.dir}">
+            <include name="${ivy.artifact.id}-${project.revision}.jar" />
+          </fileset>
+        </copy>
 		<!-- Compile the Mantle Application -->
 		<ant antfile="${gwt.common.build.file}" target="gwt-compile">
 			<property name="gwt-module.path" value="org.pentaho.mantle.MantleApplication" />

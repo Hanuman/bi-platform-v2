@@ -36,6 +36,7 @@ import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.commands.AboutCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
+import org.pentaho.mantle.client.commands.CommandExec;
 import org.pentaho.mantle.client.commands.ExecuteGlobalActionsCommand;
 import org.pentaho.mantle.client.commands.LogoutCommand;
 import org.pentaho.mantle.client.commands.ManageContentEditCommand;
@@ -124,6 +125,8 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
   private PentahoMenuItem propertiesMenuItem;
 
   public boolean isAdministrator = false;
+  
+  private CommandExec commandExec = GWT.create(CommandExec.class);
   
 
   public void activatePerspective(IPerspective perspective) {
@@ -336,8 +339,16 @@ public class MantleApplication implements EntryPoint, IPerspectiveCallback, Solu
       mantle.@org.pentaho.mantle.client.MantleApplication::addGlassPaneListener(Lcom/google/gwt/core/client/JavaScriptObject;)(callback);      
     }
     
+    $wnd.executeCommand = function(commandName) { 
+      mantle.@org.pentaho.mantle.client.MantleApplication::executeCommand(Ljava/lang/String;)(commandName);      
+    }
+    
     
   }-*/;
+  
+  public void executeCommand(String commandName){
+    commandExec.execute(commandName);
+  }
 
   // Content frames can register a Javascript object to receive various PUC notifications. 
   public void registerContentCallback(JavaScriptObject obj){
