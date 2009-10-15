@@ -116,6 +116,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     Image runDisabledImage = new Image();
     MantleImages.images.runDisabled().applyTo(runDisabledImage);
     runBtn = new ToolbarButton(runImage, runDisabledImage);
+    runBtn.setId("filesToolbarRun");
     runCmd = new FileCommand(FileCommand.COMMAND.RUN, null, callback);
     runBtn.setCommand(runCmd);
     runBtn.setToolTip(Messages.getString("open")); //$NON-NLS-1$
@@ -126,6 +127,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     Image editDisabledImage = new Image();
     MantleImages.images.updateDisabled().applyTo(editDisabledImage);
     editBtn = new ToolbarButton(editImage, editDisabledImage);
+    editBtn.setId("filesToolbarEdit");
     editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null, callback);
     editBtn.setCommand(editCmd);
     editBtn.setToolTip(Messages.getString("edit")); //$NON-NLS-1$
@@ -136,6 +138,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     Image miscDisabledImage = new Image();
     MantleImages.images.miscDisabled().applyTo(miscDisabledImage);
     miscComboBtn = new ToolbarComboButton(miscImage, miscDisabledImage);
+    miscComboBtn.setId("filesToolbarOptions");
     MantleServiceCache.getService().repositorySupportsACLS(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
