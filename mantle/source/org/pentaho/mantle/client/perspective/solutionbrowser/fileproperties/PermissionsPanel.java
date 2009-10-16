@@ -66,6 +66,11 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
   RoundedButton addButton = new RoundedButton(Messages.getString("addPeriods")); //$NON-NLS-1$
 
   public PermissionsPanel() {
+    
+    usersAndRolesList.getElement().setId("sharePanelUsersAndRolesList");
+    addButton.getElement().setId("sharePanelAddButton");
+    removeButton.getElement().setId("sharePanelRemoveButton");
+    
     removeButton.addClickListener(new ClickListener() {
 
       public void onClick(Widget sender) {
@@ -180,6 +185,14 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
     final CheckBox deletePermissionCheckBox = new CheckBox(Messages.getString("delete")); //$NON-NLS-1$
     final CheckBox grantPermissionCheckBox = new CheckBox(Messages.getString("grantPermissions")); //$NON-NLS-1$
     final CheckBox subscribePermissionCheckBox = new CheckBox(Messages.getString("schedule")); //$NON-NLS-1$
+
+    allPermissionCheckBox.getElement().setId("sharePermissionAll");
+    createPermissionCheckBox.getElement().setId("sharePermissionCreate");
+    updatePermissionCheckBox.getElement().setId("sharePermissionUpdate");
+    executePermissionCheckBox.getElement().setId("sharePermissionExecute");
+    deletePermissionCheckBox.getElement().setId("sharePermissionDelete");
+    grantPermissionCheckBox.getElement().setId("sharePermissionGrant");
+    subscribePermissionCheckBox.getElement().setId("sharePermissionSubscribe");
 
     if ("".equals(userOrRoleString)) { //$NON-NLS-1$
       allPermissionCheckBox.setEnabled(false);
