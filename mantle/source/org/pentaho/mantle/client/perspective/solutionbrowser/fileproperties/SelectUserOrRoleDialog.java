@@ -68,6 +68,14 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
         }
       }
     });
+    
+    // Unique ids are important for test automation
+    contentTable.getElement().setId("userOrRoleDialogContentTable");
+    usersListBox.getElement().setId("userOrRoleDialogUsersList");
+    rolesListBox.getElement().setId("userOrRoleDialogRolesList");
+    okButton.getElement().setId("userOrRoleDialogOkButton");
+    cancelButton.getElement().setId("userOrRoleDialogCancelButton");
+
     usersListBox.setVisibleItemCount(5);
     rolesListBox.setVisibleItemCount(5);
     rolesListBox.setWidth("100%"); //$NON-NLS-1$
