@@ -67,6 +67,15 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
   public SubscriptionsPanel() {
     layout();
     dirty = false;
+    
+    enableSubscriptions.getElement().setId("subscriptionPanelEnableCheck");
+    availableLB.getElement().setId("subscriptionPanelAvailableList");
+    appliedLB.getElement().setId("subscriptionPanelAppliedList");
+    moveRightBtn.getElement().setId("subscriptionPanelMoveRightButton");
+    moveLeftBtn.getElement().setId("subscriptionPanelMoveLeftButton");
+    moveAllRightBtn.getElement().setId("subscriptionPanelMoveAllRightButton");
+    moveAllLeftBtn.getElement().setId("subscriptionPanelMoveAllLeftButton");
+
   }
 
   public void layout() {

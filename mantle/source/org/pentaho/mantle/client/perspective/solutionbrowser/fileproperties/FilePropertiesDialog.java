@@ -25,14 +25,11 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileTypeEnabledOptions;
 import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective.ContentTypePlugin;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -61,6 +58,13 @@ public class FilePropertiesDialog extends PromptDialogBox {
     generalTab = new GeneralPanel();
     permissionsTab = new PermissionsPanel();
     subscriptionsTab = new SubscriptionsPanel();
+    
+    generalTab.getElement().setId("filePropertiesGeneralTab");
+    permissionsTab.getElement().setId("filePropertiesPermissionsTab");
+    subscriptionsTab.getElement().setId("filePropertiesSubscriptionsTab");
+    okButton.getElement().setId("filePropertiesOKButton");
+    cancelButton.getElement().setId("filePropertiesCancelButton");
+    
     this.defaultTab = defaultTab;
 
     super.setCallback(new IDialogCallback() {
