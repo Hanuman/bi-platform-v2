@@ -98,7 +98,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executeOpenFileCommand() {
-    OpenFileCommand openFileCommand = new OpenFileCommand(solutionBrowser);
+    OpenFileCommand openFileCommand = new OpenFileCommand();
     openFileCommand.execute();
   }
 
@@ -110,19 +110,19 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executePrintCommand() {
-    PrintCommand printCommand = new PrintCommand(solutionBrowser);
+    PrintCommand printCommand = new PrintCommand();
     printCommand.execute();
   }
 
   @Bindable
   public void executeSaveCommand() {
-    SaveCommand saveCommand = new SaveCommand(solutionBrowser, false);
+    SaveCommand saveCommand = new SaveCommand(false);
     saveCommand.execute();
   }
 
   @Bindable
   public void executeSaveAsCommand() {
-    SaveCommand saveCommand = new SaveCommand(solutionBrowser, true);
+    SaveCommand saveCommand = new SaveCommand(true);
     saveCommand.execute();
   }
 

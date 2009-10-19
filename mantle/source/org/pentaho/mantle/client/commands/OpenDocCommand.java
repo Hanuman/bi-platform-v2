@@ -27,12 +27,10 @@ import com.google.gwt.user.client.Command;
  * @author nbaker / dkincade
  */
 public class OpenDocCommand implements Command {
-  private SolutionBrowserPerspective navigatorPerspective;
   private String documentationURL;
 
-  public OpenDocCommand(String documentationURL, SolutionBrowserPerspective navigatorPerspective) {
+  public OpenDocCommand(String documentationURL) {
     this.documentationURL = documentationURL;
-    this.navigatorPerspective = navigatorPerspective;
   }
 
   /**
@@ -40,7 +38,7 @@ public class OpenDocCommand implements Command {
    * the EE version of the document.
    */
   public void execute() {
-    navigatorPerspective.showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
+    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
   }
   
 

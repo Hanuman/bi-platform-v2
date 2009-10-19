@@ -28,10 +28,7 @@ public class OpenFileCommand implements Command {
 
   private static String lastPath = "/"; //$NON-NLS-1$
   
-  SolutionBrowserPerspective navigatorPerspective;
-
-  public OpenFileCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  public OpenFileCommand() {
   }
 
   public void execute(){
@@ -39,6 +36,7 @@ public class OpenFileCommand implements Command {
   }
   
   public void execute(final SolutionBrowserPerspective.OPEN_METHOD openMethod) {
+    final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
     final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, navigatorPerspective.getSolutionDocument(), false, true);
     if (!MantleApplication.showAdvancedFeatures) {
       dialog.setShowSearch(false);

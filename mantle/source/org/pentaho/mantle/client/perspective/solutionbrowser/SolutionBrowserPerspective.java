@@ -39,7 +39,7 @@ import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.CommandCallback;
 import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
-import org.pentaho.mantle.client.commands.NewFolderCommand;
+import org.pentaho.mantle.client.commands.NewRootFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
@@ -55,7 +55,6 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.classic.ClassicNavi
 import org.pentaho.mantle.client.perspective.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.scheduling.NewScheduleDialog;
 import org.pentaho.mantle.client.perspective.solutionbrowser.toolbars.BrowserToolbar;
-import org.pentaho.mantle.client.perspective.solutionbrowser.WorkspacePanel;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.usersettings.ui.UserPreferencesDialog;
@@ -114,7 +113,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private FilesListPanel filesListPanel = new FilesListPanel(this);
   private FileItem selectedFileItem;
   private DeckPanel contentPanel = new DeckPanel();
-  private LaunchPanel launchPanel = new LaunchPanel(this);
+  private LaunchPanel launchPanel = new LaunchPanel();
   private WorkspacePanel workspacePanel = null;
   private String newAnalysisViewOverrideCommandUrl;
   private String newAnalysisViewOverrideCommandTitle;
@@ -126,7 +125,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private IViewMenuCallback viewMenuCallback;
   private Document solutionDocument;
   private boolean showSolutionBrowser = false;
-  private boolean explorerMode = false;
+  private boolean useClassicView = false;
   private boolean isAdministrator = false;
   private MenuBar favoritesGroupMenuBar = new MenuBar(true);
   private List<Bookmark> bookmarks;
@@ -135,41 +134,35 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
   private List<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
   public static final int CURRENT_SELECTED_TAB = -1;
-  
+
   // commands
   Command ShowWorkSpaceCommand = new Command() {
     public void execute() {
-      toggleWorkspace();
+      showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
+      if (showWorkspaceMenuItem.isChecked()) {
+        showWorkspace();
+      } else {
+        showContent();
+      }
     }
   };
 
-  public void toggleWorkspace() {
-    showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
-    if (showWorkspaceMenuItem.isChecked()) {
-      showWorkspace();
-    } else {
-      showContent();
-    }
-  }
-
-  RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand(SolutionBrowserPerspective.this);
+  RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand();
 
   Command ToggleClassicViewCommand = new Command() {
-
     public void execute() {
       // update view menu
-      explorerMode = !explorerMode;
+      useClassicView = !useClassicView;
       buildUI();
-      installViewMenu(viewMenuCallback);
+      updateViewMenu(viewMenuCallback);
     }
-
   };
-  Command ToggleLocalizedNamesCommand = new Command() {
 
+  Command ToggleLocalizedNamesCommand = new Command() {
     public void execute() {
       setUseLocalizedFileNames(!solutionTree.showLocalizedFileNames);
       // update view menu
-      installViewMenu(viewMenuCallback);
+      updateViewMenu(viewMenuCallback);
 
       // update setting
       AsyncCallback callback = new AsyncCallback() {
@@ -189,7 +182,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     public void execute() {
       setShowHiddenFiles(!solutionTree.showHiddenFiles);
       // update view menu
-      installViewMenu(viewMenuCallback);
+      updateViewMenu(viewMenuCallback);
 
       // update setting
       AsyncCallback callback = new AsyncCallback() {
@@ -209,7 +202,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     public void execute() {
       setUseDescriptions(!solutionTree.useDescriptionsForTooltip);
       // update view menu
-      installViewMenu(viewMenuCallback);
+      updateViewMenu(viewMenuCallback);
 
       // update setting
       AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -230,7 +223,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand); //$NON-NLS-1$
   CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand); //$NON-NLS-1$
   CheckBoxMenuItem showLocalizedFileNamesMenuItem = new CheckBoxMenuItem(Messages.getString("showLocalizedFileNames"), ToggleLocalizedNamesCommand); //$NON-NLS-1$
-  CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand(this)); //$NON-NLS-1$
+  CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand()); //$NON-NLS-1$
   CheckBoxMenuItem useDescriptionsMenuItem = new CheckBoxMenuItem(Messages.getString("useDescriptionsForTooltips"), UseDescriptionCommand); //$NON-NLS-1$
 
   TreeListener treeListener = new TreeListener() {
@@ -249,7 +242,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   private static SolutionBrowserPerspective instance;
 
-  public SolutionBrowserPerspective(final IViewMenuCallback viewMenuCallback) {
+  private SolutionBrowserPerspective(final IViewMenuCallback viewMenuCallback) {
     instance = this;
     this.viewMenuCallback = viewMenuCallback;
 
@@ -407,28 +400,28 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   public Command getNewAnalysisViewCommand() {
     if (newAnalysisViewOverrideCommandUrl == null) {
-      return new AnalysisViewCommand(this);
+      return new AnalysisViewCommand();
     } else {
-      return new UrlCommand(this, newAnalysisViewOverrideCommandUrl, newAnalysisViewOverrideCommandTitle);
+      return new UrlCommand(newAnalysisViewOverrideCommandUrl, newAnalysisViewOverrideCommandTitle);
     }
   }
 
   public Command getNewReportCommand() {
     if (newReportOverrideCommandUrl == null) {
-      return new WAQRCommand(this);
+      return new WAQRCommand();
     } else {
-      return new UrlCommand(this, newReportOverrideCommandUrl, newReportOverrideCommandTitle);
+      return new UrlCommand(newReportOverrideCommandUrl, newReportOverrideCommandTitle);
     }
   }
 
   public void buildUI() {
     clear();
-    if (explorerMode) {
+    if (useClassicView) {
 
       solutionNavigatorPanel.setHeight("100%"); //$NON-NLS-1$
       // ----- Create the top panel ----
 
-      BrowserToolbar browserToolbar = new BrowserToolbar(this);
+      BrowserToolbar browserToolbar = new BrowserToolbar();
       browserToolbar.setHeight("28px"); //$NON-NLS-1$
       browserToolbar.setWidth("100%"); //$NON-NLS-1$
 
@@ -656,7 +649,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-              UrlCommand cmd = new UrlCommand(this, url, selectedFileItem.localizedName);
+              UrlCommand cmd = new UrlCommand(url, selectedFileItem.localizedName);
               cmd.execute(new CommandCallback() {
                 public void afterExecute() {
                   setFileInfoInFrame();
@@ -740,7 +733,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
         public void okPressed() {
           dialogBox.hide();
-          (new OpenFileCommand(SolutionBrowserPerspective.this)).execute();
+          (new OpenFileCommand()).execute();
         }
       });
 
@@ -764,7 +757,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
               public void okPressed() {
                 dialogBox.hide();
-                (new OpenFileCommand(SolutionBrowserPerspective.this)).execute(OPEN_METHOD.SCHEDULE);
+                (new OpenFileCommand()).execute(OPEN_METHOD.SCHEDULE);
               }
             });
 
@@ -928,7 +921,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     // this NewFolderCommand creates new "root" folders, so we do not
     // pass the SolutionTree in (if we did, it would create a folder
     // branched off of anything selected).
-    NewFolderCommand cmd = new NewFolderCommand(null);
+    NewRootFolderCommand cmd = new NewRootFolderCommand();
     cmd.execute();
   }
 
@@ -1260,7 +1253,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   public void refreshSolutionBrowser(boolean showStatus) {
     fetchSolutionDocument(showStatus, /* collapse */true);
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public FileItem getSelectedFileItem() {
@@ -1402,7 +1395,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   public void setUseLocalizedFileNames(boolean showLocalizedFileNames) {
     solutionTree.setShowLocalizedFileNames(showLocalizedFileNames);
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public void setShowHiddenFiles(boolean showHiddenFiles) {
@@ -1410,7 +1403,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
 
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public void setUseDescriptions(boolean showDescriptions) {
@@ -1418,7 +1411,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
 
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public void installBookmarkGroups(final Map<String, List<Bookmark>> groupMap) {
@@ -1474,7 +1467,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     MantleServiceCache.getService().getBookmarks(callback);
   }
 
-  private void installViewMenu(IViewMenuCallback viewMenuCallback) {
+  private void updateViewMenu(IViewMenuCallback viewMenuCallback) {
     List<UIObject> viewMenuItems = new ArrayList<UIObject>();
 
     showLocalizedFileNamesMenuItem.setChecked(solutionTree.showLocalizedFileNames);
@@ -1482,7 +1475,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     showSolutionBrowserMenuItem.setChecked(showSolutionBrowser);
     useDescriptionsMenuItem.setChecked(solutionTree.useDescriptionsForTooltip);
 
-    if (explorerMode) {
+    if (useClassicView) {
       // viewMenuItems.add(showLocalizedFileNamesMenuItem);
       viewMenuItems.add(showSolutionBrowserMenuItem);
       viewMenuItems.add(showWorkspaceMenuItem);
@@ -1494,24 +1487,24 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
         viewMenuItems.add(favoritesGroupMenuBar);
       }
     }
-
     viewMenuItems.add(new MenuItemSeparator());
     
-    MenuItem refreshItem = new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand(this));
+    MenuItem refreshItem = new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand());
     refreshItem.getElement().setId("view_refresh_menu_item");
     viewMenuItems.add(refreshItem); //$NON-NLS-1$
+    
     viewMenuCallback.installViewMenu(viewMenuItems);
   }
 
   public boolean isExplorerViewShowing() {
-    return explorerMode;
+    return useClassicView;
   }
 
   public void setExplorerViewShowing(boolean explorerViewShowing) {
-    this.explorerMode = explorerViewShowing;
+    this.useClassicView = explorerViewShowing;
     buildUI();
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public TabPanel getContentTabPanel() {
@@ -1551,7 +1544,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
     }
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
   }
 
   public void toggleShowSolutionBrowser() {
@@ -1562,7 +1555,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     }
     showSolutionBrowser = !showSolutionBrowser;
     // update view menu
-    installViewMenu(viewMenuCallback);
+    updateViewMenu(viewMenuCallback);
 
     // update setting
     AsyncCallback callback = new AsyncCallback() {
@@ -1641,7 +1634,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   public void mouseUp(Event e) {
     solutionNavigatorAndContentPanel.onBrowserEvent(e);
   }
-  
+
   /**
    * Called by JSNI call from parameterized xaction prompt pages to "cancel". The only 'key' to pass up is the URL. To handle the possibility of multiple tabs
    * with the same url, this method first checks the assumption that the current active tab initiates the call. Otherwise it checks from tail up for the first
@@ -1723,7 +1716,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
    * This method is called via JSNI
    */
   private void handleWAQRPreview(String url, String xml) {
-    ExecuteWAQRPreviewCommand command = new ExecuteWAQRPreviewCommand(contentTabPanel, url, xml, this);
+    ExecuteWAQRPreviewCommand command = new ExecuteWAQRPreviewCommand(contentTabPanel, url, xml);
     command.execute();
   }
 
@@ -1747,8 +1740,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     return true == frame.pivot_initialized;
   }-*/;
 
-  public static SolutionBrowserPerspective getInstance() {
+  public static SolutionBrowserPerspective getInstance(IViewMenuCallback viewMenuCallback) {
+    if (instance == null) {
+      instance = new SolutionBrowserPerspective(viewMenuCallback);
+    }
     return instance;
+  }
+
+  public static SolutionBrowserPerspective getInstance() {
+    return getInstance(null);
   }
 
   /**
@@ -1843,6 +1843,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   public void setCurrentTabJSCallback(JavaScriptObject obj) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setContentCallback(obj);
+  }
+
+  public SolutionTree getSolutionTree() {
+    return solutionTree;
+  }
+
+  public void setSolutionTree(SolutionTree solutionTree) {
+    this.solutionTree = solutionTree;
   }
 
   public void buildEnabledOptionsList(Map<String, String> settings) {

@@ -20,10 +20,6 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileTreeItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionTree;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -39,33 +35,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
-public class NewFolderCommand implements Command {
+public class NewRootFolderCommand implements Command {
 
   private String repoPath = "";
   private String solution = "";
   
-  public NewFolderCommand() {
+  public NewRootFolderCommand() {
   }
 
   public void execute() {
-    SolutionTree solutionTree = SolutionBrowserPerspective.getInstance().getSolutionTree();
-    if (solutionTree != null) {
-      FileTreeItem selectedTreeItem = (FileTreeItem) solutionTree.getSelectedItem();
-      final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(),
-          solutionTree.getSolution(), solutionTree.getPath(), null, null, null, null, false, null);
-      
-      
-//      path = solutionTree.getPath().substring(0, solutionTree.getPath().lastIndexOf("/")); //$NON-NLS-1$
-      
-      
-      repoPath = selectedItem.getPath();
-      // if a solution folder is selected then the solution-name/path are the same, we can't allow that
-      // but we need them to be in the tree like this for building the tree paths correctly (other code)
-      if (repoPath.equals("/" + selectedItem.getSolution())) { //$NON-NLS-1$
-        repoPath = ""; //$NON-NLS-1$
-      }
-      solution = selectedItem.getSolution();
-    }
     final TextBox folderNameTextBox = new TextBox();
     folderNameTextBox.setTabIndex(1);
     folderNameTextBox.setVisibleLength(40);

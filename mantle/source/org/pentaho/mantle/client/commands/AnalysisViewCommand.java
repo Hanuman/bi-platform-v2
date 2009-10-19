@@ -29,13 +29,11 @@ import com.google.gwt.user.client.Timer;
 
 public class AnalysisViewCommand implements Command {
 
-  SolutionBrowserPerspective navigatorPerspective;
-
-  public AnalysisViewCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  public AnalysisViewCommand() {
   }
 
   public void execute() {
+    final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
     final AnalysisViewDialog analysisDialog = new AnalysisViewDialog(navigatorPerspective.getSolutionDocument());
     IDialogCallback callback = new IDialogCallback() {
 

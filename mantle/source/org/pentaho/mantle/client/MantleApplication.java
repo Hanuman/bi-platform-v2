@@ -68,10 +68,9 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
   public void loadApplication() {
     logoPanel = new LogoPanel("http://www.pentaho.com"); //$NON-NLS-1$;
     menuBar = new MantleMainMenuBar();
-    solutionBrowserPerspective = new SolutionBrowserPerspective(menuBar);
+    solutionBrowserPerspective = SolutionBrowserPerspective.getInstance(menuBar);
     main = XulMain.instance(solutionBrowserPerspective);
     menuBar.setSolutionBrowser(solutionBrowserPerspective);
-    commandExec.setSolutionBrowserPerspective(solutionBrowserPerspective);
     
     // registered our native JSNI hooks
     setupNativeHooks(this);
@@ -200,6 +199,7 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     showAdvancedFeatures = "true".equals(settings.get("show-advanced-features")); //$NON-NLS-1$ //$NON-NLS-2$
 
     boolean isAdministrator = "true".equals(settings.get("is-administrator"));
+    solutionBrowserPerspective.setAdministrator(isAdministrator);
     menuBar.buildMenuBar(settings, isAdministrator);
     solutionBrowserPerspective.setExplorerViewShowing(showExplorerViewOnStartup);
 

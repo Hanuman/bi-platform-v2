@@ -22,13 +22,11 @@ import com.google.gwt.user.client.Command;
 
 public class ShowBrowserCommand implements Command {
 
-  SolutionBrowserPerspective solutionBrowserPerspective;
-
-  public ShowBrowserCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public ShowBrowserCommand() {
   }
 
   public void execute() {
+    final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     solutionBrowserPerspective.toggleShowSolutionBrowser();
   }
 

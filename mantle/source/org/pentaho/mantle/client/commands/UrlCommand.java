@@ -20,23 +20,23 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPers
 
 public class UrlCommand extends AbstractCommand {
 
-  SolutionBrowserPerspective navigatorPerspective;
   String url;
   String title;
   
-  public UrlCommand(SolutionBrowserPerspective navigatorPerspective, String url, String title ) {
-    this.navigatorPerspective = navigatorPerspective;
+  public UrlCommand(String url, String title ) {
     this.url = url;
     this.title = title;
   }
 
   protected void performOperation()
   {
+    SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
     navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
   }
 
   protected void performOperation(boolean feedback)
   {
+    SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
     navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
   }
 }

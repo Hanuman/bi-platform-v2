@@ -27,13 +27,12 @@ import com.google.gwt.user.client.Command;
 public class ManageContentScheduleCommand implements Command {
 
   private static String lastPath = "/"; //$NON-NLS-1$
-  SolutionBrowserPerspective solutionBrowserPerspective;
   
-  public ManageContentScheduleCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public ManageContentScheduleCommand() {
   }
 
   public void execute() {
+    final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, solutionBrowserPerspective.getSolutionDocument(), false, true);
     if (!MantleApplication.showAdvancedFeatures) {
       dialog.setShowSearch(false);

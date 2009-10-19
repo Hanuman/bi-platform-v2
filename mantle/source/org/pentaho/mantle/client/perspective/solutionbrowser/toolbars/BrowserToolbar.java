@@ -40,13 +40,10 @@ public class BrowserToolbar extends Toolbar {
 
   ToolbarButton refreshBtn;
 
-  SolutionBrowserPerspective solutionBrowserPerspective;
-
   MenuBar miscMenus = new MantleMenuBar(true);
 
-  public BrowserToolbar(SolutionBrowserPerspective solutionBrowserPerspective) {
+  public BrowserToolbar() {
     super();
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
 
     // Formatting stuff
     setHorizontalAlignment(ALIGN_RIGHT);
@@ -68,7 +65,7 @@ public class BrowserToolbar extends Toolbar {
     Image refreshDisabledImage = new Image();
     MantleImages.images.runDisabled().applyTo(refreshDisabledImage);
     refreshBtn = new ToolbarButton(refreshImage, refreshDisabledImage);
-    refreshBtn.setCommand(new RefreshRepositoryCommand(solutionBrowserPerspective));
+    refreshBtn.setCommand(new RefreshRepositoryCommand());
     refreshBtn.setToolTip(Messages.getString("refresh")); //$NON-NLS-1$
     add(refreshBtn);
   }

@@ -22,13 +22,11 @@ import com.google.gwt.user.client.Command;
 
 public class ManageContentEditCommand implements Command {
 
-  SolutionBrowserPerspective solutionBrowserPerspective;
-  
-  public ManageContentEditCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public ManageContentEditCommand() {
   }
 
   public void execute() {
+    final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     EditFileCommand cmd = new EditFileCommand(solutionBrowserPerspective);
     cmd.execute();
   }

@@ -26,7 +26,7 @@ public class WAQRCommand implements Command {
 
   SolutionBrowserPerspective navigatorPerspective;
 
-  public WAQRCommand(SolutionBrowserPerspective navigatorPerspective) {
+  public WAQRCommand() {
     this.navigatorPerspective = navigatorPerspective;
   }
 

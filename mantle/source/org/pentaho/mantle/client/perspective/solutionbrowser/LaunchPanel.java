@@ -28,10 +28,8 @@ public class LaunchPanel extends Frame {
   Image launchWaqrImage;
   Image launchAnalysisViewImage;
   Image manageContentImage;
-  SolutionBrowserPerspective perspective;
 
-  public LaunchPanel(SolutionBrowserPerspective perspective) {
-    this.perspective = perspective;
+  public LaunchPanel() {
 
     String url = "mantle/launch/launch.jsp"; //$NON-NLS-1$
     if (GWT.isScript()) {
@@ -86,15 +84,15 @@ public class LaunchPanel extends Frame {
   }-*/;
   
   public void openWAQR(){
-    perspective.getNewReportCommand().execute();
+    SolutionBrowserPerspective.getInstance().getNewReportCommand().execute();
   }
 
   public void openAnalysis(){
-    perspective.getNewAnalysisViewCommand().execute();
+    SolutionBrowserPerspective.getInstance().getNewAnalysisViewCommand().execute();
   }
 
   public void openManage(){
-    new ManageContentCommand(perspective).execute();
+    new ManageContentCommand().execute();
   }
 
 }

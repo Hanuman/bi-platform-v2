@@ -26,10 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RefreshRepositoryCommand extends AbstractCommand {
 
-  SolutionBrowserPerspective navigatorPerspective;
-
-  public RefreshRepositoryCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  public RefreshRepositoryCommand() {
   }
 
   protected void performOperation(final boolean feedback) {
@@ -50,7 +47,7 @@ public class RefreshRepositoryCommand extends AbstractCommand {
 
       public void onSuccess(Void nothing) {
         try {
-          navigatorPerspective.refreshSolutionBrowser(false);
+          SolutionBrowserPerspective.getInstance().refreshSolutionBrowser(false);
         } catch (Throwable t) {
           // we want to make sure we don't prevent the waitpopup
         }

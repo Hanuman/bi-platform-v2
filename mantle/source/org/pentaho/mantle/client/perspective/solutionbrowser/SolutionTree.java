@@ -584,7 +584,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   }
 
   public void createNewFolder() {
-    NewFolderCommand cmd = new NewFolderCommand(this);
+    NewFolderCommand cmd = new NewFolderCommand();
     cmd.execute();
   }
 
@@ -639,7 +639,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
               Document resultDoc = (Document) XMLParser.parse((String) (String) response.getText());
               boolean result = "true".equals(resultDoc.getDocumentElement().getFirstChild().getNodeValue()); //$NON-NLS-1$
               if (result) {
-                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand(solutionBrowserPerspective);
+                RefreshRepositoryCommand cmd = new RefreshRepositoryCommand();
                 cmd.execute(false);
               } else {
                 MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$

@@ -17,7 +17,6 @@
 package org.pentaho.mantle.client.commands;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 
 public class LogoutCommand implements Command {
 

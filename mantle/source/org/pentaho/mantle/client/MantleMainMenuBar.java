@@ -89,14 +89,14 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
   public void buildMenuBar(final HashMap<String, String> settings, final boolean isAdministrator) {
     clearItems();
     propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null, solutionBrowser);
-    refreshRepositoryCommand = new RefreshRepositoryCommand(solutionBrowser);
+    refreshRepositoryCommand = new RefreshRepositoryCommand();
 
     solutionBrowser.setAdministrator(isAdministrator);
-    printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand(solutionBrowser)); //$NON-NLS-1$
+    printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand()); //$NON-NLS-1$
     printMenuItem.getElement().setId("print");
-    saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(solutionBrowser, false)); //$NON-NLS-1$
+    saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(false)); //$NON-NLS-1$
     saveMenuItem.getElement().setId("save");
-    saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAsEllipsis"), new SaveCommand(solutionBrowser, true)); //$NON-NLS-1$
+    saveAsMenuItem = new PentahoMenuItem(Messages.getString("saveAsEllipsis"), new SaveCommand(true)); //$NON-NLS-1$
     saveAsMenuItem.getElement().setId("saveAs");
     propertiesMenuItem = new PentahoMenuItem(Messages.getString("propertiesEllipsis"), propertiesCommand); //$NON-NLS-1$
     propertiesMenuItem.getElement().setId("properties");
@@ -118,11 +118,11 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     newMenuBar.getElement().setId("new_menu_bar");
     fileMenu.addItem(newMenuBar);
 
-    MenuItem openFileMenuItem = new MenuItem(Messages.getString("openEllipsis"), new OpenFileCommand(solutionBrowser));//$NON-NLS-1$
+    MenuItem openFileMenuItem = new MenuItem(Messages.getString("openEllipsis"), new OpenFileCommand());//$NON-NLS-1$
     openFileMenuItem.getElement().setId("open_file_menu_item");
     fileMenu.addItem(openFileMenuItem); //$NON-NLS-1$
     if (MantleApplication.showAdvancedFeatures) {
-      fileMenu.addItem(Messages.getString("openURLEllipsis"), new OpenURLCommand(solutionBrowser)); //$NON-NLS-1$
+      fileMenu.addItem(Messages.getString("openURLEllipsis"), new OpenURLCommand()); //$NON-NLS-1$
     }
     fileMenu.addSeparator();
 
@@ -138,9 +138,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     }
     MenuBar manageContentMenu = new MantleMenuBar(true);
     manageContentMenu.getElement().setId("manage_content_menu");
-    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new ManageContentEditCommand(solutionBrowser));//$NON-NLS-1$
-    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new ManageContentShareCommand(solutionBrowser)); //$NON-NLS-1$
-    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new ManageContentScheduleCommand(solutionBrowser)); //$NON-NLS-1$
+    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new ManageContentEditCommand());//$NON-NLS-1$
+    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new ManageContentShareCommand()); //$NON-NLS-1$
+    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new ManageContentScheduleCommand()); //$NON-NLS-1$
     
     editContent.getElement().setId("edit_content_menu_item");
     shareContent.getElement().setId("share_content_menu_item");
@@ -233,7 +233,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
 
     MenuBar helpMenu = new MenuBar(true);
     helpMenu.getElement().setId("help_menu");
-    MenuItem docMenuItem = new MenuItem(Messages.getString("documentation"), new OpenDocCommand(settings.get("documentation-url"), solutionBrowser)); //$NON-NLS-1$ //$NON-NLS-2$
+    MenuItem docMenuItem = new MenuItem(Messages.getString("documentation"), new OpenDocCommand(settings.get("documentation-url"))); //$NON-NLS-1$ //$NON-NLS-2$
     docMenuItem.getElement().setId("doc_menu_item"); //$NON-NLS-1$
     helpMenu.addItem(docMenuItem);
     helpMenu.addSeparator();
@@ -275,7 +275,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
           }
 
         }
-        UrlCommand menuCommand = new UrlCommand(solutionBrowser, command, title);
+        UrlCommand menuCommand = new UrlCommand(command, title);
 
         MenuItem item = new MenuItem(title, menuCommand);
         //item.getElement().setId(title);

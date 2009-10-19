@@ -26,8 +26,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CleanContentRepositoryCommand implements Command {
 
-  int daysBack = 90;
+  private static final int DEFAULT_DAYS_BACK = 90;
+  
+  int daysBack = DEFAULT_DAYS_BACK;
 
+  public CleanContentRepositoryCommand() {
+    this(DEFAULT_DAYS_BACK);
+  }
+  
   public CleanContentRepositoryCommand(int daysBack) {
     this.daysBack = daysBack;
   }

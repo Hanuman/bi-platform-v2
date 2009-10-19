@@ -46,8 +46,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   protected String MAIN_TOOBAR_STYLE_NAME = "mainToolbar"; //$NON-NLS-1$
 
-  SolutionBrowserPerspective solutionBrowser;
-  
   ToolbarButton openFileButton;
   ToolbarButton newAnalysisButton;
   ToolbarButton newAdhocButton;
@@ -59,15 +57,16 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   Image browseHideImage = new Image();
   ToolbarToggleButton workspaceToggleButton;
 
-  public MainToolbar(final SolutionBrowserPerspective solutionBrowser) {
+  public MainToolbar() {
     super();
-    this.solutionBrowser = solutionBrowser;
     this.setStylePrimaryName(MAIN_TOOBAR_STYLE_NAME);
 
+    final SolutionBrowserPerspective solutionBrowser = SolutionBrowserPerspective.getInstance();
+    
     Image openImage = new Image();
     MantleImages.images.open_32().applyTo(openImage);
     openFileButton = new ToolbarButton(openImage);
-    openFileButton.setCommand(new OpenFileCommand(solutionBrowser));
+    openFileButton.setCommand(new OpenFileCommand());
     openFileButton.setToolTip(Messages.getString("openEllipsis")); //$NON-NLS-1$
 
     
@@ -90,7 +89,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image printDisabledImage = new Image();
     MantleImages.images.print_32_disabled().applyTo(printDisabledImage);
     printButton = new ToolbarButton(printImage, printDisabledImage);
-    printButton.setCommand(new PrintCommand(solutionBrowser));
+    printButton.setCommand(new PrintCommand());
     printButton.setToolTip(Messages.getString("print")); //$NON-NLS-1$
     printButton.setEnabled(false);
 
@@ -99,7 +98,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image saveDisabledImage = new Image();
     MantleImages.images.save_32_disabled().applyTo(saveDisabledImage);
     saveButton = new ToolbarButton(saveButtonImage, saveDisabledImage);
-    saveButton.setCommand(new SaveCommand(solutionBrowser, false));
+    saveButton.setCommand(new SaveCommand(false));
     saveButton.setToolTip(Messages.getString("save")); //$NON-NLS-1$
     saveButton.setEnabled(false);
 
@@ -108,7 +107,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image saveAsDisabledImage = new Image();
     MantleImages.images.saveAs_32_disabled().applyTo(saveAsDisabledImage);
     saveAsButton = new ToolbarButton(saveAsButtonImage, saveAsDisabledImage);
-    saveAsButton.setCommand(new SaveCommand(solutionBrowser, true));
+    saveAsButton.setCommand(new SaveCommand(true));
     saveAsButton.setToolTip(Messages.getString("saveAs")); //$NON-NLS-1$
     saveAsButton.setEnabled(false);
 
@@ -117,11 +116,10 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image toggleWorkspaceImageDisabled = saveAsDisabledImage = new Image();
     MantleImages.images.workspace_32().applyTo(toggleWorkspaceImageDisabled);
     workspaceToggleButton = new ToolbarToggleButton(toggleWorkspaceImage, toggleWorkspaceImageDisabled, solutionBrowser.isNavigatorShowing());
-    final Command workspaceCmd = new ToggleWorkspaceCommand(solutionBrowser);
+    final Command workspaceCmd = new ToggleWorkspaceCommand();
     workspaceToggleButton.setCommand(new Command() {
      public void execute() {
          workspaceCmd.execute();
-         solutionBrowser.toggleWorkspace();
       }  
     });
     toggleWorkspaceButton();
@@ -133,7 +131,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     toggleBrowserButton();
     showBrowserToggleButton.setCommand(new Command() {
       public void execute() {
-        Command cmd = new ShowBrowserCommand(solutionBrowser);
+        Command cmd = new ShowBrowserCommand();
         cmd.execute();
         toggleBrowserButton();
       }
@@ -157,10 +155,12 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
   }
 
   public void toggleWorkspaceButton() {
+    final SolutionBrowserPerspective solutionBrowser = SolutionBrowserPerspective.getInstance();
     workspaceToggleButton.setSelected(solutionBrowser.isWorkspaceShowing(), false);
   }
   
   public void toggleBrowserButton() {
+    final SolutionBrowserPerspective solutionBrowser = SolutionBrowserPerspective.getInstance();
     showBrowserToggleButton.setEnabled(false);
     if (solutionBrowser.isNavigatorShowing()) {
       showBrowserToggleButton.setImage(browseHideImage);

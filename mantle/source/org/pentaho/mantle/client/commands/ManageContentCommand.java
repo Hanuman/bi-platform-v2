@@ -24,10 +24,7 @@ import com.google.gwt.user.client.Command;
 
 public class ManageContentCommand implements Command {
 
-  private SolutionBrowserPerspective solutionBrowserPerspective;
-  
-  public ManageContentCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public ManageContentCommand() {
   }
 
   public void execute() {
@@ -35,13 +32,13 @@ public class ManageContentCommand implements Command {
     dialog.setCallback(new IDialogCallback() {
       public void okPressed() {
         if (dialog.getState() == ManageContentDialog.STATE.EDIT) {
-          ManageContentEditCommand cmd = new ManageContentEditCommand(solutionBrowserPerspective);
+          ManageContentEditCommand cmd = new ManageContentEditCommand();
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SHARE) {
-          ManageContentShareCommand cmd = new ManageContentShareCommand(solutionBrowserPerspective);
+          ManageContentShareCommand cmd = new ManageContentShareCommand();
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SCHEDULE) {
-          ManageContentScheduleCommand cmd = new ManageContentScheduleCommand(solutionBrowserPerspective);
+          ManageContentScheduleCommand cmd = new ManageContentScheduleCommand();
           cmd.execute();
         }
       }

@@ -31,17 +31,16 @@ public class ExecuteWAQRPreviewCommand extends AbstractCommand {
   private String xml;
   private String url;
   private TabPanel contentTabPanel;
-  private SolutionBrowserPerspective solutionBrowserPerspective;
   public ExecuteWAQRPreviewCommand() {
   }
 
-  public ExecuteWAQRPreviewCommand(TabPanel contentTabPanel, String url, String xml, SolutionBrowserPerspective solutionBrowserPerspective) {
+  public ExecuteWAQRPreviewCommand(TabPanel contentTabPanel, String url, String xml) {
     this.xml = xml;
     this.url = url;
     this.contentTabPanel = contentTabPanel;
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
   }
   protected void performOperation() {
+    final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     if(solutionBrowserPerspective != null && contentTabPanel != null) {
       solutionBrowserPerspective.showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();

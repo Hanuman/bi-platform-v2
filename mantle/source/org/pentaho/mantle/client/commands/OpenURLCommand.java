@@ -28,10 +28,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class OpenURLCommand implements Command {
 
-  SolutionBrowserPerspective navigatorPerspective;
-
-  public OpenURLCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  public OpenURLCommand() {
   }
 
   public void execute() {
@@ -45,7 +42,7 @@ public class OpenURLCommand implements Command {
       }
 
       public void okPressed() {
-        navigatorPerspective.showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText());
+        SolutionBrowserPerspective.getInstance().showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText());
       }
 
     };

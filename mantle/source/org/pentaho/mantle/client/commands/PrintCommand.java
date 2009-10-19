@@ -22,14 +22,11 @@ import com.google.gwt.user.client.Command;
 
 public class PrintCommand implements Command {
 
-  SolutionBrowserPerspective navigatorPerspective;
-
-  public PrintCommand(SolutionBrowserPerspective navigatorPerspective) {
-    this.navigatorPerspective = navigatorPerspective;
+  public PrintCommand() {
   }
 
   public void execute() {
-    printFrame(navigatorPerspective.getCurrentFrameElementId());
+    printFrame(SolutionBrowserPerspective.getInstance().getCurrentFrameElementId());
   }
 
   /**

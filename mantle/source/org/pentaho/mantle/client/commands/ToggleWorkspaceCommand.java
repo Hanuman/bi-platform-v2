@@ -22,13 +22,12 @@ import com.google.gwt.user.client.Command;
 
 public class ToggleWorkspaceCommand implements Command {
 
-  SolutionBrowserPerspective solutionBrowserPerspective;
   
-  public ToggleWorkspaceCommand(SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public ToggleWorkspaceCommand() {
   }
 
   public void execute() {
+    SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     if (solutionBrowserPerspective.isWorkspaceShowing()) {
       solutionBrowserPerspective.showContent();
     } else {

@@ -34,7 +34,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class SaveCommand implements Command {
 
-  SolutionBrowserPerspective navigatorPerspective;
   boolean isSaveAs = false;
 
   private String name;
@@ -43,12 +42,15 @@ public class SaveCommand implements Command {
   private SolutionFileInfo.Type type;
   private String tabName;
   
-  public SaveCommand(SolutionBrowserPerspective navigatorPerspective, boolean isSaveAs) {
-    this.navigatorPerspective = navigatorPerspective;
+  public SaveCommand() {
+  }
+  
+  public SaveCommand(boolean isSaveAs) {
     this.isSaveAs = isSaveAs;
   }
 
   public void execute() {
+    final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
 
     retrieveCachedValues(navigatorPerspective.getCurrentFrame());
     
@@ -122,7 +124,7 @@ public class SaveCommand implements Command {
     fileInfo.setPath(this.path);
     fileInfo.setSolution(this.solution);
     fileInfo.setType(this.type);
-    navigatorPerspective.getCurrentFrame().setFileInfo(fileInfo);
+    SolutionBrowserPerspective.getInstance().getCurrentFrame().setFileInfo(fileInfo);
   }
 
   private void clearValues() {
@@ -198,7 +200,7 @@ public class SaveCommand implements Command {
   
   private void doTabRename(){
     if(tabName != null){ // Save-As does not modify the name of the tab. 
-      TabWidget tab = navigatorPerspective.getCurrentTab();
+      TabWidget tab = SolutionBrowserPerspective.getInstance().getCurrentTab();
       tab.setLabelText(tabName);
       tab.setLabelTooltip(tabName);
     }
