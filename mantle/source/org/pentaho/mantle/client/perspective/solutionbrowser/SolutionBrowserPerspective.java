@@ -1496,8 +1496,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     }
 
     viewMenuItems.add(new MenuItemSeparator());
-
-    viewMenuItems.add(new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand(this))); //$NON-NLS-1$
+    
+    MenuItem refreshItem = new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand(this));
+    refreshItem.getElement().setId("view_refresh_menu_item");
+    viewMenuItems.add(refreshItem); //$NON-NLS-1$
     viewMenuCallback.installViewMenu(viewMenuItems);
   }
 

@@ -141,9 +141,15 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new ManageContentEditCommand(solutionBrowser));//$NON-NLS-1$
     MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new ManageContentShareCommand(solutionBrowser)); //$NON-NLS-1$
     MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new ManageContentScheduleCommand(solutionBrowser)); //$NON-NLS-1$
+    
+    editContent.getElement().setId("edit_content_menu_item");
+    shareContent.getElement().setId("share_content_menu_item");
+    scheduleContent.getElement().setId("schedule_content_menu_item");
+    
     manageContentMenu.addItem(editContent);
     manageContentMenu.addItem(shareContent);
     manageContentMenu.addItem(scheduleContent);
+    
     customizeMenu(manageContentMenu, "file-manage", settings); //$NON-NLS-1$
     MenuItem manageContentMenuBar = new MenuItem(Messages.getString("manage"), manageContentMenu); //$NON-NLS-1$
     manageContentMenuBar.getElement().setId("manage_content_menu_bar");
@@ -272,7 +278,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
         UrlCommand menuCommand = new UrlCommand(solutionBrowser, command, title);
 
         MenuItem item = new MenuItem(title, menuCommand);
-        item.getElement().setId(title);
+        //item.getElement().setId(title);
 
         // add it to the menu
         menu.addItem(item);
