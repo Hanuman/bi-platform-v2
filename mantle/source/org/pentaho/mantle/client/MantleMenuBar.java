@@ -15,7 +15,7 @@
  * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
  * 
 */
-package org.pentaho.mantle.client.menus;
+package org.pentaho.mantle.client;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;

@@ -14,7 +14,7 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.dialogs.usersettings;
+package org.pentaho.mantle.client.usersettings.ui;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 

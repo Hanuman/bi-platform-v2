@@ -27,8 +27,8 @@ import org.pentaho.gwt.widgets.client.toolbar.ToolbarGroup;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;
 import org.pentaho.mantle.client.MantleApplication;
+import org.pentaho.mantle.client.MantleMenuBar;
 import org.pentaho.mantle.client.images.MantleImages;
-import org.pentaho.mantle.client.menus.MantleMenuBar;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
@@ -39,6 +39,7 @@ import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand.COMMAND
 import org.pentaho.mantle.client.perspective.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
@@ -142,9 +143,11 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleServiceCache.getService().repositorySupportsACLS(new AsyncCallback<Boolean>() {
 
       public void onFailure(Throwable caught) {
+        Window.alert("FilesToolbar begin");
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), caught.toString(), false, false, true); //$NON-NLS-1$
         dialogBox.center();
         createMenuItems(false);
+        Window.alert("FilesToolbar end");
       }
 
       public void onSuccess(Boolean result) {

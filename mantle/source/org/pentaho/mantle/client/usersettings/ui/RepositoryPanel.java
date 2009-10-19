@@ -14,14 +14,15 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.dialogs.usersettings;
+package org.pentaho.mantle.client.usersettings.ui;
 
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
-import org.pentaho.mantle.client.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
+import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
+import org.pentaho.mantle.client.usersettings.UserSettingsManager;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -88,7 +89,7 @@ public class RepositoryPanel extends UserPreferencesPanel {
         }
       }
     };
-    MantleServiceCache.getService().getUserSettings(callback);
+    UserSettingsManager.getInstance().fetchUserSettings(callback, false);
   }
 
   public void setShowHiddenFiles(boolean show) {

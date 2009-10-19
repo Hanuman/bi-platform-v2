@@ -17,13 +17,12 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.perspective;
+package org.pentaho.mantle.client;
 
 import java.util.List;
 
 import com.google.gwt.user.client.ui.UIObject;
 
-public interface IPerspectiveCallback {
+public interface IViewMenuCallback {
   public void installViewMenu(List<UIObject> menuItems);
-  public void activatePerspective(IPerspective perspective);
 }

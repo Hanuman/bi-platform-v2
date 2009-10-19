@@ -16,7 +16,7 @@
  */
 package org.pentaho.mantle.client.commands;
 
-import org.pentaho.mantle.client.dialogs.usersettings.UserPreferencesDialog;
+import org.pentaho.mantle.client.usersettings.ui.UserPreferencesDialog;
 
 import com.google.gwt.user.client.Command;
 

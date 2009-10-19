@@ -14,7 +14,7 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.dialogs.usersettings;
+package org.pentaho.mantle.client.usersettings.ui;
 
 import java.util.HashMap;
 
@@ -31,8 +31,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class UserPreferencesDialog extends PromptDialogBox implements ChangeListener, IDialogValidatorCallback, IDialogCallback {
 
-  public static enum PREFERENCE { STYLES, REPOSITORY, FAVORITES };
-  
+  public static enum PREFERENCE {
+    STYLES, REPOSITORY, FAVORITES
+  };
+
   VerticalPanel preferencesContent = new VerticalPanel();
   ListBox preferencesList = new ListBox();
   HashMap<String, UserPreferencesPanel> preferencesPanelMap = new HashMap<String, UserPreferencesPanel>();

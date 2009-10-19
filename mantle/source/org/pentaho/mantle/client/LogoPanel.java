@@ -17,13 +17,13 @@
 package org.pentaho.mantle.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class LogoPanel extends VerticalPanel {
 
@@ -50,8 +50,8 @@ public class LogoPanel extends VerticalPanel {
     }
     if (launchURL != null && !"".equals(launchURL)) { //$NON-NLS-1$
       logoImage.setStyleName("launchImage"); //$NON-NLS-1$
-      logoImage.addClickListener(new ClickListener() {
-        public void onClick(Widget sender) {
+      logoImage.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent event) {
           Window.open(getLaunchURL(), "_blank", ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
       });

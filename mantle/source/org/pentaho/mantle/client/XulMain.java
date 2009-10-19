@@ -14,10 +14,9 @@
  *
  * Copyright 2008 - 2009 Pentaho Corporation.  All rights reserved.
  * 
-*/
+ */
 package org.pentaho.mantle.client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,9 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
@@ -35,7 +37,6 @@ import org.pentaho.mantle.client.toolbars.MainToolbarModel;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.XulException;
-import org.pentaho.ui.xul.XulOverlay;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.gwt.GwtXulDomContainer;
 import org.pentaho.ui.xul.gwt.GwtXulRunner;
@@ -46,24 +47,23 @@ import org.pentaho.ui.xul.gwt.util.EventHandlerWrapper;
 import org.pentaho.ui.xul.gwt.util.IXulLoaderCallback;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
-public class XulMain extends SimplePanel implements IXulLoaderCallback{
-  
-  private Map<String, MantleXulOverlay> overlayMap = new HashMap<String, MantleXulOverlay>();  
-  
+public class XulMain extends SimplePanel implements IXulLoaderCallback, SolutionBrowserListener {
+
+  private Map<String, MantleXulOverlay> overlayMap = new HashMap<String, MantleXulOverlay>();
+
   private MainToolbarModel model;
-  
+
   private MainToolbarController controller;
-  
+
   private GwtXulDomContainer container;
-  
+
   private static XulMain _instance = null;
-  
+
   private SolutionBrowserPerspective solutionBrowser;
 
   public static synchronized XulMain instance(final SolutionBrowserPerspective solutionBrowser) {
@@ -72,66 +72,66 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
     }
     return _instance;
   }
-  
+
   public static XulMain getInstance() {
     return _instance;
   }
-  
-  protected XulMain(final SolutionBrowserPerspective solutionBrowser){
+
+  protected XulMain(final SolutionBrowserPerspective solutionBrowser) {
     this.solutionBrowser = solutionBrowser;
-    //instantiate our Model and Controller
+    // instantiate our Model and Controller
     controller = new MainToolbarController(solutionBrowser, new MainToolbarModel(solutionBrowser, this));
-    
+
     // Invoke the async loading of the XUL DOM.
     AsyncXulLoader.loadXulFromUrl("xul/main_toolbar.xul", "messages/messages", this);
-    
+    solutionBrowser.addSolutionBrowserListener(this);
   }
-  
+
   /**
    * Callback method for the MantleXulLoader. This is called when the Xul file has been processed.
    * 
-   * @param runner GwtXulRunner instance ready for event handlers and initializing.
+   * @param runner
+   *          GwtXulRunner instance ready for event handlers and initializing.
    */
-  public void xulLoaded(GwtXulRunner runner)  {    
-    
+  public void xulLoaded(GwtXulRunner runner) {
+
     // handlers need to be wrapped generically in GWT, create one and pass it our reference.
     EventHandlerWrapper wrapper = GWT.create(MainToolbarController.class);
     wrapper.setHandler(controller);
-  
+
     // Add handler to container
     container = (GwtXulDomContainer) runner.getXulDomContainers().get(0);
     container.addEventHandler(wrapper);
-  
-    try{
+
+    try {
       runner.initialize();
-    } catch(XulException e){
-      Window.alert("Error initializing XUL runner: "+e.getMessage());    //$NON-NLS-1$
+    } catch (XulException e) {
+      Window.alert("Error initializing XUL runner: " + e.getMessage()); //$NON-NLS-1$
       e.printStackTrace();
       return;
     }
 
-    //TODO: remove controller reference from model when Bindings in place
+    // TODO: remove controller reference from model when Bindings in place
     model = new MainToolbarModel(solutionBrowser, this);
     controller.setModel(model);
     controller.setSolutionBrowser(solutionBrowser);
-    
-  
+
     // Get the toolbar from the XUL doc
-    Toolbar bar = (Toolbar) container.getDocumentRoot().getElementById("mainToolbar").getManagedObject();    //$NON-NLS-1$
-    bar.setStylePrimaryName("mainToolbar");    //$NON-NLS-1$
+    Toolbar bar = (Toolbar) container.getDocumentRoot().getElementById("mainToolbar").getManagedObject(); //$NON-NLS-1$
+    bar.setStylePrimaryName("mainToolbar"); //$NON-NLS-1$
     this.add(bar);
 
-    //unfortunately hosted mode won't resolve the image with 'mantle/' in it
+    // unfortunately hosted mode won't resolve the image with 'mantle/' in it
     cleanImageUrlsForHostedMode();
-    
+
     fetchOverlays();
-    
+
     // Fix for IE 6 transparent PNGs
     ElementUtils.convertPNGs();
-    
+
   }
-  
-  private void fetchOverlays(){
+
+  private void fetchOverlays() {
     AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
 
       public void onFailure(Throwable caught) {
@@ -139,22 +139,21 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
       }
 
       public void onSuccess(List<MantleXulOverlay> overlays) {
-        
+
         XulMain.getInstance().loadOverlays(overlays);
       }
     };
-    MantleServiceCache.getService().getOverlays(callback);    
+    MantleServiceCache.getService().getOverlays(callback);
   }
-  
-  private void doLogin(){
+
+  private void doLogin() {
     MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true) {
-          
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true) {
+
         }; //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         dialogBox.setCallback(new IDialogCallback() {
           public void cancelPressed() {
             // do nothing
@@ -164,7 +163,7 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
             doLogin();
           }
         });
-        
+
         dialogBox.center();
       }
 
@@ -174,61 +173,62 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
 
     });
   }
-  
-  private void cleanImageUrlsForHostedMode(){
+
+  private void cleanImageUrlsForHostedMode() {
     if (!GWT.isScript()) {
-      
-      GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar");  //$NON-NLS-1$
-      for(XulComponent c : toolbar.getChildNodes()){
-        if(c instanceof XulToolbarbutton){
+
+      GwtToolbar toolbar = (GwtToolbar) container.getDocumentRoot().getElementById("mainToolbar"); //$NON-NLS-1$
+      for (XulComponent c : toolbar.getChildNodes()) {
+        if (c instanceof XulToolbarbutton) {
           GwtToolbarbutton btn = (GwtToolbarbutton) c;
-          
+
           String curSrc = btn.getImage();
-          btn.setImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
-          
+          btn.setImage(curSrc.replace("mantle/", "")); //$NON-NLS-1$ //$NON-NLS-2$
+
           curSrc = btn.getDisabledImage();
-          if(curSrc != null ){
-            btn.setDisabledImage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          if (curSrc != null) {
+            btn.setDisabledImage(curSrc.replace("mantle/", "")); //$NON-NLS-1$ //$NON-NLS-2$
           }
           curSrc = btn.getDownimage();
-          if(curSrc != null ){
-            btn.setDownimage(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          if (curSrc != null) {
+            btn.setDownimage(curSrc.replace("mantle/", "")); //$NON-NLS-1$ //$NON-NLS-2$
           }
           curSrc = btn.getDownimagedisabled();
-          if(curSrc != null ){
-            btn.setDownimagedisabled(curSrc.replace("mantle/", ""));    //$NON-NLS-1$ //$NON-NLS-2$
+          if (curSrc != null) {
+            btn.setDownimagedisabled(curSrc.replace("mantle/", "")); //$NON-NLS-1$ //$NON-NLS-2$
           }
         }
       }
     }
   }
-  
-  public void overlayLoaded(){
+
+  public void overlayLoaded() {
     cleanImageUrlsForHostedMode();
     // Fix for IE 6 transparent PNGs
     ElementUtils.convertPNGs();
-  } 
-  
+  }
+
   public void loadOverlays(List<MantleXulOverlay> overlays) {
-    for(MantleXulOverlay overlay: overlays) {
+    for (MantleXulOverlay overlay : overlays) {
       overlayMap.put(overlay.getId(), overlay);
-      if(overlay.getId().startsWith("startup")){
+      if (overlay.getId().startsWith("startup")) {
         AsyncXulLoader.loadOverlayFromSource(overlay.getSource(), overlay.getResourceBundleUri(), container, this);
       }
     }
   }
 
   public void applyOverlays(Set<String> overlayIds) {
-    if(overlayIds != null && !overlayIds.isEmpty()) {
+    if (overlayIds != null && !overlayIds.isEmpty()) {
       for (String overlayId : overlayIds) {
         applyOverlay(overlayId);
       }
     }
   }
+
   public void applyOverlay(String id) {
-    if(overlayMap != null && !overlayMap.isEmpty()) {
-      if(overlayMap.containsKey(id)) {
-        MantleXulOverlay overlay = overlayMap.get(id); 
+    if (overlayMap != null && !overlayMap.isEmpty()) {
+      if (overlayMap.containsKey(id)) {
+        MantleXulOverlay overlay = overlayMap.get(id);
         AsyncXulLoader.loadOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here
@@ -237,16 +237,17 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
   }
 
   public void removeOverlays(Set<String> overlayIds) {
-    if(overlayIds != null && !overlayIds.isEmpty()) {
+    if (overlayIds != null && !overlayIds.isEmpty()) {
       for (String overlayId : overlayIds) {
         removeOverlay(overlayId);
       }
     }
   }
+
   public void removeOverlay(String id) {
-    if(overlayMap != null && !overlayMap.isEmpty()) {    
-      if(overlayMap.containsKey(id)) {
-        MantleXulOverlay overlay = overlayMap.get(id); 
+    if (overlayMap != null && !overlayMap.isEmpty()) {
+      if (overlayMap.containsKey(id)) {
+        MantleXulOverlay overlay = overlayMap.get(id);
         AsyncXulLoader.removeOverlayFromSource(overlay.getOverlayXml(), overlay.getResourceBundleUri(), container, this);
       } else {
         // Should I log this or throw an exception here
@@ -256,9 +257,21 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback{
 
   public void overlayRemoved() {
     // TODO Auto-generated method stub
-    
-  }
-  
-}
 
-  
+  }
+
+  public void solutionBrowserEvent(EventType type, Widget panel, FileItem selectedFileItem) {
+    if (panel instanceof ReloadableIFrameTabPanel) {
+      if (SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
+        if (panel != null) {
+          applyOverlays(((ReloadableIFrameTabPanel) panel).getOverlayIds());
+        }
+      } else if (SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)) {
+        if (panel != null) {
+          removeOverlays(((ReloadableIFrameTabPanel) panel).getOverlayIds());
+        }
+      }
+    }
+  }
+
+}

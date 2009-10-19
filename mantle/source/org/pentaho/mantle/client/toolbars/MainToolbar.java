@@ -153,6 +153,7 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     addSpacer(20);
     add(workspaceToggleButton);
     add(showBrowserToggleButton);
+    
   }
 
   public void toggleWorkspaceButton() {

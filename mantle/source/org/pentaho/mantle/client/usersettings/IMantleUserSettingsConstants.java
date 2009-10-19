@@ -14,7 +14,7 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client;
+package org.pentaho.mantle.client.usersettings;
 
 public interface IMantleUserSettingsConstants {
   //////////////////////////////////////////////////////////////////////////////////////////////////

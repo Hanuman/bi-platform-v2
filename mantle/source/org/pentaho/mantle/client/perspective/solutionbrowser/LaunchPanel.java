@@ -17,7 +17,6 @@
 package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import org.pentaho.mantle.client.commands.ManageContentCommand;
-import org.pentaho.mantle.client.commands.WAQRCommand;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -32,8 +31,6 @@ public class LaunchPanel extends Frame {
   SolutionBrowserPerspective perspective;
 
   public LaunchPanel(SolutionBrowserPerspective perspective) {
-
-    
     this.perspective = perspective;
 
     String url = "mantle/launch/launch.jsp"; //$NON-NLS-1$
@@ -70,12 +67,8 @@ public class LaunchPanel extends Frame {
     $wnd.openManage = function(){
       panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openManage()();
     }
-    $wnd.openURL = function(name, tooltip, url){
-      panel.@org.pentaho.mantle.client.perspective.solutionbrowser.LaunchPanel::openURL(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, tooltip, url);
-    }
     var iwind = ele.contentWindow;
     
-  
     var funct = function(event){
       event = iwind.parent.translateInnerMouseEvent(ele, event);
       iwind.parent.sendMouseEvent(event);
@@ -102,10 +95,6 @@ public class LaunchPanel extends Frame {
 
   public void openManage(){
     new ManageContentCommand(perspective).execute();
-  }
-  
-  public void openURL(String name, String tooltip, String url) {
-    perspective.showNewURLTab(name, tooltip, url);
   }
 
 }

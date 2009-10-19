@@ -30,7 +30,7 @@ public class ToggleWorkspaceCommand implements Command {
 
   public void execute() {
     if (solutionBrowserPerspective.isWorkspaceShowing()) {
-      solutionBrowserPerspective.showLaunchOrContent();
+      solutionBrowserPerspective.showContent();
     } else {
       solutionBrowserPerspective.showWorkspace();
     }

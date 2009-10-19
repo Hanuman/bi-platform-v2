@@ -17,7 +17,7 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.perspective.workspace;
+package org.pentaho.mantle.client.perspective.solutionbrowser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,8 +33,6 @@ import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.WorkspaceContent;
-import org.pentaho.mantle.client.perspective.IPerspectiveCallback;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
@@ -53,7 +51,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WorkspacePerspective extends ScrollPanel {
+public class WorkspacePanel extends ScrollPanel {
   public DeleteSubscriptionClickListener deleteSubscriptionClickListener;
   private static final int WAITING = 0;
   private static final int COMPLETE = 1;
@@ -75,7 +73,7 @@ public class WorkspacePerspective extends ScrollPanel {
 
   private SolutionBrowserPerspective solutionBrowserPerspective;
 
-  public WorkspacePerspective(final SolutionBrowserPerspective solutionBrowserPerspective, final IPerspectiveCallback perspectiveCallback) {
+  public WorkspacePanel(final SolutionBrowserPerspective solutionBrowserPerspective) {
     this.solutionBrowserPerspective = solutionBrowserPerspective;
     DOM.setStyleAttribute(getElement(), "backgroundColor", "white"); //$NON-NLS-1$ //$NON-NLS-2$
     buildScheduledAndCompletedContentPanel();

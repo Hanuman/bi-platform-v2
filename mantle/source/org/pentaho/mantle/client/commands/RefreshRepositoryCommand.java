@@ -33,18 +33,24 @@ public class RefreshRepositoryCommand extends AbstractCommand {
   }
 
   protected void performOperation(final boolean feedback) {
+
+    // high level details:
+    // ask the server to reload/resolve the solution repository against disk (if needed)
+    // -this is only done if the user is the admin
+    // if the user is not admin, we're still going to cause a refetch of the solution repo document
+    // -because something might have been published or an admin might have reloaded with a different session
+
     AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
         WaitPopup.getInstance().setVisible(false);
-        MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("refreshRepositoryFailed"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
       public void onSuccess(Void nothing) {
         try {
-          navigatorPerspective.refreshPerspective(false);
+          navigatorPerspective.refreshSolutionBrowser(false);
         } catch (Throwable t) {
           // we want to make sure we don't prevent the waitpopup
         }
