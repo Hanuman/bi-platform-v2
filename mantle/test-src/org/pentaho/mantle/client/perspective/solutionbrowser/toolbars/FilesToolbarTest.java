@@ -17,10 +17,10 @@
  * @created Aug 27, 2008 
  * @author wseyler
  */
-package org.pentaho.mantle.client.perspective.solutionbrowser.toolbars;
+package org.pentaho.mantle.client.solutionbrowser.toolbars;
 
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.IFileItemCallback;
 
 import com.google.gwt.junit.client.GWTTestCase;
 
@@ -51,7 +51,7 @@ public class FilesToolbarTest extends GWTTestCase {
   public class MockCallback implements IFileItemCallback {
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#createSchedule(java.lang.String)
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#createSchedule(java.lang.String)
      */
     public void createSchedule(String cronExpression) {
       // TODO Auto-generated method stub
@@ -59,7 +59,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#createSchedule()
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#createSchedule()
      */
     public void createSchedule() {
       // TODO Auto-generated method stub
@@ -67,7 +67,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#editFile()
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#editFile()
      */
     public void editFile() {
       // TODO Auto-generated method stub
@@ -75,7 +75,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#getSelectedFileItem()
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#getSelectedFileItem()
      */
     public FileItem getSelectedFileItem() {
       // TODO Auto-generated method stub
@@ -83,7 +83,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#loadPropertiesDialog()
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#loadPropertiesDialog()
      */
     public void loadPropertiesDialog() {
       // TODO Auto-generated method stub
@@ -91,7 +91,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#openFile(int)
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#openFile(int)
      */
     public void openFile(int mode) {
       // TODO Auto-generated method stub
@@ -99,7 +99,7 @@ public class FilesToolbarTest extends GWTTestCase {
     }
 
     /* (non-Javadoc)
-     * @see org.pentaho.mantle.client.perspective.solutionbrowser.IFileItemCallback#setSelectedFileItem(org.pentaho.mantle.client.perspective.solutionbrowser.FileItem)
+     * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#setSelectedFileItem(org.pentaho.mantle.client.solutionbrowser.FileItem)
      */
     public void setSelectedFileItem(FileItem fileItem) {
       // TODO Auto-generated method stub
