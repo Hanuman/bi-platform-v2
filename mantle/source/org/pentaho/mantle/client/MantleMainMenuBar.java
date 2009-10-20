@@ -27,12 +27,12 @@ import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.SwitchLocaleCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileCommand;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.IReloadableTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.FileCommand;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.IReloadableTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;

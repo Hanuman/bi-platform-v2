@@ -21,7 +21,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.TextBox;

@@ -13,25 +13,31 @@
  * See the GNU Lesser General Public License for more details.
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
+ *
+ * @created Jul 31, 2008 
+ * @author wseyler
  */
-package org.pentaho.mantle.client.commands;
+package org.pentaho.mantle.client.solutionbrowser.events;
 
-import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import java.util.ArrayList;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.IFileItemCallback;
 
-public class WAQRCommand implements Command {
-
-  public WAQRCommand() {
-  }
-
-  public void execute() {
-    String waqrURL = "adhoc/waqr.html"; //$NON-NLS-1$
-    if (!GWT.isScript()) {
-      waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$
+/**
+ * @author wseyler
+ *
+ * Holds a list of IWizardPanelListeners.
+ */
+public class FileSelectionListenerCollection extends ArrayList<IFileSelectionChangedListener> {
+  /**
+   * Fires a wizard changed event to all listeners.
+   * 
+   * @param sender - the IWizardPanel sending the event.
+   */
+  public void fireFileSelectionChanged(IFileItemCallback callback) {
+    for (IFileSelectionChangedListener listener : this) {
+      listener.fileSelectionChanged(callback);
     }
-    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("untitled"), Messages.getString("newAdhocReport"), waqrURL); //$NON-NLS-1$ //$NON-NLS-2$
   }
 }

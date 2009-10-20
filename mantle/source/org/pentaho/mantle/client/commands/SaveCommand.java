@@ -24,9 +24,9 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.perspective.solutionbrowser.TabWidget;
+import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.TabWidget;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;

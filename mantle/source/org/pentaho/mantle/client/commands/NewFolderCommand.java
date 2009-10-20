@@ -20,10 +20,10 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileTreeItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionTree;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.FileTreeItem;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionTree;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;

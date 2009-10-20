@@ -19,7 +19,7 @@ package org.pentaho.mantle.client.toolbars;
 
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.binding.BindingFactory;
 import org.pentaho.ui.xul.components.XulToolbarbutton;
 import org.pentaho.ui.xul.gwt.binding.GwtBindingFactory;

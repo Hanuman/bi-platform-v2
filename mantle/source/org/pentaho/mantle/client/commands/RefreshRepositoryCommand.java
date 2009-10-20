@@ -19,8 +19,8 @@ package org.pentaho.mantle.client.commands;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.service.MantleServiceCache;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

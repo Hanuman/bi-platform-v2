@@ -14,24 +14,35 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.commands;
+package org.pentaho.mantle.client.solutionbrowser;
 
-import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.TreeItem;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-
-public class WAQRCommand implements Command {
-
-  public WAQRCommand() {
+public class FileTreeItem extends TreeItem {
+  public String fileName;
+  public String url;
+  private HasFocus focusableWidget;
+  
+  public String getFileName() {
+    return fileName;
   }
 
-  public void execute() {
-    String waqrURL = "adhoc/waqr.html"; //$NON-NLS-1$
-    if (!GWT.isScript()) {
-      waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$
-    }
-    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("untitled"), Messages.getString("newAdhocReport"), waqrURL); //$NON-NLS-1$ //$NON-NLS-2$
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
   }
+
+  public String getURL() {
+    return url;
+  }
+
+  public void setURL(String url) {
+    this.url = url;
+  }
+
+  @Override
+  protected HasFocus getFocusableWidget() {
+    return ((SolutionTree) this.getTree()).getFocusableWidget();
+  }
+  
 }

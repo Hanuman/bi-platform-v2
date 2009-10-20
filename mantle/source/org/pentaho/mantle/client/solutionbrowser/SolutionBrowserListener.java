@@ -14,24 +14,17 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.commands;
+package org.pentaho.mantle.client.solutionbrowser;
 
-import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import com.google.gwt.user.client.ui.Widget;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-
-public class WAQRCommand implements Command {
-
-  public WAQRCommand() {
+public interface SolutionBrowserListener {
+  
+  // would like to let the listeners know (where possible):
+  // -current tab (url)
+  // -selected file item
+  public enum EventType {
+    UNDEFINED, OPEN, SELECT, DESELECT, CLOSE
   }
-
-  public void execute() {
-    String waqrURL = "adhoc/waqr.html"; //$NON-NLS-1$
-    if (!GWT.isScript()) {
-      waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$
-    }
-    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("untitled"), Messages.getString("newAdhocReport"), waqrURL); //$NON-NLS-1$ //$NON-NLS-2$
-  }
+  public void solutionBrowserEvent(EventType type, Widget panel, FileItem selectedFileItem);
 }

@@ -17,7 +17,7 @@
 package org.pentaho.mantle.client.commands;
 
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 

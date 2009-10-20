@@ -30,10 +30,10 @@ import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;

@@ -20,7 +20,7 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooserDialog;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
 

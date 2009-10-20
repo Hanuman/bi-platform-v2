@@ -21,10 +21,10 @@ import org.pentaho.mantle.client.XulMain;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
-import org.pentaho.mantle.client.perspective.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserListener;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.stereotype.Bindable;
 

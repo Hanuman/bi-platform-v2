@@ -29,7 +29,7 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.commands.CommandExec;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.usersettings.IMantleSettingsListener;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.usersettings.IUserSettingsListener;

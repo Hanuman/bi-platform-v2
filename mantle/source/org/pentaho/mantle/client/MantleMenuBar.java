@@ -19,8 +19,8 @@ package org.pentaho.mantle.client;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.gwt.widgets.client.utils.FrameUtils;
-import org.pentaho.mantle.client.perspective.solutionbrowser.ReloadableIFrameTabPanel;
-import org.pentaho.mantle.client.perspective.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
