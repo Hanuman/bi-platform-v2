@@ -27,11 +27,11 @@ import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.SwitchLocaleCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.FileCommand;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
@@ -333,9 +333,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
   public void solutionBrowserEvent(SolutionBrowserListener.EventType type, Widget panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
-    if (panel != null && panel instanceof ReloadableIFrameTabPanel) {
-      selectedTabURL = ((ReloadableIFrameTabPanel) panel).getUrl();
-      saveEnabled = ((ReloadableIFrameTabPanel) panel).isSaveEnabled();
+    if (panel != null && panel instanceof IFrameTabPanel) {
+      selectedTabURL = ((IFrameTabPanel) panel).getUrl();
+      saveEnabled = ((IFrameTabPanel) panel).isSaveEnabled();
     }
 
     final boolean isEnabled = (selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$

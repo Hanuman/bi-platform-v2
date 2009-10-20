@@ -30,10 +30,10 @@ import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
@@ -177,9 +177,9 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     String selectedTabURL = null;
     boolean saveEnabled = false;
     
-    if(panel != null && panel instanceof ReloadableIFrameTabPanel){
-      selectedTabURL = ((ReloadableIFrameTabPanel)panel).getUrl();
-      saveEnabled = ((ReloadableIFrameTabPanel)panel).isSaveEnabled();
+    if(panel != null && panel instanceof IFrameTabPanel){
+      selectedTabURL = ((IFrameTabPanel)panel).getUrl();
+      saveEnabled = ((IFrameTabPanel)panel).isSaveEnabled();
     }
     
     printButton.setEnabled(selectedTabURL != null && !"".equals(selectedTabURL)); //$NON-NLS-1$

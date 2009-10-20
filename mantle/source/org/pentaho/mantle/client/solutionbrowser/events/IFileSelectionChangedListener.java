@@ -19,8 +19,7 @@
  */
 package org.pentaho.mantle.client.solutionbrowser.events;
 
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.IFileItemCallback;
+import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
 
 /**
  * @author wseyler

@@ -14,9 +14,10 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.launcher;
 
 import org.pentaho.mantle.client.commands.ManageContentCommand;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -58,13 +59,13 @@ public class LaunchPanel extends Frame {
   private native void hookNativeEvents(LaunchPanel panel, Element ele)
   /*-{
     $wnd.openWAQR = function(){
-      panel.@org.pentaho.mantle.client.solutionbrowser.LaunchPanel::openWAQR()();
+      panel.@org.pentaho.mantle.client.solutionbrowser.launcher.LaunchPanel::openWAQR()();
     }
     $wnd.openAnalysis = function(){
-      panel.@org.pentaho.mantle.client.solutionbrowser.LaunchPanel::openAnalysis()();
+      panel.@org.pentaho.mantle.client.solutionbrowser.launcher.LaunchPanel::openAnalysis()();
     }
     $wnd.openManage = function(){
-      panel.@org.pentaho.mantle.client.solutionbrowser.LaunchPanel::openManage()();
+      panel.@org.pentaho.mantle.client.solutionbrowser.launcher.LaunchPanel::openManage()();
     }
     var iwind = ele.contentWindow;
     

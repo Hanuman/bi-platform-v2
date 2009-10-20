@@ -17,19 +17,22 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.tabs;
 
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -46,7 +49,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TabWidget extends HorizontalPanel implements MouseListener {
 
-  private static final int TAB_TEXT_LENGTH = 12;
+  private static enum TABCOMMAND {
+    BACK, RELOAD, RELOAD_ALL, CLOSE, CLOSE_ALL, CLOSE_OTHERS, NEW_WINDOW, CREATE_DEEP_LINK
+  };
 
   private PopupPanel popupMenu = new MantlePopupPanel(true);
 
@@ -59,8 +64,39 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private Image closeTabImage = new Image();
   private String fullText;
 
-  public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
+  private class TabCommand implements Command {
 
+    TABCOMMAND mode = TABCOMMAND.RELOAD;
+    PopupPanel popupMenu;
+
+    public TabCommand(TABCOMMAND inMode, PopupPanel popupMenu) {
+      this.mode = inMode;
+      this.popupMenu = popupMenu;
+    }
+
+    public void execute() {
+      popupMenu.hide();
+      if (mode == TABCOMMAND.RELOAD) {
+        reloadTab();
+      } else if (mode == TABCOMMAND.RELOAD_ALL) {
+        reloadAllTabs();
+      } else if (mode == TABCOMMAND.CLOSE) {
+        closeTab();
+      } else if (mode == TABCOMMAND.CLOSE_OTHERS) {
+        closeOtherTabs();
+      } else if (mode == TABCOMMAND.CLOSE_ALL) {
+        closeAllTabs();
+      } else if (mode == TABCOMMAND.NEW_WINDOW) {
+        openTabInNewWindow();
+      } else if (mode == TABCOMMAND.CREATE_DEEP_LINK) {
+        createDeepLink();
+      } else if (mode == TABCOMMAND.BACK) {
+        back();
+      }
+    }
+  }
+
+  public TabWidget(String text, String tooltip, final SolutionBrowserPerspective perspective, final TabPanel tabPanel, final Widget tabContent) {
     // BISERVER-2317 Request for more IDs for Mantle UI elements
     // the id for each tab shall be the text which it displays
     getElement().setId("tab-" + text); //$NON-NLS-1$
@@ -106,9 +142,8 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     MantleImages.images.closeTab().applyTo(closeTabImage);
     closeTabImage.setTitle(Messages.getString("closeTab")); //$NON-NLS-1$
     closeTabImage.addMouseListener(this);
-    closeTabImage.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
+    closeTabImage.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         closeTab();
       }
 
@@ -177,7 +212,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void back() {
-    ((ReloadableIFrameTabPanel) tabContent).back();
+    ((IFrameTabPanel) tabContent).back();
   }
 
   public void closeAllTabs() {
@@ -188,22 +223,22 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void reloadTab() {
-    if (tabContent instanceof ReloadableIFrameTabPanel) {
-      ((ReloadableIFrameTabPanel) tabContent).reload();
+    if (tabContent instanceof IFrameTabPanel) {
+      ((IFrameTabPanel) tabContent).reload();
     }
   }
 
   public void reloadAllTabs() {
     for (int i = 0; i < tabPanel.getTabBar().getTabCount(); i++) {
-      if (tabPanel.getWidget(i) instanceof ReloadableIFrameTabPanel) {
-        ((ReloadableIFrameTabPanel) tabPanel.getWidget(i)).reload();
+      if (tabPanel.getWidget(i) instanceof IFrameTabPanel) {
+        ((IFrameTabPanel) tabPanel.getWidget(i)).reload();
       }
     }
   }
 
   public void openTabInNewWindow() {
-    if (tabContent instanceof ReloadableIFrameTabPanel) {
-      ((ReloadableIFrameTabPanel) tabContent).openTabInNewWindow();
+    if (tabContent instanceof IFrameTabPanel) {
+      ((IFrameTabPanel) tabContent).openTabInNewWindow();
     }
   }
 
@@ -219,18 +254,17 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        if (tabContent instanceof ReloadableIFrameTabPanel) {
-          MenuItem backMenuItem = new MenuItem(Messages.getString("back"), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this)); //$NON-NLS-1$
+        if (tabContent instanceof IFrameTabPanel) {
+          MenuItem backMenuItem = new MenuItem(Messages.getString("back"), new TabCommand(TABCOMMAND.BACK, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(backMenuItem);
           backMenuItem.getElement().setId("back"); //$NON-NLS-1$
           menuBar.addSeparator();
-          MenuItem reloadTabMenuItem = new MenuItem(Messages.getString("reloadTab"), new TabCommand(TabCommand.TABCOMMAND.RELOAD, popupMenu, this)); //$NON-NLS-1$
+          MenuItem reloadTabMenuItem = new MenuItem(Messages.getString("reloadTab"), new TabCommand(TABCOMMAND.RELOAD, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(reloadTabMenuItem);
           reloadTabMenuItem.getElement().setId("reloadTab"); //$NON-NLS-1$
         }
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getString("reloadAllTabs"), new TabCommand(TabCommand.TABCOMMAND.RELOAD_ALL, popupMenu, //$NON-NLS-1$
-              this));
+          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getString("reloadAllTabs"), new TabCommand(TABCOMMAND.RELOAD_ALL, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(reloadAllTabsMenuItem);
           reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
         } else {
@@ -240,24 +274,21 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
           reloadAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         }
         menuBar.addSeparator();
-        if (tabContent instanceof ReloadableIFrameTabPanel) {
-          MenuItem openTabInNewWindowMenuItem = new MenuItem(
-              Messages.getString("openTabInNewWindow"), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)); //$NON-NLS-1$
+        if (tabContent instanceof IFrameTabPanel) {
+          MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getString("openTabInNewWindow"), new TabCommand(TABCOMMAND.NEW_WINDOW, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(openTabInNewWindowMenuItem);
           openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
-          MenuItem createDeepLinkMenuItem = new MenuItem(
-              Messages.getString("createDeepLink"), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)); //$NON-NLS-1$
+          MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getString("createDeepLink"), new TabCommand(TABCOMMAND.CREATE_DEEP_LINK, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(createDeepLinkMenuItem);
           createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
           menuBar.addSeparator();
         }
-        menuBar.addItem(new MenuItem(Messages.getString("closeTab"), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this))); //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getString("closeTab"), new TabCommand(TABCOMMAND.CLOSE, popupMenu))); //$NON-NLS-1$
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          MenuItem closeOtherTabsMenuItem = new MenuItem(
-              Messages.getString("closeOtherTabs"), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)); //$NON-NLS-1$
+          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getString("closeOtherTabs"), new TabCommand(TABCOMMAND.CLOSE_OTHERS, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
           closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
-          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getString("closeAllTabs"), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)); //$NON-NLS-1$
+          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getString("closeAllTabs"), new TabCommand(TABCOMMAND.CLOSE_ALL, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(closeAllTabsMenuItem);
           closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
         } else {
@@ -328,12 +359,12 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void createDeepLink() {
-    if (tabContent instanceof ReloadableIFrameTabPanel) {
+    if (tabContent instanceof IFrameTabPanel) {
       PromptDialogBox dialogBox = new PromptDialogBox(Messages.getString("deepLink"), Messages.getString("ok"), Messages.getString("cancel"), false, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           true);
       String url = Window.Location.getProtocol() + "//" + Window.Location.getHostName() + ":" + Window.Location.getPort() + Window.Location.getPath() //$NON-NLS-1$ //$NON-NLS-2$
           + "?name=" + textLabel.getText() + "&startup-url="; //$NON-NLS-1$ //$NON-NLS-2$
-      String startup = ((ReloadableIFrameTabPanel) tabContent).getUrl();
+      String startup = ((IFrameTabPanel) tabContent).getUrl();
       TextBox urlbox = new TextBox();
       urlbox.setText(url + URL.encodeComponent(startup));
       urlbox.setVisibleLength(80);

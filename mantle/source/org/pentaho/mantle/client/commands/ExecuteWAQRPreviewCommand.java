@@ -18,8 +18,8 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -43,14 +43,14 @@ public class ExecuteWAQRPreviewCommand extends AbstractCommand {
     final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     if(solutionBrowserPerspective != null && contentTabPanel != null) {
       solutionBrowserPerspective.showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      NamedFrame namedFrame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
+      NamedFrame namedFrame = ((IFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
       final FormPanel form = new FormPanel(namedFrame);
       RootPanel.get().add(form);
       form.setMethod(FormPanel.METHOD_POST);
       form.setAction(url);
       form.add(new Hidden("reportXml", xml)); //$NON-NLS-1$
       form.submit();
-      ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
+      ((IFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).setForm(form);
     } else {
       MessageDialogBox dialogBox = new MessageDialogBox(
           Messages.getString("error"), Messages.getString("errorPerformingWAQRPreview"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$

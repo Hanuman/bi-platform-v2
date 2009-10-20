@@ -51,11 +51,21 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.solutionbrowser.FileCommand.COMMAND;
 import org.pentaho.mantle.client.solutionbrowser.classic.ClassicNavigatorView;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FilesListPanel;
+import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog;
+import org.pentaho.mantle.client.solutionbrowser.launcher.LaunchPanel;
 import org.pentaho.mantle.client.solutionbrowser.scheduling.NewScheduleDialog;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.tabs.TabWidget;
 import org.pentaho.mantle.client.solutionbrowser.toolbars.BrowserToolbar;
+import org.pentaho.mantle.client.solutionbrowser.tree.FileTreeItem;
+import org.pentaho.mantle.client.solutionbrowser.tree.SolutionTree;
+import org.pentaho.mantle.client.solutionbrowser.workspace.WorkspacePanel;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
 import org.pentaho.mantle.client.usersettings.ui.UserPreferencesDialog;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
@@ -104,7 +114,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
   private static int frameIdCount = 0;
   private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
-  private static PopupPanel popupMenu = new PopupPanel(true);
 
   private ClassicNavigatorView classicNavigatorView = new ClassicNavigatorView();
   private HorizontalSplitPanel solutionNavigatorAndContentPanel = new HorizontalSplitPanel(MantleImages.images);
@@ -160,7 +169,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   Command ToggleLocalizedNamesCommand = new Command() {
     public void execute() {
-      setUseLocalizedFileNames(!solutionTree.showLocalizedFileNames);
+      setUseLocalizedFileNames(!solutionTree.isShowLocalizedFileNames());
       // update view menu
       updateViewMenu(viewMenuCallback);
 
@@ -174,13 +183,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
         }
 
       };
-      MantleServiceCache.getService().setShowLocalizedFileNames(solutionTree.showLocalizedFileNames, callback);
+      MantleServiceCache.getService().setShowLocalizedFileNames(solutionTree.isShowLocalizedFileNames(), callback);
     }
   };
 
   Command ShowHideFilesCommand = new Command() {
     public void execute() {
-      setShowHiddenFiles(!solutionTree.showHiddenFiles);
+      setShowHiddenFiles(!solutionTree.isShowHiddenFiles());
       // update view menu
       updateViewMenu(viewMenuCallback);
 
@@ -194,13 +203,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
         }
 
       };
-      MantleServiceCache.getService().setShowHiddenFiles(solutionTree.showHiddenFiles, callback);
+      MantleServiceCache.getService().setShowHiddenFiles(solutionTree.isShowHiddenFiles(), callback);
     }
   };
 
   Command UseDescriptionCommand = new Command() {
     public void execute() {
-      setUseDescriptions(!solutionTree.useDescriptionsForTooltip);
+      setUseDescriptions(!solutionTree.isUseDescriptionsForTooltip());
       // update view menu
       updateViewMenu(viewMenuCallback);
 
@@ -215,7 +224,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
       };
       MantleServiceCache.getService().setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS,
-          "" + solutionTree.useDescriptionsForTooltip, callback);
+          "" + solutionTree.isUseDescriptionsForTooltip(), callback);
     }
   };
 
@@ -281,10 +290,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
           Widget tabPanel = contentTabPanel.getWidget(tabIndex);
           Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$ //$NON-NLS-2$
 
-          if (tabPanel instanceof ReloadableIFrameTabPanel) {
-            NamedFrame frame = ((ReloadableIFrameTabPanel) tabPanel).getFrame();
+          if (tabPanel instanceof IFrameTabPanel) {
+            NamedFrame frame = ((IFrameTabPanel) tabPanel).getFrame();
             frame.setVisible(true);
-            refreshIfPDF(((ReloadableIFrameTabPanel) tabPanel));
+            refreshIfPDF(((IFrameTabPanel) tabPanel));
           }
         }
         for (int i = 0; i < tabIndex; i++) {
@@ -394,7 +403,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   }
 
   public void hideFrame(int tabIndex) {
-    Frame frame = ((ReloadableIFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
+    Frame frame = ((IFrameTabPanel) contentTabPanel.getWidget(tabIndex)).getFrame();
     frame.setVisible(false);
   }
 
@@ -438,7 +447,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
             final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
             final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
             handleRightClick(left, top);
-            event.cancelBubble(true);
           } else {
             super.onBrowserEvent(event);
           }
@@ -493,6 +501,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   }
 
   private void handleRightClick(int left, int top) {
+    final PopupPanel popupMenu = MantlePopupPanel.getInstance(true);
     popupMenu.setPopupPosition(left, top);
     MenuBar menuBar = new MenuBar(true);
     menuBar.setAutoOpen(true);
@@ -530,8 +539,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       selectedTab = contentTabPanel.getTabBar().getSelectedTab();
       if (selectedTab > -1) {
         Widget tabContent = contentTabPanel.getWidget(selectedTab);
-        if (tabContent instanceof ReloadableIFrameTabPanel) {
-          refreshIfPDF((ReloadableIFrameTabPanel) tabContent);
+        if (tabContent instanceof IFrameTabPanel) {
+          refreshIfPDF((IFrameTabPanel) tabContent);
         }
       }
 
@@ -561,7 +570,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   public void showNewURLTab(final String tabName, final String tabTooltip, final String url) {
     final int elementId = contentTabPanel.getWidgetCount();
     String frameName = getUniqueFrameName();
-    ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
+    IFrameTabPanel panel = new IFrameTabPanel(frameName, url);
 
     Frame frame = panel.getFrame();
     frame.getElement().setAttribute("id", frameName); //$NON-NLS-1$
@@ -631,7 +640,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       if (mode == FileCommand.COMMAND.NEWWINDOW) {
         Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), selectedFileItem.getURL());
       }
     } else {
 
@@ -649,7 +658,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-              UrlCommand cmd = new UrlCommand(url, selectedFileItem.localizedName);
+              UrlCommand cmd = new UrlCommand(url, selectedFileItem.getLocalizedName());
               cmd.execute(new CommandCallback() {
                 public void afterExecute() {
                   setFileInfoInFrame();
@@ -666,7 +675,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+              showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), updateUrl);
             }
           }
         }
@@ -679,7 +688,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
           if (mode == FileCommand.COMMAND.NEWWINDOW) {
             Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
           } else {
-            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+            showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), selectedFileItem.getURL());
           }
         }
       }
@@ -692,7 +701,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
    * @param selectedFileItem
    */
   private void setFileInfoInFrame() {
-    ReloadableIFrameTabPanel tp = SolutionBrowserPerspective.this.getCurrentFrame();
+    IFrameTabPanel tp = SolutionBrowserPerspective.this.getCurrentFrame();
     if (tp != null && selectedFileItem != null) {
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
@@ -816,7 +825,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       // See if it's already loaded
       for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
-        if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)) {
+        if (w instanceof IFrameTabPanel && ((IFrameTabPanel) w).getUrl().endsWith(url)) {
           // Already up, select and exit
           contentTabPanel.selectTab(i);
           return;
@@ -845,7 +854,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
         // See if it's already loaded
         for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
           Widget w = contentTabPanel.getWidget(i);
-          if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(editUrl)) {
+          if (w instanceof IFrameTabPanel && ((IFrameTabPanel) w).getUrl().endsWith(editUrl)) {
             // Already up, select and exit
             contentTabPanel.selectTab(i);
             return;
@@ -858,7 +867,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
         } else {
           // we have a URL so open it in a new tab
           String updateUrl = "/MantleService?passthru=" + editUrl; //$NON-NLS-1$
-          showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+          showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), updateUrl);
         }
 
         // Store representation of file in the frame for reference later when save is called
@@ -899,7 +908,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       // See if it's already loaded
       for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
         Widget w = contentTabPanel.getWidget(i);
-        if (w instanceof ReloadableIFrameTabPanel && ((ReloadableIFrameTabPanel) w).url.endsWith(url)) {
+        if (w instanceof IFrameTabPanel && ((IFrameTabPanel) w).getUrl().endsWith(url)) {
           // Already up, select and exit
           contentTabPanel.selectTab(i);
           return;
@@ -1470,10 +1479,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private void updateViewMenu(IViewMenuCallback viewMenuCallback) {
     List<UIObject> viewMenuItems = new ArrayList<UIObject>();
 
-    showLocalizedFileNamesMenuItem.setChecked(solutionTree.showLocalizedFileNames);
-    showHiddenFilesMenuItem.setChecked(solutionTree.showHiddenFiles);
+    showLocalizedFileNamesMenuItem.setChecked(solutionTree.isShowLocalizedFileNames());
+    showHiddenFilesMenuItem.setChecked(solutionTree.isShowHiddenFiles());
     showSolutionBrowserMenuItem.setChecked(showSolutionBrowser);
-    useDescriptionsMenuItem.setChecked(solutionTree.useDescriptionsForTooltip);
+    useDescriptionsMenuItem.setChecked(solutionTree.isUseDescriptionsForTooltip());
 
     if (useClassicView) {
       // viewMenuItems.add(showLocalizedFileNamesMenuItem);
@@ -1488,11 +1497,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       }
     }
     viewMenuItems.add(new MenuItemSeparator());
-    
+
     MenuItem refreshItem = new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand());
     refreshItem.getElement().setId("view_refresh_menu_item");
     viewMenuItems.add(refreshItem); //$NON-NLS-1$
-    
+
     viewMenuCallback.installViewMenu(viewMenuItems);
   }
 
@@ -1654,8 +1663,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
       }
       return;
     }
-    ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
-    if (url.contains(curPanel.url)) {
+    IFrameTabPanel curPanel = (IFrameTabPanel) contentTabPanel.getWidget(curpos);
+    if (url.contains(curPanel.getUrl())) {
       contentTabPanel.remove(curpos);
       if (contentTabPanel.getWidgetCount() == 0) {
         allTabsClosed();
@@ -1664,9 +1673,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     }
 
     for (int i = contentTabPanel.getWidgetCount() - 1; i >= 0; i--) {
-      curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(i);
+      curPanel = (IFrameTabPanel) contentTabPanel.getWidget(i);
 
-      if (url.contains(curPanel.url)) {
+      if (url.contains(curPanel.getUrl())) {
         contentTabPanel.remove(i);
         if (contentTabPanel.getWidgetCount() == 0) {
           allTabsClosed();
@@ -1683,16 +1692,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
    */
   public String getCurrentFrameElementId() {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
-    final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
+    final IFrameTabPanel curPanel = (IFrameTabPanel) contentTabPanel.getWidget(curpos);
     return curPanel.getFrame().getElement().getAttribute("id"); //$NON-NLS-1$
   }
 
-  public ReloadableIFrameTabPanel getCurrentFrame() {
+  public IFrameTabPanel getCurrentFrame() {
     int curpos = contentTabPanel.getTabBar().getSelectedTab();
     if (curpos == -1) {
       return null;
     }
-    final ReloadableIFrameTabPanel curPanel = (ReloadableIFrameTabPanel) contentTabPanel.getWidget(curpos);
+    final IFrameTabPanel curPanel = (IFrameTabPanel) contentTabPanel.getWidget(curpos);
     return curPanel;
   }
 
@@ -1701,7 +1710,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
   }-*/;
 
-  private void refreshIfPDF(final ReloadableIFrameTabPanel frame) {
+  private void refreshIfPDF(final IFrameTabPanel frame) {
     Timer t = new Timer() {
       public void run() {
         if (isPDF(frame.getFrame().getElement())) {
@@ -1809,7 +1818,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   }
 
   public void setCurrentTabSaveEnabled(boolean enabled) {
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    IFrameTabPanel panel = getCurrentFrame();
     if (panel != null) {
       panel.setSaveEnabled(enabled);
     }
@@ -1821,27 +1830,27 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
    * and the type of event
    */
   public void registerContentOverlay(String id) {
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    IFrameTabPanel panel = getCurrentFrame();
     panel.addOverlay(id);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
   }
 
   public void enableContentEdit(boolean enable) {
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    IFrameTabPanel panel = getCurrentFrame();
     panel.setEditEnabled(enable);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
 
   public void setContentEditSelected(boolean selected) {
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    IFrameTabPanel panel = getCurrentFrame();
     panel.setEditSelected(selected);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
 
   // Content frames can register a Javascript object to receive various PUC notifications. We broker that out
-  // to the appropriate ReloadableIFrameTabPanel here.
+  // to the appropriate IFrameTabPanel here.
   public void setCurrentTabJSCallback(JavaScriptObject obj) {
-    ReloadableIFrameTabPanel panel = getCurrentFrame();
+    IFrameTabPanel panel = getCurrentFrame();
     panel.setContentCallback(obj);
   }
 

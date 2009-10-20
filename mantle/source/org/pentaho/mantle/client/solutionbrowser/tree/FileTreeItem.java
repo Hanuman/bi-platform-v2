@@ -14,16 +14,15 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.tree;
 
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class FileTreeItem extends TreeItem {
   public String fileName;
   public String url;
-  private HasFocus focusableWidget;
-  
+
   public String getFileName() {
     return fileName;
   }
@@ -41,8 +40,8 @@ public class FileTreeItem extends TreeItem {
   }
 
   @Override
-  protected HasFocus getFocusableWidget() {
-    return ((SolutionTree) this.getTree()).getFocusableWidget();
+  protected Focusable getFocusable() {
+    return ((SolutionTree) this.getTree()).getFocusable();
   }
-  
+
 }

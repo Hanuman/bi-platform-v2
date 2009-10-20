@@ -26,10 +26,10 @@ import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.FileTypeEnabledOptions;
-import org.pentaho.mantle.client.solutionbrowser.TabWidget;
-import org.pentaho.mantle.client.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
+import org.pentaho.mantle.client.solutionbrowser.tabs.TabWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TabPanel;

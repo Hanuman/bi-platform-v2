@@ -17,7 +17,7 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.tabs;
 
 import java.util.Set;
 import java.util.Stack;
@@ -32,75 +32,74 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ReloadableIFrameTabPanel extends VerticalPanel {
+public class IFrameTabPanel extends VerticalPanel {
 
-  String url;
-  String name;
-  CustomFrame frame;
-  protected SolutionFileInfo fileInfo;
-  protected FormPanel form;
-  protected boolean saveEnabled, editContentEnabled, editContentSelected;
-  
+  private String url;
+  private String name;
+  private CustomFrame frame;
+  private SolutionFileInfo fileInfo;
+  private FormPanel form;
+  private boolean saveEnabled, editContentEnabled, editContentSelected;
 
-  // We hold onto a Javascript object that gets various notifications of PUC events. 
+  // We hold onto a Javascript object that gets various notifications of PUC events.
   // (edit content button clicked, etc.)
   protected JavaScriptObject jsCallback;
-  
+
   private Set<String> overlayIds;
-  
-  public ReloadableIFrameTabPanel() {
-    this.name = ""+System.currentTimeMillis();
+
+  public IFrameTabPanel() {
+    this.name = "" + System.currentTimeMillis();
     this.frame = new CustomFrame(name, "about:blank");
   }
-  
-  public ReloadableIFrameTabPanel(String url) {
+
+  public IFrameTabPanel(String url) {
     this.url = url;
-    this.name = ""+System.currentTimeMillis();
+    this.name = "" + System.currentTimeMillis();
     this.frame = new CustomFrame(name, url); //$NON-NLS-1$
     add(frame);
-  }  
-  
-  public ReloadableIFrameTabPanel(String name, String url) {
+  }
+
+  public IFrameTabPanel(String name, String url) {
     this.url = url;
     this.name = name;
-    
+
     setSaveEnabled(url.endsWith("analysisview.xaction")); //$NON-NLS-1$
-    
+
     this.frame = new CustomFrame(name, url);
     add(frame);
   }
 
   public void reload() {
 
-    if(form != null){
+    if (form != null) {
       form.submit();
     } else {
-      //frame.setUrl(getCurrentUrl());
+      // frame.setUrl(getCurrentUrl());
       reloadFrame(frame.getElement());
     }
   }
 
-  public native void reloadFrame(Element frameElement)/*-{
+  public native void reloadFrame(Element frameElement)
+  /*-{
     frameElement.contentWindow.location.reload();
   }-*/;
-  
-  public void back(){
+
+  public void back() {
     frame.back();
   }
-  
-  public void setFileInfo(SolutionFileInfo info){
+
+  public void setFileInfo(SolutionFileInfo info) {
     fileInfo = info;
   }
-  
-  public SolutionFileInfo getFileInfo(){
+
+  public SolutionFileInfo getFileInfo() {
     return fileInfo;
   }
-  
+
   /*
-   * frame.getUrl returns the original URL, but not the current one. This method accesses the
-   * DOM directly to get that URL
+   * frame.getUrl returns the original URL, but not the current one. This method accesses the DOM directly to get that URL
    */
-  private String getCurrentUrl(){
+  private String getCurrentUrl() {
     return IFrameElement.as(this.frame.getElement()).getContentDocument().getURL();
   }
 
@@ -123,7 +122,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
   public void setFrame(CustomFrame frame) {
     this.frame = frame;
   }
-  
+
   public FormPanel getForm() {
     return form;
   }
@@ -131,46 +130,43 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
   public void setForm(FormPanel form) {
     this.form = form;
   }
-  
-  public class CustomFrame extends NamedFrame{
+
+  public class CustomFrame extends NamedFrame {
     private boolean ignoreNextHistoryAdd = false;
     private Stack<String> history = new Stack<String>();
-    
-    private CustomFrame(String name){
+
+    private CustomFrame(String name) {
       super(name);
     }
-    
-    private CustomFrame(String name, String url){
+
+    private CustomFrame(String name, String url) {
       super(name);
       setUrl(url);
     }
-    
-    public void back(){
-      if(!history.empty()){
+
+    public void back() {
+      if (!history.empty()) {
         ignoreNextHistoryAdd = true;
         frame.setUrl(history.pop());
       }
     }
-    
-    
-    
-    public void addHistory(String url){
-      if(ignoreNextHistoryAdd || url.equals("about:blank")){  //$NON-NLS-1$
+
+    public void addHistory(String url) {
+      if (ignoreNextHistoryAdd || url.equals("about:blank")) { //$NON-NLS-1$
         ignoreNextHistoryAdd = false;
         return;
       }
       history.add(url);
     }
-    
-    
-    
+
     @Override
     protected void onAttach() {
       super.onAttach();
       attachEventListeners(frame.getElement(), this);
     }
 
-    public native void attachEventListeners(Element ele, CustomFrame frame)/*-{
+    public native void attachEventListeners(Element ele, CustomFrame frame)
+    /*-{
       var iwind = ele.contentWindow; //IFrame's window instance
       
       var funct = function(event){
@@ -200,7 +196,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
       
       // Called on iFrame unload, calls containing Window to start monitoring it for Url change
       var unloader = function(event){
-        frame.@org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel$CustomFrame::addHistory(Ljava/lang/String;)(iwind.location.href);
+        frame.@org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel$CustomFrame::addHistory(Ljava/lang/String;)(iwind.location.href);
         $wnd.startIFrameWatcher(iwind);
       }
       
@@ -227,9 +223,6 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
       
       //Hook up the mouse and unload event handlers for iFrame being created
       $wnd.hookEvents(iwind);
-      
-      
-      
     }-*/;
   }
 
@@ -238,7 +231,7 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
   }
 
   public void setSaveEnabled(boolean enabled) {
-    saveEnabled = enabled;  
+    saveEnabled = enabled;
   }
 
   public Set<String> getOverlayIds() {
@@ -248,34 +241,33 @@ public class ReloadableIFrameTabPanel extends VerticalPanel {
   public void addOverlay(String id) {
     overlayIds.add(id);
   }
-  
-  public void setEditEnabled(boolean enable){
+
+  public void setEditEnabled(boolean enable) {
     this.editContentEnabled = enable;
   }
-  
-  public boolean isEditEnabled(){
-    return editContentEnabled ;
+
+  public boolean isEditEnabled() {
+    return editContentEnabled;
   }
- 
-  public void setEditSelected(boolean selected){
+
+  public void setEditSelected(boolean selected) {
     this.editContentSelected = selected;
   }
-  
-  public boolean isEditSelected(){
+
+  public boolean isEditSelected() {
     return this.editContentSelected;
   }
-  
+
   /**
-   * Return the JavaScript callback object registered to receive notifications 
-   * regarding this tab's content.
+   * Return the JavaScript callback object registered to receive notifications regarding this tab's content.
    * 
    * @return JavaScriptObject callback
    */
-  public JavaScriptObject getContentCallback(){
+  public JavaScriptObject getContentCallback() {
     return jsCallback;
   }
-  
-  public void setContentCallback(JavaScriptObject callback){
+
+  public void setContentCallback(JavaScriptObject callback) {
     this.jsCallback = callback;
   }
 }

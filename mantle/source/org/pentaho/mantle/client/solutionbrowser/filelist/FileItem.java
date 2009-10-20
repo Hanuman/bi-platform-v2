@@ -17,16 +17,18 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.filelist;
 
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.solutionbrowser.FileTypeEnabledOptions;
+import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
 import org.pentaho.mantle.client.solutionbrowser.events.FileSelectionListenerCollection;
 import org.pentaho.mantle.client.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.solutionbrowser.events.SourcesFileSelectionChanged;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -82,16 +84,16 @@ public class FileItem extends FlexTable implements SourcesFileSelectionChanged {
   // and we can be sure to hide any existing ones by calling hide
   static PopupPanel popupMenu = new MantlePopupPanel(true);
   
-  Label fileLabel = new Label();
-  IFileItemCallback fileItemCallback;
-  String name;
-  String solution;
-  String path;
-  String lastModifiedDateStr;
-  String url;
-  String localizedName;
-  FileTypeEnabledOptions options;
-  boolean supportsACLs;
+  private Label fileLabel = new Label();
+  private IFileItemCallback fileItemCallback;
+  private String name;
+  private String solution;
+  private String path;
+  private String lastModifiedDateStr;
+  private String url;
+  private String localizedName;
+  private FileTypeEnabledOptions options;
+  private boolean supportsACLs;
 
   FileSelectionListenerCollection fileSelectionListenerCollection = new FileSelectionListenerCollection();
 

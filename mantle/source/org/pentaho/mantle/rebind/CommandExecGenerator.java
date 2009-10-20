@@ -3,6 +3,10 @@ package org.pentaho.mantle.rebind;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.pentaho.mantle.client.commands.AbstractCommand;
+import org.pentaho.mantle.client.commands.CommandExec;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
@@ -12,6 +16,7 @@ import com.google.gwt.core.ext.typeinfo.JPackage;
 import com.google.gwt.core.ext.typeinfo.JPrimitiveType;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.TypeOracle;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
@@ -62,8 +67,8 @@ public class CommandExecGenerator extends Generator {
     // init composer, set class properties, create source writer
     ClassSourceFileComposerFactory composer = null;
     composer = new ClassSourceFileComposerFactory(packageName, className);
-    composer.addImplementedInterface("org.pentaho.mantle.client.commands.CommandExec");
-    composer.addImport("org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective");
+    composer.addImplementedInterface(CommandExec.class.getName());
+    composer.addImport(SolutionBrowserPerspective.class.getName());
 
     SourceWriter sourceWriter = null;
     sourceWriter = composer.createSourceWriter(context, printWriter);
@@ -93,14 +98,13 @@ public class CommandExecGenerator extends Generator {
       // find Command implementors
       ArrayList<JClassType> implementingTypes = new ArrayList<JClassType>();
 
-      JPackage pack = typeOracle.getPackage("org.pentaho.mantle.client.commands");
+      JPackage pack = typeOracle.getPackage(AbstractCommand.class.getPackage().getName());
 
-      JClassType eventSourceType = typeOracle.getType("com.google.gwt.user.client.Command");
+      JClassType eventSourceType = typeOracle.getType(Command.class.getName());
 
       for (JClassType type : pack.getTypes()) {
         if (type.isAssignableTo(eventSourceType)) {
           implementingTypes.add(type);
-          System.out.println(type.getSimpleSourceName());
         }
       }
 
@@ -128,7 +132,6 @@ public class CommandExecGenerator extends Generator {
   }
 
   private void generateConstructor(SourceWriter sourceWriter) {
-
     // start constructor source generation
     sourceWriter.println("public " + className + "() { ");
     sourceWriter.indent();
@@ -136,7 +139,6 @@ public class CommandExecGenerator extends Generator {
 
     sourceWriter.outdent();
     sourceWriter.println("}");
-
   }
 
   private String boxPrimative(JType type) {

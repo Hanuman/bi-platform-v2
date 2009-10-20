@@ -21,7 +21,7 @@ package org.pentaho.mantle.client.solutionbrowser.fileproperties;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 
 public interface IFileModifier {
   public void init(FileItem fileItem, SolutionFileInfo fileInfo);

@@ -17,7 +17,7 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.tree;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +33,11 @@ import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
 
@@ -47,10 +52,9 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -65,14 +69,13 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionTree extends Tree implements IFileItemCallback {
-  PopupPanel popupMenu = new MantlePopupPanel(true);
   boolean showLocalizedFileNames = true;
   boolean showHiddenFiles = false;
   Document solutionDocument;
   boolean isAdministrator = false;
   boolean createRootNode = false;
   boolean useDescriptionsForTooltip = false;
-  
+
   SolutionBrowserPerspective solutionBrowserPerspective;
   FocusPanel focusable = new FocusPanel();
 
@@ -83,7 +86,6 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     sinkEvents(Event.ONDBLCLICK);
     // popupMenu.setAnimationEnabled(false);
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
-    DOM.setElementAttribute(popupMenu.getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
     addItem(new TreeItem(Messages.getString("loadingEllipsis"))); //$NON-NLS-1$
 
     DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -97,12 +99,12 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     DOM.sinkEvents(focusable.getElement(), Event.FOCUSEVENTS);
 
     // By default, expanding a node does not select it. Add that in here
-    this.addOpenHandler(new OpenHandler<TreeItem>(){
+    this.addOpenHandler(new OpenHandler<TreeItem>() {
       public void onOpen(OpenEvent<TreeItem> event) {
         SolutionTree.this.setSelectedItem(event.getTarget());
       }
     });
-    
+
     getElement().setId("solutionTree");
   }
 
@@ -129,6 +131,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         // load menu (Note: disabled as Delete and Properties have no meaning for Folders now
         int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
         int top = Window.getScrollTop() + DOM.eventGetClientY(event);
+        final PopupPanel popupMenu = MantlePopupPanel.getInstance(true);
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
@@ -138,14 +141,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this))); //$NON-NLS-1$
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
-        Timer t = new Timer() {
-          public void run() {
-            popupMenu.show();
-          }
-        };
-        t.schedule(250);
-        super.onBrowserEvent(event);
-        //event.cancelBubble(true);
+        popupMenu.show();
       } else if (DOM.eventGetType(event) == Event.ONDBLCLICK) {
         getSelectedItem().setState(!getSelectedItem().getState(), true);
       } else {
@@ -155,7 +151,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       // death to this browser event
     }
     TreeItem selItem = getSelectedItem();
-    if(selItem != null){
+    if (selItem != null) {
       DOM.scrollIntoView(selItem.getElement());
     }
   }
@@ -284,11 +280,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
       if (item.getFileName().equals(pathSegments.get(segmentIndex))) {
         // we found the correct 'root', now search children
         segmentIndex++;
-        for (int i=0;i<item.getChildCount() && segmentIndex < pathSegments.size();i++) {
-          FileTreeItem childItem = (FileTreeItem)item.getChild(i);
+        for (int i = 0; i < item.getChildCount() && segmentIndex < pathSegments.size(); i++) {
+          FileTreeItem childItem = (FileTreeItem) item.getChild(i);
           if (childItem.getFileName().equals(pathSegments.get(segmentIndex))) {
             item = childItem;
-            i=0;
+            i = 0;
             segmentIndex++;
           }
         }
@@ -352,7 +348,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         while (parent != null) {
           if (StringUtils.isEmpty(parent.getAttribute("name"))) {
             try {
-              parent = (Element)parent.getParentNode();
+              parent = (Element) parent.getParentNode();
             } catch (Throwable t) {
               parent = null;
             }
@@ -367,13 +363,13 @@ public class SolutionTree extends Tree implements IFileItemCallback {
             break;
           }
           try {
-            parent = (Element)parent.getParentNode();
+            parent = (Element) parent.getParentNode();
           } catch (Throwable t) {
             parent = null;
           }
         }
         childTreeItem.getElement().setAttribute("id", id);
-        
+
         killAllTextSelection(childTreeItem.getElement());
         childTreeItem.setURL(childElement.getAttribute("url")); //$NON-NLS-1$
         if (showLocalizedFileNames) {
@@ -540,8 +536,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // brings up permission dialog
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
-    FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path, null, null,
-        null, null, false, null);
+    FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path, null,
+        null, null, null, false, null);
     FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, null, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
   }
@@ -593,8 +589,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     // delete folder
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
     String path = getPath().substring(0, getPath().lastIndexOf("/")); //$NON-NLS-1$
-    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path, null,
-        null, null, null, false, null);
+    final FileItem selectedItem = new FileItem(selectedTreeItem.getFileName(), selectedTreeItem.getText(), selectedTreeItem.getText(), getSolution(), path,
+        null, null, null, null, false, null);
     String repoPath = selectedItem.getPath();
     // if a solution folder is selected then the solution-name/path are the same, we can't allow that
     // but we need them to be in the tree like this for building the tree paths correctly (other code)
@@ -671,14 +667,11 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     return showLocalizedFileNames;
   }
 
-  
-  public boolean isUseDescriptionsForTooltip()
-  {
+  public boolean isUseDescriptionsForTooltip() {
     return useDescriptionsForTooltip;
   }
 
-  public void setUseDescriptionsForTooltip(boolean useDescriptionsForTooltip)
-  {
+  public void setUseDescriptionsForTooltip(boolean useDescriptionsForTooltip) {
     this.useDescriptionsForTooltip = useDescriptionsForTooltip;
     buildSolutionTree(solutionDocument);
   }
@@ -705,7 +698,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     return createRootNode;
   }
 
-  HasFocus getFocusableWidget() {
+  Focusable getFocusable() {
     return this.focusable;
   }
 

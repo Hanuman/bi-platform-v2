@@ -24,9 +24,9 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.solutionbrowser.TabWidget;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
+import org.pentaho.mantle.client.solutionbrowser.tabs.TabWidget;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -134,7 +134,7 @@ public class SaveCommand implements Command {
     type = null;
   }
 
-  private void retrieveCachedValues(ReloadableIFrameTabPanel tabPanel){
+  private void retrieveCachedValues(IFrameTabPanel tabPanel){
     SolutionFileInfo info = tabPanel.getFileInfo();
     if(info != null){
       this.name = info.getName();

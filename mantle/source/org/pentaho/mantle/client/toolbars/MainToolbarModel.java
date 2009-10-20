@@ -21,10 +21,10 @@ import org.pentaho.mantle.client.XulMain;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 import org.pentaho.ui.xul.XulEventSourceAdapter;
 import org.pentaho.ui.xul.stereotype.Bindable;
 
@@ -145,8 +145,8 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     boolean editSelected = false;
     JavaScriptObject callback = null;
 
-    if (panel != null && panel instanceof ReloadableIFrameTabPanel) {
-      ReloadableIFrameTabPanel tbp = (ReloadableIFrameTabPanel) panel;
+    if (panel != null && panel instanceof IFrameTabPanel) {
+      IFrameTabPanel tbp = (IFrameTabPanel) panel;
       selectedTabURL = tbp.getUrl();
       saveEnabled = tbp.isSaveEnabled();
       editIsEnabled = tbp.isEditEnabled();
@@ -164,17 +164,17 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
     setWorkspaceSelected(solutionBrowser.isWorkspaceShowing());
     setShowBrowserSelected(solutionBrowser.isNavigatorShowing());
 
-    if (panel instanceof ReloadableIFrameTabPanel) {
+    if (panel instanceof IFrameTabPanel) {
       if (SolutionBrowserListener.EventType.OPEN.equals(type)
           || SolutionBrowserListener.EventType.SELECT.equals(type)) {
         if (panel != null) {
           main
-              .applyOverlays(((ReloadableIFrameTabPanel) panel).getOverlayIds());
+              .applyOverlays(((IFrameTabPanel) panel).getOverlayIds());
         }
       } else if (SolutionBrowserListener.EventType.CLOSE.equals(type)
           || SolutionBrowserListener.EventType.DESELECT.equals(type)) {
         if (panel != null) {
-          main.removeOverlays(((ReloadableIFrameTabPanel) panel)
+          main.removeOverlays(((IFrameTabPanel) panel)
               .getOverlayIds());
         }
       }

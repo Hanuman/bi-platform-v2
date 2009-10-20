@@ -17,9 +17,9 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.filelist;
 
-import org.pentaho.mantle.client.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 
 public interface IFileItemCallback {
   public FileItem getSelectedFileItem();

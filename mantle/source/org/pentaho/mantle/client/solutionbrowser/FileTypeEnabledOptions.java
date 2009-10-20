@@ -22,7 +22,7 @@ package org.pentaho.mantle.client.solutionbrowser;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pentaho.mantle.client.solutionbrowser.FileCommand.COMMAND;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 
 /**
  * This class defines the options available for individual file extensions.

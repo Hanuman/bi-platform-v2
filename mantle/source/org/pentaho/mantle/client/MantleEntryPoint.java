@@ -62,7 +62,7 @@ public class MantleEntryPoint implements EntryPoint, IResourceBundleLoadCallback
         }
       }
     };
-    timer.schedule(3000);    
+    timer.schedule(1250);    
     
     MantleApplication mantle = new MantleApplication();
     mantle.loadApplication();

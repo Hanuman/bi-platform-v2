@@ -28,10 +28,10 @@ import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 import org.pentaho.mantle.client.toolbars.MainToolbarController;
 import org.pentaho.mantle.client.toolbars.MainToolbarModel;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
@@ -261,14 +261,14 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback, Solution
   }
 
   public void solutionBrowserEvent(EventType type, Widget panel, FileItem selectedFileItem) {
-    if (panel instanceof ReloadableIFrameTabPanel) {
+    if (panel instanceof IFrameTabPanel) {
       if (SolutionBrowserListener.EventType.OPEN.equals(type) || SolutionBrowserListener.EventType.SELECT.equals(type)) {
         if (panel != null) {
-          applyOverlays(((ReloadableIFrameTabPanel) panel).getOverlayIds());
+          applyOverlays(((IFrameTabPanel) panel).getOverlayIds());
         }
       } else if (SolutionBrowserListener.EventType.CLOSE.equals(type) || SolutionBrowserListener.EventType.DESELECT.equals(type)) {
         if (panel != null) {
-          removeOverlays(((ReloadableIFrameTabPanel) panel).getOverlayIds());
+          removeOverlays(((IFrameTabPanel) panel).getOverlayIds());
         }
       }
     }

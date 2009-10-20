@@ -17,7 +17,7 @@
  * Created Mar 25, 2008
  * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser;
+package org.pentaho.mantle.client.solutionbrowser.workspace;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ import java.util.List;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
-import org.pentaho.gwt.widgets.client.utils.StringUtils;
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
@@ -34,12 +34,14 @@ import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SubscriptionBean;
 import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.mantle.client.service.MantleServiceCache;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.login.client.MantleLoginDialog;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Frame;
@@ -49,10 +51,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class WorkspacePanel extends ScrollPanel {
-  public DeleteSubscriptionClickListener deleteSubscriptionClickListener;
+  public DeleteSubscriptionClickHandler deleteSubscriptionClickHandler;
   private static final int WAITING = 0;
   private static final int COMPLETE = 1;
   private static final int MYSCHEDULES = 2;
@@ -189,9 +190,8 @@ public class WorkspacePanel extends ScrollPanel {
       HorizontalPanel actionPanel = new HorizontalPanel();
       if (tableType == COMPLETE) {
         Label viewLabel = new Label(Messages.getString("view")); //$NON-NLS-1$
-        viewLabel.addClickListener(new ClickListener() {
-
-          public void onClick(Widget sender) {
+        viewLabel.addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
             // PromptDialogBox viewDialog = new PromptDialogBox(jobDetail.name, "Close", null, true, true);
             // viewDialog.setPixelSize(1024, 600);
             // viewDialog.center();
@@ -203,14 +203,12 @@ public class WorkspacePanel extends ScrollPanel {
             // iframe.setPixelSize(1024, 600);
             solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id); //$NON-NLS-1$
           }
-
         });
         viewLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
         viewLabel.setTitle(Messages.getString("viewContent")); //$NON-NLS-1$
         Label deleteLabel = new Label(Messages.getString("delete")); //$NON-NLS-1$
-        deleteLabel.addClickListener(new ClickListener() {
-
-          public void onClick(Widget sender) {
+        deleteLabel.addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
             deleteContentItem(jobDetail.id);
           }
 
@@ -223,9 +221,8 @@ public class WorkspacePanel extends ScrollPanel {
         actionPanel.add(deleteLabel);
       } else if (tableType == WAITING) {
         Label cancelLabel = new Label(Messages.getString("cancel")); //$NON-NLS-1$
-        cancelLabel.addClickListener(new ClickListener() {
-
-          public void onClick(Widget sender) {
+        cancelLabel.addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
             cancelBackgroundJob(jobDetail.id, jobDetail.group);
           }
 
@@ -293,20 +290,20 @@ public class WorkspacePanel extends ScrollPanel {
 
       Label lblRunNow = new Label(Messages.getString("run")); //$NON-NLS-1$
       lblRunNow.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblRunNow.addClickListener(new RunSubscriptionClickListener(currentSubscr));
+      lblRunNow.addClickHandler(new RunSubscriptionClickHandler(currentSubscr));
 
       Label lblArchive = new Label(Messages.getString("archive")); //$NON-NLS-1$
       lblArchive.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblArchive.addClickListener(new RunAndArchiveClickListener(subscriptionId));
+      lblArchive.addClickHandler(new RunAndArchiveClickHandler(subscriptionId));
 
       Label lblEdit = new Label(Messages.getString("edit")); //$NON-NLS-1$
       lblEdit.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      lblEdit.addClickListener(new EditSubscriptionClickListener(currentSubscr));
+      lblEdit.addClickHandler(new EditSubscriptionClickHandler(currentSubscr));
 
       Label lblDelete = new Label(Messages.getString("delete")); //$NON-NLS-1$
       lblDelete.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-      deleteSubscriptionClickListener = new DeleteSubscriptionClickListener(currentSubscr, lblDelete);
-      lblDelete.addClickListener(deleteSubscriptionClickListener);
+      deleteSubscriptionClickHandler = new DeleteSubscriptionClickHandler(currentSubscr, lblDelete);
+      lblDelete.addClickHandler(deleteSubscriptionClickHandler);
 
       buttonsPanel.add(lblRunNow);
       buttonsPanel.add(new HTML("&nbsp;|&nbsp;")); //$NON-NLS-1$
@@ -337,9 +334,8 @@ public class WorkspacePanel extends ScrollPanel {
 
           final Label lblViewContent = new Label(Messages.getString("view")); //$NON-NLS-1$
           lblViewContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-          lblViewContent.addClickListener(new ClickListener() {
-
-            public void onClick(Widget sender) {
+          lblViewContent.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
               final String fileId = currSchedule[3];
               final String name = subscriptionId;
               performActionOnSubscriptionContent("archived", currentSubscr, name, fileId); //$NON-NLS-1$
@@ -349,8 +345,8 @@ public class WorkspacePanel extends ScrollPanel {
 
           final Label lblDeleteContent = new Label(Messages.getString("delete")); //$NON-NLS-1$
           lblDeleteContent.setStyleName("backgroundContentAction"); //$NON-NLS-1$
-          lblDeleteContent.addClickListener(new ClickListener() {
-            public void onClick(Widget sender) {
+          lblDeleteContent.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
               doDelete(false, currentSubscr, currSchedule[3]);
             }
           });
@@ -401,7 +397,7 @@ public class WorkspacePanel extends ScrollPanel {
       final IDialogCallback callback = new IDialogCallback() {
         public void cancelPressed() {
           deleteConfirmDialog.hide();
-          deleteSubscriptionClickListener.getLblDelete().setVisible(true);
+          deleteSubscriptionClickHandler.getLblDelete().setVisible(true);
         }
 
         public void okPressed() {
@@ -504,9 +500,8 @@ public class WorkspacePanel extends ScrollPanel {
       final JobSchedule jobSchedule = scheduleDetails.get(row);
       HorizontalPanel actionPanel = new HorizontalPanel();
       Label suspendJobLabel = new Label(Messages.getString("suspend")); //$NON-NLS-1$
-      suspendJobLabel.addClickListener(new ClickListener() {
-
-        public void onClick(Widget sender) {
+      suspendJobLabel.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent event) {
           suspendJob(jobSchedule.jobName, jobSchedule.jobGroup, jobSource);
         }
 
@@ -515,9 +510,8 @@ public class WorkspacePanel extends ScrollPanel {
       suspendJobLabel.setTitle(Messages.getString("suspendThisJob")); //$NON-NLS-1$
 
       Label resumeJobLabel = new Label(Messages.getString("resume")); //$NON-NLS-1$
-      resumeJobLabel.addClickListener(new ClickListener() {
-
-        public void onClick(Widget sender) {
+      resumeJobLabel.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent event) {
           resumeJob(jobSchedule.jobName, jobSchedule.jobGroup, jobSource);
         }
 
@@ -526,9 +520,8 @@ public class WorkspacePanel extends ScrollPanel {
       resumeJobLabel.setTitle(Messages.getString("resumeThisJob")); //$NON-NLS-1$
 
       Label runJobLabel = new Label(Messages.getString("run")); //$NON-NLS-1$
-      runJobLabel.addClickListener(new ClickListener() {
-
-        public void onClick(Widget sender) {
+      runJobLabel.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent event) {
           runJob(jobSchedule.jobName, jobSchedule.jobGroup, jobSource);
         }
 
@@ -537,9 +530,8 @@ public class WorkspacePanel extends ScrollPanel {
       runJobLabel.setTitle(Messages.getString("runThisJob")); //$NON-NLS-1$
 
       Label deleteJobLabel = new Label(Messages.getString("delete")); //$NON-NLS-1$
-      deleteJobLabel.addClickListener(new ClickListener() {
-
-        public void onClick(Widget sender) {
+      deleteJobLabel.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent event) {
           deleteJob(jobSchedule.jobName, jobSchedule.jobGroup, jobSource);
         }
 
@@ -889,43 +881,43 @@ public class WorkspacePanel extends ScrollPanel {
   }
 
   // Event classes
-  public class RunAndArchiveClickListener implements ClickListener {
+  public class RunAndArchiveClickHandler implements ClickHandler {
     String subscriptionId;
 
-    public RunAndArchiveClickListener(String subscriptionID) {
+    public RunAndArchiveClickHandler(String subscriptionID) {
       this.subscriptionId = subscriptionID;
     }
 
-    public void onClick(Widget arg0) {
+    public void onClick(ClickEvent event) {
       runAndArchive(subscriptionId);
     }
   }
 
-  public class RunSubscriptionClickListener implements ClickListener {
+  public class RunSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
 
-    public RunSubscriptionClickListener(SubscriptionBean subscription) {
+    public RunSubscriptionClickHandler(SubscriptionBean subscription) {
       this.subscription = subscription;
     }
 
-    public void onClick(Widget arg0) {
+    public void onClick(ClickEvent event) {
       performActionOnSubscription("run", subscription, subscription.getId()); //$NON-NLS-1$
     }
   }
 
-  public class EditSubscriptionClickListener implements ClickListener {
+  public class EditSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
 
-    public EditSubscriptionClickListener(SubscriptionBean subscription) {
+    public EditSubscriptionClickHandler(SubscriptionBean subscription) {
       this.subscription = subscription;
     }
 
-    public void onClick(Widget arg0) {
+    public void onClick(ClickEvent event) {
       performActionOnSubscription("edit", subscription, subscription.getId()); //$NON-NLS-1$
     }
   }
 
-  public class DeleteSubscriptionClickListener implements ClickListener {
+  public class DeleteSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
     Label lblDelete;
 
@@ -937,16 +929,16 @@ public class WorkspacePanel extends ScrollPanel {
       this.lblDelete = lblDelete;
     }
 
-    public DeleteSubscriptionClickListener(SubscriptionBean subscription, Label lblDelete) {
+    public DeleteSubscriptionClickHandler(SubscriptionBean subscription, Label lblDelete) {
       this.subscription = subscription;
       this.lblDelete = lblDelete;
     }
 
-    public void onClick(Widget sender) {
+    public void onClick(ClickEvent event) {
       lblDelete.setVisible(false);
       doDelete(true, subscription, ""); //$NON-NLS-1$
     }
-    
+
   }
 
 }
