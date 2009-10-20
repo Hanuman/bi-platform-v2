@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ReloadableIFrameTabPanel extends VerticalPanel implements IReloadableTabPanel {
+public class ReloadableIFrameTabPanel extends VerticalPanel {
 
   String url;
   String name;

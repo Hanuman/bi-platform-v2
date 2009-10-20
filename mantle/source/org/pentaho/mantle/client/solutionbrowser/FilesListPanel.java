@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
-import org.pentaho.gwt.widgets.client.utils.StringUtils;
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.solutionbrowser.toolbars.FilesToolbar;
 
 import com.google.gwt.user.client.DOM;
@@ -80,6 +80,8 @@ public class FilesListPanel extends FlowPanel {
     add(filesListWrapper);
 
     this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
+    
+    getElement().setId("filesListPanel");
   }
 
   public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, FileItem selectedFileItem, TreeItem item) {

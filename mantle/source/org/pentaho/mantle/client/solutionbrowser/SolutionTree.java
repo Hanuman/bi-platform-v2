@@ -58,7 +58,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -103,6 +102,8 @@ public class SolutionTree extends Tree implements IFileItemCallback {
         SolutionTree.this.setSelectedItem(event.getTarget());
       }
     });
+    
+    getElement().setId("solutionTree");
   }
 
   public void onBrowserEvent(Event event) {

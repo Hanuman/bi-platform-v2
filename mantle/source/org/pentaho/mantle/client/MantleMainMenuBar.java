@@ -29,7 +29,6 @@ import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.IReloadableTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.ReloadableIFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
@@ -334,7 +333,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
   public void solutionBrowserEvent(SolutionBrowserListener.EventType type, Widget panel, FileItem selectedFileItem) {
     String selectedTabURL = null;
     boolean saveEnabled = false;
-    if (panel != null && panel instanceof IReloadableTabPanel) {
+    if (panel != null && panel instanceof ReloadableIFrameTabPanel) {
       selectedTabURL = ((ReloadableIFrameTabPanel) panel).getUrl();
       saveEnabled = ((ReloadableIFrameTabPanel) panel).isSaveEnabled();
     }

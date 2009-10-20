@@ -56,32 +56,20 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   private static final String SEPARATOR = "separator"; //$NON-NLS-1$
   protected String FILES_TOOLBAR_STYLE_NAME = "filesPanelToolbar"; //$NON-NLS-1$
   protected String FILE_GROUP_STYLE_NAME = "filesToolbarGroup"; //$NON-NLS-1$
-  
-  private static final String menuItemNames[] = {
-    "openInNewWindow", //$NON-NLS-1$
-    "runInBackground", //$NON-NLS-1$
- // edit action is a advanced feature, hidden normally
-    "editAction", //$NON-NLS-1$
-    "delete", //$NON-NLS-1$
-    SEPARATOR,
-    "share", //$NON-NLS-1$
-    "scheduleEllipsis", //$NON-NLS-1$
-    SEPARATOR,
-    "propertiesEllipsis" //$NON-NLS-1$ 
+
+  private static final String menuItemNames[] = { "openInNewWindow", //$NON-NLS-1$
+      "runInBackground", //$NON-NLS-1$
+      // edit action is a advanced feature, hidden normally
+      "editAction", //$NON-NLS-1$
+      "delete", //$NON-NLS-1$
+      SEPARATOR, "share", //$NON-NLS-1$
+      "scheduleEllipsis", //$NON-NLS-1$
+      SEPARATOR, "propertiesEllipsis" //$NON-NLS-1$ 
   };
-  
-  FileCommand.COMMAND menuCommands[] = {
-      COMMAND.NEWWINDOW,
-      COMMAND.BACKGROUND,
-      COMMAND.EDIT_ACTION,
-      COMMAND.DELETE,
-      null,
-      COMMAND.SHARE,
-      COMMAND.SCHEDULE_NEW,
-      null,
-      COMMAND.PROPERTIES
-  };
-  
+
+  FileCommand.COMMAND menuCommands[] = { COMMAND.NEWWINDOW, COMMAND.BACKGROUND, COMMAND.EDIT_ACTION, COMMAND.DELETE, null, COMMAND.SHARE, COMMAND.SCHEDULE_NEW,
+      null, COMMAND.PROPERTIES };
+
   ToolbarComboButton miscComboBtn;
   ToolbarButton runBtn, editBtn;
   FileCommand runCmd, editCmd;
@@ -160,7 +148,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     add(miscComboBtn);
     setEnabled(false);
   }
-    
+
   private void createMenuItems(final boolean supportsACLs) {
     this.supportsACLs = supportsACLs;
     menuItems = new MenuItem[menuCommands.length];
@@ -170,8 +158,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       if (!supportsACLs && menuCommands[i] == COMMAND.SHARE) {
         continue;
       }
-      if (!MantleApplication.showAdvancedFeatures && 
-          menuCommands[i] == COMMAND.EDIT_ACTION) {
+      if (!MantleApplication.showAdvancedFeatures && menuCommands[i] == COMMAND.EDIT_ACTION) {
         continue;
       }
       if (menuCommands[i] == null) {
@@ -189,11 +176,11 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     String safeid = id.replace(' ', '_').replaceAll("\\.", "").replaceAll(":", "");
     return safeid.toLowerCase();
   }
-  
+
   @Override
   public void popupClosed(PopupPanel panel) {
     ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
-    if(iframeTab == null || iframeTab.getFrame() == null){
+    if (iframeTab == null || iframeTab.getFrame() == null) {
       return;
     }
     Frame currentFrame = iframeTab.getFrame();
@@ -203,12 +190,11 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   @Override
   public void popupOpened(PopupPanel panel) {
     ReloadableIFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
-    if(iframeTab == null || iframeTab.getFrame() == null){
+    if (iframeTab == null || iframeTab.getFrame() == null) {
       return;
     }
     Frame currentFrame = iframeTab.getFrame();
-    if(ElementUtils.elementsOverlap(panel.getElement(), 
-        currentFrame.getElement())){
+    if (ElementUtils.elementsOverlap(panel.getElement(), currentFrame.getElement())) {
       FrameUtils.setEmbedVisibility(currentFrame, false);
     }
   }
@@ -216,7 +202,9 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   /*
    * (non-Javadoc)
    * 
-   * @see org.pentaho.mantle.client.solutionbrowser.events.IFileSelectionChangedListener#fileSelectionChanged(org.pentaho.mantle.client.solutionbrowser.IFileItemCallback)
+   * @see
+   * org.pentaho.mantle.client.solutionbrowser.events.IFileSelectionChangedListener#fileSelectionChanged(org.pentaho.mantle.client.solutionbrowser.IFileItemCallback
+   * )
    */
   public void fileSelectionChanged(IFileItemCallback callback) {
     updateMenus(callback.getSelectedFileItem());
@@ -236,7 +224,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       if ((!supportsACLs && menuCommands[i] == COMMAND.SHARE) || menuCommands[i] == null || menuItems[i] == null) {
         continue;
       }
-      
+
       if (selectedFileItem != null && selectedFileItem.isCommandEnabled(menuCommands[i])) {
         menuItems[i].setCommand(menuFileCommands[i]);
         menuItems[i].setStyleName("gwt-MenuItem"); //$NON-NLS-1$
@@ -247,26 +235,26 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     }
     miscComboBtn.setMenu(miscMenus);
   }
-  
+
   /**
    * @author wseyler
-   *
+   * 
    */
-public class FilesToolbarGroup extends ToolbarGroup {
+  public class FilesToolbarGroup extends ToolbarGroup {
     public FilesToolbarGroup(String groupName) {
       super(groupName);
     }
 
     /**
-     * Changes the enabled status of the group. If enabled is false, the buttons will be disabled.
-     * If enabled is true, it will consult the buttons for their current enabled state.
+     * Changes the enabled status of the group. If enabled is false, the buttons will be disabled. If enabled is true, it will consult the buttons for their
+     * current enabled state.
      * 
-     * @param enabled boolena flag
+     * @param enabled
+     *          boolena flag
      */
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
       super.setEnabled(true);
     }
-    
 
     public void setTempDisabled(boolean disable) {
       super.setTempDisabled(false);

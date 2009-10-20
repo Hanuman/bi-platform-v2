@@ -19,24 +19,17 @@
  */
 package org.pentaho.mantle.client.solutionbrowser;
 
-import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
-import org.pentaho.gwt.widgets.client.utils.FrameUtils;
-import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.objects.Bookmark;
-import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -44,10 +37,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MouseListener;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -58,7 +49,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private static final int TAB_TEXT_LENGTH = 12;
 
   private PopupPanel popupMenu = new MantlePopupPanel(true);
-  
+
   private TabPanel tabPanel;
   private Widget tabContent;
   private SolutionBrowserPerspective perspective;
@@ -186,7 +177,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void back() {
-    ((IReloadableTabPanel) tabContent).back();
+    ((ReloadableIFrameTabPanel) tabContent).back();
   }
 
   public void closeAllTabs() {
@@ -197,67 +188,22 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   }
 
   public void reloadTab() {
-    if (tabContent instanceof IReloadableTabPanel) {
-      ((IReloadableTabPanel) tabContent).reload();
+    if (tabContent instanceof ReloadableIFrameTabPanel) {
+      ((ReloadableIFrameTabPanel) tabContent).reload();
     }
   }
 
   public void reloadAllTabs() {
     for (int i = 0; i < tabPanel.getTabBar().getTabCount(); i++) {
-      if (tabPanel.getWidget(i) instanceof IReloadableTabPanel) {
-        ((IReloadableTabPanel) tabPanel.getWidget(i)).reload();
+      if (tabPanel.getWidget(i) instanceof ReloadableIFrameTabPanel) {
+        ((ReloadableIFrameTabPanel) tabPanel.getWidget(i)).reload();
       }
     }
   }
 
   public void openTabInNewWindow() {
-    if (tabContent instanceof IReloadableTabPanel) {
-      ((IReloadableTabPanel) tabContent).openTabInNewWindow();
-    }
-  }
-
-  public void bookmark() {
     if (tabContent instanceof ReloadableIFrameTabPanel) {
-      final String url = ((ReloadableIFrameTabPanel) tabContent).getUrl();
-      final AsyncCallback callback = new AsyncCallback() {
-
-        public void onFailure(Throwable caught) {
-        }
-
-        public void onSuccess(Object result) {
-          if (perspective != null) {
-            perspective.loadBookmarks();
-          }
-        }
-
-      };
-
-      MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-      for (Bookmark bookmark : perspective.getBookmarks()) {
-        oracle.add(bookmark.getGroup());
-      }
-
-      final TextBox groupNameTextBox = new TextBox();
-      SuggestBox suggestTextBox = new SuggestBox(oracle, groupNameTextBox);
-
-      PromptDialogBox dialogBox = new PromptDialogBox(Messages.getString("groupName"), Messages.getString("ok"), Messages.getString("cancel"), false, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          true, suggestTextBox);
-      if (perspective != null) {
-        perspective.getBookmarks();
-      }
-      dialogBox.setCallback(new IDialogCallback() {
-        public void cancelPressed() {
-        }
-
-        public void okPressed() {
-          Bookmark bookmark = new Bookmark();
-          bookmark.setTitle(textLabel.getText());
-          bookmark.setUrl(url);
-          bookmark.setGroup(groupNameTextBox.getText());
-          MantleServiceCache.getService().addBookmark(bookmark, callback);
-        }
-      });
-      dialogBox.center();
+      ((ReloadableIFrameTabPanel) tabContent).openTabInNewWindow();
     }
   }
 
@@ -274,14 +220,6 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
         if (tabContent instanceof ReloadableIFrameTabPanel) {
-          if (MantleApplication.showAdvancedFeatures) {
-            MenuItem bookmarkMenuItem = new MenuItem(Messages.getString("bookmarkTab"), new TabCommand(TabCommand.TABCOMMAND.BOOKMARK, popupMenu, this)); //$NON-NLS-1$
-            menuBar.addItem(bookmarkMenuItem);
-            bookmarkMenuItem.getElement().setId("bookmark"); //$NON-NLS-1$
-            menuBar.addSeparator();
-          }
-        }
-        if (tabContent instanceof IReloadableTabPanel) {
           MenuItem backMenuItem = new MenuItem(Messages.getString("back"), new TabCommand(TabCommand.TABCOMMAND.BACK, popupMenu, this)); //$NON-NLS-1$
           menuBar.addItem(backMenuItem);
           backMenuItem.getElement().setId("back"); //$NON-NLS-1$
@@ -302,18 +240,21 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
           reloadAllTabsMenuItem.setStyleName("disabledMenuItem"); //$NON-NLS-1$
         }
         menuBar.addSeparator();
-        if (tabContent instanceof IReloadableTabPanel) {
-          MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getString("openTabInNewWindow"), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)); //$NON-NLS-1$
+        if (tabContent instanceof ReloadableIFrameTabPanel) {
+          MenuItem openTabInNewWindowMenuItem = new MenuItem(
+              Messages.getString("openTabInNewWindow"), new TabCommand(TabCommand.TABCOMMAND.NEW_WINDOW, popupMenu, this)); //$NON-NLS-1$
           menuBar.addItem(openTabInNewWindowMenuItem);
           openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
-          MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getString("createDeepLink"), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)); //$NON-NLS-1$
+          MenuItem createDeepLinkMenuItem = new MenuItem(
+              Messages.getString("createDeepLink"), new TabCommand(TabCommand.TABCOMMAND.CREATE_DEEP_LINK, popupMenu, this)); //$NON-NLS-1$
           menuBar.addItem(createDeepLinkMenuItem);
           createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
           menuBar.addSeparator();
         }
         menuBar.addItem(new MenuItem(Messages.getString("closeTab"), new TabCommand(TabCommand.TABCOMMAND.CLOSE, popupMenu, this))); //$NON-NLS-1$
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getString("closeOtherTabs"), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)); //$NON-NLS-1$
+          MenuItem closeOtherTabsMenuItem = new MenuItem(
+              Messages.getString("closeOtherTabs"), new TabCommand(TabCommand.TABCOMMAND.CLOSE_OTHERS, popupMenu, this)); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
           closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
           MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getString("closeAllTabs"), new TabCommand(TabCommand.TABCOMMAND.CLOSE_ALL, popupMenu, this)); //$NON-NLS-1$

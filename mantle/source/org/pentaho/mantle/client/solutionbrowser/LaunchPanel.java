@@ -33,7 +33,7 @@ public class LaunchPanel extends Frame {
 
     String url = "mantle/launch/launch.jsp"; //$NON-NLS-1$
     if (GWT.isScript()) {
-      
+
       String mypath = Window.Location.getPath();
       if (!mypath.endsWith("/")) { //$NON-NLS-1$
         mypath = mypath.substring(0, mypath.lastIndexOf("/") + 1); //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class LaunchPanel extends Frame {
       mypath = mypath.replaceAll("/mantle/", "/"); //$NON-NLS-1$ //$NON-NLS-2$
       if (!mypath.endsWith("/")) { //$NON-NLS-1$
         mypath = "/" + mypath; //$NON-NLS-1$
-      }    
+      }
       url = mypath + url;
     } else {
       url = "http://localhost:8080/pentaho/mantle/launch/launch.jsp?userid=joe&password=password"; //$NON-NLS-1$
@@ -49,13 +49,14 @@ public class LaunchPanel extends Frame {
     this.setUrl(url);
 
   }
-  
+
   @Override
   protected void onLoad() {
     hookNativeEvents(this, this.getElement());
   }
-  
-  private native void hookNativeEvents(LaunchPanel panel, Element ele)/*-{
+
+  private native void hookNativeEvents(LaunchPanel panel, Element ele)
+  /*-{
     $wnd.openWAQR = function(){
       panel.@org.pentaho.mantle.client.solutionbrowser.LaunchPanel::openWAQR()();
     }
@@ -82,16 +83,16 @@ public class LaunchPanel extends Frame {
       //You're most likely here because of Cross-site scripting permissions... consuming
     }
   }-*/;
-  
-  public void openWAQR(){
+
+  public void openWAQR() {
     SolutionBrowserPerspective.getInstance().getNewReportCommand().execute();
   }
 
-  public void openAnalysis(){
+  public void openAnalysis() {
     SolutionBrowserPerspective.getInstance().getNewAnalysisViewCommand().execute();
   }
 
-  public void openManage(){
+  public void openManage() {
     new ManageContentCommand().execute();
   }
 
