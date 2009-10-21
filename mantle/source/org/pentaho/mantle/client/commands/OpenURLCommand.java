@@ -23,15 +23,18 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class OpenURLCommand implements Command {
+public class OpenURLCommand extends AbstractCommand {
 
   public OpenURLCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final TextBox textBox = new TextBox();
     textBox.setText("http://"); //$NON-NLS-1$
     textBox.setWidth("500px"); //$NON-NLS-1$

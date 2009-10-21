@@ -19,18 +19,21 @@ package org.pentaho.mantle.client.commands;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
-public class SwitchLocaleCommand implements Command {
+public class SwitchLocaleCommand extends AbstractCommand {
 
   private String locale;
-  
+
   public SwitchLocaleCommand(String locale) {
     this.locale = locale;
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     // stuff the locale in the server's session so we can use it
     // to override the browser setting, as needed
     MantleServiceCache.getService().setLocaleOverride(locale, null);
@@ -41,7 +44,7 @@ public class SwitchLocaleCommand implements Command {
       if (index >= 0) {
         newLocalePath = baseUrl.substring(0, index) + "/Home?locale=" + locale;
       }
-     }    
+    }
     Window.Location.replace(newLocalePath);
   }
 

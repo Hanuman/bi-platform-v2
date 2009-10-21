@@ -766,7 +766,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
               public void okPressed() {
                 dialogBox.hide();
-                (new OpenFileCommand()).execute(OPEN_METHOD.SCHEDULE);
+                (new OpenFileCommand(OPEN_METHOD.SCHEDULE)).execute();
               }
             });
 

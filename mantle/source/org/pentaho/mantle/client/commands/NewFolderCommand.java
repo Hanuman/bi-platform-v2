@@ -31,7 +31,6 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -39,7 +38,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
-public class NewFolderCommand implements Command {
+public class NewFolderCommand extends AbstractCommand {
 
   private String repoPath = "";
   private String solution = "";
@@ -47,7 +46,11 @@ public class NewFolderCommand implements Command {
   public NewFolderCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     SolutionTree solutionTree = SolutionBrowserPerspective.getInstance().getSolutionTree();
     if (solutionTree != null) {
       FileTreeItem selectedTreeItem = (FileTreeItem) solutionTree.getSelectedItem();

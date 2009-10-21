@@ -20,15 +20,18 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AboutCommand implements Command {
+public class AboutCommand extends AbstractCommand {
 
   public AboutCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     AsyncCallback<String> callback = new AsyncCallback<String>() {
       public void onFailure(Throwable caught) {
       }

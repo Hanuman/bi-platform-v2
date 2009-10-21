@@ -19,14 +19,12 @@ package org.pentaho.mantle.client.commands;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
-
 /**
  * Executes the Open Document command.
  * 
  * @author nbaker / dkincade
  */
-public class OpenDocCommand implements Command {
+public class OpenDocCommand extends AbstractCommand {
   private String documentationURL;
 
   public OpenDocCommand(String documentationURL) {
@@ -37,7 +35,11 @@ public class OpenDocCommand implements Command {
    * Executes the command to open the help documentation. Based on the subscription setting, the document being opened will be the CE version of the document or
    * the EE version of the document.
    */
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
   }
   

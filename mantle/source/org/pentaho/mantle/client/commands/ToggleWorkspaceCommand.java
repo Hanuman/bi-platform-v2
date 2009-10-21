@@ -18,15 +18,16 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
+public class ToggleWorkspaceCommand extends AbstractCommand {
 
-public class ToggleWorkspaceCommand implements Command {
-
-  
   public ToggleWorkspaceCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     if (solutionBrowserPerspective.isWorkspaceShowing()) {
       solutionBrowserPerspective.showContent();

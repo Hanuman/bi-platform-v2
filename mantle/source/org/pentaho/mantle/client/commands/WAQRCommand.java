@@ -20,14 +20,17 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 
-public class WAQRCommand implements Command {
+public class WAQRCommand extends AbstractCommand {
 
   public WAQRCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     String waqrURL = "adhoc/waqr.html"; //$NON-NLS-1$
     if (!GWT.isScript()) {
       waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$

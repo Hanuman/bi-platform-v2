@@ -19,14 +19,16 @@ package org.pentaho.mantle.client.commands;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.mantle.client.dialogs.ManageContentDialog;
 
-import com.google.gwt.user.client.Command;
-
-public class ManageContentCommand implements Command {
+public class ManageContentCommand extends AbstractCommand {
 
   public ManageContentCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final ManageContentDialog dialog = new ManageContentDialog();
     dialog.setCallback(new IDialogCallback() {
       public void okPressed() {

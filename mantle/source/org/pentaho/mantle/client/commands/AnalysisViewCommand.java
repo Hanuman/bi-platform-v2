@@ -24,15 +24,18 @@ import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 
-public class AnalysisViewCommand implements Command {
+public class AnalysisViewCommand extends AbstractCommand {
 
   public AnalysisViewCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
     final AnalysisViewDialog analysisDialog = new AnalysisViewDialog(navigatorPerspective.getSolutionDocument());
     IDialogCallback callback = new IDialogCallback() {

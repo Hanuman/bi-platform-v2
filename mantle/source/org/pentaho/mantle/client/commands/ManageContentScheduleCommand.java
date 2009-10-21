@@ -22,16 +22,18 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
-
-public class ManageContentScheduleCommand implements Command {
+public class ManageContentScheduleCommand extends AbstractCommand {
 
   private static String lastPath = "/"; //$NON-NLS-1$
   
   public ManageContentScheduleCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, solutionBrowserPerspective.getSolutionDocument(), false, true);
     if (!MantleApplication.showAdvancedFeatures) {

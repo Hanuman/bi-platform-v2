@@ -28,11 +28,10 @@ import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.tabs.TabWidget;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 
-public class SaveCommand implements Command {
+public class SaveCommand extends AbstractCommand {
 
   boolean isSaveAs = false;
 
@@ -41,19 +40,23 @@ public class SaveCommand implements Command {
   private String path;
   private SolutionFileInfo.Type type;
   private String tabName;
-  
+
   public SaveCommand() {
   }
-  
+
   public SaveCommand(boolean isSaveAs) {
     this.isSaveAs = isSaveAs;
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
 
     retrieveCachedValues(navigatorPerspective.getCurrentFrame());
-    
+
     if (isSaveAs || name == null) {
       final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
       if (isSaveAs) {
@@ -77,11 +80,10 @@ public class SaveCommand implements Command {
           tabName = name;
           if (tabName.indexOf("analysisview.xaction") != -1) {
             // trim off the analysisview.xaction from the localized-name
-            tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction")-1);
+            tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction") - 1);
           } else if (tabName.indexOf("waqr.xaction") != -1) {
-            tabName = tabName.substring(0, tabName.indexOf("waqr.xaction")-1);
+            tabName = tabName.substring(0, tabName.indexOf("waqr.xaction") - 1);
           }
-          
 
           if (false) {// if (dialog.doesSelectedFileExist()) {
             dialog.hide();
@@ -118,7 +120,7 @@ public class SaveCommand implements Command {
     }
   }
 
-  private void persistFileInfoInFrame(){
+  private void persistFileInfoInFrame() {
     SolutionFileInfo fileInfo = new SolutionFileInfo();
     fileInfo.setName(this.name);
     fileInfo.setPath(this.path);
@@ -134,9 +136,9 @@ public class SaveCommand implements Command {
     type = null;
   }
 
-  private void retrieveCachedValues(IFrameTabPanel tabPanel){
+  private void retrieveCachedValues(IFrameTabPanel tabPanel) {
     SolutionFileInfo info = tabPanel.getFileInfo();
-    if(info != null){
+    if (info != null) {
       this.name = info.getName();
       this.path = info.getPath();
       this.solution = info.getSolution();
@@ -149,7 +151,7 @@ public class SaveCommand implements Command {
    * 
    * @param elementId
    */
-  public native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite) 
+  public native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite)
   /*-{
     var frame = $doc.getElementById(elementId);
     frame = frame.contentWindow;
@@ -197,9 +199,9 @@ public class SaveCommand implements Command {
       }
     }
   }-*/;
-  
-  private void doTabRename(){
-    if(tabName != null){ // Save-As does not modify the name of the tab. 
+
+  private void doTabRename() {
+    if (tabName != null) { // Save-As does not modify the name of the tab.
       TabWidget tab = SolutionBrowserPerspective.getInstance().getCurrentTab();
       tab.setLabelText(tabName);
       tab.setLabelTooltip(tabName);

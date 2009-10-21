@@ -20,11 +20,10 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class CleanContentRepositoryCommand implements Command {
+public class CleanContentRepositoryCommand extends AbstractCommand {
 
   private static final int DEFAULT_DAYS_BACK = 90;
   
@@ -38,7 +37,11 @@ public class CleanContentRepositoryCommand implements Command {
     this.daysBack = daysBack;
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     AsyncCallback<Integer> callback = new AsyncCallback<Integer>() {
 
       public void onFailure(Throwable caught) {

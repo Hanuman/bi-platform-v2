@@ -22,9 +22,7 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
-
-public class EditFileCommand implements Command {
+public class EditFileCommand extends AbstractCommand {
 
   private static String lastPath = "/"; //$NON-NLS-1$
 
@@ -34,7 +32,11 @@ public class EditFileCommand implements Command {
     this.solutionBrowserPerspective = solutionBrowserPerspective;
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.OPEN, lastPath, solutionBrowserPerspective.getSolutionDocument(), false, true);
     if (!MantleApplication.showAdvancedFeatures) {
       dialog.setShowSearch(false);

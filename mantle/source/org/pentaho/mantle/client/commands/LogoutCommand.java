@@ -23,8 +23,8 @@ public class LogoutCommand implements Command {
   public LogoutCommand() {
   }
 
-  public native void execute() /*-{
-    
+  public native void execute()
+  /*-{
     var loc = $wnd.location.href.substring(0, $wnd.location.href.lastIndexOf('/')) + "/Logout";
     if($wnd.opener != null){
       try{
@@ -38,8 +38,6 @@ public class LogoutCommand implements Command {
       }
     }
     $wnd.open(loc, "_top","");
-  
-    
   }-*/;
 
 }

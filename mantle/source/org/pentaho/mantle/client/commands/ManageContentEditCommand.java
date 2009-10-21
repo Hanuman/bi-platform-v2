@@ -18,14 +18,16 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
-
-public class ManageContentEditCommand implements Command {
+public class ManageContentEditCommand extends AbstractCommand {
 
   public ManageContentEditCommand() {
   }
 
-  public void execute() {
+  protected void performOperation() {
+    performOperation(true);
+  }
+
+  protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
     EditFileCommand cmd = new EditFileCommand(solutionBrowserPerspective);
     cmd.execute();
