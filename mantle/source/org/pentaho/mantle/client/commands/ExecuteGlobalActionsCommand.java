@@ -29,13 +29,13 @@ public class ExecuteGlobalActionsCommand extends AbstractCommand {
   }
 
   protected void performOperation() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
       public void onFailure(Throwable caught) {
         Window.alert(caught.toString());
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(Void result) {
         MessageDialogBox dialogBox = new MessageDialogBox(
             Messages.getString("info"), Messages.getString("globalActionsExecutedSuccessfully"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();

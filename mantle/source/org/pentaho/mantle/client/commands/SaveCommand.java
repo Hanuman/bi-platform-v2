@@ -200,6 +200,8 @@ public class SaveCommand extends AbstractCommand {
     }
   }-*/;
 
+  // used via JSNI
+  @SuppressWarnings("unused")
   private void doTabRename() {
     if (tabName != null) { // Save-As does not modify the name of the tab.
       TabWidget tab = SolutionBrowserPerspective.getInstance().getCurrentTab();
