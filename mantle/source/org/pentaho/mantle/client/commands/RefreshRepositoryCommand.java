@@ -20,7 +20,7 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -30,7 +30,6 @@ public class RefreshRepositoryCommand extends AbstractCommand {
   }
 
   protected void performOperation(final boolean feedback) {
-
     // high level details:
     // ask the server to reload/resolve the solution repository against disk (if needed)
     // -this is only done if the user is the admin
@@ -47,7 +46,7 @@ public class RefreshRepositoryCommand extends AbstractCommand {
 
       public void onSuccess(Void nothing) {
         try {
-          SolutionBrowserPerspective.getInstance().refreshSolutionBrowser(false);
+          SolutionDocumentManager.getInstance().fetchSolutionDocument(true);
         } catch (Throwable t) {
           // we want to make sure we don't prevent the waitpopup
         }
@@ -59,11 +58,7 @@ public class RefreshRepositoryCommand extends AbstractCommand {
   }
 
   protected void performOperation() {
-    // do nothing
-  }
-
-  public void execute() {
-    execute(true);
+    performOperation(true);
   }
 
 }

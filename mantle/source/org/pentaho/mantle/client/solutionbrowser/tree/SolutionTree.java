@@ -33,8 +33,9 @@ import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.ISolutionDocumentListener;
 import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
@@ -68,7 +69,7 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SolutionTree extends Tree implements IFileItemCallback {
+public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDocumentListener {
   boolean showLocalizedFileNames = true;
   boolean showHiddenFiles = false;
   Document solutionDocument;
@@ -76,12 +77,10 @@ public class SolutionTree extends Tree implements IFileItemCallback {
   boolean createRootNode = false;
   boolean useDescriptionsForTooltip = false;
 
-  SolutionBrowserPerspective solutionBrowserPerspective;
   FocusPanel focusable = new FocusPanel();
 
-  public SolutionTree(SolutionBrowserPerspective solutionBrowserPerspective) {
+  public SolutionTree() {
     super(MantleImages.images);
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
     setAnimationEnabled(true);
     sinkEvents(Event.ONDBLCLICK);
     // popupMenu.setAnimationEnabled(false);
@@ -106,8 +105,15 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     });
 
     getElement().setId("solutionTree");
+    
+    SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
   }
 
+  public void onFetchSolutionDocument(Document solutionDocument) {
+    // update tree
+    buildSolutionTree(solutionDocument);
+  }
+  
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
     switch (eventType) {
@@ -156,7 +162,7 @@ public class SolutionTree extends Tree implements IFileItemCallback {
     }
   }
 
-  public void buildSolutionTree(Document solutionDocument) {
+  private void buildSolutionTree(Document solutionDocument) {
     if (solutionDocument == null) {
       return;
     }

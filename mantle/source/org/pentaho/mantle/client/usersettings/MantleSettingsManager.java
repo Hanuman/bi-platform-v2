@@ -30,6 +30,9 @@ public class MantleSettingsManager {
 
   public void addMantleSettingsListener(IMantleSettingsListener listener) {
     listeners.add(listener);
+    if (settings == null) {
+      fetchMantleSettings(true);
+    }
   }
 
   public void removeMantleSettingsListener(IMantleSettingsListener listener) {

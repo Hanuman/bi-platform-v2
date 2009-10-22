@@ -177,32 +177,34 @@ public class MainToolbarController extends AbstractXulEventHandler {
     executeMantleCall(funct);
   }
 
-  private native void executeMantleCall(String js)/*-{
-        try{
-          $wnd.eval(js);
-        } catch (e){
-          $wnd.mantle_showMessage("Javascript Error",e.message+"\n\n"+js);
-          
-        }
-      }-*/;
+  private native void executeMantleCall(String js)
+  /*-{
+    try{
+      $wnd.eval(js);
+    } catch (e){
+      $wnd.mantle_showMessage("Javascript Error",e.message+"\n\n"+js);
+    }
+  }-*/;
 
-  private native void executeJS(JavaScriptObject obj, String js)/*-{
-        try{
-          var tempObj = obj;
-          eval("tempObj."+js);
-        } catch (e){
-          $wnd.mantle_showMessage("Javascript Error",e.message+"          "+"tempObj."+js);
-        }
-      }-*/;
+  private native void executeJS(JavaScriptObject obj, String js)
+  /*-{
+    try{
+      var tempObj = obj;
+      eval("tempObj."+js);
+    } catch (e){
+      $wnd.mantle_showMessage("Javascript Error",e.message+"          "+"tempObj."+js);
+    }
+  }-*/;
 
   @Bindable
-  public native void openUrl(String title, String name, String uri)/*-{
-        try{
-          $wnd.eval("openURL('"+name+"','"+title+"','"+uri+"')");
-        } catch (e){
-          $wnd.mantle_showMessage("Javascript Error",e.message);
-        }
-      }-*/;
+  public native void openUrl(String title, String name, String uri)
+  /*-{
+    try {
+      $wnd.eval("openURL('"+name+"','"+title+"','"+uri+"')");
+    } catch (e) {
+      $wnd.mantle_showMessage("Javascript Error",e.message);
+    }
+  }-*/;
 
   @Bindable
   public void setContentEditEnabled(boolean enable) {
@@ -223,11 +225,12 @@ public class MainToolbarController extends AbstractXulEventHandler {
     executeEditContentCallback(model.getCallback(), model.isContentEditSelected());
   }
 
-  private native void executeEditContentCallback(JavaScriptObject obj, boolean selected)/*-{
-        try{
-          obj.editContentToggled(selected);
-        } catch (e){}
-      }-*/;
+  private native void executeEditContentCallback(JavaScriptObject obj, boolean selected)
+  /*-{
+    try {
+      obj.editContentToggled(selected);
+    } catch (e){}
+  }-*/;
 
   public MainToolbarModel getModel() {
 

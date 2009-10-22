@@ -43,6 +43,7 @@ import org.pentaho.mantle.client.commands.NewRootFolderCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.ShowBrowserCommand;
+import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
 import org.pentaho.mantle.client.dialogs.FileDialog;
@@ -109,7 +110,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SolutionBrowserPerspective extends HorizontalPanel implements IFileItemCallback {
+public class SolutionBrowserPerspective extends HorizontalPanel implements IFileItemCallback, ISolutionDocumentListener {
 
   private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
   private static int frameIdCount = 0;
@@ -118,7 +119,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private ClassicNavigatorView classicNavigatorView = new ClassicNavigatorView();
   private HorizontalSplitPanel solutionNavigatorAndContentPanel = new HorizontalSplitPanel(MantleImages.images);
   private VerticalSplitPanel solutionNavigatorPanel = new VerticalSplitPanel(MantleImages.images);
-  private SolutionTree solutionTree = new SolutionTree(this);
+  private SolutionTree solutionTree = new SolutionTree();
   private FilesListPanel filesListPanel = new FilesListPanel(this);
   private FileItem selectedFileItem;
   private DeckPanel contentPanel = new DeckPanel();
@@ -143,18 +144,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
   private List<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
   public static final int CURRENT_SELECTED_TAB = -1;
-
-  // commands
-  Command ShowWorkSpaceCommand = new Command() {
-    public void execute() {
-      showWorkspaceMenuItem.setChecked(!showWorkspaceMenuItem.isChecked());
-      if (showWorkspaceMenuItem.isChecked()) {
-        showWorkspace();
-      } else {
-        showContent();
-      }
-    }
-  };
 
   RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand();
 
@@ -229,7 +218,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   };
 
   // menu items
-  CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand); //$NON-NLS-1$
+  CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), new ToggleWorkspaceCommand()); //$NON-NLS-1$
   CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand); //$NON-NLS-1$
   CheckBoxMenuItem showLocalizedFileNamesMenuItem = new CheckBoxMenuItem(Messages.getString("showLocalizedFileNames"), ToggleLocalizedNamesCommand); //$NON-NLS-1$
   CheckBoxMenuItem showSolutionBrowserMenuItem = new CheckBoxMenuItem(Messages.getString("showSolutionBrowser"), new ShowBrowserCommand()); //$NON-NLS-1$
@@ -257,6 +246,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
     setupNativeHooks(this);
 
+    SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
+    
     // add window close listener
     Window.addWindowCloseListener(new WindowCloseListener() {
 
@@ -518,12 +509,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   }
 
   public void showWorkspace() {
+    showWorkspaceMenuItem.setChecked(true);
     workspacePanel.refreshWorkspace();
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
   }
 
   public void showContent() {
+    showWorkspaceMenuItem.setChecked(false);
+
     int showIndex = -1;
     if (contentTabPanel.getWidgetCount() == 0) {
       showIndex = contentPanel.getWidgetIndex(launchPanel);
@@ -531,6 +525,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     } else {
       showIndex = contentPanel.getWidgetIndex(contentTabPanel);
     }
+
     int selectedTab = -1;
     if (showIndex != -1) {
       contentPanel.showWidget(showIndex);
@@ -1163,105 +1158,37 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void fetchSolutionDocument(final boolean showSuccess, final boolean collapse) {
-    final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+  public void onFetchSolutionDocument(Document solutionDocument) {
+    this.solutionDocument = solutionDocument;
 
-      public void onSuccess(Boolean result) {
-        RequestBuilder builder = null;
-        if (GWT.isScript()) {
-          String path = Window.Location.getPath();
-          if (!path.endsWith("/")) { //$NON-NLS-1$
-            path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
-          }
-          builder = new RequestBuilder(RequestBuilder.GET, path + "SolutionRepositoryService?component=getSolutionRepositoryDoc"); //$NON-NLS-1$
-        } else {
-          builder = new RequestBuilder(RequestBuilder.GET,
-              "/MantleService?passthru=SolutionRepositoryService&component=getSolutionRepositoryDoc&userid=joe&password=password"); //$NON-NLS-1$
-        }
+    TreeItem selectedItem = solutionTree.getSelectedItem();
 
-        RequestCallback callback = new RequestCallback() {
-
-          public void onError(Request request, Throwable exception) {
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, //$NON-NLS-1$ //$NON-NLS-2$
-                false, true);
-            dialogBox.center();
-          }
-
-          public void onResponseReceived(Request request, Response response) {
-            // ok, we have a repository document, we can build the GUI
-            // consider caching the document
-            solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
-
-            // flat that we have the document so that other things might start to use it (PDB-500)
-            flagSolutionDocumentLoaded();
-
-            // update tree
-            solutionTree.buildSolutionTree(solutionDocument);
-
-            TreeItem selectedItem = solutionTree.getSelectedItem();
-
-            // IE has difficulty rendering the tree if the nodes have changed. We can get around
-            // that by collapsing the top level nodes and then re-opening them.
-            for (TreeItem item : solutionTree.getAllNodes()) {
-              if (item.getState()) {
-                item.setState(false);
-                if (collapse == false) {
-                  item.setState(true);
-                }
-              }
-            }
-
-            final List<TreeItem> items = new ArrayList<TreeItem>();
-            TreeItem tmpItem = selectedItem;
-            while (tmpItem != null) {
-              items.add(tmpItem);
-              tmpItem = tmpItem.getParentItem();
-            }
-            Collections.reverse(items);
-            for (TreeItem item : items) {
-              item.setState(true);
-              item.setSelected(false);
-            }
-            selectedItem.setSelected(true);
-
-            // update classic view
-            classicNavigatorView.setSolutionDocument(solutionDocument);
-            classicNavigatorView.buildSolutionNavigator();
-            if (showSuccess) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("solutionBrowserRefreshed"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
-                  true);
-              dialogBox.center();
-            }
-          }
-
-        };
-        try {
-          builder.sendRequest(null, callback);
-        } catch (RequestException e) {
-          MessageDialogBox dialogBox = new MessageDialogBox(
-              Messages.getString("error"), Messages.getString("couldNotGetRepositoryDocument"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-          dialogBox.center();
-        }
+    // IE has difficulty rendering the tree if the nodes have changed. We can get around
+    // that by collapsing the top level nodes and then re-opening them.
+    for (TreeItem item : solutionTree.getAllNodes()) {
+      if (item.getState()) {
+        item.setState(false);
+        item.setState(true);
       }
+    }
 
-      public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
+    final List<TreeItem> items = new ArrayList<TreeItem>();
+    TreeItem tmpItem = selectedItem;
+    while (tmpItem != null) {
+      items.add(tmpItem);
+      tmpItem = tmpItem.getParentItem();
+    }
+    Collections.reverse(items);
+    for (TreeItem item : items) {
+      item.setState(true);
+      item.setSelected(false);
+    }
+    selectedItem.setSelected(true);
 
-          public void onFailure(Throwable caught) {
-          }
+    // update classic view
+    classicNavigatorView.setSolutionDocument(solutionDocument);
+    classicNavigatorView.buildSolutionNavigator();
 
-          public void onSuccess(Boolean result) {
-            fetchSolutionDocument(showSuccess, collapse);
-          }
-
-        });
-      }
-    };
-    MantleServiceCache.getService().isAuthenticated(callback);
-  }
-
-  public void refreshSolutionBrowser(boolean showStatus) {
-    fetchSolutionDocument(showStatus, /* collapse */true);
     updateViewMenu(viewMenuCallback);
   }
 
@@ -1728,11 +1655,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     ExecuteWAQRPreviewCommand command = new ExecuteWAQRPreviewCommand(contentTabPanel, url, xml);
     command.execute();
   }
-
-  private native void flagSolutionDocumentLoaded()
-  /*-{
-    $wnd.mantle_repository_loaded = true;
-  }-*/;
 
   /**
    * This method will check if the given frame(by id) is jpivot.

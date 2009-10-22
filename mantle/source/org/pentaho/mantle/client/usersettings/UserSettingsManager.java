@@ -29,6 +29,9 @@ public class UserSettingsManager {
 
   public void addUserSettingsListener(IUserSettingsListener listener) {
     listeners.add(listener);
+    if (settings == null) {
+      fetchUserSettings(true);
+    }
   }
 
   public void removeUserSettingsListener(IUserSettingsListener listener) {

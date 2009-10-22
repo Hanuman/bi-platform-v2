@@ -77,11 +77,9 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
 
     // listen to any reloads of user settings
     UserSettingsManager.getInstance().addUserSettingsListener(this);
-    UserSettingsManager.getInstance().fetchUserSettings(true);
     
     // listen to any reloads of mantle settings
     MantleSettingsManager.getInstance().addMantleSettingsListener(this);
-    MantleSettingsManager.getInstance().fetchMantleSettings(true);
 
     ElementUtils.convertPNGs();
   }
@@ -178,8 +176,6 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     mainApplicationPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
     mainApplicationPanel.add(menuAndLogoPanel);
     mainApplicationPanel.setCellHeight(menuAndLogoPanel, "1px"); //$NON-NLS-1$
-
-    solutionBrowserPerspective.refreshSolutionBrowser(false);
 
     // load user bookmarks
     solutionBrowserPerspective.loadBookmarks();
