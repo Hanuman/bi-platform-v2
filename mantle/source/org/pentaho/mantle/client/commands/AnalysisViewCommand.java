@@ -22,9 +22,12 @@ import org.pentaho.mantle.client.dialogs.AnalysisViewDialog;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.xml.client.Document;
 
 public class AnalysisViewCommand extends AbstractCommand {
 
@@ -37,73 +40,81 @@ public class AnalysisViewCommand extends AbstractCommand {
 
   protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
-    final AnalysisViewDialog analysisDialog = new AnalysisViewDialog(navigatorPerspective.getSolutionDocument());
-    IDialogCallback callback = new IDialogCallback() {
 
-      public void cancelPressed() {
+    SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
+      public void onFailure(Throwable caught) {
       }
 
-      public void okPressed() {
-        // without the timer, this code would cause a crash in IE6 and IE7
-        Timer timer = new Timer() {
-          @Override
-          public void run() {
-            String actionName = System.currentTimeMillis() + ".analysisview.xaction"; //$NON-NLS-1$
-            String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            if (!GWT.isScript()) {
-              newAnalysisViewURL = "http://localhost:8080/pentaho/" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            
-            navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
-            
-            //Set it to save-enabled and fire event
-            navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
-            navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
-            
-            //navigatorPerspective.refreshPerspective(false);
+      public void onSuccess(Document result) {
+        final AnalysisViewDialog analysisDialog = new AnalysisViewDialog(result);
+        IDialogCallback callback = new IDialogCallback() {
+
+          public void cancelPressed() {
+          }
+
+          public void okPressed() {
+            // without the timer, this code would cause a crash in IE6 and IE7
+            Timer timer = new Timer() {
+              @Override
+              public void run() {
+                String actionName = System.currentTimeMillis() + ".analysisview.xaction"; //$NON-NLS-1$
+                String newAnalysisViewURL = "AnalysisViewService?component=createNewView&name=" + actionName + "&descr=" + actionName + "&actionName=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    + actionName + "&textfield=&schema=" + analysisDialog.getSchema() + "&cube=" + analysisDialog.getCube() + "&solution=system&actionPath=tmp"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                if (!GWT.isScript()) {
+                  newAnalysisViewURL = "http://localhost:8080/pentaho/" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+
+                navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
+
+                // Set it to save-enabled and fire event
+                navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
+                navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
+
+                // navigatorPerspective.refreshPerspective(false);
+              }
+            };
+            timer.schedule(1);
           }
         };
-        timer.schedule(1);
-      }
-    };
 
-    IDialogValidatorCallback validatorCallback = new IDialogValidatorCallback() {
-      public boolean validate() {
-        return analysisDialog.validate();
-      }
-    };
+        IDialogValidatorCallback validatorCallback = new IDialogValidatorCallback() {
+          public boolean validate() {
+            return analysisDialog.validate();
+          }
+        };
 
-    analysisDialog.setValidatorCallback(validatorCallback);
-    analysisDialog.setCallback(callback);
-    //
-    // Commented out analysis view check, JPivot now supports multiple views
-    // in a single session.  Leaving the code here during testing phase.
-    //
-    
-//    final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
-//    if (openAnalysisView != null) {
-//      String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
-//      Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
-//      PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//      dialog.setCallback(new IDialogCallback() {
-//
-//        public void cancelPressed() {
-//          // TODO Auto-generated method stub
-//          
-//        }
-//
-//        public void okPressed() {
-//          navigatorPerspective.getContentTabPanel().remove(openAnalysisView);
-//          analysisDialog.center();
-//        }
-//        
-//      });
-//      dialog.center();
-//      dialog.show();
-//
-//    } else {
-    analysisDialog.center();
-//    }
+        analysisDialog.setValidatorCallback(validatorCallback);
+        analysisDialog.setCallback(callback);
+        //
+        // Commented out analysis view check, JPivot now supports multiple views
+        // in a single session. Leaving the code here during testing phase.
+        //
+
+        // final Widget openAnalysisView = navigatorPerspective.getOpenAnalysisView();
+        // if (openAnalysisView != null) {
+        // String actionName = navigatorPerspective.getTabForWidget(openAnalysisView).getText();
+        //          Widget content = new HTML(Messages.getString("analysisViewIsOpen", actionName)); //$NON-NLS-1$
+        //          PromptDialogBox dialog = new PromptDialogBox(Messages.getString("open"), Messages.getString("ok"), Messages.getString("cancel"), false, true, content); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        // dialog.setCallback(new IDialogCallback() {
+        //
+        // public void cancelPressed() {
+        // // TODO Auto-generated method stub
+        //              
+        // }
+        //
+        // public void okPressed() {
+        // navigatorPerspective.getContentTabPanel().remove(openAnalysisView);
+        // analysisDialog.center();
+        // }
+        //            
+        // });
+        // dialog.center();
+        // dialog.show();
+        //
+        // } else {
+        analysisDialog.center();
+        // }
+      }
+    });
   }
 }

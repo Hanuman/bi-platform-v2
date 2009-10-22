@@ -123,7 +123,6 @@ public class MainToolbarController extends AbstractXulEventHandler {
   public void showBrowserClicked() {
     ShowBrowserCommand showBrowserCommand = new ShowBrowserCommand();
     showBrowserCommand.execute();
-    model.setShowBrowserSelected(SolutionBrowserPerspective.getInstance().isExplorerViewShowing());
   }
 
   @Bindable

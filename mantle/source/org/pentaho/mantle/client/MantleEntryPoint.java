@@ -26,7 +26,6 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -51,21 +50,16 @@ public class MantleEntryPoint implements EntryPoint, IResourceBundleLoadCallback
 
   public void bundleLoaded(String bundleName) {
     Window.setTitle(Messages.getString("productName")); //$NON-NLS-1$
-    
-    Timer timer = new Timer() {
-      public void run() {
-        RootPanel loadingPanel = RootPanel.get("loading"); //$NON-NLS-1$
-        if (loadingPanel != null) {
-          loadingPanel.removeFromParent();
-          loadingPanel.setVisible(false);
-          loadingPanel.setHeight("0px"); //$NON-NLS-1$
-        }
-      }
-    };
-    timer.schedule(1250);    
-    
+
     MantleApplication mantle = new MantleApplication();
     mantle.loadApplication();
+
+    RootPanel loadingPanel = RootPanel.get("loading"); //$NON-NLS-1$
+    if (loadingPanel != null) {
+      loadingPanel.removeFromParent();
+      loadingPanel.setVisible(false);
+      loadingPanel.setHeight("0px"); //$NON-NLS-1$
+    }
   }
 
 }

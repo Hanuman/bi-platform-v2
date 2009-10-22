@@ -59,10 +59,16 @@ public class SolutionDocumentManager {
     for (ISolutionDocumentListener listener : listeners) {
       listener.onFetchSolutionDocument(solutionDocument);
     }
-    // flat that we have the document so that other things might start to use it (PDB-500)
+    // flag that we have the document so that other things might start to use it (PDB-500)
     flagSolutionDocumentLoaded();
   }
 
+  public void beforeFetchSolutionDocument() {
+    for (ISolutionDocumentListener listener : listeners) {
+      listener.beforeFetchSolutionDocument();
+    }
+  }
+  
   public void fetchSolutionDocument(final boolean forceReload) {
     if (forceReload || solutionDocument == null) {
       fetchSolutionDocument(null);
@@ -78,6 +84,10 @@ public class SolutionDocumentManager {
   }
 
   public void fetchSolutionDocument(final AsyncCallback<Document> callback) {
+    // notify listeners that we are about to talk to the server (in case there's anything they want to do
+    // such as busy cursor or tree loading indicators)
+    beforeFetchSolutionDocument();
+    
     RequestBuilder builder = null;
     if (GWT.isScript()) {
       String path = Window.Location.getPath();
@@ -103,6 +113,7 @@ public class SolutionDocumentManager {
         // consider caching the document
         solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
         fireSolutionDocumentFetched();
+        callback.onSuccess(solutionDocument);
       }
 
     };

@@ -25,11 +25,14 @@ import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 import org.pentaho.mantle.client.solutionbrowser.tabs.TabWidget;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.xml.client.Document;
 
 public class SaveCommand extends AbstractCommand {
 
@@ -57,67 +60,74 @@ public class SaveCommand extends AbstractCommand {
 
     retrieveCachedValues(navigatorPerspective.getCurrentFrame());
 
-    if (isSaveAs || name == null) {
-      final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", navigatorPerspective.getSolutionDocument(), false, true); //$NON-NLS-1$
-      if (isSaveAs) {
-        dialog.setTitle(Messages.getString("saveAs")); //$NON-NLS-1$
-        dialog.setText(Messages.getString("saveAs")); //$NON-NLS-1$
-      } else {
-        dialog.setTitle(Messages.getString("save")); //$NON-NLS-1$
+    SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
+      public void onFailure(Throwable caught) {
       }
 
-      if (!MantleApplication.showAdvancedFeatures) {
-        dialog.setShowSearch(false);
-      }
-      dialog.addFileChooserListener(new FileChooserListener() {
-
-        public void fileSelected(final String solution, final String path, final String name, String localizedFileName) {
-          setSolution(solution);
-          setPath(path);
-          setName(name);
-          setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
-
-          tabName = name;
-          if (tabName.indexOf("analysisview.xaction") != -1) {
-            // trim off the analysisview.xaction from the localized-name
-            tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction") - 1);
-          } else if (tabName.indexOf("waqr.xaction") != -1) {
-            tabName = tabName.substring(0, tabName.indexOf("waqr.xaction") - 1);
+      public void onSuccess(Document result) {
+        if (isSaveAs || name == null) {
+          final FileChooserDialog dialog = new FileChooserDialog(FileChooserMode.SAVE, "/", result, false, true); //$NON-NLS-1$
+          if (isSaveAs) {
+            dialog.setTitle(Messages.getString("saveAs")); //$NON-NLS-1$
+            dialog.setText(Messages.getString("saveAs")); //$NON-NLS-1$
+          } else {
+            dialog.setTitle(Messages.getString("save")); //$NON-NLS-1$
           }
 
-          if (false) {// if (dialog.doesSelectedFileExist()) {
-            dialog.hide();
-            PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getString("question"), Messages.getString("yes"), Messages.getString("no"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                false, true);
-            overWriteDialog.setContent(new Label(Messages.getString("fileExistsOverwrite"), false)); //$NON-NLS-1$
-            overWriteDialog.setCallback(new IDialogCallback() {
-              public void okPressed() {
+          if (!MantleApplication.showAdvancedFeatures) {
+            dialog.setShowSearch(false);
+          }
+          dialog.addFileChooserListener(new FileChooserListener() {
+
+            public void fileSelected(final String solution, final String path, final String name, String localizedFileName) {
+              setSolution(solution);
+              setPath(path);
+              setName(name);
+              setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
+
+              tabName = name;
+              if (tabName.indexOf("analysisview.xaction") != -1) {
+                // trim off the analysisview.xaction from the localized-name
+                tabName = tabName.substring(0, tabName.indexOf("analysisview.xaction") - 1);
+              } else if (tabName.indexOf("waqr.xaction") != -1) {
+                tabName = tabName.substring(0, tabName.indexOf("waqr.xaction") - 1);
+              }
+
+              if (false) {// if (dialog.doesSelectedFileExist()) {
+                dialog.hide();
+                PromptDialogBox overWriteDialog = new PromptDialogBox(Messages.getString("question"), Messages.getString("yes"), Messages.getString("no"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    false, true);
+                overWriteDialog.setContent(new Label(Messages.getString("fileExistsOverwrite"), false)); //$NON-NLS-1$
+                overWriteDialog.setCallback(new IDialogCallback() {
+                  public void okPressed() {
+                    doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+                    Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
+                  }
+
+                  public void cancelPressed() {
+                    dialog.show();
+                  }
+                });
+                overWriteDialog.center();
+              } else {
                 doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
                 Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
+                persistFileInfoInFrame();
+                clearValues();
               }
+            }
 
-              public void cancelPressed() {
-                dialog.show();
-              }
-            });
-            overWriteDialog.center();
-          } else {
-            doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
-            Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
-            persistFileInfoInFrame();
-            clearValues();
-          }
+            public void fileSelectionChanged(String solution, String path, String name) {
+            }
+
+          });
+          dialog.center();
+        } else {
+          doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+          clearValues();
         }
-
-        public void fileSelectionChanged(String solution, String path, String name) {
-        }
-
-      });
-      dialog.center();
-    } else {
-      doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
-      clearValues();
-    }
+      }
+    });
   }
 
   private void persistFileInfoInFrame() {

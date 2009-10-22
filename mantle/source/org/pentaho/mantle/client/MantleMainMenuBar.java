@@ -10,9 +10,6 @@ import org.pentaho.mantle.client.commands.AboutCommand;
 import org.pentaho.mantle.client.commands.CheckForSoftwareUpdatesCommand;
 import org.pentaho.mantle.client.commands.ExecuteGlobalActionsCommand;
 import org.pentaho.mantle.client.commands.LogoutCommand;
-import org.pentaho.mantle.client.commands.ManageContentEditCommand;
-import org.pentaho.mantle.client.commands.ManageContentScheduleCommand;
-import org.pentaho.mantle.client.commands.ManageContentShareCommand;
 import org.pentaho.mantle.client.commands.OpenDocCommand;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.OpenURLCommand;
@@ -29,6 +26,7 @@ import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective.OPEN_METHOD;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
@@ -137,9 +135,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     }
     MenuBar manageContentMenu = new MantleMenuBar(true);
     manageContentMenu.getElement().setId("manage_content_menu");
-    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new ManageContentEditCommand());//$NON-NLS-1$
-    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new ManageContentShareCommand()); //$NON-NLS-1$
-    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new ManageContentScheduleCommand()); //$NON-NLS-1$
+    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new OpenFileCommand(OPEN_METHOD.EDIT));//$NON-NLS-1$
+    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new OpenFileCommand(OPEN_METHOD.SHARE)); //$NON-NLS-1$
+    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new OpenFileCommand(OPEN_METHOD.SCHEDULE)); //$NON-NLS-1$
     
     editContent.getElement().setId("edit_content_menu_item");
     shareContent.getElement().setId("share_content_menu_item");

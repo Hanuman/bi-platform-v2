@@ -4,4 +4,5 @@ import com.google.gwt.xml.client.Document;
 
 public interface ISolutionDocumentListener {
   public void onFetchSolutionDocument(Document solutionDocument);
+  public void beforeFetchSolutionDocument();
 }

@@ -71,13 +71,13 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     solutionBrowserPerspective = SolutionBrowserPerspective.getInstance(menuBar);
     main = XulMain.instance(solutionBrowserPerspective);
     menuBar.setSolutionBrowser(solutionBrowserPerspective);
-    
+
     // registered our native JSNI hooks
     setupNativeHooks(this);
 
     // listen to any reloads of user settings
     UserSettingsManager.getInstance().addUserSettingsListener(this);
-    
+
     // listen to any reloads of mantle settings
     MantleSettingsManager.getInstance().addMantleSettingsListener(this);
 
@@ -100,10 +100,10 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     }    
   }-*/;
 
-  private void executeCommand(String commandName){
+  private void executeCommand(String commandName) {
     commandExec.execute(commandName);
   }
-  
+
   private void addGlassPaneListener(JavaScriptObject obj) {
     GlassPane.getInstance().addGlassPaneListener(new GlassPaneNativeListener(obj));
   }
@@ -191,13 +191,11 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     RootPanel.get().add(mainApplicationPanel);
     RootPanel.get().add(WaitPopup.getInstance());
 
-    boolean showExplorerViewOnStartup = "true".equals(settings.get("show-explorer-view-on-startup")); //$NON-NLS-1$ //$NON-NLS-2$
     showAdvancedFeatures = "true".equals(settings.get("show-advanced-features")); //$NON-NLS-1$ //$NON-NLS-2$
 
     boolean isAdministrator = "true".equals(settings.get("is-administrator"));
     solutionBrowserPerspective.setAdministrator(isAdministrator);
     menuBar.buildMenuBar(settings, isAdministrator);
-    solutionBrowserPerspective.setExplorerViewShowing(showExplorerViewOnStartup);
 
     int numStartupURLs = Integer.parseInt(settings.get("num-startup-urls")); //$NON-NLS-1$
     for (int i = 0; i < numStartupURLs; i++) {

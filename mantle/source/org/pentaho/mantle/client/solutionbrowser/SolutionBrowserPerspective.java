@@ -52,7 +52,6 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.client.solutionbrowser.classic.ClassicNavigatorView;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FilesListPanel;
@@ -110,13 +109,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SolutionBrowserPerspective extends HorizontalPanel implements IFileItemCallback, ISolutionDocumentListener {
+public class SolutionBrowserPerspective extends HorizontalPanel implements IFileItemCallback {
 
   private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
   private static int frameIdCount = 0;
   private static final String defaultSplitPosition = "220px"; //$NON-NLS-1$
 
-  private ClassicNavigatorView classicNavigatorView = new ClassicNavigatorView();
   private HorizontalSplitPanel solutionNavigatorAndContentPanel = new HorizontalSplitPanel(MantleImages.images);
   private VerticalSplitPanel solutionNavigatorPanel = new VerticalSplitPanel(MantleImages.images);
   private SolutionTree solutionTree = new SolutionTree();
@@ -133,9 +131,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   protected TabPanel contentTabPanel = new TabPanel();
   private HashMap<Widget, TabWidget> contentTabMap = new HashMap<Widget, TabWidget>();
   private IViewMenuCallback viewMenuCallback;
-  private Document solutionDocument;
   private boolean showSolutionBrowser = false;
-  private boolean useClassicView = false;
   private boolean isAdministrator = false;
   private MenuBar favoritesGroupMenuBar = new MenuBar(true);
   private List<Bookmark> bookmarks;
@@ -146,15 +142,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   public static final int CURRENT_SELECTED_TAB = -1;
 
   RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand();
-
-  Command ToggleClassicViewCommand = new Command() {
-    public void execute() {
-      // update view menu
-      useClassicView = !useClassicView;
-      buildUI();
-      updateViewMenu(viewMenuCallback);
-    }
-  };
 
   Command ToggleLocalizedNamesCommand = new Command() {
     public void execute() {
@@ -246,8 +233,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
     setupNativeHooks(this);
 
-    SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
-    
     // add window close listener
     Window.addWindowCloseListener(new WindowCloseListener() {
 
@@ -298,14 +283,28 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     buildUI();
   }
 
-  private void showOpenFileDialog(JavaScriptObject callback, String title, String okText, String fileTypes) {
-    FileDialog dialog = new FileDialog(getSolutionDocument(), title, okText, fileTypes.split(","));
-    openFileDialog(dialog, callback);
+  private void showOpenFileDialog(final JavaScriptObject callback, final String title, final String okText, final String fileTypes) {
+    SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
+      public void onFailure(Throwable caught) {
+      }
+
+      public void onSuccess(Document result) {
+        FileDialog dialog = new FileDialog(result, title, okText, fileTypes.split(","));
+        openFileDialog(dialog, callback);
+      }
+    });
   }
 
-  private void showOpenFileDialog(JavaScriptObject callback, String path, String title, String okText, String fileTypes) {
-    FileDialog dialog = new FileDialog(getSolutionDocument(), path, title, okText, fileTypes.split(","));
-    openFileDialog(dialog, callback);
+  private void showOpenFileDialog(final JavaScriptObject callback, final String path, final String title, final String okText, final String fileTypes) {
+    SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
+      public void onFailure(Throwable caught) {
+      }
+
+      public void onSuccess(Document result) {
+        FileDialog dialog = new FileDialog(result, path, title, okText, fileTypes.split(","));
+        openFileDialog(dialog, callback);
+      }
+    });
   }
 
   private void openFileDialog(FileDialog dialog, final JavaScriptObject callback) {
@@ -416,79 +415,68 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   public void buildUI() {
     clear();
-    if (useClassicView) {
+    solutionNavigatorPanel.setHeight("100%"); //$NON-NLS-1$
+    // ----- Create the top panel ----
 
-      solutionNavigatorPanel.setHeight("100%"); //$NON-NLS-1$
-      // ----- Create the top panel ----
+    BrowserToolbar browserToolbar = new BrowserToolbar();
+    browserToolbar.setHeight("28px"); //$NON-NLS-1$
+    browserToolbar.setWidth("100%"); //$NON-NLS-1$
 
-      BrowserToolbar browserToolbar = new BrowserToolbar();
-      browserToolbar.setHeight("28px"); //$NON-NLS-1$
-      browserToolbar.setWidth("100%"); //$NON-NLS-1$
+    FlowPanel topPanel = new FlowPanel();
+    SimplePanel toolbarWrapper = new SimplePanel();
+    toolbarWrapper.add(browserToolbar);
+    toolbarWrapper.setStyleName("files-toolbar"); //$NON-NLS-1$
+    topPanel.add(toolbarWrapper);
 
-      FlowPanel topPanel = new FlowPanel();
-      SimplePanel toolbarWrapper = new SimplePanel();
-      toolbarWrapper.add(browserToolbar);
-      toolbarWrapper.setStyleName("files-toolbar"); //$NON-NLS-1$
-      topPanel.add(toolbarWrapper);
-
-      SimplePanel filesListWrapper = new SimplePanel() {
-        public void onBrowserEvent(Event event) {
-          if (((DOM.eventGetButton(event) & Event.BUTTON_RIGHT) == Event.BUTTON_RIGHT && (DOM.eventGetType(event) & Event.ONMOUSEUP) == Event.ONMOUSEUP)) {
-            // bring up a popup with 'create new folder' option
-            final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
-            final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
-            handleRightClick(left, top);
-          } else {
-            super.onBrowserEvent(event);
-          }
+    SimplePanel filesListWrapper = new SimplePanel() {
+      public void onBrowserEvent(Event event) {
+        if (((DOM.eventGetButton(event) & Event.BUTTON_RIGHT) == Event.BUTTON_RIGHT && (DOM.eventGetType(event) & Event.ONMOUSEUP) == Event.ONMOUSEUP)) {
+          // bring up a popup with 'create new folder' option
+          final int left = Window.getScrollLeft() + DOM.eventGetClientX(event);
+          final int top = Window.getScrollTop() + DOM.eventGetClientY(event);
+          handleRightClick(left, top);
+        } else {
+          super.onBrowserEvent(event);
         }
-      };
-      filesListWrapper.sinkEvents(Event.MOUSEEVENTS);
-      filesListWrapper.add(solutionTree);
-      filesListWrapper.setStyleName("files-list-panel"); //$NON-NLS-1$
-      topPanel.add(filesListWrapper);
-      solutionTree.getElement().getStyle().setProperty("marginTop", "29px"); //$NON-NLS-1$ //$NON-NLS-2$
-
-      this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
-
-      // --------------------------------
-
-      solutionNavigatorPanel.setTopWidget(topPanel);
-      filesListPanel.setWidth("100%"); //$NON-NLS-1$
-      solutionNavigatorPanel.setBottomWidget(filesListPanel);
-      solutionNavigatorPanel.setSplitPosition("60%"); //$NON-NLS-1$
-      solutionNavigatorAndContentPanel.setLeftWidget(solutionNavigatorPanel);
-      solutionNavigatorAndContentPanel.setRightWidget(contentPanel);
-      contentPanel.setAnimationEnabled(true);
-      contentPanel.add(workspacePanel);
-      contentPanel.add(launchPanel);
-      contentPanel.add(contentTabPanel);
-      showContent();
-      if (showSolutionBrowser) {
-        solutionNavigatorAndContentPanel.setSplitPosition(defaultSplitPosition);
-      } else {
-        solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
       }
-      contentPanel.setHeight("100%"); //$NON-NLS-1$
-      contentPanel.setWidth("100%"); //$NON-NLS-1$
-      contentTabPanel.setHeight("100%"); //$NON-NLS-1$
-      contentTabPanel.setWidth("100%"); //$NON-NLS-1$
-      setHeight("100%"); //$NON-NLS-1$
-      setWidth("100%"); //$NON-NLS-1$
-      add(solutionNavigatorAndContentPanel);
+    };
+    filesListWrapper.sinkEvents(Event.MOUSEEVENTS);
+    filesListWrapper.add(solutionTree);
+    filesListWrapper.setStyleName("files-list-panel"); //$NON-NLS-1$
+    topPanel.add(filesListWrapper);
+    solutionTree.getElement().getStyle().setProperty("marginTop", "29px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
+    this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
 
-      ElementUtils.removeScrollingFromUpTo(solutionNavigatorAndContentPanel.getLeftWidget().getElement(), solutionNavigatorAndContentPanel.getElement());
+    // --------------------------------
+
+    solutionNavigatorPanel.setTopWidget(topPanel);
+    filesListPanel.setWidth("100%"); //$NON-NLS-1$
+    solutionNavigatorPanel.setBottomWidget(filesListPanel);
+    solutionNavigatorPanel.setSplitPosition("60%"); //$NON-NLS-1$
+    solutionNavigatorAndContentPanel.setLeftWidget(solutionNavigatorPanel);
+    solutionNavigatorAndContentPanel.setRightWidget(contentPanel);
+    contentPanel.setAnimationEnabled(true);
+    contentPanel.add(workspacePanel);
+    contentPanel.add(launchPanel);
+    contentPanel.add(contentTabPanel);
+    showContent();
+    if (showSolutionBrowser) {
+      solutionNavigatorAndContentPanel.setSplitPosition(defaultSplitPosition);
     } else {
-      // load classic view
-      // we've got the tree
-      setHeight("100%"); //$NON-NLS-1$
-      setWidth("100%"); //$NON-NLS-1$
-      classicNavigatorView.setHeight("100%"); //$NON-NLS-1$
-      classicNavigatorView.setWidth("100%"); //$NON-NLS-1$
-      add(classicNavigatorView);
+      solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
     }
+    contentPanel.setHeight("100%"); //$NON-NLS-1$
+    contentPanel.setWidth("100%"); //$NON-NLS-1$
+    contentTabPanel.setHeight("100%"); //$NON-NLS-1$
+    contentTabPanel.setWidth("100%"); //$NON-NLS-1$
+    setHeight("100%"); //$NON-NLS-1$
+    setWidth("100%"); //$NON-NLS-1$
+    add(solutionNavigatorAndContentPanel);
+
+    ElementUtils.removeScrollingFromSplitPane(solutionNavigatorPanel);
+
+    ElementUtils.removeScrollingFromUpTo(solutionNavigatorAndContentPanel.getLeftWidget().getElement(), solutionNavigatorAndContentPanel.getElement());
   }
 
   private void handleRightClick(int left, int top) {
@@ -1158,39 +1146,43 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void onFetchSolutionDocument(Document solutionDocument) {
-    this.solutionDocument = solutionDocument;
-
-    TreeItem selectedItem = solutionTree.getSelectedItem();
-
-    // IE has difficulty rendering the tree if the nodes have changed. We can get around
-    // that by collapsing the top level nodes and then re-opening them.
-    for (TreeItem item : solutionTree.getAllNodes()) {
-      if (item.getState()) {
-        item.setState(false);
-        item.setState(true);
-      }
-    }
-
-    final List<TreeItem> items = new ArrayList<TreeItem>();
-    TreeItem tmpItem = selectedItem;
-    while (tmpItem != null) {
-      items.add(tmpItem);
-      tmpItem = tmpItem.getParentItem();
-    }
-    Collections.reverse(items);
-    for (TreeItem item : items) {
-      item.setState(true);
-      item.setSelected(false);
-    }
-    selectedItem.setSelected(true);
-
-    // update classic view
-    classicNavigatorView.setSolutionDocument(solutionDocument);
-    classicNavigatorView.buildSolutionNavigator();
-
-    updateViewMenu(viewMenuCallback);
-  }
+  // public void beforeFetchSolutionDocument() {
+  // // NO OP
+  // }
+  //
+  // public void onFetchSolutionDocument(Document solutionDocument) {
+  // this.solutionDocument = solutionDocument;
+  //
+  // TreeItem selectedItem = solutionTree.getSelectedItem();
+  //
+  // // IE has difficulty rendering the tree if the nodes have changed. We can get around
+  // // that by collapsing the top level nodes and then re-opening them.
+  // for (TreeItem item : solutionTree.getAllNodes()) {
+  // if (item.getState()) {
+  // item.setState(false);
+  // item.setState(true);
+  // }
+  // }
+  //
+  // final List<TreeItem> items = new ArrayList<TreeItem>();
+  // TreeItem tmpItem = selectedItem;
+  // while (tmpItem != null) {
+  // items.add(tmpItem);
+  // tmpItem = tmpItem.getParentItem();
+  // }
+  // Collections.reverse(items);
+  // for (TreeItem item : items) {
+  // item.setState(true);
+  // item.setSelected(false);
+  // }
+  // selectedItem.setSelected(true);
+  //
+  // // update classic view
+  // classicNavigatorView.setSolutionDocument(solutionDocument);
+  // classicNavigatorView.buildSolutionNavigator();
+  //
+  // updateViewMenu(viewMenuCallback);
+  // }
 
   public FileItem getSelectedFileItem() {
     return selectedFileItem;
@@ -1411,18 +1403,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     showSolutionBrowserMenuItem.setChecked(showSolutionBrowser);
     useDescriptionsMenuItem.setChecked(solutionTree.isUseDescriptionsForTooltip());
 
-    if (useClassicView) {
-      // viewMenuItems.add(showLocalizedFileNamesMenuItem);
-      viewMenuItems.add(showSolutionBrowserMenuItem);
-      viewMenuItems.add(showWorkspaceMenuItem);
-      // viewMenuItems.add(showHiddenFilesMenuItem);
-      viewMenuItems.add(new MenuItemSeparator());
-      viewMenuItems.add(useDescriptionsMenuItem);
-      if (MantleApplication.showAdvancedFeatures) {
-        favoritesGroupMenuBar.setTitle(Messages.getString("favoriteGroups")); //$NON-NLS-1$
-        viewMenuItems.add(favoritesGroupMenuBar);
-      }
-    }
     viewMenuItems.add(new MenuItemSeparator());
 
     MenuItem refreshItem = new MenuItem(Messages.getString("refresh"), new RefreshRepositoryCommand());
@@ -1432,31 +1412,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     viewMenuCallback.installViewMenu(viewMenuItems);
   }
 
-  public boolean isExplorerViewShowing() {
-    return useClassicView;
-  }
-
-  public void setExplorerViewShowing(boolean explorerViewShowing) {
-    this.useClassicView = explorerViewShowing;
-    buildUI();
-    // update view menu
-    updateViewMenu(viewMenuCallback);
-  }
-
   public TabPanel getContentTabPanel() {
     return contentTabPanel;
   }
 
   public void setContentTabPanel(TabPanel contentTabPanel) {
     this.contentTabPanel = contentTabPanel;
-  }
-
-  public Document getSolutionDocument() {
-    return solutionDocument;
-  }
-
-  public void setSolutionDocument(Document solutionDocument) {
-    this.solutionDocument = solutionDocument;
   }
 
   public boolean isAdministrator() {

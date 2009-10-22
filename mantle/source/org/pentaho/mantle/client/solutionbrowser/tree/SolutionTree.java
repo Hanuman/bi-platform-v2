@@ -85,7 +85,6 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     sinkEvents(Event.ONDBLCLICK);
     // popupMenu.setAnimationEnabled(false);
     DOM.setElementAttribute(getElement(), "oncontextmenu", "return false;"); //$NON-NLS-1$ //$NON-NLS-2$
-    addItem(new TreeItem(Messages.getString("loadingEllipsis"))); //$NON-NLS-1$
 
     DOM.setStyleAttribute(focusable.getElement(), "fontSize", "0"); //$NON-NLS-1$ //$NON-NLS-2$
     DOM.setStyleAttribute(focusable.getElement(), "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,15 +104,10 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     });
 
     getElement().setId("solutionTree");
-    
+
     SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
   }
 
-  public void onFetchSolutionDocument(Document solutionDocument) {
-    // update tree
-    buildSolutionTree(solutionDocument);
-  }
-  
   public void onBrowserEvent(Event event) {
     int eventType = DOM.eventGetType(event);
     switch (eventType) {
@@ -162,7 +156,12 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     }
   }
 
-  private void buildSolutionTree(Document solutionDocument) {
+  public void beforeFetchSolutionDocument() {
+    clear();
+    addItem(new TreeItem(Messages.getString("loadingEllipsis"))); //$NON-NLS-1$
+  }
+
+  public void onFetchSolutionDocument(Document solutionDocument) {
     if (solutionDocument == null) {
       return;
     }
@@ -666,7 +665,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
 
   public void setShowHiddenFiles(boolean showHiddenFiles) {
     this.showHiddenFiles = showHiddenFiles;
-    buildSolutionTree(solutionDocument);
+    onFetchSolutionDocument(solutionDocument);
   }
 
   public boolean isShowLocalizedFileNames() {
@@ -679,7 +678,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
 
   public void setUseDescriptionsForTooltip(boolean useDescriptionsForTooltip) {
     this.useDescriptionsForTooltip = useDescriptionsForTooltip;
-    buildSolutionTree(solutionDocument);
+    onFetchSolutionDocument(solutionDocument);
   }
 
   public boolean isAdministrator() {
