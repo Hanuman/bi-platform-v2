@@ -45,7 +45,7 @@ public class SampleUsersAndRolesInitHandlerTest {
 
   private static final String JOE = "joe"; //$NON-NLS-1$
 
-  private static final String ADMIN = "Admin"; //$NON-NLS-1$
+  private static final String ADMIN = "ROLE_Admin"; //$NON-NLS-1$
 
   private HibernateUserRoleDao userRoleDao;
 
