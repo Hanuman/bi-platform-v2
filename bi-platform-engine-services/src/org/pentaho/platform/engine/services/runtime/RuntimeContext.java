@@ -103,7 +103,6 @@ import org.pentaho.platform.engine.services.actionsequence.ActionParameter;
 import org.pentaho.platform.engine.services.actionsequence.ActionParameterSource;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceParameterMgr;
 import org.pentaho.platform.engine.services.messages.Messages;
-import org.pentaho.platform.engine.services.solution.ActionDelegate;
 import org.pentaho.platform.engine.services.solution.PojoComponent;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.util.logging.Logger;
