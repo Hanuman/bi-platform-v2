@@ -30,4 +30,10 @@ public class InvalidParameterException extends RuntimeException {
    */
   private static final long serialVersionUID = -5276376792590138849L;
 
+  public InvalidParameterException() {   
+  }
+  
+  public InvalidParameterException(String msg) {
+    super(msg);
+  }
 }

@@ -14,21 +14,28 @@
  */
 package org.pentaho.platform.engine.services;
 
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.platform.api.engine.ActionSequenceException;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IRuntimeContext;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.util.IVersionHelper;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.engine.services.runtime.ParameterManager.ReturnParameter;
-
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 public class MessageFormatter implements IMessageFormatter {
@@ -38,6 +45,8 @@ public class MessageFormatter implements IMessageFormatter {
   public static final String TEXT_MIME_TYPE = "text/plain"; //$NON-NLS-1$
 
   public static final int MAX_RESULT_THRESHOLD = 100;
+
+  DateFormat dateFormat = LocaleHelper.getFullDateFormat(true, true);
 
   public void formatErrorMessage(final String mimeType, final String title, final String message,
       final StringBuffer messageBuffer) {
@@ -69,7 +78,7 @@ public class MessageFormatter implements IMessageFormatter {
       while (messageIterator.hasNext()) {
         String message = (String) messageIterator.next();
         if (message.indexOf(errorStart) == 0) {
-          message = StringEscapeUtils.escapeHtml(message);  // Escape this to prevent CSS (PPP-1595)
+          message = StringEscapeUtils.escapeHtml(message); // Escape this to prevent CSS (PPP-1595)
           return message;
         }
       }
@@ -81,8 +90,8 @@ public class MessageFormatter implements IMessageFormatter {
       final StringBuffer messageBuffer) {
     // TODO make this template or XSL based
 
-//    String product = VersionHelper.getVersionInfo().getProductID();
-//    String version = VersionHelper.getVersionInfo().getVersionNumber();
+    //    String product = VersionHelper.getVersionInfo().getProductID();
+    //    String version = VersionHelper.getVersionInfo().getVersionNumber();
     if ("text/html".equals(mimeType)) { //$NON-NLS-1$
       messageBuffer
           .append("<html><head><title>") //$NON-NLS-1$
@@ -106,10 +115,10 @@ public class MessageFormatter implements IMessageFormatter {
         messageBuffer.append(StringEscapeUtils.escapeHtml((String) messageIterator.next())).append("<br/>"); //$NON-NLS-1$
       }
       messageBuffer.append("</td></tr></table><p>"); //$NON-NLS-1$
-      if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
-      IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
-      messageBuffer
-          .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
+      if (PentahoSystem.getObjectFactory().objectDefined(IVersionHelper.class.getSimpleName())) {
+        IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
+        messageBuffer
+            .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
       }
       messageBuffer.append("</body></html>"); //$NON-NLS-1$
     } else {
@@ -128,12 +137,159 @@ public class MessageFormatter implements IMessageFormatter {
           mimeType,
           Messages.getString("MessageFormatter.ERROR_0001_REQUEST_FAILED"), Messages.getString("MessageFormatter.ERROR_0002_COULD_NOT_PROCESS"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
     } else {
-      List theMessages = (context == null) ? defaultMessages : context.getMessages();
-      // TODO handle error messages from the runtime context
-      formatErrorMessage(mimeType, "Failed", theMessages, messageBuffer); //$NON-NLS-1$
-      // formatErrorMessage( mimeType,
-      // Messages.getString("MessageFormatter.ERROR_0001_REQUEST_FAILED"), messages,
-      // messageBuffer ); //$NON-NLS-1$
+      if (context == null) {
+        formatErrorMessage(mimeType, "Failed", defaultMessages, messageBuffer); //$NON-NLS-1$
+      } else {
+        // By convention, if the solution engine encounters an exception while trying to execute and xaction,
+        // the engine will stick the caught exception in the runtime context messages. Here we're looking through
+        // the messages to see if an an action sequence exception was caught and stored with the messages.
+        // If so we'll format and return an exception message.
+        ActionSequenceException theFailureException = null;
+        List theMessages = context.getMessages();
+        for (Object msg : theMessages) {
+          if (msg instanceof ActionSequenceException) {
+            theFailureException = (ActionSequenceException) msg;
+            break;
+          }
+        }
+        if (theFailureException != null) {
+          formatExceptionMessage(mimeType, theFailureException, messageBuffer);
+        } else {
+          formatErrorMessage(mimeType, "Failed", theMessages, messageBuffer); //$NON-NLS-1$
+        }
+      }
+    }
+  }
+
+  public void formatExceptionMessage(String mimeType, ActionSequenceException exception, StringBuffer messageBuffer) {
+    if ("text/html".equals(mimeType)) { //$NON-NLS-1$
+      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class);
+      String templateFile = null;
+      String templatePath = "system/ui/templates/viewActionErrorTemplate.html"; //$NON-NLS-1$
+      try {
+        templateFile = repository.getResourceAsString(templatePath, ISolutionRepository.ACTION_EXECUTE);
+      } catch (IOException e) {
+        messageBuffer.append(Messages.getErrorString("MessageFormatter.RESPONSE_ERROR_HEADING", templatePath)); //$NON-NLS-1$
+        e.printStackTrace();
+      }
+
+      //NOTE: StringUtils.replace is used here instead of String.replaceAll because since the latter uses regex, the replacment
+      //text can cause exceptions if '$' or other special characters are present.  We cannot guarantee that the replacement
+      //text does not have these characters, so a non-regex replacer was used.
+
+      //TODO: there is a bit of extraneous String object creation here.  If performance becomes an issue, there are more efficient
+      //ways of doing mass replacments of text, such as using StringBuilder.replace
+
+      //%ERROR_HEADING%
+      templateFile = StringUtils.replace(templateFile, "%ERROR_HEADING%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_ERROR_HEADING")); //$NON-NLS-1$
+
+      //%EXCEPTION_MSG%
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MSG%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getMessage() == null ? "" : exception.getMessage())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MSG_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_MSG_LABEL")); //$NON-NLS-1$
+
+      //%EXCEPTION_TIME%
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TIME%", StringEscapeUtils.escapeHtml(dateFormat //$NON-NLS-1$
+          .format(exception.getDate())));
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TIME_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_TIME_LABEL")); //$NON-NLS-1$
+
+      //%EXCEPTION_TYPE%
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TYPE%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getClass().getSimpleName()));
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TYPE_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_TYPE_LABEL")); //$NON-NLS-1$
+
+      //%SESSION_ID%
+      templateFile = StringUtils.replace(templateFile, "%SESSION_ID%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getSessionId() == null ? "" : exception.getSessionId())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%SESSION_ID_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_SESSION_ID_LABEL")); //$NON-NLS-1$
+
+      //%INSTANCE_ID%
+      templateFile = StringUtils.replace(templateFile, "%INSTANCE_ID%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getInstanceId() == null ? "" : exception.getInstanceId())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%INSTANCE_ID_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_INSTANCE_ID_LABEL")); //$NON-NLS-1$
+
+      //%ACTION_SEQUENCE%
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getActionSequenceName() == null ? "" : exception.getActionSequenceName())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_SEQUENCE_LABEL")); //$NON-NLS-1$
+      
+      //%ACTION_SEQUENCE_EXECUTION_STACK%
+      CharArrayWriter charWriter = new CharArrayWriter();
+      PrintWriter printWriter = new PrintWriter(charWriter);
+      exception.printActionExecutionStack(printWriter);
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_EXECUTION_STACK%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
+          .toString()));
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_EXECUTION_STACK_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_SEQUENCE_EXECUTION_STACK_LABEL")); //$NON-NLS-1$
+
+      //%ACTION_CLASS%
+      templateFile = StringUtils.replace(templateFile, "%ACTION_CLASS%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getActionClass() == null ? "" : exception.getActionClass())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_CLASS_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_CLASS_LABEL")); //$NON-NLS-1$
+
+      //%ACTION_DESC%
+      templateFile = StringUtils.replace(templateFile, "%ACTION_DESC%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getStepDescription() == null ? "" : exception.getStepDescription())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_DESC_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_DESC_LABEL")); //$NON-NLS-1$
+
+      //%STEP_NUM%
+      templateFile = StringUtils.replace(templateFile, "%STEP_NUM%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getStepNumber() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getStepNumber().toString())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%STEP_NUM_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_STEP_NUM_LABEL")); //$NON-NLS-1$
+      
+      //%STEP_NUM%
+      templateFile = StringUtils.replace(templateFile, "%LOOP_INDEX%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
+          .getLoopIndex() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getLoopIndex().toString())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%LOOP_INDEX_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_LOOP_INDEX_LABEL")); //$NON-NLS-1$
+
+      //%STACK_TRACE%
+      charWriter = new CharArrayWriter();
+      printWriter = new PrintWriter(charWriter);
+      exception.printStackTrace(printWriter);
+      templateFile = StringUtils.replace(templateFile, "%STACK_TRACE%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
+          .toString()));
+      templateFile = StringUtils.replace(templateFile, "%STACK_TRACE_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_STACK_TRACE_LABEL")); //$NON-NLS-1$
+
+      //%EXCEPTION_MESSAGES%
+      Stack<String> causes = new Stack<String>();
+      buildCauses(causes, exception);
+      charWriter = new CharArrayWriter();
+      printWriter = new PrintWriter(charWriter);
+      while(!causes.empty()) {
+        printWriter.println(causes.pop());
+      }
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MESSAGES%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
+          .toString()));
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MESSAGES_LABEL%", Messages //$NON-NLS-1$
+          .getString("MessageFormatter.RESPONSE_EXCEPTION_MESSAGES_LABEL")); //$NON-NLS-1$
+
+      //%SERVER_INFO% (if available)
+      if (PentahoSystem.getObjectFactory().objectDefined(IVersionHelper.class.getSimpleName())) {
+        IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class);
+        templateFile = StringUtils.replace(templateFile, "%SERVER_INFO%", Messages.getString( //$NON-NLS-1$
+            "MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$
+      }
+
+      messageBuffer.append(templateFile);
+    }
+  }
+
+  private static void buildCauses(Stack<String> causes, Throwable cause) {
+    if (cause != null) {
+      causes.push(cause.getMessage());
+      buildCauses(causes, cause.getCause());
     }
   }
 
@@ -236,10 +392,11 @@ public class MessageFormatter implements IMessageFormatter {
           formatResultSetAsHTMLRows((IPentahoResultSet) value, messageBuffer);
         } else {
           // Temporary fix for BISERVER-3348
-          ReturnParameter rpm = (ReturnParameter)context.getParameterManager().getReturnParameters().get(outputName);
-          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) && ("header".equalsIgnoreCase(rpm.destinationParameter))){
+          ReturnParameter rpm = (ReturnParameter) context.getParameterManager().getReturnParameters().get(outputName);
+          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) //$NON-NLS-1$
+              && ("header".equalsIgnoreCase(rpm.destinationParameter))) { //$NON-NLS-1$
             // we don't want to output response header parameters to the browser...
-          }else{
+          } else {
 
             if (doWrapper) {
               messageBuffer.append(outputName).append("="); //$NON-NLS-1$
@@ -248,7 +405,7 @@ public class MessageFormatter implements IMessageFormatter {
             if (doWrapper) {
               messageBuffer.append("<br/>"); //$NON-NLS-1$
             }
-          
+
           }
         }
       }
@@ -317,10 +474,11 @@ public class MessageFormatter implements IMessageFormatter {
           }
         } else {
           // Temporary fix for BISERVER-3348
-          ReturnParameter rpm = (ReturnParameter)context.getParameterManager().getReturnParameters().get(outputName);
-          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) && ("header".equalsIgnoreCase(rpm.destinationParameter))){
+          ReturnParameter rpm = (ReturnParameter) context.getParameterManager().getReturnParameters().get(outputName);
+          if ((rpm != null) && ("response".equalsIgnoreCase(rpm.destinationName)) //$NON-NLS-1$
+              && ("header".equalsIgnoreCase(rpm.destinationParameter))) { //$NON-NLS-1$
             // we don't want to output response header parameters to the browser...
-          }else{
+          } else {
             messageBuffer.append(outputName).append("=").append(value.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
           }
         }

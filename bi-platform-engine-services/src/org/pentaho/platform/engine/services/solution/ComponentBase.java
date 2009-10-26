@@ -41,7 +41,6 @@ import org.pentaho.platform.api.engine.IParameterResolver;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.ISelectionMapper;
-import org.pentaho.platform.api.engine.InvalidParameterException;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.PentahoMessenger;
@@ -137,6 +136,7 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
    * 
    * @return Node containing this component's definition.
    */
+  @SuppressWarnings("unchecked")
   public Node getComponentDefinition(final boolean process) {
     if (process) {
       List nodes = componentDefinition.selectNodes("//*"); //$NON-NLS-1$
@@ -467,11 +467,15 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
           runtimeContext.promptNow();
         }
       }
-    } catch (InvalidParameterException e) {
-      // No reason to do a stack trace
-      error(Messages.getErrorString("Base.ERROR_0002_EXECUTION_FAILED")); //$NON-NLS-1$
     } catch (Throwable e) {
-      error(Messages.getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
+      if (e instanceof RuntimeException) {
+        throw (RuntimeException)e;
+      } else {
+        //Since we want all exceptions including checked exceptions to propogate to the solution engine,
+        //and we cannot change IComponent API on a minor release, we have to wrap all checked exceptions
+        //in a RuntimeException.
+        throw new RuntimeException(Messages.getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
+      }
     }
     return result;
   }
@@ -489,16 +493,16 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
     return runtimeContext.getActionTitle();
   }
 
-  /**
-   * @deprecated
-   * @return
-   */
   @Deprecated
   protected IContentItem getOutputContentItem(final String mimeType) {
     return runtimeContext.getOutputContentItem(mimeType);
   }
 
   protected IContentItem getOutputContentItem(final String outputName, final String mimeType) {
+    return runtimeContext.getOutputContentItem(outputName, mimeType);
+  }
+  
+  protected IContentItem getContentOutputItem(final String outputName, final String mimeType) {
     return runtimeContext.getOutputContentItem(outputName, mimeType);
   }
 

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.pentaho.platform.api.engine.ActionSequenceException;
 import org.pentaho.platform.api.engine.IActionCompleteListener;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.ICreateFeedbackParameterCallback;
@@ -359,7 +360,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
 
     IActionSequence actionSequence = null;
     if (actionSequenceXML != null) {
-      actionSequence = createActionSequence(actionSequenceXML, solutionName);
+      actionSequence = createActionSequence(actionSequenceXML, sequenceName);
     } else {
       actionSequence = createActionSequence(sequenceName, sequencePath, solutionName);
     }
@@ -391,10 +392,31 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
       runtime.setPromptStatus(IRuntimeContext.PROMPT_NO);
     }
 
-    int validationStatus = runtime.validateSequence(sequenceName, execListener);
-    if (validationStatus != IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_OK) {
-      error(Messages.getErrorString("SolutionEngine.ERROR_0006_ACTION_SEQUENCE_INVALID")); //$NON-NLS-1$
-      status = IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL;
+    boolean validating = true;
+    try {
+      runtime.validateSequence(sequenceName, execListener);
+      validating = false;
+      runtime.executeSequence(doneListener, execListener, async);
+      if (instanceEnds) {
+        long end = System.currentTimeMillis();
+        AuditHelper.audit(session.getId(), session.getName(), sequenceName, getObjectName(), processId,
+            MessageTypes.INSTANCE_END, runtime.getInstanceId(), "", ((float) (end - start) / 1000), this); //$NON-NLS-1$
+      }
+      status = runtime.getStatus();
+    } catch (ActionSequenceException ex) {
+      String errorMsg = null;
+      status = validating ? IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL : IRuntimeContext.RUNTIME_STATUS_FAILURE;
+      
+      // This next line is a bit of a workaround, to make up for a deficiency in the SolutionEngine api.
+      // What would be nice is to have the exception that is being caught here actually be thrown out of this
+      // method. However, the ISolutionEngine interface that this class implements doesn't allow exceptions to be
+      // thrown from this method. Since we can't change the signature of public API's with a minor release we need a 
+      // workaround. We've created an new error method in PentahoMessenger that takes the exception and stuffs it in
+      // the messages list maintained within PentahoMessenger. Callers of this method that want to know if an 
+      // ActionSequenceException occurred should first call getStatus(). If the status does not 
+      // indicate success then call getMessages() and check if there is an exception in the list of messages.
+      error(ex);
+      
       long end = System.currentTimeMillis();
       AuditHelper
           .audit(
@@ -405,41 +427,8 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
               processId,
               MessageTypes.INSTANCE_FAILED,
               runtime.getInstanceId(),
-              Messages.getErrorString("SolutionEngine.ERROR_0006_ACTION_SEQUENCE_INVALID"), ((float) (end - start) / 1000), this); //$NON-NLS-1$
-      return runtime;
+              errorMsg, ((float) (end - start) / 1000), this); //$NON-NLS-1$
     }
-
-    try {
-      int executionStatus = runtime.executeSequence(doneListener, execListener, async);
-      if (executionStatus != IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
-        error(Messages.getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED")); //$NON-NLS-1$
-        status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
-        long end = System.currentTimeMillis();
-        AuditHelper
-            .audit(
-                session.getId(),
-                session.getName(),
-                sequenceName,
-                getObjectName(),
-                processId,
-                MessageTypes.INSTANCE_FAILED,
-                runtime.getInstanceId(),
-                Messages.getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED"), ((float) (end - start) / 1000), this); //$NON-NLS-1$
-        return runtime;
-      }
-    } finally {
-      if (persisted) {
-        // HibernateUtil.commitTransaction();
-        // HibernateUtil.closeSession();
-      }
-    }
-    // return the runtime context for the action
-    if (instanceEnds) {
-      long end = System.currentTimeMillis();
-      AuditHelper.audit(session.getId(), session.getName(), sequenceName, getObjectName(), processId,
-          MessageTypes.INSTANCE_END, runtime.getInstanceId(), "", ((float) (end - start) / 1000), this); //$NON-NLS-1$
-    }
-    status = runtime.getStatus();
     
     return runtime;
   }

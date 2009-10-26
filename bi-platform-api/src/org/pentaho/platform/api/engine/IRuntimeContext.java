@@ -189,11 +189,10 @@ public interface IRuntimeContext extends IAuditable, ILogger {
   /**
    * Validates the action sequence for consistency
    * @param sequenceName The name of the sequence to validate
-   * @return integer indicating success or failure
-   * @see IRuntimeContext#RUNTIME_CONTEXT_VALIDATE_FAIL
-   * @see IRuntimeContext#RUNTIME_CONTEXT_VALIDATE_OK
+   * @throws IllegalStateException
+   * @throws ActionSequenceException
    */
-  public int validateSequence(String sequenceName, IExecutionListener execListener);
+  public void validateSequence(String sequenceName, IExecutionListener execListener) throws ActionValidationException;
 
   /**
    * Executes the action sequence.
@@ -203,7 +202,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * @see IRuntimeContext#RUNTIME_STATUS_FAILURE
    * @see IRuntimeContext#RUNTIME_STATUS_SUCCESS
    */
-  public int executeSequence(IActionCompleteListener listener, IExecutionListener execListener, boolean async);
+  public void executeSequence(IActionCompleteListener listener, IExecutionListener execListener, boolean async) throws ActionSequenceException;
 
   /**
    * The Url Factory is used for building URL's that link to this or another application
@@ -461,7 +460,7 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * @see IOutputHandler
    */
   public IContentItem getOutputContentItem(String outputName, String mimeType);
-
+  
   /**
    * Returns a url to the passed in content item that can be used to retrieve
    * the content.
@@ -477,10 +476,10 @@ public interface IRuntimeContext extends IAuditable, ILogger {
    * Generates a parameter acquisition form for required
    * parameters. This writes directly to the output stream
    * provided by the output handler.
-   * @throws IOException
+   * @throws ActionSequenceException
    * @see IOutputHandler
    */
-  public void sendFeedbackForm() throws IOException;
+  public void sendFeedbackForm() throws ActionSequencePromptException;
 
   public void setCreateFeedbackParameterCallback(ICreateFeedbackParameterCallback callback);
   
@@ -687,5 +686,6 @@ public interface IRuntimeContext extends IAuditable, ILogger {
 
   @SuppressWarnings("unchecked")
   public Map getParameterProviders();
+
   
 }
