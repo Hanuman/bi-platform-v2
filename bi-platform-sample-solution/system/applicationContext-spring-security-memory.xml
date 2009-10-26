@@ -30,10 +30,10 @@
 			<!-- case matters -->
 			<value>
 				<![CDATA[
-          joe=password,ceo,Admin,User,Authenticated
-          suzy=password,cto,is,User,Authenticated
-          pat=password,dev,User,Authenticated
-          tiffany=password,dev,devmgr,User,Authenticated
+          joe=password,ROLE_ceo,ROLE_Admin,ROLE_Authenticated
+          suzy=password,ROLE_cto,ROLE_is,ROLE_Authenticated
+          pat=password,ROLE_dev,ROLE_Authenticated
+          tiffany=password,ROLE_dev,ROLE_devmgr,ROLE_Authenticated
         ]]>
 			</value>
 		</constructor-arg>

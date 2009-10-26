@@ -64,10 +64,10 @@
 						for this to work).
 					-->
 					<default-acls>
-						<acl-entry role="Admin" acl="FULL_CONTROL" />				<!-- Admin users get all authorities -->
-						<acl-entry role="cto" acl="FULL_CONTROL" />				<!-- CTO gets everything -->
-						<acl-entry role="dev" acl="EXECUTE_SUBSCRIBE" />		<!-- Dev gets execute/subscribe -->
-						<acl-entry role="Authenticated" acl="EXECUTE" />		<!-- Authenticated users get execute only -->
+						<acl-entry role="ROLE_Admin" acl="FULL_CONTROL" />				<!-- Admin users get all authorities -->
+						<acl-entry role="ROLE_cto" acl="FULL_CONTROL" />				<!-- CTO gets everything -->
+						<acl-entry role="ROLE_dev" acl="EXECUTE_SUBSCRIBE" />		<!-- Dev gets execute/subscribe -->
+						<acl-entry role="ROLE_Authenticated" acl="EXECUTE" />		<!-- Authenticated users get execute only -->
 					</default-acls>
 					
 					<!--
@@ -78,7 +78,7 @@
 
 					<overrides>
 						<file path="/pentaho-solutions/admin">
-							<acl-entry role="Admin" acl="FULL_CONTROL" />
+							<acl-entry role="ROLE_Admin" acl="FULL_CONTROL" />
 						</file>
 					</overrides>
 
@@ -101,7 +101,7 @@
 				</acl-publisher>
 				<acl-voter>
 					<!-- What role must someone be in to be an ADMIN of Pentaho -->
-					<admin-role>Admin</admin-role>
+					<admin-role>ROLE_Admin</admin-role>
 				</acl-voter>
 				<!-- 
 				  acl-files tag was added in support of PPP-130 
@@ -120,7 +120,7 @@
 
 				<anonymous-authentication>
 				  <anonymous-user>anonymousUser</anonymous-user>
-				  <anonymous-role>Anonymous</anonymous-role>
+				  <anonymous-role>ROLE_Anonymous</anonymous-role>
                                 </anonymous-authentication>
 	<!-- Insert additional pentaho-system -->
 	

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:sec="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+
+  <!-- Bean definitions in this file override bean definitions in repository.spring.xml. -->
+
+  <bean id="aclDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+    <property name="url" value="jdbc:hsqldb:mem:test" />
+    <property name="username" value="sa" />
+    <property name="password" value="" />
+  </bean>
+
+  <sec:authentication-provider>
+    <sec:user-service id="userDetailsService">
+      <sec:user password="password" name="joe" authorities="ROLE_Authenticated, ROLE_Admin" />
+      <sec:user password="password" name="suzy" authorities="ROLE_Authenticated" />
+    </sec:user-service>
+  </sec:authentication-provider>
+  
+  <sec:authentication-manager alias="authenticationManager"/>
+
+  <bean id="jcrRepository" class="org.springframework.extensions.jcr.jackrabbit.RepositoryFactoryBean">
+    <property name="configuration" value="/jackrabbit-test-repo.xml" />
+    <property name="homeDir" value="file:/tmp" />
+  </bean>
+
+</beans>

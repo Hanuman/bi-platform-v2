@@ -58,14 +58,14 @@ public class SampleUsersAndRolesInitHandler extends HibernateDaoSupport implemen
       boolean noUsers = userRoleDao.getUsers().isEmpty();
 
       if (noUsers) {
-        PentahoRole adminRole = new PentahoRole("Admin", "Super User"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole anonymous = new PentahoRole("Anonymous", "User has not logged in"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole authenticated = new PentahoRole("Authenticated", "User has logged in"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole ceo = new PentahoRole("ceo", "Chief Executive Officer"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole cto = new PentahoRole("cto", "Chief Technology Officer"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole dev = new PentahoRole("dev", "Developer"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole devMgr = new PentahoRole("devmgr", "Development Manager"); //$NON-NLS-1$ //$NON-NLS-2$
-        PentahoRole is = new PentahoRole("is", "Information Services"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole adminRole = new PentahoRole("ROLE_Admin", "Super User"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole anonymous = new PentahoRole("ROLE_Anonymous", "User has not logged in"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole authenticated = new PentahoRole("ROLE_Authenticated", "User has logged in"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole ceo = new PentahoRole("ROLE_ceo", "Chief Executive Officer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole cto = new PentahoRole("ROLE_cto", "Chief Technology Officer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole dev = new PentahoRole("ROLE_dev", "Developer"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole devMgr = new PentahoRole("ROLE_devmgr", "Development Manager"); //$NON-NLS-1$ //$NON-NLS-2$
+        PentahoRole is = new PentahoRole("ROLE_is", "Information Services"); //$NON-NLS-1$ //$NON-NLS-2$
 
         userRoleDao.createRole(adminRole);
         userRoleDao.createRole(anonymous);

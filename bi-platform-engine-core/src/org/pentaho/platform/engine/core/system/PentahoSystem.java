@@ -57,6 +57,7 @@ import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PentahoSystemException;
+import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
@@ -164,6 +165,8 @@ public class PentahoSystem {
   private static final String CACHE_MANAGER = "ICacheManager"; //$NON-NLS-1$
 
   private static IUserDetailsRoleListService userDetailsRoleListService;
+  
+  private static IPentahoContentRepository pentahoContentRepository;
 
   private static final List ACLFileExtensionList = new ArrayList();
 
@@ -769,6 +772,14 @@ public class PentahoSystem {
 
   public static IUserDetailsRoleListService getUserDetailsRoleListService() {
     return PentahoSystem.userDetailsRoleListService;
+  }
+  
+  public static void setPentahoContentRepository(final IPentahoContentRepository value) {
+    PentahoSystem.pentahoContentRepository = value;
+  }
+
+  public static IPentahoContentRepository getPentahoContentRepository() {
+    return PentahoSystem.pentahoContentRepository;
   }
 
   @Deprecated  //use PentahoSystem.get(...) to retrieve pentaho system objects

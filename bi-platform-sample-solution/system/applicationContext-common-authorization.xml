@@ -8,7 +8,7 @@
 <beans>
 
   <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
-    <property name="rolePrefix" value="" />
+    <property name="rolePrefix" value="ROLE_" />
   </bean>
 
 </beans>

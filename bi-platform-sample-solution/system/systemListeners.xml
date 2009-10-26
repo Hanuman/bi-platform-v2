@@ -14,6 +14,7 @@
         <!-- The kettleSystemListener MUST be first. It initializes and loads the Kettle plugins. -->
         <bean id="kettleSystemListener" class="org.pentaho.platform.plugin.action.kettle.KettleSystemListener" />
         <bean id="jfreeReportSystemListener" class="org.pentaho.platform.plugin.action.jfreereport.JFreeReportSystemListener" />
+
         <bean id="mondrianSystemListener" class="org.pentaho.platform.plugin.action.mondrian.MondrianSystemListener" />
         <bean id="quartzSystemListener" class="org.pentaho.platform.scheduler.QuartzSystemListener" />
         <bean id="versionCheckerSystemListener" class="org.pentaho.platform.scheduler.versionchecker.VersionCheckSystemListener">
@@ -22,19 +23,22 @@
           </property>
           <property name="requestedReleases" value="Minor, GA" />
           <property name="disableVersionCheck">
+
             <value>false</value>
           </property>
         </bean>
         <bean id="pooledDataSourceSystemListener" class="org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledDatasourceSystemListener" />
+        <bean id="pentahoContentRepositorySystemListener" class="org.pentaho.platform.repository.pcr.PentahoContentRepositorySystemListener"/>
         <!--
           <bean id="nonPooledDataSourceSystemListener"
           class="org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceSystemListener"/>
         -->
         <bean id="pluginSystemListener" class="org.pentaho.platform.plugin.services.pluginmgr.PluginAdapter" />
         <bean id="sessionCleanupListener" class="org.pentaho.platform.engine.core.system.SessionCleanupListener" />
+
         <bean id="chartingSystemListener" class="org.pentaho.platform.plugin.action.chartbeans.ChartBeansSystemListener" />
         
- 		<!-- Insert system-listeners -->
+    <!-- Insert system-listeners -->
       </list>
     </constructor-arg>
   </bean>

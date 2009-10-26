@@ -11,6 +11,7 @@
   <import resource="adminPlugins.xml" />
   <import resource="systemListeners.xml" />
   <import resource="sessionStartupActions.xml" />
+  <import resource="repository.spring.xml" />
   <import resource="applicationContext-spring-security.xml" />
   <import resource="applicationContext-common-authorization.xml" />
   <import resource="applicationContext-spring-security-hibernate.xml" />

@@ -19,6 +19,14 @@
     
         <!--  external dependencies -->
         <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
+        <dependency org="org.springframework.security"   name="spring-security-acl"       rev="2.0.5.RELEASE" transitive="false"/>
+        <dependency org="org.aspectj"   name="aspectjrt"        rev="1.6.6" />
+        
+        <dependency org="org.apache.jackrabbit"   name="jackrabbit-core"        rev="1.6.0" />
+        <dependency org="org.slf4j"               name="slf4j-log4j12"          rev="1.5.3" />
+
+        <dependency org="org.springframework.se-jcr"    name="se-jcr"       rev="0.9" />
+        <dependency org="javax.jcr"                     name="jcr"          rev="1.0" />
         
         <dependency org="commons-logging"     name="commons-logging"     rev="1.1"   transitive="false"/>
         <dependency org="commons-io"          name="commons-io"          rev="1.4" />
@@ -37,6 +45,7 @@
         	<exclude org="xml-apis" name="xml-apis" />
         </dependency>
 		<dependency org="org.springframework" name="spring"              rev="2.5.6"   transitive="false"/>
+    <dependency org="net.sf.ehcache" name="ehcache" rev="1.7.0" />
 		<dependency org="org.hibernate"       name="hibernate"           rev="3.2.6.ga">
 			<!--
 			 
@@ -67,6 +76,7 @@
         
         
         <!--  testing dependencies -->  
+        <dependency org="org.springframework" name="spring-test"              rev="2.5.6"   conf="test->default"/>
         <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true" conf="test->default" transitive="false"/>      
         <dependency org="junit"               name="junit"               rev="4.4" conf="test->default"/>
 		<dependency org="hsqldb"              name="hsqldb"              rev="1.8.0.7" conf="test->default"/>
