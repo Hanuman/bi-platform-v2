@@ -147,9 +147,8 @@ public class TestRuntimeContext extends PentahoBase implements IRuntimeContext {
 
   }
 
-  public int executeSequence(IActionCompleteListener listener, IExecutionListener execListener, boolean async) {
+  public void executeSequence(IActionCompleteListener listener, IExecutionListener execListener, boolean async) {
     // TODO Auto-generated method stub
-    return 0;
   }
 
   public boolean feedbackAllowed() {
@@ -345,7 +344,7 @@ public class TestRuntimeContext extends PentahoBase implements IRuntimeContext {
 
   }
 
-  public void sendFeedbackForm() throws IOException {
+  public void sendFeedbackForm() {
     // TODO Auto-generated method stub
 
   }
@@ -385,9 +384,8 @@ public class TestRuntimeContext extends PentahoBase implements IRuntimeContext {
 
   }
 
-  public int validateSequence(String sequenceName, IExecutionListener execListener) {
+  public void validateSequence(String sequenceName, IExecutionListener execListener) {
     // TODO Auto-generated method stub
-    return 0;
   }
 
   public String getActionName() {
@@ -401,6 +399,11 @@ public class TestRuntimeContext extends PentahoBase implements IRuntimeContext {
   }
 
   public String getProcessId() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public IContentItem getContentOutputItem(String outputName, String mimeType) {
     // TODO Auto-generated method stub
     return null;
   }
