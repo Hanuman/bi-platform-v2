@@ -17,7 +17,7 @@
 package org.pentaho.mantle.client.solutionbrowser.launcher;
 
 import org.pentaho.mantle.client.commands.ManageContentCommand;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -86,11 +86,11 @@ public class LaunchPanel extends Frame {
   }-*/;
 
   public void openWAQR() {
-    SolutionBrowserPerspective.getInstance().getNewReportCommand().execute();
+    PluginOptionsHelper.getNewReportCommand().execute();
   }
 
   public void openAnalysis() {
-    SolutionBrowserPerspective.getInstance().getNewAnalysisViewCommand().execute();
+    PluginOptionsHelper.getNewAnalysisViewCommand().execute();
   }
 
   public void openManage() {

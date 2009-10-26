@@ -24,6 +24,7 @@ import org.pentaho.mantle.client.commands.ShowPreferencesCommand;
 import org.pentaho.mantle.client.commands.SwitchLocaleCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective.OPEN_METHOD;
@@ -102,10 +103,10 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     fileMenu.getElement().setId("file_menu");
     MenuBar newMenu = new MantleMenuBar(true);
     newMenu.getElement().setId("new_menu");
-    MenuItem waqrMenuItem = new MenuItem(Messages.getString("newAdhocReport"), solutionBrowser.getNewReportCommand());//$NON-NLS-1$
+    MenuItem waqrMenuItem = new MenuItem(Messages.getString("newAdhocReport"), PluginOptionsHelper.getNewReportCommand());//$NON-NLS-1$
     waqrMenuItem.getElement().setId("waqr_menu_item");
     newMenu.addItem(waqrMenuItem);
-    MenuItem analysisMenuItem = new MenuItem(Messages.getString("newAnalysisViewEllipsis"), solutionBrowser.getNewAnalysisViewCommand());//$NON-NLS-1$
+    MenuItem analysisMenuItem = new MenuItem(Messages.getString("newAnalysisViewEllipsis"), PluginOptionsHelper.getNewAnalysisViewCommand());//$NON-NLS-1$
     analysisMenuItem.getElement().setId("new_analysis_view_menu_item");
     newMenu.addItem(analysisMenuItem); //$NON-NLS-1$
     // add additions to the file menu

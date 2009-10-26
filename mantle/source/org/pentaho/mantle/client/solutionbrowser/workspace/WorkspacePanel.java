@@ -72,15 +72,15 @@ public class WorkspacePanel extends ScrollPanel {
   private FlexTable completedContentTable;
   private FlexTable workspaceTable = new FlexTable();
 
-  private SolutionBrowserPerspective solutionBrowserPerspective;
+  private boolean isAdministrator = false;
 
-  public WorkspacePanel(final SolutionBrowserPerspective solutionBrowserPerspective) {
-    this.solutionBrowserPerspective = solutionBrowserPerspective;
+  public WorkspacePanel(boolean isAdministrator) {
+    this.isAdministrator = isAdministrator;
     DOM.setStyleAttribute(getElement(), "backgroundColor", "white"); //$NON-NLS-1$ //$NON-NLS-2$
-    buildScheduledAndCompletedContentPanel();
+    buildScheduledAndCompletedContentPanel(isAdministrator);
   }
 
-  public FlexTable buildEmptyBackgroundItemTable(int tableType) {
+  private FlexTable buildEmptyBackgroundItemTable(int tableType) {
     FlexTable table = new FlexTable();
     table.setWidth("100%"); //$NON-NLS-1$
     table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class WorkspacePanel extends ScrollPanel {
     return table;
   }
 
-  public FlexTable buildEmptyScheduleTable() {
+  private FlexTable buildEmptyScheduleTable() {
     FlexTable table = new FlexTable();
     table.setWidth("100%"); //$NON-NLS-1$
     table.setStyleName("backgroundContentTable"); //$NON-NLS-1$
@@ -147,42 +147,27 @@ public class WorkspacePanel extends ScrollPanel {
     return table;
   }
 
-  public void buildScheduledAndCompletedContentPanel() {
-    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-      public void onSuccess(Boolean isAdministrator) {
-        workspaceTable = new FlexTable();
-        workspaceTable.setWidget(0, 0, new HTML(Messages.getString("workspaceMessage"))); //$NON-NLS-1$
-        workspaceTable.setWidget(1, 0, waitingContentDisclosure);
-        workspaceTable.setWidget(2, 0, completedContentDisclosure);
-        workspaceTable.setWidget(3, 0, myScheduledContentDisclosure);
-        if (isAdministrator) {
-          workspaceTable.setWidget(4, 0, allScheduledContentDisclosure);
-        }
-
-        workspaceTable.setWidget(5, 0, subscriptionsContentDisclosure);
-        DOM.setStyleAttribute(workspaceTable.getElement(), "margin", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-        setWidget(workspaceTable);
-      }
-
-      public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback<Boolean>() {
-
-          public void onFailure(Throwable caught) {
-
-          }
-
-          public void onSuccess(Boolean result) {
-            buildScheduledAndCompletedContentPanel();
-          }
-
-        });
-      }
-    };
-    MantleServiceCache.getService().isAdministrator(callback);
+  public void setAdministrator(boolean isAdministrator) {
+    this.isAdministrator = isAdministrator;
+    buildScheduledAndCompletedContentPanel(isAdministrator);
   }
 
-  public void buildJobTable(List<JobDetail> jobDetails, FlexTable jobTable, DisclosurePanel disclosurePanel, int tableType) {
+  private void buildScheduledAndCompletedContentPanel(boolean isAdministrator) {
+    workspaceTable = new FlexTable();
+    workspaceTable.setWidget(0, 0, new HTML(Messages.getString("workspaceMessage"))); //$NON-NLS-1$
+    workspaceTable.setWidget(1, 0, waitingContentDisclosure);
+    workspaceTable.setWidget(2, 0, completedContentDisclosure);
+    workspaceTable.setWidget(3, 0, myScheduledContentDisclosure);
+    if (isAdministrator) {
+      workspaceTable.setWidget(4, 0, allScheduledContentDisclosure);
+    }
+
+    workspaceTable.setWidget(5, 0, subscriptionsContentDisclosure);
+    DOM.setStyleAttribute(workspaceTable.getElement(), "margin", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
+    setWidget(workspaceTable);
+  }
+
+  private void buildJobTable(List<JobDetail> jobDetails, FlexTable jobTable, DisclosurePanel disclosurePanel, int tableType) {
     disclosurePanel.setOpen(jobDetails != null && jobDetails.size() > 0);
     for (int row = 0; row < jobDetails.size(); row++) {
       final JobDetail jobDetail = jobDetails.get(row);
@@ -201,7 +186,7 @@ public class WorkspacePanel extends ScrollPanel {
             // Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
             // viewDialog.setContent(iframe);
             // iframe.setPixelSize(1024, 600);
-            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id); //$NON-NLS-1$
+            SolutionBrowserPerspective.getInstance().showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id); //$NON-NLS-1$
           }
         });
         viewLabel.setStyleName("backgroundContentAction"); //$NON-NLS-1$
@@ -268,7 +253,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public void buildSubscriptionsTable(final List<SubscriptionBean> subscriptionsInfo, final FlexTable subscrTable, final DisclosurePanel disclosurePanel) {
+  private void buildSubscriptionsTable(final List<SubscriptionBean> subscriptionsInfo, final FlexTable subscrTable, final DisclosurePanel disclosurePanel) {
     disclosurePanel.setOpen(subscriptionsInfo != null && subscriptionsInfo.size() > 0);
     subscrTable.setCellSpacing(2);
 
@@ -365,7 +350,7 @@ public class WorkspacePanel extends ScrollPanel {
    * @param publicSchedule
    *          Public schedule name
    */
-  void runAndArchive(final String publicSchedule) {
+  private void runAndArchive(final String publicSchedule) {
     AsyncCallback<String> callback = null;
     if (publicSchedule != null) {
       callback = new AsyncCallback<String>() {
@@ -387,7 +372,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
+  private void doDelete(final boolean isPublicSchedule, final SubscriptionBean currentSubscr, final String fileId) {
     if (isPublicSchedule) {
       VerticalPanel vp = new VerticalPanel();
       vp.add(new Label(Messages.getString("deletePublicSchedule"))); //$NON-NLS-1$
@@ -445,7 +430,7 @@ public class WorkspacePanel extends ScrollPanel {
     performActionOnSubscription(action, subscription, subscrName + ":" + contentID); //$NON-NLS-1$
   }
 
-  void performActionOnSubscription(final String action, final SubscriptionBean subscription, final String subscrName) {
+  private void performActionOnSubscription(final String action, final SubscriptionBean subscription, final String subscrName) {
     final PromptDialogBox viewDialog = new PromptDialogBox(Messages.getString("view"), Messages.getString("close"), null, false, false); //$NON-NLS-1$ //$NON-NLS-2$
     viewDialog.setContent(new VerticalPanel());
     viewDialog.setCallback(new IDialogCallback() {
@@ -477,7 +462,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
 
     if (action.equals("archived") || action.equals("run") || action.equals("edit")) { //$NON-NLS-1$ //$NON-NLS-2$
-      solutionBrowserPerspective.showNewURLTab(subscription.getName(), subscription.getId(), url);
+      SolutionBrowserPerspective.getInstance().showNewURLTab(subscription.getName(), subscription.getId(), url);
     } else {
       viewDialog.center();
       final Frame iframe = new Frame(url);
@@ -494,7 +479,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public void buildScheduleTable(List<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
+  private void buildScheduleTable(List<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
     disclosurePanel.setOpen(scheduleDetails != null && scheduleDetails.size() > 0);
     for (int row = 0; row < scheduleDetails.size(); row++) {
       final JobSchedule jobSchedule = scheduleDetails.get(row);
@@ -584,7 +569,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public String getTriggerStateName(int state) {
+  private String getTriggerStateName(int state) {
     if (state == 0) {
       return Messages.getString("normal"); //$NON-NLS-1$
     } else if (state == 1) {
@@ -595,7 +580,7 @@ public class WorkspacePanel extends ScrollPanel {
     return Messages.getString("unknown"); //$NON-NLS-1$
   }
 
-  public void deleteContentItem(final String subscriptionName, final String fileId) {
+  private void deleteContentItem(final String subscriptionName, final String fileId) {
     AsyncCallback<String> callback = new AsyncCallback<String>() {
 
       public void onFailure(Throwable caught) {
@@ -635,7 +620,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void fetchWorkspaceContent() {
+  private void fetchWorkspaceContent() {
     AsyncCallback<WorkspaceContent> callback = new AsyncCallback<WorkspaceContent>() {
 
       public void onSuccess(WorkspaceContent result) {
@@ -667,7 +652,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().getWorkspaceContent(callback);
   }
 
-  public void cancelBackgroundJob(final String jobName, final String jobGroup) {
+  private void cancelBackgroundJob(final String jobName, final String jobGroup) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -702,7 +687,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void deleteContentItem(final String contentId) {
+  private void deleteContentItem(final String contentId) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -738,7 +723,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void suspendJob(final String jobName, final String jobGroup, final int jobSource) {
+  private void suspendJob(final String jobName, final String jobGroup, final int jobSource) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -773,7 +758,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void resumeJob(final String jobName, final String jobGroup, final int jobSource) {
+  private void resumeJob(final String jobName, final String jobGroup, final int jobSource) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -808,7 +793,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void deleteJob(final String jobName, final String jobGroup, final int jobSource) {
+  private void deleteJob(final String jobName, final String jobGroup, final int jobSource) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -844,7 +829,7 @@ public class WorkspacePanel extends ScrollPanel {
     MantleServiceCache.getService().isAuthenticated(callback);
   }
 
-  public void runJob(final String jobName, final String jobGroup, final int jobSource) {
+  private void runJob(final String jobName, final String jobGroup, final int jobSource) {
     AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
       public void onSuccess(Boolean result) {
@@ -881,7 +866,7 @@ public class WorkspacePanel extends ScrollPanel {
   }
 
   // Event classes
-  public class RunAndArchiveClickHandler implements ClickHandler {
+  private class RunAndArchiveClickHandler implements ClickHandler {
     String subscriptionId;
 
     public RunAndArchiveClickHandler(String subscriptionID) {
@@ -893,7 +878,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public class RunSubscriptionClickHandler implements ClickHandler {
+  private class RunSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
 
     public RunSubscriptionClickHandler(SubscriptionBean subscription) {
@@ -905,7 +890,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public class EditSubscriptionClickHandler implements ClickHandler {
+  private class EditSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
 
     public EditSubscriptionClickHandler(SubscriptionBean subscription) {
@@ -917,7 +902,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  public class DeleteSubscriptionClickHandler implements ClickHandler {
+  private class DeleteSubscriptionClickHandler implements ClickHandler {
     SubscriptionBean subscription;
     Label lblDelete;
 

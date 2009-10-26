@@ -18,31 +18,18 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
-import com.google.gwt.user.client.Command;
+public class RefreshWorkspaceCommand extends AbstractCommand {
 
-public class PrintCommand implements Command {
-
-  public PrintCommand() {
+  public RefreshWorkspaceCommand() {
   }
 
-  public void execute() {
-    printFrame(SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentFrameElementId());
+  protected void performOperation() {
+    performOperation(true);
   }
 
-  /**
-   * This method will print the frame with the given element id.
-   * 
-   * @param elementId
-   */
-  public static native void printFrame(String elementId) /*-{
-    var frame = $doc.getElementById(elementId);
-    if (!frame) { 
-      $wnd.alert("Error: Can't find printing frame. Please try again."); 
-      return; 
-    } 
-    frame = frame.contentWindow;
-    frame.focus();    
-    frame.print();
-  }-*/;
+  protected void performOperation(boolean feedback) {
+    SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
+    solutionBrowserPerspective.getWorkspacePanel().refreshWorkspace();
+  }
 
 }

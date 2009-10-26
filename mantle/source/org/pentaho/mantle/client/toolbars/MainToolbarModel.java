@@ -21,6 +21,7 @@ import org.pentaho.mantle.client.XulMain;
 import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.PrintCommand;
 import org.pentaho.mantle.client.commands.SaveCommand;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
@@ -104,7 +105,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executeAnalysisViewCommand() {
-    Command analysisViewCommand = solutionBrowser.getNewAnalysisViewCommand();
+    Command analysisViewCommand = PluginOptionsHelper.getNewAnalysisViewCommand();
     analysisViewCommand.execute();
   }
 
@@ -128,7 +129,7 @@ public class MainToolbarModel extends XulEventSourceAdapter implements
 
   @Bindable
   public void executeWAQRCommand() {
-    Command wAQRCommand = solutionBrowser.getNewReportCommand();
+    Command wAQRCommand = PluginOptionsHelper.getNewReportCommand();
     wAQRCommand.execute();
   }
 

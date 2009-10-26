@@ -77,7 +77,7 @@ public class MantleMenuBar extends MenuBar {
   }
 
   private Frame getActiveBrowserPerspectiveFrame() {
-    IFrameTabPanel panel = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    IFrameTabPanel panel = SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentFrame();
     if (panel == null) {
       return null;
     } else {

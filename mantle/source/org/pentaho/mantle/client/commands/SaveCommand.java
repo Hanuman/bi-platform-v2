@@ -58,7 +58,7 @@ public class SaveCommand extends AbstractCommand {
   protected void performOperation(boolean feedback) {
     final SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
 
-    retrieveCachedValues(navigatorPerspective.getCurrentFrame());
+    retrieveCachedValues(navigatorPerspective.getContentTabPanel().getCurrentFrame());
 
     SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
       public void onFailure(Throwable caught) {
@@ -100,7 +100,7 @@ public class SaveCommand extends AbstractCommand {
                 overWriteDialog.setContent(new Label(Messages.getString("fileExistsOverwrite"), false)); //$NON-NLS-1$
                 overWriteDialog.setCallback(new IDialogCallback() {
                   public void okPressed() {
-                    doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+                    doSaveAs(navigatorPerspective.getContentTabPanel().getCurrentFrameElementId(), name, solution, path, type, true);
                     Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
                   }
 
@@ -110,7 +110,7 @@ public class SaveCommand extends AbstractCommand {
                 });
                 overWriteDialog.center();
               } else {
-                doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+                doSaveAs(navigatorPerspective.getContentTabPanel().getCurrentFrameElementId(), name, solution, path, type, true);
                 Window.setTitle(Messages.getString("productName") + " - " + name); //$NON-NLS-1$ //$NON-NLS-2$
                 persistFileInfoInFrame();
                 clearValues();
@@ -123,7 +123,7 @@ public class SaveCommand extends AbstractCommand {
           });
           dialog.center();
         } else {
-          doSaveAs(navigatorPerspective.getCurrentFrameElementId(), name, solution, path, type, true);
+          doSaveAs(navigatorPerspective.getContentTabPanel().getCurrentFrameElementId(), name, solution, path, type, true);
           clearValues();
         }
       }
@@ -136,7 +136,7 @@ public class SaveCommand extends AbstractCommand {
     fileInfo.setPath(this.path);
     fileInfo.setSolution(this.solution);
     fileInfo.setType(this.type);
-    SolutionBrowserPerspective.getInstance().getCurrentFrame().setFileInfo(fileInfo);
+    SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentFrame().setFileInfo(fileInfo);
   }
 
   private void clearValues() {
@@ -214,7 +214,7 @@ public class SaveCommand extends AbstractCommand {
   @SuppressWarnings("unused")
   private void doTabRename() {
     if (tabName != null) { // Save-As does not modify the name of the tab.
-      TabWidget tab = SolutionBrowserPerspective.getInstance().getCurrentTab();
+      TabWidget tab = SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentTab();
       tab.setLabelText(tabName);
       tab.setLabelTooltip(tabName);
     }

@@ -30,6 +30,7 @@ import org.pentaho.mantle.client.commands.ShowBrowserCommand;
 import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
@@ -73,13 +74,13 @@ public class MainToolbar extends Toolbar implements SolutionBrowserListener {
     Image newAnalysisImage = new Image();
     MantleImages.images.new_analysis_32().applyTo(newAnalysisImage);
     newAnalysisButton = new ToolbarButton(newAnalysisImage);
-    newAnalysisButton.setCommand(solutionBrowser.getNewAnalysisViewCommand());
+    newAnalysisButton.setCommand(PluginOptionsHelper.getNewAnalysisViewCommand());
     newAnalysisButton.setToolTip(Messages.getString("newAnalysisViewEllipsis")); //$NON-NLS-1$
 
     Image newAdhocImage = new Image();
     MantleImages.images.new_report_32().applyTo(newAdhocImage);
     newAdhocButton = new ToolbarButton(newAdhocImage);
-    newAdhocButton.setCommand(solutionBrowser.getNewReportCommand());
+    newAdhocButton.setCommand(PluginOptionsHelper.getNewReportCommand());
     newAdhocButton.setToolTip(Messages.getString("newAdhocReportEllipsis")); //$NON-NLS-1$
 
     

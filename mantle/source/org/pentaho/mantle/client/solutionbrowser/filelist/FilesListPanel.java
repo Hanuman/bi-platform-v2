@@ -25,7 +25,9 @@ import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper.ContentTypePlugin;
 import org.pentaho.mantle.client.solutionbrowser.toolbars.FilesToolbar;
 import org.pentaho.mantle.client.solutionbrowser.tree.SolutionTree;
 
@@ -108,7 +110,7 @@ public class FilesListPanel extends FlowPanel {
           String path = solutionTree.getPath();
           String lastModifiedDateStr = fileElement.getAttribute("lastModifiedDate"); //$NON-NLS-1$
           String url = fileElement.getAttribute("url"); //$NON-NLS-1$
-          SolutionBrowserPerspective.ContentTypePlugin plugin = perspective.getContentTypePlugin(name);
+          ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(name);
           String icon = null;
           if (plugin != null) {
             icon = plugin.getFileIcon();
@@ -120,7 +122,7 @@ public class FilesListPanel extends FlowPanel {
             tooltip = description;
           }
           final FileItem fileLabel = new FileItem(name, localizedName, tooltip, solution, path, //$NON-NLS-1$
-              lastModifiedDateStr, url, perspective, perspective.getEnabledOptions(name), toolbar.getSupportsACLs(), icon);
+              lastModifiedDateStr, url, perspective, PluginOptionsHelper.getEnabledOptions(name), toolbar.getSupportsACLs(), icon);
           // BISERVER-2317: Request for more IDs for Mantle UI elements
           // set element id as the filename
           fileLabel.getElement().setId("file-" + name); //$NON-NLS-1$

@@ -179,7 +179,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
   @Override
   public void popupClosed(PopupPanel panel) {
-    IFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    IFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentFrame();
     if (iframeTab == null || iframeTab.getFrame() == null) {
       return;
     }
@@ -189,7 +189,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
 
   @Override
   public void popupOpened(PopupPanel panel) {
-    IFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getCurrentFrame();
+    IFrameTabPanel iframeTab = SolutionBrowserPerspective.getInstance().getContentTabPanel().getCurrentFrame();
     if (iframeTab == null || iframeTab.getFrame() == null) {
       return;
     }

@@ -29,6 +29,7 @@ import org.pentaho.gwt.widgets.client.utils.ElementUtils;
 import org.pentaho.mantle.client.commands.CommandExec;
 import org.pentaho.mantle.client.dialogs.WaitPopup;
 import org.pentaho.mantle.client.messages.Messages;
+import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.usersettings.IMantleSettingsListener;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
@@ -177,11 +178,8 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     mainApplicationPanel.add(menuAndLogoPanel);
     mainApplicationPanel.setCellHeight(menuAndLogoPanel, "1px"); //$NON-NLS-1$
 
-    // load user bookmarks
-    solutionBrowserPerspective.loadBookmarks();
-
     // update supported file types
-    solutionBrowserPerspective.buildEnabledOptionsList(settings);
+    PluginOptionsHelper.buildEnabledOptionsList(settings);
 
     // show stuff we've created/configured
     mainApplicationPanel.add(solutionBrowserPerspective);

@@ -67,7 +67,7 @@ public class AnalysisViewCommand extends AbstractCommand {
                 navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // Set it to save-enabled and fire event
-                navigatorPerspective.getCurrentFrame().setSaveEnabled(true);
+                navigatorPerspective.getContentTabPanel().getCurrentFrame().setSaveEnabled(true);
                 navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
 
                 // navigatorPerspective.refreshPerspective(false);
