@@ -193,7 +193,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
     tabPanel.remove(tabPanel.getWidgetIndex(tabContent));
     if (tabPanel.getWidgetCount() == 0) {
       if (perspective != null) {
-        perspective.allTabsClosed();
+        perspective.getContentTabPanel().allTabsClosed();
       }
     }
 
@@ -218,7 +218,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   public void closeAllTabs() {
     tabPanel.clear();
     if (tabPanel.getWidgetCount() == 0) {
-      perspective.allTabsClosed();
+      perspective.getContentTabPanel().allTabsClosed();
     }
   }
 

@@ -23,6 +23,7 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
+import org.pentaho.mantle.client.solutionbrowser.tabs.MantleTabPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
@@ -68,7 +69,7 @@ public class AnalysisViewCommand extends AbstractCommand {
 
                 // Set it to save-enabled and fire event
                 navigatorPerspective.getContentTabPanel().getCurrentFrame().setSaveEnabled(true);
-                navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, SolutionBrowserPerspective.CURRENT_SELECTED_TAB);
+                navigatorPerspective.fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, MantleTabPanel.CURRENT_SELECTED_TAB);
 
                 // navigatorPerspective.refreshPerspective(false);
               }

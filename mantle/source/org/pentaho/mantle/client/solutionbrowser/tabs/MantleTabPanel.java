@@ -45,6 +45,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MantleTabPanel extends TabPanel {
 
+  public static final int CURRENT_SELECTED_TAB = -1;
+
   private static final String FRAME_ID_PRE = "frame_"; //$NON-NLS-1$
   private static int frameIdCount = 0;
 
@@ -230,7 +232,7 @@ public class MantleTabPanel extends TabPanel {
         remove(curpos);
       }
       if (getWidgetCount() == 0) {
-        SolutionBrowserPerspective.getInstance().allTabsClosed();
+        allTabsClosed();
       }
       return;
     }
@@ -238,7 +240,7 @@ public class MantleTabPanel extends TabPanel {
     if (url.contains(curPanel.getUrl())) {
       remove(curpos);
       if (getWidgetCount() == 0) {
-        SolutionBrowserPerspective.getInstance().allTabsClosed();
+        allTabsClosed();
       }
       return;
     }
@@ -249,7 +251,7 @@ public class MantleTabPanel extends TabPanel {
       if (url.contains(curPanel.getUrl())) {
         remove(i);
         if (getWidgetCount() == 0) {
-          SolutionBrowserPerspective.getInstance().allTabsClosed();
+          allTabsClosed();
         }
         return;
       }
@@ -303,5 +305,10 @@ public class MantleTabPanel extends TabPanel {
     }
   }
 
-  
+  public void allTabsClosed() {
+    // show the "launch" panel
+    SolutionBrowserPerspective.getInstance().showContent();
+    SolutionBrowserPerspective.getInstance().fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.CLOSE, CURRENT_SELECTED_TAB);
+  }
+
 }

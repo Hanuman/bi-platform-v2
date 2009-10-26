@@ -114,13 +114,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
   private boolean isAdministrator = false;
   private List<SolutionBrowserListener> listeners = new ArrayList<SolutionBrowserListener>();
 
-  public static final int CURRENT_SELECTED_TAB = -1;
-
-  RefreshRepositoryCommand refreshRepositoryCommand = new RefreshRepositoryCommand();
-
   Command ToggleLocalizedNamesCommand = new Command() {
     public void execute() {
-      setUseLocalizedFileNames(!solutionTree.isShowLocalizedFileNames());
+      solutionTree.setShowLocalizedFileNames(!solutionTree.isShowLocalizedFileNames());
+
       // update view menu
       updateViewMenu();
 
@@ -131,7 +128,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   Command ShowHideFilesCommand = new Command() {
     public void execute() {
-      setShowHiddenFiles(!solutionTree.isShowHiddenFiles());
+      solutionTree.setShowHiddenFiles(!solutionTree.isShowHiddenFiles());
+      solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
+
       // update view menu
       updateViewMenu();
 
@@ -142,7 +141,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
   Command UseDescriptionCommand = new Command() {
     public void execute() {
-      setUseDescriptions(!solutionTree.isUseDescriptionsForTooltip());
+      solutionTree.setUseDescriptionsForTooltip(!solutionTree.isUseDescriptionsForTooltip());
+      solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
+
       // update view menu
       updateViewMenu();
 
@@ -229,10 +230,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     $wnd.sendMouseEvent = function(event) {
       return solutionNavigator.@org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective::mouseUp(Lcom/google/gwt/user/client/Event;)(event);
     }
-    $wnd.mantle_refreshRepository = function() {
-      var cmd = solutionNavigator.@org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective::refreshRepositoryCommand;
-      cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
-    }
     $wnd.mantle_waqr_preview = function(url, xml) {
       solutionNavigator.@org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective::handleWAQRPreview(Ljava/lang/String;Ljava/lang/String;)(url, xml);
     }
@@ -306,7 +303,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     workspacePanel.refreshWorkspace();
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
     // TODO Not sure what event type to pass
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, MantleTabPanel.CURRENT_SELECTED_TAB);
     updateViewMenu();
   }
 
@@ -841,29 +838,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
     dialog.center();
   }
 
-  public void setUseLocalizedFileNames(boolean showLocalizedFileNames) {
-    solutionTree.setShowLocalizedFileNames(showLocalizedFileNames);
-    // update view menu
-    updateViewMenu();
-  }
-
-  public void setShowHiddenFiles(boolean showHiddenFiles) {
-    solutionTree.setShowHiddenFiles(showHiddenFiles);
-    solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
-
-    // update view menu
-    updateViewMenu();
-  }
-
-  public void setUseDescriptions(boolean showDescriptions) {
-    solutionTree.setUseDescriptionsForTooltip(showDescriptions);
-    solutionTree.setSelectedItem(solutionTree.getSelectedItem(), true);
-
-    // update view menu
-    updateViewMenu();
-  }
-
-  private void updateViewMenu() {
+  public void updateViewMenu() {
     List<UIObject> viewMenuItems = new ArrayList<UIObject>();
 
     showLocalizedFileNamesMenuItem.setChecked(solutionTree.isShowLocalizedFileNames());
@@ -926,14 +901,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IFile
 
     // update setting
     // TODO not sure what type of event needs to be fired
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB);
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, MantleTabPanel.CURRENT_SELECTED_TAB);
     MantleServiceCache.getService().setShowNavigator(showSolutionBrowser, EmptyCallback.getInstance());
-  }
-
-  public void allTabsClosed() {
-    // show the "launch" panel
-    showContent();
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.CLOSE, CURRENT_SELECTED_TAB);
   }
 
   public void addSolutionBrowserListener(SolutionBrowserListener listener) {

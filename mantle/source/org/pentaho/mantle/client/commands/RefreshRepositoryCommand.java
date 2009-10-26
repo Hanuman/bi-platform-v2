@@ -25,7 +25,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RefreshRepositoryCommand extends AbstractCommand {
 
+  private static native void setupNativeHooks(RefreshRepositoryCommand cmd)
+  /*-{
+    $wnd.mantle_refreshRepository = function() {
+      cmd.@org.pentaho.mantle.client.commands.RefreshRepositoryCommand::execute(Z)(false);
+    }
+  }-*/;
+
   public RefreshRepositoryCommand() {
+    setupNativeHooks(this);
   }
 
   public void execute() {

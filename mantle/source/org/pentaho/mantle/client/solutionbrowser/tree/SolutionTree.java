@@ -35,12 +35,17 @@ import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.ISolutionDocumentListener;
 import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
+import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
+import org.pentaho.mantle.client.usersettings.IUserSettingsListener;
+import org.pentaho.mantle.client.usersettings.UserSettingsManager;
+import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Node;
@@ -69,7 +74,7 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDocumentListener {
+public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDocumentListener, IUserSettingsListener {
   boolean showLocalizedFileNames = true;
   boolean showHiddenFiles = false;
   Document solutionDocument;
@@ -106,6 +111,28 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     getElement().setId("solutionTree");
 
     SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
+    UserSettingsManager.getInstance().addUserSettingsListener(this);
+  }
+
+  public void onFetchUserSettings(List<IUserSetting> settings) {
+    if (settings == null) {
+      return;
+    }
+
+    for (IUserSetting setting : settings) {
+      if (IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES.equals(setting.getSettingName())) {
+        boolean showLocalizedFileNames = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
+        setShowLocalizedFileNames(showLocalizedFileNames);
+      } else if (IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS.equals(setting.getSettingName())) {
+        boolean useDescriptions = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
+        setUseDescriptionsForTooltip(useDescriptions);
+      } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
+        boolean showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
+        setShowHiddenFiles(showHiddenFiles);
+      }
+    }
+    
+    SolutionBrowserPerspective.getInstance().updateViewMenu();
   }
 
   public void onBrowserEvent(Event event) {

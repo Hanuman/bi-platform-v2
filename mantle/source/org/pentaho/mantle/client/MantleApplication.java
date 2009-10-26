@@ -130,15 +130,6 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
         if (IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR.equals(setting.getSettingName())) {
           boolean showNavigator = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
           solutionBrowserPerspective.setNavigatorShowing(showNavigator);
-        } else if (IMantleUserSettingsConstants.MANTLE_SHOW_LOCALIZED_FILENAMES.equals(setting.getSettingName())) {
-          boolean showLocalizedFileNames = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
-          solutionBrowserPerspective.setUseLocalizedFileNames(showLocalizedFileNames);
-        } else if (IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS.equals(setting.getSettingName())) {
-          boolean useDescriptions = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
-          solutionBrowserPerspective.setUseDescriptions(useDescriptions);
-        } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
-          boolean showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
-          solutionBrowserPerspective.setShowHiddenFiles(showHiddenFiles);
         } else if (IMantleUserSettingsConstants.MANTLE_LOGO_LAUNCH_URL.equals(setting.getSettingName())) {
           String url = setting.getSettingValue();
           logoPanel.setLaunchURL(url);
