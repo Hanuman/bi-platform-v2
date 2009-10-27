@@ -98,7 +98,7 @@ public class UserRoleDaoUserDetailsServiceTest {
     assertTrue(userFromService.getPassword().equals(PASSWORD));
     assertTrue(userFromService.isEnabled() == true);
     assertTrue(userFromService.getAuthorities().length == 1);
-    assertTrue(userFromService.getAuthorities()[0].getAuthority().equals(ROLE));
+    assertTrue(userFromService.getAuthorities()[0].getAuthority().equals(ROLE_PREFIX + ROLE));
   }
 
   @Test(expected = UsernameNotFoundException.class)
