@@ -44,7 +44,7 @@ public class UserRoleDaoUserDetailsService implements UserDetailsService {
 
   // ~ Instance fields =================================================================================================
 
-  private String rolePrefix = ""; //$NON-NLS-1$
+  private String rolePrefix = "ROLE_"; //$NON-NLS-1$
 
   private IUserRoleDao userRoleDao;
 

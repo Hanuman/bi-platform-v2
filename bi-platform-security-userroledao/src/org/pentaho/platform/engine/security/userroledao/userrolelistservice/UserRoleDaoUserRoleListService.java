@@ -43,8 +43,10 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
   // ~ Instance fields =================================================================================================
 
   private IUserRoleDao userRoleDao;
-  
+
   private UserDetailsService userDetailsService;
+
+  private String rolePrefix = "ROLE_"; //$NON-NLS-1$
 
   // ~ Constructors ====================================================================================================
 
@@ -60,7 +62,7 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
     List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
 
     for (IPentahoRole role : roles) {
-      auths.add(new GrantedAuthorityImpl(role.getName()));
+      auths.add(new GrantedAuthorityImpl(rolePrefix + role.getName()));
     }
 
     return auths.toArray(new GrantedAuthority[0]);
@@ -79,9 +81,9 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
   }
 
   public GrantedAuthority[] getAuthoritiesForUser(String username) throws UsernameNotFoundException,
-  DataAccessException {
-  UserDetails user = userDetailsService.loadUserByUsername(username);
-  return user.getAuthorities();
+      DataAccessException {
+    UserDetails user = userDetailsService.loadUserByUsername(username);
+    return user.getAuthorities();
   }
 
   public String[] getUsernamesInRole(GrantedAuthority authority) {
@@ -106,6 +108,22 @@ public class UserRoleDaoUserRoleListService implements IUserRoleListService {
 
   public void setUserDetailsService(UserDetailsService userDetailsService) {
     this.userDetailsService = userDetailsService;
+  }
+
+  /**
+   * Allows a default role prefix to be specified. If this is set to a non-empty value, then it is
+   * automatically prepended to any roles read in from the db. This may for example be used to add the
+   * <code>ROLE_</code> prefix expected to exist in role names (by default) by some other Spring Security framework
+   * classes, in the case that the prefix is not already present in the db.
+   *
+   * @param rolePrefix the new prefix
+   */
+  public void setRolePrefix(String rolePrefix) {
+    if (rolePrefix == null) {
+      this.rolePrefix = ""; //$NON-NLS-1$
+    } else {
+      this.rolePrefix = rolePrefix;
+    }
   }
 
 }

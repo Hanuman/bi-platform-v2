@@ -12,6 +12,7 @@
 		class="org.pentaho.platform.engine.security.userroledao.userrolelistservice.UserRoleDaoUserRoleListService">
 		<property name="userDetailsService" ref="userDetailsService" />
 		<property name="userRoleDao" ref="userRoleDao" />
+    <property name="rolePrefix" value="ROLE_" />
 	</bean>
 
 	<bean id="pentahoUserRoleListService"
