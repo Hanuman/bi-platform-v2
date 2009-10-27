@@ -58,10 +58,6 @@ public class UserRoleDaoUserRoleListServiceTest {
   
   private static final String ROLE2 = "ceo"; //$NON-NLS-1$
   
-  private static final String ROLE_WITH_PREFIX = "ROLE_Admin"; //$NON-NLS-1$
-  
-  private static final String ROLE2_WITH_PREFIX = "ROLE_ceo"; //$NON-NLS-1$
-  
   private Mockery context = new JUnit4Mockery();
   
   @Before
@@ -92,8 +88,8 @@ public class UserRoleDaoUserRoleListServiceTest {
     GrantedAuthority[] auths = service.getAllAuthorities();
     
     assertTrue(auths.length == 2);
-    assertTrue(auths[0].getAuthority().equals(ROLE_WITH_PREFIX) || auths[0].getAuthority().equals(ROLE2_WITH_PREFIX));
-    assertTrue(auths[1].getAuthority().equals(ROLE_WITH_PREFIX) || auths[1].getAuthority().equals(ROLE2_WITH_PREFIX));
+    assertTrue(auths[0].getAuthority().equals(ROLE) || auths[0].getAuthority().equals(ROLE2));
+    assertTrue(auths[1].getAuthority().equals(ROLE) || auths[1].getAuthority().equals(ROLE2));
   }
 
   @Test
