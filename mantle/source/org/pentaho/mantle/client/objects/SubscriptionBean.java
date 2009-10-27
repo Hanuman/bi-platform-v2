@@ -17,7 +17,7 @@
 package org.pentaho.mantle.client.objects;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 public class SubscriptionBean implements Serializable {
   /**
@@ -31,56 +31,72 @@ public class SubscriptionBean implements Serializable {
   private String size;
   private String type;
   private String pluginUrl;
-  private List<String[]> content;
-  
+  private ArrayList<String[]> content;
+
   public SubscriptionBean() {
-    
+
   }
+
   public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
+
   public String getXactionName() {
     return xactionName;
   }
+
   public void setXactionName(String xactionName) {
     this.xactionName = xactionName;
   }
+
   public String getScheduleDate() {
     return scheduleDate;
   }
+
   public void setScheduleDate(String scheduleDate) {
     this.scheduleDate = scheduleDate;
   }
+
   public String getSize() {
     return size;
   }
+
   public void setSize(String size) {
     this.size = size;
   }
+
   public String getType() {
     return type;
   }
+
   public void setType(String type) {
     this.type = type;
-  }  
-  public List<String[]> getContent() {
+  }
+
+  public ArrayList<String[]> getContent() {
     return content;
   }
-  public void setContent(List<String[]> content) {
+
+  public void setContent(ArrayList<String[]> content) {
     this.content = content;
   }
+
   public String getId() {
     return id;
   }
+
   public void setId(String id) {
     this.id = id;
   }
+
   public String getPluginUrl() {
     return pluginUrl;
   }
+
   public void setPluginUrl(String pluginUrl) {
     this.pluginUrl = pluginUrl;
   }

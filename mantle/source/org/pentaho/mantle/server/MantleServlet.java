@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.mantle.client.MantleXulOverlay;
-import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.JobDetail;
 import org.pentaho.mantle.client.objects.JobSchedule;
 import org.pentaho.mantle.client.objects.RolePermission;
@@ -57,7 +56,6 @@ import org.pentaho.mantle.client.objects.UserPermission;
 import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.mantle.client.service.MantleService;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
-import org.pentaho.mantle.server.helpers.BookmarkHelper;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
 import org.pentaho.platform.api.engine.IActionSequence;
 import org.pentaho.platform.api.engine.IBackgroundExecution;
@@ -224,13 +222,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
-  public List<JobDetail> getScheduledBackgroundContent() {
+  public ArrayList<JobDetail> getScheduledBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
     if (backgroundExecution != null) {
       try {
         List<IJobDetail> jobsList = (List<IJobDetail>) backgroundExecution.getScheduledAndExecutingBackgroundJobs(getPentahoSession());
-        List<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
+        ArrayList<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
         for (IJobDetail jobDetail : jobsList) {
           JobDetail myJobDetail = new JobDetail();
           myJobDetail.id = jobDetail.getName();
@@ -253,12 +251,12 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
-  public List<JobDetail> getCompletedBackgroundContent() {
+  public ArrayList<JobDetail> getCompletedBackgroundContent() {
     getPentahoSession().resetBackgroundExecutionAlert();
     IBackgroundExecution backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getPentahoSession());
     if (backgroundExecution != null) {
       List<IContentItem> jobsList = (List<IContentItem>) backgroundExecution.getBackgroundExecutedContentList(getPentahoSession());
-      List<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
+      ArrayList<JobDetail> myJobs = new ArrayList<JobDetail>(jobsList.size());
       SimpleDateFormat fmt = new SimpleDateFormat();
       for (IContentItem contentItem : jobsList) {
         JobDetail myJobDetail = new JobDetail();
@@ -326,8 +324,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  public List<JobSchedule> getMySchedules() {
-    List<JobSchedule> jobSchedules = null;
+  public ArrayList<JobSchedule> getMySchedules() {
+    ArrayList<JobSchedule> jobSchedules = null;
     try {
       List<IJobSchedule> schedules = SchedulerHelper.getMySchedules(getPentahoSession());
       jobSchedules = iJobSchedule2JobSchedule(schedules);
@@ -340,8 +338,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return jobSchedules;
   }
 
-  public List<JobSchedule> getAllSchedules() {
-    List<JobSchedule> jobSchedules = null;
+  public ArrayList<JobSchedule> getAllSchedules() {
+    ArrayList<JobSchedule> jobSchedules = null;
     try {
       List<IJobSchedule> schedules = SchedulerHelper.getAllSchedules(getPentahoSession());
       jobSchedules = iJobSchedule2JobSchedule(schedules);
@@ -354,8 +352,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return jobSchedules;
   }
 
-  private List<JobSchedule> iJobSchedule2JobSchedule(List<IJobSchedule> iJobSchedules) {
-    List<JobSchedule> jobSchedules = new ArrayList<JobSchedule>();
+  private ArrayList<JobSchedule> iJobSchedule2JobSchedule(List<IJobSchedule> iJobSchedules) {
+    ArrayList<JobSchedule> jobSchedules = new ArrayList<JobSchedule>();
     for (IJobSchedule iJobSchedule : iJobSchedules) {
       JobSchedule jobSchedule = new JobSchedule();
       jobSchedule.fullname = iJobSchedule.getFullname();
@@ -473,15 +471,15 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   }
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
-  public List<String> getAllRoles() {
+  public ArrayList<String> getAllRoles() {
     IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
-    return (List<String>) userDetailsRoleListService.getAllRoles();
+    return (ArrayList<String>) userDetailsRoleListService.getAllRoles();
   }
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
-  public List<String> getAllUsers() {
+  public ArrayList<String> getAllUsers() {
     IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
-    return (List<String>) userDetailsRoleListService.getAllUsers();
+    return (ArrayList<String>) userDetailsRoleListService.getAllUsers();
   }
 
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName) {
@@ -568,8 +566,8 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     solutionFileInfo.canEffectiveUserManage = isAdministrator() || repository.hasAccess(solutionFile, PentahoAclEntry.PERM_UPDATE_PERMS);
     solutionFileInfo.supportsAccessControls = repository.supportsAccessControls();
     if (solutionFileInfo.canEffectiveUserManage && solutionFileInfo.supportsAccessControls) {
-      List<RolePermission> rolePermissions = new ArrayList<RolePermission>();
-      List<UserPermission> userPermissions = new ArrayList<UserPermission>();
+      ArrayList<RolePermission> rolePermissions = new ArrayList<RolePermission>();
+      ArrayList<UserPermission> userPermissions = new ArrayList<UserPermission>();
       if (solutionFile instanceof IAclSolutionFile) {
         Map<IPermissionRecipient, IPermissionMask> filePermissions = repository.getEffectivePermissions((solutionFile));
         for (Map.Entry<IPermissionRecipient, IPermissionMask> filePerm : filePermissions.entrySet()) {
@@ -695,7 +693,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginManager != null) {
         // get the menu customizations for the plugins, if any
-        List<IMenuCustomization> customs = pluginManager.getMenuCustomizations();
+        ArrayList<IMenuCustomization> customs = (ArrayList<IMenuCustomization>)pluginManager.getMenuCustomizations();
         int fileIdx = 0;
         int fileNewIdx = 0;
         int fileManageIdx = 0;
@@ -821,12 +819,12 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * 
    * @seeorg.pentaho.mantle.client.service.MantleService# getAvailableSubscriptionSchedules()
    */
-  public List<SubscriptionSchedule> getAvailableSubscriptionSchedules(String actionRef) {
+  public ArrayList<SubscriptionSchedule> getAvailableSubscriptionSchedules(String actionRef) {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     List<ISchedule> appliedList = subscribeContent == null ? new ArrayList<ISchedule>() : subscribeContent.getSchedules();
     List<ISchedule> availableList = subscriptionRepository.getSchedules();
-    List<SubscriptionSchedule> unusedScheduleList = new ArrayList<SubscriptionSchedule>();
+    ArrayList<SubscriptionSchedule> unusedScheduleList = new ArrayList<SubscriptionSchedule>();
     for (ISchedule schedule : availableList) {
       if (!appliedList.contains(schedule)) {
         SubscriptionSchedule subSchedule = new SubscriptionSchedule();
@@ -874,7 +872,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    *          The list of content items belonging to the given public schedule to be deleted
    * @return Error message if error occurred else success message
    */
-  public String deletePublicScheduleAndContents(String publicScheduleName, List<String> contentItemList) {
+  public String deletePublicScheduleAndContents(String publicScheduleName, ArrayList<String> contentItemList) {
     /*
      * Iterate through all the content items and delete them
      */
@@ -926,11 +924,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * 
    * @return List<SubscriptionBean> List of subscriptions and their related information contained within the object.
    */
-  public List<SubscriptionBean> getSubscriptionsForMyWorkspace() {
+  public ArrayList<SubscriptionBean> getSubscriptionsForMyWorkspace() {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     final String currentUser = getPentahoSession().getName();
     final List<ISubscription> userSubscriptionList = subscriptionRepository.getUserSubscriptions(currentUser);
-    final List<SubscriptionBean> opSubscrList = new ArrayList<SubscriptionBean>();
+    final ArrayList<SubscriptionBean> opSubscrList = new ArrayList<SubscriptionBean>();
 
     Iterator<ISubscription> subscrIter = userSubscriptionList.iterator();
     while (subscrIter.hasNext()) {
@@ -1012,10 +1010,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * @param currentSubscr
    * @return List of String arrays where the array consists of formatted date of the content, file type and size, file id, name and OS path.
    */
-  private List<String[]> getContentItems(final ISubscriptionRepository subscriptionRepository, final Subscription currentSubscr) {
+  private ArrayList<String[]> getContentItems(final ISubscriptionRepository subscriptionRepository, final Subscription currentSubscr) {
     final List<ContentItemFile> contentItemFileList = (List<ContentItemFile>) subscriptionRepository.getSubscriptionArchives(currentSubscr.getId(),
         getPentahoSession());
-    List<String[]> archiveList = null;
+    ArrayList<String[]> archiveList = null;
 
     if (contentItemFileList != null) {
       archiveList = new ArrayList<String[]>();
@@ -1050,11 +1048,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   // return result;
   // }
 
-  public List<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef) {
+  public ArrayList<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef) {
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
     List<ISchedule> appliedList = subscribeContent == null ? new ArrayList<ISchedule>() : subscribeContent.getSchedules();
-    List<SubscriptionSchedule> appliedScheduleList = new ArrayList<SubscriptionSchedule>();
+    ArrayList<SubscriptionSchedule> appliedScheduleList = new ArrayList<SubscriptionSchedule>();
     for (ISchedule schedule : appliedList) {
       SubscriptionSchedule subSchedule = new SubscriptionSchedule();
       subSchedule.id = schedule.getId();
@@ -1075,7 +1073,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * 
    * @see org.pentaho.mantle.client.service.MantleService#setSubscriptions(java.lang .String, boolean, java.util.List)
    */
-  public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules) {
+  public void setSubscriptions(String actionRef, boolean enabled, ArrayList<SubscriptionSchedule> currentSchedules) {
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       throw new RuntimeException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
     }
@@ -1087,7 +1085,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       }
 
       subscribeContent.clearsSchedules();
-      List<ISchedule> updatedSchedules = new ArrayList<ISchedule>();
+      ArrayList<ISchedule> updatedSchedules = new ArrayList<ISchedule>();
       List<ISchedule> availableSchedules = subscriptionRepository.getSchedules();
       for (SubscriptionSchedule currentSchedule : currentSchedules) {
         for (ISchedule availableSchedule : availableSchedules) {
@@ -1109,13 +1107,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    * 
    * @return HashMap The hashmap has schema name as keys and a list of cube names as values
    */
-  public HashMap<String, List<String>> getMondrianCatalogs() {
-    HashMap<String, List<String>> catalogCubeHashMap = new HashMap<String, List<String>>();
+  public HashMap<String, ArrayList<String>> getMondrianCatalogs() {
+    HashMap<String, ArrayList<String>> catalogCubeHashMap = new HashMap<String, ArrayList<String>>();
 
     List<MondrianCatalog> catalogs = MondrianCatalogHelper.getInstance().listCatalogs(getPentahoSession(), true);
 
     for (MondrianCatalog cat : catalogs) {
-      List<String> cubes = new ArrayList<String>();
+      ArrayList<String> cubes = new ArrayList<String>();
       catalogCubeHashMap.put(cat.getName(), cubes);
       for (MondrianCube cube : cat.getSchema().getCubes()) {
         cubes.add(cube.getName());
@@ -1137,10 +1135,10 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return state;
   }
 
-  public List<IUserSetting> getUserSettings() {
+  public ArrayList<IUserSetting> getUserSettings() {
     try {
       IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-      List<IUserSetting> settings = settingsService.getUserSettings();
+      ArrayList<IUserSetting> settings = (ArrayList<IUserSetting>)settingsService.getUserSettings();
       return settings;
     } catch (Exception e) {
       e.printStackTrace();
@@ -1174,52 +1172,6 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     }
   }
 
-  public void addBookmark(Bookmark bookmark) throws SimpleMessageException {
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
-    }
-    try {
-      IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-      List<Bookmark> bookmarks = getBookmarks();
-      // just be sure (yeah, this would be better as a Set, but I care about the
-      // user's order)
-      bookmarks.remove(bookmark);
-      bookmarks.add(bookmark);
-      settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_BOOKMARKS, BookmarkHelper.toXML(bookmarks));
-    } catch (Exception e) {
-      throw new SimpleMessageException(e.getMessage());
-    }
-  }
-
-  public void deleteBookmark(Bookmark bookmark) throws SimpleMessageException {
-    if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
-    }
-    try {
-      IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-      List<Bookmark> bookmarks = getBookmarks();
-      // just be sure (yeah, this would be better as a Set, but I care about the
-      // user's order)
-      bookmarks.remove(bookmark);
-      settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_BOOKMARKS, BookmarkHelper.toXML(bookmarks));
-    } catch (Exception e) {
-      throw new SimpleMessageException(e.getMessage());
-    }
-  }
-
-  public List<Bookmark> getBookmarks() throws SimpleMessageException {
-    IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
-    IUserSetting setting = settingsService.getUserSetting(IMantleUserSettingsConstants.MANTLE_BOOKMARKS, null);
-    if (setting == null) {
-      return new ArrayList<Bookmark>();
-    }
-    try {
-      return BookmarkHelper.fromXML(setting.getSettingValue());
-    } catch (Exception e) {
-      throw new SimpleMessageException(e.getMessage());
-    }
-  }
-
   public void setShowNavigator(boolean showNavigator) {
     IUserSettingService settingsService = PentahoSystem.get(IUserSettingService.class, getPentahoSession());
     settingsService.setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_NAVIGATOR, "" + showNavigator); //$NON-NLS-1$
@@ -1245,11 +1197,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     return versionInfo.getVersionNumber();
   }
 
-  public List<MantleXulOverlay> getOverlays() {
+  public ArrayList<MantleXulOverlay> getOverlays() {
     IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
 
     List<XulOverlay> overlays = pluginManager.getOverlays();
-    List<MantleXulOverlay> result = new ArrayList<MantleXulOverlay>();
+    ArrayList<MantleXulOverlay> result = new ArrayList<MantleXulOverlay>();
     for (XulOverlay overlay : overlays) {
 
       MantleXulOverlay tempOverlay = new MantleXulOverlay(overlay.getId(), overlay.getOverlayUri(), overlay.getSource(), overlay.getResourceBundleUri());

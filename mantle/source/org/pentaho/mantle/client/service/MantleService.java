@@ -19,12 +19,11 @@
  */
 package org.pentaho.mantle.client.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.pentaho.mantle.client.MantleXulOverlay;
-import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.SimpleMessageException;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
@@ -32,7 +31,6 @@ import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.mantle.client.objects.WorkspaceContent;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface MantleService extends RemoteService {
@@ -62,20 +60,20 @@ public interface MantleService extends RemoteService {
   
   //subscriptions API
   public Boolean isSubscriptionContent(String actionRef);
-  public List<SubscriptionSchedule> getAvailableSubscriptionSchedules(String actionRef);
-  public List<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef);
-  public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules);
+  public ArrayList<SubscriptionSchedule> getAvailableSubscriptionSchedules(String actionRef);
+  public ArrayList<SubscriptionSchedule> getAppliedSubscriptionSchedules(String actionRef);
+  public void setSubscriptions(String actionRef, boolean enabled, ArrayList<SubscriptionSchedule> currentSchedules);
   public SubscriptionState getSubscriptionState(String actionRef);
   public String deleteSubscriptionArchive(String subscriptionName, String fileId);
-  public String deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList);    
+  public String deletePublicScheduleAndContents(String currSubscr, ArrayList<String> fileItemArrayList);    
   public String runAndArchivePublicSchedule(String publicScheduleName) throws SimpleMessageException;
   public WorkspaceContent getWorkspaceContent();
   
   // file api
   public SolutionFileInfo getSolutionFileInfo(String solutionName, String path, String fileName);
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException;
-  public List<String> getAllUsers();
-  public List<String> getAllRoles();
+  public ArrayList<String> getAllUsers();
+  public ArrayList<String> getAllRoles();
   public boolean doesSolutionRepositorySupportPermissions();
   public boolean hasAccess(String solutionName, String path, String fileName, int actionOperation);
   
@@ -86,23 +84,20 @@ public interface MantleService extends RemoteService {
   public String getVersion();
   
   // For New Analysis View
-  public HashMap<String,List<String>> getMondrianCatalogs();  
+  public HashMap<String,ArrayList<String>> getMondrianCatalogs();  
   
   // user settings
-  public List<IUserSetting> getUserSettings();
+  public ArrayList<IUserSetting> getUserSettings();
   public void setLocaleOverride(String locale);
   // generic user settings
   public void setUserSetting(String settingName, String settingValue) throws SimpleMessageException;
   public IUserSetting getUserSetting(String settingName) throws SimpleMessageException;
-  public void addBookmark(Bookmark bookmark) throws SimpleMessageException;
-  public void deleteBookmark(Bookmark bookmark) throws SimpleMessageException;
-  public List<Bookmark> getBookmarks() throws SimpleMessageException;
   public void setShowNavigator(boolean showNavigator);
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames);
   public void setShowHiddenFiles(boolean showHiddenFiles);
   
   public boolean repositorySupportsACLS();
   
-  public List<MantleXulOverlay> getOverlays();
+  public ArrayList<MantleXulOverlay> getOverlays();
   
 }

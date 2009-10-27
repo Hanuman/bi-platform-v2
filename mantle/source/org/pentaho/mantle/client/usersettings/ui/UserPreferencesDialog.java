@@ -23,13 +23,14 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogValidatorCallback;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UserPreferencesDialog extends PromptDialogBox implements ChangeListener, IDialogValidatorCallback, IDialogCallback {
+public class UserPreferencesDialog extends PromptDialogBox implements ChangeHandler, IDialogValidatorCallback, IDialogCallback {
 
   public static enum PREFERENCE {
     STYLES, REPOSITORY, FAVORITES
@@ -50,7 +51,6 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
 
   public void init() {
     preferencesPanelMap.put(Messages.getString("repository"), new RepositoryPanel()); //$NON-NLS-1$
-    preferencesPanelMap.put(Messages.getString("favorites"), new FavoritesPanel()); //$NON-NLS-1$
 
     HorizontalPanel content = (HorizontalPanel) getContent();
     content.setSpacing(10);
@@ -65,7 +65,7 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
     }
 
     // preferencesList.addItem("Favorites");
-    preferencesList.addChangeListener(this);
+    preferencesList.addChangeHandler(this);
     for (int i = 0; i < preferencesList.getItemCount(); i++) {
       String item = preferencesList.getItemText(i);
       if (initialSelectedPreference.equals(PREFERENCE.STYLES) && item.equalsIgnoreCase(Messages.getString("styles"))) { //$NON-NLS-1$
@@ -76,10 +76,10 @@ public class UserPreferencesDialog extends PromptDialogBox implements ChangeList
         preferencesList.setSelectedIndex(i);
       }
     }
-    onChange(preferencesList);
+    onChange(null);
   }
 
-  public void onChange(Widget sender) {
+  public void onChange(ChangeEvent event) {
     String preferenceName = preferencesList.getItemText(preferencesList.getSelectedIndex());
     Widget content = preferencesPanelMap.get(preferenceName);
 

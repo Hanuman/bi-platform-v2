@@ -19,12 +19,11 @@
  */
 package org.pentaho.mantle.client.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.pentaho.mantle.client.MantleXulOverlay;
-import org.pentaho.mantle.client.objects.Bookmark;
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.objects.SubscriptionSchedule;
 import org.pentaho.mantle.client.objects.SubscriptionState;
@@ -61,12 +60,12 @@ public interface MantleServiceAsync {
   
   //subscriptions API
   public void isSubscriptionContent(String actionRef, AsyncCallback<Boolean> callback);
-  public void getAvailableSubscriptionSchedules(String actionRef, AsyncCallback<List<SubscriptionSchedule>> callback);
-  public void getAppliedSubscriptionSchedules(String actionRef, AsyncCallback<List<SubscriptionSchedule>> callback);
-  public void setSubscriptions(String actionRef, boolean enabled, List<SubscriptionSchedule> currentSchedules, AsyncCallback<Void> callback);
+  public void getAvailableSubscriptionSchedules(String actionRef, AsyncCallback<ArrayList<SubscriptionSchedule>> callback);
+  public void getAppliedSubscriptionSchedules(String actionRef, AsyncCallback<ArrayList<SubscriptionSchedule>> callback);
+  public void setSubscriptions(String actionRef, boolean enabled, ArrayList<SubscriptionSchedule> currentSchedules, AsyncCallback<Void> callback);
   public void getSubscriptionState(String actionRef, AsyncCallback<SubscriptionState> callback);
   public void deleteSubscriptionArchive(String subscriptionName, String fileId, AsyncCallback<String> callback);
-  public void deletePublicScheduleAndContents(String currSubscr, List<String> fileItemList, AsyncCallback<String> callback);
+  public void deletePublicScheduleAndContents(String currSubscr, ArrayList<String> fileItemList, AsyncCallback<String> callback);
   public void runAndArchivePublicSchedule(String publicScheduleName, AsyncCallback<String> callback);
   // workspace
   public void getWorkspaceContent(AsyncCallback<WorkspaceContent> callback);
@@ -74,8 +73,8 @@ public interface MantleServiceAsync {
   // file api
   public void getSolutionFileInfo(String solutionName, String path, String fileName, AsyncCallback<SolutionFileInfo> callback);
   public void setSolutionFileInfo(SolutionFileInfo fileInfo, AsyncCallback<Void> callback);
-  public void getAllUsers(AsyncCallback<List<String>> callback);
-  public void getAllRoles(AsyncCallback<List<String>> callback);
+  public void getAllUsers(AsyncCallback<ArrayList<String>> callback);
+  public void getAllRoles(AsyncCallback<ArrayList<String>> callback);
   public void doesSolutionRepositorySupportPermissions(AsyncCallback<Boolean> callback);
   public void hasAccess(String solutionName, String path, String fileName, int actionOperation, AsyncCallback<Boolean> callback);
   
@@ -86,20 +85,17 @@ public interface MantleServiceAsync {
   public void getVersion(AsyncCallback<String> callback);
 
   // For New Analysis View
-  public void getMondrianCatalogs(AsyncCallback<HashMap<String,List<String>>> callback);
+  public void getMondrianCatalogs(AsyncCallback<HashMap<String,ArrayList<String>>> callback);
   
   // user settings
-  public void getUserSettings(AsyncCallback<List<IUserSetting>> callback);
+  public void getUserSettings(AsyncCallback<ArrayList<IUserSetting>> callback);
   public void setLocaleOverride(String locale, AsyncCallback<Void> callback);
   // generic user setting getter/setters
   public void setUserSetting(String settingName, String settingValue, AsyncCallback<Void> callback);
   public void getUserSetting(String settingName, AsyncCallback<IUserSetting> callback);
-  public void addBookmark(Bookmark bookmark, AsyncCallback<Void> callback);
-  public void deleteBookmark(Bookmark bookmark, AsyncCallback<Void> callback);
-  public void getBookmarks(AsyncCallback<List<Bookmark>> callback);
   public void setShowNavigator(boolean showNavigator, AsyncCallback<Void> callback);
   public void setShowLocalizedFileNames(boolean showLocalizedFileNames, AsyncCallback<Void> callback);
   public void setShowHiddenFiles(boolean showHiddenFiles, AsyncCallback<Void> callback);
   public void repositorySupportsACLS(AsyncCallback<Boolean> callback);
-  public void getOverlays(AsyncCallback<List<MantleXulOverlay>> callback);
+  public void getOverlays(AsyncCallback<ArrayList<MantleXulOverlay>> callback);
 }

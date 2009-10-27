@@ -47,7 +47,8 @@ public class BrowserToolbar extends Toolbar {
     // Formatting stuff
     setHorizontalAlignment(ALIGN_RIGHT);
     addStyleName(FILES_TOOLBAR_STYLE_NAME);
-    setSize("100%", "29px"); //$NON-NLS-1$//$NON-NLS-2$
+    setHeight("28px"); //$NON-NLS-1$
+    setWidth("100%"); //$NON-NLS-1$
 
     createMenus();
   }

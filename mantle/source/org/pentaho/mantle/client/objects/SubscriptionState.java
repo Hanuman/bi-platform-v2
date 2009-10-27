@@ -18,18 +18,17 @@
  * @author wseyler
  */
 
-
 package org.pentaho.mantle.client.objects;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author wseyler
- *
+ * 
  */
 public class SubscriptionState implements Serializable {
   public Boolean subscriptionsEnabled;
-  public List<SubscriptionSchedule> availableSchedules;
-  public List<SubscriptionSchedule> appliedSchedules;
+  public ArrayList<SubscriptionSchedule> availableSchedules;
+  public ArrayList<SubscriptionSchedule> appliedSchedules;
 }

@@ -21,7 +21,6 @@ package org.pentaho.mantle.client.solutionbrowser.workspace;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
@@ -167,7 +166,7 @@ public class WorkspacePanel extends ScrollPanel {
     setWidget(workspaceTable);
   }
 
-  private void buildJobTable(List<JobDetail> jobDetails, FlexTable jobTable, DisclosurePanel disclosurePanel, int tableType) {
+  private void buildJobTable(ArrayList<JobDetail> jobDetails, FlexTable jobTable, DisclosurePanel disclosurePanel, int tableType) {
     disclosurePanel.setOpen(jobDetails != null && jobDetails.size() > 0);
     for (int row = 0; row < jobDetails.size(); row++) {
       final JobDetail jobDetail = jobDetails.get(row);
@@ -253,7 +252,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  private void buildSubscriptionsTable(final List<SubscriptionBean> subscriptionsInfo, final FlexTable subscrTable, final DisclosurePanel disclosurePanel) {
+  private void buildSubscriptionsTable(final ArrayList<SubscriptionBean> subscriptionsInfo, final FlexTable subscrTable, final DisclosurePanel disclosurePanel) {
     disclosurePanel.setOpen(subscriptionsInfo != null && subscriptionsInfo.size() > 0);
     subscrTable.setCellSpacing(2);
 
@@ -304,7 +303,7 @@ public class WorkspacePanel extends ScrollPanel {
       subscrTable.setWidget(row, 3, type);
       subscrTable.setWidget(row, 4, buttonsPanel);
 
-      List<String[]> scheduleList = currentSubscr.getContent();
+      ArrayList<String[]> scheduleList = currentSubscr.getContent();
       if (scheduleList != null) {
         int scheduleSize = scheduleList.size();
 
@@ -403,8 +402,8 @@ public class WorkspacePanel extends ScrollPanel {
    */
   private void deletePublicScheduleAndContents(final SubscriptionBean currPublicSchedule) {
     final String subscrName = currPublicSchedule.getId();
-    final List<String[]> scheduleList = currPublicSchedule.getContent() == null ? new ArrayList<String[]>() : currPublicSchedule.getContent();
-    final List<String> fileList = new ArrayList<String>();
+    final ArrayList<String[]> scheduleList = currPublicSchedule.getContent() == null ? new ArrayList<String[]>() : currPublicSchedule.getContent();
+    final ArrayList<String> fileList = new ArrayList<String>();
 
     AsyncCallback<String> callback = new AsyncCallback<String>() {
       public void onFailure(Throwable caught) {
@@ -479,7 +478,7 @@ public class WorkspacePanel extends ScrollPanel {
     }
   }
 
-  private void buildScheduleTable(List<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
+  private void buildScheduleTable(ArrayList<JobSchedule> scheduleDetails, FlexTable scheduleTable, DisclosurePanel disclosurePanel, final int jobSource) {
     disclosurePanel.setOpen(scheduleDetails != null && scheduleDetails.size() > 0);
     for (int row = 0; row < scheduleDetails.size(); row++) {
       final JobSchedule jobSchedule = scheduleDetails.get(row);

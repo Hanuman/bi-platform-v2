@@ -1,66 +1,66 @@
 package org.pentaho.mantle.client.objects;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 public class WorkspaceContent implements Serializable
 {
-  private List<JobDetail> scheduledJobs;
-  private List<JobDetail> completedJobs;
-  private List<JobSchedule> mySchedules;
-  private List<JobSchedule> allSchedules;
-  private List<SubscriptionBean> subscriptions;
+  private ArrayList<JobDetail> scheduledJobs;
+  private ArrayList<JobDetail> completedJobs;
+  private ArrayList<JobSchedule> mySchedules;
+  private ArrayList<JobSchedule> allSchedules;
+  private ArrayList<SubscriptionBean> subscriptions;
 
   public WorkspaceContent()
   {
   }
 
-  public List<JobDetail> getScheduledJobs()
+  public ArrayList<JobDetail> getScheduledJobs()
   {
     return scheduledJobs;
   }
 
-  public void setScheduledJobs(List<JobDetail> scheduledJobs)
+  public void setScheduledJobs(ArrayList<JobDetail> scheduledJobs)
   {
     this.scheduledJobs = scheduledJobs;
   }
 
-  public List<JobDetail> getCompletedJobs()
+  public ArrayList<JobDetail> getCompletedJobs()
   {
     return completedJobs;
   }
 
-  public void setCompletedJobs(List<JobDetail> completedJobs)
+  public void setCompletedJobs(ArrayList<JobDetail> completedJobs)
   {
     this.completedJobs = completedJobs;
   }
 
-  public List<JobSchedule> getMySchedules()
+  public ArrayList<JobSchedule> getMySchedules()
   {
     return mySchedules;
   }
 
-  public void setMySchedules(List<JobSchedule> mySchedules)
+  public void setMySchedules(ArrayList<JobSchedule> mySchedules)
   {
     this.mySchedules = mySchedules;
   }
 
-  public List<JobSchedule> getAllSchedules()
+  public ArrayList<JobSchedule> getAllSchedules()
   {
     return allSchedules;
   }
 
-  public void setAllSchedules(List<JobSchedule> allSchedules)
+  public void setAllSchedules(ArrayList<JobSchedule> allSchedules)
   {
     this.allSchedules = allSchedules;
   }
 
-  public List<SubscriptionBean> getSubscriptions()
+  public ArrayList<SubscriptionBean> getSubscriptions()
   {
     return subscriptions;
   }
 
-  public void setSubscriptions(List<SubscriptionBean> subscriptions)
+  public void setSubscriptions(ArrayList<SubscriptionBean> subscriptions)
   {
     this.subscriptions = subscriptions;
   }

@@ -32,10 +32,9 @@ import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.solutionbrowser.events.IFileSelectionChangedListener;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
+import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemListener;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 
@@ -52,7 +51,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * @author wseyler
  * 
  */
-public class FilesToolbar extends Toolbar implements IFileSelectionChangedListener {
+public class FilesToolbar extends Toolbar implements IFileItemListener {
   private static final String SEPARATOR = "separator"; //$NON-NLS-1$
   protected String FILES_TOOLBAR_STYLE_NAME = "filesPanelToolbar"; //$NON-NLS-1$
   protected String FILE_GROUP_STYLE_NAME = "filesToolbarGroup"; //$NON-NLS-1$
@@ -77,13 +76,10 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
   FileCommand menuFileCommands[] = null;
   boolean supportsACLs = false;
 
-  IFileItemCallback callback;
-
   MenuBar miscMenus = new MantleMenuBar(true);
 
-  public FilesToolbar(IFileItemCallback fileItemCallback) {
+  public FilesToolbar() {
     super();
-    this.callback = fileItemCallback;
 
     // Formatting stuff
     setHorizontalAlignment(ALIGN_RIGHT);
@@ -106,7 +102,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleImages.images.runDisabled().applyTo(runDisabledImage);
     runBtn = new ToolbarButton(runImage, runDisabledImage);
     runBtn.setId("filesToolbarRun");
-    runCmd = new FileCommand(FileCommand.COMMAND.RUN, null, callback);
+    runCmd = new FileCommand(FileCommand.COMMAND.RUN, null);
     runBtn.setCommand(runCmd);
     runBtn.setToolTip(Messages.getString("open")); //$NON-NLS-1$
     add(runBtn);
@@ -117,7 +113,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     MantleImages.images.updateDisabled().applyTo(editDisabledImage);
     editBtn = new ToolbarButton(editImage, editDisabledImage);
     editBtn.setId("filesToolbarEdit");
-    editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null, callback);
+    editCmd = new FileCommand(FileCommand.COMMAND.EDIT, null);
     editBtn.setCommand(editCmd);
     editBtn.setToolTip(Messages.getString("edit")); //$NON-NLS-1$
     add(editBtn);
@@ -164,7 +160,7 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
       if (menuCommands[i] == null) {
         miscMenus.addSeparator();
       } else {
-        menuFileCommands[i] = new FileCommand(menuCommands[i], miscComboBtn.getPopup(), callback);
+        menuFileCommands[i] = new FileCommand(menuCommands[i], miscComboBtn.getPopup());
         menuItems[i] = miscMenus.addItem(Messages.getString(menuItemNames[i]), menuFileCommands[i]);
         menuItems[i].getElement().setId(makeSafeId("file_toolbar_menuitem_" + Messages.getString(menuItemNames[i])));
       }
@@ -199,17 +195,10 @@ public class FilesToolbar extends Toolbar implements IFileSelectionChangedListen
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.pentaho.mantle.client.solutionbrowser.events.IFileSelectionChangedListener#fileSelectionChanged(org.pentaho.mantle.client.solutionbrowser.IFileItemCallback
-   * )
-   */
-  public void fileSelectionChanged(IFileItemCallback callback) {
-    updateMenus(callback.getSelectedFileItem());
+  public void itemSelected(FileItem item) {
+    updateMenus(item);
   }
-
+  
   /**
    * @param selectedFileItem
    */

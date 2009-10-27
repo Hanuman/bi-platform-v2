@@ -2,7 +2,6 @@ package org.pentaho.mantle.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.pentaho.gwt.widgets.client.menuitem.PentahoMenuItem;
@@ -86,7 +85,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
 
   public void buildMenuBar(final HashMap<String, String> settings, final boolean isAdministrator) {
     clearItems();
-    propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null, solutionBrowser);
+    propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null);
     refreshRepositoryCommand = new RefreshRepositoryCommand();
 
     solutionBrowser.setAdministrator(isAdministrator);
@@ -289,9 +288,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
   }
 
   // Cache menu additions for removal later.
-  private List<UIObject> viewMenuAdditions = new ArrayList<UIObject>();
+  private ArrayList<UIObject> viewMenuAdditions = new ArrayList<UIObject>();
 
-  public void installViewMenu(List<UIObject> viewMenuItems) {
+  public void installViewMenu(ArrayList<UIObject> viewMenuItems) {
     // clear existing items
     if (viewMenuAdditions != null) {
       for (UIObject widget : viewMenuAdditions) {

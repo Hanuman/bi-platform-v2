@@ -20,6 +20,7 @@
 package org.pentaho.mantle.client.objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class SolutionFileInfo implements Serializable {
   
   public enum Type{REPORT, XACTION, URL, ANALYSIS_VIEW, PLUGIN, FOLDER};
 
-  public List<UserPermission> userPermissions;
-  public List<RolePermission> rolePermissions;
+  public ArrayList<UserPermission> userPermissions;
+  public ArrayList<RolePermission> rolePermissions;
 
   public SolutionFileInfo() {
   }
@@ -118,19 +119,19 @@ public class SolutionFileInfo implements Serializable {
     this.supportsAccessControls = supportsAccessControls;
   }
 
-  public List<UserPermission> getUserPermissions() {
+  public ArrayList<UserPermission> getUserPermissions() {
     return userPermissions;
   }
 
-  public void setUserPermissions(List<UserPermission> userPermissions) {
+  public void setUserPermissions(ArrayList<UserPermission> userPermissions) {
     this.userPermissions = userPermissions;
   }
 
-  public List<RolePermission> getRolePermissions() {
+  public ArrayList<RolePermission> getRolePermissions() {
     return rolePermissions;
   }
 
-  public void setRolePermissions(List<RolePermission> rolePermissions) {
+  public void setRolePermissions(ArrayList<RolePermission> rolePermissions) {
     this.rolePermissions = rolePermissions;
   }
 

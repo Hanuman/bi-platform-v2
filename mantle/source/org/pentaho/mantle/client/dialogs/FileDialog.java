@@ -36,7 +36,7 @@ import com.google.gwt.xml.client.Document;
 public class FileDialog{
 
   private static String lastPath = "";
-  private List<FileChooserListener> listeners = new ArrayList<FileChooserListener>();
+  private ArrayList<FileChooserListener> listeners = new ArrayList<FileChooserListener>();
   private Document doc;
   private String title, okText;
   private String[] fileTypes;

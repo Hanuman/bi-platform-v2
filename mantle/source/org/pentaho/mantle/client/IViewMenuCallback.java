@@ -19,10 +19,10 @@
  */
 package org.pentaho.mantle.client;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.UIObject;
 
 public interface IViewMenuCallback {
-  public void installViewMenu(List<UIObject> menuItems);
+  public void installViewMenu(ArrayList<UIObject> menuItems);
 }

@@ -16,6 +16,7 @@
  */
 package org.pentaho.mantle.client.usersettings.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
@@ -61,14 +62,14 @@ public class RepositoryPanel extends UserPreferencesPanel {
   }
 
   public void loadAndApplyUserSettings() {
-    AsyncCallback<List<IUserSetting>> callback = new AsyncCallback<List<IUserSetting>>() {
+    AsyncCallback<ArrayList<IUserSetting>> callback = new AsyncCallback<ArrayList<IUserSetting>>() {
 
       public void onFailure(Throwable caught) {
         caught.printStackTrace();
         // Window.alert(caught.toString());
       }
 
-      public void onSuccess(List<IUserSetting> settings) {
+      public void onSuccess(ArrayList<IUserSetting> settings) {
 
         content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
         content.add(showNavigatorCB);
@@ -83,9 +84,9 @@ public class RepositoryPanel extends UserPreferencesPanel {
           } else if (IMantleUserSettingsConstants.MANTLE_SHOW_HIDDEN_FILES.equals(setting.getSettingName())) {
             showHiddenFiles = "true".equals(setting.getSettingValue()); //$NON-NLS-1$
           }
-          showLocalizedFileNamesCB.setChecked(showLocalizedFileNames);
-          showHiddenFilesCB.setChecked(showHiddenFiles);
-          showNavigatorCB.setChecked(showNavigator);
+          showLocalizedFileNamesCB.setValue(showLocalizedFileNames);
+          showHiddenFilesCB.setValue(showHiddenFiles);
+          showNavigatorCB.setValue(showNavigator);
         }
       }
     };

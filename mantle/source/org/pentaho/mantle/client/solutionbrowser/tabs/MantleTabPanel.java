@@ -86,7 +86,7 @@ public class MantleTabPanel extends TabPanel {
           if (tabPanel instanceof IFrameTabPanel) {
             NamedFrame frame = ((IFrameTabPanel) tabPanel).getFrame();
             frame.setVisible(true);
-            refreshIfPDF(((IFrameTabPanel) tabPanel));
+            refreshIfPDF();
           }
         }
         for (int i = 0; i < tabIndex; i++) {
@@ -97,7 +97,8 @@ public class MantleTabPanel extends TabPanel {
         }
       }
     });
-
+    setHeight("100%"); //$NON-NLS-1$
+    setWidth("100%"); //$NON-NLS-1$
   }
 
   public void add(Widget w, TabWidget tabWidget) {
@@ -263,15 +264,23 @@ public class MantleTabPanel extends TabPanel {
     return (frame.contentDocument != null && frame.contentDocument.getElementsByTagName('embed').length > 0);
   }-*/;
 
-  public void refreshIfPDF(final IFrameTabPanel frame) {
-    Timer t = new Timer() {
-      public void run() {
-        if (isPDF(frame.getFrame().getElement())) {
-          frame.reload();
-        }
+  public void refreshIfPDF() {
+    // There's a bug when re-showing a tab containing a PDF. Under Firefox it doesn't render, so we force a reload
+    int selectedTab = getTabBar().getSelectedTab();
+    if (selectedTab > -1) {
+      final Widget tabContent = getWidget(selectedTab);
+      if (tabContent instanceof IFrameTabPanel) {
+        Timer t = new Timer() {
+          public void run() {
+            IFrameTabPanel frame = ((IFrameTabPanel) tabContent);
+            if (isPDF(frame.getFrame().getElement())) {
+              frame.reload();
+            }
+          }
+        };
+        t.schedule(250);
       }
-    };
-    t.schedule(250);
+    }
   }
 
   /**

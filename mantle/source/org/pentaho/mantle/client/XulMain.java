@@ -17,6 +17,7 @@
  */
 package org.pentaho.mantle.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,13 +133,13 @@ public class XulMain extends SimplePanel implements IXulLoaderCallback, Solution
   }
 
   private void fetchOverlays() {
-    AsyncCallback<List<MantleXulOverlay>> callback = new AsyncCallback<List<MantleXulOverlay>>() {
+    AsyncCallback<ArrayList<MantleXulOverlay>> callback = new AsyncCallback<ArrayList<MantleXulOverlay>>() {
 
       public void onFailure(Throwable caught) {
         doLogin();
       }
 
-      public void onSuccess(List<MantleXulOverlay> overlays) {
+      public void onSuccess(ArrayList<MantleXulOverlay> overlays) {
 
         XulMain.getInstance().loadOverlays(overlays);
       }

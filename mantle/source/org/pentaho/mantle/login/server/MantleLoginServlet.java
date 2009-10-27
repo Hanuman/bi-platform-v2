@@ -16,8 +16,8 @@
  */
 package org.pentaho.mantle.login.server;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -32,11 +32,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class MantleLoginServlet extends RemoteServiceServlet implements MantleLoginService {
 
-  public List<String> getAllUsers() {
-
+  public ArrayList<String> getAllUsers() {
     IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
-
-    List<String> users = userDetailsRoleListService.getAllUsers();
+    ArrayList<String> users = (ArrayList<String>)userDetailsRoleListService.getAllUsers();
     Collections.sort(users);
     return users;
   }

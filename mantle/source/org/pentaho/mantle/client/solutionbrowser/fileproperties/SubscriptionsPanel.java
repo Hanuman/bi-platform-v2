@@ -20,7 +20,6 @@
 package org.pentaho.mantle.client.solutionbrowser.fileproperties;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
@@ -32,18 +31,18 @@ import org.pentaho.mantle.client.objects.SubscriptionState;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author wseyler
@@ -54,8 +53,8 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
   private boolean wasEnabled = false;
   private CheckBox enableSubscriptions = new CheckBox(Messages.getString("enableSubscription")); //$NON-NLS-1$
 
-  private ListBox availableLB = new ListBox();
-  private ListBox appliedLB = new ListBox();
+  private ListBox availableLB = new ListBox(true);
+  private ListBox appliedLB = new ListBox(true);
 
   private RoundedButton moveRightBtn = new RoundedButton();
   private RoundedButton moveLeftBtn = new RoundedButton();
@@ -67,7 +66,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
   public SubscriptionsPanel() {
     layout();
     dirty = false;
-    
+
     enableSubscriptions.getElement().setId("subscriptionPanelEnableCheck");
     availableLB.getElement().setId("subscriptionPanelAvailableList");
     appliedLB.getElement().setId("subscriptionPanelAppliedList");
@@ -80,8 +79,8 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
 
   public void layout() {
     this.setSize("100%", "100%"); //$NON-NLS-1$//$NON-NLS-2$
-    enableSubscriptions.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    enableSubscriptions.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         dirty = true;
         updateControls();
       }
@@ -98,14 +97,12 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     availablePanel.add(new Label(Messages.getString("available"))); //$NON-NLS-1$
     availablePanel.add(availableLB);
     availableLB.setVisibleItemCount(9);
-    availableLB.setMultipleSelect(true);
     availableLB.setWidth("100%"); //$NON-NLS-1$
 
     VerticalPanel appliedPanel = new VerticalPanel();
     appliedPanel.add(new Label(Messages.getString("current"))); //$NON-NLS-1$
     appliedPanel.add(appliedLB);
     appliedLB.setVisibleItemCount(9);
-    appliedLB.setMultipleSelect(true);
     appliedLB.setWidth("100%"); //$NON-NLS-1$
 
     // Add the buttons
@@ -116,8 +113,8 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     moveRightBtn.setText(">"); //$NON-NLS-1$
     moveRightBtn.setTitle(Messages.getString("add")); //$NON-NLS-1$
     moveRightBtn.setWidth("30px"); //$NON-NLS-1$
-    moveRightBtn.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    moveRightBtn.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         moveSelectedToRight();
       }
     });
@@ -125,8 +122,8 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     moveAllRightBtn.setText(">>"); //$NON-NLS-1$
     moveAllRightBtn.setTitle(Messages.getString("addAll")); //$NON-NLS-1$
     moveAllRightBtn.setWidth("30px"); //$NON-NLS-1$
-    moveAllRightBtn.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    moveAllRightBtn.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         moveAllToRight();
       }
     });
@@ -134,20 +131,22 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     moveLeftBtn.setText("<"); //$NON-NLS-1$
     moveLeftBtn.setTitle(Messages.getString("remove")); //$NON-NLS-1$
     moveLeftBtn.setWidth("30px"); //$NON-NLS-1$
-    moveLeftBtn.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    moveLeftBtn.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         moveSelectedToLeft();
       }
     });
+
     buttonGrid.add(moveLeftBtn);
     moveAllLeftBtn.setText("<<"); //$NON-NLS-1$
     moveAllLeftBtn.setTitle(Messages.getString("removeAll")); //$NON-NLS-1$
     moveAllLeftBtn.setWidth("30px"); //$NON-NLS-1$
-    moveAllLeftBtn.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    moveAllLeftBtn.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         moveAllToLeft();
       }
     });
+
     buttonGrid.add(moveAllLeftBtn);
 
     // Add the list boxes
@@ -225,12 +224,14 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.pentaho.mantle.client.solutionbrowser.fileproperties.IFileModifier#apply()
    */
   public void apply(final IDialogCallback applyCallback) {
     if (dirty) {
-      if ((wasEnabled && !enableSubscriptions.isChecked() && Window.confirm(Messages.getString("appliedSchedulesWillBeLost"))) || (!wasEnabled)) { // We're
+      if ((wasEnabled && !enableSubscriptions.getValue() && Window.confirm(Messages.getString("appliedSchedulesWillBeLost"))) || (!wasEnabled)) { // We're
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
           public void onFailure(Throwable caught) {
@@ -247,7 +248,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
           }
 
         };
-        List<SubscriptionSchedule> currentSchedules = new ArrayList<SubscriptionSchedule>();
+        ArrayList<SubscriptionSchedule> currentSchedules = new ArrayList<SubscriptionSchedule>();
         for (int i = 0; i < appliedLB.getItemCount(); i++) {
           SubscriptionSchedule subSchedule = new SubscriptionSchedule();
           subSchedule.title = appliedLB.getItemText(i);
@@ -255,7 +256,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
           currentSchedules.add(subSchedule);
         }
         MantleServiceCache.getService().setSubscriptions(
-            fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), enableSubscriptions.isChecked(), currentSchedules, callback); //$NON-NLS-1$
+            fileItem.getSolution() + fileItem.getPath() + "/" + fileItem.getName(), enableSubscriptions.getValue(), currentSchedules, callback); //$NON-NLS-1$
       }
     } else {
       // invoke the next
@@ -263,23 +264,26 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.pentaho.mantle.client.solutionbrowser.fileproperties.IFileModifier#init(org.pentaho.mantle.client.solutionbrowser.FileItem, org.pentaho.mantle.client.objects.SolutionFileInfo)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.pentaho.mantle.client.solutionbrowser.fileproperties.IFileModifier#init(org.pentaho.mantle.client.solutionbrowser.FileItem,
+   * org.pentaho.mantle.client.objects.SolutionFileInfo)
    */
   public void init(FileItem fileItem, SolutionFileInfo fileInfo) {
     this.fileItem = fileItem;
 
     updateState();
-    wasEnabled = enableSubscriptions.isChecked();
+    wasEnabled = enableSubscriptions.getValue();
   }
 
   protected void updateControls() {
-    availableLB.setEnabled(enableSubscriptions.isChecked());
-    appliedLB.setEnabled(enableSubscriptions.isChecked());
-    moveAllLeftBtn.setEnabled(enableSubscriptions.isChecked());
-    moveAllRightBtn.setEnabled(enableSubscriptions.isChecked());
-    moveLeftBtn.setEnabled(enableSubscriptions.isChecked());
-    moveRightBtn.setEnabled(enableSubscriptions.isChecked());
+    availableLB.setEnabled(enableSubscriptions.getValue());
+    appliedLB.setEnabled(enableSubscriptions.getValue());
+    moveAllLeftBtn.setEnabled(enableSubscriptions.getValue());
+    moveAllRightBtn.setEnabled(enableSubscriptions.getValue());
+    moveLeftBtn.setEnabled(enableSubscriptions.getValue());
+    moveRightBtn.setEnabled(enableSubscriptions.getValue());
   }
 
   /**
@@ -289,7 +293,7 @@ public class SubscriptionsPanel extends VerticalPanel implements IFileModifier {
     AsyncCallback<SubscriptionState> callBack = new AsyncCallback<SubscriptionState>() {
 
       public void onSuccess(SubscriptionState state) {
-        enableSubscriptions.setChecked(state.subscriptionsEnabled);
+        enableSubscriptions.setValue(state.subscriptionsEnabled);
         for (SubscriptionSchedule schedule : state.availableSchedules) {
           availableLB.addItem(schedule.title, schedule.id);
         }

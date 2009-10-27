@@ -19,9 +19,9 @@
  */
 package org.pentaho.mantle.client.solutionbrowser.filelist;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
@@ -50,11 +50,12 @@ public class FilesListPanel extends FlowPanel {
 
   private FlexTable filesList = new FlexTable();
   private FilesToolbar toolbar;
+  private FileItem selectedFileItem;
 
-  public FilesListPanel(final IFileItemCallback fileItemCallback) {
+  public FilesListPanel() {
     super();
     // Create the toolbar
-    toolbar = new FilesToolbar(fileItemCallback);
+    toolbar = new FilesToolbar();
     SimplePanel toolbarWrapper = new SimplePanel();
     toolbarWrapper.add(toolbar);
     toolbarWrapper.setStyleName("files-toolbar"); //$NON-NLS-1$
@@ -65,11 +66,11 @@ public class FilesListPanel extends FlowPanel {
       public void onBrowserEvent(Event event) {
         if ((DOM.eventGetType(event) & Event.ONKEYDOWN) == Event.ONKEYDOWN) {
           if (event.getKeyCode() == KeyCodes.KEY_UP) {
-            fileItemCallback.selectPreviousItem(fileItemCallback.getSelectedFileItem());
+            selectPreviousItem(selectedFileItem);
           } else if (event.getKeyCode() == KeyCodes.KEY_DOWN) {
-            fileItemCallback.selectNextItem(fileItemCallback.getSelectedFileItem());
+            selectNextItem(selectedFileItem);
           } else if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
-            fileItemCallback.openFile(FileCommand.COMMAND.RUN);
+            SolutionBrowserPerspective.getInstance().openFile(FileCommand.COMMAND.RUN);
           }
         }
         super.onBrowserEvent(event);
@@ -83,15 +84,16 @@ public class FilesListPanel extends FlowPanel {
     filesListWrapper.setStyleName("files-list-panel"); //$NON-NLS-1$
     add(filesListWrapper);
 
-    this.setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
-
+    setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
+    setWidth("100%"); //$NON-NLS-1$
+    
     getElement().setId("filesListPanel");
   }
 
   @SuppressWarnings("unchecked")
-  public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, FileItem selectedFileItem, TreeItem item) {
+  public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, TreeItem item) {
     filesList.clear();
-    List<Element> files = (List<Element>) item.getUserObject();
+    ArrayList<Element> files = (ArrayList<Element>) item.getUserObject();
     // let's sort this list based on localized name
     Collections.sort(files, new Comparator<Element>() {
       public int compare(Element o1, Element o2) {
@@ -122,7 +124,7 @@ public class FilesListPanel extends FlowPanel {
             tooltip = description;
           }
           final FileItem fileLabel = new FileItem(name, localizedName, tooltip, solution, path, //$NON-NLS-1$
-              lastModifiedDateStr, url, perspective, PluginOptionsHelper.getEnabledOptions(name), toolbar.getSupportsACLs(), icon);
+              lastModifiedDateStr, url, this, PluginOptionsHelper.getEnabledOptions(name), toolbar.getSupportsACLs(), icon);
           // BISERVER-2317: Request for more IDs for Mantle UI elements
           // set element id as the filename
           fileLabel.getElement().setId("file-" + name); //$NON-NLS-1$
@@ -133,7 +135,6 @@ public class FilesListPanel extends FlowPanel {
           if (selectedFileItem != null && selectedFileItem.getFullPath().equals(fileLabel.getFullPath())) {
             fileLabel.setStyleName("fileLabelSelected"); //$NON-NLS-1$
             selectedFileItem = fileLabel;
-            perspective.setSelectedFileItem(selectedFileItem);
           }
         }
       }
@@ -144,6 +145,54 @@ public class FilesListPanel extends FlowPanel {
     for (int i = 0; i < filesList.getRowCount(); i++) {
       FileItem item = (FileItem) filesList.getWidget(i, 0);
       item.setStyleName("fileLabel"); //$NON-NLS-1$
+    }
+  }
+
+  public FileItem getSelectedFileItem() {
+    return selectedFileItem;
+  }
+
+  public void setSelectedFileItem(FileItem fileItem) {
+    selectedFileItem = fileItem;
+  }
+
+  public void selectNextItem(FileItem currentItem) {
+    if (currentItem == null) {
+      return;
+    }
+    int myIndex = -1;
+    for (int i = 0; i < getFileCount(); i++) {
+      FileItem fileItem = getFileItem(i);
+      if (fileItem == currentItem) {
+        myIndex = i;
+      }
+    }
+    if (myIndex >= 0 && myIndex < getFileCount() - 1) {
+      currentItem.setStyleName("fileLabel"); //$NON-NLS-1$
+      FileItem nextItem = getFileItem(myIndex + 1);
+      nextItem.setStyleName("fileLabelSelected"); //$NON-NLS-1$
+      setSelectedFileItem(nextItem);
+      nextItem.fireFileSelectionEvent();
+    }
+  }
+
+  public void selectPreviousItem(FileItem currentItem) {
+    if (currentItem == null) {
+      return;
+    }
+    int myIndex = -1;
+    for (int i = 0; i < getFileCount(); i++) {
+      FileItem fileItem = getFileItem(i);
+      if (fileItem == currentItem) {
+        myIndex = i;
+      }
+    }
+    if (myIndex > 0 && myIndex < getFileCount()) {
+      currentItem.setStyleName("fileLabel"); //$NON-NLS-1$
+      FileItem nextItem = getFileItem(myIndex - 1);
+      nextItem.setStyleName("fileLabelSelected"); //$NON-NLS-1$
+      setSelectedFileItem(nextItem);
+      nextItem.fireFileSelectionEvent();
     }
   }
 

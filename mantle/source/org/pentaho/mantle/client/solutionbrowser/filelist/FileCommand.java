@@ -19,51 +19,55 @@
  */
 package org.pentaho.mantle.client.solutionbrowser.filelist;
 
+import org.pentaho.mantle.client.commands.DeleteFileCommand;
+import org.pentaho.mantle.client.commands.FilePropertiesCommand;
+import org.pentaho.mantle.client.commands.NewRootFolderCommand;
+import org.pentaho.mantle.client.commands.ShareFileCommand;
+import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog;
+import org.pentaho.mantle.client.solutionbrowser.scheduling.ScheduleHelper;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class FileCommand implements Command {
 
   public static enum COMMAND {
-    RUN, EDIT, DELETE, PROPERTIES, BACKGROUND, NEWWINDOW,
-    SCHEDULE_CUSTOM, SCHEDULE_NEW, SUBSCRIBE, SHARE, EDIT_ACTION, CREATE_FOLDER
+    RUN, EDIT, DELETE, PROPERTIES, BACKGROUND, NEWWINDOW, SCHEDULE_CUSTOM, SCHEDULE_NEW, SUBSCRIBE, SHARE, EDIT_ACTION, CREATE_FOLDER
   };
 
   COMMAND mode = COMMAND.RUN;
   PopupPanel popupMenu;
-  IFileItemCallback fileItemCallback;
 
-  public FileCommand(COMMAND inMode, PopupPanel popupMenu, IFileItemCallback fileItemCallback) {
+  public FileCommand(COMMAND inMode, PopupPanel popupMenu) {
     this.mode = inMode;
     this.popupMenu = popupMenu;
-    this.fileItemCallback = fileItemCallback;
   }
 
   public void execute() {
     if (popupMenu != null) {
       popupMenu.hide();
     }
-    if (mode == COMMAND.RUN || mode == COMMAND.BACKGROUND || mode == COMMAND.NEWWINDOW) {
-      fileItemCallback.openFile(mode);
-    } else if (mode == COMMAND.PROPERTIES) {
-      fileItemCallback.loadPropertiesDialog();
-    } else if (mode == COMMAND.EDIT) {
-      fileItemCallback.editFile();
-    } else if (mode == COMMAND.DELETE) {
-      fileItemCallback.deleteFile();
-    } else if (mode == COMMAND.CREATE_FOLDER) {
-      fileItemCallback.createNewFolder();
-    } else if (mode == COMMAND.EDIT_ACTION) {
-      fileItemCallback.editActionFile();
-    } else if (mode == COMMAND.SCHEDULE_NEW) {
-      fileItemCallback.createSchedule();
-    } else if (mode == COMMAND.SHARE) {
-      fileItemCallback.shareFile();
-    }
-  }
 
-  public void setFileItemCallback(IFileItemCallback fileItemCallback) {
-    this.fileItemCallback = fileItemCallback;
+    SolutionBrowserPerspective callback = SolutionBrowserPerspective.getInstance();
+
+    if (mode == COMMAND.RUN || mode == COMMAND.BACKGROUND || mode == COMMAND.NEWWINDOW) {
+      callback.openFile(mode);
+    } else if (mode == COMMAND.PROPERTIES) {
+      new FilePropertiesCommand(FilePropertiesDialog.Tabs.GENERAL).execute();
+    } else if (mode == COMMAND.EDIT) {
+      callback.editFile();
+    } else if (mode == COMMAND.DELETE) {
+      new DeleteFileCommand(callback.getFilesListPanel().getSelectedFileItem()).execute();
+    } else if (mode == COMMAND.CREATE_FOLDER) {
+      new NewRootFolderCommand().execute();
+    } else if (mode == COMMAND.EDIT_ACTION) {
+      callback.editActionFile();
+    } else if (mode == COMMAND.SCHEDULE_NEW) {
+      ScheduleHelper.createSchedule(callback.getFilesListPanel().getSelectedFileItem());
+    } else if (mode == COMMAND.SHARE) {
+      new ShareFileCommand().execute();
+    }
   }
 
 }

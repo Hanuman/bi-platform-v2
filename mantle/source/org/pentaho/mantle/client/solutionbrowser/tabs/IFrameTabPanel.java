@@ -50,6 +50,7 @@ public class IFrameTabPanel extends VerticalPanel {
   public IFrameTabPanel() {
     this.name = "" + System.currentTimeMillis();
     this.frame = new CustomFrame(name, "about:blank");
+    add(frame);
   }
 
   public IFrameTabPanel(String url) {
@@ -65,12 +66,15 @@ public class IFrameTabPanel extends VerticalPanel {
 
     setSaveEnabled(url.endsWith("analysisview.xaction")); //$NON-NLS-1$
 
-    this.frame = new CustomFrame(name, url);
+    frame = new CustomFrame(name, url);
+    frame.getElement().setAttribute("id", name); //$NON-NLS-1$
+    frame.setWidth("100%"); //$NON-NLS-1$
+    frame.setHeight("100%"); //$NON-NLS-1$
+
     add(frame);
   }
 
   public void reload() {
-
     if (form != null) {
       form.submit();
     } else {

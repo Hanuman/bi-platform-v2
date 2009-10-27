@@ -22,7 +22,6 @@ package org.pentaho.mantle.client.solutionbrowser.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
@@ -39,7 +38,6 @@ import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
-import org.pentaho.mantle.client.solutionbrowser.filelist.IFileItemCallback;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog;
 import org.pentaho.mantle.client.solutionbrowser.fileproperties.FilePropertiesDialog.Tabs;
 import org.pentaho.mantle.client.usersettings.IMantleUserSettingsConstants;
@@ -74,7 +72,7 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDocumentListener, IUserSettingsListener {
+public class SolutionTree extends Tree implements ISolutionDocumentListener, IUserSettingsListener {
   boolean showLocalizedFileNames = true;
   boolean showHiddenFiles = false;
   Document solutionDocument;
@@ -109,12 +107,13 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     });
 
     getElement().setId("solutionTree");
+    getElement().getStyle().setProperty("marginTop", "29px"); //$NON-NLS-1$ //$NON-NLS-2$
 
     SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
     UserSettingsManager.getInstance().addUserSettingsListener(this);
   }
 
-  public void onFetchUserSettings(List<IUserSetting> settings) {
+  public void onFetchUserSettings(ArrayList<IUserSetting> settings) {
     if (settings == null) {
       return;
     }
@@ -131,7 +130,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
         setShowHiddenFiles(showHiddenFiles);
       }
     }
-    
+
     SolutionBrowserPerspective.getInstance().updateViewMenu();
   }
 
@@ -162,10 +161,10 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
         popupMenu.setPopupPosition(left, top);
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
-        menuBar.addItem(new MenuItem(Messages.getString("createNewFolderEllipsis"), new FileCommand(FileCommand.COMMAND.CREATE_FOLDER, popupMenu, this)));
-        menuBar.addItem(new MenuItem(Messages.getString("delete"), new FileCommand(FileCommand.COMMAND.DELETE, popupMenu, this))); //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getString("createNewFolderEllipsis"), new FileCommand(FileCommand.COMMAND.CREATE_FOLDER, popupMenu)));
+        menuBar.addItem(new MenuItem(Messages.getString("delete"), new FileCommand(FileCommand.COMMAND.DELETE, popupMenu))); //$NON-NLS-1$
         menuBar.addSeparator();
-        menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu, this))); //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getString("properties"), new FileCommand(FileCommand.COMMAND.PROPERTIES, popupMenu))); //$NON-NLS-1$
         popupMenu.setWidget(menuBar);
         popupMenu.hide();
         popupMenu.show();
@@ -212,7 +211,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     } else {
       buildSolutionTree(null, solutionRoot);
       // sort the root elements
-      List<TreeItem> roots = new ArrayList<TreeItem>();
+      ArrayList<TreeItem> roots = new ArrayList<TreeItem>();
       for (int i = 0; i < getItemCount(); i++) {
         roots.add(getItem(i));
       }
@@ -227,7 +226,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
       }
     }
     if (selectedItem != null) {
-      List<FileTreeItem> parents = new ArrayList<FileTreeItem>();
+      ArrayList<FileTreeItem> parents = new ArrayList<FileTreeItem>();
       while (selectedItem != null) {
         parents.add(selectedItem);
         selectedItem = (FileTreeItem) selectedItem.getParentItem();
@@ -241,8 +240,8 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     }
   }
 
-  public List<FileTreeItem> getAllNodes() {
-    List<FileTreeItem> nodeList = new ArrayList<FileTreeItem>();
+  public ArrayList<FileTreeItem> getAllNodes() {
+    ArrayList<FileTreeItem> nodeList = new ArrayList<FileTreeItem>();
     for (int i = 0; i < this.getItemCount(); i++) {
       nodeList.add((FileTreeItem) this.getItem(i));
       getAllNodes((FileTreeItem) this.getItem(i), nodeList);
@@ -250,7 +249,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     return nodeList;
   }
 
-  private void getAllNodes(FileTreeItem parent, List<FileTreeItem> nodeList) {
+  private void getAllNodes(FileTreeItem parent, ArrayList<FileTreeItem> nodeList) {
     for (int i = 0; i < parent.getChildCount(); i++) {
       FileTreeItem child = (FileTreeItem) parent.getChild(i);
       nodeList.add(child);
@@ -267,7 +266,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
    *          File name to be looked for in the given directory {a/b/c/example.txt => example.txt}
    * @return True if file exists, false otherwise
    */
-  public boolean doesFileExist(final List<String> pathSegments, final String pFileName) {
+  public boolean doesFileExist(final ArrayList<String> pathSegments, final String pFileName) {
     // The IF part is to check if we are looking only at the top most level
     // If so then we need to iterate through itemCount
     if (pathSegments.size() == 0) {
@@ -286,7 +285,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
       if (directoryItem != null) {
         // Iterate through the directory and check if the name we are searching for exists in
         // the file list of current dir
-        final List<Element> filesInCurrDirectory = (List<Element>) directoryItem.getUserObject();
+        final ArrayList<Element> filesInCurrDirectory = (ArrayList<Element>) directoryItem.getUserObject();
         if (filesInCurrDirectory != null) {
           final int fileListSize = filesInCurrDirectory.size();
           for (int i = 0; i < fileListSize; i++) {
@@ -302,7 +301,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     return false;
   }
 
-  public FileTreeItem getTreeItem(List<String> pathSegments) {
+  public FileTreeItem getTreeItem(ArrayList<String> pathSegments) {
     if (pathSegments.size() == 0) {
       return null;
     }
@@ -329,7 +328,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     return null;
   }
 
-  private void selectFromList(List<FileTreeItem> parents) {
+  private void selectFromList(ArrayList<FileTreeItem> parents) {
     FileTreeItem pathDown = null;
     for (int i = 0; i < parents.size(); i++) {
       FileTreeItem parent = parents.get(i);
@@ -439,7 +438,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
                     // remove all items between the insert point and the end
                     // add the new item
                     // add back all removed items
-                    List<FileTreeItem> removedItems = new ArrayList<FileTreeItem>();
+                    ArrayList<FileTreeItem> removedItems = new ArrayList<FileTreeItem>();
                     for (int x = j; x < parentTreeItem.getChildCount(); x++) {
                       FileTreeItem removedItem = (FileTreeItem) parentTreeItem.getChild(x);
                       removedItems.add(removedItem);
@@ -474,7 +473,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
         }
 
         if (parentTreeItem != null) {
-          List<Element> files = (List<Element>) parentTreeItem.getUserObject();
+          ArrayList<Element> files = (ArrayList<Element>) parentTreeItem.getUserObject();
           if (files == null) {
             files = new ArrayList<Element>();
             parentTreeItem.setUserObject(files);
@@ -520,7 +519,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
       }
     }
     FileTreeItem tmpParent = (FileTreeItem) getSelectedItem();
-    List<FileTreeItem> parents = new ArrayList<FileTreeItem>();
+    ArrayList<FileTreeItem> parents = new ArrayList<FileTreeItem>();
     while (tmpParent != null) {
       parents.add(tmpParent);
       tmpParent = (FileTreeItem) tmpParent.getParentItem();
@@ -543,7 +542,7 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     }
 
     FileTreeItem tmpParent = (FileTreeItem) getSelectedItem();
-    List<FileTreeItem> parents = new ArrayList<FileTreeItem>();
+    ArrayList<FileTreeItem> parents = new ArrayList<FileTreeItem>();
     while (tmpParent != null) {
       parents.add(tmpParent);
       tmpParent = (FileTreeItem) tmpParent.getParentItem();
@@ -559,11 +558,6 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
     return path;
   }
 
-  public FileItem getSelectedFileItem() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
   public void loadPropertiesDialog() {
     // brings up permission dialog
     FileTreeItem selectedTreeItem = (FileTreeItem) getSelectedItem();
@@ -572,44 +566,6 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
         null, null, null, false, null);
     FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, null, isAdministrator, new TabPanel(), null, Tabs.GENERAL);
     dialog.center();
-  }
-
-  public void openFile(FileCommand.COMMAND mode) {
-    // TODO Auto-generated method stub
-    // noop
-  }
-
-  public void editFile() {
-    // TODO Auto-generated method stub
-    // noop
-  }
-
-  public void editActionFile() {
-    // TODO Auto-generated method stub
-    // noop
-  }
-
-  public void selectNextItem(FileItem currentItem) {
-    // noop
-  }
-
-  public void selectPreviousItem(FileItem currentItem) {
-    // noop
-  }
-
-  public void createSchedule(String cronExpression) {
-    // TODO Auto-generated method stub
-    // noop
-  }
-
-  public void createSchedule() {
-    // TODO Auto-generated method stub
-    // noop
-  }
-
-  public void setSelectedFileItem(FileItem fileItem) {
-    // TODO Auto-generated method stub
-    // noop
   }
 
   public void createNewFolder() {
@@ -714,16 +670,6 @@ public class SolutionTree extends Tree implements IFileItemCallback, ISolutionDo
 
   public void setAdministrator(boolean isAdministrator) {
     this.isAdministrator = isAdministrator;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.pentaho.mantle.client.solutionbrowser.IFileItemCallback#shareFile()
-   */
-  public void shareFile() {
-    // TODO Auto-generated method stub
-    // noop
   }
 
   public boolean isCreateRootNode() {

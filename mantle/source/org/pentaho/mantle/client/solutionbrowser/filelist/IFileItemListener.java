@@ -14,17 +14,11 @@
  *
  * Copyright 2008 Pentaho Corporation.  All rights reserved.
  *
- * @created Aug 21, 2008 
- * @author wseyler
+ * Created Mar 25, 2008
+ * @author Michael D'Amour
  */
-package org.pentaho.mantle.client.solutionbrowser.events;
+package org.pentaho.mantle.client.solutionbrowser.filelist;
 
-
-/**
- * @author wseyler
- *
- */
-public interface SourcesFileSelectionChanged {
-  public void addFileSelectionChangedListener(IFileSelectionChangedListener listener);
-  public void removeFileSelectionChangedListener(IFileSelectionChangedListener listener);
+public interface IFileItemListener {
+  public void itemSelected(FileItem item);
 }

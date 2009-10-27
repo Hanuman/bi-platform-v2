@@ -16,9 +16,9 @@
  */
 package org.pentaho.mantle.client.dialogs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
@@ -43,7 +43,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
 
   public static final String FOCUS_ON_TITLE = "title"; //$NON-NLS-1$
 
-  private HashMap<String, List<String>> schemaCubeHashMap;
+  private HashMap<String, ArrayList<String>> schemaCubeHashMap;
 
   public AnalysisViewDialog(Document solutionRepositoryDoc) {
     super(Messages.getString("newAnalysisView"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new VerticalPanel()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -123,7 +123,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
       @SuppressWarnings("unchecked")
       public void onSuccess(Object result) {
         if (result != null) {
-          schemaCubeHashMap = (HashMap<String, List<String>>) result;
+          schemaCubeHashMap = (HashMap<String, ArrayList<String>>) result;
 
           if (schemaCubeHashMap != null && schemaCubeHashMap.size() >= 1) {
             Iterator iter = schemaCubeHashMap.keySet().iterator();
@@ -152,7 +152,7 @@ public class AnalysisViewDialog extends PromptDialogBox {
   public void updateCubeListBox(String currentSchema) {
     lboxCube.clear();
 
-    List<String> cubeNamesList = (List<String>) schemaCubeHashMap.get(currentSchema);
+    ArrayList<String> cubeNamesList = (ArrayList<String>) schemaCubeHashMap.get(currentSchema);
     int size = cubeNamesList.size();
 
     for (int i = 0; i < size; i++) {

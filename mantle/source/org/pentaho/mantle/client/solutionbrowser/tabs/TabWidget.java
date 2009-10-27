@@ -63,7 +63,7 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   private HorizontalPanel leftCap = new HorizontalPanel();
   private Image closeTabImage = new Image();
   private String fullText;
-
+  
   private class TabCommand implements Command {
 
     TABCOMMAND mode = TABCOMMAND.RELOAD;

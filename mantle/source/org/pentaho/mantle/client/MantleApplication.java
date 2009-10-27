@@ -19,8 +19,8 @@
  */
 package org.pentaho.mantle.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.GlassPane;
 import org.pentaho.gwt.widgets.client.dialogs.GlassPaneNativeListener;
@@ -101,10 +101,12 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     }    
   }-*/;
 
+  @SuppressWarnings("unused")
   private void executeCommand(String commandName) {
     commandExec.execute(commandName);
   }
 
+  @SuppressWarnings("unused")
   private void addGlassPaneListener(JavaScriptObject obj) {
     GlassPane.getInstance().addGlassPaneListener(new GlassPaneNativeListener(obj));
   }
@@ -115,12 +117,13 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
    * @param title
    * @param message
    */
+  @SuppressWarnings("unused")
   private void showMessage(String title, String message) {
     MessageDialogBox dialog = new MessageDialogBox(title, message, true, false, true);
     dialog.center();
   }
 
-  public void onFetchUserSettings(List<IUserSetting> settings) {
+  public void onFetchUserSettings(ArrayList<IUserSetting> settings) {
     if (settings == null) {
       return;
     }

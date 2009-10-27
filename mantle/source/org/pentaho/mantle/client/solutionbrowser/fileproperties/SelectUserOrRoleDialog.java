@@ -19,7 +19,7 @@
  */
 package org.pentaho.mantle.client.solutionbrowser.fileproperties;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
@@ -27,12 +27,12 @@ import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class SelectUserOrRoleDialog extends PromptDialogBox {
 
@@ -41,19 +41,19 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
   private static ListBox rolesListBox = new ListBox(false);
 
   static {
-    usersListBox.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    usersListBox.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         rolesListBox.setSelectedIndex(-1);
-      }
+      }      
     });
-    rolesListBox.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
+    rolesListBox.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
         usersListBox.setSelectedIndex(-1);
-      }
+      }      
     });
   }
 
-  public SelectUserOrRoleDialog(List<String> existing, final IUserRoleSelectedCallback callback) {
+  public SelectUserOrRoleDialog(ArrayList<String> existing, final IUserRoleSelectedCallback callback) {
     super(Messages.getString("selectUserOrRole"), Messages.getString("ok"), Messages.getString("cancel"), false, true, contentTable); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     setCallback(new IDialogCallback() {
 
@@ -91,18 +91,17 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     setWidth("200px"); //$NON-NLS-1$
   }
 
-  public void fetchAllRoles(final List<String> existing) {
-    AsyncCallback callback = new AsyncCallback() {
+  public void fetchAllRoles(final ArrayList<String> existing) {
+    AsyncCallback<ArrayList<String>> callback = new AsyncCallback<ArrayList<String>>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetRoles"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(ArrayList<String> roles) {
         // filter out existing
         rolesListBox.clear();
-        List<String> roles = (List<String>) result;
         for (String role : roles) {
           if (!existing.contains(role)) {
             rolesListBox.addItem(role);
@@ -114,18 +113,17 @@ public class SelectUserOrRoleDialog extends PromptDialogBox {
     MantleServiceCache.getService().getAllRoles(callback);
   }
 
-  public void fetchAllUsers(final List<String> existing) {
-    AsyncCallback callback = new AsyncCallback() {
+  public void fetchAllUsers(final ArrayList<String> existing) {
+    AsyncCallback<ArrayList<String>> callback = new AsyncCallback<ArrayList<String>>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUsers"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.center();
       }
 
-      public void onSuccess(Object result) {
+      public void onSuccess(ArrayList<String> users) {
         // filter out existing
         usersListBox.clear();
-        List<String> users = (List<String>) result;
         for (String user : users) {
           if (!existing.contains(user)) {
             usersListBox.addItem(user);

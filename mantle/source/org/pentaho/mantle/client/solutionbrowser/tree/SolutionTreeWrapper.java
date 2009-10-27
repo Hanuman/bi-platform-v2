@@ -2,7 +2,6 @@ package org.pentaho.mantle.client.solutionbrowser.tree;
 
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.MantlePopupPanel;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 
 import com.google.gwt.user.client.DOM;
@@ -38,8 +37,7 @@ public class SolutionTreeWrapper extends SimplePanel {
     popupMenu.setPopupPosition(left, top);
     MenuBar menuBar = new MenuBar(true);
     menuBar.setAutoOpen(true);
-    menuBar.addItem(new MenuItem(Messages.getString("createNewFolderEllipsis"), new FileCommand(FileCommand.COMMAND.CREATE_FOLDER, popupMenu,
-        SolutionBrowserPerspective.getInstance())));
+    menuBar.addItem(new MenuItem(Messages.getString("createNewFolderEllipsis"), new FileCommand(FileCommand.COMMAND.CREATE_FOLDER, popupMenu)));
     popupMenu.setWidget(menuBar);
     popupMenu.show();
   }

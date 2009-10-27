@@ -26,11 +26,12 @@ public class SolutionDocumentManager {
   private static boolean fetching = false;
 
   private SolutionDocumentManager() {
+    flagSolutionDocumentLoaded(false);
   }
 
-  private native void flagSolutionDocumentLoaded()
+  private native void flagSolutionDocumentLoaded(boolean docLoaded)
   /*-{
-    $wnd.mantle_repository_loaded = true;
+    $wnd.mantle_repository_loaded = docLoaded;
   }-*/;
 
   public static SolutionDocumentManager getInstance() {
@@ -60,7 +61,7 @@ public class SolutionDocumentManager {
       listener.onFetchSolutionDocument(solutionDocument);
     }
     // flag that we have the document so that other things might start to use it (PDB-500)
-    flagSolutionDocumentLoaded();
+    flagSolutionDocumentLoaded(true);
   }
 
   public void beforeFetchSolutionDocument() {
@@ -68,7 +69,7 @@ public class SolutionDocumentManager {
       listener.beforeFetchSolutionDocument();
     }
   }
-  
+
   public void fetchSolutionDocument(final boolean forceReload) {
     if (forceReload || solutionDocument == null) {
       fetchSolutionDocument(null);
@@ -87,7 +88,7 @@ public class SolutionDocumentManager {
     // notify listeners that we are about to talk to the server (in case there's anything they want to do
     // such as busy cursor or tree loading indicators)
     beforeFetchSolutionDocument();
-    
+
     RequestBuilder builder = null;
     if (GWT.isScript()) {
       String path = Window.Location.getPath();
@@ -113,7 +114,9 @@ public class SolutionDocumentManager {
         // consider caching the document
         solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
         fireSolutionDocumentFetched();
-        callback.onSuccess(solutionDocument);
+        if (callback != null) {
+          callback.onSuccess(solutionDocument);
+        }
       }
 
     };

@@ -1,7 +1,6 @@
 package org.pentaho.mantle.client.usersettings;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
@@ -14,7 +13,7 @@ public class UserSettingsManager {
 
   private ArrayList<IUserSettingsListener> listeners = new ArrayList<IUserSettingsListener>();
 
-  private List<IUserSetting> settings;
+  private ArrayList<IUserSetting> settings;
   private static UserSettingsManager instance;
 
   private UserSettingsManager() {
@@ -50,7 +49,7 @@ public class UserSettingsManager {
     }
   }
 
-  public void fetchUserSettings(final AsyncCallback<List<IUserSetting>> callback, final boolean forceReload) {
+  public void fetchUserSettings(final AsyncCallback<ArrayList<IUserSetting>> callback, final boolean forceReload) {
     if (forceReload || settings == null) {
       fetchUserSettings(callback);
     } else {
@@ -58,15 +57,15 @@ public class UserSettingsManager {
     }
   }
 
-  public void fetchUserSettings(final AsyncCallback<List<IUserSetting>> callback) {
-    AsyncCallback<List<IUserSetting>> internalCallback = new AsyncCallback<List<IUserSetting>>() {
+  public void fetchUserSettings(final AsyncCallback<ArrayList<IUserSetting>> callback) {
+    AsyncCallback<ArrayList<IUserSetting>> internalCallback = new AsyncCallback<ArrayList<IUserSetting>>() {
 
       public void onFailure(Throwable caught) {
         MessageDialogBox dialog = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetUserSettings"), true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.center();
       }
 
-      public void onSuccess(final List<IUserSetting> settings) {
+      public void onSuccess(final ArrayList<IUserSetting> settings) {
         getInstance().settings = settings;
         if (callback != null) {
           callback.onSuccess(settings);

@@ -2,7 +2,6 @@ package org.pentaho.mantle.client.solutionbrowser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
@@ -15,8 +14,8 @@ import com.google.gwt.user.client.Command;
 
 public class PluginOptionsHelper {
 
-  private static List<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
-  private static List<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
+  private static ArrayList<FileTypeEnabledOptions> enabledOptionsList = new ArrayList<FileTypeEnabledOptions>();
+  private static ArrayList<ContentTypePlugin> contentTypePluginList = new ArrayList<ContentTypePlugin>();
   private static String newAnalysisViewOverrideCommandUrl;
   private static String newAnalysisViewOverrideCommandTitle;
   private static String newReportOverrideCommandUrl;

@@ -20,7 +20,6 @@
 package org.pentaho.mantle.client.solutionbrowser.fileproperties;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.pentaho.gwt.widgets.client.buttons.RoundedButton;
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
@@ -54,7 +53,7 @@ public class PermissionsPanel extends FlexTable implements IFileModifier {
 
   private boolean dirty = false;
   
-  List<String> existingUsersAndRoles = new ArrayList<String>();
+  ArrayList<String> existingUsersAndRoles = new ArrayList<String>();
 
   FileItem fileItem;
   SolutionFileInfo fileInfo;
