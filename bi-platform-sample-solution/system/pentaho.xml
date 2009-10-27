@@ -64,10 +64,10 @@
 						for this to work).
 					-->
 					<default-acls>
-						<acl-entry role="ROLE_Admin" acl="FULL_CONTROL" />				<!-- Admin users get all authorities -->
-						<acl-entry role="ROLE_cto" acl="FULL_CONTROL" />				<!-- CTO gets everything -->
-						<acl-entry role="ROLE_dev" acl="EXECUTE_SUBSCRIBE" />		<!-- Dev gets execute/subscribe -->
-						<acl-entry role="ROLE_Authenticated" acl="EXECUTE" />		<!-- Authenticated users get execute only -->
+						<acl-entry role="Admin" acl="FULL_CONTROL" />				<!-- Admin users get all authorities -->
+						<acl-entry role="cto" acl="FULL_CONTROL" />				<!-- CTO gets everything -->
+						<acl-entry role="dev" acl="EXECUTE_SUBSCRIBE" />		<!-- Dev gets execute/subscribe -->
+						<acl-entry role="Authenticated" acl="EXECUTE" />		<!-- Authenticated users get execute only -->
 					</default-acls>
 					
 					<!--
@@ -78,7 +78,7 @@
 
 					<overrides>
 						<file path="/pentaho-solutions/admin">
-							<acl-entry role="ROLE_Admin" acl="FULL_CONTROL" />
+							<acl-entry role="Admin" acl="FULL_CONTROL" />
 						</file>
 					</overrides>
 
@@ -121,7 +121,9 @@
 				<anonymous-authentication>
 				  <anonymous-user>anonymousUser</anonymous-user>
 				  <anonymous-role>ROLE_Anonymous</anonymous-role>
-                                </anonymous-authentication>
+        </anonymous-authentication>
+                                
+        <role-prefix>ROLE_</role-prefix>
 	<!-- Insert additional pentaho-system -->
 	
     <audit>
