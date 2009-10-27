@@ -971,8 +971,8 @@ public class DbBasedSolutionRepositoryTest {
     ISolutionFile file = repo.getFileByPath("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> acl = repo.getPermissions(file);
     assertTrue(acl.size() == 2);
-    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL), acl.get(new SimpleRole("ROLE_Admin"))); //$NON-NLS-1$
-    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE), acl.get(new SimpleRole("ROLE_Authenticated"))); //$NON-NLS-1$
+    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL), acl.get(new SimpleRole("Admin"))); //$NON-NLS-1$
+    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_EXECUTE), acl.get(new SimpleRole("Authenticated"))); //$NON-NLS-1$
   }
 
   @Test
@@ -989,12 +989,12 @@ public class DbBasedSolutionRepositoryTest {
     Map<IPermissionRecipient, IPermissionMask> newAcl = new HashMap<IPermissionRecipient, IPermissionMask>();
     newAcl.put(recipient, mask);
     // next ACE is necessary so I don't lock myself out of the subsequent getEffectivePermissions call
-    newAcl.put(new SimpleRole("ROLE_Authenticated"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
+    newAcl.put(new SimpleRole("Authenticated"), new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
     repo.setPermissions(file, newAcl);
     acl = repo.getEffectivePermissions(file);
     assertTrue(acl.size() == 2);
     assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_UPDATE), acl.get(new SimpleUser("tiffany"))); //$NON-NLS-1$
-    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL), acl.get(new SimpleRole("ROLE_Authenticated"))); //$NON-NLS-1$
+    assertEquals(new SimplePermissionMask(PentahoAclEntry.PERM_FULL_CONTROL), acl.get(new SimpleRole("Authenticated"))); //$NON-NLS-1$
   }
 
   @Test

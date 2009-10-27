@@ -101,7 +101,7 @@
 				</acl-publisher>
 				<acl-voter>
 					<!-- What role must someone be in to be an ADMIN of Pentaho -->
-					<admin-role>ROLE_Admin</admin-role>
+					<admin-role>Admin</admin-role>
 				</acl-voter>
 				<!-- 
 				  acl-files tag was added in support of PPP-130 
@@ -120,7 +120,7 @@
 
 				<anonymous-authentication>
 				  <anonymous-user>anonymousUser</anonymous-user>
-				  <anonymous-role>ROLE_Anonymous</anonymous-role>
+				  <anonymous-role>Anonymous</anonymous-role>
         </anonymous-authentication>
                                 
         <role-prefix>ROLE_</role-prefix>

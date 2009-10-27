@@ -56,6 +56,8 @@ public class SecurityHelper {
 
   public static final String DefaultAnonymousUser = PentahoSystem.getSystemSetting(
       "anonymous-authentication/anonymous-user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
+  
+  public static final String DefaultRolePrefix = PentahoSystem.getSystemSetting("role-prefix", "ROLE_"); //$NON-NLS-1$ //$NON-NLS-2$
 
   /**
    * Looks in the provided session to get the Spring Security Authentication object out.
@@ -117,7 +119,7 @@ public class SecurityHelper {
       // an un-authenticated user. For now, we'll default to returning
       // an authentication that has the user as anonymous.
       Authentication auth = new UsernamePasswordAuthenticationToken(SecurityHelper.DefaultAnonymousUser, null,
-          new GrantedAuthorityImpl[] { new GrantedAuthorityImpl(SecurityHelper.DefaultAnonymousRole) });
+          new GrantedAuthorityImpl[] { new GrantedAuthorityImpl(SecurityHelper.DefaultAnonymousRole + SecurityHelper.DefaultAnonymousRole) });
       return auth;
     } else {
       if (SecurityHelper.logger.isDebugEnabled()) {
