@@ -20,6 +20,7 @@ package org.pentaho.platform.api.engine;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.pentaho.actionsequence.dom.IActionControlStatement;
 import org.pentaho.actionsequence.dom.IActionDefinition;
 import org.pentaho.actionsequence.dom.IActionIfStatement;
@@ -193,8 +194,8 @@ public class ActionSequenceException extends Exception {
     } else if (statement instanceof IActionLoop) {
       s.println(prefix + "LOOP ON: " + ((IActionLoop) statement).getLoopOn());
     } else if (statement instanceof IActionDefinition) {
-      s.println(prefix + "EXECUTING ACTION: " + ((IActionDefinition) statement).getDescription() + " ("
-          + ((IActionDefinition) statement).getComponentName() + ")");
+      String actionDesc = StringUtils.defaultString(((IActionDefinition) statement).getDescription(), "");
+      s.println(prefix + "EXECUTING ACTION: " + actionDesc + " (" + ((IActionDefinition) statement).getComponentName() + ")");
     } else if (statement instanceof IActionControlStatement) {
       s.println(prefix + "UNKNOWN CONTROL STATEMENT");
     } else if (statement instanceof IActionControlStatement) {
