@@ -693,7 +693,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, getPentahoSession()); //$NON-NLS-1$
       if (pluginManager != null) {
         // get the menu customizations for the plugins, if any
-        ArrayList<IMenuCustomization> customs = (ArrayList<IMenuCustomization>)pluginManager.getMenuCustomizations();
+        List<IMenuCustomization> customs = (List<IMenuCustomization>)pluginManager.getMenuCustomizations();
         int fileIdx = 0;
         int fileNewIdx = 0;
         int fileManageIdx = 0;
