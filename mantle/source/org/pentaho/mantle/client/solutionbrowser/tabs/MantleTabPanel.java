@@ -19,6 +19,8 @@
  */
 package org.pentaho.mantle.client.solutionbrowser.tabs;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
@@ -106,6 +108,47 @@ public class MantleTabPanel extends TabPanel {
     contentTabMap.put(w, tabWidget);
   }
 
+  public void showNewURLTab(String tabName, String tabTooltip, final String url) {
+    final int elementId = getWidgetCount();
+    String frameName = getUniqueFrameName();
+
+    // check for other tabs with this name
+    if (existingTabMatchesName(tabName)) {
+      int counter = 2;
+      while (true) {
+        // Loop until a unique tab name is not found
+        // i.e. get the last counter number and then add 1 to it for the new tab name
+        if (existingTabMatchesName(tabName + " (" + counter + ")")) { // unique //$NON-NLS-1$ //$NON-NLS-2$
+          counter++;
+          continue;
+        } else {
+          tabName = tabName + " (" + counter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+          tabTooltip = tabTooltip + " (" + counter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+          break;
+        }
+      }
+    }
+
+    IFrameTabPanel panel = new IFrameTabPanel(frameName, url);
+    add(panel, new TabWidget(tabName, tabTooltip, SolutionBrowserPerspective.getInstance(), this, panel));
+    selectTab(elementId);
+
+    final ArrayList<com.google.gwt.dom.client.Element> parentList = new ArrayList<com.google.gwt.dom.client.Element>();
+    com.google.gwt.dom.client.Element parent = panel.getFrame().getElement();
+    while (parent != getElement()) {
+      parentList.add(parent);
+      parent = parent.getParentElement();
+    }
+    Collections.reverse(parentList);
+    for (int i = 1; i < parentList.size(); i++) {
+      parentList.get(i).getStyle().setProperty("height", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    SolutionBrowserPerspective.getInstance().showContent();
+    SolutionBrowserPerspective.getInstance().fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, getTabBar().getSelectedTab());
+
+    setFileInfoInFrame(SolutionBrowserPerspective.getInstance().getFilesListPanel().getSelectedFileItem());
+  }
+
   private native void setupNativeHooks(MantleTabPanel tabPanel)
   /*-{  
     $wnd.enableContentEdit = function(enable) { 
@@ -126,7 +169,27 @@ public class MantleTabPanel extends TabPanel {
     $wnd.closeTab = function(url) {
       tabPanel.@org.pentaho.mantle.client.solutionbrowser.tabs.MantleTabPanel::closeTab(Ljava/lang/String;)(url);
     }    
+    $wnd.mantle_openTab = function(name, title, url) {
+      tabPanel.@org.pentaho.mantle.client.solutionbrowser.tabs.MantleTabPanel::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, title, url);
+    }    
+    $wnd.openURL = function(name, tooltip, url){
+      tabPanel.@org.pentaho.mantle.client.solutionbrowser.tabs.MantleTabPanel::showNewURLTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(name, tooltip, url);
+    }    
+
   }-*/;
+
+  public Widget getCurrentTab(int tabIndex) {
+    Widget tabPanel = null;
+    if (tabIndex >= 0 && getWidgetCount() > tabIndex) {
+      tabPanel = getWidget(tabIndex);
+    } else {
+      int selectedTabIndex = getTabBar().getSelectedTab();
+      if (selectedTabIndex >= 0) {
+        tabPanel = getWidget(selectedTabIndex);
+      }
+    }
+    return tabPanel;
+  }
 
   public TabWidget getCurrentTab() {
     return contentTabMap.get(getWidget(getTabBar().getSelectedTab()));

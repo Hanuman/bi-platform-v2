@@ -40,7 +40,7 @@ public class OpenDocCommand extends AbstractCommand {
   }
 
   protected void performOperation(boolean feedback) {
-    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
+    SolutionBrowserPerspective.getInstance().getContentTabPanel().showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
   }
   
 

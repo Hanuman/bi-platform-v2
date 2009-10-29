@@ -65,7 +65,7 @@ public class AnalysisViewCommand extends AbstractCommand {
                   newAnalysisViewURL = "http://localhost:8080/pentaho/" + newAnalysisViewURL + "&userid=joe&password=password"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                navigatorPerspective.showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
+                navigatorPerspective.getContentTabPanel().showNewURLTab(Messages.getString("newAnalysisView"), Messages.getString("newAnalysisView"), newAnalysisViewURL); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // Set it to save-enabled and fire event
                 navigatorPerspective.getContentTabPanel().getCurrentFrame().setSaveEnabled(true);

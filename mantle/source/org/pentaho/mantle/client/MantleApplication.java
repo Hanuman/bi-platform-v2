@@ -71,7 +71,6 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     menuBar = new MantleMainMenuBar();
     solutionBrowserPerspective = SolutionBrowserPerspective.getInstance(menuBar);
     main = XulMain.instance(solutionBrowserPerspective);
-    menuBar.setSolutionBrowser(solutionBrowserPerspective);
 
     // registered our native JSNI hooks
     setupNativeHooks(this);
@@ -194,7 +193,7 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
       String url = settings.get("startup-url-" + (i + 1)); //$NON-NLS-1$
       String name = settings.get("startup-name-" + (i + 1)); //$NON-NLS-1$
       if (url != null && !"".equals(url)) { //$NON-NLS-1$
-        solutionBrowserPerspective.showNewURLTab(name != null ? name : url, url, url);
+        solutionBrowserPerspective.getContentTabPanel().showNewURLTab(name != null ? name : url, url, url);
       }
     }
     if (solutionBrowserPerspective.getContentTabPanel().getWidgetCount() > 0) {
@@ -206,7 +205,7 @@ public class MantleApplication implements IUserSettingsListener, IMantleSettings
     if (startupURL != null && !"".equals(startupURL)) { //$NON-NLS-1$
       String title = Window.Location.getParameter("name"); //$NON-NLS-1$
       startupURL = URL.decodeComponent(startupURL);
-      solutionBrowserPerspective.showNewURLTab(title, title, startupURL);
+      solutionBrowserPerspective.getContentTabPanel().showNewURLTab(title, title, startupURL);
     }
   }
 

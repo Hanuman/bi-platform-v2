@@ -43,8 +43,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, SolutionBrowserListener {
 
-  private SolutionBrowserPerspective solutionBrowser;
-
   private MantleMenuBar viewMenu = new MantleMenuBar(true);
   // menu items (to be enabled/disabled)
   private PentahoMenuItem printMenuItem;
@@ -53,7 +51,6 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
   private PentahoMenuItem propertiesMenuItem;
 
   private FileCommand propertiesCommand;
-  private RefreshRepositoryCommand refreshRepositoryCommand;
 
   public MantleMainMenuBar() {
     super(false);
@@ -85,10 +82,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
 
   public void buildMenuBar(final HashMap<String, String> settings, final boolean isAdministrator) {
     clearItems();
+    SolutionBrowserPerspective.getInstance().addSolutionBrowserListener(this);
     propertiesCommand = new FileCommand(FileCommand.COMMAND.PROPERTIES, null);
-    refreshRepositoryCommand = new RefreshRepositoryCommand();
 
-    solutionBrowser.setAdministrator(isAdministrator);
     printMenuItem = new PentahoMenuItem(Messages.getString("print"), new PrintCommand()); //$NON-NLS-1$
     printMenuItem.getElement().setId("print");
     saveMenuItem = new PentahoMenuItem(Messages.getString("save"), new SaveCommand(false)); //$NON-NLS-1$
@@ -138,15 +134,15 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new OpenFileCommand(OPEN_METHOD.EDIT));//$NON-NLS-1$
     MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new OpenFileCommand(OPEN_METHOD.SHARE)); //$NON-NLS-1$
     MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new OpenFileCommand(OPEN_METHOD.SCHEDULE)); //$NON-NLS-1$
-    
+
     editContent.getElement().setId("edit_content_menu_item");
     shareContent.getElement().setId("share_content_menu_item");
     scheduleContent.getElement().setId("schedule_content_menu_item");
-    
+
     manageContentMenu.addItem(editContent);
     manageContentMenu.addItem(shareContent);
     manageContentMenu.addItem(scheduleContent);
-    
+
     customizeMenu(manageContentMenu, "file-manage", settings); //$NON-NLS-1$
     MenuItem manageContentMenuBar = new MenuItem(Messages.getString("manage"), manageContentMenu); //$NON-NLS-1$
     manageContentMenuBar.getElement().setId("manage_content_menu_bar");
@@ -177,7 +173,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
       MenuBar adminMenu = new MantleMenuBar(true);
       adminMenu.getElement().setId("admin_menu");
 
-      MenuItem refreshRepositoryMenuItem = new MenuItem(Messages.getString("refreshRepository"), refreshRepositoryCommand); //$NON-NLS-1$
+      MenuItem refreshRepositoryMenuItem = new MenuItem(Messages.getString("refreshRepository"), new RefreshRepositoryCommand()); //$NON-NLS-1$
       MenuItem refreshSystemSettingsMenuItem = new MenuItem(Messages.getString("refreshSystemSettings"), new RefreshSystemSettingsCommand()); //$NON-NLS-1$
       MenuItem refreshMetadataMenuItem = new MenuItem(Messages.getString("refreshReportingMetadata"), new RefreshMetaDataCommand()); //$NON-NLS-1$
       MenuItem executeGlobalActionsMenuItem = new MenuItem(Messages.getString("executeGlobalActions"), new ExecuteGlobalActionsCommand()); //$NON-NLS-1$
@@ -275,7 +271,7 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
         UrlCommand menuCommand = new UrlCommand(command, title);
 
         MenuItem item = new MenuItem(title, menuCommand);
-        //item.getElement().setId(title);
+        // item.getElement().setId(title);
 
         // add it to the menu
         menu.addItem(item);
@@ -317,15 +313,6 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
       }
     }
     viewMenuAdditions = viewMenuItems;
-  }
-
-  public SolutionBrowserPerspective getSolutionBrowser() {
-    return solutionBrowser;
-  }
-
-  public void setSolutionBrowser(SolutionBrowserPerspective solutionBrowser) {
-    this.solutionBrowser = solutionBrowser;
-    solutionBrowser.addSolutionBrowserListener(this);
   }
 
   public void solutionBrowserEvent(SolutionBrowserListener.EventType type, Widget panel, FileItem selectedFileItem) {

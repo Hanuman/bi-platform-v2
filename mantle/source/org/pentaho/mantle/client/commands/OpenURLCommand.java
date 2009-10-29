@@ -45,7 +45,7 @@ public class OpenURLCommand extends AbstractCommand {
       }
 
       public void okPressed() {
-        SolutionBrowserPerspective.getInstance().showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText());
+        SolutionBrowserPerspective.getInstance().getContentTabPanel().showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText());
       }
 
     };

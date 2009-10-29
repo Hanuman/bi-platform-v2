@@ -23,22 +23,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
+import org.pentaho.mantle.client.dialogs.FileDialog;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
+import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper.ContentTypePlugin;
 import org.pentaho.mantle.client.solutionbrowser.toolbars.FilesToolbar;
 import org.pentaho.mantle.client.solutionbrowser.tree.SolutionTree;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 
 /**
@@ -86,9 +92,49 @@ public class FilesListPanel extends FlowPanel {
 
     setStyleName("panelWithTitledToolbar"); //$NON-NLS-1$  
     setWidth("100%"); //$NON-NLS-1$
-    
+
     getElement().setId("filesListPanel");
+
+    setupNativeHooks(this);
   }
+
+  @SuppressWarnings("unused")
+  private void showOpenFileDialog(final JavaScriptObject callback, final String path, final String title, final String okText, final String fileTypes) {
+    SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
+      public void onFailure(Throwable caught) {
+      }
+
+      public void onSuccess(Document result) {
+        FileDialog dialog = new FileDialog(result, path, title, okText, fileTypes.split(","));
+        dialog.addFileChooserListener(new FileChooserListener() {
+
+          public void fileSelected(String solution, String path, String name, String localizedFileName) {
+            notifyOpenFileCallback(callback, solution, path, name, localizedFileName);
+          }
+
+          public void fileSelectionChanged(String solution, String path, String name) {
+          }
+
+        });
+        dialog.show();
+      }
+    }, false);
+  }
+
+  private native void notifyOpenFileCallback(JavaScriptObject obj, String solution, String path, String name, String localizedFileName)
+  /*-{
+    obj.fileSelected(solution, path, name, localizedFileName);
+  }-*/;
+
+  private static native void setupNativeHooks(FilesListPanel filesListPanel)
+  /*-{
+    $wnd.openFileDialog = function(callback,title, okText, fileTypes) { 
+      filesListPanel.@org.pentaho.mantle.client.solutionbrowser.filelist.FilesListPanel::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(callback, null, title, okText, fileTypes);      
+    }
+    $wnd.openFileDialogWithPath = function(callback, path, title, okText, fileTypes) { 
+      filesListPanel.@org.pentaho.mantle.client.solutionbrowser.filelist.FilesListPanel::showOpenFileDialog(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(callback, path, title, okText, fileTypes);      
+    }
+  }-*/;
 
   @SuppressWarnings("unchecked")
   public void populateFilesList(SolutionBrowserPerspective perspective, SolutionTree solutionTree, TreeItem item) {

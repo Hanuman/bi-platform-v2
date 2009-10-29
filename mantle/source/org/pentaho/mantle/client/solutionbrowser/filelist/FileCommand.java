@@ -61,8 +61,6 @@ public class FileCommand implements Command {
       new DeleteFileCommand(callback.getFilesListPanel().getSelectedFileItem()).execute();
     } else if (mode == COMMAND.CREATE_FOLDER) {
       new NewRootFolderCommand().execute();
-    } else if (mode == COMMAND.EDIT_ACTION) {
-      callback.editActionFile();
     } else if (mode == COMMAND.SCHEDULE_NEW) {
       ScheduleHelper.createSchedule(callback.getFilesListPanel().getSelectedFileItem());
     } else if (mode == COMMAND.SHARE) {

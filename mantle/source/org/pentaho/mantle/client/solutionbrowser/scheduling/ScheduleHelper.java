@@ -105,7 +105,7 @@ public class ScheduleHelper {
                 if (displayName == null || displayName.length() < 1) {
                   displayName = fileInfo.getName();
                 }
-                SolutionBrowserPerspective.getInstance().showNewURLTab(displayName, displayName, url);
+                SolutionBrowserPerspective.getInstance().getContentTabPanel().showNewURLTab(displayName, displayName, url);
               } else {
                 SolutionBrowserPerspective.getInstance().executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
               }

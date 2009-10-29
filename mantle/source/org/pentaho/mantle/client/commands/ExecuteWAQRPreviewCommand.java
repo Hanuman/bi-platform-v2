@@ -49,7 +49,7 @@ public class ExecuteWAQRPreviewCommand extends AbstractCommand {
 
   protected void performOperation() {
     MantleTabPanel contentTabPanel = SolutionBrowserPerspective.getInstance().getContentTabPanel();
-    SolutionBrowserPerspective.getInstance().showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    contentTabPanel.showNewURLTab(Messages.getString("preview"), Messages.getString("adhocPreview"), "about:blank"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     NamedFrame namedFrame = ((IFrameTabPanel) contentTabPanel.getWidget(contentTabPanel.getTabBar().getSelectedTab())).getFrame();
     final FormPanel form = new FormPanel(namedFrame);
     RootPanel.get().add(form);

@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.pentaho.mantle.client.objects.SolutionFileInfo;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
@@ -94,6 +95,14 @@ public class IFrameTabPanel extends VerticalPanel {
 
   public void setFileInfo(SolutionFileInfo info) {
     fileInfo = info;
+  }
+
+  public void setFileInfo(FileItem item) {
+    SolutionFileInfo fileInfo = new SolutionFileInfo();
+    fileInfo.setName(item.getName());
+    fileInfo.setSolution(item.getSolution());
+    fileInfo.setPath(item.getPath());
+    setFileInfo(fileInfo);
   }
 
   public SolutionFileInfo getFileInfo() {
