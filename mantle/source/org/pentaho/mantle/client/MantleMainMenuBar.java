@@ -26,9 +26,9 @@ import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserListener;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective.OPEN_METHOD;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 import org.pentaho.mantle.client.solutionbrowser.tabs.IFrameTabPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -131,9 +131,9 @@ public class MantleMainMenuBar extends MenuBar implements IViewMenuCallback, Sol
     }
     MenuBar manageContentMenu = new MantleMenuBar(true);
     manageContentMenu.getElement().setId("manage_content_menu");
-    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new OpenFileCommand(OPEN_METHOD.EDIT));//$NON-NLS-1$
-    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new OpenFileCommand(OPEN_METHOD.SHARE)); //$NON-NLS-1$
-    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new OpenFileCommand(OPEN_METHOD.SCHEDULE)); //$NON-NLS-1$
+    MenuItem editContent = new MenuItem(Messages.getString("editEllipsis"), new OpenFileCommand(COMMAND.EDIT));//$NON-NLS-1$
+    MenuItem shareContent = new MenuItem(Messages.getString("shareEllipsis"), new OpenFileCommand(COMMAND.SHARE)); //$NON-NLS-1$
+    MenuItem scheduleContent = new MenuItem(Messages.getString("scheduleEllipsis"), new OpenFileCommand(COMMAND.SCHEDULE_NEW)); //$NON-NLS-1$
 
     editContent.getElement().setId("edit_content_menu_item");
     shareContent.getElement().setId("share_content_menu_item");

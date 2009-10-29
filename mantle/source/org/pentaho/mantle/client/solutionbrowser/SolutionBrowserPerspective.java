@@ -39,7 +39,6 @@ import org.pentaho.mantle.client.commands.ToggleWorkspaceCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.images.MantleImages;
 import org.pentaho.mantle.client.messages.Messages;
-import org.pentaho.mantle.client.objects.SolutionFileInfo;
 import org.pentaho.mantle.client.service.EmptyCallback;
 import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper.ContentTypePlugin;
@@ -323,12 +322,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     }
   }
 
-  public enum OPEN_METHOD {
-    OPEN, EDIT, SHARE, SCHEDULE
-  }
-
   @SuppressWarnings("unchecked")
-  public void openFile(String path, String name, String localizedFileName, OPEN_METHOD openMethod) {
+  public void openFile(String path, String name, String localizedFileName, FileCommand.COMMAND mode) {
     ArrayList<String> pathSegments = new ArrayList<String>();
     if (path != null) {
       if (path.startsWith("/")) { //$NON-NLS-1$
@@ -367,7 +362,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     filesListPanel.setSelectedFileItem(selectedFileItem);
 
     // TODO: Create a more dynamic filter interface
-    if (openMethod == OPEN_METHOD.SCHEDULE) {
+    if (mode == FileCommand.COMMAND.SCHEDULE_NEW) {
       if (selectedFileItem.getName() != null) {
         if (!selectedFileItem.getName().endsWith(".xaction") || selectedFileItem.getName().endsWith(FileItem.ANALYSIS_VIEW_SUFFIX)) { //$NON-NLS-1$
           final MessageDialogBox dialogBox = new MessageDialogBox(
@@ -379,7 +374,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
 
             public void okPressed() {
               dialogBox.hide();
-              (new OpenFileCommand(OPEN_METHOD.SCHEDULE)).execute();
+              (new OpenFileCommand(FileCommand.COMMAND.SCHEDULE_NEW)).execute();
             }
           });
 
@@ -414,13 +409,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
       }
     }
 
-    if (openMethod == OPEN_METHOD.EDIT) {
+    if (mode == FileCommand.COMMAND.EDIT) {
       editFile();
-    } else if (openMethod == OPEN_METHOD.OPEN) {
+    } else if (mode == FileCommand.COMMAND.RUN) {
       openFile(FileCommand.COMMAND.RUN);
-    } else if (openMethod == OPEN_METHOD.SCHEDULE) {
+    } else if (mode == FileCommand.COMMAND.SCHEDULE_NEW) {
       ScheduleHelper.createSchedule(filesListPanel.getSelectedFileItem());
-    } else if (openMethod == OPEN_METHOD.SHARE) {
+    } else if (mode == FileCommand.COMMAND.SHARE) {
       (new ShareFileCommand()).execute();
     }
   }
@@ -640,15 +635,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
       solutionNavigatorAndContentPanel.setSplitPosition("0px"); //$NON-NLS-1$
     }
     updateViewMenu();
-  }
-
-  public void toggleShowSolutionBrowser() {
-    setNavigatorShowing(!showSolutionBrowser);
-
-    // update setting
-    // TODO not sure what type of event needs to be fired
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, MantleTabPanel.CURRENT_SELECTED_TAB);
-    MantleServiceCache.getService().setShowNavigator(showSolutionBrowser, EmptyCallback.getInstance());
   }
 
   public void addSolutionBrowserListener(SolutionBrowserListener listener) {

@@ -22,7 +22,7 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooser.FileChooserMode;
 import org.pentaho.mantle.client.MantleApplication;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective.OPEN_METHOD;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.xml.client.Document;
@@ -31,12 +31,12 @@ public class OpenFileCommand extends AbstractCommand {
 
   private static String lastPath = "/"; //$NON-NLS-1$
 
-  private SolutionBrowserPerspective.OPEN_METHOD openMethod = SolutionBrowserPerspective.OPEN_METHOD.OPEN;
+  private FileCommand.COMMAND openMethod = FileCommand.COMMAND.RUN;
 
   public OpenFileCommand() {
   }
 
-  public OpenFileCommand(final SolutionBrowserPerspective.OPEN_METHOD openMethod) {
+  public OpenFileCommand(final FileCommand.COMMAND openMethod) {
     this.openMethod = openMethod;
   }
 
@@ -61,8 +61,8 @@ public class OpenFileCommand extends AbstractCommand {
           public void fileSelected(String solution, String path, String name, String localizedFileName) {
             dialog.hide();
             lastPath = "/" + solution + path; //$NON-NLS-1$
-            if (name.contains("analysis.xaction") && openMethod.equals(OPEN_METHOD.EDIT)) { //$NON-NLS-1$
-              solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, SolutionBrowserPerspective.OPEN_METHOD.OPEN); //$NON-NLS-1$
+            if (name.contains("analysis.xaction") && openMethod.equals(FileCommand.COMMAND.EDIT)) { //$NON-NLS-1$
+              solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, FileCommand.COMMAND.RUN); //$NON-NLS-1$
             } else {
               solutionBrowserPerspective.openFile("/" + solution + path, name, localizedFileName, openMethod); //$NON-NLS-1$
             }

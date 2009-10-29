@@ -18,7 +18,7 @@ package org.pentaho.mantle.client.commands;
 
 import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.mantle.client.dialogs.ManageContentDialog;
-import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective.OPEN_METHOD;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand;
 
 public class ManageContentCommand extends AbstractCommand {
 
@@ -34,13 +34,13 @@ public class ManageContentCommand extends AbstractCommand {
     dialog.setCallback(new IDialogCallback() {
       public void okPressed() {
         if (dialog.getState() == ManageContentDialog.STATE.EDIT) {
-          OpenFileCommand cmd = new OpenFileCommand(OPEN_METHOD.EDIT);
+          OpenFileCommand cmd = new OpenFileCommand(FileCommand.COMMAND.EDIT);
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SHARE) {
-          OpenFileCommand cmd = new OpenFileCommand(OPEN_METHOD.SHARE);
+          OpenFileCommand cmd = new OpenFileCommand(FileCommand.COMMAND.SHARE);
           cmd.execute();
         } else if (dialog.getState() == ManageContentDialog.STATE.SCHEDULE) {
-          OpenFileCommand cmd = new OpenFileCommand(OPEN_METHOD.SCHEDULE);
+          OpenFileCommand cmd = new OpenFileCommand( FileCommand.COMMAND.SCHEDULE_NEW);
           cmd.execute();
         }
       }

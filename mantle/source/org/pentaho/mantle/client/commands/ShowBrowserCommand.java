@@ -16,6 +16,8 @@
  */
 package org.pentaho.mantle.client.commands;
 
+import org.pentaho.mantle.client.service.EmptyCallback;
+import org.pentaho.mantle.client.service.MantleServiceCache;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 
 import com.google.gwt.user.client.Command;
@@ -27,7 +29,8 @@ public class ShowBrowserCommand implements Command {
 
   public void execute() {
     final SolutionBrowserPerspective solutionBrowserPerspective = SolutionBrowserPerspective.getInstance();
-    solutionBrowserPerspective.toggleShowSolutionBrowser();
+    solutionBrowserPerspective.setNavigatorShowing(!solutionBrowserPerspective.isNavigatorShowing());
+    MantleServiceCache.getService().setShowNavigator(solutionBrowserPerspective.isNavigatorShowing(), EmptyCallback.getInstance());
   }
 
 }
