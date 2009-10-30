@@ -49,20 +49,21 @@ public class FileCommand implements Command {
       popupMenu.hide();
     }
 
-    SolutionBrowserPerspective callback = SolutionBrowserPerspective.getInstance();
+    SolutionBrowserPerspective sbp = SolutionBrowserPerspective.getInstance();
 
     if (mode == COMMAND.RUN || mode == COMMAND.BACKGROUND || mode == COMMAND.NEWWINDOW) {
-      callback.openFile(mode);
+      FilesListPanel flp = sbp.getFilesListPanel();
+      sbp.openFile(flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), mode);
     } else if (mode == COMMAND.PROPERTIES) {
       new FilePropertiesCommand(FilePropertiesDialog.Tabs.GENERAL).execute();
     } else if (mode == COMMAND.EDIT) {
-      callback.editFile();
+      sbp.editFile();
     } else if (mode == COMMAND.DELETE) {
-      new DeleteFileCommand(callback.getFilesListPanel().getSelectedFileItem()).execute();
+      new DeleteFileCommand(sbp.getFilesListPanel().getSelectedFileItem()).execute();
     } else if (mode == COMMAND.CREATE_FOLDER) {
       new NewRootFolderCommand().execute();
     } else if (mode == COMMAND.SCHEDULE_NEW) {
-      ScheduleHelper.createSchedule(callback.getFilesListPanel().getSelectedFileItem());
+      ScheduleHelper.createSchedule(sbp.getFilesListPanel().getSelectedFileItem());
     } else if (mode == COMMAND.SHARE) {
       new ShareFileCommand().execute();
     }

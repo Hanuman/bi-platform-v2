@@ -140,7 +140,8 @@ public class FileItem extends FlexTable {
   public void onBrowserEvent(Event event) {
     if ((DOM.eventGetType(event) & Event.ONDBLCLICK) == Event.ONDBLCLICK) {
       select();
-      SolutionBrowserPerspective.getInstance().openFile(FileCommand.COMMAND.RUN);
+      SolutionBrowserPerspective.getInstance().openFile(filesListPanel.getSelectedFileItem().getSolution() + filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem().getName(),
+          filesListPanel.getSelectedFileItem().getLocalizedName(), COMMAND.RUN);
     } else if (DOM.eventGetButton(event) == Event.BUTTON_LEFT) {
       select();
       fireFileSelectionEvent();

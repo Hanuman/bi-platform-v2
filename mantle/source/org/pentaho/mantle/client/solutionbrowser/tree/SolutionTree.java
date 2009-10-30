@@ -27,6 +27,7 @@ import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
+import org.pentaho.gwt.widgets.client.utils.string.StringTokenizer;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.commands.NewFolderCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
@@ -46,7 +47,6 @@ import org.pentaho.mantle.client.usersettings.UserSettingsManager;
 import org.pentaho.platform.api.usersettings.pojo.IUserSetting;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.http.client.Request;
@@ -73,12 +73,14 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 public class SolutionTree extends Tree implements ISolutionDocumentListener, IUserSettingsListener {
-  boolean showLocalizedFileNames = true;
-  boolean showHiddenFiles = false;
-  Document solutionDocument;
-  boolean isAdministrator = false;
-  boolean createRootNode = false;
-  boolean useDescriptionsForTooltip = false;
+  private boolean showLocalizedFileNames = true;
+  private boolean showHiddenFiles = false;
+  private Document solutionDocument;
+  private boolean isAdministrator = false;
+  private boolean createRootNode = false;
+  private boolean useDescriptionsForTooltip = false;
+
+  private FileTreeItem selectedItem = null;
 
   FocusPanel focusable = new FocusPanel();
 
@@ -183,6 +185,9 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
   }
 
   public void beforeFetchSolutionDocument() {
+    if (getSelectedItem() != null) {
+      selectedItem = (FileTreeItem) getSelectedItem();
+    }
     clear();
     addItem(new TreeItem(Messages.getString("loadingEllipsis"))); //$NON-NLS-1$
   }
@@ -193,7 +198,6 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
     }
     this.solutionDocument = solutionDocument;
     // remember selectedItem, so we can reselect it after the tree is loaded
-    FileTreeItem selectedItem = (FileTreeItem) getSelectedItem();
     clear();
     // get document root item
     Element solutionRoot = solutionDocument.getDocumentElement();
@@ -202,7 +206,7 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
       rootItem.setText(solutionRoot.getAttribute("path")); //$NON-NLS-1$
       rootItem.setTitle(solutionRoot.getAttribute("path")); //$NON-NLS-1$
       rootItem.getElement().setId(solutionRoot.getAttribute("path"));
-      killAllTextSelection(rootItem.getElement());
+      ElementUtils.killAllTextSelection(rootItem.getElement());
 
       // added so we can traverse the true names
       rootItem.setFileName("/"); //$NON-NLS-1$
@@ -255,6 +259,20 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
       nodeList.add(child);
       getAllNodes(child, nodeList);
     }
+  }
+
+  public ArrayList<String> getPathSegments(String path) {
+    ArrayList<String> pathSegments = new ArrayList<String>();
+    if (path != null) {
+      if (path.startsWith("/")) { //$NON-NLS-1$
+        path = path.substring(1);
+      }
+      StringTokenizer st = new StringTokenizer(path, '/');
+      for (int i = 0; i < st.countTokens(); i++) {
+        pathSegments.add(st.tokenAt(i));
+      }
+    }
+    return pathSegments;
   }
 
   /**
@@ -338,6 +356,7 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
           if (parent.getFileName().equals(possibleItem.getFileName())) {
             pathDown = possibleItem;
             pathDown.setState(true, true);
+            pathDown.setSelected(true);
             break;
           }
         }
@@ -401,7 +420,7 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
         }
         childTreeItem.getElement().setAttribute("id", id);
 
-        killAllTextSelection(childTreeItem.getElement());
+        ElementUtils.killAllTextSelection(childTreeItem.getElement());
         childTreeItem.setURL(childElement.getAttribute("url")); //$NON-NLS-1$
         if (showLocalizedFileNames) {
           childTreeItem.setText(localizedName);
@@ -678,15 +697,6 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
 
   Focusable getFocusable() {
     return this.focusable;
-  }
-
-  private void killAllTextSelection(com.google.gwt.dom.client.Element item) {
-    ElementUtils.preventTextSelection(item);
-    com.google.gwt.dom.client.NodeList<Node> children = item.getChildNodes();
-    for (int i = 0; i < children.getLength(); i++) {
-      killAllTextSelection((com.google.gwt.dom.client.Element) children.getItem(i));
-    }
-
   }
 
 }

@@ -21,7 +21,6 @@ package org.pentaho.mantle.client.solutionbrowser;
 
 import java.util.ArrayList;
 
-import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
@@ -30,7 +29,6 @@ import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.IViewMenuCallback;
 import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.commands.CommandCallback;
-import org.pentaho.mantle.client.commands.OpenFileCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.RefreshWorkspaceCommand;
 import org.pentaho.mantle.client.commands.ShareFileCommand;
@@ -258,81 +256,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     updateViewMenu();
   }
 
-  public void openFile(final FileCommand.COMMAND mode) {
-    String name = filesListPanel.getSelectedFileItem().getName();
-    if (name.endsWith(".xaction")) { //$NON-NLS-1$
-      executeActionSequence(mode);
-      contentTabPanel.setFileInfoInFrame(filesListPanel.getSelectedFileItem());
-    } else if (name.endsWith(".url")) { //$NON-NLS-1$
-      if (mode == FileCommand.COMMAND.NEWWINDOW) {
-        Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-      } else {
-        contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-            filesListPanel.getSelectedFileItem().getURL());
-      }
-    } else {
-      // see if this file is a plugin
-      ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(filesListPanel.getSelectedFileItem().getName());
-      if (plugin != null && plugin.hasCommand(mode)) {
-        // load the editor for this plugin
-        String url = filesListPanel.getSelectedFileItem().getURL();
-        if (StringUtils.isEmpty(url)) {
-          url = plugin.getCommandUrl(filesListPanel.getSelectedFileItem(), mode);
-        }
-        if (GWT.isScript()) {
-          if (url != null && !"".equals(url)) { //$NON-NLS-1$
-            // we have a URL so open it in a new tab
-            if (mode == FileCommand.COMMAND.NEWWINDOW) {
-              Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-              UrlCommand cmd = new UrlCommand(url, filesListPanel.getSelectedFileItem().getLocalizedName());
-              cmd.execute(new CommandCallback() {
-                public void afterExecute() {
-                  contentTabPanel.setFileInfoInFrame(filesListPanel.getSelectedFileItem());
-                }
-              });
-            }
-          }
-        } else {
-          if (url != null && !"".equals(url)) { //$NON-NLS-1$
-            // we have a URL so open it in a new tab
-            String updateUrl = "/MantleService?passthru=" + url; //$NON-NLS-1$
-
-            if (mode == FileCommand.COMMAND.NEWWINDOW) {
-              Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-              contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-                  updateUrl);
-            }
-          }
-        }
-      } else {
-        // see if this file has a URL
-        String url = filesListPanel.getSelectedFileItem().getURL();
-        if (url != null && !"".equals(url)) { //$NON-NLS-1$
-          // we have a URL so open it in a new tab
-          if (mode == FileCommand.COMMAND.NEWWINDOW) {
-            Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
-          } else {
-            contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-                filesListPanel.getSelectedFileItem().getURL());
-          }
-        }
-      }
-    }
-  }
-
   @SuppressWarnings("unchecked")
   public void openFile(String path, String name, String localizedFileName, FileCommand.COMMAND mode) {
-    ArrayList<String> pathSegments = new ArrayList<String>();
-    if (path != null) {
-      if (path.startsWith("/")) { //$NON-NLS-1$
-        path = path.substring(1);
-      }
-      StringTokenizer st = new StringTokenizer(path, '/');
-      for (int i = 0; i < st.countTokens(); i++) {
-        pathSegments.add(st.tokenAt(i));
-      }
+    ArrayList<String> pathSegments = solutionTree.getPathSegments(path);
+    final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
+    if (!fileExists) {
+      final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("fileDoesNotExist", name), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+      dialogBox.center();
+      return;
     }
 
     String repoPath = ""; //$NON-NLS-1$
@@ -340,57 +271,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
       repoPath += "/" + pathSegments.get(i); //$NON-NLS-1$
     }
 
-    final boolean fileExists = solutionTree.doesFileExist(pathSegments, name);
-    if (!fileExists) {
-      final MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("open"), Messages.getString("fileDoesNotExist", name), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-
-      dialogBox.setCallback(new IDialogCallback() {
-        public void cancelPressed() {
-        }
-
-        public void okPressed() {
-          dialogBox.hide();
-          (new OpenFileCommand()).execute();
-        }
-      });
-
-      dialogBox.center();
-      return;
-    }
-
     FileItem selectedFileItem = new FileItem(name, localizedFileName, localizedFileName, pathSegments.get(0), repoPath, "", null, null, null, false, null); //$NON-NLS-1$
     filesListPanel.setSelectedFileItem(selectedFileItem);
 
-    // TODO: Create a more dynamic filter interface
-    if (mode == FileCommand.COMMAND.SCHEDULE_NEW) {
-      if (selectedFileItem.getName() != null) {
-        if (!selectedFileItem.getName().endsWith(".xaction") || selectedFileItem.getName().endsWith(FileItem.ANALYSIS_VIEW_SUFFIX)) { //$NON-NLS-1$
-          final MessageDialogBox dialogBox = new MessageDialogBox(
-              Messages.getString("open"), Messages.getString("scheduleInvalidFileType", selectedFileItem.getName()), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-
-          dialogBox.setCallback(new IDialogCallback() {
-            public void cancelPressed() {
-            }
-
-            public void okPressed() {
-              dialogBox.hide();
-              (new OpenFileCommand(FileCommand.COMMAND.SCHEDULE_NEW)).execute();
-            }
-          });
-
-          dialogBox.center();
-          return;
-        }
-      }
-    }
-
+    solutionTree.setSelectedItem(null);
     FileTreeItem fileTreeItem = solutionTree.getTreeItem(pathSegments);
-    pathSegments.add(name);
-
-    ArrayList<FileTreeItem> allNodes = solutionTree.getAllNodes();
-    for (FileTreeItem item : allNodes) {
-      item.setSelected(false);
-    }
     solutionTree.setSelectedItem(fileTreeItem, true);
 
     TreeItem tmpTreeItem = fileTreeItem;
@@ -411,12 +296,71 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
 
     if (mode == FileCommand.COMMAND.EDIT) {
       editFile();
-    } else if (mode == FileCommand.COMMAND.RUN) {
-      openFile(FileCommand.COMMAND.RUN);
     } else if (mode == FileCommand.COMMAND.SCHEDULE_NEW) {
       ScheduleHelper.createSchedule(filesListPanel.getSelectedFileItem());
     } else if (mode == FileCommand.COMMAND.SHARE) {
       (new ShareFileCommand()).execute();
+    } else {
+      if (name.endsWith(".xaction")) { //$NON-NLS-1$
+        executeActionSequence(mode);
+        contentTabPanel.setFileInfoInFrame(filesListPanel.getSelectedFileItem());
+      } else if (name.endsWith(".url")) { //$NON-NLS-1$
+        if (mode == FileCommand.COMMAND.NEWWINDOW) {
+          Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
+              filesListPanel.getSelectedFileItem().getURL());
+        }
+      } else {
+        // see if this file is a plugin
+        ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(filesListPanel.getSelectedFileItem().getName());
+        if (plugin != null && plugin.hasCommand(mode)) {
+          // load the editor for this plugin
+          String url = filesListPanel.getSelectedFileItem().getURL();
+          if (StringUtils.isEmpty(url)) {
+            url = plugin.getCommandUrl(filesListPanel.getSelectedFileItem(), mode);
+          }
+          if (GWT.isScript()) {
+            if (url != null && !"".equals(url)) { //$NON-NLS-1$
+              // we have a URL so open it in a new tab
+              if (mode == FileCommand.COMMAND.NEWWINDOW) {
+                Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+              } else {
+                UrlCommand cmd = new UrlCommand(url, filesListPanel.getSelectedFileItem().getLocalizedName());
+                cmd.execute(new CommandCallback() {
+                  public void afterExecute() {
+                    contentTabPanel.setFileInfoInFrame(filesListPanel.getSelectedFileItem());
+                  }
+                });
+              }
+            }
+          } else {
+            if (url != null && !"".equals(url)) { //$NON-NLS-1$
+              // we have a URL so open it in a new tab
+              String updateUrl = "/MantleService?passthru=" + url; //$NON-NLS-1$
+
+              if (mode == FileCommand.COMMAND.NEWWINDOW) {
+                Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+              } else {
+                contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
+                    updateUrl);
+              }
+            }
+          }
+        } else {
+          // see if this file has a URL
+          String url = filesListPanel.getSelectedFileItem().getURL();
+          if (url != null && !"".equals(url)) { //$NON-NLS-1$
+            // we have a URL so open it in a new tab
+            if (mode == FileCommand.COMMAND.NEWWINDOW) {
+              Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+              contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
+                  filesListPanel.getSelectedFileItem().getURL());
+            }
+          }
+        }
+      }
     }
   }
 
@@ -446,7 +390,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
       contentTabPanel.getCurrentFrame().setFileInfo(filesListPanel.getSelectedFileItem());
 
     } else if (filesListPanel.getSelectedFileItem().getName().endsWith(".analysisview.xaction")) { //$NON-NLS-1$
-      openFile(COMMAND.RUN);
+      openFile(filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem().getName(), filesListPanel.getSelectedFileItem()
+          .getLocalizedName(), COMMAND.RUN);
     } else {
       // check to see if a plugin supports editing
       ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(filesListPanel.getSelectedFileItem().getName());

@@ -31,6 +31,7 @@ import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper.ContentTypePlugin;
+import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 import org.pentaho.mantle.client.solutionbrowser.toolbars.FilesToolbar;
 import org.pentaho.mantle.client.solutionbrowser.tree.SolutionTree;
 
@@ -76,7 +77,9 @@ public class FilesListPanel extends FlowPanel {
           } else if (event.getKeyCode() == KeyCodes.KEY_DOWN) {
             selectNextItem(selectedFileItem);
           } else if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
-            SolutionBrowserPerspective.getInstance().openFile(FileCommand.COMMAND.RUN);
+            SolutionBrowserPerspective sbp = SolutionBrowserPerspective.getInstance();
+            FilesListPanel flp = sbp.getFilesListPanel();
+            sbp.openFile(flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), COMMAND.RUN);
           }
         }
         super.onBrowserEvent(event);
