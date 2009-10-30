@@ -27,6 +27,7 @@ import org.pentaho.gwt.widgets.client.filechooser.FileChooserListener;
 import org.pentaho.gwt.widgets.client.toolbar.Toolbar;
 import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.dialogs.FileDialog;
+import org.pentaho.mantle.client.solutionbrowser.ISolutionDocumentListener;
 import org.pentaho.mantle.client.solutionbrowser.PluginOptionsHelper;
 import org.pentaho.mantle.client.solutionbrowser.SolutionBrowserPerspective;
 import org.pentaho.mantle.client.solutionbrowser.SolutionDocumentManager;
@@ -52,7 +53,7 @@ import com.google.gwt.xml.client.Element;
  * @author wseyler
  * 
  */
-public class FilesListPanel extends FlowPanel {
+public class FilesListPanel extends FlowPanel implements ISolutionDocumentListener {
   protected String FILES_LABEL_STYLE_NAME = "filesPanelMenuLabel"; //$NON-NLS-1$
 
   private FlexTable filesList = new FlexTable();
@@ -99,8 +100,17 @@ public class FilesListPanel extends FlowPanel {
     getElement().setId("filesListPanel");
 
     setupNativeHooks(this);
+    
+    SolutionDocumentManager.getInstance().addSolutionDocumentListener(this);
   }
 
+  public void beforeFetchSolutionDocument() {
+    filesList.clear();
+  }
+
+  public void onFetchSolutionDocument(Document solutionDocument) {
+  }
+  
   @SuppressWarnings("unused")
   private void showOpenFileDialog(final JavaScriptObject callback, final String path, final String title, final String okText, final String fileTypes) {
     SolutionDocumentManager.getInstance().fetchSolutionDocument(new AsyncCallback<Document>() {
