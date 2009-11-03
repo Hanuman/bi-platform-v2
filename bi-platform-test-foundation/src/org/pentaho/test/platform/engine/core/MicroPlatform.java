@@ -17,8 +17,13 @@
  */
 package org.pentaho.test.platform.engine.core;
 
+import org.apache.log4j.BasicConfigurator;
+import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory;
+import org.pentaho.platform.api.engine.ISolutionEngine;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.boot.PentahoSystemBoot;
+import org.pentaho.platform.engine.core.system.boot.PlatformInitializationException;
 
 /**
  * This is a test-oriented booter class that extends {@link PentahoSystemBoot}.
@@ -46,5 +51,17 @@ public class MicroPlatform extends PentahoSystemBoot {
   public MicroPlatform(String solutionPath, String baseUrl, IPentahoDefinableObjectFactory factory) {
     super(solutionPath, baseUrl, factory);
   }
-
+  
+  @Override
+  public boolean start() throws PlatformInitializationException {
+    //initialize log4j to write to the console
+    BasicConfigurator.configure();
+    boolean ret = super.start();
+    //set log levels
+    //FIXME: find a better way to set log levels programmatically than this.. this can cause NPEs
+    //and other errors, not to mention it's inefficient
+    PentahoSystem.get(ISolutionEngine.class).setLoggingLevel(ILogger.DEBUG);
+//    PentahoSystem.get(ISolutionRepository.class).setLoggingLevel(ILogger.DEBUG);
+    return ret;
+  }
 }
