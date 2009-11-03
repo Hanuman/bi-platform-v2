@@ -100,7 +100,7 @@ public class TraverseFolderAclEntryAfterInvocationProvider extends AbstractAclPr
 
       throw new AccessDeniedException(messages.getMessage("BasicAclEntryAfterInvocationProvider.noPermission",
           new Object[] { authentication.getName(), returnedObject },
-          "Authentication {0} has NO permissions to the domain object {1}"));
+          "Authentication {0} does not have permission to traverse to the domain object {1}"));
     }
 
     return returnedObject;

@@ -165,7 +165,7 @@ public class ProxyTrustingFilter implements Filter {
                 reset = true;
               }
             }
-            IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+            IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
             if (reset || ((existingSession == null) && (userDetailsRoleListService != null) )) {
               HttpSession httpSession = req.getSession();
               

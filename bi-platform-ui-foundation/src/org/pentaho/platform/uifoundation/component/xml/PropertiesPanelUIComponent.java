@@ -160,7 +160,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     if (!repository.supportsAccessControls()) {
       error(Messages.getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
     }
-    userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
   }
 
   @Override

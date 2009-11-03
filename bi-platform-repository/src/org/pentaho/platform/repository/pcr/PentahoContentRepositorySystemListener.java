@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
+import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
 /**
@@ -18,7 +19,7 @@ public class PentahoContentRepositorySystemListener implements IPentahoSystemLis
 
   public boolean startup(IPentahoSession session) {
     try {
-      PentahoSystem.getPentahoContentRepository().startup();
+      PentahoSystem.get(IPentahoContentRepository.class).startup();
       return true;
     } catch (Exception e) {
       logger.error("", e);

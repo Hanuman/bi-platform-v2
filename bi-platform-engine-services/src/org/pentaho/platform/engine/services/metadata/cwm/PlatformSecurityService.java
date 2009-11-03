@@ -47,7 +47,7 @@ public class PlatformSecurityService extends SecurityService {
 
   public PlatformSecurityService() {
     super();
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     users = service.getAllUsers();
     roles = service.getAllRoles();
     acls = new ArrayList();
@@ -67,7 +67,7 @@ public class PlatformSecurityService extends SecurityService {
    * Returns XML for list of users.
    */
   protected void doUsers(final StringBuffer buf) {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     buf.append("<users>"); //$NON-NLS-1$
     if (service != null) {
       List users = service.getAllUsers();
@@ -85,7 +85,7 @@ public class PlatformSecurityService extends SecurityService {
    * Returns XML for list of roles.
    */
   protected void doRoles(final StringBuffer buf) {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     buf.append("<roles>"); //$NON-NLS-1$
     if (service != null) {
       List roles = service.getAllRoles();

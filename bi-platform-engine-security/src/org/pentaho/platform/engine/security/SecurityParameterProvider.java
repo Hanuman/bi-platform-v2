@@ -242,7 +242,7 @@ public class SecurityParameterProvider implements IParameterProvider {
   }
 
   protected Object getSystemRoleNames() {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     if (service != null) {
       return service.getAllRoles();
     }
@@ -250,7 +250,7 @@ public class SecurityParameterProvider implements IParameterProvider {
   }
 
   protected Object getSystemUserNames() {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     if (service != null) {
       return service.getAllUsers();
     }

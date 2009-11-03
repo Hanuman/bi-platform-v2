@@ -79,7 +79,7 @@ public class SubscriptionExecute extends PentahoBase {
   }
 
   public IPentahoSession getEffectiveUserSession(final String userName) {
-    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
     if (userDetailsRoleListService != null) {
       return userDetailsRoleListService.getEffectiveUserSession(userName, null);
     } else {

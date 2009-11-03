@@ -164,10 +164,6 @@ public class PentahoSystem {
 
   private static final String CACHE_MANAGER = "ICacheManager"; //$NON-NLS-1$
 
-  private static IUserDetailsRoleListService userDetailsRoleListService;
-  
-  private static IPentahoContentRepository pentahoContentRepository;
-
   private static final List ACLFileExtensionList = new ArrayList();
 
   private static final List UnmodifiableACLFileExtensionList = UnmodifiableList
@@ -764,22 +760,6 @@ public class PentahoSystem {
       }
     }
     return object;
-  }
-
-  public static void setUserDetailsRoleListService(final IUserDetailsRoleListService value) {
-    PentahoSystem.userDetailsRoleListService = value;
-  }
-
-  public static IUserDetailsRoleListService getUserDetailsRoleListService() {
-    return PentahoSystem.userDetailsRoleListService;
-  }
-  
-  public static void setPentahoContentRepository(final IPentahoContentRepository value) {
-    PentahoSystem.pentahoContentRepository = value;
-  }
-
-  public static IPentahoContentRepository getPentahoContentRepository() {
-    return PentahoSystem.pentahoContentRepository;
   }
 
   @Deprecated  //use PentahoSystem.get(...) to retrieve pentaho system objects

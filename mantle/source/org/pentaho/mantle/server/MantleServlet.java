@@ -472,13 +472,13 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
   public ArrayList<String> getAllRoles() {
-    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
     return (ArrayList<String>) userDetailsRoleListService.getAllRoles();
   }
 
   @SuppressWarnings("unchecked")//$NON-NLS-1$
   public ArrayList<String> getAllUsers() {
-    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
     return (ArrayList<String>) userDetailsRoleListService.getAllUsers();
   }
 

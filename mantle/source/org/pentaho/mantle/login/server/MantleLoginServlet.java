@@ -33,7 +33,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class MantleLoginServlet extends RemoteServiceServlet implements MantleLoginService {
 
   public ArrayList<String> getAllUsers() {
-    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
     ArrayList<String> users = (ArrayList<String>)userDetailsRoleListService.getAllUsers();
     Collections.sort(users);
     return users;

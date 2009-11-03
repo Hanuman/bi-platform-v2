@@ -90,4 +90,10 @@ PentahoSystem which is initialized after Spring
   <bean id="connection-XML" class="org.pentaho.platform.plugin.services.connections.xquery.XQConnection" scope="prototype" />
   <bean id="connection-HQL" class="org.pentaho.platform.plugin.services.connections.hql.HQLConnection" scope="prototype" />
   
+  <!-- actual bean defined in repository.spring.xml; aliased here -->
+  <!--alias name="pentahoContentRepository" alias="IPentahoContentRepository"/-->
+  
+  <!-- actual bean defined in applicationContext-pentaho-security-*.spring.xml; aliased here -->
+  <alias name="pentahoUserRoleListService" alias="IUserDetailsRoleListService"/>
+  
 </beans>

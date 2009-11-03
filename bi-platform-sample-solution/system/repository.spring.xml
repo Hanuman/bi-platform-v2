@@ -326,7 +326,4 @@ org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=ROLE_
      <constructor-arg ref="pentahoContentRepository" />
    </bean>
    
-   <!-- Hooks content repo up to PentahoSystem -->
-   <bean class="org.pentaho.platform.repository.pcr.spring.PentahoSystemBeanPostProcessor" />
-   
 </beans>

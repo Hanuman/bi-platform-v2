@@ -54,7 +54,6 @@ public class UserDetailsRoleListService implements InitializingBean, IUserDetail
     if (this.userRoleListService == null) {
       throw new Exception(Messages.getString("UserDetailsRoleListService.ERROR_0001_USERROLELISTSERVICE_NOT_SET")); //$NON-NLS-1$
     }
-    PentahoSystem.setUserDetailsRoleListService(this);
   }
 
   public List getAllRoles() {

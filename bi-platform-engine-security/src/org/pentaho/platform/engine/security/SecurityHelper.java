@@ -90,7 +90,7 @@ public class SecurityHelper {
       // roles a user is in, we need to dispatch a call to the
       // UserRoleListProvider to get that information from there.
 
-      IUserDetailsRoleListService roleListService = PentahoSystem.getUserDetailsRoleListService();
+      IUserDetailsRoleListService roleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
       List roles = roleListService.getRolesForUser(principal.getName());
       if (SecurityHelper.logger.isDebugEnabled()) {
         SecurityHelper.logger.debug("rolesForUser from roleListService:" + roles); //$NON-NLS-1$

@@ -745,7 +745,7 @@ public class HttpWebService extends ServletBase {
    */
   protected void doUsers(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
       throws ServletException, IOException {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     buf.append("<users>"); //$NON-NLS-1$
     if (service != null) {
       List users = service.getAllUsers();
@@ -764,7 +764,7 @@ public class HttpWebService extends ServletBase {
    */
   protected void doRoles(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
       throws ServletException, IOException {
-    IUserDetailsRoleListService service = PentahoSystem.getUserDetailsRoleListService();
+    IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
     buf.append("<roles>"); //$NON-NLS-1$
     if (service != null) {
       List roles = service.getAllRoles();
