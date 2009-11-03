@@ -178,7 +178,7 @@ public class MessageFormatter implements IMessageFormatter {
       //text does not have these characters, so a non-regex replacer was used.
 
       //TODO: there is a bit of extraneous String object creation here.  If performance becomes an issue, there are more efficient
-      //ways of doing mass replacments of text, such as using StringBuilder.replace
+      //ways of doing mass replacements of text, such as using StringBuilder.replace
 
       //%ERROR_HEADING%
       templateFile = StringUtils.replace(templateFile, "%ERROR_HEADING%", Messages //$NON-NLS-1$
@@ -288,7 +288,7 @@ public class MessageFormatter implements IMessageFormatter {
 
   private static void buildCauses(Stack<String> causes, Throwable cause) {
     if (cause != null) {
-      causes.push(cause.getMessage());
+      causes.push(cause.getClass().getSimpleName() +": "+((cause.getMessage() != null)?cause.getMessage():""));  //$NON-NLS-1$//$NON-NLS-2$
       buildCauses(causes, cause.getCause());
     }
   }
