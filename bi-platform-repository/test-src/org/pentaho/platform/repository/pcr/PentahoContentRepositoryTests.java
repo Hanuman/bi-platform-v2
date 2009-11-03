@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -158,21 +159,24 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   @Test(expected = AccessDeniedException.class)
-  public void testGetFileByPathAccessDenied() throws Exception {
+  public void testGetFileAccessDenied() throws Exception {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.createUserHomeFolderIfNecessary();
+    pentahoContentRepository.createFolder(tiffanyHomeFolder, new RepositoryFile.Builder("test").folder(true).build());
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.getFile("/pentaho/home/tiffany");
+    // no execute access for suzy on folder called tiffany
+    pentahoContentRepository.getFile("/pentaho/home/tiffany/test");
   }
 
   @Test
-  public void testGetFileByPathAdmin() throws Exception {
+  public void testGetFileAdmin() throws Exception {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.createUserHomeFolderIfNecessary();
+    pentahoContentRepository.createFolder(tiffanyHomeFolder, new RepositoryFile.Builder("test").folder(true).build());
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_JOE);
-    pentahoContentRepository.getFile("/pentaho/home/tiffany");
+    pentahoContentRepository.getFile("/pentaho/home/tiffany/test");
   }
 
   @Test
@@ -190,16 +194,17 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
     pentahoContentRepository.createUserHomeFolderIfNecessary();
-    pentahoContentRepository.getFile("/pentaho/home/tiffany");
+    RepositoryFile tiffanyHome = pentahoContentRepository.getFile("/pentaho/home/tiffany");
+    assertNotNull(tiffanyHome);
   }
 
-  @Test
-  public void testGetFileForExecute() throws Exception {
-    pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    RepositoryFile file = pentahoContentRepository.getFileForExecute("/pentaho/home");
-    assertNotNull(file);
-  }
+//  @Test
+//  public void testGetStreamForExecute() throws Exception {
+//    pentahoContentRepository.startup();
+//    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+//    RepositoryFile file = pentahoContentRepository.getStreamForExecute("/pentaho/home");
+//    assertNotNull(file);
+//  }
 
   @Test
   public void testStartupTwice() throws Exception {
@@ -214,13 +219,27 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.createUserHomeFolderIfNecessary();
     pentahoContentRepository.createUserHomeFolderIfNecessary();
   }
-
+  
   @Test
-  public void testExists() throws Exception {
+  public void testCreateFolder() throws Exception {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    assertTrue(pentahoContentRepository.exists("/pentaho"));
-    assertFalse(pentahoContentRepository.exists("/pentaho/doesnotexist"));
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    newFolder = pentahoContentRepository.createFolder(parentFolder, newFolder);
+    assertNotNull(newFolder);
+    assertNotNull(newFolder.getId());
+    assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, "/pentaho/home/suzy/test"));
+  }
+  
+  @Test(expected = AccessDeniedException.class)
+  public void testCreateFolderAccessDenied() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho");
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    pentahoContentRepository.createFolder(parentFolder, newFolder);
   }
 
   @Test
@@ -232,23 +251,24 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedDataString = "Hello World!";
     final String expectedEncoding = "UTF-8";
     byte[] data = expectedDataString.getBytes(expectedEncoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String expectedMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
     final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction"; 
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(
-        expectedName).data(data).encoding("UTF-8").mimeType(expectedMimeType).build());
+        expectedName).encoding("UTF-8").mimeType(expectedMimeType).build(), dataStream);
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
     assertNotNull(foundFile);
     assertEquals(expectedName, foundFile.getName());
     assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
-    assertTrue(foundFile.length() > 0);
-    assertNotNull(foundFile.getData());
+//    assertTrue(foundFile.length() > 0);
+//    assertNotNull(foundFile.getData());
     assertEquals(expectedEncoding, foundFile.getEncoding());
     assertEquals(expectedMimeType, foundFile.getMimeType());
     assertNotNull(foundFile.getCreatedDate());
-    String dataString = new String(foundFile.getData(), expectedEncoding);
-    assertEquals(expectedDataString, dataString);
+//    String dataString = new String(foundFile.getData(), expectedEncoding);
+//    assertEquals(expectedDataString, dataString);
     assertNotNull(foundFile.getLastModifiedDate());
   }
 

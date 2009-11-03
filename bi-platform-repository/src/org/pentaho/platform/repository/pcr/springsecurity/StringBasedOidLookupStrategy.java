@@ -40,12 +40,12 @@ import org.springframework.security.util.FieldUtils;
 import org.springframework.util.Assert;
 
 /**
- * A copy-and-paste of <code>org.springframework.security.acls.jdbc.BasicLookupStrategy</code>. (The authors of
- * <code>BasicLookupStrategy</code> do not recommend subclassing it.)
+ * A copy-and-paste of {@link org.springframework.security.acls.jdbc.BasicLookupStrategy}. (The authors of
+ * {@code BasicLookupStrategy} do not recommend subclassing it.)
  * 
- * <p>The modifications to <code>BasicLookupStrategy</code> are as follows:
+ * <p>The modifications to {@code BasicLookupStrategy} are as follows:
  * <ul>
- * <li>string-based object identities. (<code>BasicLookupStrategy</code> uses longs.)</li>
+ * <li>string-based object identities. ({@code BasicLookupStrategy} uses longs.)</li>
  * <li>Fix for {@link http://jira.springframework.org/browse/SEC-1140}.</li>
  * </p>
  */

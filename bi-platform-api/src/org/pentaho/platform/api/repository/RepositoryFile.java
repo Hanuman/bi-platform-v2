@@ -14,7 +14,7 @@ public class RepositoryFile {
 
   // ~ Static fields/initializers ======================================================================================
 
-  public static final String PATH_SEPARATOR = "/";
+  public static final String SEPARATOR = "/";
   
   // ~ Instance fields =================================================================================================
 
@@ -35,12 +35,6 @@ public class RepositoryFile {
   private boolean folder;
 
   private String absolutePath;
-
-  /**
-   * Content of the file. May be <code>null</code> when files are retrieved in bulk, as when fetching the children of
-   * a folder. 
-   */
-  private byte[] data;
 
   // ~ Constructors ====================================================================================================
 
@@ -104,21 +98,13 @@ public class RepositoryFile {
     return absolutePath;
   }
   
-  public byte[] getData() {
-    return data;
-  }
-
-  /**
-   * Length, in bytes, of the file or 0L if the file is a folder. This is a calculated field.
-   * @return length in bytes
-   */
-  public long length() {
-    if (data != null) {
-      return data.length;
-    } else {
-      return 0L;
-    }
-  }
+//  /**
+//   * Length, in bytes, of the file or 0L if the file is a folder.
+//   * @return length in bytes
+//   */
+//  public long getLength() {
+//    return length;
+//  }
 
   @Override
   public String toString() {
@@ -144,8 +130,6 @@ public class RepositoryFile {
 
     private String absolutePath;
     
-    private byte[] data;
-
     public Builder(final String name) {
       this.name = name;
     }
@@ -171,7 +155,6 @@ public class RepositoryFile {
       result.mimeType = this.mimeType;
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
-      result.data = data;
       return result;
     }
 
@@ -202,11 +185,6 @@ public class RepositoryFile {
 
     public Builder absolutePath(final String absolutePath) {
       this.absolutePath = absolutePath;
-      return this;
-    }
-    
-    public Builder data(final byte[] data) {
-      this.data = data;
       return this;
     }
     

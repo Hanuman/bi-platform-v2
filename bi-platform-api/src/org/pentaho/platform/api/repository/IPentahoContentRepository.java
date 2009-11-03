@@ -1,7 +1,17 @@
 package org.pentaho.platform.api.repository;
 
+import java.io.InputStream;
+
 /**
  * Entry point into the content repository.
+ * 
+ * <p>
+ * With the exception of the {@code create} methods, all {@code RepositoryFile} instances should be retrieved 
+ * from this service and not created explicitly. For example, to get a stream for execute, use
+ * <pre>{@code
+ * InputStream stream = getStreamForExecute(getFile("/myfile"));
+ * }</pre>
+ * </p>
  * 
  * @author mlowery
  */
@@ -25,36 +35,47 @@ public interface IPentahoContentRepository {
   RepositoryFile createUserHomeFolderIfNecessary();
 
   /**
-   * Gets file for read.
+   * Gets file. Use this method to test for file existence too.
    * 
    * @param absPath absolute path to file
-   * @return file
+   * @return file or {@code null} if the file does not exist
    */
   RepositoryFile getFile(final String absPath);
-
-  /**
-   * Gets file for execute.
-   * 
-   * @param absPath absolute path to file
-   * @return file
-   */
-  RepositoryFile getFileForExecute(final String absPath);
   
   /**
-   * Returns <code>true</code> if file exists.
+   * Gets stream for read.
    * 
-   * @param absPath absolute path to file
-   * @return <code>true</code> if file exists
+   * @param file to read
+   * @return stream
    */
-  boolean exists(final String absPath);
+  InputStream getStreamForRead(final RepositoryFile file);
+
+  /**
+   * Gets stream for execute.
+   * 
+   * @param file to execute
+   * @return stream
+   */
+  InputStream getStreamForExecute(final RepositoryFile file);
   
   /**
    * Creates a file.
    * 
    * 
-   * @param parentFolder parent folder (may be <code>null</code>)
+   * @param parentFolder parent folder (may be {@code null})
+   * @param file file to create
+   * @param data stream with file data
+   * @return file that is equal to given file except with id populated
+   */
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data);
+  
+  /**
+   * Creates a folder.
+   * 
+   * 
+   * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file);
+  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
 }

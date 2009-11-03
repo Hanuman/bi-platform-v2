@@ -1,31 +1,43 @@
 package org.pentaho.platform.api.repository;
 
+import java.io.InputStream;
+
 public interface IPentahoContentDao {
   
   /**
    * Returns file at given absolute path.
    * 
    * @param absPath absolute path
-   * @return file or <code>null</code> if file does not exist
+   * @return file or {@code null} if file does not exist
    */
   RepositoryFile getFile(final String absPath);
+  
+  /**
+   * Returns a stream for the file.
+   * 
+   * @param file file to open
+   * @return stream
+   */
+  InputStream getStream(final RepositoryFile file);
   
 //  void removeFile(final RepositoryFile file);
   
   /**
-   * Returns <code>true</code> if the file at the given absolute path exists.
-   * 
-   * @param absPath absolute path
-   * @return <code>true</code> if the file at the given absolute path exists
-   */
-  boolean exists(final String absPath);
-  
-  /**
    * Creates a file.
    * 
-   * @param parentFolder parent folder (may be <code>null</code>)
+   * @param parentFolder parent folder (may be {@code null})
+   * @param file file to create
+   * @param data stream with file data
+   * @return new file with non-null id
+   */
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data);
+  
+  /**
+   * Creates a folder.
+   * 
+   * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
    * @return new file with non-null id
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file);
+  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
 }

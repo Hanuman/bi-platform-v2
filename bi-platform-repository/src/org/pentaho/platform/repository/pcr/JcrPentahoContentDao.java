@@ -1,7 +1,7 @@
 package org.pentaho.platform.repository.pcr;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 import javax.jcr.Item;
@@ -50,7 +50,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
-    Assert.isTrue(!file.getName().contains(RepositoryFile.PATH_SEPARATOR));
+    Assert.isTrue(!file.getName().contains(RepositoryFile.SEPARATOR));
     Assert.isTrue(file.isFolder());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
@@ -58,25 +58,19 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        Node parentFolderNode;
-        if (parentFolder != null) {
-          parentFolderNode = nodeIdStrategy.findNodeById(session, parentFolder.getId());
-        } else {
-          parentFolderNode = session.getRootNode();
-        }
-        Node folderNode = parentFolderNode.addNode(file.getName(), JcrConstants.NT_FOLDER);
-        nodeIdStrategy.setId(folderNode, null);
+        Node folderNode = JcrRepositoryFileUtils.toFolderNode(session, nodeIdStrategy, parentFolder, file);
         session.save();
-        return JcrRepositoryFileUtils.fromNode(session, folderNode, nodeIdStrategy);
+        return JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, folderNode);
       }
     });
   }
 
-  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file) {
+  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final InputStream data) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
-    Assert.notNull(file.getData());
+    Assert.notNull(data);
     Assert.hasText(file.getEncoding());
     Assert.hasText(file.getMimeType());
     if (parentFolder != null) {
@@ -85,34 +79,29 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        Node parentFolderNode;
-        if (parentFolder != null) {
-          parentFolderNode = nodeIdStrategy.findNodeById(session, parentFolder.getId());
-        } else {
-          parentFolderNode = session.getRootNode();
-        }
-        Node fileNode = parentFolderNode.addNode(file.getName(), JcrConstants.NT_FILE);
-        nodeIdStrategy.setId(fileNode, null);
-        Node resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE);
-        resourceNode.setProperty(JcrConstants.JCR_ENCODING, file.getEncoding());
-        resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, file.getMimeType());
-        resourceNode.setProperty(JcrConstants.JCR_DATA, new ByteArrayInputStream(file.getData()));
-        // set created and last modified to same date when creating a new file
-        resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, fileNode.getProperty(JcrConstants.JCR_CREATED)
-            .getDate());
+        Node fileNode = JcrRepositoryFileUtils.toFileNode(session, nodeIdStrategy, parentFolder, file, data);
         session.save();
-        return JcrRepositoryFileUtils.fromNode(session, fileNode, nodeIdStrategy);
+        return JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, fileNode);
       }
     });
   }
 
-  public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file) {
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data) {
     Assert.notNull(file);
-    if (file.isFolder()) {
-      return internalCreateFolder(parentFolder, file);
-    } else {
-      return internalCreateFile(parentFolder, file);
-    }
+    Assert.isTrue(!file.isFolder());
+    return internalCreateFile(parentFolder, file, data);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.isTrue(file.isFolder());
+    return internalCreateFolder(parentFolder, file);
   }
 
   public void removeFile(final RepositoryFile file) {
@@ -126,22 +115,6 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
-  public boolean exists(final String absPath) {
-    Assert.hasText(absPath);
-    return (Boolean) jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException {
-        Item fileItem;
-        try {
-          fileItem = session.getItem(absPath);
-        } catch (PathNotFoundException e) {
-          return false;
-        }
-        Assert.isTrue(fileItem.isNode());
-        return true;
-      }
-    });
-  }
-
   public void afterPropertiesSet() throws Exception {
     Assert.notNull(jcrTemplate, "jcrTemplate required");
   }
@@ -151,9 +124,12 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     this.nodeIdStrategy = nodeIdStrategy;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public RepositoryFile getFile(final String absPath) {
     Assert.hasText(absPath);
-    Assert.isTrue(absPath.startsWith(RepositoryFile.PATH_SEPARATOR));
+    Assert.isTrue(absPath.startsWith(RepositoryFile.SEPARATOR));
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         Item fileNode;
@@ -164,7 +140,23 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
         } catch (PathNotFoundException e) {
           fileNode = null;
         }
-        return fileNode != null ? JcrRepositoryFileUtils.fromNode(session, (Node) fileNode, nodeIdStrategy) : null;
+        return fileNode != null ? JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, (Node) fileNode) : null;
+      }
+    });
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public InputStream getStream(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+
+    return (InputStream) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        return JcrRepositoryFileUtils.getStream(session, nodeIdStrategy, file);
       }
     });
 
@@ -195,7 +187,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
      * Returns the node with the given id.
      * @param session session to use
      * @param id id of node to find
-     * @return found node or <code>null</code>
+     * @return found node or {@code null}
      */
     Node findNodeById(final Session session, final Serializable id);
   }
@@ -230,7 +222,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     }
 
     /**
-     * Uses session.getNodeByUUID.
+     * Uses {@code session.getNodeByUUID}.
      */
     public Node findNodeById(final Session session, final Serializable id) {
       try {

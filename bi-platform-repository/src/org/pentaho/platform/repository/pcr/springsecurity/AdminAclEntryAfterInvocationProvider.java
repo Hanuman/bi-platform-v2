@@ -13,8 +13,8 @@ import org.springframework.util.Assert;
 
 /**
  * Calls {@link AclEntryAfterInvocationProvider#decide(Authentication, Object, ConfigAttributeDefinition, Object)}. If
- * an <code>AccessDeniedException</code> is thrown, check if the user has been granted the authority 
- * <code>adminAuthority</code>. If granted, return the object as superclass would. Otherwise, throw original exception.
+ * an {@code AccessDeniedException} is thrown, check if the user has been granted the authority 
+ * {@code adminAuthority}. If granted, return the object as superclass would. Otherwise, throw original exception.
  * 
  * @author mlowery
  */

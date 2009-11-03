@@ -8,7 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * Registers the Spring-instantiated <code>IPentahoContentRepository</code> with <code>PentahoSystem</code>.
+ * Registers the Spring-instantiated {@link IPentahoContentRepository} with {@link PentahoSystem}.
  * 
  * @author mlowery
  */

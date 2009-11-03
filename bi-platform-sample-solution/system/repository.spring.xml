@@ -26,7 +26,15 @@
         class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
     <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.EXECUTE"/>
   </bean>
-
+  <bean id="RepositoryFilePermission.APPEND"
+        class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.APPEND"/>
+  </bean>
+  <bean id="RepositoryFilePermission.WRITE"
+        class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE"/>
+  </bean>
+  
   <!-- An access decision voter that reads VOTE_ROLE_* configuration settings -->
   <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
     <property name="rolePrefix" ref="rolePrefix" />
@@ -36,41 +44,87 @@
     <constructor-arg value="ROLE_" />
   </bean>
 
-  <!-- An access decision voter that reads VOTE_ACL_CONTENT_READ configuration settings. -->
+  <!-- An access decision voter that reads VOTE_ACL_FILE_READ configuration settings. -->
   <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
-  <bean id="aclContentReadVoter" class="org.springframework.security.vote.AclEntryVoter">
+  <bean id="aclFileReadVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
     <constructor-arg ref="aclService"/>
-    <constructor-arg value="VOTE_ACL_CONTENT_READ"/>
+    <constructor-arg value="VOTE_ACL_FILE_READ"/>
     <constructor-arg>
       <list>
         <ref local="RepositoryFilePermission.READ"/>
       </list>
     </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
+    <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
+  </bean>
+  
+  <!-- An access decision voter that reads VOTE_ACL_FILE_WRITE configuration settings. -->
+  <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
+  <bean id="aclFileWriteVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="VOTE_ACL_FILE_WRITE"/>
+    <constructor-arg>
+      <list>
+        <ref local="RepositoryFilePermission.WRITE"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
+    <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
+  </bean>
+  
+  <!-- An access decision voter that reads VOTE_ACL_FILE_APPEND configuration settings. -->
+  <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
+  <bean id="aclFileAppendVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="VOTE_ACL_FILE_APPEND"/>
+    <constructor-arg>
+      <list>
+        <ref local="RepositoryFilePermission.APPEND"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
+    <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
+  </bean>
+  
+  <!-- An access decision voter that reads VOTE_ACL_FILE_EXECUTE configuration settings. -->
+  <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
+  <bean id="aclFileExecuteVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="VOTE_ACL_FILE_EXECUTE"/>
+    <constructor-arg>
+      <list>
+        <ref local="RepositoryFilePermission.EXECUTE"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
 
-  <!-- An access decision voter that reads VOTE_ACL_CONTENT_DELETE configuration settings. -->
+  <!-- An access decision voter that reads VOTE_ACL_FILE_DELETE configuration settings. -->
   <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
-  <bean id="aclContentDeleteVoter" class="org.springframework.security.vote.AclEntryVoter">
+  <bean id="aclFileDeleteVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
     <constructor-arg ref="aclService"/>
-    <constructor-arg value="VOTE_ACL_CONTENT_DELETE"/>
+    <constructor-arg value="VOTE_ACL_FILE_DELETE"/>
     <constructor-arg>
       <list>
         <ref local="RepositoryFilePermission.DELETE"/>
       </list>
     </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
 
   <!-- An access decision manager used by the business objects. -->
-  <!-- Never use more than one of these voters on a method since Affirmative means any can grant access. -->
-  <bean id="businessAccessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+  <bean id="businessAccessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
     <property name="allowIfAllAbstainDecisions" value="false"/>
     <property name="decisionVoters">
       <list>
         <ref local="roleVoter"/>
-        <ref local="aclContentReadVoter"/>
-        <ref local="aclContentDeleteVoter"/>
+        <ref local="aclFileReadVoter"/>
+        <ref local="aclFileWriteVoter"/>
+        <ref local="aclFileAppendVoter"/>
+        <ref local="aclFileExecuteVoter"/>
+        <ref local="aclFileDeleteVoter"/>
       </list>
     </property>
   </bean>
@@ -126,6 +180,7 @@
       <list>
         <ref local="afterAclRead"/>
         <ref local="afterAclExecute" />
+        <ref local="afterAclTraverse" />
       </list>
     </property>
   </bean>
@@ -142,7 +197,7 @@
     </constructor-arg>
     <constructor-arg value="ROLE_Admin"/>
   </bean>
-  
+
   <!-- Processes AFTER_ACL_EXECUTE configuration settings -->
   <bean id="afterAclExecute" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryAfterInvocationProvider">
     <constructor-arg ref="aclService"/>
@@ -153,6 +208,19 @@
       </list>
     </constructor-arg>
     <constructor-arg value="ROLE_Admin"/>
+  </bean>
+
+  <!-- Processes AFTER_ACL_TRAVERSE configuration settings -->
+  <bean id="afterAclTraverse" class="org.pentaho.platform.repository.pcr.springsecurity.TraverseFolderAclEntryAfterInvocationProvider">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="AFTER_ACL_TRAVERSE"/>
+    <constructor-arg>
+      <list>
+        <ref local="RepositoryFilePermission.EXECUTE"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg ref="pentahoContentDao" />
   </bean>
 
   <!--************************************************************************************************************** -->
@@ -168,8 +236,10 @@
           org.pentaho.platform.api.repository.IPentahoContentRepository.startup=PROPAGATION_REQUIRED
           org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=PROPAGATION_REQUIRED
           org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=PROPAGATION_REQUIRED,readOnly
-          org.pentaho.platform.api.repository.IPentahoContentRepository.getFileForExecute=PROPAGATION_REQUIRED,readOnly
-          org.pentaho.platform.api.repository.IPentahoContentRepository.exists=PROPAGATION_REQUIRED,readOnly
+          org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=PROPAGATION_REQUIRED,readOnly
+          org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=PROPAGATION_REQUIRED,readOnly
+          org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=PROPAGATION_REQUIRED
+          org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=PROPAGATION_REQUIRED
         </value>
     </property>
   </bean>
@@ -214,9 +284,11 @@
   <property name="objectDefinitionSource">
     <value>
 org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=ROLE_Authenticated
-org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=ROLE_Authenticated,AFTER_ACL_READ
-org.pentaho.platform.api.repository.IPentahoContentRepository.getFileForExecute=ROLE_Authenticated,AFTER_ACL_READ,AFTER_ACL_EXECUTE
-org.pentaho.platform.api.repository.IPentahoContentRepository.exists=ROLE_Authenticated
+org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=ROLE_Authenticated,AFTER_ACL_TRAVERSE
+org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=ROLE_Authenticated,VOTE_ACL_FILE_READ
+org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=ROLE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
+org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=ROLE_Authenticated,VOTE_ACL_FILE_WRITE
+org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=ROLE_Authenticated,VOTE_ACL_FILE_APPEND
     </value>
   </property>
 </bean>        

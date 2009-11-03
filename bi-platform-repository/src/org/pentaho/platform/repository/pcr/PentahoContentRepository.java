@@ -1,5 +1,6 @@
 package org.pentaho.platform.repository.pcr;
 
+import java.io.InputStream;
 import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
@@ -28,8 +29,8 @@ import org.springframework.security.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of <code>IPentahoContentRepository</code> using an <code>IPentahoContentDao</code> and Spring 
- * Security's <code>MutableAclService</code>.
+ * Implementation of {@link IPentahoContentRepository} using an {@link IPentahoContentDao} and Spring 
+ * Security's {@link MutableAclService}.
  * 
  * <p>
  * All <strong>public</strong> methods in this class should be protected via Spring Security with the exception of:
@@ -53,7 +54,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private static final String FOLDER_ROOT = "pentaho";
 
-  private static final String PATH_ROOT = RepositoryFile.PATH_SEPARATOR + FOLDER_ROOT;
+  private static final String PATH_ROOT = RepositoryFile.SEPARATOR + FOLDER_ROOT;
 
   // ~ Instance fields =================================================================================================
 
@@ -108,7 +109,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   }
 
   /**
-   * Creates "system" authentication.  Note that <code>RunAsManager</code> is not used here as it is only relevant when 
+   * Creates "system" authentication.  Note that {@code RunAsManager} is not used here as it is only relevant when 
    * there is an already-authenticated user; there is no already-authenticated user here.
    * 
    * @return system authentication
@@ -123,7 +124,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   }
 
   /**
-   * Throws an <code>IllegalStateException</code> if not started up.  Should be called from all public methods (except 
+   * Throws an {@code IllegalStateException} if not started up.  Should be called from all public methods (except 
    * {@link #startup()}).
    */
   private void internalCheckStartedUp() {
@@ -135,16 +136,16 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     if (contentDao.getFile(PATH_ROOT) != null) {
       return;
     }
-    RepositoryFile rootFolder = internalCreateFile(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(),
+    RepositoryFile rootFolder = internalCreateFolder(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(),
         false);
     internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName), RepositoryFilePermission.READ);
     internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName),
         RepositoryFilePermission.EXECUTE);
 
     // inherits the ACEs from parent ACL
-    internalCreateFile(rootFolder, new RepositoryFile.Builder(FOLDER_PUBLIC).folder(true).build(), true);
+    internalCreateFolder(rootFolder, new RepositoryFile.Builder(FOLDER_PUBLIC).folder(true).build(), true);
     // inherits the ACEs from parent ACL
-    internalCreateFile(rootFolder, new RepositoryFile.Builder(FOLDER_HOME).folder(true).build(), true);
+    internalCreateFolder(rootFolder, new RepositoryFile.Builder(FOLDER_HOME).folder(true).build(), true);
   }
 
   private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission) {
@@ -173,13 +174,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     return contentDao.getFile(absPath);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public synchronized RepositoryFile getFileForExecute(final String absPath) {
-    return getFile(absPath);
-  }
-
   private void internalSetOwner(final RepositoryFile file, final Sid owner) {
     Assert.notNull(file);
     Assert.notNull(owner);
@@ -196,30 +190,32 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile createUserHomeFolderIfNecessary() {
     internalCheckStartedUp();
-    RepositoryFile homeFolder = contentDao.getFile(PATH_ROOT + RepositoryFile.PATH_SEPARATOR + FOLDER_HOME);
-    RepositoryFile userHomeFolder = contentDao.getFile(homeFolder.getAbsolutePath() + RepositoryFile.PATH_SEPARATOR
+    RepositoryFile homeFolder = contentDao.getFile(PATH_ROOT + RepositoryFile.SEPARATOR + FOLDER_HOME);
+    RepositoryFile userHomeFolder = contentDao.getFile(homeFolder.getAbsolutePath() + RepositoryFile.SEPARATOR
         + internalGetUsername());
     if (userHomeFolder == null) {
-      return internalCreateFile(homeFolder, new RepositoryFile.Builder(internalGetUsername()).folder(true).build(),
+      return internalCreateFolder(homeFolder, new RepositoryFile.Builder(internalGetUsername()).folder(true).build(),
           false);
     } else {
       return userHomeFolder;
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public synchronized boolean exists(final String absPath) {
-    internalCheckStartedUp();
-    return contentDao.exists(absPath);
-  }
-
-  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
+  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data,
       final boolean inheritAces) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFile(parentFolder, file);
+    RepositoryFile newFile = contentDao.createFile(parentFolder, file, data);
+    internalCreateAclIfNecessary(newFile, inheritAces);
+
+    return newFile;
+  }
+  
+  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final boolean inheritAces) {
+    Assert.notNull(file);
+
+    RepositoryFile newFile = contentDao.createFolder(parentFolder, file);
     internalCreateAclIfNecessary(newFile, inheritAces);
 
     return newFile;
@@ -267,7 +263,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * Returns the username of the current principal.
    * 
-   * <p><strong>Only call this method if you are sure there is a non-null <code>Authentication</code>.</strong></p>
+   * <p><strong>Only call this method if you are sure there is a non-null {@code Authentication}.</strong></p>
    * @return username
    */
   private String internalGetUsername() {
@@ -299,19 +295,55 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file) {
+  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data) {
     Assert.notNull(file);
+    Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     if (!file.isFolder()) {
-      Assert.notNull(file.getData());
-      Assert.hasText(file.getEncoding());
+      Assert.notNull(data);
       Assert.hasText(file.getMimeType());
     }
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
 
-    return internalCreateFile(parentFolder, file, true);
+    return internalCreateFile(parentFolder, file, data, true);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.isTrue(file.isFolder());
+    Assert.hasText(file.getName());
+    if (parentFolder != null) {
+      Assert.hasText(parentFolder.getName());
+    }
+    return internalCreateFolder(parentFolder, file, true);
   }
 
+  /**
+   * {@inheritDoc}
+   * 
+   * <p>
+   * Delegates to {@link #getStreamForRead(RepositoryFile)} but assumes that some external system (e.g. Spring Security)
+   * is protecting this method with different authorization rules than {@link #getStreamForRead(RepositoryFile)}.
+   * </p>
+   * 
+   * @see #getStreamForRead(RepositoryFile)
+   */
+  public InputStream getStreamForExecute(final RepositoryFile file) {
+    return getStreamForRead(file);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public InputStream getStreamForRead(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    return contentDao.getStream(file);
+  }
+  
 }
