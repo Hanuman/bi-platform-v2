@@ -481,7 +481,15 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
     public InputStream getInputStream() throws IOException {
       if (inputStream != null){
-        inputStream.reset();
+        if(inputStream.markSupported()) {
+          try {
+            inputStream.reset();
+          }
+          catch(IOException e) {
+            //do nothing: a mark has not been set on this stream. This is not an error.
+            return inputStream;
+          }
+        }
       }
       return inputStream;
     }
