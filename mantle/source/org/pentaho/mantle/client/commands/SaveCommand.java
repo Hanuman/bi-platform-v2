@@ -80,10 +80,10 @@ public class SaveCommand extends AbstractCommand {
           dialog.addFileChooserListener(new FileChooserListener() {
 
             public void fileSelected(final String solution, final String path, final String name, String localizedFileName) {
-              setSolution(solution);
-              setPath(path);
-              setName(name);
-              setType(SolutionFileInfo.Type.XACTION); //$NON-NLS-1$
+              SaveCommand.this.solution = solution;
+              SaveCommand.this.path = path;
+              SaveCommand.this.name = name;
+              SaveCommand.this.type = SolutionFileInfo.Type.XACTION; //$NON-NLS-1$
 
               tabName = name;
               if (tabName.indexOf("analysisview.xaction") != -1) {
@@ -127,7 +127,7 @@ public class SaveCommand extends AbstractCommand {
           clearValues();
         }
       }
-    });
+    }, false);
   }
 
   private void persistFileInfoInFrame() {
@@ -147,6 +147,7 @@ public class SaveCommand extends AbstractCommand {
   }
 
   private void retrieveCachedValues(IFrameTabPanel tabPanel) {
+    clearValues();
     SolutionFileInfo info = tabPanel.getFileInfo();
     if (info != null) {
       this.name = info.getName();
@@ -161,7 +162,7 @@ public class SaveCommand extends AbstractCommand {
    * 
    * @param elementId
    */
-  public native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite)
+  private native void doSaveAs(String elementId, String filename, String solution, String path, SolutionFileInfo.Type type, boolean overwrite)
   /*-{
     var frame = $doc.getElementById(elementId);
     frame = frame.contentWindow;
@@ -218,46 +219,6 @@ public class SaveCommand extends AbstractCommand {
       tab.setLabelText(tabName);
       tab.setLabelTooltip(tabName);
     }
-  }
-
-  public String getName() {
-
-    return name;
-  }
-
-  public void setName(String name) {
-
-    this.name = name;
-  }
-
-  public String getSolution() {
-
-    return solution;
-  }
-
-  public void setSolution(String solution) {
-
-    this.solution = solution;
-  }
-
-  public String getPath() {
-
-    return path;
-  }
-
-  public void setPath(String path) {
-
-    this.path = path;
-  }
-
-  public SolutionFileInfo.Type getType() {
-
-    return type;
-  }
-
-  public void setType(SolutionFileInfo.Type type) {
-
-    this.type = type;
   }
 
 }

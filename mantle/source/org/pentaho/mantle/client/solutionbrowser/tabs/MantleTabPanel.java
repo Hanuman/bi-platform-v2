@@ -108,7 +108,15 @@ public class MantleTabPanel extends TabPanel {
     contentTabMap.put(w, tabWidget);
   }
 
-  public void showNewURLTab(String tabName, String tabTooltip, final String url) {
+  /*
+   * This should only ever get invoked via JSNI now
+   */
+  @SuppressWarnings("unused")
+  private void showNewURLTab(String tabName, String tabTooltip, final String url) {
+    showNewURLTab(tabName, tabTooltip, url, false);
+  }
+
+  public void showNewURLTab(String tabName, String tabTooltip, final String url, boolean setFileInfoInFrame) {
     final int elementId = getWidgetCount();
     String frameName = getUniqueFrameName();
 
@@ -146,7 +154,9 @@ public class MantleTabPanel extends TabPanel {
     SolutionBrowserPerspective.getInstance().showContent();
     SolutionBrowserPerspective.getInstance().fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, getTabBar().getSelectedTab());
 
-    setFileInfoInFrame(SolutionBrowserPerspective.getInstance().getFilesListPanel().getSelectedFileItem());
+    if (setFileInfoInFrame) {
+      setFileInfoInFrame(SolutionBrowserPerspective.getInstance().getFilesListPanel().getSelectedFileItem());
+    }
   }
 
   private native void setupNativeHooks(MantleTabPanel tabPanel)

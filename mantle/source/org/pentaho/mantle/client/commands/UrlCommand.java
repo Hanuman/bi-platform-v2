@@ -31,12 +31,12 @@ public class UrlCommand extends AbstractCommand {
   protected void performOperation()
   {
     SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
-    navigatorPerspective.getContentTabPanel().showNewURLTab( title, "", url); //$NON-NLS-1$
+    navigatorPerspective.getContentTabPanel().showNewURLTab( title, "", url, false); //$NON-NLS-1$
   }
 
   protected void performOperation(boolean feedback)
   {
     SolutionBrowserPerspective navigatorPerspective = SolutionBrowserPerspective.getInstance();
-    navigatorPerspective.getContentTabPanel().showNewURLTab( title, "", url); //$NON-NLS-1$
+    navigatorPerspective.getContentTabPanel().showNewURLTab( title, "", url, false); //$NON-NLS-1$
   }
 }

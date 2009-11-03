@@ -35,6 +35,6 @@ public class WAQRCommand extends AbstractCommand {
     if (!GWT.isScript()) {
       waqrURL = "http://localhost:8080/pentaho/adhoc/waqr.html?userid=joe&password=password"; //$NON-NLS-1$
     }
-    SolutionBrowserPerspective.getInstance().getContentTabPanel().showNewURLTab(Messages.getString("untitled"), Messages.getString("newAdhocReport"), waqrURL); //$NON-NLS-1$ //$NON-NLS-2$
+    SolutionBrowserPerspective.getInstance().getContentTabPanel().showNewURLTab(Messages.getString("untitled"), Messages.getString("newAdhocReport"), waqrURL, false); //$NON-NLS-1$ //$NON-NLS-2$
   }
 }

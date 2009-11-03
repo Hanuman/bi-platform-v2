@@ -24,17 +24,15 @@ import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.dialogs.PromptDialogBox;
 import org.pentaho.mantle.client.messages.Messages;
 import org.pentaho.mantle.client.service.MantleServiceCache;
-import org.pentaho.mantle.login.client.MantleLoginDialog;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xml.client.Document;
 
-@SuppressWarnings("deprecation")
 public class AnalysisViewDialog extends PromptDialogBox {
 
   private ListBox lboxSchema = new ListBox();
@@ -45,14 +43,14 @@ public class AnalysisViewDialog extends PromptDialogBox {
 
   private HashMap<String, ArrayList<String>> schemaCubeHashMap;
 
-  public AnalysisViewDialog(Document solutionRepositoryDoc) {
+  public AnalysisViewDialog() {
     super(Messages.getString("newAnalysisView"), Messages.getString("ok"), Messages.getString("cancel"), false, true, new VerticalPanel()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    buildAnalysisView(solutionRepositoryDoc);
+    buildAnalysisView();
     lboxSchema.getElement().setId("schemaList");
     lboxSchema.setTabIndex(1);
     lboxCube.getElement().setId("cubeList");
     lboxCube.setTabIndex(2);
-    
+
     setFocusWidget(lboxSchema);
   }
 
@@ -61,14 +59,14 @@ public class AnalysisViewDialog extends PromptDialogBox {
    * 
    * @return The container that contains all the requisite widget.
    */
-  public Widget buildAnalysisView(Document solutionRepositoryDoc) {
+  private Widget buildAnalysisView() {
     VerticalPanel mainPanel = (VerticalPanel) getContent();
     mainPanel.setSpacing(5);
     Label schemaLabel = new Label(Messages.getString("schema")); //$NON-NLS-1$
     Label cubeLabel = new Label(Messages.getString("cube")); //$NON-NLS-1$
 
-    lboxSchema.addChangeListener(new ChangeListener() {
-      public void onChange(Widget sender) {
+    lboxSchema.addChangeHandler(new ChangeHandler() {
+      public void onChange(ChangeEvent event) {
         final String currentSchema = lboxSchema.getItemText(lboxSchema.getSelectedIndex());
         updateCubeListBox(currentSchema);
       }
@@ -103,27 +101,17 @@ public class AnalysisViewDialog extends PromptDialogBox {
    * Populates the schema and cube list box based on the information retrieved from the catalogs.
    */
   private void getSchemaAndCubeInfo() {
-    AsyncCallback callback = new AsyncCallback() {
+    AsyncCallback<HashMap<String, ArrayList<String>>> callback = new AsyncCallback<HashMap<String, ArrayList<String>>>() {
       public void onFailure(Throwable caught) {
-        MantleLoginDialog.performLogin(new AsyncCallback() {
-
-          public void onFailure(Throwable caughtLogin) {
-            // we are already logged in, or something horrible happened
-            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
-                true);
-            dialogBox.center();
-          }
-
-          public void onSuccess(Object result) {
-            getSchemaAndCubeInfo();
-          }
-        });
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, //$NON-NLS-1$ //$NON-NLS-2$
+            true);
+        dialogBox.center();
       }
 
       @SuppressWarnings("unchecked")
-      public void onSuccess(Object result) {
+      public void onSuccess(HashMap<String, ArrayList<String>> result) {
         if (result != null) {
-          schemaCubeHashMap = (HashMap<String, ArrayList<String>>) result;
+          schemaCubeHashMap = result;
 
           if (schemaCubeHashMap != null && schemaCubeHashMap.size() >= 1) {
             Iterator iter = schemaCubeHashMap.keySet().iterator();

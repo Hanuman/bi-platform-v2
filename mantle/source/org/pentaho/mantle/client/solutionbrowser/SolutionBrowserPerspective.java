@@ -308,7 +308,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
           Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
           contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-              filesListPanel.getSelectedFileItem().getURL());
+              filesListPanel.getSelectedFileItem().getURL(), true);
         }
       } else {
         // see if this file is a plugin
@@ -342,7 +342,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
                 Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
               } else {
                 contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-                    updateUrl);
+                    updateUrl, true);
               }
             }
           }
@@ -355,7 +355,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
               Window.open(filesListPanel.getSelectedFileItem().getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
               contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-                  filesListPanel.getSelectedFileItem().getURL());
+                  filesListPanel.getSelectedFileItem().getURL(), true);
             }
           }
         }
@@ -382,8 +382,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
         }
       }
       contentTabPanel
-          .showNewURLTab(
-              Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
+      .showNewURLTab(
+              Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), url, true); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       contentTabPanel.getCurrentFrame().setFileInfo(filesListPanel.getSelectedFileItem());
@@ -410,12 +410,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
         if (GWT.isScript()) {
           contentTabPanel
               .showNewURLTab(
-                  Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), editUrl); //$NON-NLS-1$ //$NON-NLS-2$
+                  Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), editUrl, true); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
           // we have a URL so open it in a new tab
           String updateUrl = "/MantleService?passthru=" + editUrl; //$NON-NLS-1$
           contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-              updateUrl);
+              updateUrl, true);
         }
 
         // Store representation of file in the frame for reference later when save is called
@@ -499,7 +499,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
             public void onSuccess(Boolean subscribable) {
               if (subscribable) {
                 contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(),
-                    myurl);
+                    myurl, true);
               } else {
                 MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
                     Messages.getString("noSchedulePermission"), false, false, true); //$NON-NLS-1$
@@ -510,7 +510,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
           MantleServiceCache.getService().hasAccess(filesListPanel.getSelectedFileItem().getSolution(), filesListPanel.getSelectedFileItem().getPath(),
               filesListPanel.getSelectedFileItem().getName(), 3, callback);
         } else {
-          contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(), url);
+          contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(), url, true);
         }
       }
 
