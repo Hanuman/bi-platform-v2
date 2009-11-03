@@ -39,6 +39,7 @@ import org.pentaho.platform.api.engine.IOutputHandler;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.engine.core.output.AuditableOutputStream;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.web.http.messages.Messages;
 
@@ -53,6 +54,7 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
 
   boolean allowFeedback;
 
+  @Deprecated
   private boolean contentGenerated;
 
   private IPentahoSession session;
@@ -62,13 +64,18 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
   protected IRuntimeContext runtimeContext;
 
   private int outputType = IOutputHandler.OUTPUT_TYPE_DEFAULT;
+  
+  private OutputStream destinationOutputStream;
+  
+  private boolean responseExpected;
 
   public HttpOutputHandler(final HttpServletResponse response, final OutputStream outputStream, final boolean allowFeedback) {
     this.response = response;
+    destinationOutputStream = outputStream;
 
-    outputContent = new HttpContentItem(outputStream, this);
+    outputContent = new HttpContentItem(destinationOutputStream, this);
     ((HttpContentItem) outputContent).setMimeTypeListener(this);
-    feedbackContent = new HttpContentItem(outputStream, this);
+    feedbackContent = new HttpContentItem(destinationOutputStream, this);
 
     this.allowFeedback = allowFeedback;
     contentGenerated = false;
@@ -104,11 +111,11 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
 	      }
   }
   
+  @Deprecated
   public boolean contentDone() {
     return contentGenerated;
-
   }
-
+  
   public boolean allowFeedback() {
     return allowFeedback;
   }
@@ -140,6 +147,11 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
     if (allowFeedback) {
       // assume that content is generated becuase of this
       contentGenerated = true;
+      /*
+       * if someone is requesting a feedbackContentItem, we can assume they tend to write feedback
+       * back to the client, so we set the flag here
+       */
+      responseExpected = true;
       return feedbackContent;
     }
     return null;
@@ -155,8 +167,15 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
     if (objectName.equals(IOutputHandler.RESPONSE) && contentName.equals(IOutputHandler.CONTENT)) {
       // assume that content is generated becuase of this
       // change the content type if necessary
-      outputContent.setMimeType(mimeType);
+      if(mimeType != null) {
+        outputContent.setMimeType(mimeType);
+      }
       contentGenerated = true;
+      /*
+       * if someone is requesting an outputContentItem, they are intending to write to the response
+       * output stream.
+       */
+      responseExpected = true;
 
       return outputContent;
     } else {
@@ -197,6 +216,12 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
       HttpOutputHandler.logger.warn(Messages.getString("HttpOutputHandler.WARN_0001_VALUE_IS_NULL")); //$NON-NLS-1$
       return;
     }
+    
+    /*
+     * if setOutput is called, it means someone intends to write some data to the response stream,
+     * which they may not have gotten a handle to earlier through getOutputContentItem*. So we need to set the flag here.
+     */
+    responseExpected = true;
 
     if ("redirect".equalsIgnoreCase(name)) { //$NON-NLS-1$
       try {
@@ -237,11 +262,13 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
               setMimeType(content.getMimeType());
             }
             try {
-              OutputStream outStr = response.getOutputStream();
+              //Bad idea to write to the output stream directly. This prevents us from
+              //auditing writes.  Use the managed destinationOutputStream instead.
+              //OutputStream outStr = response.getOutputStream();
               int inCnt = 0;
               byte[] buf = new byte[4096];
               while (-1 != (inCnt = inStr.read(buf))) {
-                outStr.write(buf, 0, inCnt);
+                destinationOutputStream.write(buf, 0, inCnt);
               }
             } finally {
               try {
@@ -257,7 +284,7 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
             setMimeType("text/html"); //$NON-NLS-1$
           }
 
-          response.getOutputStream().write(value.toString().getBytes());
+          destinationOutputStream.write(value.toString().getBytes());
           contentGenerated = true;
         }
       } catch (IOException ioe) {
@@ -274,14 +301,6 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
     this.mimeTypeListener = mimeTypeListener;
   }
 
-  public IContentItem getOutputContent() {
-    return outputContent;
-  }
-
-  public void setOutputContent(final IContentItem outputContent) {
-    this.outputContent = outputContent;
-  }
-
   public HttpServletResponse getResponse() {
     return response;
   }
@@ -289,9 +308,16 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
   public void setResponse(final HttpServletResponse response) {
     this.response = response;
   }
+  
+  public boolean isResponseExpected() {
+    return responseExpected;
+  }
 
   public void setRuntimeContext(final IRuntimeContext runtimeContext) {
     this.runtimeContext = runtimeContext;
   }
 
+  public boolean isWritable() {
+    return false;
+  }
 }

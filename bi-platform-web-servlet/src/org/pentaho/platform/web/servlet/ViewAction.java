@@ -25,7 +25,9 @@ package org.pentaho.platform.web.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +50,7 @@ import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.scheduler.BackgroundExecutionException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.runtime.ParameterManager;
 import org.pentaho.platform.repository.subscription.SubscriptionHelper;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
@@ -104,14 +107,14 @@ public class ViewAction extends ServletBase {
 
         response.getWriter().print(intro);
         String backgroundResponse = null;
-        try  {
-          backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);  
-        } catch(BackgroundExecutionException bex) {
+        try {
+          backgroundResponse = backgroundExecutionHandler.backgroundExecuteAction(userSession, parameterProvider);
+        } catch (BackgroundExecutionException bex) {
           backgroundResponse = bex.getLocalizedMessage();
           response.getWriter().print(backgroundResponse);
           response.getWriter().print(footer);
           error(Messages.getErrorString("ViewAction.ERROR_0004_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION"), bex); //$NON-NLS-1$
-          return false;          
+          return false;
         }
         response.setHeader("background_execution", "true");
         response.getWriter().print(backgroundResponse);
@@ -139,41 +142,66 @@ public class ViewAction extends ServletBase {
   protected boolean doMessages(final HttpServletRequest request) {
     return "true".equalsIgnoreCase(request.getParameter("debug")); //$NON-NLS-1$ //$NON-NLS-2$
   }
+  
+  protected boolean hasResponse(IRuntimeContext runtime) {
+    boolean hasResponse = false;
+    Map returnParamMap = runtime.getParameterManager().getReturnParameters();
+    for (Iterator it = returnParamMap.entrySet().iterator(); it.hasNext();) {
+      Map.Entry mapEntry = (Map.Entry) it.next();
+      ParameterManager.ReturnParameter returnParam = (ParameterManager.ReturnParameter) mapEntry.getValue();
+      if (returnParam != null && "response".equals(returnParam.destinationName)) {
+        hasResponse = true;
+      }
+    }
+    return hasResponse;
+  }
 
   protected void handleActionRequest(final HttpServletRequest request, final HttpServletResponse response,
-      final HttpOutputHandler outputHandler, final HttpServletRequestHandler requestHandler, OutputStream outputStream,
+      final IOutputHandler outputHandler, final HttpServletRequestHandler requestHandler, OutputStream outputStream,
       final IContentItem contentItem) throws ServletException, IOException {
     IRuntimeContext runtime = null;
     try {
       runtime = requestHandler.handleActionRequest(0, 0);
 
-      // see if we need to provide feedback to the caller
-      if (!outputHandler.contentDone() || doMessages(request)) {
-        outputHandler.getOutputContent().setMimeType("text/html");//$NON-NLS-1$
-        outputStream = outputHandler.getOutputContent().getOutputStream(null);
+      /*
+       * the flag "hasResponse" should be set if the outputHandler is expected to serve a response back
+       * via either the "response.content" output (a final content output), or an intermediate response
+       * such as a form to request parameters such as from a SecureFilterComponent.
+       */
+      boolean hasResponse = outputHandler.isResponseExpected();
+      IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, null);
 
-        response.setContentType("text/html"); //$NON-NLS-1$
+      boolean success = (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS);
+      boolean debugMessages = doMessages(request);
+      boolean printSuccess = (runtime != null) && success && (!hasResponse || debugMessages);
+      boolean printError = (runtime != null) && !success && !response.isCommitted();
+      
+      if(printSuccess || printError) {
+        final String htmlMimeType = "text/html"; //$NON-NLS-1$
+        outputContentItem.setMimeType(htmlMimeType);
+        //this is going to be the response output stream unless you are in debug mode
+        outputStream = outputContentItem.getOutputStream(null);
 
+        response.setContentType(htmlMimeType);
         StringBuffer buffer = new StringBuffer();
-        if ((runtime != null) && (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
+        
+        IMessageFormatter formatter = PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request));
+        
+        if(printSuccess) {
           boolean doWrapper = !("false".equals(request.getParameter("wrapper"))); //$NON-NLS-1$ //$NON-NLS-2$
-          PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatSuccessMessage(
-              "text/html", runtime, buffer, doMessages(request), doWrapper); //$NON-NLS-1$
-        } else {
-          // we need an error message...
-          PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatFailureMessage(
-              "text/html", runtime, buffer, requestHandler.getMessages()); //$NON-NLS-1$
+          formatter.formatSuccessMessage(htmlMimeType, runtime, buffer, debugMessages, doWrapper);
+        }else {
+          response.resetBuffer();
+          formatter.formatFailureMessage(htmlMimeType, runtime, buffer, requestHandler.getMessages());
         }
+
         outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
-        outputHandler.getOutputContent().closeOutputStream();
+        outputContentItem.closeOutputStream();
       }
     } finally {
       if (runtime != null) {
         runtime.dispose();
       }
-    }
-    if (contentItem != null) {
-      contentItem.closeOutputStream();
     }
   }
 
@@ -217,7 +245,6 @@ public class ViewAction extends ServletBase {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
       IOException {
     PentahoSystem.systemEntryPoint();
-    IContentItem contentItem = null;
     try {
       IPentahoSession userSession = getPentahoSession(request);
       if (!doBackgroundExecution(request, response, userSession)) {
@@ -259,9 +286,6 @@ public class ViewAction extends ServletBase {
 
         HttpOutputHandler outputHandler = createOutputHandler(response, outputStream);
         outputHandler.setSession(userSession);
-        if ((contentItem != null) && (fileName != null)) {
-          outputHandler.setOutputContent(contentItem);
-        }
 
         IMimeTypeListener listener = new HttpMimeTypeListener(request, response, fileName);
         outputHandler.setMimeTypeListener(listener);
@@ -272,7 +296,7 @@ public class ViewAction extends ServletBase {
         if (!handleSubscriptions(request, response, userSession, requestParameters, outputStream, urlFactory)) {
           HttpServletRequestHandler requestHandler = getRequestHandler(request, response, userSession,
               requestParameters, outputStream, outputHandler, urlFactory);
-          handleActionRequest(request, response, outputHandler, requestHandler, outputStream, contentItem);
+          handleActionRequest(request, response, outputHandler, requestHandler, outputStream, null);
         }
       }
     } finally {
@@ -323,15 +347,15 @@ public class ViewAction extends ServletBase {
       outputStream = contentItem.getOutputStream(name);
       String resp = null;
       try {
-        resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);  
-      } catch(BackgroundExecutionException bex) {
+        resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);
+      } catch (BackgroundExecutionException bex) {
         resp = bex.getLocalizedMessage();
         error(Messages.getErrorString("ViewAction.ERROR_0003_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
         outputStream.write(resp.getBytes());
         contentItem.closeOutputStream();
-        return false; 
+        return false;
       }
-      
+
       outputStream.write(resp.getBytes());
       contentItem.closeOutputStream();
       return true;

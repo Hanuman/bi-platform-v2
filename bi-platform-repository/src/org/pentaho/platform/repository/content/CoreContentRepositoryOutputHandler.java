@@ -260,4 +260,9 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
     this.runtimeContext = runtimeContext;
   }
 
+  public boolean isResponseExpected() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
 }

@@ -58,7 +58,24 @@ public interface IOutputHandler {
 
   public IPentahoSession getSession();
 
+  /**
+   * @deprecated  This method could never tell you if the content was actually done.  Use
+   * {@link #isResponseExpected()} if you need information about a handlers likelihood to 
+   * generate a response.
+   */
   public boolean contentDone();
+  
+  /**
+   * Indicates whether or not the handler is expected to have data written
+   * to a response output stream managed by the handler.  Typically, a handler will want 
+   * to return true here if its getOutputContentItem or setOutput methods
+   * have been invoked and their invocations can result in a write to the response
+   * output stream that is managed by the handler.  In general, handlers are responsible for setting
+   * this flag any time a client response is possible.
+   * 
+   * @return true if the handler gave something the opportunity to write data to the its response output stream
+   */
+  public boolean isResponseExpected();
 
   /**
    * Retrieve a single output parameter definition by name

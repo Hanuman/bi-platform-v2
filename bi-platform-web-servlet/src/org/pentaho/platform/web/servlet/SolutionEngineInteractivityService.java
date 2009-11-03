@@ -216,7 +216,6 @@ public class SolutionEngineInteractivityService extends ServletBase {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     PentahoSystem.systemEntryPoint();
-    IContentItem contentItem = null;
     try {
       IPentahoSession userSession = getPentahoSession(request);
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -257,9 +256,6 @@ public class SolutionEngineInteractivityService extends ServletBase {
 
       HttpOutputHandler outputHandler = createOutputHandler(response, outputStream);
       outputHandler.setSession(userSession);
-      if ((contentItem != null) && (fileName != null)) {
-        outputHandler.setOutputContent(contentItem);
-      }
 
       IMimeTypeListener listener = new HttpMimeTypeListener(request, response);
       listener.setName(fileName);
@@ -268,7 +264,7 @@ public class SolutionEngineInteractivityService extends ServletBase {
       IParameterProvider requestParameters = new HttpRequestParameterProvider(request);
       setupOutputHandler(outputHandler, requestParameters);
       HttpServletRequestHandler requestHandler = getRequestHandler(request, response, userSession, requestParameters, outputStream, outputHandler, urlFactory);
-      handleActionRequest(request, response, outputHandler, requestHandler, requestParameters, outputStream, contentItem);
+      handleActionRequest(request, response, outputHandler, requestHandler, requestParameters, outputStream, null);
     } finally {
       PentahoSystem.systemExitPoint();
     }

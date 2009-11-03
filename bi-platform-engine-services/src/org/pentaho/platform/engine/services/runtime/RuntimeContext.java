@@ -801,7 +801,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       component = (IComponent) componentTmp;
     /* } else if(componentTmp instanceof IAction) {
       ActionDelegate actionAdapter = new ActionDelegate((IAction)componentTmp);
-      component = actionAdapter;*/
+      component = actionAdapter; */
     } else {
       // Try this out...
       PojoComponent pc = new PojoComponent();
@@ -995,7 +995,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       final IExecutionListener execListener, final boolean async, boolean peekOnly) throws ActionSequenceException  {
 
     // execute the actions
-    int loopCount = 0;
+    int loopCount = -1;
 
     // TODO handle results sets directly instead of using Properties maps
     
@@ -1076,7 +1076,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       final IActionCompleteListener doneListener, final IExecutionListener execListener, final boolean async) throws ActionSequenceException {
 
     // execute the actions
-    int loopCount = 0;
+    int loopCount = -1;
     for (Iterator it = loopList.iterator(); it.hasNext();) {
       loopCount++;
       if (RuntimeContext.debug) {
