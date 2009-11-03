@@ -119,7 +119,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   private String newAnalysisViewOverrideCommandTitle;
   private String newReportOverrideCommandUrl;
   private String newReportOverrideCommandTitle;
-  
+
   protected TabPanel contentTabPanel = new TabPanel();
   private HashMap<Widget, TabWidget> contentTabMap = new HashMap<Widget, TabWidget>();
   private boolean hasBeenLoaded = false;
@@ -218,11 +218,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
 
       };
-      MantleServiceCache.getService().setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS, ""+solutionTree.useDescriptionsForTooltip, callback);
+      MantleServiceCache.getService().setUserSetting(IMantleUserSettingsConstants.MANTLE_SHOW_DESCRIPTIONS_FOR_TOOLTIPS,
+          "" + solutionTree.useDescriptionsForTooltip, callback);
     }
   };
-  
-  
+
   // menu items
   CheckBoxMenuItem showWorkspaceMenuItem = new CheckBoxMenuItem(Messages.getString("workspace"), ShowWorkSpaceCommand); //$NON-NLS-1$
   CheckBoxMenuItem showHiddenFilesMenuItem = new CheckBoxMenuItem(Messages.getString("showHiddenFiles"), ShowHideFilesCommand); //$NON-NLS-1$
@@ -268,9 +268,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           Window.setTitle(Messages.getString("productName") + " - " + getCurrentTab().getText()); //$NON-NLS-1$ //$NON-NLS-2$
 
           if (tabPanel instanceof ReloadableIFrameTabPanel) {
-            NamedFrame frame = ((ReloadableIFrameTabPanel)tabPanel).getFrame();
+            NamedFrame frame = ((ReloadableIFrameTabPanel) tabPanel).getFrame();
             frame.setVisible(true);
-            refreshIfPDF(((ReloadableIFrameTabPanel)tabPanel));
+            refreshIfPDF(((ReloadableIFrameTabPanel) tabPanel));
           }
         }
         for (int i = 0; i < tabIndex; i++) {
@@ -283,7 +283,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     });
     buildUI();
   }
-  
+
   public FileTypeEnabledOptions getEnabledOptions(String filename) {
     for (FileTypeEnabledOptions option : enabledOptionsList) {
       if (option.isSupportedFile(filename)) {
@@ -292,7 +292,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     return null;
   }
-  
+
   public ContentTypePlugin getContentTypePlugin(String filename) {
     for (ContentTypePlugin plugin : contentTypePluginList) {
       if (plugin.isSupportedFile(filename)) {
@@ -317,12 +317,12 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public Command getNewReportCommand() {
     if (newReportOverrideCommandUrl == null) {
-      return new WAQRCommand(this); 
+      return new WAQRCommand(this);
     } else {
       return new UrlCommand(this, newReportOverrideCommandUrl, newReportOverrideCommandTitle);
     }
   }
-  
+
   public void buildUI() {
     clear();
     if (explorerMode) {
@@ -420,7 +420,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   public void showWorkspace() {
     workspacePanel.refreshWorkspace();
     contentPanel.showWidget(contentPanel.getWidgetIndex(workspacePanel));
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED,CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB); // TODO Not sure what event type to pass
   }
 
   public void showLaunchOrContent() {
@@ -440,7 +440,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (selectedTab > -1) {
         Widget tabContent = contentTabPanel.getWidget(selectedTab);
         if (tabContent instanceof ReloadableIFrameTabPanel) {
-          refreshIfPDF((ReloadableIFrameTabPanel)tabContent);
+          refreshIfPDF((ReloadableIFrameTabPanel) tabContent);
         }
       }
 
@@ -462,12 +462,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     return false;
   }
-  
+
   public String getUniqueFrameName() {
     return FRAME_ID_PRE + frameIdCount++;
   }
-  
+
   public void showNewURLTab(final String tabName, final String tabTooltip, final String url) {
+    showNewURLTab(tabName, tabTooltip, url, false);
+  }
+
+  public void showNewURLTab(final String tabName, final String tabTooltip, final String url, boolean setFileInfoInFrame) {
     final int elementId = contentTabPanel.getWidgetCount();
     String frameName = getUniqueFrameName();
     ReloadableIFrameTabPanel panel = new ReloadableIFrameTabPanel(frameName, url);
@@ -521,7 +525,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
 
     perspectiveCallback.activatePerspective(this);
-    setFileInfoInFrame();
+
+    if (setFileInfoInFrame) {
+      setFileInfoInFrame();
+    }
   }
 
   public TabWidget getCurrentTab() {
@@ -541,10 +548,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       if (mode == FileCommand.COMMAND.NEWWINDOW) {
         Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+        showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL(), true);
       }
     } else {
-      
+
       // see if this file is a plugin
       ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
       if (plugin != null && plugin.hasCommand(mode)) {
@@ -560,8 +567,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
               UrlCommand cmd = new UrlCommand(this, url, selectedFileItem.localizedName);
-              cmd.execute(new CommandCallback(){
-                public void afterExecute(){
+              cmd.execute(new CommandCallback() {
+                public void afterExecute() {
                   setFileInfoInFrame();
                 }
               });
@@ -569,19 +576,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           }
         } else {
           if (url != null && !"".equals(url)) { //$NON-NLS-1$
-            
+
             // we have a URL so open it in a new tab
             String updateUrl = "/MantleService?passthru=" + url; //$NON-NLS-1$
 
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(updateUrl, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+              showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl, true);
             }
-          }          
+          }
         }
       } else {
-      
+
         // see if this file has a URL
         String url = selectedFileItem.getURL();
         if (url != null && !"".equals(url)) { //$NON-NLS-1$
@@ -589,21 +596,21 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           if (mode == FileCommand.COMMAND.NEWWINDOW) {
             Window.open(selectedFileItem.getURL(), "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
           } else {
-            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL());
+            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, selectedFileItem.getURL(), true);
           }
         }
       }
     }
   }
-  
+
   /**
    * Store representation of file in the frame for reference later when save is called
    * 
    * @param selectedFileItem
    */
-  private void setFileInfoInFrame(){
+  private void setFileInfoInFrame() {
     ReloadableIFrameTabPanel tp = SolutionBrowserPerspective.this.getCurrentFrame();
-    if(tp != null && selectedFileItem != null){
+    if (tp != null && selectedFileItem != null) {
       SolutionFileInfo fileInfo = new SolutionFileInfo();
       fileInfo.setName(selectedFileItem.getName());
       fileInfo.setSolution(selectedFileItem.getSolution());
@@ -733,7 +740,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
       showNewURLTab(
-          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
+          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url, true); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -748,9 +755,9 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       // check to see if a plugin supports editing
       ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
       if (plugin != null && plugin.hasCommand(COMMAND.EDIT)) {
-        
+
         // load the editor for this plugin
-        
+
         String editUrl = plugin.getCommandUrl(selectedFileItem, COMMAND.EDIT);
         // See if it's already loaded
         for (int i = 0; i < contentTabPanel.getWidgetCount(); i++) {
@@ -761,19 +768,16 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             return;
           }
         }
-        
-        
+
         if (GWT.isScript()) {
           showNewURLTab(
-              Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), editUrl); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), editUrl, true); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            // we have a URL so open it in a new tab
-            String updateUrl = "/MantleService?passthru=" + editUrl; //$NON-NLS-1$
-            showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl);
+          // we have a URL so open it in a new tab
+          String updateUrl = "/MantleService?passthru=" + editUrl; //$NON-NLS-1$
+          showNewURLTab(selectedFileItem.localizedName, selectedFileItem.localizedName, updateUrl, true);
         }
-        
-        
-        
+
         // Store representation of file in the frame for reference later when save is called
         SolutionFileInfo fileInfo = new SolutionFileInfo();
         fileInfo.setName(selectedFileItem.getName());
@@ -781,7 +785,6 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         fileInfo.setPath(selectedFileItem.getPath());
         this.getCurrentFrame().setFileInfo(fileInfo);
 
-        
       } else {
         MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
             Messages.getString("cannotEditFileType"), //$NON-NLS-1$
@@ -820,7 +823,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         }
       }
       showNewURLTab(
-          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url); //$NON-NLS-1$ //$NON-NLS-2$
+          Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), Messages.getString("editingColon") + selectedFileItem.getLocalizedName(), url, true); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       SolutionFileInfo fileInfo = new SolutionFileInfo();
@@ -969,7 +972,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             public void onSuccess(Boolean subscribable) {
 
               if (subscribable) {
-                showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl);
+                showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), myurl, true);
 
                 // Store representation of file in the frame for reference later when save is called
                 // getCurrentFrame().setFileInfo(fileInfo);
@@ -983,7 +986,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           };
           MantleServiceCache.getService().hasAccess(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), 3, callback);
         } else {
-          showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), url);
+          showNewURLTab(selectedFileItem.getLocalizedName(), selectedFileItem.getLocalizedName(), url, true);
         }
       }
 
@@ -995,18 +998,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   /**
-   * Display the login screen and and validate the credentials supplied by the user
-   * if the credentials are correct, the execute method is being invoked other wise
-   * error dialog is being display. On clicking ok button on the dialog box, login
-   * screen is displayed again and process is repeated until the user click cancel 
-   * or user is successfully authenticated
-   *  */
+   * Display the login screen and and validate the credentials supplied by the user if the credentials are correct, the execute method is being invoked other
+   * wise error dialog is being display. On clicking ok button on the dialog box, login screen is displayed again and process is repeated until the user click
+   * cancel or user is successfully authenticated
+   * */
   private void doLogin(final FileCommand.COMMAND mode) {
     MantleLoginDialog.performLogin(new AsyncCallback<Object>() {
 
       public void onFailure(Throwable caught) {
-        MessageDialogBox dialogBox = new MessageDialogBox(
-            Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+        MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("invalidLogin"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
         dialogBox.setCallback(new IDialogCallback() {
           public void cancelPressed() {
             // do nothing
@@ -1015,7 +1015,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           public void okPressed() {
             doLogin(mode);
           }
-          
+
         });
         dialogBox.center();
       }
@@ -1032,26 +1032,26 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
       public void onSuccess(Object result) {
         // if we are still authenticated, perform the action, otherwise present login
-          AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
-            public void onFailure(Throwable caught) {
-              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+          public void onFailure(Throwable caught) {
+            MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), Messages.getString("couldNotGetFileProperties"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+            dialogBox.center();
+          }
+
+          public void onSuccess(Boolean subscribable) {
+
+            if (subscribable) {
+              NewScheduleDialog dialog = new NewScheduleDialog(fileInfo.getSolution(), fileInfo.getPath(), fileInfo.getName());
+              dialog.center();
+            } else {
+              MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+                  Messages.getString("noSchedulePermission"), false, false, true); //$NON-NLS-1$
               dialogBox.center();
             }
-
-            public void onSuccess(Boolean subscribable) {
-                 
-                if (subscribable) {
-                  NewScheduleDialog dialog = new NewScheduleDialog(fileInfo.getSolution(), fileInfo.getPath(), fileInfo.getName());
-                  dialog.center();
-                } else {
-                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
-                      Messages.getString("noSchedulePermission"), false, false, true); //$NON-NLS-1$
-                  dialogBox.center();
-                }
-              } 
-          };
-          MantleServiceCache.getService().hasAccess(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), 3, callback);
+          }
+        };
+        MantleServiceCache.getService().hasAccess(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), 3, callback);
 
       }
 
@@ -1071,7 +1071,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     };
     MantleServiceCache.getService().isAuthenticated(callback);
   }
-  
+
   public void fetchSolutionDocument(final boolean showSuccess, final boolean collapse) {
     final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
@@ -1100,21 +1100,21 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
             // ok, we have a repository document, we can build the GUI
             // consider caching the document
             solutionDocument = (Document) XMLParser.parse((String) (String) response.getText());
-            
+
             // flat that we have the document so that other things might start to use it (PDB-500)
             flagSolutionDocumentLoaded();
-            
+
             // update tree
             solutionTree.buildSolutionTree(solutionDocument);
 
             TreeItem selectedItem = solutionTree.getSelectedItem();
-            
-            // IE has difficulty rendering the tree if the nodes have changed. We can get around 
+
+            // IE has difficulty rendering the tree if the nodes have changed. We can get around
             // that by collapsing the top level nodes and then re-opening them.
             for (TreeItem item : solutionTree.getAllNodes()) {
-              if(item.getState()){
+              if (item.getState()) {
                 item.setState(false);
-                if (collapse == false ) {
+                if (collapse == false) {
                   item.setState(true);
                 }
               }
@@ -1132,7 +1132,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
               item.setSelected(false);
             }
             selectedItem.setSelected(true);
-            
+
             // update classic view
             classicNavigatorView.setSolutionDocument(solutionDocument);
             classicNavigatorView.buildSolutionNavigator();
@@ -1171,10 +1171,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
   public void loadPerspective(boolean force, boolean showStatus) {
     if (!hasBeenLoaded) {
-      fetchSolutionDocument(showStatus, /*collapse*/true);
+      fetchSolutionDocument(showStatus, /* collapse */true);
       hasBeenLoaded = true;
     } else if (force) {
-      fetchSolutionDocument(showStatus, /*collapse*/false);
+      fetchSolutionDocument(showStatus, /* collapse */false);
     }
     installViewMenu(perspectiveCallback);
   }
@@ -1251,10 +1251,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
                 ContentTypePlugin plugin = getContentTypePlugin(fileInfo.getName());
                 String url = plugin.getCommandUrl(selectedFileItem, COMMAND.SCHEDULE_NEW);
                 String displayName = fileInfo.getLocalizedName();
-                if (displayName == null || displayName.length()<1) {
+                if (displayName == null || displayName.length() < 1) {
                   displayName = fileInfo.getName();
                 }
-                showNewURLTab(displayName, displayName, url);
+                showNewURLTab(displayName, displayName, url, true);
               } else {
                 executeActionSequence(FileCommand.COMMAND.SUBSCRIBE);
               }
@@ -1293,7 +1293,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
         };
         MantleServiceCache.getService().getSolutionFileInfo(selectedFileItem.getSolution(), selectedFileItem.getPath(), selectedFileItem.getName(), callback);
       }
-      
+
       protected void performOperation() {
         schedule();
       }
@@ -1301,21 +1301,23 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       protected void performOperation(boolean feedback) {
         schedule();
       }
-      
+
     };
     scheduleCommand.execute();
   }
 
   public void loadPropertiesDialog() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.GENERAL);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null,
+        FilePropertiesDialog.Tabs.GENERAL);
     dialog.showTab(FilePropertiesDialog.Tabs.GENERAL);
     dialog.center();
   }
 
   public void shareFile() {
     FileItem selectedItem = getSelectedFileItem();
-    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null, FilePropertiesDialog.Tabs.PERMISSION);
+    FilePropertiesDialog dialog = new FilePropertiesDialog(selectedItem, getEnabledOptions(selectedItem.getName()), isAdministrator(), new TabPanel(), null,
+        FilePropertiesDialog.Tabs.PERMISSION);
     dialog.showTab(FilePropertiesDialog.Tabs.PERMISSION);
     dialog.center();
   }
@@ -1340,8 +1342,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
     // update view menu
     installViewMenu(perspectiveCallback);
-  }  
-  
+  }
+
   public void installBookmarkGroups(final Map<String, List<Bookmark>> groupMap) {
     favoritesGroupMenuBar.clearItems();
     for (final String groupName : groupMap.keySet()) {
@@ -1350,7 +1352,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           List<Bookmark> bookmarks = groupMap.get(groupName);
           contentTabPanel.clear();
           for (Bookmark bookmark : bookmarks) {
-            showNewURLTab(bookmark.getTitle(), bookmark.getTitle(), bookmark.getUrl());
+            showNewURLTab(bookmark.getTitle(), bookmark.getTitle(), bookmark.getUrl(), true);
           }
           contentTabPanel.selectTab(0);
         }
@@ -1493,7 +1495,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       }
 
     };
-    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB);  // TODO not sure what type of event needs to be fired 
+    fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, CURRENT_SELECTED_TAB); // TODO not sure what type of event needs to be fired
     MantleServiceCache.getService().setShowNavigator(showSolutionBrowser, callback);
   }
 
@@ -1544,10 +1546,10 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       tabPanel = contentTabPanel.getWidget(tabIndex);
     } else {
       int selectedTabIndex = contentTabPanel.getTabBar().getSelectedTab();
-      if(selectedTabIndex >= 0) {
-        tabPanel = contentTabPanel.getWidget(selectedTabIndex);  
+      if (selectedTabIndex >= 0) {
+        tabPanel = contentTabPanel.getWidget(selectedTabIndex);
       }
-      
+
     }
 
     for (SolutionBrowserListener listener : listeners) {
@@ -1675,13 +1677,13 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   /*-{
     $wnd.mantle_repository_loaded = true;
   }-*/;
-  
+
   /**
    * This method will check if the given frame(by id) is jpivot.
    * 
    * @param elementId
    */
-  public static native boolean isPivot(String elementId) 
+  public static native boolean isPivot(String elementId)
   /*-{
     var frame = $doc.getElementById(elementId);
     if (!frame) { 
@@ -1715,10 +1717,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
 
         public void onResponseReceived(Request request, Response response) {
           /*
-           *  We are checking for this specific string because if the job was scheduled 
-           *  successfully by QuartzBackgroundExecutionHelper then the response is an html 
-           *  that contains the specific string. We have coded this way because we did not want to 
-           *  touch the old way.   
+           * We are checking for this specific string because if the job was scheduled successfully by QuartzBackgroundExecutionHelper then the response is an
+           * html that contains the specific string. We have coded this way because we did not want to touch the old way.
            */
           if ("true".equals(response.getHeader("background_execution"))) {
             MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), Messages.getString("backgroundJobScheduled"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1737,7 +1737,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     final String title = Messages.getString("confirm"); //$NON-NLS-1$
     final String message = Messages.getString("userParamBackgroundWarning"); //$NON-NLS-1$
     VerticalPanel vp = new VerticalPanel();
-    vp.add(new Label(Messages.getString(message))); 
+    vp.add(new Label(Messages.getString(message)));
 
     final PromptDialogBox scheduleInBackground = new PromptDialogBox(title, Messages.getString("yes"), Messages.getString("no"), false, true, vp); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1763,36 +1763,36 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
   }
 
   /*
-   * registerContentOverlay - register the overlay with the panel. Once the registration is done it fires a soultion browser
-   * event passing the current tab index and the type of event
+   * registerContentOverlay - register the overlay with the panel. Once the registration is done it fires a soultion browser event passing the current tab index
+   * and the type of event
    */
-  public void registerContentOverlay(String id){
+  public void registerContentOverlay(String id) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.addOverlay(id);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.OPEN, contentTabPanel.getTabBar().getSelectedTab());
   }
 
-  public void enableContentEdit(boolean enable){
+  public void enableContentEdit(boolean enable) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setEditEnabled(enable);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
 
-  public void setContentEditSelected(boolean selected){
+  public void setContentEditSelected(boolean selected) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setEditSelected(selected);
     fireSolutionBrowserListenerEvent(SolutionBrowserListener.EventType.UNDEFINED, contentTabPanel.getTabBar().getSelectedTab());
   }
-  
-  // Content frames can register a Javascript object to receive various PUC notifications. We broker that out 
+
+  // Content frames can register a Javascript object to receive various PUC notifications. We broker that out
   // to the appropriate ReloadableIFrameTabPanel here.
-  public void setCurrentTabJSCallback(JavaScriptObject obj){
+  public void setCurrentTabJSCallback(JavaScriptObject obj) {
     ReloadableIFrameTabPanel panel = getCurrentFrame();
     panel.setContentCallback(obj);
   }
-  
+
   public void buildEnabledOptionsList(Map<String, String> settings) {
-    
+
     enabledOptionsList.clear();
     contentTypePluginList.clear();
 
@@ -1804,14 +1804,14 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
     // Check for override of New Report
     // Poked in via pentaho.xml entry
-//    <new-analysis-view>
-//      <command-url>http://www.google.com</command-url>
-//      <command-title>Marc Analysis View</command-title>
-//    </new-analysis-view>
-//    <new-report>
-//      <command-url>http://www.yahoo.com</command-url>
-//      <command-title>Marc New Report</command-title>
-//    </new-report>
+    // <new-analysis-view>
+    // <command-url>http://www.google.com</command-url>
+    // <command-title>Marc Analysis View</command-title>
+    // </new-analysis-view>
+    // <new-report>
+    // <command-url>http://www.yahoo.com</command-url>
+    // <command-title>Marc New Report</command-title>
+    // </new-report>
     // 
     if (settings.containsKey("new-report-command-url")) { //$NON-NLS-1$
       newReportOverrideCommandUrl = settings.get("new-report-command-url"); //$NON-NLS-1$
@@ -1820,31 +1820,31 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     // Another way to override is from a plugin.xml...
     // 
     // <menu-item id="waqr_menu_item" anchor="file-new-submenu-waqr_menu_item" label="New WAQR" command="http://www.amazon.com" type="MENU_ITEM" how="REPLACE"/>
-    // <menu-item id="new_analysis_view_menu_item" anchor="file-new-submenu-new_analysis_view_menu_item" label="New Analysis" command="http://www.dogpile.com" type="MENU_ITEM" how="REPLACE"/>
+    // <menu-item id="new_analysis_view_menu_item" anchor="file-new-submenu-new_analysis_view_menu_item" label="New Analysis" command="http://www.dogpile.com"
+    // type="MENU_ITEM" how="REPLACE"/>
 
-    if (settings.get("file-newMenuOverrideTitle0" )!= null ) { //$NON-NLS-1$
+    if (settings.get("file-newMenuOverrideTitle0") != null) { //$NON-NLS-1$
       // For now, only support override of these two menus
-      for (int i=0; i<2; i++) {
+      for (int i = 0; i < 2; i++) {
         String title = settings.get("file-newMenuOverrideTitle" + i); //$NON-NLS-1$
         String command = settings.get("file-newMenuOverrideCommand" + i); //$NON-NLS-1$
         String menuItem = settings.get("file-newMenuOverrideMenuItem" + i); //$NON-NLS-1$
-        if ( (menuItem != null) && (command != null) && (title != null) ) {
+        if ((menuItem != null) && (command != null) && (title != null)) {
           if (menuItem.equals("waqr_menu_item")) { //$NON-NLS-1$
             newReportOverrideCommandUrl = command;
             newReportOverrideCommandTitle = title;
-          } else if (menuItem.equals("new_analysis_view_menu_item") ) { //$NON-NLS-1$
+          } else if (menuItem.equals("new_analysis_view_menu_item")) { //$NON-NLS-1$
             newAnalysisViewOverrideCommandUrl = command;
             newAnalysisViewOverrideCommandTitle = title;
           }
         }
       }
     }
-    
-    
+
     // load plugins
     int index = 0;
     String pluginSetting = "plugin-content-type-" + index; //$NON-NLS-1$
-    while(settings.containsKey(pluginSetting)) {
+    while (settings.containsKey(pluginSetting)) {
       String fileExtension = settings.get(pluginSetting);
       String fileIcon = settings.get("plugin-content-type-icon-" + index);
       FileTypeEnabledOptions pluginMenu = new FileTypeEnabledOptions(fileExtension);
@@ -1867,19 +1867,19 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
           // a plugin has a poorly configured plugin
         }
       }
-      
+
       // all files can share, delete, and have properties
       pluginMenu.addCommand(COMMAND.SHARE);
       pluginMenu.addCommand(COMMAND.DELETE);
       pluginMenu.addCommand(COMMAND.PROPERTIES);
-      
+
       contentTypePluginList.add(plugin);
       enabledOptionsList.add(pluginMenu);
 
       // check for another one
       pluginSetting = "plugin-content-type-" + (++index); //$NON-NLS-1$
     }
-    
+
     FileTypeEnabledOptions waqrMenu = new FileTypeEnabledOptions(FileItem.WAQR_VIEW_SUFFIX);
     waqrMenu.addCommand(COMMAND.RUN);
     waqrMenu.addCommand(COMMAND.NEWWINDOW);
@@ -1891,17 +1891,17 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     waqrMenu.addCommand(COMMAND.SCHEDULE_NEW);
     waqrMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(waqrMenu);
-    
+
     FileTypeEnabledOptions analysisMenu = new FileTypeEnabledOptions(FileItem.ANALYSIS_VIEW_SUFFIX);
     analysisMenu.addCommand(COMMAND.RUN);
     analysisMenu.addCommand(COMMAND.NEWWINDOW);
     analysisMenu.addCommand(COMMAND.EDIT);
     analysisMenu.addCommand(COMMAND.EDIT_ACTION);
     analysisMenu.addCommand(COMMAND.DELETE);
-    analysisMenu.addCommand(COMMAND.SHARE);    
+    analysisMenu.addCommand(COMMAND.SHARE);
     analysisMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(analysisMenu);
-    
+
     FileTypeEnabledOptions xactionMenu = new FileTypeEnabledOptions(FileItem.XACTION_SUFFIX);
     xactionMenu.addCommand(COMMAND.RUN);
     xactionMenu.addCommand(COMMAND.NEWWINDOW);
@@ -1912,7 +1912,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     xactionMenu.addCommand(COMMAND.SHARE);
     xactionMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(xactionMenu);
-    
+
     FileTypeEnabledOptions defaultMenu = new FileTypeEnabledOptions(null);
     defaultMenu.addCommand(COMMAND.RUN);
     defaultMenu.addCommand(COMMAND.NEWWINDOW);
@@ -1921,26 +1921,26 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     defaultMenu.addCommand(COMMAND.PROPERTIES);
     enabledOptionsList.add(defaultMenu);
   }
-  
+
   public static class ContentTypePlugin {
 
     String fileExtension;
     String fileIcon;
     Map<COMMAND, String> urlCommands = new HashMap<COMMAND, String>();
-    
+
     ContentTypePlugin(String fileExtension, String fileIcon) {
       this.fileExtension = fileExtension;
       this.fileIcon = fileIcon;
     }
-    
+
     public void addUrlCommand(COMMAND cmd, String url) {
       urlCommands.put(cmd, url);
     }
-    
+
     public boolean isSupportedFile(String filename) {
-        return filename != null && filename.endsWith(fileExtension);
+      return filename != null && filename.endsWith(fileExtension);
     }
-    
+
     private String replacePattern(String url, FileItem item) {
       if (url == null) {
         return null;
@@ -1949,15 +1949,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       newurl = newurl.replaceAll("\\{path\\}", item.getPath()); //$NON-NLS-1$
       return newurl.replaceAll("\\{name\\}", item.getName()); //$NON-NLS-1$
     }
-    
+
     public boolean hasCommand(COMMAND cmd) {
       return urlCommands.containsKey(cmd);
     }
-    
+
     public String getCommandUrl(FileItem item, COMMAND cmd) {
       return replacePattern(urlCommands.get(cmd), item);
     }
-    
+
     public String getFileIcon() {
       return fileIcon;
     }

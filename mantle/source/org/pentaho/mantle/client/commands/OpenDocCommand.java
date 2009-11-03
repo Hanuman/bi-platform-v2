@@ -40,7 +40,7 @@ public class OpenDocCommand implements Command {
    * the EE version of the document.
    */
   public void execute() {
-    navigatorPerspective.showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL);
+    navigatorPerspective.showNewURLTab(Messages.getString("documentation"), Messages.getString("documentation"), documentationURL, false);
   }
   
 

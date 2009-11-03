@@ -45,7 +45,7 @@ public class OpenURLCommand implements Command {
       }
 
       public void okPressed() {
-        navigatorPerspective.showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText());
+        navigatorPerspective.showNewURLTab(textBox.getText(), textBox.getText(), textBox.getText(), false);
       }
 
     };

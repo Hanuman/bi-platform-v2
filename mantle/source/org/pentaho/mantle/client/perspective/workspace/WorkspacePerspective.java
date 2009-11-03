@@ -203,7 +203,7 @@ public class WorkspacePerspective extends ScrollPanel {
             // Frame iframe = new Frame("GetContent?action=view&id=" + jobDetail.id);
             // viewDialog.setContent(iframe);
             // iframe.setPixelSize(1024, 600);
-            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id); //$NON-NLS-1$
+            solutionBrowserPerspective.showNewURLTab(jobDetail.name, jobDetail.name, "GetContent?action=view&id=" + jobDetail.id, false); //$NON-NLS-1$
           }
 
         });
@@ -483,7 +483,7 @@ public class WorkspacePerspective extends ScrollPanel {
     }
 
     if (action.equals("archived") || action.equals("run") || action.equals("edit")) { //$NON-NLS-1$ //$NON-NLS-2$
-      solutionBrowserPerspective.showNewURLTab(subscription.getName(), subscription.getId(), url);
+      solutionBrowserPerspective.showNewURLTab(subscription.getName(), subscription.getId(), url, false);
     } else {
       viewDialog.center();
       final Frame iframe = new Frame(url);

@@ -32,11 +32,11 @@ public class UrlCommand extends AbstractCommand {
 
   protected void performOperation()
   {
-    navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
+    navigatorPerspective.showNewURLTab( title, "", url, false); //$NON-NLS-1$
   }
 
   protected void performOperation(boolean feedback)
   {
-    navigatorPerspective.showNewURLTab( title, "", url); //$NON-NLS-1$
+    navigatorPerspective.showNewURLTab( title, "", url, false); //$NON-NLS-1$
   }
 }

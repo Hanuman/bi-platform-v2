@@ -105,7 +105,7 @@ public class LaunchPanel extends Frame {
   }
   
   public void openURL(String name, String tooltip, String url) {
-    perspective.showNewURLTab(name, tooltip, url);
+    perspective.showNewURLTab(name, tooltip, url, false);
   }
 
 }
