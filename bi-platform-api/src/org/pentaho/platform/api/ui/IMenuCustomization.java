@@ -17,6 +17,9 @@
  */
 package org.pentaho.platform.api.ui;
 
+/**
+ * @deprecated bi platform api now prefers {@link org.pentaho.ui.xul.IMenuCustomization}
+ */
 public interface IMenuCustomization {
 
 	public enum CustomizationType { INSERT_BEFORE, INSERT_AFTER, FIRST_CHILD, LAST_CHILD, REPLACE, DELETE };
