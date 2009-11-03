@@ -60,7 +60,10 @@ public class MicroPlatform extends PentahoSystemBoot {
     //set log levels
     //FIXME: find a better way to set log levels programmatically than this.. this can cause NPEs
     //and other errors, not to mention it's inefficient
-    PentahoSystem.get(ISolutionEngine.class).setLoggingLevel(ILogger.DEBUG);
+    Object o = PentahoSystem.get(ISolutionEngine.class);
+    if(o != null && o instanceof ILogger) {
+      ((ILogger)o).setLoggingLevel(ILogger.DEBUG);
+    }
 //    PentahoSystem.get(ISolutionRepository.class).setLoggingLevel(ILogger.DEBUG);
     return ret;
   }
