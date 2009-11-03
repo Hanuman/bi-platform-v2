@@ -169,7 +169,7 @@ public class ViewAction extends ServletBase {
        * such as a form to request parameters such as from a SecureFilterComponent.
        */
       boolean hasResponse = outputHandler.isResponseExpected();
-      IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, null);
+      IContentItem responseContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, null);
 
       boolean success = (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS);
       boolean debugMessages = doMessages(request);
@@ -178,9 +178,9 @@ public class ViewAction extends ServletBase {
       
       if(printSuccess || printError) {
         final String htmlMimeType = "text/html"; //$NON-NLS-1$
-        outputContentItem.setMimeType(htmlMimeType);
+        responseContentItem.setMimeType(htmlMimeType);
         //this is going to be the response output stream unless you are in debug mode
-        outputStream = outputContentItem.getOutputStream(null);
+        outputStream = responseContentItem.getOutputStream(null);
 
         response.setContentType(htmlMimeType);
         StringBuffer buffer = new StringBuffer();
@@ -196,7 +196,7 @@ public class ViewAction extends ServletBase {
         }
 
         outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
-        outputContentItem.closeOutputStream();
+        responseContentItem.closeOutputStream();
       }
     } finally {
       if (runtime != null) {
