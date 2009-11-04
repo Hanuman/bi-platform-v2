@@ -31,6 +31,7 @@
       <exclude org="commons-logging" name="commons-logging" />
       <exclude org="commons-collections" />
       <exclude org="dom4j" name="dom4j" />
+      <exclude org="net.sf.ehcache" name="ehcache" />
     </dependency>
 
     <!-- external test dependencies -->

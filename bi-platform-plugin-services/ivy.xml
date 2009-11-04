@@ -53,6 +53,7 @@
       <exclude org="commons-logging" name="commons-logging" />
       <exclude org="commons-collections" name="commons-collections" />
       <exclude org="dom4j" name="dom4j" />
+      <exclude org="net.sf.ehcache" name="ehcache" />
     </dependency>
     
     <dependency org="org.apache.axis2" name="axis2-adb" rev="1.4.1" transitive="false"/>
