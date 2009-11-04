@@ -404,11 +404,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createCronJob(String solutionName, String path, String actionName, String triggerName, String triggerGroup, String description,
       String cronExpression) throws SimpleMessageException {
     if (!hasAccess(solutionName, path, actionName, ISolutionRepository.ACTION_SUBSCRIBE)) {
-      throw new SimpleMessageException(ServerMessages.getString("noSchedulePermission")); //$NON-NLS-1$
+      throw new SimpleMessageException(ServerMessages.getInstance().getString("noSchedulePermission")); //$NON-NLS-1$
     }
 
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+      throw new SimpleMessageException(ServerMessages.getInstance().getString("featureDisabled")); //$NON-NLS-1$
     }
 
     try {
@@ -437,11 +437,11 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
   public void createSimpleTriggerJob(String triggerName, String triggerGroup, String description, Date startDate, Date endDate, int repeatCount,
       int repeatInterval, String solutionName, String path, String actionName) throws SimpleMessageException {
     if (!hasAccess(solutionName, path, actionName, ISolutionRepository.ACTION_SUBSCRIBE)) {
-      throw new SimpleMessageException(ServerMessages.getString("noSchedulePermission")); //$NON-NLS-1$
+      throw new SimpleMessageException(ServerMessages.getInstance().getString("noSchedulePermission")); //$NON-NLS-1$
     }
 
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+      throw new SimpleMessageException(ServerMessages.getInstance().getString("featureDisabled")); //$NON-NLS-1$
     }
 
     try {
@@ -596,7 +596,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void setSolutionFileInfo(SolutionFileInfo fileInfo) throws SimpleMessageException {
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new SimpleMessageException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+      throw new SimpleMessageException(ServerMessages.getInstance().getString("featureDisabled")); //$NON-NLS-1$
     }
     try {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getPentahoSession());
@@ -858,7 +858,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
       response = SubscriptionHelper.createSubscriptionArchive(publicScheduleName, userSession, null, sessionParameters);
     } catch (BackgroundExecutionException bex) {
       response = bex.getLocalizedMessage();
-      throw new SimpleMessageException(Messages.getErrorString("ViewAction.ViewAction.ERROR_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$      
+      throw new SimpleMessageException(Messages.getInstance().getErrorString("ViewAction.ViewAction.ERROR_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$      
     }
     return response;
   }
@@ -906,17 +906,17 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
     ISubscription subscription = subscriptionRepository.getSubscription(publicScheduleName, session);
     if (subscription == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     IContentItem contentItem = subscriptionRepository.getContentItem(publicScheduleName, session);
     if (contentItem == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
 
     contentItem.removeVersion(contentId);
 
-    return Messages.getString("SubscriptionHelper.USER_ARCHIVE_DELETED"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SubscriptionHelper.USER_ARCHIVE_DELETED"); //$NON-NLS-1$
   }
 
   /**
@@ -1075,7 +1075,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
    */
   public void setSubscriptions(String actionRef, boolean enabled, ArrayList<SubscriptionSchedule> currentSchedules) {
     if ("true".equalsIgnoreCase(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new RuntimeException(ServerMessages.getString("featureDisabled")); //$NON-NLS-1$
+      throw new RuntimeException(ServerMessages.getInstance().getString("featureDisabled")); //$NON-NLS-1$
     }
     ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getPentahoSession());
     ISubscribeContent subscribeContent = subscriptionRepository.getContentByActionReference(actionRef);
